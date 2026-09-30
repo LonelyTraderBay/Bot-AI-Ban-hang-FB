@@ -1,0 +1,1380 @@
+{
+  "version": "2.0",
+  "authority": "User approval 2026-09-29T09:24:12Z; live integrations/financial limits are not activated.",
+  "features": [
+    {
+      "id": "A01",
+      "title": "Đăng ký thiết bị nhận thông báo",
+      "group": "Thông báo điện thoại",
+      "module": "notifications",
+      "spec": "Hiển thị khả năng thiết bị, hướng dẫn cài PWA, xin quyền sau thao tác người dùng; gửi kiểm tra; thu hồi subscription.",
+      "acceptance": "Từ chối quyền không ghi connected; thiết bị đã thu hồi không nhận lại; không yêu cầu key trong trình duyệt.",
+      "doc": "docs/21_NOTIFICATIONS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-A01",
+      "taskIds": [
+        "T033",
+        "T034",
+        "T066",
+        "T070"
+      ],
+      "routeIds": [
+        "R40"
+      ]
+    },
+    {
+      "id": "A02",
+      "title": "Báo đơn đủ điều kiện chuẩn bị",
+      "group": "Thông báo điện thoại",
+      "module": "notifications",
+      "spec": "order.confirmed + reservation bền vững + payment/COD policy cho phép mới tạo task và notification intent.",
+      "acceptance": "Đơn nháp, reservation fail hoặc transaction rollback không phát lệnh chuẩn bị; event trùng chỉ một việc.",
+      "doc": "docs/21_NOTIFICATIONS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-A02",
+      "taskIds": [
+        "T031",
+        "T033",
+        "T036",
+        "T072"
+      ],
+      "routeIds": [
+        "R39"
+      ]
+    },
+    {
+      "id": "A03",
+      "title": "Mở đơn an toàn từ thông báo",
+      "group": "Thông báo điện thoại",
+      "module": "notifications",
+      "spec": "Deep-link đến shop/order sau session bootstrap; nội dung lockscreen tối thiểu; không có PII trong URL.",
+      "acceptance": "Người không thuộc shop nhận 403/404; URL cũ không vượt quyền hiện hành.",
+      "doc": "docs/21_NOTIFICATIONS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-A03",
+      "taskIds": [
+        "T034",
+        "T061",
+        "T070"
+      ],
+      "routeIds": [
+        "R39"
+      ]
+    },
+    {
+      "id": "A04",
+      "title": "Xác nhận nhận chuẩn bị",
+      "group": "Thông báo điện thoại",
+      "module": "notifications",
+      "spec": "Nút Tôi nhận đơn thực hiện compare-and-set task.version/assignee trong transaction; người nhận và thời gian rõ.",
+      "acceptance": "Hai nhân viên đồng thời nhận: một thắng, một thấy người đã nhận; delivery receipt không đồng nghĩa nhận việc.",
+      "doc": "docs/21_NOTIFICATIONS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-A04",
+      "taskIds": [
+        "T031",
+        "T036",
+        "T070",
+        "T080"
+      ],
+      "routeIds": [
+        "R39"
+      ]
+    },
+    {
+      "id": "A05",
+      "title": "Nhắc hạn và dự phòng",
+      "group": "Thông báo điện thoại",
+      "module": "notifications",
+      "spec": "Lịch nhắc dựa lịch trực/múi giờ, policy có version; định danh intent và số lần tối đa; fallback Telegram đã liên kết.",
+      "acceptance": "Nhận việc/hủy đơn dừng nhắc; worker restart không phát trùng; không có người trực thì vào hàng ngoại lệ.",
+      "doc": "docs/21_NOTIFICATIONS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-A05",
+      "taskIds": [
+        "T034",
+        "T056",
+        "T070"
+      ],
+      "routeIds": [
+        "R40"
+      ]
+    },
+    {
+      "id": "A06",
+      "title": "Loại thông báo và lịch trực",
+      "group": "Thông báo điện thoại",
+      "module": "notifications",
+      "spec": "Ưu tiên đơn mới, trễ, hết hàng, lệch tiền, lỗi; giờ yên lặng; chủ shop duyệt ngoại lệ khẩn.",
+      "acceptance": "Không tự bỏ qua giờ yên lặng; bộ nhớ cấu hình mẫu không thành chính sách live.",
+      "doc": "docs/21_NOTIFICATIONS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-A06",
+      "taskIds": [
+        "T034",
+        "T070"
+      ],
+      "routeIds": [
+        "R40"
+      ]
+    },
+    {
+      "id": "A07",
+      "title": "Theo dõi gửi/mở/nhận việc",
+      "group": "Thông báo điện thoại",
+      "module": "notifications",
+      "spec": "Tách accepted_by_provider, failed, unknown, opened_if_observed, acknowledged; không suy diễn giao thành công.",
+      "acceptance": "Timeout không gắn failed; không có callback mở thì giữ unknown, không tạo tỷ lệ đọc giả.",
+      "doc": "docs/21_NOTIFICATIONS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-A07",
+      "taskIds": [
+        "T033",
+        "T034",
+        "T070"
+      ],
+      "routeIds": [
+        "R39"
+      ]
+    },
+    {
+      "id": "A08",
+      "title": "Chống trùng và bảo vệ thông báo",
+      "group": "Thông báo điện thoại",
+      "module": "notifications",
+      "spec": "Dedupe theo shop/event/recipient/channel, payload tối thiểu, callback token ngắn hạn, rate/budget cap.",
+      "acceptance": "Callback replay, membership revoked, sai shop hoặc TTL hết đều bị chặn; tắt SMS/voice mặc định.",
+      "doc": "docs/21_NOTIFICATIONS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-A08",
+      "taskIds": [
+        "T033",
+        "T034",
+        "T070"
+      ],
+      "routeIds": [
+        "R40"
+      ]
+    },
+    {
+      "id": "B01",
+      "title": "Kịch bản tư vấn theo ngành hàng",
+      "group": "AI Admin bán hàng",
+      "module": "inbox",
+      "spec": "Flow hỏi nhu cầu, thông tin bắt buộc, persona và điều không được nói; bản nháp/live tách biệt.",
+      "acceptance": "Thiếu chính sách giao/đổi trả thì bot hỏi hoặc handoff, không bịa.",
+      "doc": "docs/07_AI_AND_CHANNELS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-B01",
+      "taskIds": [
+        "T038",
+        "T039",
+        "T066"
+      ],
+      "routeIds": [
+        "R06"
+      ]
+    },
+    {
+      "id": "B02",
+      "title": "Giá/tồn từ dữ liệu nghiệp vụ",
+      "group": "AI Admin bán hàng",
+      "module": "inbox",
+      "spec": "Tools đọc catalog/quote/available trong scope; RAG chỉ kiến thức mô tả đã duyệt.",
+      "acceptance": "Tồn/giá thay sau retrieval được kiểm lại tại confirm; không dùng vector cache làm giá giao dịch.",
+      "doc": "docs/07_AI_AND_CHANNELS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-B02",
+      "taskIds": [
+        "T019",
+        "T024",
+        "T040",
+        "T041",
+        "T069"
+      ],
+      "routeIds": [
+        "R06"
+      ]
+    },
+    {
+      "id": "B03",
+      "title": "Thu thập và xác nhận đặt hàng",
+      "group": "AI Admin bán hàng",
+      "module": "inbox",
+      "spec": "Customer, địa chỉ, SKU, qty, quoteVersion, phương thức nhận/thanh toán; lưu bằng chứng khách xác nhận bản tóm tắt.",
+      "acceptance": "Thiếu số liên hệ/địa chỉ theo policy hoặc quote hết hạn không chốt; sửa hàng/giá cần xác nhận mới.",
+      "doc": "docs/07_AI_AND_CHANNELS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-B03",
+      "taskIds": [
+        "T021",
+        "T024",
+        "T025",
+        "T026",
+        "T029",
+        "T041"
+      ],
+      "routeIds": [
+        "R06"
+      ]
+    },
+    {
+      "id": "B04",
+      "title": "Tự chốt đơn có điều kiện",
+      "group": "AI Admin bán hàng",
+      "module": "inbox",
+      "spec": "Đơn đủ điều kiện sau customer confirmation được policy engine cho phép; ngoại lệ tạo approval.",
+      "acceptance": "Prompt nói đã đồng ý không thay bằng chứng xác nhận; không tự tăng hạn mức.",
+      "doc": "docs/07_AI_AND_CHANNELS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-B04",
+      "taskIds": [
+        "T023",
+        "T026",
+        "T030",
+        "T041",
+        "T069",
+        "T072"
+      ],
+      "routeIds": [
+        "R06"
+      ]
+    },
+    {
+      "id": "B05",
+      "title": "Bán kèm theo chương trình",
+      "group": "AI Admin bán hàng",
+      "module": "inbox",
+      "spec": "Chỉ combo và promotion phiên bản đang hiệu lực, tối thiểu lợi nhuận theo rule được duyệt.",
+      "acceptance": "Hết hạn, sai SKU, vượt giảm giá hoặc hết tồn không áp dụng ưu đãi.",
+      "doc": "docs/07_AI_AND_CHANNELS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-B05",
+      "taskIds": [
+        "T041"
+      ],
+      "routeIds": [
+        "R06"
+      ]
+    },
+    {
+      "id": "B06",
+      "title": "Chăm sóc sau mua",
+      "group": "AI Admin bán hàng",
+      "module": "inbox",
+      "spec": "Tra shipment/order theo khách xác thực; tiếp nhận yêu cầu đổi/trả và tạo case.",
+      "acceptance": "Không gửi đơn khách khác; không hứa hoàn tiền hoặc xác nhận hoàn tiền thật.",
+      "doc": "docs/07_AI_AND_CHANNELS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-B06",
+      "taskIds": [
+        "T038",
+        "T042"
+      ],
+      "routeIds": [
+        "R54"
+      ]
+    },
+    {
+      "id": "B07",
+      "title": "Bot/người thật tiếp quản",
+      "group": "AI Admin bán hàng",
+      "module": "inbox",
+      "spec": "Lease hội thoại + generation fencing; takeover chặn các job AI chưa gửi và hiển thị người xử lý.",
+      "acceptance": "Takeover xảy ra khi LLM đang chạy: draft cũ không được send; release bot có audit.",
+      "doc": "docs/07_AI_AND_CHANNELS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-B07",
+      "taskIds": [
+        "T037",
+        "T038",
+        "T069"
+      ],
+      "routeIds": [
+        "R06"
+      ]
+    },
+    {
+      "id": "B08",
+      "title": "Bình luận/ảnh/tin thoại",
+      "group": "AI Admin bán hàng",
+      "module": "inbox",
+      "spec": "Capability-gated, signed media fetch, scan/type/size limit, transcript review; Meta policy server quyết định.",
+      "acceptance": "Ảnh chuyển tiền không xác nhận payment; comment không tự cấp phép private message; không hỗ trợ thì UI nêu rõ.",
+      "doc": "docs/07_AI_AND_CHANNELS.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-B08",
+      "taskIds": [
+        "T037",
+        "T042",
+        "T069"
+      ],
+      "routeIds": [
+        "R06"
+      ]
+    },
+    {
+      "id": "C01",
+      "title": "Bảng chuẩn bị hàng",
+      "group": "Chuẩn bị và giao hàng",
+      "module": "fulfillment",
+      "spec": "Task board queued/claimed/picking/packed/handed_over với assignee, dueAt, thời gian trễ.",
+      "acceptance": "Không gộp packed với delivered; bộ lọc không làm mất việc chưa nhận.",
+      "doc": "docs/22_FULFILLMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-C01",
+      "taskIds": [
+        "T029",
+        "T031",
+        "T036",
+        "T061",
+        "T066",
+        "T080"
+      ],
+      "routeIds": [
+        "R41"
+      ]
+    },
+    {
+      "id": "C02",
+      "title": "Phiếu lấy hàng theo SKU",
+      "group": "Chuẩn bị và giao hàng",
+      "module": "fulfillment",
+      "spec": "Checklist line, phiên bản, quantity; barcode tùy chọn và sửa lượng có reason.",
+      "acceptance": "Quét sai SKU/nhập vượt lượng chặn pack; snapshot không dùng ảnh hiện tại sai phiên bản.",
+      "doc": "docs/22_FULFILLMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-C02",
+      "taskIds": [
+        "T032"
+      ],
+      "routeIds": [
+        "R41"
+      ]
+    },
+    {
+      "id": "C03",
+      "title": "Kiểm đóng gói",
+      "group": "Chuẩn bị và giao hàng",
+      "module": "fulfillment",
+      "spec": "Thiếu/hỏng/sai biến thể tạo issue; chỉ đóng gói đủ dòng và điều kiện bắt buộc.",
+      "acceptance": "Có issue chưa giải quyết thì không ready; ảnh chứng cứ không công khai PII.",
+      "doc": "docs/22_FULFILLMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-C03",
+      "taskIds": [
+        "T032"
+      ],
+      "routeIds": [
+        "R41"
+      ]
+    },
+    {
+      "id": "C04",
+      "title": "Phí và vùng giao hàng",
+      "group": "Chuẩn bị và giao hàng",
+      "module": "fulfillment",
+      "spec": "Shipping address, serviceability, quote/actual fee, shipper, package size nếu yêu cầu.",
+      "acceptance": "Ngoài vùng, quote phí hết hạn hoặc thiếu address không hứa giao.",
+      "doc": "docs/22_FULFILLMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-C04",
+      "taskIds": [
+        "T027",
+        "T035"
+      ],
+      "routeIds": [
+        "R42"
+      ]
+    },
+    {
+      "id": "C05",
+      "title": "Vận đơn và bàn giao",
+      "group": "Chuẩn bị và giao hàng",
+      "module": "fulfillment",
+      "spec": "Adapter carrier hoặc nhập mã thủ công; idempotent label; người thật xác nhận bàn giao.",
+      "acceptance": "Timeout create label phải reconcile; bàn giao lần hai không trừ tồn lần hai.",
+      "doc": "docs/22_FULFILLMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-C05",
+      "taskIds": [
+        "T032",
+        "T035",
+        "T071"
+      ],
+      "routeIds": [
+        "R42"
+      ]
+    },
+    {
+      "id": "C06",
+      "title": "Trạng thái giao độc lập",
+      "group": "Chuẩn bị và giao hàng",
+      "module": "fulfillment",
+      "spec": "Shipment separate from order/payment; transit/delivered/failed/returning/returned với evidence event.",
+      "acceptance": "Event lùi/trùng không hoàn tất sai; delivered không đồng nghĩa tiền về ngân hàng.",
+      "doc": "docs/22_FULFILLMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-C06",
+      "taskIds": [
+        "T025",
+        "T035",
+        "T036",
+        "T062",
+        "T071",
+        "T072"
+      ],
+      "routeIds": [
+        "R42"
+      ]
+    },
+    {
+      "id": "C07",
+      "title": "Đổi/trả từng phần",
+      "group": "Chuẩn bị và giao hàng",
+      "module": "fulfillment",
+      "spec": "Return line/quantity, kiểm tình trạng, refund obligation, người duyệt, reversal.",
+      "acceptance": "Returned item chưa kiểm không available; không hoàn quá paid/qty; partial return không làm hoàn toàn đơn.",
+      "doc": "docs/22_FULFILLMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-C07",
+      "taskIds": [
+        "T035",
+        "T062"
+      ],
+      "routeIds": [
+        "R43"
+      ]
+    },
+    {
+      "id": "C08",
+      "title": "Sửa/hủy theo giai đoạn",
+      "group": "Chuẩn bị và giao hàng",
+      "module": "fulfillment",
+      "spec": "Draft edit; confirmed release/requote; sau handover là return process; notify task changes.",
+      "acceptance": "Không hủy đơn đã handed_over bằng cancel thường; reservation release đúng một lần.",
+      "doc": "docs/22_FULFILLMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-C08",
+      "taskIds": [
+        "T023",
+        "T025",
+        "T026",
+        "T029",
+        "T030"
+      ],
+      "routeIds": [
+        "R43"
+      ]
+    },
+    {
+      "id": "D01",
+      "title": "Tồn theo trạng thái và SKU",
+      "group": "Kho và mua hàng",
+      "module": "procurement",
+      "spec": "Sellable, reserved, in_transit_to_customer, quarantined, inbound_confirmed; warehouse scoped.",
+      "acceptance": "Hàng đang về/hỏng không có trong available; tổng projection khớp movement ledger.",
+      "doc": "docs/23_PROCUREMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-D01",
+      "taskIds": [
+        "T013",
+        "T020",
+        "T022",
+        "T047",
+        "T066"
+      ],
+      "routeIds": [
+        "R47"
+      ]
+    },
+    {
+      "id": "D02",
+      "title": "Nhà cung cấp hàng hóa",
+      "group": "Kho và mua hàng",
+      "module": "procurement",
+      "spec": "Supplier/SKU price/MOQ/packSize/leadTime/currency/paymentTerms; approved status.",
+      "acceptance": "Supplier khác shop hoặc chưa duyệt không auto-purchase; lịch sử đổi giá được giữ.",
+      "doc": "docs/23_PROCUREMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-D02",
+      "taskIds": [
+        "T043",
+        "T048"
+      ],
+      "routeIds": [
+        "R44"
+      ]
+    },
+    {
+      "id": "D03",
+      "title": "Quy tắc nhập lại",
+      "group": "Kho và mua hàng",
+      "module": "procurement",
+      "spec": "Reorder point/target/safety stock/rounding/approved suppliers/max commitments; versioned.",
+      "acceptance": "Thiếu budget cho auto_send phải block; qty không âm và đúng packSize/MOQ.",
+      "doc": "docs/23_PROCUREMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-D03",
+      "taskIds": [
+        "T022",
+        "T043",
+        "T044",
+        "T048"
+      ],
+      "routeIds": [
+        "R45"
+      ]
+    },
+    {
+      "id": "D04",
+      "title": "Nguy cơ hết hàng",
+      "group": "Kho và mua hàng",
+      "module": "procurement",
+      "spec": "Baseline min-max; optional forecast từ lịch sử có coverage/seasonality warnings.",
+      "acceptance": "Chưa đủ lịch sử hiển thị static rule; không dự báo confidence giả.",
+      "doc": "docs/23_PROCUREMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-D04",
+      "taskIds": [
+        "T044",
+        "T048"
+      ],
+      "routeIds": [
+        "R45"
+      ]
+    },
+    {
+      "id": "D05",
+      "title": "Vòng đời đơn mua",
+      "group": "Kho và mua hàng",
+      "module": "procurement",
+      "spec": "draft/pending_approval/approved/sending/unknown/sent/confirmed/part_received/received/cancelled.",
+      "acceptance": "Timeout send giữ unknown; không gửi đơn mới trước reconcile.",
+      "doc": "docs/23_PROCUREMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-D05",
+      "taskIds": [
+        "T045",
+        "T046",
+        "T048",
+        "T071",
+        "T080"
+      ],
+      "routeIds": [
+        "R46"
+      ]
+    },
+    {
+      "id": "D06",
+      "title": "Tự gửi đơn mua có giới hạn",
+      "group": "Kho và mua hàng",
+      "module": "procurement",
+      "spec": "Mặc định draft_for_approval; automatic chỉ khi allowlist giá/số lượng/budget + approval authority còn hợp lệ.",
+      "acceptance": "Approval thay giá/qty/supplier cần cấp lại; không tự thanh toán từ quyền mua.",
+      "doc": "docs/23_PROCUREMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-D06",
+      "taskIds": [
+        "T045",
+        "T046",
+        "T048"
+      ],
+      "routeIds": [
+        "R46"
+      ]
+    },
+    {
+      "id": "D07",
+      "title": "Ngăn đặt trùng và vượt vốn",
+      "group": "Kho và mua hàng",
+      "module": "procurement",
+      "spec": "Kế hoạch tính confirmed inbound + open proposals separately; reserve budget cùng transaction tạo PO.",
+      "acceptance": "Hai workers reorder cùng SKU tạo tối đa một active proposal; reserved budget không vượt cap.",
+      "doc": "docs/23_PROCUREMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-D07",
+      "taskIds": [
+        "T044",
+        "T045",
+        "T046",
+        "T048"
+      ],
+      "routeIds": [
+        "R45"
+      ]
+    },
+    {
+      "id": "D08",
+      "title": "Nhận và đối chiếu hàng",
+      "group": "Kho và mua hàng",
+      "module": "procurement",
+      "spec": "GoodsReceipt line qty accepted/rejected; over-delivery policy; link PO/invoice; AP.",
+      "acceptance": "Nhận một phần đúng tồn và công nợ; replay receipt không double stock; rejects không sellable.",
+      "doc": "docs/23_PROCUREMENT.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-D08",
+      "taskIds": [
+        "T047",
+        "T048",
+        "T071",
+        "T072"
+      ],
+      "routeIds": [
+        "R47"
+      ]
+    },
+    {
+      "id": "E01",
+      "title": "Chứng từ và sổ kép",
+      "group": "Kế toán quản trị",
+      "module": "finance",
+      "spec": "Journal header/lines, debit/credit exact Decimal, source uniqueness, posted immutable.",
+      "acceptance": "Không post journal mất cân bằng; source trùng không ghi lặp; reversed phải reason.",
+      "doc": "docs/24_FINANCE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-E01",
+      "taskIds": [
+        "T013",
+        "T028",
+        "T030",
+        "T047",
+        "T054",
+        "T066"
+      ],
+      "routeIds": [
+        "R48"
+      ]
+    },
+    {
+      "id": "E02",
+      "title": "Giá vốn và lợi nhuận",
+      "group": "Kế toán quản trị",
+      "module": "finance",
+      "spec": "Moving weighted average baseline có policyVersion; cost snapshot tại dispatch; recognize revenue theo approved transfer rule.",
+      "acceptance": "Không lấy toàn purchase cost vào P&L; không giả định dispatch = delivered; policy chưa duyệt chặn live post.",
+      "doc": "docs/24_FINANCE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-E02",
+      "taskIds": [
+        "T028",
+        "T035",
+        "T036",
+        "T049",
+        "T054",
+        "T062",
+        "T079"
+      ],
+      "routeIds": [
+        "R48"
+      ]
+    },
+    {
+      "id": "E03",
+      "title": "Chi phí và phân bổ",
+      "group": "Kế toán quản trị",
+      "module": "finance",
+      "spec": "Quảng cáo/AI/carrier/packaging/fees; actual/estimated separate; không double expense.",
+      "acceptance": "Phí COD đã khấu trừ không hạch toán thêm lần thứ hai; nhãn estimate không đổi thành actual.",
+      "doc": "docs/24_FINANCE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-E03",
+      "taskIds": [
+        "T049",
+        "T051",
+        "T054"
+      ],
+      "routeIds": [
+        "R48"
+      ]
+    },
+    {
+      "id": "E04",
+      "title": "Đối soát ngân hàng",
+      "group": "Kế toán quản trị",
+      "module": "finance",
+      "spec": "Import deterministic mapping, dedupe externalTxnId/account; match suggestions need review.",
+      "acceptance": "Ảnh chuyển khoản chỉ evidence chờ kiểm; unmatched/partial/duplicate visible; offline không post.",
+      "doc": "docs/24_FINANCE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-E04",
+      "taskIds": [
+        "T027",
+        "T050",
+        "T054",
+        "T071"
+      ],
+      "routeIds": [
+        "R49"
+      ]
+    },
+    {
+      "id": "E05",
+      "title": "Đối soát COD",
+      "group": "Kế toán quản trị",
+      "module": "finance",
+      "spec": "Delivered COD receivable; carrier collection/fees/remittance; pending mismatch queue.",
+      "acceptance": "Khách trả carrier khác shop received cash; net remittance + fees cân bằng gross clearing.",
+      "doc": "docs/24_FINANCE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-E05",
+      "taskIds": [
+        "T027",
+        "T051",
+        "T054",
+        "T071",
+        "T072"
+      ],
+      "routeIds": [
+        "R49"
+      ]
+    },
+    {
+      "id": "E06",
+      "title": "Công nợ",
+      "group": "Kế toán quản trị",
+      "module": "finance",
+      "spec": "AP/AR, deposits, dueAt, aging buckets, dispute holds; base currency locked per shop.",
+      "acceptance": "Không cộng khác currency chưa FX policy; deposit không bị coi revenue sai kỳ.",
+      "doc": "docs/24_FINANCE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-E06",
+      "taskIds": [
+        "T047",
+        "T049",
+        "T050",
+        "T051",
+        "T052",
+        "T054"
+      ],
+      "routeIds": [
+        "R50"
+      ]
+    },
+    {
+      "id": "E07",
+      "title": "Khóa kỳ và điều chỉnh",
+      "group": "Kế toán quản trị",
+      "module": "finance",
+      "spec": "Period close prerequisite unresolved count, role + approval, reopen/reversal audit.",
+      "acceptance": "Backdated post vào locked period bị chặn; export không thay dữ liệu nguồn.",
+      "doc": "docs/24_FINANCE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-E07",
+      "taskIds": [
+        "T052",
+        "T054",
+        "T079"
+      ],
+      "routeIds": [
+        "R50"
+      ]
+    },
+    {
+      "id": "E08",
+      "title": "Báo cáo và hỏi đáp có nguồn",
+      "group": "Kế toán quản trị",
+      "module": "finance",
+      "spec": "Server read models; drill-down journal ids; explain only from filtered report input.",
+      "acceptance": "LLM không được viết ledger; tổng từ pagination UI không làm P&L; missing data shown.",
+      "doc": "docs/24_FINANCE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-E08",
+      "taskIds": [
+        "T053",
+        "T054",
+        "T064",
+        "T080"
+      ],
+      "routeIds": [
+        "R22"
+      ]
+    },
+    {
+      "id": "F01",
+      "title": "Bốn vai trò AI",
+      "group": "Trưởng nhóm điều hành",
+      "module": "operations",
+      "spec": "Role capabilities, tools, scopes, budget, version, human accountable owner; one orchestration substrate.",
+      "acceptance": "Không xem bốn cards là bốn process; bot role không có members.manage hoặc payment transfer.",
+      "doc": "docs/25_OPERATIONS_AI.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-F01",
+      "taskIds": [
+        "T040",
+        "T055",
+        "T057",
+        "T060",
+        "T066"
+      ],
+      "routeIds": [
+        "R51"
+      ]
+    },
+    {
+      "id": "F02",
+      "title": "Bảng công việc chung",
+      "group": "Trưởng nhóm điều hành",
+      "module": "operations",
+      "spec": "One WorkItem per business intent; assignee/dependencies/due/status/evidence.",
+      "acceptance": "Notification ack liên kết task, không thành tracker cạnh tranh; cancelled source cancels task.",
+      "doc": "docs/25_OPERATIONS_AI.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-F02",
+      "taskIds": [
+        "T031",
+        "T056",
+        "T060",
+        "T072"
+      ],
+      "routeIds": [
+        "R37"
+      ]
+    },
+    {
+      "id": "F03",
+      "title": "Giám sát ngoại lệ",
+      "group": "Trưởng nhóm điều hành",
+      "module": "operations",
+      "spec": "Rules detect unanswered cases/unclaimed orders/late shipments/low stock/unmatched money.",
+      "acceptance": "Rule version, cooldown, dedupe; no endless self-created tasks.",
+      "doc": "docs/25_OPERATIONS_AI.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-F03",
+      "taskIds": [
+        "T056",
+        "T060"
+      ],
+      "routeIds": [
+        "R37"
+      ]
+    },
+    {
+      "id": "F04",
+      "title": "Hàng chờ duyệt",
+      "group": "Trưởng nhóm điều hành",
+      "module": "operations",
+      "spec": "Approval binds shop/action/resourceVersion/policyVersion/intentHash/expiry; reason required reject.",
+      "acceptance": "Expired/changed/replayed approvals fail; batch approval excludes stale rows with reasons.",
+      "doc": "docs/25_OPERATIONS_AI.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-F04",
+      "taskIds": [
+        "T045",
+        "T055",
+        "T060"
+      ],
+      "routeIds": [
+        "R38"
+      ]
+    },
+    {
+      "id": "F05",
+      "title": "Ủy quyền",
+      "group": "Trưởng nhóm điều hành",
+      "module": "operations",
+      "spec": "Versioned rule amounts/actions/scopes; current effective authority checked before execution.",
+      "acceptance": "Supervisor không tự nâng scope, không approval của mình thành người thật.",
+      "doc": "docs/25_OPERATIONS_AI.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-F05",
+      "taskIds": [
+        "T015",
+        "T041",
+        "T055",
+        "T057",
+        "T060"
+      ],
+      "routeIds": [
+        "R38"
+      ]
+    },
+    {
+      "id": "F06",
+      "title": "Bản tin chủ shop",
+      "group": "Trưởng nhóm điều hành",
+      "module": "operations",
+      "spec": "Scheduled durable job per shop timezone; summarize pending/blocked/completed with links.",
+      "acceptance": "Thiếu giờ/recipient thì chưa bật; gửi lại bản tin cùng kỳ không trùng.",
+      "doc": "docs/25_OPERATIONS_AI.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-F06",
+      "taskIds": [
+        "T056",
+        "T060",
+        "T080",
+        "T084"
+      ],
+      "routeIds": [
+        "R52"
+      ]
+    },
+    {
+      "id": "F07",
+      "title": "Trạng thái hệ thống",
+      "group": "Trưởng nhóm điều hành",
+      "module": "operations",
+      "spec": "Provider/channel/worker heartbeat/lag/budget/failed/unknown; degraded runbook link.",
+      "acceptance": "No green healthy when last check too old; unknown distinct down.",
+      "doc": "docs/25_OPERATIONS_AI.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-F07",
+      "taskIds": [
+        "T059",
+        "T060"
+      ],
+      "routeIds": [
+        "R37",
+        "R52"
+      ]
+    },
+    {
+      "id": "F08",
+      "title": "Đánh giá chất lượng",
+      "group": "Trưởng nhóm điều hành",
+      "module": "operations",
+      "spec": "Ground-truth eval datasets, failed cases, response time, cost, human corrections.",
+      "acceptance": "Không tự nhận confidence từ model là accuracy; version linkage and sample counts visible.",
+      "doc": "docs/25_OPERATIONS_AI.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-F08",
+      "taskIds": [
+        "T042",
+        "T059",
+        "T060"
+      ],
+      "routeIds": [
+        "R52"
+      ]
+    },
+    {
+      "id": "G01",
+      "title": "Onboarding vận hành",
+      "group": "Dữ liệu và marketing",
+      "module": "workspace",
+      "spec": "Country/currency/timezone/hours/shipping/approvers/provider grants/config readiness.",
+      "acceptance": "Không tự suy quốc gia kinh doanh từ location; config missing blocks only dependent live actions.",
+      "doc": "docs/01_PRODUCT_SCOPE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-G01",
+      "taskIds": [
+        "T002",
+        "T010",
+        "T011",
+        "T014",
+        "T018",
+        "T059",
+        "T063",
+        "T066",
+        "T068",
+        "T079"
+      ],
+      "routeIds": [
+        "R33"
+      ]
+    },
+    {
+      "id": "G02",
+      "title": "Nội dung sản phẩm",
+      "group": "Dữ liệu và marketing",
+      "module": "workspace",
+      "spec": "Features,size,use,warranty,alternatives,forbidden promises,images, source owner.",
+      "acceptance": "Publish yêu cầu dữ liệu tối thiểu; price/stock vẫn live tools.",
+      "doc": "docs/01_PRODUCT_SCOPE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-G02",
+      "taskIds": [
+        "T019",
+        "T020",
+        "T024",
+        "T039"
+      ],
+      "routeIds": [
+        "R33"
+      ]
+    },
+    {
+      "id": "G03",
+      "title": "Chính sách phiên bản",
+      "group": "Dữ liệu và marketing",
+      "module": "workspace",
+      "spec": "Validity, approvals, conflicts, expiry for promotions/FAQ/shipping/returns.",
+      "acceptance": "Outdated knowledge excluded from retrieval; new version does not silently rewrite past promises.",
+      "doc": "docs/01_PRODUCT_SCOPE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-G03",
+      "taskIds": [
+        "T039",
+        "T063"
+      ],
+      "routeIds": [
+        "R33"
+      ]
+    },
+    {
+      "id": "G04",
+      "title": "Hồ sơ khách liên kết",
+      "group": "Dữ liệu và marketing",
+      "module": "workspace",
+      "spec": "Page-scoped customer identity, contact verification, case/order/conversation linkage.",
+      "acceptance": "Không tự merge cùng tên/số bị che; scope mismatch denied.",
+      "doc": "docs/01_PRODUCT_SCOPE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-G04",
+      "taskIds": [
+        "T021",
+        "T038"
+      ],
+      "routeIds": [
+        "R54"
+      ]
+    },
+    {
+      "id": "G05",
+      "title": "Consent và ngừng liên hệ",
+      "group": "Dữ liệu và marketing",
+      "module": "workspace",
+      "spec": "Service vs marketing permission, opt-out, retention/deletion scope and legal hold review.",
+      "acceptance": "Opt-out suppresses marketing jobs queued before change; backups restore reapplies tombstones.",
+      "doc": "docs/01_PRODUCT_SCOPE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-G05",
+      "taskIds": [
+        "T021",
+        "T063",
+        "T075",
+        "T079"
+      ],
+      "routeIds": [
+        "R33"
+      ]
+    },
+    {
+      "id": "G06",
+      "title": "Vòng cải thiện có duyệt",
+      "group": "Dữ liệu và marketing",
+      "module": "workspace",
+      "spec": "Feedback redaction→revision→evaluation→publish; separate customer memory.",
+      "acceptance": "Prompt injection in document not instructions; no all-chat training by default.",
+      "doc": "docs/01_PRODUCT_SCOPE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-G06",
+      "taskIds": [
+        "T039",
+        "T042",
+        "T063"
+      ],
+      "routeIds": [
+        "R33"
+      ]
+    },
+    {
+      "id": "G07",
+      "title": "Thông tin marketing cho chủ shop",
+      "group": "Dữ liệu và marketing",
+      "module": "workspace",
+      "spec": "Frequently asked, lost-sale reasons, demand vs stock and content ideas, evidence links.",
+      "acceptance": "Report missing attribution separately; no auto publish ads/content.",
+      "doc": "docs/01_PRODUCT_SCOPE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-G07",
+      "taskIds": [
+        "T053",
+        "T058",
+        "T064"
+      ],
+      "routeIds": [
+        "R53"
+      ]
+    },
+    {
+      "id": "G08",
+      "title": "Hiệu quả chiến dịch",
+      "group": "Dữ liệu và marketing",
+      "module": "workspace",
+      "spec": "Spend import with source IDs, promo results, known/estimated attribution split.",
+      "acceptance": "Không tự tăng ad spend; không ghi estimate thành actual finance expense.",
+      "doc": "docs/01_PRODUCT_SCOPE.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-G08",
+      "taskIds": [
+        "T053",
+        "T058"
+      ],
+      "routeIds": [
+        "R53"
+      ]
+    },
+    {
+      "id": "H01",
+      "title": "Worker phía máy chủ",
+      "group": "An toàn vận hành",
+      "module": "platform",
+      "spec": "Durable outbox + command log + queue consumers; health/progress in UI.",
+      "acceptance": "Close browser and restart worker preserves due work; queue loss rebuild from DB.",
+      "doc": "docs/08_SECURITY_TENANCY_RBAC.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-H01",
+      "taskIds": [
+        "T007",
+        "T017",
+        "T037",
+        "T066",
+        "T067",
+        "T074",
+        "T076",
+        "T082"
+      ],
+      "routeIds": [
+        "R52"
+      ]
+    },
+    {
+      "id": "H02",
+      "title": "Kill switch",
+      "group": "An toàn vận hành",
+      "module": "platform",
+      "spec": "Shop/role/conversation generations; check immediately before side effect; cancel pending.",
+      "acceptance": "Stop cannot unsend accepted message; UI shows accepted/unknown boundary honestly.",
+      "doc": "docs/08_SECURITY_TENANCY_RBAC.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-H02",
+      "taskIds": [
+        "T057",
+        "T076",
+        "T083"
+      ],
+      "routeIds": [
+        "R51"
+      ]
+    },
+    {
+      "id": "H03",
+      "title": "Chi phí và failover",
+      "group": "An toàn vận hành",
+      "module": "platform",
+      "spec": "Token/channel budgets and procurement budgets separate; approved fallback providers only.",
+      "acceptance": "No silent PII transfer to unapproved model; exhausted budget moves to safe handoff.",
+      "doc": "docs/08_SECURITY_TENANCY_RBAC.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-H03",
+      "taskIds": [
+        "T017",
+        "T040",
+        "T057",
+        "T069",
+        "T074",
+        "T076"
+      ],
+      "routeIds": [
+        "R51"
+      ]
+    },
+    {
+      "id": "H04",
+      "title": "Chống trùng và phục hồi",
+      "group": "An toàn vận hành",
+      "module": "platform",
+      "spec": "Command idempotency/body hash, transaction/outbox, retries bounded, unknown reconciliation.",
+      "acceptance": "Crash after external accept before local save not blindly retried; poison jobs isolated.",
+      "doc": "docs/08_SECURITY_TENANCY_RBAC.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-H04",
+      "taskIds": [
+        "T009",
+        "T016",
+        "T017",
+        "T023",
+        "T028",
+        "T030",
+        "T036",
+        "T037",
+        "T046",
+        "T050",
+        "T062",
+        "T065",
+        "T072",
+        "T076",
+        "T083"
+      ],
+      "routeIds": [
+        "R52"
+      ]
+    },
+    {
+      "id": "H05",
+      "title": "Quyền xuyên mọi entrypoint",
+      "group": "An toàn vận hành",
+      "module": "platform",
+      "spec": "API/workers/SSE/export/search/media/callback tenant+object+field checks.",
+      "acceptance": "UI-hidden control cannot bypass backend; Telegram id mapping rechecked.",
+      "doc": "docs/08_SECURITY_TENANCY_RBAC.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-H05",
+      "taskIds": [
+        "T004",
+        "T008",
+        "T009",
+        "T011",
+        "T013",
+        "T014",
+        "T015",
+        "T018",
+        "T055",
+        "T061",
+        "T064",
+        "T065",
+        "T068",
+        "T073",
+        "T078"
+      ],
+      "routeIds": [
+        "R34"
+      ]
+    },
+    {
+      "id": "H06",
+      "title": "Audit",
+      "group": "An toàn vận hành",
+      "module": "platform",
+      "spec": "Actor kind/user/agent, policy/config/knowledge versions, resource snapshot and result; secret redaction.",
+      "acceptance": "Changed data must not rewrite audit reason; no secrets in logs/exports/error URLs.",
+      "doc": "docs/08_SECURITY_TENANCY_RBAC.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-H06",
+      "taskIds": [
+        "T002",
+        "T004",
+        "T006",
+        "T016",
+        "T073",
+        "T084"
+      ],
+      "routeIds": [
+        "R34"
+      ]
+    },
+    {
+      "id": "H07",
+      "title": "Phòng thử",
+      "group": "An toàn vận hành",
+      "module": "platform",
+      "spec": "Mock adapters and staging isolation; fault injection and evaluated prompt changes.",
+      "acceptance": "Demo pass not live proof; no real customer/keys/money in synthetic tests.",
+      "doc": "docs/08_SECURITY_TENANCY_RBAC.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-H07",
+      "taskIds": [
+        "T001",
+        "T003",
+        "T005",
+        "T006",
+        "T007",
+        "T008",
+        "T010",
+        "T012",
+        "T065",
+        "T073",
+        "T077",
+        "T078"
+      ],
+      "routeIds": [
+        "R34"
+      ]
+    },
+    {
+      "id": "H08",
+      "title": "Khôi phục và readiness",
+      "group": "An toàn vận hành",
+      "module": "platform",
+      "spec": "Restore rehearsal, stale check expiry, deploy gates, last verified environment/revision.",
+      "acceptance": "Backup exists not restore proof; missing mandatory criterion cannot greenlight launch.",
+      "doc": "docs/08_SECURITY_TENANCY_RBAC.md",
+      "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
+      "approvedAt": "2026-09-29T09:24:12Z",
+      "scenarioId": "SC2-H08",
+      "taskIds": [
+        "T001",
+        "T003",
+        "T005",
+        "T059",
+        "T067",
+        "T074",
+        "T075",
+        "T077",
+        "T078",
+        "T079",
+        "T081",
+        "T082",
+        "T083",
+        "T084"
+      ],
+      "routeIds": [
+        "R52"
+      ]
+    }
+  ]
+}

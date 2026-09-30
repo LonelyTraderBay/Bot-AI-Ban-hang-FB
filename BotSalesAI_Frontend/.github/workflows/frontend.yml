@@ -1,0 +1,17 @@
+name: frontend
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Require real generated lockfile
+        run: test -f package-lock.json || (echo 'Run npm install on an authorized online machine and commit the generated lockfile.' && exit 1)
+      - run: npm ci
+      - run: npm run setup
+      - run: npm run verify
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

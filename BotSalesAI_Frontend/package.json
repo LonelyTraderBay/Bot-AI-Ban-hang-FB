@@ -1,0 +1,52 @@
+{
+  "name": "botsales-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @botsales/web",
+    "dev:live": "npm run dev:live --workspace @botsales/web",
+    "generate": "node scripts/generate.mjs",
+    "generate:check": "node scripts/generate.mjs --check",
+    "typecheck": "tsc -p apps/web/tsconfig.json --noEmit",
+    "lint": "eslint apps/web/src --max-warnings 0",
+    "boundaries": "node scripts/check-boundaries.mjs",
+    "test": "vitest run --config apps/web/vitest.config.ts",
+    "test:source": "node scripts/check-source.mjs",
+    "test:domain": "node scripts/test-domain.mjs",
+    "test:e2e": "playwright test",
+    "build": "npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web",
+    "build:demo": "npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web",
+    "preview": "npm run preview --workspace @botsales/web",
+    "verify": "npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build",
+    "setup": "node scripts/setup.mjs",
+    "doctor": "node scripts/doctor.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.2",
+    "vite": "7.1.3",
+    "@vitejs/plugin-react": "5.0.2",
+    "vitest": "3.2.4",
+    "jsdom": "26.1.0",
+    "@playwright/test": "1.55.0",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/jest-dom": "6.8.0",
+    "@testing-library/user-event": "14.6.1",
+    "@axe-core/playwright": "4.10.2",
+    "eslint": "9.34.0",
+    "@eslint/js": "9.34.0",
+    "typescript-eslint": "8.41.0",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "globals": "16.3.0",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "@types/node": "24.3.0"
+  }
+}

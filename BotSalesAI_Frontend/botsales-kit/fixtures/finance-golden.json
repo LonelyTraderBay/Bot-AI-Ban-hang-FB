@@ -1,0 +1,139 @@
+{
+  "scope": "SYNTHETIC_VND_NO_TAX_SPEC_NOT_PRODUCT_TEST",
+  "quantityReceived": 10,
+  "quantitySold": 2,
+  "journals": [
+    {
+      "id": "CAPITAL",
+      "debits": [
+        {
+          "account": "Bank",
+          "amount": "2000000"
+        }
+      ],
+      "credits": [
+        {
+          "account": "OwnerCapital",
+          "amount": "2000000"
+        }
+      ]
+    },
+    {
+      "id": "RECEIPT",
+      "debits": [
+        {
+          "account": "InventoryWarehouse",
+          "amount": "1000000"
+        }
+      ],
+      "credits": [
+        {
+          "account": "SupplierPayable",
+          "amount": "1000000"
+        }
+      ]
+    },
+    {
+      "id": "PAY-SUPPLIER-VERIFIED",
+      "debits": [
+        {
+          "account": "SupplierPayable",
+          "amount": "1000000"
+        }
+      ],
+      "credits": [
+        {
+          "account": "Bank",
+          "amount": "1000000"
+        }
+      ]
+    },
+    {
+      "id": "DISPATCH",
+      "debits": [
+        {
+          "account": "InventoryTransit",
+          "amount": "200000"
+        }
+      ],
+      "credits": [
+        {
+          "account": "InventoryWarehouse",
+          "amount": "200000"
+        }
+      ]
+    },
+    {
+      "id": "DELIVERY-SALE",
+      "debits": [
+        {
+          "account": "CarrierCODReceivable",
+          "amount": "300000"
+        }
+      ],
+      "credits": [
+        {
+          "account": "Sales",
+          "amount": "300000"
+        }
+      ]
+    },
+    {
+      "id": "DELIVERY-COGS",
+      "debits": [
+        {
+          "account": "COGS",
+          "amount": "200000"
+        }
+      ],
+      "credits": [
+        {
+          "account": "InventoryTransit",
+          "amount": "200000"
+        }
+      ]
+    },
+    {
+      "id": "COD-SETTLEMENT",
+      "debits": [
+        {
+          "account": "Bank",
+          "amount": "280000"
+        },
+        {
+          "account": "CarrierFees",
+          "amount": "20000"
+        }
+      ],
+      "credits": [
+        {
+          "account": "CarrierCODReceivable",
+          "amount": "300000"
+        }
+      ]
+    }
+  ],
+  "expectedAfterSale": {
+    "bank": "1280000",
+    "inventory": "800000",
+    "sales": "300000",
+    "cogs": "200000",
+    "carrierFees": "20000",
+    "profit": "80000",
+    "payables": "0",
+    "receivables": "0"
+  },
+  "returnExtension": {
+    "quantity": 1,
+    "refundObligation": "150000",
+    "inventoryRestoredAtOriginalCost": "100000",
+    "expectedAfterObservedRefund": {
+      "bank": "1130000",
+      "inventory": "900000",
+      "netRevenue": "150000",
+      "cogs": "100000",
+      "profit": "30000"
+    }
+  },
+  "note": "Actual money movement not executed. Return extension requires tests at T049/T054 and target approved policy."
+}

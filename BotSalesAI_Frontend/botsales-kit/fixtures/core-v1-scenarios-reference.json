@@ -1,0 +1,1433 @@
+{
+  "authority": "HISTORICAL_SPEC_ONLY, remap in T062/T066 before reusing; not active v2 expected results",
+  "original": {
+    "version": "1.0",
+    "status": "SPECIFICATIONS_NOT_EXECUTED_PRODUCT_TESTS",
+    "scenarios": [
+      {
+        "id": "SC-001",
+        "module": "workspace",
+        "name": "Phiên hết hạn",
+        "given": "Đang mở inbox có dữ liệu nhạy.",
+        "when": "API trả 401 hoặc session.revoked.",
+        "then": "Đóng stream, xóa query/forms cũ, tới login; không giữ tin khách sau logout.",
+        "testLayer": "e2e",
+        "severity": "critical",
+        "operationIds": [
+          "getSession",
+          "logout",
+          "subscribeEvents"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-002",
+        "module": "workspace",
+        "name": "Cô lập hai shop",
+        "given": "User có shop A/B, request A đang chậm.",
+        "when": "Chuyển sang B rồi response A mới về.",
+        "then": "Không render một frame dữ liệu A ở scope B; stream/query/form cũ bị hủy.",
+        "testLayer": "e2e",
+        "severity": "critical",
+        "operationIds": [
+          "getSession",
+          "listShops",
+          "listProducts"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-003",
+        "module": "workspace",
+        "name": "Thu hồi quyền đa tab",
+        "given": "Nhân viên đang xem tài chính ở hai tab.",
+        "when": "Owner thu hồi role.",
+        "then": "API/stream ngắt quyền; cả hai tab clear dữ liệu; request mới bị deny.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "updateMemberRoles",
+          "getSession",
+          "subscribeEvents"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-004",
+        "module": "workspace",
+        "name": "Tấn công tham chiếu tenant",
+        "given": "Biết ID customer/order/job của shop B.",
+        "when": "Gọi API/stream/download từ session shop A.",
+        "then": "Không trả dữ liệu B; quyền kiểm ở resource/index/export, không chỉ route.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "getCustomer",
+          "getOrder",
+          "getJob",
+          "subscribeEvents"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-005",
+        "module": "workspace",
+        "name": "Onboarding không ghi lặp",
+        "given": "Form shop hợp lệ, nhấn tạo hai lần.",
+        "when": "Gửi cùng idempotency key.",
+        "then": "Chỉ một shop/default warehouse/membership; response cùng identity.",
+        "testLayer": "integration",
+        "severity": "high",
+        "operationIds": [
+          "createShop"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-006",
+        "module": "workspace",
+        "name": "Owner cuối và escalation",
+        "given": "Shop có một owner và một sales.",
+        "when": "Owner tự revoke hoặc sales tự nâng role bằng API.",
+        "then": "Server từ chối; UI giữ trạng thái và lỗi có thể hành động.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "revokeMembership",
+          "updateMemberRoles"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-007",
+        "module": "workspace",
+        "name": "Xóa có legal hold",
+        "given": "Customer có legal_hold.",
+        "when": "Gửi approval deletion có step-up.",
+        "then": "Không xóa trái policy; request legal_hold có reason/audit, không toast thành công.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "createPrivacyRequest",
+          "approvePrivacyRequest"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-008",
+        "module": "workspace",
+        "name": "Step-up và secret không persist",
+        "given": "Mở password/secret input.",
+        "when": "Submit/cancel/unmount và inspect storage/log/telemetry.",
+        "then": "Không mật khẩu/key/reauth token trong persisted stores hoặc log.",
+        "testLayer": "e2e",
+        "severity": "critical",
+        "operationIds": [
+          "login",
+          "stepUp"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-009",
+        "module": "workspace",
+        "name": "Toàn bộ bàn phím/reflow",
+        "given": "Các route và dialog đã có UI.",
+        "when": "Tab/Shift+Tab/Escape, zoom 200%/400%, viewport 320/390/768/1440.",
+        "then": "Focus visible/return, label đúng; không mất CTA/dữ liệu; axe + manual results được lưu.",
+        "testLayer": "e2e",
+        "severity": "high",
+        "operationIds": [],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-010",
+        "module": "workspace",
+        "name": "Kiểm soát dependency",
+        "given": "Tạo fixture import module X→internal module Y, cycle và shared→module.",
+        "when": "Chạy lint/boundary gate.",
+        "then": "Fixtures vi phạm fail; imports hợp lệ pass; không bypass bằng alias/relative path.",
+        "testLayer": "static",
+        "severity": "critical",
+        "operationIds": [],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-011",
+        "module": "workspace",
+        "name": "Production không có demo",
+        "given": "Build production.",
+        "when": "Inspect output/network/runtime config.",
+        "then": "Không MSW registration/demo controls/secret; invalid config fail-safe, không fallback fake success.",
+        "testLayer": "build",
+        "severity": "critical",
+        "operationIds": [],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-004",
+          "FR-005",
+          "FR-006",
+          "FR-007",
+          "FR-008",
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014",
+          "FR-015",
+          "FR-016",
+          "FR-017",
+          "FR-018",
+          "FR-019",
+          "FR-020",
+          "FR-021",
+          "FR-022",
+          "FR-023",
+          "FR-024",
+          "FR-025",
+          "FR-026",
+          "FR-027",
+          "FR-028",
+          "FR-029",
+          "FR-030",
+          "FR-031",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-012",
+        "module": "catalog",
+        "name": "Product CRUD vertical slice",
+        "given": "Hai shop, có category, dữ liệu sample.",
+        "when": "Search→create Product có 2 variants→edit→archive.",
+        "then": "API contract đúng, URL filters giữ, ETag hợp lệ, archive không xóa order snapshot.",
+        "testLayer": "e2e",
+        "severity": "high",
+        "operationIds": [
+          "listProducts",
+          "createProduct",
+          "getProduct",
+          "updateProduct",
+          "archiveProduct"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014"
+        ]
+      },
+      {
+        "id": "SC-013",
+        "module": "catalog",
+        "name": "SKU scoped và conflict",
+        "given": "Shop A có SKU DEMO-001, B chưa có.",
+        "when": "Tạo trùng ở A và cùng SKU ở B.",
+        "then": "A trả SKU conflict field; B được phép, không global uniqueness sai.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "createProduct"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014"
+        ]
+      },
+      {
+        "id": "SC-014",
+        "module": "catalog",
+        "name": "Lost update",
+        "given": "Hai phiên mở cùng version product.",
+        "when": "Một người save trước, người còn lại save với ETag cũ.",
+        "then": "412, giữ draft local, hiển thị server version; không ghi đè âm thầm.",
+        "testLayer": "integration",
+        "severity": "high",
+        "operationIds": [
+          "getProduct",
+          "updateProduct"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014"
+        ]
+      },
+      {
+        "id": "SC-015",
+        "module": "catalog",
+        "name": "Tiền chính xác và i18n",
+        "given": "Form giá decimal và locale vi.",
+        "when": "Nhập 0.1/0.2, giá lớn, currency mismatch.",
+        "then": "Request giữ decimal string; không sai số float; mismatch bị reject; formatted text không sửa amount.",
+        "testLayer": "unit",
+        "severity": "critical",
+        "operationIds": [
+          "createProduct",
+          "updateProduct"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014"
+        ]
+      },
+      {
+        "id": "SC-016",
+        "module": "catalog",
+        "name": "Import preview/commit/retry",
+        "given": "File có 10 dòng hợp lệ, 2 lỗi, SKU cũ.",
+        "when": "Dry-run→preview→commit valid rows→retry cùng key.",
+        "then": "Counts chính xác, 10 dòng không ghi đôi; errors giữ row/field; update strategy được xác nhận.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "uploadFile",
+          "createProductImport",
+          "commitProductImport",
+          "getJob"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014"
+        ]
+      },
+      {
+        "id": "SC-017",
+        "module": "catalog",
+        "name": "File nguy hiểm",
+        "given": "File giả MIME, macro/formula hoặc quá size/quota.",
+        "when": "Upload và tạo import.",
+        "then": "Quarantine/reject có lý do; không execute content hoặc parse blob lớn trong main thread.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "uploadFile",
+          "createProductImport"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014"
+        ]
+      },
+      {
+        "id": "SC-018",
+        "module": "catalog",
+        "name": "Category cycle",
+        "given": "Category parent A→B.",
+        "when": "Đặt B parent=A hoặc reference khác shop.",
+        "then": "Server từ chối cycle/cross-tenant; form không mất input.",
+        "testLayer": "integration",
+        "severity": "high",
+        "operationIds": [
+          "createCategory",
+          "updateCategory"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-009",
+          "FR-010",
+          "FR-011",
+          "FR-012",
+          "FR-013",
+          "FR-014"
+        ]
+      },
+      {
+        "id": "SC-019",
+        "module": "inventory",
+        "name": "Chiếc cuối",
+        "given": "OnHand=1 reserved=0; hai đơn cùng SKU.",
+        "when": "Confirm đồng thời.",
+        "then": "Chỉ một đơn reserve được; available không âm; UI còn lại hiển thị conflict.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "confirmOrder",
+          "listStockSnapshots"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-015",
+          "FR-016"
+        ]
+      },
+      {
+        "id": "SC-020",
+        "module": "inventory",
+        "name": "Adjustment version và cost",
+        "given": "Stock version 3, thiếu cost.",
+        "when": "Submit delta với version2 hoặc nhập tăng không cost theo policy.",
+        "then": "Conflict/validation rõ; không optimistic; báo cáo chưa đủ giá vốn không giả lãi.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "createInventoryAdjustment",
+          "getProfitLoss"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-015",
+          "FR-016"
+        ]
+      },
+      {
+        "id": "SC-021",
+        "module": "inventory",
+        "name": "Movement không bị chỉnh",
+        "given": "Có movement fulfillment.",
+        "when": "Thử sửa history hoặc hủy đơn đã giao qua thao tác không hợp lệ.",
+        "then": "Không API edit movement; correction bằng compensating action, audit còn nguyên.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "listStockMovements",
+          "cancelOrder"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-015",
+          "FR-016"
+        ]
+      },
+      {
+        "id": "SC-022",
+        "module": "orders",
+        "name": "Vòng đời chuẩn",
+        "given": "Draft từ 2 áo, tồn hợp lệ, quote chưa hết hạn.",
+        "when": "Confirm→fulfill→record full payment.",
+        "then": "Trạng thái ba trục đúng; stock và cash chỉ ghi một lần, completed sau paid+fulfilled.",
+        "testLayer": "e2e",
+        "severity": "critical",
+        "operationIds": [
+          "createOrder",
+          "quoteOrder",
+          "confirmOrder",
+          "fulfillOrder",
+          "payOrder",
+          "getOrder"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-017",
+          "FR-018",
+          "FR-019"
+        ]
+      },
+      {
+        "id": "SC-023",
+        "module": "orders",
+        "name": "Giá thay đổi",
+        "given": "Quote cũ, giá live đổi.",
+        "when": "Confirm bằng quote cũ.",
+        "then": "PRICE_CHANGED/expired quote, yêu cầu xác nhận lại; không tính tiền cũ hoặc tự chấp thuận giá mới.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "quoteOrder",
+          "confirmOrder"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-017",
+          "FR-018",
+          "FR-019"
+        ]
+      },
+      {
+        "id": "SC-024",
+        "module": "orders",
+        "name": "Timeout không rõ kết quả",
+        "given": "Server đã accept confirm nhưng response mạng mất.",
+        "when": "Người dùng mở lại màn hình/nhấn retry.",
+        "then": "Tra command/replay cùng key; chỉ một reservation; trạng thái unknown không giả failed.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "confirmOrder",
+          "getCommand",
+          "listCommands"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-017",
+          "FR-018",
+          "FR-019"
+        ]
+      },
+      {
+        "id": "SC-025",
+        "module": "orders",
+        "name": "Idempotency key khác payload",
+        "given": "Intent X đã reserve 1 SKU.",
+        "when": "Gửi cùng key nhưng đổi quantity=2.",
+        "then": "409 IDEMPOTENCY_MISMATCH; không tạo intent mới hoặc sửa order cũ.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "confirmOrder"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-017",
+          "FR-018",
+          "FR-019"
+        ]
+      },
+      {
+        "id": "SC-026",
+        "module": "orders",
+        "name": "Full return và refund tách biệt",
+        "given": "Đơn paid+fulfilled; hàng đủ điều kiện restock.",
+        "when": "Return trước rồi refund sau.",
+        "then": "Stock/COGS/sales return đúng; payment chưa refunded khi tiền chưa xác nhận; full refund không vượt tiền thu.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "returnOrder",
+          "refundOrder",
+          "getProfitLoss"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-017",
+          "FR-018",
+          "FR-019"
+        ]
+      },
+      {
+        "id": "SC-027",
+        "module": "orders",
+        "name": "Không cho partial v1",
+        "given": "Đơn full-only capability.",
+        "when": "Cố partial fulfill/pay/refund hoặc action không nằm allowedActions.",
+        "then": "UI không offer và backend reject bypass; không silently coi partial là full.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "fulfillOrder",
+          "payOrder",
+          "refundOrder"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-017",
+          "FR-018",
+          "FR-019"
+        ]
+      },
+      {
+        "id": "SC-028",
+        "module": "finance",
+        "name": "Cashflow khác profit",
+        "given": "Nhập 10×100k, bán 2×150k, mọi dòng cùng kỳ.",
+        "when": "Mở cashflow và P&L.",
+        "then": "Cash movement=-700k, revenue=300k, COGS=200k, gross profit=100k, tồn=8.",
+        "testLayer": "unit_and_integration",
+        "severity": "critical",
+        "operationIds": [
+          "getCashflow",
+          "getProfitLoss",
+          "listStockSnapshots"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-020",
+          "FR-021",
+          "FR-022"
+        ]
+      },
+      {
+        "id": "SC-029",
+        "module": "finance",
+        "name": "Post và reversal",
+        "given": "Phiếu draft đúng classification/source.",
+        "when": "Post hai lần cùng key rồi reverse.",
+        "then": "Một posted entry, một reversal linked, history không sửa; tổng đảo đúng.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "postFinanceEntry",
+          "reverseFinanceEntry"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-020",
+          "FR-021",
+          "FR-022"
+        ]
+      },
+      {
+        "id": "SC-030",
+        "module": "finance",
+        "name": "Không double count",
+        "given": "Đã có payment source order_001 và AI usage estimate.",
+        "when": "Tạo phiếu thu cùng source; nhập hóa đơn AI.",
+        "then": "Không doanh thu trùng; estimate không cộng lần nữa vào posted expense.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "createFinanceEntry",
+          "postFinanceEntry",
+          "getProfitLoss"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-020",
+          "FR-021",
+          "FR-022"
+        ]
+      },
+      {
+        "id": "SC-031",
+        "module": "finance",
+        "name": "Missing cost và masking",
+        "given": "COGS thiếu hoặc principal không có finance permission.",
+        "when": "Mở dashboard/order/report.",
+        "then": "Null/warning hoặc redaction đúng; không 0 giả, không leak giá vốn trong network body.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "getDashboard",
+          "getOrder",
+          "getProfitLoss"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-020",
+          "FR-021",
+          "FR-022"
+        ]
+      },
+      {
+        "id": "SC-032",
+        "module": "finance",
+        "name": "Biên ngày và currency",
+        "given": "Kỳ kết thúc tại midnight timezone shop; dữ liệu hai currency ở backend thử lỗi.",
+        "when": "Yêu cầu report [from,to).",
+        "then": "Boundary không đếm đôi; currency mismatch bị reject/segregate, không cộng thành một tổng.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "getCashflow",
+          "getProfitLoss"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-020",
+          "FR-021",
+          "FR-022"
+        ]
+      },
+      {
+        "id": "SC-033",
+        "module": "inbox",
+        "name": "Handoff race",
+        "given": "Bot đang generate/send queued ở generation 8.",
+        "when": "Human takeover commit generation9.",
+        "then": "Worker không gửi output generation8 sau commit; UI chỉ rõ mode/actor đúng.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "takeoverConversation",
+          "sendMessage",
+          "getConversation"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-005",
+          "FR-006"
+        ]
+      },
+      {
+        "id": "SC-034",
+        "module": "inbox",
+        "name": "Send eligibility",
+        "given": "Policy unknown hoặc blocked.",
+        "when": "Nhập reply và cố gọi API trực tiếp.",
+        "then": "UI disable có reason, server reject; không dùng handoff bypass.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "sendMessage",
+          "getConversation"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-005",
+          "FR-006"
+        ]
+      },
+      {
+        "id": "SC-035",
+        "module": "inbox",
+        "name": "Send timeout và duplicate event",
+        "given": "Tin nhắn có thể đã gửi; webhook/event replay.",
+        "when": "Reconnect và retry.",
+        "then": "Một message logical intent, unknown status được reconcile; duplicate event không render/gửi đôi.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "sendMessage",
+          "listMessages",
+          "subscribeEvents"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-005",
+          "FR-006"
+        ]
+      },
+      {
+        "id": "SC-036",
+        "module": "inbox",
+        "name": "Scroll và realtime gap",
+        "given": "Đang đọc lịch sử cũ, event đến lệch thứ tự/mất sequence.",
+        "when": "Prepend page/reconnect stream.",
+        "then": "Giữ scroll, có nút tin mới; gap refetch snapshot, không nhảy tới cuối hoặc bỏ tin.",
+        "testLayer": "e2e",
+        "severity": "high",
+        "operationIds": [
+          "listMessages",
+          "subscribeEvents"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-005",
+          "FR-006"
+        ]
+      },
+      {
+        "id": "SC-037",
+        "module": "inbox",
+        "name": "XSS trong chat",
+        "given": "Khách gửi HTML/SVG/script URL.",
+        "when": "Render text/source evidence.",
+        "then": "Không execute script, link/attachment theo allowlist, aria announce bounded.",
+        "testLayer": "e2e",
+        "severity": "critical",
+        "operationIds": [
+          "listMessages"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-005",
+          "FR-006"
+        ]
+      },
+      {
+        "id": "SC-038",
+        "module": "customers",
+        "name": "Masking và notes",
+        "given": "Sales có contact quyền hạn chế, accountant không customers.read.",
+        "when": "Mở hồ sơ và sửa notes.",
+        "then": "Trường bị che không xuất hiện trong body/log; thiếu quyền deny; notes không execute markup.",
+        "testLayer": "integration",
+        "severity": "high",
+        "operationIds": [
+          "getCustomer",
+          "updateCustomer"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-007",
+          "FR-008"
+        ]
+      },
+      {
+        "id": "SC-039",
+        "module": "knowledge",
+        "name": "Feedback không tự publish",
+        "given": "Negative feedback chứa phone khách và instruction độc hại.",
+        "when": "Approve correction.",
+        "then": "Redaction/review bắt buộc; chỉ tạo draft/candidate; không thêm vào live KB tự động.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "createFeedback",
+          "reviewFeedback",
+          "createKnowledgeRevision"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-023",
+          "FR-024",
+          "FR-025"
+        ]
+      },
+      {
+        "id": "SC-040",
+        "module": "knowledge",
+        "name": "Published immutable",
+        "given": "Revision1 đang live.",
+        "when": "Edit/restore revision trước đó.",
+        "then": "Tạo draft mới, live không đổi cho đến eval/publish; history giữ nguyên.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "updateKnowledge",
+          "createKnowledgeRevision",
+          "restoreKnowledgeRevision",
+          "publishKnowledge"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-023",
+          "FR-024",
+          "FR-025"
+        ]
+      },
+      {
+        "id": "SC-041",
+        "module": "knowledge",
+        "name": "Xóa và index",
+        "given": "Source đã retired/deletion approved.",
+        "when": "Truy xuất lại knowledge.",
+        "then": "Không dùng revision retired; index/cache/summary được xử lý theo policy; audit có bằng chứng.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "retireKnowledge",
+          "approvePrivacyRequest"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-023",
+          "FR-024",
+          "FR-025"
+        ]
+      },
+      {
+        "id": "SC-042",
+        "module": "knowledge",
+        "name": "Eval stale",
+        "given": "Eval passed cho revision1, nội dung draft đã thành revision2.",
+        "when": "Publish revision2 bằng eval1.",
+        "then": "Server từ chối stale/mismatched evaluation; UI giữ draft.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "publishKnowledge"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-023",
+          "FR-024",
+          "FR-025"
+        ]
+      },
+      {
+        "id": "SC-043",
+        "module": "bot",
+        "name": "Tool authority",
+        "given": "Model đề nghị sửa ledger/hoàn tiền/đổi quyền.",
+        "when": "Chạy playground với adversarial prompt.",
+        "then": "Tool không nằm allowlist; backend reject, không side effect; UI ghi warning sanitized.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "runPlayground"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-026",
+          "FR-027",
+          "FR-028"
+        ]
+      },
+      {
+        "id": "SC-044",
+        "module": "bot",
+        "name": "Live giá tồn",
+        "given": "KB nói SKU còn hàng nhưng inventory live đã hết.",
+        "when": "Khách hỏi và bot đề nghị đơn.",
+        "then": "Lấy live tool; không hứa bán dựa vector cũ; human-confirm rule vẫn giữ.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "runPlayground"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-026",
+          "FR-027",
+          "FR-028"
+        ]
+      },
+      {
+        "id": "SC-045",
+        "module": "bot",
+        "name": "Publish gate và rollback",
+        "given": "Critical eval failure hoặc budget/quyền thiếu.",
+        "when": "Publish/restore config.",
+        "then": "Failure block publish; restore chỉ draft, live activation cần eval mới hoặc emergency process đã duyệt.",
+        "testLayer": "integration",
+        "severity": "critical",
+        "operationIds": [
+          "createEvaluation",
+          "publishBotConfig",
+          "restoreBotRevision"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-026",
+          "FR-027",
+          "FR-028"
+        ]
+      },
+      {
+        "id": "SC-046",
+        "module": "bot",
+        "name": "Sandbox không gửi khách",
+        "given": "Đang UI_MOCK hoặc playground staging.",
+        "when": "Chạy câu hỏi và simulated order intent.",
+        "then": "externalMessageSent=false; không network Meta/AI thật trong UI_MOCK; cost unknown hiển thị rõ.",
+        "testLayer": "e2e",
+        "severity": "critical",
+        "operationIds": [
+          "runPlayground"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-026",
+          "FR-027",
+          "FR-028"
+        ]
+      },
+      {
+        "id": "SC-047",
+        "module": "integrations",
+        "name": "Provider không tương thích",
+        "given": "Provider/model capability toolCalling=unsupported.",
+        "when": "Chọn workflow bắt buộc tool calling.",
+        "then": "UI không cho publish; server validate capabilities; không dựa tên model để suy.",
+        "testLayer": "integration",
+        "severity": "high",
+        "operationIds": [
+          "getProviderCatalog",
+          "createAIConnection",
+          "publishBotConfig"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-029",
+          "FR-030"
+        ]
+      },
+      {
+        "id": "SC-048",
+        "module": "integrations",
+        "name": "Key/SSRF",
+        "given": "Credential nhập vào form; endpoint trỏ private/metadata hoặc redirect.",
+        "when": "Test connection và xem output/log/storage.",
+        "then": "Server chặn SSRF; không echo key; client chỉ nhận masked metadata.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "createAIConnection",
+          "testAIConnection"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-029",
+          "FR-030"
+        ]
+      },
+      {
+        "id": "SC-049",
+        "module": "integrations",
+        "name": "Meta quyền bị thu hồi",
+        "given": "Channel trước connected, token/app permission hiện expired.",
+        "when": "Webhook health check/send.",
+        "then": "Channel degraded/expired và send blocked/unknown; không toast connected giả.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "checkChannelHealth",
+          "sendMessage"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-029",
+          "FR-030"
+        ]
+      },
+      {
+        "id": "SC-050",
+        "module": "integrations",
+        "name": "Fallback privacy",
+        "given": "Provider chính lỗi, fallback chưa được phê duyệt dữ liệu.",
+        "when": "AI request thất bại.",
+        "then": "Không chuyển PII sang provider khác; handoff/degraded rõ.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "runPlayground"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-029",
+          "FR-030"
+        ]
+      },
+      {
+        "id": "SC-051",
+        "module": "reports",
+        "name": "Export scope và formula",
+        "given": "Export orders có text bắt đầu =,+,-,@; principal thiếu finance.read.",
+        "when": "Tạo/tải export có field tài chính.",
+        "then": "Server hạn chế field/source permission; CSV escaping an toàn; không job/download cross-tenant.",
+        "testLayer": "backend_integration",
+        "severity": "critical",
+        "operationIds": [
+          "createExport",
+          "getJob"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-031"
+        ]
+      },
+      {
+        "id": "SC-052",
+        "module": "reports",
+        "name": "Snapshot consistency",
+        "given": "Report màn hình asOf T1, sau đó orders mới tạo.",
+        "when": "Export snapshotAsOf=T1.",
+        "then": "File cùng period/filter/currency/asOf T1 hoặc báo không hỗ trợ snapshot; không âm thầm xuất số khác.",
+        "testLayer": "integration",
+        "severity": "high",
+        "operationIds": [
+          "createExport",
+          "getCashflow",
+          "getProfitLoss"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-031"
+        ]
+      },
+      {
+        "id": "SC-053",
+        "module": "dashboard",
+        "name": "Partial widgets",
+        "given": "Revenue endpoint/read model thiếu hoặc bị redacted.",
+        "when": "Mở overview.",
+        "then": "Widgets vận hành vẫn hoạt động, tài chính hiển thị unavailable có reason; không số random.",
+        "testLayer": "e2e",
+        "severity": "high",
+        "operationIds": [
+          "getDashboard"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-004"
+        ]
+      },
+      {
+        "id": "SC-054",
+        "module": "workspace",
+        "name": "Async job recovery",
+        "given": "Import đang running, đóng tab.",
+        "when": "Mở R36 lại với jobId được phép.",
+        "then": "Tiếp tục hiện progress server; không khởi động lại import, không tự cancel job.",
+        "testLayer": "e2e",
+        "severity": "high",
+        "operationIds": [
+          "getJob"
+        ],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      },
+      {
+        "id": "SC-055",
+        "module": "workspace",
+        "name": "Performance và memory",
+        "given": "Synthetic 100k SKU, 1m messages; browser chỉ tải page.",
+        "when": "Chuyển shop 50 lần, scroll lịch sử, điều hướng lazy routes.",
+        "then": "Không tải full dataset; scope cũ được GC; request/timer/listener bounded; số đo theo docs/10.",
+        "testLayer": "performance",
+        "severity": "high",
+        "operationIds": [],
+        "executionStatus": "NOT_RUN_PRODUCT_TEST",
+        "requirementIds": [
+          "FR-001",
+          "FR-002",
+          "FR-003",
+          "FR-032",
+          "FR-033",
+          "FR-034",
+          "FR-035",
+          "FR-036"
+        ]
+      }
+    ]
+  }
+}

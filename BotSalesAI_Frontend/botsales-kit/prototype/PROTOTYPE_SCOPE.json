@@ -1,0 +1,69 @@
+{
+  "version": "2.1.1",
+  "kind": "INTERACTIVE_UI_REVIEW_PROTOTYPE_NOT_PRODUCTION",
+  "source": "prototype/src/",
+  "entry": "prototype/index.html",
+  "style": "dark-only",
+  "statePersistence": "Business data in active tab only; feedback localStorage best-effort and downloadable export. Reload restores synthetic seed.",
+  "network": "No external requests; no Facebook, AI API, real Push, Telegram, carriers or payments.",
+  "architecture": "Portable JavaScript simulation, NOT production React/Nest/Prisma source. Do not copy app.js into product architecture.",
+  "testedPageCount": 45,
+  "productRouteSpecCount": 54,
+  "functionalFlows": [
+    {
+      "name": "Sales → phone → preparation → delivery → COD",
+      "details": "Create synthetic confirmed order; event dedupe; claim; pick checklist; pack; handover decreases stock without revenue; delivery records revenue/COGS/COD receivable; settlement nets delivery fee exactly."
+    },
+    {
+      "name": "Low stock → approval → PO → receipt → AP",
+      "details": "Reorder subtracts pending orders; owner approves immutable intent; simulated send/confirmation; partial receipts update stock+AP with balanced journals. No money transfer."
+    },
+    {
+      "name": "Role, pause, offline and feedback",
+      "details": "UI role guards/offline write guards, sales pause for simulated auto-order, per-shop state and route-context feedback export."
+    }
+  ],
+  "partialOrDesignOnly": [
+    {
+      "feature": "Returns",
+      "available": "Partial request for first order line and physical quarantine acknowledgment",
+      "notImplemented": "Actual return authorization service, inspection dispositions, financial reversal, real refunds, multi-line partial UI."
+    },
+    {
+      "feature": "Notifications",
+      "available": "Phone visual preview, dedupe, manual fallback, acknowledgment, simulated devices/setting editor",
+      "notImplemented": "Real browser subscription, background delivery, timer worker, real quiet-hour enforcement and mobile lock-screen notifications."
+    },
+    {
+      "feature": "Four AI roles",
+      "available": "Role cards, scopes, simulated pause/state, common work list and generated local digest",
+      "notImplemented": "Real LLM, durable agent orchestration, live provider health, automated schedule."
+    },
+    {
+      "feature": "Finance",
+      "available": "V2 journal subset, COD, AP and period guard demonstration; old dashboard demo balances labeled separately",
+      "notImplemented": "Complete opening subledger, live bank import/matching, real period-close certification, national tax returns or money movement."
+    },
+    {
+      "feature": "Suppliers",
+      "available": "Create draft supplier profiles; deterministic PO uses approved fixture SUP-01",
+      "notImplemented": "Real approval of new supplier, messaging, actual purchasing contracts, currency/FX/tax."
+    },
+    {
+      "feature": "Marketing",
+      "available": "Low-stock insight from fixtures; explicit missing advertising data",
+      "notImplemented": "Facebook Ads ingestion or real attribution/ROAS."
+    },
+    {
+      "feature": "Security",
+      "available": "UI guard interactions in synthetic data",
+      "notImplemented": "Authentication, backend enforcement, real privacy deletion, production multi-tenant isolation proof."
+    }
+  ],
+  "evidenceScope": "Chromium injected document on desktop/mobile viewports and Node domain tests only. Not real mobile/HTTPS/backend E2E.",
+  "progressTreatment": "Do not add any of this demo to execution/progress.json.",
+  "visualIdentity": "Graphite Gold",
+  "businessBaselineVersion": "2.0",
+  "paletteVersion": "2.1",
+  "designDecisionRef": "design/decision.json"
+}

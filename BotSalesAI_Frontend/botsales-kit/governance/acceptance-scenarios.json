@@ -1,0 +1,497 @@
+{
+  "kitVersion": "2.1.1",
+  "kind": "GOVERNANCE_ACCEPTANCE_SPECIFICATIONS_NOT_TEST_RESULTS",
+  "cases": [
+    {
+      "id": "QA-001",
+      "title": "Dark bất kể OS preference",
+      "ruleIds": [
+        "DARK-001",
+        "DARK-007"
+      ],
+      "gateIds": [
+        "QG-06"
+      ],
+      "layer": "browser",
+      "given": "App build cùng revision, OS light/dark/no-preference",
+      "when": "Mở, reload và chuyển route",
+      "then": "Palette dark theo token; không có light CSS do app tự chọn",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-002",
+      "title": "Preference cũ không đổi theme",
+      "ruleIds": [
+        "DARK-002",
+        "DARK-003"
+      ],
+      "gateIds": [
+        "QG-05",
+        "QG-06"
+      ],
+      "layer": "browser",
+      "given": "Storage từng có preference light; có dữ liệu khác cần giữ",
+      "when": "Khởi động bản dark-only",
+      "then": "Không đọc/ghi preference mới; app vẫn dark; không clear toàn storage",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-003",
+      "title": "Không có switcher và state đa theme",
+      "ruleIds": [
+        "DARK-002",
+        "DARK-003",
+        "DARK-012"
+      ],
+      "gateIds": [
+        "QG-05"
+      ],
+      "layer": "static_and_browser",
+      "given": "Baseline hợp lệ và bản mutate thêm mode/switch",
+      "when": "Chạy static rule và inspect UI settings",
+      "then": "Bản hợp lệ pass; toggle/system mode do app thêm bị chặn",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-004",
+      "title": "Dark trước JavaScript",
+      "ruleIds": [
+        "DARK-005"
+      ],
+      "gateIds": [
+        "QG-06"
+      ],
+      "layer": "browser",
+      "given": "Cold cache, boot CSS từ token, JS bị chặn hoặc trì hoãn",
+      "when": "Load HTML và quan sát fallback trước app bootstrap",
+      "then": "Canvas/fallback dark, không phụ thuộc đọc preference; ghi evidence first paint",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-005",
+      "title": "Portal và error cùng dark",
+      "ruleIds": [
+        "DARK-006",
+        "DARK-008",
+        "CODE-015"
+      ],
+      "gateIds": [
+        "QG-06",
+        "QG-07"
+      ],
+      "layer": "component_and_browser",
+      "given": "Login/loading/403/404/500 và dialog/menu/tooltip",
+      "when": "Mở từng trạng thái bằng bàn phím",
+      "then": "Theme cùng nguồn; đúng error state/focus return; không trắng nền hay thành công giả",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-006",
+      "title": "Accessibility/i18n không bị hy sinh",
+      "ruleIds": [
+        "DARK-009",
+        "CODE-018"
+      ],
+      "gateIds": [
+        "QG-12"
+      ],
+      "layer": "browser_and_manual",
+      "given": "Forced-colors/reduced-motion/zoom; locale vi",
+      "when": "Thao tác form/dialog/table ở các viewport",
+      "then": "Focus/label/translated copy đọc được; không global forced-color-adjust:none; không khóa zoom",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-007",
+      "title": "Cross-module import bị chặn",
+      "ruleIds": [
+        "CODE-005"
+      ],
+      "gateIds": [
+        "QG-03"
+      ],
+      "layer": "static_graph",
+      "given": "inbox import orders qua alias, relative hoặc dynamic literal",
+      "when": "Chạy checker trên resolved graph",
+      "then": "Mọi cạnh cấm bị báo; public app composition hợp lệ không bị chặn",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-008",
+      "title": "Shared không phụ thuộc nghiệp vụ",
+      "ruleIds": [
+        "CODE-004",
+        "CODE-005"
+      ],
+      "gateIds": [
+        "QG-03"
+      ],
+      "layer": "static_graph",
+      "given": "shared/lib import modules/catalog qua barrel",
+      "when": "Resolve đầy đủ đường dẫn",
+      "then": "Cạnh shared→module bị từ chối, kể cả type-only",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-009",
+      "title": "Cycle và parser failure không lọt",
+      "ruleIds": [
+        "CODE-005"
+      ],
+      "gateIds": [
+        "QG-03"
+      ],
+      "layer": "static_graph",
+      "given": "Fixture A→B→A và file source không parse được",
+      "when": "Chạy graph gate",
+      "then": "Cycle bị chặn; parser failure là lỗi kiểm tra, không silent pass",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-010",
+      "title": "Generated drift bị phát hiện",
+      "ruleIds": [
+        "CODE-001",
+        "CODE-009"
+      ],
+      "gateIds": [
+        "QG-04"
+      ],
+      "layer": "contract",
+      "given": "Source schema/token đổi nhưng output chưa sinh lại",
+      "when": "Chạy freshness/contract gate",
+      "then": "Diff fail; sửa tay DTO/output không che được source drift",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-011",
+      "title": "Strict/type unsafe không lọt",
+      "ruleIds": [
+        "CODE-007",
+        "CODE-008"
+      ],
+      "gateIds": [
+        "QG-02"
+      ],
+      "layer": "type_and_lint",
+      "given": "Fixture unsafe any/null/index truy cập thiếu kiểm tra",
+      "when": "Chạy compiler/lint đúng source includes",
+      "then": "Lỗi được báo; không loại folder nghiệp vụ khỏi kiểm tra",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-012",
+      "title": "Dữ liệu qua đúng ranh giới",
+      "ruleIds": [
+        "CODE-011",
+        "CODE-012",
+        "CODE-013"
+      ],
+      "gateIds": [
+        "QG-07"
+      ],
+      "layer": "component_and_static",
+      "given": "Page có API hook và mapper; bản sai fetch/catch-return-success",
+      "when": "Thử transport fail và dữ liệu không hợp lệ",
+      "then": "UI error đúng; không fake data, không bản cache thứ hai hoặc DTO cast bỏ lỗi",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-013",
+      "title": "Late response không rò shop",
+      "ruleIds": [
+        "CODE-012",
+        "CODE-019"
+      ],
+      "gateIds": [
+        "QG-08"
+      ],
+      "layer": "integration",
+      "given": "Shop A request pending rồi chuyển B/thu hồi quyền",
+      "when": "Response A về muộn và event cũ phát lại",
+      "then": "Không hiển thị A; subscription cũ dọn; context quyền mới được kiểm",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-014",
+      "title": "Secret và unsafe content",
+      "ruleIds": [
+        "CODE-019",
+        "CODE-020"
+      ],
+      "gateIds": [
+        "QG-10"
+      ],
+      "layer": "security_and_artifact",
+      "given": "Secret giả có marker riêng, chat HTML/instruction không tin cậy",
+      "when": "Nhập key, trigger lỗi, render chat; scan bundle/log/cache",
+      "then": "Không lộ key/PII; không execute HTML/chỉ dẫn; key không nằm trong persistent store",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-015",
+      "title": "Không có test không được pass",
+      "ruleIds": [
+        "CODE-021",
+        "CODE-024"
+      ],
+      "gateIds": [
+        "QG-16"
+      ],
+      "layer": "pipeline_negative",
+      "given": "Suite bắt buộc chưa có test hoặc bị skip hết",
+      "when": "Chạy required command",
+      "then": "Non-success hoặc CHƯA XÁC MINH có blocker; không PASS hay KHÔNG ÁP DỤNG",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-016",
+      "title": "Ownership và kiểm bản kết hợp",
+      "ruleIds": [
+        "CODE-023",
+        "CODE-024"
+      ],
+      "gateIds": [
+        "QG-01",
+        "QG-13"
+      ],
+      "layer": "workflow",
+      "given": "Hai task đổi shared contract hoặc baseline đã cũ",
+      "when": "Chuẩn bị tích hợp bản chung",
+      "then": "Xác định writer/approval thật, reconcile contract; chạy test bản kết hợp; không nhận fake peer review",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-017",
+      "title": "Quyền ở backend không chỉ UI",
+      "ruleIds": [
+        "CODE-019"
+      ],
+      "gateIds": [
+        "QG-08",
+        "QG-14"
+      ],
+      "layer": "staging_backend",
+      "given": "Staff bị ẩn nút/giá vốn nhưng thử request thủ công",
+      "when": "Gọi API cross-tenant/object/field trên tài khoản test",
+      "then": "Backend thật từ chối và không trả dữ liệu; mock pass không thay chứng cứ này",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-018",
+      "title": "Command timeout không lặp tác động",
+      "ruleIds": [
+        "CODE-010",
+        "CODE-014"
+      ],
+      "gateIds": [
+        "QG-09",
+        "QG-14"
+      ],
+      "layer": "mock_then_staging",
+      "given": "Server đã xử lý confirm/post nhưng response mất",
+      "when": "Double click, retry hoặc reload trạng thái",
+      "then": "Đối soát cùng intent/key; không trừ kho/ghi tiền hai lần; staging kiểm transaction thật",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-019",
+      "title": "Build không chứa mock fallback",
+      "ruleIds": [
+        "CODE-013",
+        "CODE-022"
+      ],
+      "gateIds": [
+        "QG-11"
+      ],
+      "layer": "build_artifact",
+      "given": "Có cấu hình mock dev và backend production lỗi",
+      "when": "Build target production rồi kiểm graph/runtime",
+      "then": "Không import MSW/fixture demo; không fallback thành công khi backend lỗi",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-020",
+      "title": "Rules/loader đúng bản",
+      "ruleIds": [
+        "CODE-001",
+        "CODE-002",
+        "CODE-023"
+      ],
+      "gateIds": [
+        "QG-01"
+      ],
+      "layer": "source_validation",
+      "given": "Kit lồng trong docs, root loader thiếu hoặc hash Universal sai",
+      "when": "G0 tiếp nhận và thử negative snapshot",
+      "then": "Không nhận auto-loaded/code governed; sửa mapping có quyền hoặc ghi CHƯA XÁC MINH",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-021",
+      "title": "Tránh guard báo sai chữ light",
+      "ruleIds": [
+        "DARK-010",
+        "DARK-012"
+      ],
+      "gateIds": [
+        "QG-05"
+      ],
+      "layer": "static_negative_and_positive",
+      "given": "primary.light là sắc độ; color variant tên light; fixture âm ngoài app",
+      "when": "Chạy guard cùng bản app thêm light theme thật",
+      "then": "Các đầu vào hợp lệ pass, palette light do app cấu hình phải fail",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-022",
+      "title": "Không sinh nhiều palette app",
+      "ruleIds": [
+        "DARK-004",
+        "DARK-007",
+        "DARK-012"
+      ],
+      "gateIds": [
+        "QG-04",
+        "QG-05",
+        "QG-11"
+      ],
+      "layer": "static_and_build",
+      "given": "Một theme từ token; bản sai thêm colorSchemes/matchMedia/light-dark",
+      "when": "Sinh CSS/build và kiểm app-owned output",
+      "then": "Không nhánh theme thứ hai; không kết luận sai chỉ vì vendor có khả năng nhiều theme",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-023",
+      "title": "Cổng thiếu/lỗi hoặc release thiếu evidence",
+      "ruleIds": [
+        "CODE-021",
+        "CODE-024"
+      ],
+      "gateIds": [
+        "QG-15",
+        "QG-16"
+      ],
+      "layer": "pipeline_and_release",
+      "given": "Sai command, error swallowed, thiếu restore/approval cho target",
+      "when": "Chạy gate và đánh giá release trên evidence thật",
+      "then": "Không báo pass; chặn phần liên quan; không tự ghi production approved",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-024",
+      "title": "Preference đổi khi app đang mở",
+      "ruleIds": [
+        "DARK-001",
+        "DARK-003",
+        "DARK-007"
+      ],
+      "gateIds": [
+        "QG-06"
+      ],
+      "layer": "browser",
+      "given": "App mở, người dùng đổi OS light↔dark hoặc mở tab mới",
+      "when": "Quan sát mọi app view mà không refresh riêng theme",
+      "then": "App vẫn dark; không listener/store/sync tab phục vụ chọn theme",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-025",
+      "title": "Nguồn màu đúng quyết định đã duyệt",
+      "ruleIds": [
+        "DARK-004",
+        "DARK-011"
+      ],
+      "gateIds": [
+        "QG-04",
+        "QG-05"
+      ],
+      "layer": "static_and_browser",
+      "given": "Gói đã nhận ADR-VIS-021 và token tương ứng",
+      "when": "Đổi HEX hoặc dùng bảng màu khác mà không có quyết định mới",
+      "then": "Kiểm hash nguồn và policy từ chối drift; không suy phê duyệt từ một file do AI tự viết",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-026",
+      "title": "Sinh lại không làm lệch màu giữa các đầu ra",
+      "ruleIds": [
+        "DARK-004"
+      ],
+      "gateIds": [
+        "QG-04"
+      ],
+      "layer": "static_and_browser",
+      "given": "Có token canonical và bản CSS/palette/demo/plan sinh ra",
+      "when": "Sửa một output và chạy kiểm độ mới; sau đó regenerate từ nguồn",
+      "then": "Bản sửa tay bị phát hiện; output được sinh lại khớp, không sửa nguồn chỉ để hợp thức hóa drift",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-027",
+      "title": "Màu hành động và trạng thái không tráo nghĩa",
+      "ruleIds": [
+        "DARK-008"
+      ],
+      "gateIds": [
+        "QG-07"
+      ],
+      "layer": "static_and_browser",
+      "given": "CTA, info badge, success/warning/error và chart có đủ trạng thái",
+      "when": "Mở gallery thực của repo và kiểm hover/pressed/disabled/focus",
+      "then": "CTA dùng accent/onAccent; thông tin và cảnh báo dùng token semantic, có nhãn và kiểm tương phản thực",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-028",
+      "title": "Phủ màu cả trước JS và portal/mobile",
+      "ruleIds": [
+        "DARK-005",
+        "DARK-006",
+        "DARK-008"
+      ],
+      "gateIds": [
+        "QG-06",
+        "QG-12"
+      ],
+      "layer": "static_and_browser",
+      "given": "App build cùng revision với OS light/dark và viewport quy định",
+      "when": "Cold load, chặn JS, mở login/error/menu/dialog/inbox/phone/finance",
+      "then": "Một dark palette đã duyệt; không tràn trang hoặc mất focus; không coi desktop là bằng chứng điện thoại thật",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-029",
+      "title": "Đổi hướng dẫn màu không tự cộng điểm sản phẩm",
+      "ruleIds": [
+        "DARK-011"
+      ],
+      "gateIds": [
+        "QG-04"
+      ],
+      "layer": "artifact_review",
+      "given": "Tracker mới 0% hoặc tracker repo có bằng chứng thật",
+      "when": "Tiếp nhận gói và cập nhật chính sách màu",
+      "then": "Giữ task ID/phụ thuộc/trọng số; không nộp báo cáo demo để lấy điểm ứng dụng; revalidate đúng phần ảnh hưởng",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "QA-030",
+      "title": "Giữ ngoại lệ accessibility và dữ liệu hợp lệ",
+      "ruleIds": [
+        "DARK-009",
+        "DARK-010"
+      ],
+      "gateIds": [
+        "QG-05",
+        "QG-12"
+      ],
+      "layer": "static_and_browser",
+      "given": "Có ảnh hàng/mã màu biến thể, forced-colors và fixture âm",
+      "when": "Chạy kiểm theme theo source ứng dụng sở hữu",
+      "then": "Không sửa dữ liệu sản phẩm hoặc vendor; forced-colors/reduced-motion được giữ; không cấm chuỗi HEX toàn repo bừa bãi",
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    }
+  ]
+}

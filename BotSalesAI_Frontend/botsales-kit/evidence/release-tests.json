@@ -1,0 +1,135 @@
+{
+  "scope": "RELEASE_VALIDATOR_SELF_TESTS_IN_ISOLATED_COPY_NOT_PRODUCT_TESTS",
+  "total": 15,
+  "passed": 15,
+  "checks": [
+    {
+      "name": "Valid distribution accepted",
+      "status": "PASS",
+      "expectedFailure": null,
+      "observedFailures": []
+    },
+    {
+      "name": "Token change without new authority detected",
+      "status": "PASS",
+      "expectedFailure": "Approved source digest matches canonical tokens",
+      "observedFailures": [
+        "Approved source digest matches canonical tokens",
+        "Entire token source unchanged from approved 2.1 palette",
+        "Palette copies are generated from the identical token bytes",
+        "Freshness scripts/generate-theme.py"
+      ]
+    },
+    {
+      "name": "Generated CSS mutation detected",
+      "status": "PASS",
+      "expectedFailure": "CSS copies match exactly",
+      "observedFailures": [
+        "CSS copies match exactly",
+        "Progress page uses current label and canonical CSS",
+        "Freshness scripts/generate-theme.py"
+      ]
+    },
+    {
+      "name": "Unapproved decision detected",
+      "status": "PASS",
+      "expectedFailure": "Approved Graphite Gold policy is bound to a direct user request",
+      "observedFailures": [
+        "Approved Graphite Gold policy is bound to a direct user request"
+      ]
+    },
+    {
+      "name": "App light palette detected",
+      "status": "PASS",
+      "expectedFailure": "Only one app palette and no system/theme selection",
+      "observedFailures": [
+        "Approved source digest matches canonical tokens",
+        "Entire token source unchanged from approved 2.1 palette",
+        "Only one app palette and no system/theme selection",
+        "Palette copies are generated from the identical token bytes",
+        "Freshness scripts/generate-theme.py"
+      ]
+    },
+    {
+      "name": "Task ignores color authority detected",
+      "status": "PASS",
+      "expectedFailure": "Task bound to approved palette T010",
+      "observedFailures": [
+        "Task plan lock points to the exact updated instructions",
+        "Task bound to approved palette T010"
+      ]
+    },
+    {
+      "name": "Task priority changed detected",
+      "status": "PASS",
+      "expectedFailure": "Task graph/weights fingerprint unchanged",
+      "observedFailures": [
+        "Task plan lock points to the exact updated instructions",
+        "Task graph/weights fingerprint unchanged"
+      ]
+    },
+    {
+      "name": "Document metadata drift detected",
+      "status": "PASS",
+      "expectedFailure": "Current metadata: 03_DESIGN_SYSTEM.md",
+      "observedFailures": [
+        "Current metadata: 03_DESIGN_SYSTEM.md",
+        "Freshness scripts/sync-release.py"
+      ]
+    },
+    {
+      "name": "Retired navy canvas detected",
+      "status": "PASS",
+      "expectedFailure": "Retired navy palette absent from active presentation prototype/src/app.css",
+      "observedFailures": [
+        "Domain/behavior source unchanged: prototype/src/app.css",
+        "Retired navy palette absent from active presentation prototype/src/app.css"
+      ]
+    },
+    {
+      "name": "Domain code accidental edit detected",
+      "status": "PASS",
+      "expectedFailure": "Domain/behavior source unchanged: prototype/src/domain-v2.js",
+      "observedFailures": [
+        "Domain/behavior source unchanged: prototype/src/domain-v2.js"
+      ]
+    },
+    {
+      "name": "Old demo label detected",
+      "status": "PASS",
+      "expectedFailure": "Generated demo uses current label with no unreplaced marker",
+      "observedFailures": [
+        "Generated demo uses current label with no unreplaced marker"
+      ]
+    },
+    {
+      "name": "Universal edit detected",
+      "status": "PASS",
+      "expectedFailure": "Universal unchanged from source release and attached source record",
+      "observedFailures": [
+        "Universal unchanged from source release and attached source record"
+      ]
+    },
+    {
+      "name": "Distribution cannot claim fake completion",
+      "status": "PASS",
+      "expectedFailure": "No product progress earned by documentation",
+      "observedFailures": [
+        "Product execution states preserved in this fresh distribution",
+        "No product progress earned by documentation"
+      ]
+    },
+    {
+      "name": "Working-mode check does not demand tracker reset",
+      "status": "PASS",
+      "expectedFailure": null,
+      "observedFailures": []
+    },
+    {
+      "name": "All mutations reverted in isolated copy",
+      "status": "PASS",
+      "expectedFailure": null,
+      "observedFailures": []
+    }
+  ]
+}
