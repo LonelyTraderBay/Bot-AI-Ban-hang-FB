@@ -1,0 +1,171 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep FE014 --timeout=60000 --reporter=line
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (17.7639ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.5847ms)
+✔ rejects unresolved schema references before generation (19.946ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.0682ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.595ms)
+✔ detects a stale generated file and accepts it after regeneration (1.6522ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (43.6501ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (9.0667ms)
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (9.0418ms)
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 94
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (114.4571ms)
+
+Running 4 tests using 1 worker
+
+
+[1A[2K(node:34280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:34280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/4] [chromium] › tests\fe014.spec.ts:27:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent
+[1A[2K[2/4] [chromium] › tests\fe014.spec.ts:116:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+[1A[2K[3/4] [chromium] › tests\fe014.spec.ts:237:1 › FE014.S03 auto-send cannot be configured without an enabled procurement budget
+[1A[2K[4/4] [chromium] › tests\fe014.spec.ts:264:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once
+[1A[2K  1) [chromium] › tests\fe014.spec.ts:264:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once 
+
+    [31mTest timeout of 60000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('combobox', { name: 'Vai trò mô phỏng' })[22m
+
+
+      19 |
+      20 | async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
+    > 21 |     await page.getByRole('combobox', { name: label }).click();
+         |                                                       ^
+      22 |     await page.getByRole('option', { name: value, exact: true }).click();
+      23 | }
+      24 |
+        at chooseOption (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:21:55)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:188:11
+
+    Error Context: test-results\fe014-FE014-AC03-partial-r-1c3ca-etic-stock-and-payable-once-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe014-FE014-AC03-partial-r-1c3ca-etic-stock-and-payable-once-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe014-FE014-AC03-partial-r-1c3ca-etic-stock-and-payable-once-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  1 failed
+    [chromium] › tests\fe014.spec.ts:264:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once 
+  3 passed (1.2m)

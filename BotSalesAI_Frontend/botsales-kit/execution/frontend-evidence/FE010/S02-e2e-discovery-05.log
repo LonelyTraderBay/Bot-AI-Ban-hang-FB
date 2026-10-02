@@ -1,0 +1,62 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/fe010.spec.ts --timeout=30000
+
+
+Running 7 tests using 1 worker
+
+(node:20320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\fe010.spec.ts:41:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (4.6s)
+  ok 2 [chromium] › tests\fe010.spec.ts:172:1 › product update sends If-Match and keeps edits visible after a 412 conflict (2.0s)
+  ok 3 [chromium] › tests\fe010.spec.ts:201:1 › warehouse role can read catalog products but cannot edit product fields or price cost data (891ms)
+  ok 4 [chromium] › tests\fe010.spec.ts:214:1 › categories create, search, update with a version, and render cursor pagination (2.2s)
+  x  5 [chromium] › tests\fe010.spec.ts:278:1 › CSV preview reports row-level errors and commits only valid product rows (7.5s)
+(node:32204) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32204) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 6 [chromium] › tests\fe010.spec.ts:389:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible (2.9s)
+  ok 7 [chromium] › tests\fe010.spec.ts:460:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview (1.3s)
+
+
+  1) [chromium] › tests\fe010.spec.ts:278:1 › CSV preview reports row-level errors and commits only valid product rows 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByText('Sản phẩm nhập FE010', { exact: true })
+    Expected: 0
+    Received: 1
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 5000ms
+      - waiting for getByText('Sản phẩm nhập FE010', { exact: true })
+        9 × locator resolved to 1 element
+          - unexpected value "1"
+
+
+      205 |     await search.fill('FE010-IMPORT-BAD');
+      206 |     await page.getByRole('button',{name:'Tìm kiếm',exact:true}).click();
+    > 207 |     await expect(page.getByText('Sản phẩm nhập FE010',{exact:true})).toHaveCount(0);
+          |                                                                      ^
+      208 |     await search.fill('DEMO-001');
+      209 |     await page.getByRole('button',{name:'Tìm kiếm',exact:true}).click();
+      210 |     await expect(page.getByText('Sản phẩm SKU trùng',{exact:true})).toHaveCount(0);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe010.spec.ts:207:70
+
+    Error Context: test-results\fe010-CSV-preview-reports--ca2f3-its-only-valid-product-rows-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe010-CSV-preview-reports--ca2f3-its-only-valid-product-rows-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe010-CSV-preview-reports--ca2f3-its-only-valid-product-rows-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\fe010.spec.ts:278:1 › CSV preview reports row-level errors and commits only valid product rows 
+  6 passed (23.3s)

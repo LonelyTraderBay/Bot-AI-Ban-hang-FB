@@ -1,0 +1,100 @@
+{
+  "taskId": "FE017",
+  "stepId": "S02",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T23:17:05.724Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty source snapshot 58f644f8789005642c0cd84e15dce018bf80301b432b81f2dd5eb73ae080ffed",
+  "expected": "The browser happy paths exercise manual draft, upload source, revision/version review, exact-evaluation publish, immutable published history, restore and feedback correction through React and synthetic MSW.",
+  "observed": "Focused FE017 Playwright passed 7/7 against React and synthetic MSW. The browser observes draft/review/evaluation/publish and feedback workflows, plus GET listProducts and listStockSnapshots responses joined by variantId; displayed price, available stock and asOf match those responses. The 375 px check confirms no page overflow and keyboard focus reaches the scrollable table region. Publish remains guarded by canonical capability and lifecycle; absent Knowledge.allowedActions is not claimed as satisfied.",
+  "command": "$env:Path = (Join-Path (Get-Location) 'node_modules\\.bin') + ';C:\\Program Files\\nodejs;C:\\Windows\\System32;C:\\Windows'; & 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe run test:e2e -- tests/fe017.spec.ts --reporter=line --timeout=45000",
+  "commandId": "fe017-e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Chromium",
+    "details": "React demo with synthetic MSW; no live knowledge backend/provider.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 7,
+  "failed": 0,
+  "exitCode": 0,
+  "logFile": "execution/frontend-evidence/FE017/S02-e2e-final-20261001.log",
+  "logSha256": "14e25248d1be092dc3ff7c3db4b9068fb94ed247d38851a884129971bb3e2c3a",
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/mocks/auxiliary.ts",
+      "sha256": "d5a19af0c1b2a4ee48247ef596e4552c267242ff8689c07179654ee6eb5296c9"
+    },
+    {
+      "path": "apps/web/src/mocks/files.ts",
+      "sha256": "f58595b94a52745428a45ebb5bf41d149e05c1e5ff588a02176d7591dfa953dc"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "4729c09a9d91ccfcb92b5cc108557bbd80a9c4cf564a5fd43a30339d6a398fda"
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "0e79b1c50544dd896f176ecb87c196ab09601a6b219e83d1fcb2c3d7145b761d"
+    },
+    {
+      "path": "apps/web/src/shared/model/labels.ts",
+      "sha256": "525a966e9c13ba1e097051f7f8111f03e4157c93be498b074c11a8463bbc8f71"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "c2ade4075e95934ca6204465f6ac6cdbe3767f6712e150950ebd1f71d250ea2a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "packages/contracts/src/generated.ts",
+      "sha256": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "e630656e8c168f7e4f204670a4ce1267603265ff485f868f8ca52c1ce9104b81"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "tests/fe017-source-map.test.mjs",
+      "sha256": "007b34a35a8a479cf07b19684d270516b94454456a8860c137e4785db5c7692f"
+    },
+    {
+      "path": "tests/fe017.spec.ts",
+      "sha256": "88d5828ea2709a84d00a8e179bd9102520f7db213286bd81ce50a7b73ae0b7fe"
+    }
+  ],
+  "sourceSnapshotSha256": "58f644f8789005642c0cd84e15dce018bf80301b432b81f2dd5eb73ae080ffed",
+  "supportingLogs": [
+    {
+      "file": "execution/frontend-evidence/FE008/S04-e2e-full-current.log",
+      "sha256": "0c55051ab20c935e6b53a46e1922fea9a331e81e58cfc42be2965906fa8aa186"
+    }
+  ],
+  "supplementaryLogs": [
+    {
+      "path": "execution/frontend-evidence/FE003/S03-e2e-fe017-final-20261001.log",
+      "sha256": "01d5193874a0da9a4eb56e5b645c03094b1317cdab18b11abdc4c8f234112407"
+    }
+  ]
+}

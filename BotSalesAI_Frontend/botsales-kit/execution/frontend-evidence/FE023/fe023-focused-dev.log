@@ -1,0 +1,60 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/states/fe023.spec.ts --reporter=line
+
+
+[1A[2K[WebServer] (node:33940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+
+[1A[2K(node:26160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+[1A[2K(node:26160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/5] [chromium] › tests\states\fe023.spec.ts:14:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard
+[1A[2K[2/5] [chromium] › tests\states\fe023.spec.ts:53:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices
+[1A[2K[3/5] [chromium] › tests\states\fe023.spec.ts:118:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path
+[1A[2K[4/5] [chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope
+[1A[2K  1) [chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope 
+
+    [31mTest timeout of 180000ms exceeded.[39m
+
+    Error: locator.fill: Test timeout of 180000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('textbox', { name: 'Tên cửa hàng' })[22m
+
+
+      104 |     await page.goto(new URL('/s/shop-demo/settings', demoUrl).toString());
+      105 |     const name = page.getByRole('textbox', { name: 'Tên cửa hàng' });
+    > 106 |     await name.fill('Joker Studio chưa lưu');
+          |                ^
+      107 |
+      108 |     await page.getByRole('link', { name: /Joker Studio/ }).click();
+      109 |     const confirm = page.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\states\fe023.spec.ts:106:16
+
+    Error Context: test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:7288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K(node:7288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[5/5] [chromium] › tests\states\fe023.spec.ts:226:1 › FE023 a saved shop form resets its dirty baseline and reports success

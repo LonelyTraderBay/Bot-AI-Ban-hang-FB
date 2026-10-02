@@ -1,0 +1,161 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> npm run setup && npm run build && npm run build:demo && playwright test tests/fe009.spec.ts tests/fe013.spec.ts tests/fe015.spec.ts
+
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2047 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist/assets/hooks-3sH71Ixr.js                   4.17 kB │ gzip:   1.94 kB
+dist/assets/imports-DsbllrWP.js                 4.84 kB │ gzip:   2.26 kB
+dist/assets/index-nJv5gqQz.js                   7.23 kB │ gzip:   2.93 kB
+dist/assets/index-np5_F0iO.js                   7.80 kB │ gzip:   3.14 kB
+dist/assets/index-BnK_D3wL.js                   8.35 kB │ gzip:   3.54 kB
+dist/assets/index-C2ZjLLuH.js                  11.38 kB │ gzip:   4.25 kB
+dist/assets/index-D4bSLNOn.js                  12.08 kB │ gzip:   4.31 kB
+dist/assets/index-BA3P8gXX.js                  12.32 kB │ gzip:   4.45 kB
+dist/assets/index-PVRKOoaR.js                  12.37 kB │ gzip:   5.06 kB
+dist/assets/index-Ck5UOIGw.js                  12.67 kB │ gzip:   4.81 kB
+dist/assets/index-BPbB-9co.js                  14.57 kB │ gzip:   4.85 kB
+dist/assets/index-BXxBrGSe.js                  14.71 kB │ gzip:   4.82 kB
+dist/assets/index-CcyPqrsh.js                  14.73 kB │ gzip:   4.94 kB
+dist/assets/index-D0WCn-KI.js                  20.94 kB │ gzip:   7.17 kB
+dist/assets/index-BKqgRQL5.js                  24.83 kB │ gzip:   8.11 kB
+dist/assets/index-BDFTeXJz.js                  29.46 kB │ gzip:   8.60 kB
+dist/assets/index-DgmsPVrh.js                  30.27 kB │ gzip:   9.48 kB
+dist/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist/assets/index-h80fsvzv.js                 324.48 kB │ gzip:  99.45 kB
+dist/assets/index-HWhKEQW7.js                 730.13 kB │ gzip: 184.23 kB
+✓ built in 2.67s
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2263 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist-demo/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist-demo/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist-demo/assets/DeleteOutlineRounded-TVhbfOvT.js    0.53 kB │ gzip:   0.31 kB
+dist-demo/assets/control-KPWAoL7B.js                 0.72 kB │ gzip:   0.46 kB
+dist-demo/assets/hooks-DG25Git5.js                   4.17 kB │ gzip:   1.94 kB
+dist-demo/assets/imports-CXsY5z6J.js                 5.01 kB │ gzip:   2.34 kB
+dist-demo/assets/index-D77b3-rs.js                   7.76 kB │ gzip:   3.13 kB
+dist-demo/assets/index-Dex5-69r.js                   7.79 kB │ gzip:   3.14 kB
+dist-demo/assets/index-DYlKhmEG.js                   8.35 kB │ gzip:   3.54 kB
+dist-demo/assets/permissions-DSwmPBth.js             8.41 kB │ gzip:   1.94 kB
+dist-demo/assets/index-Bp9vFEIi.js                  11.38 kB │ gzip:   4.25 kB
+dist-demo/assets/index-CUlhIQD2.js                  12.06 kB │ gzip:   4.88 kB
+dist-demo/assets/index-i34j9nB1.js                  12.08 kB │ gzip:   4.31 kB
+dist-demo/assets/index-BDZsIYRy.js                  12.32 kB │ gzip:   4.45 kB
+dist-demo/assets/index-BMrHw9Yc.js                  12.67 kB │ gzip:   4.81 kB
+dist-demo/assets/index-CvwtJsqv.js                  14.71 kB │ gzip:   4.82 kB
+dist-demo/assets/index-DXW4QIxd.js                  14.73 kB │ gzip:   4.90 kB
+dist-demo/assets/index-BVZV63K2.js                  16.92 kB │ gzip:   5.69 kB
+dist-demo/assets/index-z9LcpoWr.js                  18.60 kB │ gzip:   6.78 kB
+dist-demo/assets/index-Dk14hThA.js                  24.83 kB │ gzip:   8.11 kB
+dist-demo/assets/index-CxZsfIOI.js                  29.46 kB │ gzip:   8.60 kB
+dist-demo/assets/index-DzVw4irT.js                  31.39 kB │ gzip:   9.85 kB
+dist-demo/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist-demo/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist-demo/assets/service-CjlboJJY.js               157.05 kB │ gzip:  34.03 kB
+dist-demo/assets/browser-vfBHtzO3.js               255.09 kB │ gzip:  86.76 kB
+dist-demo/assets/mui-D8ryPhxS.js                   322.10 kB │ gzip:  97.68 kB
+dist-demo/assets/index-CDpI51iT.js                 324.66 kB │ gzip:  99.51 kB
+dist-demo/assets/index-D9xm5F9F.js                 733.03 kB │ gzip: 185.15 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.98s
+[WebServer] (node:26244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 20 tests using 1 worker
+
+(node:20176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › tests\fe009.spec.ts:35:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (2.3s)
+  ok  2 [chromium] › tests\fe009.spec.ts:57:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (4.0s)
+  ok  3 [chromium] › tests\fe009.spec.ts:110:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.5s)
+  ok  4 [chromium] › tests\fe009.spec.ts:124:1 › FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified (1.2s)
+  ok  5 [chromium] › tests\fe009.spec.ts:137:1 › FE009.H06 audit screen distinguishes available fields from missing contract detail (1.2s)
+  ok  6 [chromium] › tests\fe009.spec.ts:146:1 › after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment (5.7s)
+  ok  7 [chromium] › tests\fe009.spec.ts:178:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.5s)
+  ok  8 [chromium] › tests\fe009.spec.ts:214:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.9s)
+  ok  9 [chromium] › tests\fe013.spec.ts:40:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote (3.3s)
+  ok 10 [chromium] › tests\fe013.spec.ts:65:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once (7.8s)
+  ok 11 [chromium] › tests\fe013.spec.ts:198:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation (4.0s)
+  ok 12 [chromium] › tests\fe013.spec.ts:242:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible (3.3s)
+  ok 13 [chromium] › tests\fe015.spec.ts:41:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates (1.7s)
+  ok 14 [chromium] › tests\fe015.spec.ts:87:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data (1.2s)
+  ok 15 [chromium] › tests\fe015.spec.ts:108:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings (1.6s)
+  ok 16 [chromium] › tests\fe015.spec.ts:143:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (1.8s)
+  ok 17 [chromium] › tests\fe015.spec.ts:163:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions (1.8s)
+  ok 18 [chromium] › tests\fe015.spec.ts:186:1 › FE015.AC03 COD settlement matches net remittance plus documented fee (3.4s)
+  ok 19 [chromium] › tests\fe015.spec.ts:220:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible (2.6s)
+  ok 20 [chromium] › tests\fe015.spec.ts:245:1 › FE015.AC03 unknown journal posting is not resent from the same draft (2.8s)
+
+  20 passed (59.2s)

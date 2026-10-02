@@ -1,0 +1,194 @@
+{
+  "taskId": "FE022",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T14:36:25.971Z",
+  "sourceRevision": "HEAD HEAD unavailable plus current dirty frontend working tree",
+  "expected": "Cross-module navigation retains the mock entity IDs, revision links, partial allocation state, and user-visible results across module boundaries.",
+  "observed": "All four FE022 vertical-slice browser cases passed against synthetic HTTP/MSW and assert the linked entity IDs and resulting UI states rather than toast-only completion. Real backend persistence, SSE delivery, and live authorization are outside this evidence.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "commandId": "e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Chromium",
+    "details": "Real React app in browser with deterministic MSW synthetic API fixtures; no live services.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 4,
+  "failed": 0,
+  "exitCode": 0,
+  "logFile": "execution/frontend-evidence/FE022/current-vertical-slices-final-rerun-20261001.log",
+  "logSha256": "4dc351671c1cd192b11143f322b050f95da46b7333e6cefaa6ad763975765ea4",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "a331b5413e2d315e5d023c32c3e68efe58af66bb49e6383afc24e7e466abd081"
+    },
+    {
+      "path": "apps/web/src/mocks/auxiliary.ts",
+      "sha256": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "0bb882dfa7291db7318382136d12238176fbb9f7fdad4af2ee522ded858ed29e"
+    },
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "sha256": "2a8352dda922319363cfbaa89b76beebc7f4e44f9a28512dd316bfb49f8a0d73"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "9fd1c5ae9119566f28a574470edc855f00ea7020faf9d7223777f9967256a084"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "3c20ffd4e544cfa618b26160f68df927dc395c1ee1725e6830d08c7de2143762"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "909a3195c2068f7b59f4ab26aa6b4e866bf67be3a39330a5990a8dd291c7ff01"
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "5406f2739b8f004961ef705ad0b19cd675e10866300c33ea7284d140f50d3395"
+    },
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "sha256": "fb40bb83fe40685563fa06ac5e9c59cad06327fa891c2a30e9baf91e4e8ef5db"
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "ab3b1a3df7e98b7c53787a7e96e7e2b08813425beccf2f810c02657efac2f512"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "sha256": "b17485f21c46e190660139b528fb3d7f19dbb4e1f6dc0a88187bbd9db922bcc7"
+    },
+    {
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "sha256": "a5dde136bdfd5b8a5afa82dad02fa4ff976dab4ec233f61d619b8b3228999afc"
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "sha256": "11f315c4c979141968e9dccec005820cbdcdf1109f47e51c59a98e53e45803cf"
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "0e79b1c50544dd896f176ecb87c196ab09601a6b219e83d1fcb2c3d7145b761d"
+    },
+    {
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "sha256": "002ac29ba8830e932a189e0e041556c11819211775551ad0e66a33429c42dc8c"
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "sha256": "34b4feb1dbd96116794819b7ecf676bcb9f332e58da8b8a526de6c525946ab90"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "b048a78717f62910c6a4cf5c6508dc05637da2c043d8e55c03d069caa2b2c0c5"
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "sha256": "57d24b82d9ba6085e5b83be3c81179b5f54c15f3ae5cca15effec8db0dff802a"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "00f578b5679001066c746fbcf33d7df245234a1eb740cf367f228984e604abf3"
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "e424a7e78f6e4282c54c6ce29674e298cf1c671050c8591e5e200e7fc5385426"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4a4fe4c32470d08467dd0d56cbf69f5de912340b6c323c01cb844553e601edb1"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "8a8d6fc63cb2dc760def1a812fb4e52b4d36766e44741899eaafb221c6c59d44"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "10fb7124e64b4f71bb161eb198cf0fd751fcc81173e0f1cf74ce5449af47d9c9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+      "sha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE022/current-route-matrix-final-rerun-20261001.log",
+      "sha256": "30af08ca7ff5f9fcdb3be6eb9493bcac761f3f4869d591db7bf24f1d914ebaf7"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE022/current-vertical-slices-final-rerun-20261001.log",
+      "sha256": "4dc351671c1cd192b11143f322b050f95da46b7333e6cefaa6ad763975765ea4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "docs/route-implementation.json",
+      "sha256": "0d217c18fcfe830a74c0085b48313e946a8a6781bfd350f3b46228d4feb5180d"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "21cb02e0c82634c208082c81f517c92e7bf58bcbdc36f59ca9d4126a9ca4e5e5"
+    },
+    {
+      "path": "tests/vertical-slices/fe022-flows.spec.ts",
+      "sha256": "e657f387ea49f5a163734679af87fafac27b0c15b280bd62b40b4af3ea5fdf53"
+    },
+    {
+      "path": "tests/vertical-slices/generate-fe022-evidence.mjs",
+      "sha256": "cd3b6789da108f7deedc97249e44886b05be5961c5d4e42d9d778ab9691fd57a"
+    },
+    {
+      "path": "tests/vertical-slices/generate-route-implementation.mjs",
+      "sha256": "07c076f840705ba323c3dea899f2aac2f6eb312a54d8aa90d988ec53c27808cd"
+    }
+  ],
+  "sourceSnapshotSha256": "c737247b13ddb624bc7c36c9cadae4337efb2c2c72f1e5f0c766c19c704f9aa8",
+  "supportingLogs": [
+    {
+      "file": "execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+      "sha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724"
+    }
+  ]
+}

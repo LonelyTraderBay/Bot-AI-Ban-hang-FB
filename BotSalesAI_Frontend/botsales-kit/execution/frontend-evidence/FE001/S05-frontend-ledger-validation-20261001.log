@@ -1,0 +1,264 @@
+FE001.S05 frontend ledger isolation and current next-step check
+Expected: validate only the 28-task/140-step frontend ledger; identify next priority and blockers; do not mutate whole-product tracker.
+COMMAND: node botsales-kit/scripts/progress.mjs validate
+{"valid":true,"tasks":28,"checkpoints":140,"scope":"Structure only; does not run product tests"}
+VALIDATE_EXIT=0
+COMMAND: node botsales-kit/scripts/progress.mjs status
+{
+  "overallPercent": 3.33,
+  "verifiedSteps": 5,
+  "totalSteps": 140,
+  "phases": [
+    {
+      "id": "F00",
+      "title": "Tiếp nhận và môi trường",
+      "weightPercent": 10,
+      "earned": 10,
+      "total": 30,
+      "percent": 33.33333333333333
+    },
+    {
+      "id": "F01",
+      "title": "Kiến trúc, contract và mock foundation",
+      "weightPercent": 25,
+      "earned": 0,
+      "total": 50,
+      "percent": 0
+    },
+    {
+      "id": "F02",
+      "title": "Luồng và module frontend",
+      "weightPercent": 40,
+      "earned": 0,
+      "total": 140,
+      "percent": 0
+    },
+    {
+      "id": "F03",
+      "title": "Chất lượng, an toàn và artifact",
+      "weightPercent": 20,
+      "earned": 0,
+      "total": 40,
+      "percent": 0
+    },
+    {
+      "id": "F04",
+      "title": "Nghiệm thu mock và bàn giao",
+      "weightPercent": 5,
+      "earned": 0,
+      "total": 20,
+      "percent": 0
+    }
+  ],
+  "next": [
+    {
+      "id": "FE002",
+      "title": "Toolchain và dependencies tái lập",
+      "nextStep": {
+        "id": "S01",
+        "weight": 1,
+        "action": "Kiểm Node24/npm và exact package versions/peer requirements; giữ stack đang được chọn, ghi patch/nguồn thực.",
+        "requiredEvidenceKind": "artifact_review",
+        "verification": "Không đổi major/stack ngoài lỗi tương thích được chứng minh; không ghi latest. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+        "required": true,
+        "status": "STALE",
+        "note": "Changed source apps/web/package.json"
+      }
+    }
+  ],
+  "blocked": [],
+  "stale": [
+    "FE002",
+    "FE003",
+    "FE004",
+    "FE005",
+    "FE006",
+    "FE007",
+    "FE008",
+    "FE009",
+    "FE010",
+    "FE011",
+    "FE012",
+    "FE013",
+    "FE014",
+    "FE015",
+    "FE016",
+    "FE017",
+    "FE018",
+    "FE019",
+    "FE020",
+    "FE021",
+    "FE022"
+  ]
+}
+STATUS_EXIT=0
+COMMAND: node botsales-kit/scripts/progress.mjs next
+{
+  "id": "FE002",
+  "phase": "F00",
+  "priority": 2,
+  "title": "Toolchain và dependencies tái lập",
+  "kind": "frontend_implementation",
+  "dependsOn": [
+    "FE001"
+  ],
+  "featureIds": [
+    "H07",
+    "H08"
+  ],
+  "routeIds": [],
+  "operationIds": [],
+  "sourceTaskIds": [
+    "T003",
+    "T007"
+  ],
+  "verificationLevel": "V0–V3; V4 theo rủi ro frontend; API synthetic",
+  "readFirst": [
+    "../AGENTS.md",
+    "../AI_RULES.md",
+    "../docs/FRONTEND_SCOPE.md",
+    "../docs/PROJECT_CONTEXT.md",
+    "docs/02_ARCHITECTURE.md",
+    "docs/06_API_AND_REALTIME.md",
+    "docs/18_CODING_STANDARDS.md"
+  ],
+  "writeScope": [
+    "package.json",
+    "apps/web/package.json",
+    "package-lock.json",
+    ".node-version",
+    "scripts/setup.mjs",
+    "scripts/doctor.mjs",
+    "docs/PROJECT_CONTEXT.md"
+  ],
+  "deliverables": [
+    "package.json",
+    "apps/web/package.json",
+    "package-lock.json",
+    ".node-version",
+    "scripts/setup.mjs",
+    "scripts/doctor.mjs",
+    "docs/PROJECT_CONTEXT.md"
+  ],
+  "implementationSteps": [
+    {
+      "id": "S01",
+      "weight": 1,
+      "action": "Kiểm Node24/npm và exact package versions/peer requirements; giữ stack đang được chọn, ghi patch/nguồn thực.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Không đổi major/stack ngoài lỗi tương thích được chứng minh; không ghi latest. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S02",
+      "weight": 3,
+      "action": "Khảo sát setup/doctor/install scripts và quyền ghi/cache/network; ghi baseline lỗi PATH hay registry nếu xảy ra thực.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Cwd/điều kiện/tác động lệnh xác định; không giả lỗi môi trường thành lỗi code. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S03",
+      "weight": 2,
+      "action": "Cài dependencies bằng npm install để tạo lockfile thật; xử lý peer issue có căn cứ và ghi quyết định.",
+      "requiredEvidenceKind": "test_run",
+      "verification": "Install thành công, manifest/lock khớp; không lockfile tự viết hoặc stub thư viện. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S04",
+      "weight": 2,
+      "action": "Chạy npm setup và doctor với target thực; dùng worker MSW từ package, không tự viết worker giả.",
+      "requiredEvidenceKind": "test_run",
+      "verification": "Node/dependencies/lock/worker được kiểm trên máy thực; setup không ghi đè env đã có. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S05",
+      "weight": 2,
+      "action": "Kiểm npm ci trên thư mục thử sạch chứa đúng manifest/lock, giữ workspace đang làm; ghi toolchain hashes.",
+      "requiredEvidenceKind": "test_run",
+      "verification": "Cold install tái lập; không đè user changes hoặc nhận React build PASS chỉ vì install. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    }
+  ],
+  "acceptanceCases": [
+    "FE002.AC01 — Có lockfile thật và clean install tái lập.",
+    "FE002.AC02 — Doctor đáp ứng target hoặc task giữ BLOCKED đúng nguyên nhân.",
+    "FE002.AC03 — Không secret trong env/template/log."
+  ],
+  "stopConditions": [
+    "Chặn phần thiếu contract hoặc quyết định nghiệp vụ bắt buộc; ghi gap cụ thể, không tự tạo endpoint/quyền.",
+    "Thiếu toolchain/test frontend hoặc evidence đúng diff: CHƯA XÁC MINH; tiếp tục task độc lập đủ dependency.",
+    "Backend/provider thật nằm ngoài phạm vi; không đòi credentials thật để nghiệm thu mock frontend, không đánh dấu tích hợp thật PASS."
+  ],
+  "handoff": "execution/frontend-evidence/FE002/handoff.md",
+  "commandPolicy": "Lệnh app tại root frontend, từ package.json và frontend-command-map.json; chỉ đăng ký VERIFIED_AVAILABLE sau khi chạy thành công có log. Ghi evidence và snapshot của source/test/fixture/config liên quan. Không checkpoint ledger toàn sản phẩm.",
+  "status": "STALE",
+  "owner": "Codex",
+  "blockedReason": null,
+  "earned": 0,
+  "total": 10,
+  "percent": 0,
+  "done": false,
+  "dependencyReady": true,
+  "steps": [
+    {
+      "id": "S01",
+      "weight": 1,
+      "action": "Kiểm Node24/npm và exact package versions/peer requirements; giữ stack đang được chọn, ghi patch/nguồn thực.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Không đổi major/stack ngoài lỗi tương thích được chứng minh; không ghi latest. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": "Changed source apps/web/package.json"
+    },
+    {
+      "id": "S02",
+      "weight": 3,
+      "action": "Khảo sát setup/doctor/install scripts và quyền ghi/cache/network; ghi baseline lỗi PATH hay registry nếu xảy ra thực.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Cwd/điều kiện/tác động lệnh xác định; không giả lỗi môi trường thành lỗi code. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": "Changed source apps/web/package.json"
+    },
+    {
+      "id": "S03",
+      "weight": 2,
+      "action": "Cài dependencies bằng npm install để tạo lockfile thật; xử lý peer issue có căn cứ và ghi quyết định.",
+      "requiredEvidenceKind": "test_run",
+      "verification": "Install thành công, manifest/lock khớp; không lockfile tự viết hoặc stub thư viện. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": "Changed source apps/web/package.json"
+    },
+    {
+      "id": "S04",
+      "weight": 2,
+      "action": "Chạy npm setup và doctor với target thực; dùng worker MSW từ package, không tự viết worker giả.",
+      "requiredEvidenceKind": "test_run",
+      "verification": "Node/dependencies/lock/worker được kiểm trên máy thực; setup không ghi đè env đã có. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": "Changed source apps/web/package.json"
+    },
+    {
+      "id": "S05",
+      "weight": 2,
+      "action": "Kiểm npm ci trên thư mục thử sạch chứa đúng manifest/lock, giữ workspace đang làm; ghi toolchain hashes.",
+      "requiredEvidenceKind": "test_run",
+      "verification": "Cold install tái lập; không đè user changes hoặc nhận React build PASS chỉ vì install. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": "Changed source apps/web/package.json"
+    }
+  ]
+}
+NEXT_EXIT=0
+Whole product plan tasks=84; progress task entries=System.Object[]
+Whole product plan SHA-256=C8891F11430BC476D8C8E86609B4B96987EA180D8D7018C768245C123E294D16
+Whole product progress SHA-256=23F3034FF445B069843CD6E5EDA52F4CF471E2EFA10D899A9BCFD7387EFA31ED
+git status for whole-product plan/progress/tasks entries=0
+Current frontend: 5/140 valid checkpoints; next=FE002.; blocked=0
+No full-product ledger mutation was made.

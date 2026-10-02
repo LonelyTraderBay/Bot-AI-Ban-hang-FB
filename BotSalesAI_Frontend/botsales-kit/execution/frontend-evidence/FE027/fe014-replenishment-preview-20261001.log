@@ -1,0 +1,46 @@
+[WebServer] (node:31060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:32800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals (1.5s)
+
+
+  1) [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator: getByRole('dialog', { name: 'Quy tắc nhập lại' }).getByRole('combobox', { name: 'Mức tự động' })
+    Expected: "draft_for_approval"
+    Error: Not an input element
+
+    Call log:
+      - Expect "toHaveValue" getByRole('dialog', { name: 'Quy tắc nhập lại' }).getByRole('combobox', { name: 'Mức tự động' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Quy tắc nhập lại' }).getByRole('combobox', { name: 'Mức tự động' })
+
+
+      249 |     await expect(ruleDialog.getByRole('spinbutton', { name: 'Nhập tới' })).toHaveValue('20');
+      250 |     await expect(ruleDialog.getByRole('spinbutton', { name: 'Tồn an toàn' })).toHaveValue('2');
+    > 251 |     await expect(ruleDialog.getByRole('combobox', { name: 'Mức tự động' })).toHaveValue('draft_for_approval');
+          |                                                                             ^
+      252 |     await ruleDialog.getByRole('button', { name: 'Hủy', exact: true }).click();
+      253 |
+      254 |     await page.getByRole('tab', { name: 'Đề nghị nhập' }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:251:77
+
+    Error Context: test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\error-context.md
+
+    Error Context: test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals 

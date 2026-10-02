@@ -1,0 +1,83 @@
+{
+  "taskId": "FE026",
+  "stepId": "S02",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T17:35:15.851Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 (main) + verified current working-tree snapshot",
+  "expected": "Hoàn thiện build isolation để production không chứa MSW/seed/mockServiceWorker/fallback; demo có nhãn mô phỏng và fixtures đúng. Verification: Build thiếu API thật vẫn hoàn thành artifact frontend; runtime unavailable rõ, không tự fallback. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+  "observed": "The production/demo tree manifest was rebuilt after the latest E2E build. Production contains 32 files and no MSW worker; demo contains 37 files and includes the worker. Checksums are preserved in the manifest.",
+  "command": "node botsales-kit/execution/frontend-evidence/FE026/create-artifact-manifest-current-20261002.mjs",
+  "commandId": "artifact-manifest-20261002",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / v24.19.0 / npm 11.17.0",
+    "details": "Current repository working tree. Browser tests use Chromium against React and the synthetic MSW demo; local verification does not claim backend or staging behavior.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 2,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE026/artifact-manifest-current-20261002.log",
+  "logSha256": "9d41fde60200a8b861bd920e08caf9de84aef7fb5be172f59037f34352d0f00b",
+  "sourceFiles": [
+    {
+      "path": ".github/workflows/frontend.yml",
+      "sha256": "2842df4788c90b4c01b55f2fe8756261a4fd11b448727df61acb38213f5ccad3"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "1ab44beb54c70b09b2c3060613c0eddc4c32cd72fa04e93f9f9f5481ad66123b"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/design/tokens.json",
+      "sha256": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "13c46cd75f39c9e2d5409ce4001628ee2476ad55631851e08cc590afe38877cc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5d088f983679cd8ae1a46dbd6cf0bd5da34e39e08f9bea43980badece62b574d"
+    },
+    {
+      "path": "scripts/check-source.mjs",
+      "sha256": "9fc8524e3899a3039e975b3cff2aae51fbabfbbb6ee3d6a2a17a35c866d91ca5"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    }
+  ],
+  "sourceSnapshotSha256": "52d5005bc2f1f7b76b96745d29fde6cf65815367dbbec2ad02a179ce8f022d7e"
+}

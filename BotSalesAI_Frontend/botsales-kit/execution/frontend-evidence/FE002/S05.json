@@ -1,0 +1,67 @@
+{
+  "taskId": "FE002",
+  "stepId": "S05",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T12:56:00.365Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 on main + current frontend working tree",
+  "expected": "Cold npm ci runs in an isolated temporary workspace with exact root/app manifests, lock, npm config and Node pin. It exits 0, preserves the repository lock hash, resolves one React tree and does not mutate the active node_modules.",
+  "observed": "Isolated npm ci exited 0: 426 packages added, 428 audited, zero reported vulnerabilities. Temp and repository lock SHA256 both 15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce; clean npm ls has only React/React DOM 19.1.1. esbuild 0.28.2 import/CLI and msw/browser imports passed. Node and npm CLI binary hashes are recorded. Npm lifecycle approval and deprecated ESLint notices remain advisories; no secrets were logged.",
+  "command": "& 'C:\\Program Files\\nodejs\\node.exe' 'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js' --prefix 'C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-fe-clean-install-20260930' --script-shell=powershell.exe ci",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0",
+    "details": "Current frontend workspace; install scripts and temp directory use exact hashes recorded in the evidence log.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 9,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE002/S05-clean-install-current-20261001.log",
+  "logSha256": "832d68eabd3ec67c83b9e38c7cb9a47f44896c492c3fcf927adcde08f3550993",
+  "sourceFiles": [
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-ci-current-20261001.log",
+      "sha256": "98c50514d60074d817298290c0c662095495f8656ecef5b6813bf6207c0354d4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-dependency-tree-current-20261001.log",
+      "sha256": "27e5737fabdd301aa288b35b0901a73ef9a01dc70cb72290a201822810a5b355"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-esbuild-bin-current-20261001.log",
+      "sha256": "e21c48adb14b4e7e4fbb47be388c88d9d5fcd94a71a71fc4933b6762c8030d5a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-esbuild-import-current-20261001.log",
+      "sha256": "0751f0420a71c455ad3c884b107e6fe3364438d2a3b157d0bc2d3d9f1675e2a4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-msw-import-current-20261001.log",
+      "sha256": "409e230b0be5c74c8ff5d3cfc7a5b980268a065202c7e1da259b751827e44ae1"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    }
+  ],
+  "sourceSnapshotSha256": "1dae87b22b11185b7419e654273902b199e387777033325a00e9ee7353072d10",
+  "commandId": "clean-install-current"
+}

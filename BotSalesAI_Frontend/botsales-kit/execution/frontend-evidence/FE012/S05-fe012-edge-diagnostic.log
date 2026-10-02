@@ -1,0 +1,184 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep FE012 --reporter=line
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (17.6075ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.7163ms)
+✔ rejects unresolved schema references before generation (20.1417ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.2211ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.7233ms)
+✔ detects a stale generated file and accepts it after regeneration (1.6908ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (42.6759ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (119.1836ms)
+
+Running 10 tests using 1 worker
+
+
+
+[1A[2K(node:26268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:26268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/10] [chromium] › tests\fe012.spec.ts:40:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[1A[2K[2/10] [chromium] › tests\fe012.spec.ts:129:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[1A[2K[3/10] [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 stale draft version returns 412 and preserves edits after a concurrent save
+[1A[2K  1) [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 stale draft version returns 412 and preserves edits after a concurrent save 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m412[39m
+    Received: [31m200[39m
+
+      165 |     const staleSave = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname.endsWith('/orders/DH-1001'));
+      166 |     await page.getByRole('button', { name: 'Lưu đơn nháp' }).click();
+    > 167 |     expect((await staleSave).status()).toBe(412);
+          |                                        ^
+      168 |     await expect(page.getByRole('alert')).toBeVisible();
+      169 |     await expect(staleNotes).toHaveValue('Bản chỉnh sửa cần giữ lại khi có xung đột');
+      170 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe012.spec.ts:167:40
+
+    Error Context: test-results\fe012-FE012-AC03-stale-dra-430ed-its-after-a-concurrent-save-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe012-FE012-AC03-stale-dra-430ed-its-after-a-concurrent-save-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe012-FE012-AC03-stale-dra-430ed-its-after-a-concurrent-save-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:34276) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K(node:34276) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[4/10] [chromium] › tests\fe012.spec.ts:262:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+[1A[2K[5/10] [chromium] › tests\fe012.spec.ts:282:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[1A[2K[6/10] [chromium] › tests\fe012.spec.ts:328:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[1A[2K[7/10] [chromium] › tests\fe012.spec.ts:356:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[1A[2K[8/10] [chromium] › tests\fe012.spec.ts:398:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[1A[2K  2) [chromium] › tests\fe012.spec.ts:398:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund 
+
+    Error: expect.toBeVisible: Error: strict mode violation: getByRole('dialog', { name: 'Ghi nhận tiền đã hoàn' }).getByRole('alert') resolved to 2 elements:
+        1) <div role="alert" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-colorError MuiAlert-standardError MuiAlert-standard css-198saz8-MuiPaper-root-MuiAlert-root">…</div> aka getByRole('alert').filter({ hasText: 'Cần bằng chứng hoàn và số tiề' })
+        2) <div role="alert" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-colorWarning MuiAlert-standardWarning MuiAlert-standard css-1haek17-MuiPaper-root-MuiAlert-root">…</div> aka getByRole('alert').filter({ hasText: 'Chỉ ghi khoản đã được xác' })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('dialog', { name: 'Ghi nhận tiền đã hoàn' }).getByRole('alert')[22m
+
+
+      293 |     await refundDialog.getByRole('button', { name: 'Ghi nhận chứng từ' }).click();
+      294 |     expect((await overRefund).status()).toBe(422);
+    > 295 |     await expect(refundDialog.getByRole('alert')).toBeVisible();
+          |                                                   ^
+      296 |     await expect(refundDialog.getByRole('textbox', { name: 'Số tiền (VND)' })).toHaveValue('498000');
+      297 |
+      298 |     await refundDialog.getByRole('textbox', { name: 'Số tiền (VND)' }).fill('249000');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe012.spec.ts:295:51
+
+    Error Context: test-results\fe012-FE012-AC04-return-in-8e767-ty-to-mock-stock-and-refund-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe012-FE012-AC04-return-in-8e767-ty-to-mock-stock-and-refund-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe012-FE012-AC04-return-in-8e767-ty-to-mock-stock-and-refund-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:32452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:32452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[9/10] [chromium] › tests\fe012.spec.ts:511:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[1A[2K[10/10] [chromium] › tests\fe012.spec.ts:526:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[1A[2K  2 failed
+    [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 stale draft version returns 412 and preserves edits after a concurrent save 
+    [chromium] › tests\fe012.spec.ts:398:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund 
+  8 passed (27.6s)

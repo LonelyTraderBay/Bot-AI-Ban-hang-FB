@@ -1,0 +1,92 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/fe009.spec.ts --timeout=45000
+
+
+Running 5 tests using 1 worker
+
+(node:26048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe009.spec.ts:26:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (6.9s)
+(node:10976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] › tests\fe009.spec.ts:68:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (45.1s)
+(node:13648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chromium] › tests\fe009.spec.ts:141:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.6s)
+  ok 4 [chromium] › tests\fe009.spec.ts:164:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.2s)
+  ok 5 [chromium] › tests\fe009.spec.ts:216:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.8s)
+
+
+  1) [chromium] › tests\fe009.spec.ts:26:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByText('Workspace kiểm thử FE009', { exact: true })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText('Workspace kiểm thử FE009', { exact: true })[22m
+
+
+      37 |     await expect(page.getByRole('navigation',{name:'Điều hướng chính'}).getByRole('link',{name:/Workspace kiểm thử FE009/})).toBeVisible();
+      38 |     await page.goto(new URL('/workspaces',demoUrl).toString());
+    > 39 |     await expect(page.getByText('Workspace kiểm thử FE009',{exact:true})).toBeVisible();
+         |                                                                           ^
+      40 |     await expect(page.getByText('LAK · Asia/Vientiane',{exact:true})).toBeVisible();
+      41 | });
+      42 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:39:75
+
+    Error Context: test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\fe009.spec.ts:68:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version 
+
+    [31mTest timeout of 45000ms exceeded.[39m
+
+    Error: locator.fill: Test timeout of 45000ms exceeded.
+    Call log:
+    [2m  - waiting for getByLabel('Tìm kiếm')[22m
+
+
+      70 |     await expect(page.getByRole('heading',{name:updatedName,exact:true})).toBeVisible();
+      71 |     await page.getByRole('link',{name:'Danh sách khách'}).click();
+    > 72 |     await page.getByLabel('Tìm kiếm').fill(updatedName);
+         |                                       ^
+      73 |     await page.getByRole('button',{name:'Tìm kiếm',exact:true}).click();
+      74 |     await expect(page.getByRole('link',{name:'Hồ sơ',exact:true})).toHaveCount(1);
+      75 |     await expect(page.getByText(updatedName,{exact:true})).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:72:39
+
+    Error Context: test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\fe009.spec.ts:26:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route 
+    [chromium] › tests\fe009.spec.ts:68:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version 
+  3 passed (1.0m)
+EXIT_CODE=1

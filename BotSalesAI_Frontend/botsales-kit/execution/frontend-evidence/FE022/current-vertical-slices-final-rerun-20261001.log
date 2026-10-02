@@ -1,0 +1,149 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> npm run setup && npm run build && npm run build:demo && playwright test tests/vertical-slices/fe022-flows.spec.ts --reporter=line --timeout=45000
+
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2047 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist/assets/hooks-CPYDTkAm.js                   4.17 kB │ gzip:   1.94 kB
+dist/assets/imports-Bw_KLmmX.js                 4.84 kB │ gzip:   2.25 kB
+dist/assets/index-anIWrp1x.js                   7.23 kB │ gzip:   2.93 kB
+dist/assets/index-Co0MVhr_.js                   7.80 kB │ gzip:   3.14 kB
+dist/assets/index-SzvAAIeO.js                   8.35 kB │ gzip:   3.54 kB
+dist/assets/index-D8ySiUmg.js                  11.80 kB │ gzip:   4.40 kB
+dist/assets/index-eGaW6J82.js                  12.08 kB │ gzip:   4.31 kB
+dist/assets/index-DOnL4K-o.js                  12.37 kB │ gzip:   5.06 kB
+dist/assets/index-DK0rP9KB.js                  12.68 kB │ gzip:   4.81 kB
+dist/assets/index-sYp8Tyhc.js                  14.57 kB │ gzip:   4.85 kB
+dist/assets/index-JdQwRAXO.js                  14.71 kB │ gzip:   4.82 kB
+dist/assets/index-BoFlmCYp.js                  14.73 kB │ gzip:   4.94 kB
+dist/assets/index-Dqd1QSp5.js                  15.05 kB │ gzip:   5.36 kB
+dist/assets/index-8zfweqGT.js                  23.37 kB │ gzip:   7.96 kB
+dist/assets/index-mlvhKdR9.js                  24.83 kB │ gzip:   8.11 kB
+dist/assets/index-Bi8sdm-H.js                  29.46 kB │ gzip:   8.60 kB
+dist/assets/index-DLwOYwdG.js                  30.27 kB │ gzip:   9.48 kB
+dist/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist/assets/index-JU4NRJ9U.js                 324.48 kB │ gzip:  99.45 kB
+dist/assets/index-Apm3iSNp.js                 730.13 kB │ gzip: 184.23 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.72s
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2263 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist-demo/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist-demo/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist-demo/assets/DeleteOutlineRounded-TVhbfOvT.js    0.53 kB │ gzip:   0.31 kB
+dist-demo/assets/control-8FXxcdFC.js                 0.72 kB │ gzip:   0.46 kB
+dist-demo/assets/hooks-Cg-ThKnQ.js                   4.17 kB │ gzip:   1.94 kB
+dist-demo/assets/imports-D4_O5YKT.js                 5.01 kB │ gzip:   2.34 kB
+dist-demo/assets/index-CvKEbKO7.js                   7.76 kB │ gzip:   3.12 kB
+dist-demo/assets/index-BpIrZOhy.js                   7.79 kB │ gzip:   3.14 kB
+dist-demo/assets/index-PyyAohBS.js                   8.35 kB │ gzip:   3.54 kB
+dist-demo/assets/permissions-DSwmPBth.js             8.41 kB │ gzip:   1.94 kB
+dist-demo/assets/index-DNqH_MfW.js                  11.80 kB │ gzip:   4.40 kB
+dist-demo/assets/index-Cr2iDJbw.js                  12.06 kB │ gzip:   4.88 kB
+dist-demo/assets/index-mKFh6Ncb.js                  12.08 kB │ gzip:   4.31 kB
+dist-demo/assets/index-rqrpA7w5.js                  14.71 kB │ gzip:   4.82 kB
+dist-demo/assets/index-sHxIHAvU.js                  14.73 kB │ gzip:   4.90 kB
+dist-demo/assets/index-K5MtQLbu.js                  14.81 kB │ gzip:   5.48 kB
+dist-demo/assets/index-CNXqiBAC.js                  15.05 kB │ gzip:   5.36 kB
+dist-demo/assets/index-BL89Q_0v.js                  16.92 kB │ gzip:   5.69 kB
+dist-demo/assets/index-ClV4MkAL.js                  21.02 kB │ gzip:   7.57 kB
+dist-demo/assets/index-CbQEisY7.js                  24.83 kB │ gzip:   8.10 kB
+dist-demo/assets/index-DPmYIICD.js                  29.46 kB │ gzip:   8.60 kB
+dist-demo/assets/index-DPsVzOSa.js                  31.39 kB │ gzip:   9.85 kB
+dist-demo/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist-demo/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist-demo/assets/service-m7b8a3Ug.js               158.07 kB │ gzip:  34.25 kB
+dist-demo/assets/browser-B9dh2nwZ.js               255.09 kB │ gzip:  86.76 kB
+dist-demo/assets/mui-D8ryPhxS.js                   322.10 kB │ gzip:  97.68 kB
+dist-demo/assets/index-CjoclKtg.js                 324.66 kB │ gzip:  99.51 kB
+dist-demo/assets/index-CGvOyBF6.js                 733.16 kB │ gzip: 185.19 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.93s
+
+[WebServer] (node:22044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+
+(node:19112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/5] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:36:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+[2/5] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:90:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity
+[3/5] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:166:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation
+[4/5] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:202:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+[5/5] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:244:1 › FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps
+  5 passed (15.0s)
+EXIT_CODE=0

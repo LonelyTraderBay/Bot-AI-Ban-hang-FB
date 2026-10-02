@@ -1,0 +1,42 @@
+
+[WebServer] (node:5484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+
+(node:32816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] [chromium] › tests\fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers
+  1) [chromium] › tests\fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 500
+
+      88 |     const updateWait = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname.endsWith(`/suppliers/${detail.id}`));
+      89 |     await dialog.getByRole('button', { name: 'Lưu', exact: true }).click();
+    > 90 |     expect((await updateWait).status()).toBe(200);
+         |                                         ^
+      91 |     await expect(page.getByRole('table').first().getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' }).getByText('FE027 · đầu mối mô phỏng')).toBeVisible();
+      92 | });
+      93 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:90:41
+
+    Error Context: test-results\fe014-FE027-D02-supplier-w-0b3a1-ion-and-displays-MOQ-offers-chromium\error-context.md
+
+    Error Context: test-results\fe014-FE027-D02-supplier-w-0b3a1-ion-and-displays-MOQ-offers-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe014-FE027-D02-supplier-w-0b3a1-ion-and-displays-MOQ-offers-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe014-FE027-D02-supplier-w-0b3a1-ion-and-displays-MOQ-offers-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers 

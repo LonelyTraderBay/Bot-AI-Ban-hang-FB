@@ -1,0 +1,33 @@
+FE005.S03 canonical contracts and transport verification
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+HEAD=18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 + dirty frontend working tree
+node=v24.19.0; npm=11.17.0; scope=FRONTEND_WITH_SYNTHETIC_MOCK_API
+commandId=unit
+command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test
+
+--- botsales-kit/execution/frontend-evidence/FE005/S03-S04-unit-current-20261001.log ---
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+
+ Test Files  7 passed (7)
+      Tests  66 passed (66)
+   Start at  20:35:34
+   Duration  4.89s (tests 54%, environment 21%, import 13%, setup 6%, transform 6%)
+
+[review 1] PASS correct sequential FE005 checkpoint selected
+status exit=0; next=FE005.S03; blocked=[]
+
+[review 2] PASS all current run logs exist
+botsales-kit/execution/frontend-evidence/FE005/S03-S04-unit-current-20261001.log
+
+[review 3] PASS typed client enforces transport safeguards
+credentials: 'same-origin', X-CSRF-Token, If-Match, Idempotency-Key, AbortSignal, assertSchema, assertSchema<Problem>
+
+[review 4] PASS transport suite passes on current source
+Vitest 66/66 in 7 files; API client request/response tests are in the passing suite.
+
+result=PASS; checks=4; exitCode=0

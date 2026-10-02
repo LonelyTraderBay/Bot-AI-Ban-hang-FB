@@ -1,0 +1,42 @@
+
+[WebServer] (node:20344) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:29272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries
+  1) [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 403
+
+      103 |   const first = await uploadStatus(page, 'product_import', 'same-upload-key', 'sku,name,price\nP-1,Sample,100');
+      104 |   const changed = await uploadStatus(page, 'product_import', 'same-upload-key', 'sku,name,price\nP-2,Changed,200');
+    > 105 |   expect(first.status).toBe(201);
+          |                        ^
+      106 |   expect(changed.status).toBe(409);
+      107 |   expect(changed.body.code).toBe('IDEMPOTENCY_CONFLICT');
+      108 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\security.spec.ts:105:24
+
+    Error Context: test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\error-context.md
+
+    Error Context: test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries 

@@ -1,0 +1,47 @@
+[WebServer] (node:34224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:10000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe009.spec.ts:124:1 › after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment (11.0s)
+
+
+  1) [chromium] › tests\fe009.spec.ts:124:1 › after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Vận đơn liên quan', exact: true }).locator('..').getByText('seed-shipment-10021', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Vận đơn liên quan', exact: true }).locator('..').getByText('seed-shipment-10021', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Vận đơn liên quan', exact: true }).locator('..').getByText('seed-shipment-10021', { exact: true })
+
+
+      150 |     await expect(page.getByRole('heading',{name:'Linh (khách mẫu)',exact:true})).toBeVisible();
+      151 |     const shipmentPanel=page.getByRole('heading',{name:'Vận đơn liên quan',exact:true}).locator('..');
+    > 152 |     await expect(shipmentPanel.getByText('seed-shipment-10021',{exact:true})).toBeVisible();
+          |                                                                               ^
+      153 |     await expect(shipmentPanel.getByText('DH-DEMO-PAID-01',{exact:true})).toBeVisible();
+      154 | });
+      155 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:152:79
+
+    Error Context: test-results\fe009-after-sale-cases-onl-49315-rofile-shows-their-shipment-chromium\error-context.md
+
+    Error Context: test-results\fe009-after-sale-cases-onl-49315-rofile-shows-their-shipment-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-after-sale-cases-onl-49315-rofile-shows-their-shipment-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-after-sale-cases-onl-49315-rofile-shows-their-shipment-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\fe009.spec.ts:124:1 › after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment 

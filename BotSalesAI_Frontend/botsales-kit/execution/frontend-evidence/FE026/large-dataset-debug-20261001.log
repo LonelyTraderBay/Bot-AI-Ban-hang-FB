@@ -1,0 +1,54 @@
+
+[WebServer] (node:24396) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:24332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] [chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+[chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+[large-dataset-api] {"url":"http://127.0.0.1:53942/api/v2/shops/shop-demo/customers?limit=20","count":4,"page":{"limit":20,"total":4,"hasMore":false,"nextCursor":null},"firstIds":["c1","c2","c3"]}
+
+  1) [chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByRole('table').getByRole('row')
+    Expected: 21
+    Received: 5
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByRole('table').getByRole('row') with timeout 5000ms
+      - waiting for getByRole('table').getByRole('row')
+        14 × locator resolved to 5 elements
+           - unexpected value "5"
+
+
+      114 |     console.log(`[large-dataset-api] ${JSON.stringify({ url: response.url(), count: envelope.data.length, page: envelope.page, firstIds: envelope.data.slice(0, 3).map(customer => customer.id) })}`);
+      115 |     const renderedRows = page.getByRole('table').getByRole('row');
+    > 116 |     await expect(renderedRows).toHaveCount(21);
+          |                                ^
+      117 |     await expect(page.locator('a[href*="perf-customer-"]').first()).toBeVisible();
+      118 |
+      119 |     const report = {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\artifacts\demo-preview.spec.ts:116:32
+
+    Error Context: test-results\artifacts-demo-preview-a-t-5f07a--in-the-built-demo-artifact-chromium\error-context.md
+
+    Error Context: test-results\artifacts-demo-preview-a-t-5f07a--in-the-built-demo-artifact-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\artifacts-demo-preview-a-t-5f07a--in-the-built-demo-artifact-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\artifacts-demo-preview-a-t-5f07a--in-the-built-demo-artifact-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact 

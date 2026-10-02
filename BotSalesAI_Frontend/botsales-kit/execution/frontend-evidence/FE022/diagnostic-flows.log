@@ -1,0 +1,125 @@
+
+Running 4 tests using 1 worker
+
+
+
+[1A[2K(node:25412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K(node:25412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K[1/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:35:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+[1A[2K  1) [chromium] › tests\vertical-slices\fe022-flows.spec.ts:35:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked 
+
+    [31mTest timeout of 180000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 180000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('link', { name: 'DH-1001', exact: true })[22m
+
+
+      43 |     expect(before).toBeTruthy();
+      44 |     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Đơn hàng' }).click();
+    > 45 |     await page.getByRole('link', { name: 'DH-1001', exact: true }).click();
+         |                                                                    ^
+      46 |     await expect(page.getByRole('heading', { name: 'Đơn DH-1001', exact: true })).toBeVisible();
+      47 |     const quote = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/quote'));
+      48 |     await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:45:68
+
+    Error Context: test-results\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:26692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:26692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[2/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:131:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity
+[1A[2K  2) [chromium] › tests\vertical-slices\fe022-flows.spec.ts:131:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity 
+
+    Error: page.evaluate: SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+
+      24 |
+      25 | async function readList<T>(page: import('@playwright/test').Page, resource: string): Promise<T[]> {
+    > 26 |     return page.evaluate(async (path) => {
+         |                 ^
+      27 |         const response = await fetch(`/api/v2/shops/shop-demo/${path}?limit=100`);
+      28 |         if (!response.ok) throw new Error(`Expected ${path} GET to succeed, got ${response.status}`);
+      29 |         const envelope = await response.json();
+        at readList (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:26:17)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:85:27
+
+    Error Context: test-results\vertical-slices-fe022-flow-8da6a-erves-the-purchase-identity-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\vertical-slices-fe022-flow-8da6a-erves-the-purchase-identity-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\vertical-slices-fe022-flow-8da6a-erves-the-purchase-identity-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:35064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:35064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[3/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:296:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation
+[1A[2K  3) [chromium] › tests\vertical-slices\fe022-flows.spec.ts:296:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m202[39m
+    Received: [31m200[39m
+
+      168 |     const importResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/bank-transactions/import'));
+      169 |     await dialog.getByRole('button', { name: 'Kiểm tra và nhập' }).click();
+    > 170 |     expect((await importResponse).status()).toBe(202);
+          |                                             ^
+      171 |     await dialog.getByRole('button', { name: 'Hủy' }).click();
+      172 |
+      173 |     await page.getByRole('tab', { name: 'Chênh lệch cần xử lý' }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:170:45
+
+    Error Context: test-results\vertical-slices-fe022-flow-cf2e0-and-partial-debt-allocation-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\vertical-slices-fe022-flow-cf2e0-and-partial-debt-allocation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\vertical-slices-fe022-flow-cf2e0-and-partial-debt-allocation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:35124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:35124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[4/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:366:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+[1A[2K  3 failed
+    [chromium] › tests\vertical-slices\fe022-flows.spec.ts:35:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked 
+    [chromium] › tests\vertical-slices\fe022-flows.spec.ts:131:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity 
+    [chromium] › tests\vertical-slices\fe022-flows.spec.ts:296:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation 
+  1 passed (3.1m)

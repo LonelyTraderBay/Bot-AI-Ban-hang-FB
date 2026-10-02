@@ -1,0 +1,54 @@
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2046 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist/assets/hooks-Dq1j2I9l.js                   4.17 kB │ gzip:   1.94 kB
+dist/assets/imports-CHo7G4YM.js                 4.84 kB │ gzip:   2.25 kB
+dist/assets/index-BfCNM1ic.js                   7.23 kB │ gzip:   2.93 kB
+dist/assets/index-DvJ1q7-A.js                   7.80 kB │ gzip:   3.14 kB
+dist/assets/index-CYLBSu3x.js                   8.35 kB │ gzip:   3.54 kB
+dist/assets/index-CrCbA1ZL.js                   9.06 kB │ gzip:   3.34 kB
+dist/assets/index-Bogzl3jw.js                  11.38 kB │ gzip:   4.24 kB
+dist/assets/index-BBGCgg2D.js                  12.32 kB │ gzip:   4.45 kB
+dist/assets/index-Cm72SLkz.js                  12.37 kB │ gzip:   5.06 kB
+dist/assets/index-cfUygXmN.js                  12.67 kB │ gzip:   4.81 kB
+dist/assets/index-DnJaQZdH.js                  14.45 kB │ gzip:   4.85 kB
+dist/assets/index-ouYQ9JsN.js                  14.57 kB │ gzip:   4.85 kB
+dist/assets/index-CmevT3Ss.js                  14.71 kB │ gzip:   4.82 kB
+dist/assets/index-DdhOYAof.js                  18.85 kB │ gzip:   6.48 kB
+dist/assets/index-BISsThY0.js                  24.83 kB │ gzip:   8.10 kB
+dist/assets/index-BcBLJIo6.js                  28.42 kB │ gzip:   8.84 kB
+dist/assets/index-D3G3WkUY.js                  29.46 kB │ gzip:   8.60 kB
+dist/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist/assets/index-BdTEmy3v.js                 324.48 kB │ gzip:  99.45 kB
+dist/assets/index-C7mtgtfr.js                 730.13 kB │ gzip: 184.23 kB
+✓ built in 2.65s
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

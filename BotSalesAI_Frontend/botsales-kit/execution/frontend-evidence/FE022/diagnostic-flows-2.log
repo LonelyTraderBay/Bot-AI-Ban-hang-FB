@@ -1,0 +1,152 @@
+
+Running 4 tests using 1 worker
+
+
+
+[1A[2K(node:20076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:20076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:35:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+[1A[2K  1) [chromium] › tests\vertical-slices\fe022-flows.spec.ts:35:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked 
+
+    [31mTest timeout of 45000ms exceeded.[39m
+
+    Error: page.waitForResponse: Test timeout of 45000ms exceeded.
+
+      50 |     await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
+      51 |     expect((await quote).status()).toBe(200);
+    > 52 |     const confirmation = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/confirm'));
+         |                               ^
+      53 |     await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();
+      54 |     expect((await confirmation).status()).toBe(202);
+      55 |     await expect(page.getByText('Đã xác nhận', { exact: true })).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:52:31
+
+    Error: locator.click: Test timeout of 45000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'Xác nhận đơn & giữ hàng' })[22m
+    [2m    - locator resolved to <button disabled tabindex="-1" type="button" class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-disableElevation Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-disableElevation css-khcs57-MuiButtonBase-root-MuiButton-root">Xác nhận đơn & giữ hàng</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is not enabled[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is not enabled[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    83 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is not enabled[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+
+
+      51 |     expect((await quote).status()).toBe(200);
+      52 |     const confirmation = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/confirm'));
+    > 53 |     await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();
+         |                                                                         ^
+      54 |     expect((await confirmation).status()).toBe(202);
+      55 |     await expect(page.getByText('Đã xác nhận', { exact: true })).toBeVisible();
+      56 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:53:73
+
+    Error Context: test-results\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+[1A[2K(node:7384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+[1A[2K(node:7384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[2/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:134:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity
+[1A[2K  2) [chromium] › tests\vertical-slices\fe022-flows.spec.ts:134:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    Expected: [32mArrayContaining [ObjectContaining {"direction": "payable", "originalAmount": {"amount": "200000"}, "source": {"id": "goodsreceipt-10015", "type": "goods_receipt"}}][39m
+    Received: [31m[{"counterpartyId": "supplier-01", "counterpartyType": "supplier", "createdAt": "2026-09-29T14:00:20.000Z", "direction": "payable", "disputed": false, "dueAt": null, "id": "debtitem-10020", "originalAmount": {"amount": "200000", "currency": "VND"}, "outstandingAmount": {"amount": "200000", "currency": "VND"}, "shopId": "shop-demo", "source": {"id": "goodsreceipt-10015", "type": "goods_receipt"}, "updatedAt": "2026-09-29T14:00:20.000Z", "version": 1}, {"counterpartyId": "supplier-01", "counterpartyType": "supplier", "createdAt": "2026-09-29T14:01:04.000Z", "direction": "payable", "disputed": false, "dueAt": null, "id": "seed-debtitem-10064", "originalAmount": {"amount": "260000", "currency": "VND"}, "outstandingAmount": {"amount": "260000", "currency": "VND"}, "shopId": "shop-demo", "source": {"id": "seed-goodsreceipt-10059", "type": "goods_receipt"}, "updatedAt": "2026-09-29T14:01:04.000Z", "version": 1}, {"counterpartyId": "carrier-demo", "counterpartyType": "carrier", "createdAt": "2026-09-29T14:00:28.000Z", "direction": "receivable", "disputed": false, "dueAt": null, "id": "seed-debtitem-10028", "originalAmount": {"amount": "249000", "currency": "VND"}, "outstandingAmount": {"amount": "249000", "currency": "VND"}, "shopId": "shop-demo", "source": {"id": "DH-DEMO-PAID-01", "type": "order"}, "updatedAt": "2026-09-29T14:00:28.000Z", "version": 1}][39m
+
+      155 |     expect(after?.onHand).toBe((before?.onHand || 0) + 2);
+      156 |     const debts = await readList<{ source?: { type?: string; id?: string }; direction: string; originalAmount: { amount: string } }>(page, 'debts');
+    > 157 |     expect(debts).toEqual(expect.arrayContaining([expect.objectContaining({ source: { type: 'goods_receipt', id: receipt.id }, direction: 'payable', originalAmount: { amount: '200000' } })]));
+          |                   ^
+      158 | });
+      159 |
+      160 | test('FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation', async ({ page }) => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:157:19
+
+    Error Context: test-results\vertical-slices-fe022-flow-8da6a-erves-the-purchase-identity-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\vertical-slices-fe022-flow-8da6a-erves-the-purchase-identity-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\vertical-slices-fe022-flow-8da6a-erves-the-purchase-identity-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:26784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:26784) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[3/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:303:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation
+[1A[2K  3) [chromium] › tests\vertical-slices\fe022-flows.spec.ts:303:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m"[7m50[27m000"[39m
+    Received: [31m"[7m199[27m000"[39m
+
+      189 |     expect(imported).toMatchObject({ matchState: 'suggested' });
+      190 |     const debts = await readList<{ id: string; outstandingAmount: { amount: string } }>(page, 'debts');
+    > 191 |     expect(debts.find(debt => debt.id === 'seed-debtitem-10028')?.outstandingAmount.amount).toBe('50000');
+          |                                                                                             ^
+      192 | });
+      193 |
+      194 | test('FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs', async ({ page }) => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:191:93
+
+    Error Context: test-results\vertical-slices-fe022-flow-cf2e0-and-partial-debt-allocation-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\vertical-slices-fe022-flow-cf2e0-and-partial-debt-allocation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\vertical-slices-fe022-flow-cf2e0-and-partial-debt-allocation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+[1A[2K(node:25660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+[1A[2K(node:25660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[4/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:373:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+[1A[2K  3 failed
+    [chromium] › tests\vertical-slices\fe022-flows.spec.ts:35:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked 
+    [chromium] › tests\vertical-slices\fe022-flows.spec.ts:134:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity 
+    [chromium] › tests\vertical-slices\fe022-flows.spec.ts:303:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation 
+  1 passed (1.0m)

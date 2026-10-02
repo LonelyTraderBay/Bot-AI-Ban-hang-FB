@@ -1,0 +1,54 @@
+[WebServer] (node:17212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:34472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe016.spec.ts:177:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount (6.4s)
+(node:5104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium] › tests\fe016.spec.ts:191:1 › FE016.B08 image and voice preview is synthetic and stays local (1.4s)
+  ok 3 [chromium] › tests\fe020.spec.ts:175:1 › FE020.F05 delegation rule preview stays local and grants no API approval capability (2.0s)
+
+
+  1) [chromium] › tests\fe016.spec.ts:177:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('mock-promotion-preview')
+    Expected substring: "DEMO-PROMO-01"
+    Received string:    "Điều kiện minh họa: có ít nhất một áo và một phụ kiện trong đơn nháp.Không áp dụng giảm giá, không sửa đơn và không khẳng định đạt biên lợi nhuận."
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByTestId('mock-promotion-preview') with timeout 5000ms
+      - waiting for getByTestId('mock-promotion-preview')
+        14 × locator resolved to <div role="status" data-testid="mock-promotion-preview" class="MuiStack-root css-19qoor4-MuiStack-root">…</div>
+           - unexpected value "Điều kiện minh họa: có ít nhất một áo và một phụ kiện trong đơn nháp.Không áp dụng giảm giá, không sửa đơn và không khẳng định đạt biên lợi nhuận."
+
+
+      184 |     await page.getByRole('button', { name: 'Xem điều kiện combo mẫu' }).click();
+      185 |     const preview = page.getByTestId('mock-promotion-preview');
+    > 186 |     await expect(preview).toContainText('DEMO-PROMO-01');
+          |                           ^
+      187 |     await expect(preview).toContainText('Không áp dụng giảm giá');
+      188 |     expect(writes).toEqual([]);
+      189 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe016.spec.ts:186:27
+
+    Error Context: test-results\fe016-FE016-B05-cross-sell-ee6d8-without-applying-a-discount-chromium\error-context.md
+
+    Error Context: test-results\fe016-FE016-B05-cross-sell-ee6d8-without-applying-a-discount-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe016-FE016-B05-cross-sell-ee6d8-without-applying-a-discount-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe016-FE016-B05-cross-sell-ee6d8-without-applying-a-discount-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\fe016.spec.ts:177:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount 
+  2 passed (13.0s)

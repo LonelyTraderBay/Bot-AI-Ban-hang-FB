@@ -1,0 +1,37 @@
+FE005 S03 transport audit
+Command: rg source inspection
+Direct fetch or hardcoded /api/vN references in feature modules:
+PASS: no matches in apps/web/src/modules
+Shared client contract boundary:
+2:import type { OperationId, Operations, RequestOf, ResponseOf, Problem } from '@botsales/contracts';
+3:import { ApiError, UnknownResultError } from './errors';
+4:import { assertSchema } from './validation';
+8:const activeRequests = new Set<AbortController>();
+78:    for (const parameter of spec.queryParameters) {
+84:        throw new ApiError(400, 'REQUEST_BODY_REQUIRED', 'Thao tác này cần dữ liệu theo hợp đồng API.');
+86:        throw new ApiError(400, 'REQUEST_BODY_REQUIRED', 'Thao tác tải tệp cần biểu mẫu multipart.');
+89:    if (spec.headers.some(header => header.name === 'If-Match' && header.required) && options.version === undefined)
+94:    const controller = new AbortController();
+100:    let timedOut = false;
+101:    const timeout = setTimeout(() => { timedOut = true; controller.abort('timeout'); }, 25000);
+105:        headers['X-CSRF-Token'] = csrfToken;
+106:        headers['Idempotency-Key'] = intent;
+109:        headers['If-Match'] = '"' + options.version + '"';
+119:                assertSchema<RequestOf<K>>(spec.requestSchema, options.body);
+144:            let problem: Problem | undefined;
+146:                assertSchema<Problem>('Problem', raw);
+156:            assertSchema<ResponseOf<K>>(spec.responseSchema, raw);
+163:            throw new UnknownResultError(intent, commandId);
+169:        if (timedOut)
+Command settlement behavior:
+7:import { ApiError, UnknownResultError } from './errors';
+19:        retry: (count, error) => count < 1 && (!(error instanceof ApiError) || error.status >= 500),
+34:            throw new ApiError(409, 'IN_FLIGHT', 'Thao tác đang xử lý hoặc chưa xác minh kết quả.');
+49:                    for (let attempt = 0; ['accepted', 'running'].includes(String(observed)) && attempt < 8; attempt++) {
+53:                            current = await request('getCommand', { path: { shopId: scope.shop.id, commandId: command.id } });
+56:                            throw new UnknownResultError(options.idempotencyKey || command.id, command.id);
+63:                    if (['unknown', 'accepted', 'running'].includes(String(observed)))
+64:                        throw new UnknownResultError(options.idempotencyKey || command.id, command.id);
+73:            if (error instanceof UnknownResultError) {
+Coverage evidence: npm test passed 30/30 including success/null, structured 409/412/422/428/429 Problems, missing body/query/version/CSRF, request/response schema rejection, 202 terminal polling, unknown-result lock, timeout and unsupported command enum.
+Limits: required query parameters are runtime guarded; QueryApiOptions still accepts partial query objects to keep out-of-scope finance pages compiling. Cashflow/profit-loss pages still need date-range/timezone inputs under their finance task.

@@ -1,0 +1,51 @@
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v3.2.4 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+ ✓ apps/web/tests/format.test.ts (9 tests) 3ms
+ ✓ apps/web/tests/api-client.test.tsx (19 tests) 858ms
+   ✓ typed HTTP boundary > waits for command completion after HTTP 202 before resolving useCommand  421ms
+   ✓ typed HTTP boundary > keeps an accepted command unresolved when command status polling fails  414ms
+ ❯ apps/web/tests/components.test.tsx (17 tests | 1 failed) 3528ms
+   ✓ Graphite Gold theme contract > maps the approved dark tokens, typography, radii, and responsive breakpoints 1ms
+   ✓ Graphite Gold theme contract > keeps primary, secondary, status, and control contrast above their design thresholds 0ms
+   ✓ Graphite Gold theme contract > applies semantic token surfaces to standard alerts 38ms
+   ✓ Graphite Gold theme contract > loads canonical dark tokens and bootstrap before application JavaScript 1ms
+   ✓ Graphite Gold theme contract > keeps the application theme and source palette dark-only and token-owned 9ms
+   ✓ Graphite Gold theme contract > rejects copied HEX values and non-dark theme modes with negative fixtures 6ms
+   ✓ Accessible shared presentation > uses the canonical touch target for primary controls 12ms
+   ✓ Accessible shared presentation > uses the approved card radius rather than MUI spacing-scaled radius 6ms
+   ✓ Accessible shared presentation > renders semantic status text and a keyboard-navigable, named table region 14ms
+   ✓ Accessible shared presentation > keeps status and empty states understandable without relying on color 8ms
+   ✓ Accessible shared presentation > shows a reserved loading state and a retryable error state 63ms
+   ✓ Accessible shared presentation > clears search, cursor, and returns focus while preserving other filters  354ms
+   ✓ Accessible shared presentation > moves between cursor pages without dropping unrelated query filters 92ms
+   ✓ Accessible shared presentation > does not submit an unfinished IME composition 10ms
+   ✓ Accessible shared presentation > associates form errors with the visible label and returns focus after dialog close  327ms
+   ✓ Accessible shared presentation > has no axe violations in the shared table, status, and search states 68ms
+   × Accessible shared presentation > reflows the real mock application from 320px to 1440px and passes browser axe 2519ms
+     → Unexpected token 'P', "Port 5173 "... is not valid JSON
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/tests/components.test.tsx > Accessible shared presentation > reflows the real mock application from 320px to 1440px and passes browser axe
+SyntaxError: Unexpected token 'P', "Port 5173 "... is not valid JSON
+ ❯ apps/web/tests/components.test.tsx:219:27
+    217|     it('reflows the real mock application from 320px to 1440px and pas…
+    218|         const auditOutput=execFileSync(process.execPath,[path.join(pro…
+    219|         const report=JSON.parse(auditOutput.trim());
+       |                           ^
+    220|         expect(report.preJavaScript).toEqual({html:'rgb(17, 19, 24)',b…
+    221|         expect(report.accessibilityPreferences).toMatchObject({forcedC…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 44 passed (45)
+   Start at  00:51:37
+   Duration  4.63s (transform 118ms, setup 182ms, collect 886ms, tests 4.39s, environment 868ms, prepare 176ms)
+

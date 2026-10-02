@@ -1,0 +1,157 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep FE013
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (19.0271ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.9941ms)
+✔ rejects unresolved schema references before generation (21.3954ms)
+✔ rejects missing API version and a server URL outside same-origin path form (19.3198ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (15.3361ms)
+✔ detects a stale generated file and accepts it after regeneration (1.8138ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (50.1762ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (9.5947ms)
+
+Running 2 tests using 1 worker
+
+(node:34412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once (1.7s)
+(node:16964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] › tests\fe013.spec.ts:310:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible (1.4s)
+
+
+  1) [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m201[39m
+    Received: [31m200[39m
+
+      28 |     const quote = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/quote'));
+      29 |     await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
+    > 30 |     expect((await quote).status()).toBe(201);
+         |                                    ^
+      31 |     const consent = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/customer-confirmations'));
+      32 |     await page.getByRole('button', { name: 'Mô phỏng khách đồng ý báo giá' }).click();
+      33 |     expect((await consent).status()).toBe(201);
+        at confirmSeedOrder (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe013.spec.ts:30:36)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe013.spec.ts:47:5
+
+    Error Context: test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\fe013.spec.ts:310:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m201[39m
+    Received: [31m200[39m
+
+      28 |     const quote = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/quote'));
+      29 |     await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
+    > 30 |     expect((await quote).status()).toBe(201);
+         |                                    ^
+      31 |     const consent = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/customer-confirmations'));
+      32 |     await page.getByRole('button', { name: 'Mô phỏng khách đồng ý báo giá' }).click();
+      33 |     expect((await consent).status()).toBe(201);
+        at confirmSeedOrder (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe013.spec.ts:30:36)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe013.spec.ts:169:5
+
+    Error Context: test-results\fe013-FE013-AC01-role-scop-d9bf1-ion-views-remain-accessible-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe013-FE013-AC01-role-scop-d9bf1-ion-views-remain-accessible-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe013-FE013-AC01-role-scop-d9bf1-ion-views-remain-accessible-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once 
+    [chromium] › tests\fe013.spec.ts:310:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible 

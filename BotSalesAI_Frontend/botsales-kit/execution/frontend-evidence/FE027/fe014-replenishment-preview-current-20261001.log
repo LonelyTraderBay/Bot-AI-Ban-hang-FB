@@ -1,0 +1,52 @@
+
+[WebServer] (node:22192) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals
+  1) [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('row').filter({ hasText: 'v-p8' })
+    Expected substring: "18"
+    Received string:    "v-p8Xưởng hàng mẫu20200Quy tắc min-max; đã trừ hàng đang đặt. Không phải dự báo AI.Lập đơn nháp"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('row').filter({ hasText: 'v-p8' }) with timeout 5000ms
+      - waiting for getByRole('row').filter({ hasText: 'v-p8' })
+        - locator resolved to <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr>
+        - unexpected value "v-p8Xưởng hàng mẫu2000Quy tắc min-max; đã trừ hàng đang đặt. Không phải dự báo AI.Lập đơn nháp"
+        13 × locator resolved to <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr>
+           - unexpected value "v-p8Xưởng hàng mẫu20200Quy tắc min-max; đã trừ hàng đang đặt. Không phải dự báo AI.Lập đơn nháp"
+
+
+      273 |     const refreshedP8 = page.getByRole('row').filter({ hasText: 'v-p8' });
+      274 |     await expect(refreshedP8.getByRole('button', { name: 'Lập đơn nháp' })).toBeDisabled();
+    > 275 |     await expect(refreshedP8).toContainText('18');
+          |                               ^
+      276 | });
+      277 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:275:31
+
+    Error Context: test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\error-context.md
+
+    Error Context: test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals 

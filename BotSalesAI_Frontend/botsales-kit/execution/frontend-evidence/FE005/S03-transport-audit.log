@@ -1,0 +1,4 @@
+Module transport audit: no fetch() calls or hardcoded /api/vN paths under apps/web/src/modules.
+All API calls use operation IDs through shared/api/client.ts and generated API_BASE_PATH; request/response schemas validate at the client boundary.
+Static type contract file compiles: body required for createCustomer, form required for uploadFile, options required for versioned/multipart writes, and service-case customer filter absent from canonical query type.
+Unit evidence covers CSRF/version/idempotency/optional null, 409/412/422/428/429, caller abort, read/mutation timeout, invalid success DTO, accepted-to-terminal 202, poll failure unknown, and missing request body.

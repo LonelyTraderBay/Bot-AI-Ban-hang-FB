@@ -1,0 +1,146 @@
+{
+  "taskId": "FE003",
+  "stepId": "S03",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T17:55:55.491Z",
+  "sourceRevision": "Current dirty working tree; runners and frontend suites rerun on Windows",
+  "expected": "Vitest, Playwright, dirty-draft helper and the responsive browser/axe test execute with current source; no suite is disabled and MSW is gated to demo mode.",
+  "observed": "Current Vitest passed 45/45 across 3 files; the dirty-draft helper passed 4/4; full serialized Playwright passed 41/41 Chromium tests, including 10 FE012 cases. The responsive real-app browser audit ran at 320/390/768/1440 CSS px and passed configured axe assertions; color-contrast remains excluded/incomplete, so this is partial accessibility evidence. The component test reads a marked JSON report from stdout; ordinary tests no longer overwrite FE006 durable screenshot evidence, while explicit evidence runs write only when BOTSALES_DESIGN_EVIDENCE_DIR is set. Vitest config is jsdom with RTL setup; Playwright uses one worker and runs the actual Vite app. __MOCK__ gates MSW; live startup unregisters the prior mock worker. The run is synthetic frontend verification, not backend/provider or full assistive-technology validation.",
+  "command": "npm.cmd --script-shell=cmd.exe test; npm.cmd --script-shell=cmd.exe run test:e2e; node --test tests/session/dirty-drafts.check.mjs; inspect runner and mock configs",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Playwright Chromium",
+    "details": "Root frontend workspace; current tests ran with one Playwright worker. Initial overlapping run is separately preserved as a failure diagnostic.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 6,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S03-e2e-full-rerun.log",
+  "logSha256": "d106b8e1ae071e80ecb67fe41dfcf98b7f2791ed6440cb136f1d6ba26f7aea09",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "ceabad973264eef6cc111ccb7a36e21accbea93be5df7e3d88ebc4ac2b8f03d1"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "3381cb82771225f3650d352b1d7808382a62c3b674bedf0747cc26b2d81be19d"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "1ab44beb54c70b09b2c3060613c0eddc4c32cd72fa04e93f9f9f5481ad66123b"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "apps/web/tests/setup.ts",
+      "sha256": "91a3c8962a0edcb956206a501d943fe99e1c78c6d4d8b5c9a948a3362c75978c"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "92e263718c9276e33278a7541e61660e09db38b330abf17990cca30b32d1ba3e"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "779abcc0d37c4d71427e7cb6dd37a982b60d7b28ba38b5dfa69af1f09f103777"
+    },
+    {
+      "path": "apps/web/src/mocks/fulfillment.ts",
+      "sha256": "8e204fcc7f919b17d7353423cb7c954f10dc63d58f2de6180e8e7ba40336e5a9"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "1b9a29e76443e5670445a2e6d9b328e88a184bd602af9acab35c90795aadd6bf"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "c4e9369d2b6297a743f0c43000301ddb0a703b23090bd87bbc1a3c1da461005e"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "bca493bd32ab4b7aa72bad9833d388f0696956464e9fe06f0f1c50761f754ffb"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "76adf193e9db51678fb95d5e727750a1c94eb50200be7a3d0c071df8f10b8521"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "ede09183cabb844663c94ab08f4662f8bde06665ef77d544d9d5501725f566a5"
+    },
+    {
+      "path": "tests/fe009.spec.ts",
+      "sha256": "d35f07bfb4eb874c002de6c1c6a3ea5ef8797122c4412d070ec5e3f768e12fc4"
+    },
+    {
+      "path": "tests/fe010.spec.ts",
+      "sha256": "2c5df1d9e5c935455b53734671b4559fc5ec30d711d989e513a94e79e76e7a79"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "21cb02e0c82634c208082c81f517c92e7bf58bcbdc36f59ca9d4126a9ca4e5e5"
+    },
+    {
+      "path": "tests/session/demo-server.mjs",
+      "sha256": "4af989379bf20bd2bda83f02dcfd5edd3b4dcec27132fde07fd2952c82eecb20"
+    },
+    {
+      "path": "tests/session/dirty-drafts.check.mjs",
+      "sha256": "4ecb446664a8fa8aaa49a9d54d41c5d2a93a44819a366fa69e3b5380a7a8eee2"
+    },
+    {
+      "path": "tests/design/run-browser-audit.mjs",
+      "sha256": "5bc23f154e45159eaea5ce35bb0d30cd2b5f5bdacc42db4c31839d91bce61f05"
+    },
+    {
+      "path": "tests/design/browser-audit.mjs",
+      "sha256": "2ec75d0ffb27cc22e04ffdbbab24baa8b0e135684c217ca5827785e78985249a"
+    },
+    {
+      "path": "tests/fe012.spec.ts",
+      "sha256": "4efa5d0b237ed5a69a37022b8a250951a71d472eb2ab7c473ed3cad5d6c2f5e0"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE006/S04-browser-audit.json",
+      "sha256": "b09485a131f282a9872109aede47dd600190b34fed58f248ff13988fef696232"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-unit-refresh.log",
+      "sha256": "0b4df1c144ab73b9f45b5e32b4d107b43591944dd726bfed2ce816ad5030674c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-e2e-refresh.log",
+      "sha256": "50e9bac4ed6b9cd582f5cf676a932d6c45222e7e2a54a09175267ee83e9c025e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-e2e-fe009-focused.log",
+      "sha256": "c63261cffc98233741ec4a98dd44e05fbd0349a5ea1ed0fb3eaf349dbba9436e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-e2e-full-rerun.log",
+      "sha256": "d106b8e1ae071e80ecb67fe41dfcf98b7f2791ed6440cb136f1d6ba26f7aea09"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-draft-helper-refresh.log",
+      "sha256": "9dd5650e3bbbc85ba2caf877fc1f63da614ad518edf531513189da445d511b0b"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-refresh-evidence.mjs",
+      "sha256": "ef7e0b810b3bb17579310499108abc21f6c0ae314e66d77a72c9541fc67ae02e"
+    }
+  ],
+  "sourceSnapshotSha256": "593284571d869715621d161c72f8e7febc0113161977dc9424dc0ee10a577d7b"
+}

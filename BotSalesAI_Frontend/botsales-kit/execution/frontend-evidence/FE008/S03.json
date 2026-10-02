@@ -1,0 +1,105 @@
+{
+  "taskId": "FE008",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T12:57:12.306Z",
+  "sourceRevision": "18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty working tree",
+  "command": "& 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe run test:domain",
+  "commandId": "domain",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0 / Python 3.12.10",
+    "details": "Synthetic frontend simulator and MSW Node network harness; schema audit uses jsonschema 4.25.1 in an isolated temporary target. No real backend/provider, database or credentials.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 77,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE008/S03-e2e-refresh-20261001.log",
+  "logSha256": "83b43a8fc6e4540fbe35c3904f814dc855fae579ba0f46a0a4bb5c8c78402687",
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "be8d44a4ee86a57ebbe8b31e03b566dc35542d1601f7e39ae98abf7db2b3ae11"
+    },
+    {
+      "path": "apps/web/src/mocks/collections.json",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "238d0e6a82fc99474415c10365b369cc9e7b64422048bdcbaadf7d980eca598e"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "c153c195632add8e16faff8de4f1582de57b9deb9ee4d5c055ab01a3750e8597"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "tests/domain-scenarios.cjs",
+      "sha256": "ebd4d7a6a0de6e6fba5b57d09e8e0aced19e53a1a8669e7c822cf09c6baa2fa6"
+    },
+    {
+      "path": "tests/fixtures/mock-network.mjs",
+      "sha256": "dc367b505a5cd380d40ab30619ec6f7e403cbd538f1ae87d09746b3384bca78c"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "929288d28d5d694c299ada3b721ce438cd38483c08e021b5b89e29736dad72c9"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "e630656e8c168f7e4f204670a4ce1267603265ff485f868f8ca52c1ce9104b81"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "packages/contracts/src/permissions.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/events.schema.json",
+      "sha256": "7f2071f90cc925b4c32cb6d6de0ef99f8cc14b618c0e04224f024f3aa83c21ee"
+    },
+    {
+      "path": "apps/web/src/mocks/catalog.ts",
+      "sha256": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56"
+    }
+  ],
+  "sourceSnapshotSha256": "e1a6093bb39a4672d092b17325f0606155c64cd26695d510af241ffde8a4fd6e",
+  "expected": "Current network suite covers successful and failing paths for large and empty data, permissions, stale/validation/unknown responses, delay/abort and SSE without external services.",
+  "observed": "The current full Chromium suite passed 77/77 on the React demo, including deterministic shop/role isolation, stale/422/forbidden/unknown states, delayed reads, and visible synthetic transport behavior.",
+  "relatedLogs": [
+    {
+      "path": "execution/frontend-evidence/FE008/S03-e2e-refresh-20261001.log",
+      "sha256": "83b43a8fc6e4540fbe35c3904f814dc855fae579ba0f46a0a4bb5c8c78402687"
+    },
+    {
+      "path": "execution/frontend-evidence/FE017/S04-verify-current-20261001.log",
+      "sha256": "6944136b36978c2e1ec78eec8fa10ca66adae47b5899f76eadd145331e4bdd8c"
+    }
+  ]
+}

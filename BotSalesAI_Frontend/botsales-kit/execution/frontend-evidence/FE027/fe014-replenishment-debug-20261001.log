@@ -1,0 +1,44 @@
+
+[WebServer] (node:31256) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:8480) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals
+  1) [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('link', { name: 'Nhập lại hàng', exact: true })
+
+
+      267 |     await expect(page).toHaveURL(/\/s\/shop-demo\/purchases$/);
+      268 |
+    > 269 |     await page.getByRole('link', { name: 'Nhập lại hàng', exact: true }).click();
+          |                                                                          ^
+      270 |     const reevaluateWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/purchase-suggestions/evaluate'));
+      271 |     await page.getByRole('button', { name: 'Đánh giá nhu cầu nhập' }).click();
+      272 |     expect((await reevaluateWait).status()).toBe(202);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:269:74
+
+    Error Context: test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\error-context.md
+
+    Error Context: test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe014-FE014-D03-D04-D07-re-0ad4b--blocks-duplicate-proposals-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\fe014.spec.ts:242:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals 

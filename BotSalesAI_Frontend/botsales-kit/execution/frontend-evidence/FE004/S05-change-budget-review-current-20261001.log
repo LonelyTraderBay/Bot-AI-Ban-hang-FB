@@ -1,0 +1,154 @@
+FE004 change-budget diff review — 2026-10-01
+warning: in the working copy of 'BotSalesAI_Frontend/apps/web/tsconfig.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'BotSalesAI_Frontend/scripts/check-boundaries.mjs', LF will be replaced by CRLF the next time Git touches it
+ BotSalesAI_Frontend/apps/web/tsconfig.json       |   2 +-
+ BotSalesAI_Frontend/scripts/check-boundaries.mjs | 127 ++++++++++++++++++++---
+ 2 files changed, 116 insertions(+), 13 deletions(-)
+warning: in the working copy of 'BotSalesAI_Frontend/apps/web/tsconfig.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'BotSalesAI_Frontend/scripts/check-boundaries.mjs', LF will be replaced by CRLF the next time Git touches it
+diff --git a/BotSalesAI_Frontend/apps/web/tsconfig.json b/BotSalesAI_Frontend/apps/web/tsconfig.json
+index 281f7fb..2d78288 100644
+--- a/BotSalesAI_Frontend/apps/web/tsconfig.json
++++ b/BotSalesAI_Frontend/apps/web/tsconfig.json
+@@ -6,7 +6,7 @@
+     "esModuleInterop": true, "allowSyntheticDefaultImports": true,
+     "isolatedModules": true, "verbatimModuleSyntax": true,
+     "noEmit": true, "jsx": "react-jsx", "strict": true,
+-    "noUnusedLocals": true, "noUnusedParameters": true, "noFallthroughCasesInSwitch": true,
++    "noUncheckedIndexedAccess": true, "noUnusedLocals": true, "noUnusedParameters": true, "noFallthroughCasesInSwitch": true,
+     "forceConsistentCasingInFileNames": true, "skipLibCheck": true,
+     "baseUrl": ".", "paths": {
+       "@/*": ["src/*"], "@botsales/contracts": ["../../packages/contracts/src/index.ts"],
+diff --git a/BotSalesAI_Frontend/scripts/check-boundaries.mjs b/BotSalesAI_Frontend/scripts/check-boundaries.mjs
+index a0d1bbe..9216d48 100644
+--- a/BotSalesAI_Frontend/scripts/check-boundaries.mjs
++++ b/BotSalesAI_Frontend/scripts/check-boundaries.mjs
+@@ -1,12 +1,115 @@
+-import fs from 'node:fs';import path from 'node:path';import {root,typescript} from './tools.mjs';
+-const {ts}=typescript();const src=path.join(root,'apps/web/src');const issues=[],graph=new Map();let count=0;
+-function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]).filter(f=>/\.(ts|tsx)$/.test(f));}
+-function resolveImport(spec,file){const base=spec.startsWith('@/')?path.join(src,spec.slice(2)):spec==='@botsales/contracts'?path.join(root,'packages/contracts/src/index.ts'):spec==='@botsales/tokens'?path.join(root,'packages/design-tokens/src/index.ts'):spec.startsWith('.')?path.resolve(path.dirname(file),spec):null;if(!base)return null;for(const p of [base,base+'.ts',base+'.tsx',base+'.json',path.join(base,'index.ts'),path.join(base,'index.tsx')])if(fs.existsSync(p)&&fs.statSync(p).isFile())return p;issues.push(`Unresolved local import ${spec}: ${path.relative(root,file)}`);return null;}
+-for(const file of walk(src)){const tree=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);const edges=[];const from=path.relative(src,file).replaceAll('\\','/');
+- function visit(node){let spec=null;if((ts.isImportDeclaration(node)||ts.isExportDeclaration(node))&&node.moduleSpecifier&&ts.isStringLiteral(node.moduleSpecifier))spec=node.moduleSpecifier.text;else if(ts.isCallExpression(node)&&node.expression.kind===ts.SyntaxKind.ImportKeyword&&node.arguments[0]&&ts.isStringLiteral(node.arguments[0]))spec=node.arguments[0].text;
+- if(spec){count++;const target=resolveImport(spec,file);if(target){edges.push(target);const to=path.relative(src,target).replaceAll('\\','/');const a=from.match(/^modules\/([^/]+)/),b=to.match(/^modules\/([^/]+)/);if(a&&b&&a[1]!==b[1])issues.push(`Cross-feature import ${from} → ${to}`);if(a&&(to.startsWith('app/')||to.startsWith('mocks/')))issues.push(`Feature imports application/mock ${from} → ${to}`);if(from.startsWith('shared/')&&/^(app|modules|mocks)\//.test(to))issues.push(`Shared dependency violation ${from} → ${to}`);}}
+- ts.forEachChild(node,visit);
+- }visit(tree);graph.set(file,edges);
+-}
+-const visited=new Set(),active=new Set();function dfs(file,trail=[]){if(active.has(file)){issues.push('Import cycle: '+[...trail,file].map(f=>path.relative(src,f)).join(' → '));return;}if(visited.has(file)||!graph.has(file))return;visited.add(file);active.add(file);for(const to of graph.get(file))dfs(to,[...trail,file]);active.delete(file);}for(const file of graph.keys())dfs(file);
+-const report={checkedAt:new Date().toISOString(),scope:'AST imports resolve aliases/relative paths, module boundaries and cycles',files:graph.size,imports:count,status:issues.length?'FAIL':'PASS',issues};fs.mkdirSync(path.join(root,'evidence'),{recursive:true});fs.writeFileSync(path.join(root,'evidence/boundaries.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));if(issues.length)process.exitCode=1;
++import fs from 'node:fs';
++import path from 'node:path';
++import { spawnSync } from 'node:child_process';
++import { root, typescript } from './tools.mjs';
++
++const { ts } = typescript();
++const defaultSourceRoot = path.join(root, 'apps/web/src');
++const sourceRoot = process.argv[2] ? path.resolve(process.argv[2]) : defaultSourceRoot;
++const reportPath = process.argv[3]
++    ? path.resolve(process.argv[3])
++    : path.join(root, 'evidence/boundaries.json');
++const issues = [];
++const graph = new Map();
++let importCount = 0;
++
++function walk(directory) {
++    return fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
++        const entryPath = path.join(directory, entry.name);
++        return entry.isDirectory() ? walk(entryPath) : [entryPath];
++    }).filter(file => /\.(ts|tsx)$/.test(file));
++}
++
++function resolveImport(specifier, importer) {
++    const base = specifier.startsWith('@/')
++        ? path.join(sourceRoot, specifier.slice(2))
++        : specifier === '@botsales/contracts'
++            ? path.join(root, 'packages/contracts/src/index.ts')
++            : specifier === '@botsales/tokens'
++                ? path.join(root, 'packages/design-tokens/src/index.ts')
++                : specifier.startsWith('.')
++                    ? path.resolve(path.dirname(importer), specifier)
++                    : null;
++
++    if (!base) return null;
++    for (const candidate of [base, `${base}.ts`, `${base}.tsx`, `${base}.json`, path.join(base, 'index.ts'), path.join(base, 'index.tsx')]) {
++        if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) return candidate;
++    }
++
++    issues.push(`Unresolved local import ${specifier}: ${path.relative(root, importer)}`);
++    return null;
++}
++
++for (const file of walk(sourceRoot)) {
++    const tree = ts.createSourceFile(file, fs.readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
++    for (const diagnostic of tree.parseDiagnostics) {
++        const position = diagnostic.file?.getLineAndCharacterOfPosition(diagnostic.start ?? 0);
++        const location = position ? `:${position.line + 1}:${position.character + 1}` : '';
++        issues.push(`Parse error ${path.relative(sourceRoot, file)}${location}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`);
++    }
++
++    const edges = [];
++    const from = path.relative(sourceRoot, file).replaceAll('\\', '/');
++    function visit(node) {
++        let specifier = null;
++        if ((ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
++            specifier = node.moduleSpecifier.text;
++        } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword && node.arguments[0] && ts.isStringLiteral(node.arguments[0])) {
++            specifier = node.arguments[0].text;
++        }
++
++        if (specifier) {
++            importCount++;
++            const target = resolveImport(specifier, file);
++            if (target) {
++                edges.push(target);
++                const to = path.relative(sourceRoot, target).replaceAll('\\', '/');
++                const fromModule = from.match(/^modules\/([^/]+)/);
++                const toModule = to.match(/^modules\/([^/]+)/);
++                if (fromModule && toModule && fromModule[1] !== toModule[1]) issues.push(`Cross-feature import ${from} → ${to}`);
++                if (fromModule && (to.startsWith('app/') || to.startsWith('mocks/'))) issues.push(`Feature imports application/mock ${from} → ${to}`);
++                if (from.startsWith('shared/') && /^(app|modules|mocks)\//.test(to)) issues.push(`Shared dependency violation ${from} → ${to}`);
++            }
++        }
++        ts.forEachChild(node, visit);
++    }
++
++    visit(tree);
++    graph.set(file, edges);
++}
++
++const visited = new Set();
++const active = new Set();
++function visitGraph(file, trail = []) {
++    if (active.has(file)) {
++        issues.push(`Import cycle: ${[...trail, file].map(item => path.relative(sourceRoot, item)).join(' → ')}`);
++        return;
++    }
++    if (visited.has(file) || !graph.has(file)) return;
++    visited.add(file);
++    active.add(file);
++    for (const target of graph.get(file)) visitGraph(target, [...trail, file]);
++    active.delete(file);
++}
++for (const file of graph.keys()) visitGraph(file);
++
++let fixtureSummary;
++if (sourceRoot === defaultSourceRoot) {
++    const fixtureRun = spawnSync(process.execPath, [path.join(root, 'tests/architecture/check-boundaries.mjs')], { cwd: root, encoding: 'utf8' });
++    fixtureSummary = fixtureRun.status === 0 ? fixtureRun.stdout.trim() : 'FAIL';
++    if (fixtureRun.status !== 0) issues.push(`Negative boundary fixtures failed: ${fixtureRun.stderr || fixtureRun.stdout}`);
++}
++
++const report = {
++    checkedAt: new Date().toISOString(),
++    scope: 'AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors',
++    files: graph.size,
++    imports: importCount,
++    ...(fixtureSummary ? { negativeFixtures: fixtureSummary } : {}),
++    status: issues.length ? 'FAIL' : 'PASS',
++    issues,
++};
++fs.mkdirSync(path.dirname(reportPath), { recursive: true });
++fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
++console.log(JSON.stringify(report, null, 2));
++if (issues.length) process.exitCode = 1;
+Review result: scoped diff adds noUncheckedIndexedAccess to strict TypeScript and upgrades the AST boundary checker to parse diagnostics, alias/relative resolution, dynamic/type imports, cycle checks and negative fixtures. Full checks pass on current source. No additional FE004 source refactor was justified.

@@ -1,0 +1,403 @@
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Command: node scripts/progress.mjs validate
+{"valid":true,"tasks":28,"checkpoints":140,"scope":"Structure only; does not run product tests"}
+Exit code: 0
+Command: node scripts/progress.mjs status
+{
+  "overallPercent": 0,
+  "verifiedSteps": 0,
+  "totalSteps": 140,
+  "phases": [
+    {
+      "id": "F00",
+      "title": "Tiếp nhận và môi trường",
+      "weightPercent": 10,
+      "earned": 0,
+      "total": 30,
+      "percent": 0
+    },
+    {
+      "id": "F01",
+      "title": "Kiến trúc, contract và mock foundation",
+      "weightPercent": 25,
+      "earned": 0,
+      "total": 50,
+      "percent": 0
+    },
+    {
+      "id": "F02",
+      "title": "Luồng và module frontend",
+      "weightPercent": 40,
+      "earned": 0,
+      "total": 140,
+      "percent": 0
+    },
+    {
+      "id": "F03",
+      "title": "Chất lượng, an toàn và artifact",
+      "weightPercent": 20,
+      "earned": 0,
+      "total": 40,
+      "percent": 0
+    },
+    {
+      "id": "F04",
+      "title": "Nghiệm thu mock và bàn giao",
+      "weightPercent": 5,
+      "earned": 0,
+      "total": 20,
+      "percent": 0
+    }
+  ],
+  "next": [
+    {
+      "id": "FE001",
+      "title": "Tiếp nhận source và khóa phạm vi frontend",
+      "nextStep": {
+        "id": "S01",
+        "weight": 1,
+        "action": "Đọc hướng dẫn có hiệu lực, xác minh cwd/Git root/revision/diff và quyền docs/implement của lượt hiện tại.",
+        "requiredEvidenceKind": "artifact_review",
+        "verification": "Có baseline thực và thay đổi sẵn có; không nhận việc code chỉ vì mở kế hoạch. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+        "required": true,
+        "status": "STALE",
+        "note": ""
+      }
+    }
+  ],
+  "blocked": [
+    {
+      "id": "FE023",
+      "reason": "Pause the active FE023 task while revalidating stale predecessors FE003 through FE022 in priority order."
+    }
+  ],
+  "stale": [
+    "FE001",
+    "FE002",
+    "FE003",
+    "FE004",
+    "FE005",
+    "FE006",
+    "FE007",
+    "FE008",
+    "FE009",
+    "FE010",
+    "FE011",
+    "FE012",
+    "FE013",
+    "FE014",
+    "FE015",
+    "FE016",
+    "FE017",
+    "FE018",
+    "FE019",
+    "FE020",
+    "FE021",
+    "FE022"
+  ]
+}
+Exit code: 0
+Command: node scripts/progress.mjs next
+{
+  "id": "FE001",
+  "phase": "F00",
+  "priority": 1,
+  "title": "Tiếp nhận source và khóa phạm vi frontend",
+  "kind": "repository_intake",
+  "dependsOn": [],
+  "featureIds": [
+    "H07",
+    "H08"
+  ],
+  "routeIds": [],
+  "operationIds": [],
+  "sourceTaskIds": [
+    "T001",
+    "T002",
+    "T004",
+    "T006"
+  ],
+  "verificationLevel": "V0–V3; V4 theo rủi ro frontend; API synthetic",
+  "readFirst": [
+    "../AGENTS.md",
+    "../AI_RULES.md",
+    "../docs/FRONTEND_SCOPE.md",
+    "../docs/PROJECT_CONTEXT.md",
+    "docs/02_ARCHITECTURE.md",
+    "docs/06_API_AND_REALTIME.md",
+    "docs/18_CODING_STANDARDS.md",
+    "../evidence/REPORT.md",
+    "../docs/KNOWN_GAPS.md",
+    "../docs/route-implementation.json"
+  ],
+  "writeScope": [
+    "docs/PROJECT_CONTEXT.md",
+    "docs/FRONTEND_SCOPE.md",
+    "docs/KNOWN_GAPS.md",
+    "botsales-kit/execution/SESSION_HANDOFF.md"
+  ],
+  "deliverables": [
+    "docs/PROJECT_CONTEXT.md",
+    "docs/FRONTEND_SCOPE.md",
+    "docs/KNOWN_GAPS.md",
+    "botsales-kit/execution/SESSION_HANDOFF.md"
+  ],
+  "implementationSteps": [
+    {
+      "id": "S01",
+      "weight": 1,
+      "action": "Đọc hướng dẫn có hiệu lực, xác minh cwd/Git root/revision/diff và quyền docs/implement của lượt hiện tại.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Có baseline thực và thay đổi sẵn có; không nhận việc code chỉ vì mở kế hoạch. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S02",
+      "weight": 3,
+      "action": "Map 54 route và 16 module hiện có qua route-implementation.json; phân biệt source có sẵn với browser chưa xác minh.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Mỗi route trỏ file/component thực hoặc gap rõ; không dựng lại scaffold. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S03",
+      "weight": 2,
+      "action": "Đối chiếu REPORT/KNOWN_GAPS/package.json; ghi kiểm đã chạy, chưa chạy và lỗi nền theo môi trường.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Kết quả lịch sử không biến thành PASS hiện tại; không suy DNS cũ vẫn bị chặn hôm nay. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S04",
+      "weight": 2,
+      "action": "Chọn mục tiêu frontend đầu tiên, scope file, API/route và các mức V0–V4 cần chạy; ghi Change Budget.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Task có Definition of Ready rõ và không phụ thuộc gate backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S05",
+      "weight": 2,
+      "action": "Bàn giao hiện trạng và xác nhận ledger frontend riêng; đọc validate/status/next, không nhận task toàn sản phẩm.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "28 task frontend bắt đầu 0%; ledger 84 task giữ nguyên trạng. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    }
+  ],
+  "acceptanceCases": [
+    "FE001.AC01 — Scope nghiệm thu mock frontend được ghi nhất quán.",
+    "FE001.AC02 — Baseline và ma trận source đúng repo/diff.",
+    "FE001.AC03 — Không xóa/ghi đè source có sẵn hoặc nhận backend DONE."
+  ],
+  "stopConditions": [
+    "Chặn phần thiếu contract hoặc quyết định nghiệp vụ bắt buộc; ghi gap cụ thể, không tự tạo endpoint/quyền.",
+    "Thiếu toolchain/test frontend hoặc evidence đúng diff: CHƯA XÁC MINH; tiếp tục task độc lập đủ dependency.",
+    "Backend/provider thật nằm ngoài phạm vi; không đòi credentials thật để nghiệm thu mock frontend, không đánh dấu tích hợp thật PASS."
+  ],
+  "handoff": "execution/frontend-evidence/FE001/handoff.md",
+  "commandPolicy": "Lệnh app tại root frontend, từ package.json và frontend-command-map.json; chỉ đăng ký VERIFIED_AVAILABLE sau khi chạy thành công có log. Ghi evidence và snapshot của source/test/fixture/config liên quan. Không checkpoint ledger toàn sản phẩm.",
+  "status": "STALE",
+  "owner": "Codex",
+  "blockedReason": "Revalidate intake evidence after restoring the exact recorded progress helper source hash",
+  "earned": 0,
+  "total": 10,
+  "percent": 0,
+  "done": false,
+  "dependencyReady": true,
+  "steps": [
+    {
+      "id": "S01",
+      "weight": 1,
+      "action": "Đọc hướng dẫn có hiệu lực, xác minh cwd/Git root/revision/diff và quyền docs/implement của lượt hiện tại.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Có baseline thực và thay đổi sẵn có; không nhận việc code chỉ vì mở kế hoạch. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": ""
+    },
+    {
+      "id": "S02",
+      "weight": 3,
+      "action": "Map 54 route và 16 module hiện có qua route-implementation.json; phân biệt source có sẵn với browser chưa xác minh.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Mỗi route trỏ file/component thực hoặc gap rõ; không dựng lại scaffold. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": ""
+    },
+    {
+      "id": "S03",
+      "weight": 2,
+      "action": "Đối chiếu REPORT/KNOWN_GAPS/package.json; ghi kiểm đã chạy, chưa chạy và lỗi nền theo môi trường.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Kết quả lịch sử không biến thành PASS hiện tại; không suy DNS cũ vẫn bị chặn hôm nay. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": ""
+    },
+    {
+      "id": "S04",
+      "weight": 2,
+      "action": "Chọn mục tiêu frontend đầu tiên, scope file, API/route và các mức V0–V4 cần chạy; ghi Change Budget.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Task có Definition of Ready rõ và không phụ thuộc gate backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": ""
+    },
+    {
+      "id": "S05",
+      "weight": 2,
+      "action": "Bàn giao hiện trạng và xác nhận ledger frontend riêng; đọc validate/status/next, không nhận task toàn sản phẩm.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "28 task frontend bắt đầu 0%; ledger 84 task giữ nguyên trạng. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": ""
+    }
+  ]
+}
+Exit code: 0
+Command: node scripts/progress.mjs --full-product status
+{
+  "overallPercent": 0,
+  "verifiedSteps": 0,
+  "totalSteps": 420,
+  "phases": [
+    {
+      "id": "P00",
+      "title": "Tiếp nhận và khóa nguồn chuẩn",
+      "weightPercent": 3,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P01",
+      "title": "Toolchain, hợp đồng và nền UI",
+      "weightPercent": 6,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P02",
+      "title": "Backend, phiên và cô lập dữ liệu",
+      "weightPercent": 8,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P03",
+      "title": "Sản phẩm, khách hàng và tồn kho",
+      "weightPercent": 8,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P04",
+      "title": "Đơn hàng và nền tính tiền",
+      "weightPercent": 10,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P05",
+      "title": "Chuẩn bị hàng và thông báo",
+      "weightPercent": 10,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P06",
+      "title": "Facebook, tri thức và Admin AI",
+      "weightPercent": 10,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P07",
+      "title": "Nhà cung cấp và tự động mua hàng",
+      "weightPercent": 10,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P08",
+      "title": "Kế toán, COD và đối soát",
+      "weightPercent": 10,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P09",
+      "title": "Trưởng nhóm, phê duyệt và báo cáo",
+      "weightPercent": 5,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P10",
+      "title": "Hoàn thiện UI xuyên nghiệp vụ",
+      "weightPercent": 4,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P11",
+      "title": "Tích hợp staging và thiết bị thật",
+      "weightPercent": 4,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P12",
+      "title": "Bảo mật, tải và khôi phục",
+      "weightPercent": 8,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    },
+    {
+      "id": "P13",
+      "title": "Nghiệm thu, phát hành và bàn giao",
+      "weightPercent": 4,
+      "earned": 0,
+      "total": 60,
+      "percent": 0
+    }
+  ],
+  "next": [
+    {
+      "id": "T001",
+      "title": "Khảo sát đúng repo và chụp hiện trạng",
+      "nextStep": {
+        "id": "S01",
+        "weight": 1,
+        "action": "Đọc root instructions và AI_RULES nguyên bản; xác minh cwd, quyền nhiệm vụ, git status hoặc snapshot file",
+        "requiredEvidenceKind": "artifact_review",
+        "verification": "Chứng minh kết quả của T001.S01 bằng artifact/command phù hợp, chỉ rõ expected/observed; log được hash và gắn source snapshot. Không dùng log của demo HTML để hoàn thành code ứng dụng.",
+        "required": true,
+        "status": "NOT_STARTED",
+        "note": ""
+      }
+    }
+  ],
+  "blocked": [],
+  "stale": []
+}
+Exit code: 0
+Full-product ledger SHA256 before: 23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed
+Full-product ledger SHA256 after: 23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed
+Frontend FE017 raw status: BLOCKED
+Frontend FE017 blocker: FE017.AC01 requires canonical Knowledge.allowedActions, which is absent in OpenAPI; user confirmed keep this task blocked until contract adds it. Do not invent/update DTO or generated output.

@@ -1,0 +1,311 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> npm run setup && npm run build && npm run build:demo && playwright test --grep built demo artifact|production artifact
+
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2046 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist/assets/hooks-Dq1j2I9l.js                   4.17 kB │ gzip:   1.94 kB
+dist/assets/imports-CHo7G4YM.js                 4.84 kB │ gzip:   2.25 kB
+dist/assets/index-BfCNM1ic.js                   7.23 kB │ gzip:   2.93 kB
+dist/assets/index-DvJ1q7-A.js                   7.80 kB │ gzip:   3.14 kB
+dist/assets/index-CYLBSu3x.js                   8.35 kB │ gzip:   3.54 kB
+dist/assets/index-CrCbA1ZL.js                   9.06 kB │ gzip:   3.34 kB
+dist/assets/index-Bogzl3jw.js                  11.38 kB │ gzip:   4.24 kB
+dist/assets/index-BBGCgg2D.js                  12.32 kB │ gzip:   4.45 kB
+dist/assets/index-Cm72SLkz.js                  12.37 kB │ gzip:   5.06 kB
+dist/assets/index-cfUygXmN.js                  12.67 kB │ gzip:   4.81 kB
+dist/assets/index-DnJaQZdH.js                  14.45 kB │ gzip:   4.85 kB
+dist/assets/index-ouYQ9JsN.js                  14.57 kB │ gzip:   4.85 kB
+dist/assets/index-CmevT3Ss.js                  14.71 kB │ gzip:   4.82 kB
+dist/assets/index-DdhOYAof.js                  18.85 kB │ gzip:   6.48 kB
+dist/assets/index-BISsThY0.js                  24.83 kB │ gzip:   8.10 kB
+dist/assets/index-BcBLJIo6.js                  28.42 kB │ gzip:   8.84 kB
+dist/assets/index-D3G3WkUY.js                  29.46 kB │ gzip:   8.60 kB
+dist/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist/assets/index-BdTEmy3v.js                 324.48 kB │ gzip:  99.45 kB
+dist/assets/index-C7mtgtfr.js                 730.13 kB │ gzip: 184.23 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.66s
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2262 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist-demo/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist-demo/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist-demo/assets/DeleteOutlineRounded-TVhbfOvT.js    0.53 kB │ gzip:   0.31 kB
+dist-demo/assets/control-CFBF7Lij.js                 0.57 kB │ gzip:   0.39 kB
+dist-demo/assets/hooks-lqWL5GGz.js                   4.17 kB │ gzip:   1.94 kB
+dist-demo/assets/imports-C2ZjhQXU.js                 5.01 kB │ gzip:   2.34 kB
+dist-demo/assets/index-CscDWLXv.js                   7.76 kB │ gzip:   3.13 kB
+dist-demo/assets/index-CqqJVEA0.js                   7.79 kB │ gzip:   3.14 kB
+dist-demo/assets/index-DXvZCEK8.js                   8.35 kB │ gzip:   3.54 kB
+dist-demo/assets/permissions-DSwmPBth.js             8.41 kB │ gzip:   1.94 kB
+dist-demo/assets/index-BIjyNMcG.js                   9.06 kB │ gzip:   3.34 kB
+dist-demo/assets/index-C2pJAVoD.js                  11.38 kB │ gzip:   4.25 kB
+dist-demo/assets/index-Bpnpo_vi.js                  12.06 kB │ gzip:   4.88 kB
+dist-demo/assets/index-tjk4LTUO.js                  12.32 kB │ gzip:   4.45 kB
+dist-demo/assets/index-BkCCBJBy.js                  12.67 kB │ gzip:   4.81 kB
+dist-demo/assets/index-CxB8ESWy.js                  14.45 kB │ gzip:   4.85 kB
+dist-demo/assets/index-BGQaHyIn.js                  14.71 kB │ gzip:   4.82 kB
+dist-demo/assets/index-DBmKAZSe.js                  14.73 kB │ gzip:   4.90 kB
+dist-demo/assets/index-HD4LqZxl.js                  16.43 kB │ gzip:   6.06 kB
+dist-demo/assets/index-BWpyqimT.js                  24.83 kB │ gzip:   8.10 kB
+dist-demo/assets/index-BBhsObae.js                  28.42 kB │ gzip:   8.84 kB
+dist-demo/assets/index-D9e7LzhS.js                  29.46 kB │ gzip:   8.60 kB
+dist-demo/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist-demo/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist-demo/assets/service-B7JPQkF2.js               156.43 kB │ gzip:  33.79 kB
+dist-demo/assets/browser-RgK9ipWb.js               255.09 kB │ gzip:  86.76 kB
+dist-demo/assets/mui-D8ryPhxS.js                   322.10 kB │ gzip:  97.68 kB
+dist-demo/assets/index-BZ3Yf95s.js                 324.66 kB │ gzip:  99.51 kB
+dist-demo/assets/index-CXJ2XlDi.js                 732.32 kB │ gzip: 184.99 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.95s
+[WebServer] (node:27964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+✔ canonical contracts validate and generate the API base path from OpenAPI (23.1627ms)
+✔ generated operation registry preserves required and optional query parameter metadata (9.181ms)
+✔ rejects unresolved schema references before generation (23.5128ms)
+✔ rejects missing API version and a server URL outside same-origin path form (19.6925ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (15.6656ms)
+✔ detects a stale generated file and accepts it after regeneration (1.7452ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (37.672ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (12.5881ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (17.1325ms)
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (14.1029ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (17.302ms)
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.2765ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.1953ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.1694ms)
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.3625ms)
+✔ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (0.0941ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.0605ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0481ms)
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.2677ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.1001ms)
+✔ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (0.811ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.1092ms)
+
+Running 2 tests using 1 worker
+
+(node:4356) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\artifacts\demo-preview.spec.ts:37:1 › the built demo artifact serves the React UI and synthetic API through preview (191ms)
+(node:11164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium] › tests\artifacts\demo-preview.spec.ts:87:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime (11ms)
+
+
+  1) [chromium] › tests\artifacts\demo-preview.spec.ts:37:1 › the built demo artifact serves the React UI and synthetic API through preview 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 404
+
+      39 |     await page.goto(`${baseUrl}/s/shop-demo/overview`);
+      40 |     const response = await sessionResponse;
+    > 41 |     expect(response.status()).toBe(200);
+         |                               ^
+      42 |     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
+      43 |     await expect(page.locator('main h1').first()).toBeVisible();
+      44 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\artifacts\demo-preview.spec.ts:41:31
+
+    Error Context: test-results\artifacts-demo-preview-the-06aeb-nthetic-API-through-preview-chromium\error-context.md
+
+    Error Context: test-results\artifacts-demo-preview-the-06aeb-nthetic-API-through-preview-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\artifacts-demo-preview-the-06aeb-nthetic-API-through-preview-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\artifacts-demo-preview-the-06aeb-nthetic-API-through-preview-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\artifacts\demo-preview.spec.ts:37:1 › the built demo artifact serves the React UI and synthetic API through preview 
+  1 passed (2.8s)

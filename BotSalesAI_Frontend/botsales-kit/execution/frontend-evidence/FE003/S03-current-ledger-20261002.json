@@ -1,0 +1,110 @@
+{
+  "taskId": "FE003",
+  "stepId": "S03",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T18:24:10.085Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 (main) + verified current working-tree snapshot",
+  "expected": "Kiểm cấu hình Vitest/RTL/MSW/Playwright/axe thực; thu baseline có lỗi mà không tắt suite. Verification: Test runner và config được nạp; testfail ghi CHƯA ĐẠT, không nhận gate PASS. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+  "observed": "Vitest/RTL ran 71/71, domain/MSW ran 88/88, and full Playwright Chromium ran 143/143 on the current frontend snapshot. The browser suite includes whole-page axe checks, skip-link keyboard actions, demo artifact tests and role-route tests. A failed focused role-test assertion during test development is preserved as a diagnostic; the final focused and full suite both passed. No suite was skipped to obtain the final result.",
+  "command": "Review current frontend scope, implementation evidence, tracker boundaries and handoff for FE003.S03",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / v24.19.0 / npm 11.17.0",
+    "details": "Current repository working tree. Browser tests use Chromium against React and the synthetic MSW demo; local verification does not claim backend or staging behavior.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 3,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S03-review-current-ledger-20261002.log",
+  "logSha256": "d4aca83215000f515b249660a6ef175822fbec321251aa41420df1c340000d46",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "92e263718c9276e33278a7541e61660e09db38b330abf17990cca30b32d1ba3e"
+    },
+    {
+      "path": "apps/web/tests/setup.ts",
+      "sha256": "0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "1ab44beb54c70b09b2c3060613c0eddc4c32cd72fa04e93f9f9f5481ad66123b"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/design/tokens.json",
+      "sha256": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895"
+    },
+    {
+      "path": "botsales-kit/execution/FRONTEND_PLAN_GUIDE.md",
+      "sha256": "ff33fddc14adbc60a74eee578ef29aa6d5b0685f5b01de7020696c5b0275d483"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "13c46cd75f39c9e2d5409ce4001628ee2476ad55631851e08cc590afe38877cc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "ede09183cabb844663c94ab08f4662f8bde06665ef77d544d9d5501725f566a5"
+    },
+    {
+      "path": "tests/accessibility/routes.spec.ts",
+      "sha256": "9ec199807f025335a2ff6ea90f69cea6a737adfbf5311abedf7bbf4f9766577c"
+    },
+    {
+      "path": "tests/design/browser-audit.mjs",
+      "sha256": "2ec75d0ffb27cc22e04ffdbbab24baa8b0e135684c217ca5827785e78985249a"
+    },
+    {
+      "path": "tests/fe011.spec.ts",
+      "sha256": "4935d39892497393840ba2bbe5f5dbe9b6ed1372aa0726e4d6dab94a80c566da"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "4f98c24e05cdf9f984542764451df76117bc23027757697a5aff7167257221c0"
+    }
+  ],
+  "sourceSnapshotSha256": "1ce3881a3201ea4508aab0626cd69a5a9c41b2713002701c0efd809f71d61722"
+}

@@ -1,0 +1,35 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (17.9152ms)
+✔ generated operation registry preserves required and optional query parameter metadata (8.2289ms)
+✔ rejects unresolved schema references before generation (20.6447ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.6606ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.814ms)
+✔ detects a stale generated file and accepts it after regeneration (2.0657ms)
+
+Running 15 tests using 1 worker
+
+(node:24524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (1.9s)
+  ok  2 [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (4.1s)
+  ok  3 [chromium] › tests\fe009.spec.ts:212:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.4s)
+  ok  4 [chromium] › tests\fe009.spec.ts:235:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.6s)
+  ok  5 [chromium] › tests\fe009.spec.ts:299:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.9s)
+  ok  6 [chromium] › tests\frontend.spec.ts:42:1 › catalog create uses the HTTP mock and successful save clears the draft guard (1.7s)
+  ok  7 [chromium] › tests\frontend.spec.ts:80:1 › dirty drafts block in-app navigation and preserve input until the user decides (2.3s)
+  ok  8 [chromium] › tests\frontend.spec.ts:116:1 › all canonical routes render inside the real React demo application (12.3s)
+  ok  9 [chromium] › tests\frontend.spec.ts:131:1 › switching shops cancels a delayed request and loads only the new shop scope (5.2s)
+  ok 10 [chromium] › tests\frontend.spec.ts:166:1 › role changes remove restricted navigation and the route guard explains denied access (851ms)
+  ok 11 [chromium] › tests\frontend.spec.ts:185:1 › deep links survive browser refresh and logout clears the mock session (2.5s)
+  ok 12 [chromium] › tests\frontend.spec.ts:206:1 › logout asks before discarding a draft and retains the session when logout fails (2.1s)
+  ok 13 [chromium] › tests\frontend.spec.ts:328:1 › mobile navigation opens, routes, and closes without viewport overflow (938ms)
+  ok 14 [chromium] › tests\frontend.spec.ts:360:1 › chunk loading errors use the route recovery boundary (843ms)
+  ok 15 [chromium] › tests\frontend.spec.ts:439:1 › live mode reports an unavailable session API without enabling mock data (319ms)
+
+  15 passed (43.6s)
+EXIT_CODE=0

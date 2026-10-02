@@ -1,0 +1,62 @@
+{
+  "taskId": "FE002",
+  "stepId": "S02",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T12:56:00.365Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 on main + current frontend working tree",
+  "expected": "Review setup/doctor/install side effects, cache/network boundaries and local env handling. Record only observed PATH/registry issues; do not expose secret values.",
+  "observed": "npm registry ping passed; npm cache is the user cache. setup invokes canonical generators and the installed official MSW worker, and only creates .env.local if absent; existing .env.local SHA256 4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149 was unchanged. doctor is read-only and checks Node/dependencies/worker/lock. npm v11 warns that esbuild and MSW lifecycle scripts await approval; these warnings and no-secret scans are recorded.",
+  "command": "npm.cmd ping --fetch-retries=0 --fetch-timeout=10000; inspect npm cache/registry and setup/doctor scripts; compare local env hash before/after setup",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0",
+    "details": "Current frontend workspace; install scripts and temp directory use exact hashes recorded in the evidence log.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 9,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE002/S02-impact-review-current-20261001.log",
+  "logSha256": "dd055d28e2e09256e5bdd8746fa3348aa1e459d2f3d6cd14c37f92b2e14b68b5",
+  "sourceFiles": [
+    {
+      "path": ".env.example",
+      "sha256": "4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149"
+    },
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S02-registry-ping-current-20261001.log",
+      "sha256": "b14ac1cd08d0875464bfa9da726aea1e7989a49050da493244d691d30c711462"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    },
+    {
+      "path": "scripts/doctor.mjs",
+      "sha256": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    },
+    {
+      "path": "scripts/tools.mjs",
+      "sha256": "c5e8d51b9c60d48cdeadeff6422319c654fa08ae95bef2bb726926c85351aae0"
+    }
+  ],
+  "sourceSnapshotSha256": "cac4b0ec0b3dc39a170e69bbcaa6dcbbdcbe18693b935e0630487b7517a7a989"
+}

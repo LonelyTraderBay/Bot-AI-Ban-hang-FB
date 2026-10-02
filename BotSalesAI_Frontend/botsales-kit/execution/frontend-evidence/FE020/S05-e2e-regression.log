@@ -1,0 +1,68 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/fe020.spec.ts tests/fe014.spec.ts --reporter=line --timeout=30000
+
+
+Running 8 tests using 1 worker
+
+
+
+[1A[2K(node:21408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K(node:21408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[1/8] [chromium] › tests\fe014.spec.ts:27:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent
+[1A[2K[2/8] [chromium] › tests\fe014.spec.ts:116:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+[1A[2K[3/8] [chromium] › tests\fe014.spec.ts:237:1 › FE014.S03 auto-send cannot be configured without an enabled procurement budget
+[1A[2K[4/8] [chromium] › tests\fe014.spec.ts:264:1 › FE014.S03 manager without procurement.receive cannot open receipt actions
+[1A[2K[5/8] [chromium] › tests\fe014.spec.ts:310:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once
+[1A[2K  1) [chromium] › tests\fe014.spec.ts:310:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('row').filter({ hasText: 'MU-006' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('row').filter({ hasText: 'MU-006' })[22m
+
+
+      223 |     await page.getByRole('link', { name: 'Tồn kho', exact: true }).click();
+      224 |     const stockRow = page.getByRole('row').filter({ hasText: 'MU-006' });
+    > 225 |     await expect(stockRow).toBeVisible();
+          |                            ^
+      226 |     await expect(stockRow.getByRole('cell').nth(1)).toHaveText('3');
+      227 |     const debtResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/debts'));
+      228 |     await page.getByRole('link', { name: 'Công nợ & khóa kỳ', exact: true }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:225:28
+
+    Error Context: test-results\fe014-FE014-AC03-partial-r-1c3ca-etic-stock-and-payable-once-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe014-FE014-AC03-partial-r-1c3ca-etic-stock-and-payable-once-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe014-FE014-AC03-partial-r-1c3ca-etic-stock-and-payable-once-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+[1A[2K(node:16660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+[1A[2K(node:16660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[6/8] [chromium] › tests\fe020.spec.ts:58:1 › FE020.AC01 approval detail is fetched and a changed source resource rejects the stale decision
+[1A[2K[7/8] [chromium] › tests\fe020.spec.ts:139:1 › FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic
+[1A[2K[8/8] [chromium] › tests\fe020.spec.ts:231:1 › FE020.AC03 role pause control uses the canonical versioned mock and never claims readiness
+[1A[2K  1 failed
+    [chromium] › tests\fe014.spec.ts:310:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once 
+  7 passed (32.5s)

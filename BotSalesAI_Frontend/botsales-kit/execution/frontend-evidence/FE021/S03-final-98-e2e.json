@@ -1,0 +1,149 @@
+{
+  "taskId": "FE021",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T03:11:44.251Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty working tree; task source files are hashed below",
+  "expected": "Negative/empty/partial/redacted/stale/pagination/export-denied/error paths preserve user input, API truth and permission boundaries without success or download claims.",
+  "observed": "All 8 FE021 Chromium cases passed in the current 98/98 suite. They cover an empty newly onboarded shop, missing actualSpend, hidden finance data for viewer, 12+ paged export jobs, source-permission denial, invalid timezone with no job created, 412 conflict and ambiguous 503 result; both failure cases retain dates and expose no download. No report-summary version or partial export response exists in the current contract, so those states are not fabricated.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "commandId": "e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Chromium",
+    "details": "React frontend acceptance against local synthetic MSW; no live services.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 8,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE021/final-e2e-full-98.log",
+  "logSha256": "ab3af99c04ec6bb1ac9c7d37f29d84f9d75e39add369185c0c278138f96dcec1",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "ceabad973264eef6cc111ccb7a36e21accbea93be5df7e3d88ebc4ac2b8f03d1"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "f1069b5c6e40bb3385047a4e5355182a8c03974993171fc50419d473fd74dfb2"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "9e86fc53d34e9d613608e5af4e6068b36297501443937a703efeb543e037a085"
+    },
+    {
+      "path": "apps/web/src/mocks/files.ts",
+      "sha256": "95e88f98daa75d4ee43271ea104d545c0bbe732551e4a34b03fd8d4ab06bf814"
+    },
+    {
+      "path": "apps/web/src/mocks/marketing-fixture.ts",
+      "sha256": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "01ff8d32cf26db70c1d53092ebd5ed05ac07e44e14bb5f59e040f8721508d93c"
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "5406f2739b8f004961ef705ad0b19cd675e10866300c33ea7284d140f50d3395"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "00f578b5679001066c746fbcf33d7df245234a1eb740cf367f228984e604abf3"
+    },
+    {
+      "path": "apps/web/src/modules/reports/report-utils.ts",
+      "sha256": "e235b12015b6037679d9abfb41bb98933cec7080a30c88e468b60543d6a0830f"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4a4fe4c32470d08467dd0d56cbf69f5de912340b6c323c01cb844553e601edb1"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "3d07892203fc1a83af3c8dc0ebb7c38edd4ff0b66d178a355876cbcf8667a553"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "7c4c8907da5b2d90765355faf1cd659c4431905cefd77d86a55f4a396504bcc1"
+    },
+    {
+      "path": "apps/web/tests/fe021-source-map.test.ts",
+      "sha256": "da338ba6ffac50d042df60cf30f179a2b3c753d6beb5ecb3ae550db492c2d28a"
+    },
+    {
+      "path": "apps/web/tests/report-utils.test.ts",
+      "sha256": "5b8435023e3ada1cc17d779af08f5f8d78616dbe847a4ff8e1e06c3cd8128e08"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "1ab44beb54c70b09b2c3060613c0eddc4c32cd72fa04e93f9f9f5481ad66123b"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "10fb7124e64b4f71bb161eb198cf0fd751fcc81173e0f1cf74ce5449af47d9c9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    },
+    {
+      "path": "packages/contracts/src/generated.ts",
+      "sha256": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "e630656e8c168f7e4f204670a4ce1267603265ff485f868f8ca52c1ce9104b81"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+    },
+    {
+      "path": "tests/fe021.spec.ts",
+      "sha256": "51a52e847cdb03d2ac54e3a1d32ea9e9286419933344772f07f5e81a291b848b"
+    },
+    {
+      "path": "tests/session/demo-server.mjs",
+      "sha256": "4af989379bf20bd2bda83f02dcfd5edd3b4dcec27132fde07fd2952c82eecb20"
+    }
+  ],
+  "sourceSnapshotSha256": "9542004ec0dea5537f78438d61cdc2926cf1627e46f967eb026dbc75c7d2ab5d",
+  "supportingLogs": [
+    {
+      "file": "execution/frontend-evidence/FE021/final-test-domain.log",
+      "sha256": "fcd5c5943da3e4a57e7711dd4085519b36a39431f8d53ee0d147c9e46156b563"
+    },
+    {
+      "file": "execution/frontend-evidence/FE021/final-schemas.log",
+      "sha256": "2aab3205f0770efec67c9777de4ed45b5f4f0c6deaac8e48db92eb7c74e73d14"
+    },
+    {
+      "file": "execution/frontend-evidence/FE021/final-test.log",
+      "sha256": "261a59ef022bc5b73aecead6c8c5fcf0756e7b24b7a8b7ae5b7e43711f7a88a7"
+    }
+  ]
+}

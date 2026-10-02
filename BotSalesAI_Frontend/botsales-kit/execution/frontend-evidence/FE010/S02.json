@@ -1,0 +1,235 @@
+{
+  "taskId": "FE010",
+  "stepId": "S02",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T15:59:15.624Z",
+  "sourceRevision": "HEAD 18be3c6 plus current dirty working tree; exact FE010 source hashes recorded below",
+  "expected": "Product, variant, category, search/pagination, image and import happy paths use the typed HTTP client and synthetic API, producing observable payloads and resulting UI state.",
+  "observed": "The current full React Chromium suite passed 23/23. Its FE010 cases verify product create with variant payload, product/category search and versioned update, sample CSV content, valid-only import commit, and searchable imported results. All requests are captured through the mock HTTP harness.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "commandId": "e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Chromium Playwright",
+    "details": "Real React demo, canonical generated contracts, synthetic MSW network and deterministic fixtures; no live backend/provider.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 23,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE010/S05-e2e-current.log",
+  "logSha256": "0030145e91f1c33d8af159dc4bb10bfa64cbb4372fd1027833011b80117f383c",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "ceabad973264eef6cc111ccb7a36e21accbea93be5df7e3d88ebc4ac2b8f03d1"
+    },
+    {
+      "path": "apps/web/src/mocks/auxiliary.ts",
+      "sha256": "be7211726012d0544b57f8f7c33ca074d9d94196f0ad1b28cadd49ce1a3bd05e"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/src/mocks/catalog.ts",
+      "sha256": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56"
+    },
+    {
+      "path": "apps/web/src/mocks/collections.json",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "238d0e6a82fc99474415c10365b369cc9e7b64422048bdcbaadf7d980eca598e"
+    },
+    {
+      "path": "apps/web/src/mocks/files.ts",
+      "sha256": "4707af4ff8ff9dcf7af1dd99a6b305f885aa7f157947bfbc463d8ff4441de6e2"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "be8d44a4ee86a57ebbe8b31e03b566dc35542d1601f7e39ae98abf7db2b3ae11"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "8613a5687bfc808c05b59393636c94f6e3f5234d756cf102708c70fc397011af"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "9fd1c5ae9119566f28a574470edc855f00ea7020faf9d7223777f9967256a084"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "bca493bd32ab4b7aa72bad9833d388f0696956464e9fe06f0f1c50761f754ffb"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4a4fe4c32470d08467dd0d56cbf69f5de912340b6c323c01cb844553e601edb1"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "3d07892203fc1a83af3c8dc0ebb7c38edd4ff0b66d178a355876cbcf8667a553"
+    },
+    {
+      "path": "apps/web/src/shared/api/validation.ts",
+      "sha256": "64403d633b0be7118e36bee153ac4144c14b994b6b8c5ae18d13061ead274ee3"
+    },
+    {
+      "path": "apps/web/src/shared/model/filters.ts",
+      "sha256": "0697d8fb60d076ce70391abe2e87607115bfbc502757279d69863bbdcfb3c0e8"
+    },
+    {
+      "path": "apps/web/src/shared/model/format.ts",
+      "sha256": "865c0a60be3ead8df0744602090aafa12c52196f130d3a6a450acfad74eb7317"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "7c4c8907da5b2d90765355faf1cd659c4431905cefd77d86a55f4a396504bcc1"
+    },
+    {
+      "path": "apps/web/src/shared/ui/theme.ts",
+      "sha256": "f2012aadb3a7b4489cc0b8a9577e1cda62eb1db3242bb683bdf8954d186d2fe4"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "c4e9369d2b6297a743f0c43000301ddb0a703b23090bd87bbc1a3c1da461005e"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "d78e46c5a414825d28a30d7e14076b459c9a4fab45bd8f150fc792c5b3855a27"
+    },
+    {
+      "path": "apps/web/tests/format.test.ts",
+      "sha256": "5ff217f5a3af00abdc41c6eaae7a68289d857de454281bba5de118898bb41b23"
+    },
+    {
+      "path": "apps/web/tsconfig.json",
+      "sha256": "da4b4ce1e7fd3cc94c5375430a0d3f09237021a8a0bd5dad1c83b334abd120e9"
+    },
+    {
+      "path": "botsales-kit/contracts/events.schema.json",
+      "sha256": "7f2071f90cc925b4c32cb6d6de0ef99f8cc14b618c0e04224f024f3aa83c21ee"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/design/tokens.json",
+      "sha256": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "629f53b85d615f5d533c2b395141a6047da53075165957978aa593b6618c2082"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE010/S05-e2e-current.log",
+      "sha256": "0030145e91f1c33d8af159dc4bb10bfa64cbb4372fd1027833011b80117f383c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE010/write-evidence.mjs",
+      "sha256": "659073f127452a0e8d076fc8ba3c36c8b86ba2ac1f9d005054ea2f815fcb1d3d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "e630656e8c168f7e4f204670a4ce1267603265ff485f868f8ca52c1ce9104b81"
+    },
+    {
+      "path": "packages/contracts/src/permissions.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "packages/contracts/src/routes.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "ede09183cabb844663c94ab08f4662f8bde06665ef77d544d9d5501725f566a5"
+    },
+    {
+      "path": "samples/MOCK_DATA.md",
+      "sha256": "611bda12baa1d8491e5d37d6410cddccc191561676a7a8f87da0683667f1d2ce"
+    },
+    {
+      "path": "samples/products.csv",
+      "sha256": "51b4eabb0beb11d93e7b86fd5ef252fa3c1dc4b20782f8eaf4cbac783e3109d5"
+    },
+    {
+      "path": "scripts/check-boundaries.mjs",
+      "sha256": "6d3a9d997bc1787daa61b1e6cef816a4991bee8777355b32f9dafed283b4b00f"
+    },
+    {
+      "path": "scripts/check-source.mjs",
+      "sha256": "9fc8524e3899a3039e975b3cff2aae51fbabfbbb6ee3d6a2a17a35c866d91ca5"
+    },
+    {
+      "path": "scripts/generate.mjs",
+      "sha256": "d27e6db7c6d03e5e5b685243f6e2a38fe468232bb2c9f581dc5267f9f97881e7"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "929288d28d5d694c299ada3b721ce438cd38483c08e021b5b89e29736dad72c9"
+    },
+    {
+      "path": "scripts/validate-mock-schemas.py",
+      "sha256": "26fed7c86be0b6124ee44fa9c8a15d9dbd64408d5e8af7f2c3c4c930c76fa688"
+    },
+    {
+      "path": "tests/architecture/check-boundaries.mjs",
+      "sha256": "4f8d062e0a53d9cd6a2fdc70908efe56d8609c9fe88026c37e3655044f0a46a9"
+    },
+    {
+      "path": "tests/contracts/generator.test.mjs",
+      "sha256": "918597291c3a9940d22c2c50b9f9f20353520954fe8d21e50c554906a4cc7401"
+    },
+    {
+      "path": "tests/domain-scenarios.cjs",
+      "sha256": "2c41f89478cc589bf4187416f35d1f8c3c15666e25c90528785e714adc4af400"
+    },
+    {
+      "path": "tests/fe010.spec.ts",
+      "sha256": "2c5df1d9e5c935455b53734671b4559fc5ec30d711d989e513a94e79e76e7a79"
+    },
+    {
+      "path": "tests/fixtures/mock-network.mjs",
+      "sha256": "dc367b505a5cd380d40ab30619ec6f7e403cbd538f1ae87d09746b3384bca78c"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "21cb02e0c82634c208082c81f517c92e7bf58bcbdc36f59ca9d4126a9ca4e5e5"
+    }
+  ],
+  "sourceSnapshotSha256": "a332b86ee6697b758c54184165e77bf968eb44bbce60a546d59840c0953ea7b3"
+}

@@ -1,0 +1,62 @@
+{
+  "taskId": "FE002",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T12:56:00.365Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 on main + current frontend working tree",
+  "expected": "Node and npm exact pins match the actual Windows toolchain. Root/workspace exact dependencies match package-lock metadata. React and React DOM peer requirements resolve to one version. No stack major changes.",
+  "observed": "Node v24.19.0 matches .node-version 24.19.0; npm 11.17.0 matches npm@11.17.0. Root/workspace direct dependencies match lockfile metadata. React and React DOM resolve only to 19.1.1 across all npm ls output; Testing Library peer ranges include React/DOM 19.",
+  "command": "Read .node-version, packageManager, exact root/workspace versions and lock peer metadata; npm.cmd --script-shell=powershell.exe ls react react-dom --all",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0",
+    "details": "Current frontend workspace; install scripts and temp directory use exact hashes recorded in the evidence log.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 8,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE002/S01-toolchain-review-current-20261001.log",
+  "logSha256": "f02bc24d204ecfee62ce9cb9bf66d1c6c9aa8c7d560f4f0a7bf702cafca3805b",
+  "sourceFiles": [
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S01-npm-ls-react-current-20261001.log",
+      "sha256": "c7adca39df24601c28c140a819cb6203b6d05562722c2222c8d5653253752c64"
+    },
+    {
+      "path": "node_modules/@testing-library/react/package.json",
+      "sha256": "29cb4a026c2e60f758e8d0325d48acff1b59c9a83d0a942eb51f35790704705d"
+    },
+    {
+      "path": "node_modules/react-dom/package.json",
+      "sha256": "1a1856a02032d721c6adea1df2174505739f29bb7a093814688c4bdb1e0390e0"
+    },
+    {
+      "path": "node_modules/react/package.json",
+      "sha256": "7e862b437058f8dde0fe1b538266b934d725f76fe5b981305d6e942714d49608"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    }
+  ],
+  "sourceSnapshotSha256": "03abf925a0baa380ceac5e4532369fd28f74f9f5783dc070af2f0be237d29d5e"
+}

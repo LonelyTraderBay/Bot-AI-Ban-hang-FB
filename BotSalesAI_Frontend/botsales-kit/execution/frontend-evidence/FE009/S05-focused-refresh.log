@@ -1,0 +1,172 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/fe009.spec.ts --timeout=45000
+
+
+Running 5 tests using 1 worker
+
+(node:10892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe009.spec.ts:26:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (6.8s)
+(node:7928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] › tests\fe009.spec.ts:67:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (6.7s)
+(node:15376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chromium] › tests\fe009.spec.ts:140:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.6s)
+  x  4 [chromium] › tests\fe009.spec.ts:163:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (5.2s)
+(node:34200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  5 [chromium] › tests\fe009.spec.ts:213:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (8.1s)
+
+
+  1) [chromium] › tests\fe009.spec.ts:26:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('heading', { name: 'Tổng quan', exact: true })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Tổng quan', exact: true })[22m
+
+
+      35 |
+      36 |     await expect(page).toHaveURL(/\/s\/shop-[^/]+\/overview$/);
+    > 37 |     await expect(page.getByRole('heading',{name:'Tổng quan',exact:true})).toBeVisible();
+         |                                                                           ^
+      38 |     await page.goto(new URL('/workspaces',demoUrl).toString());
+      39 |     await expect(page.getByText('Workspace kiểm thử FE009',{exact:true})).toBeVisible();
+      40 |     await expect(page.getByText('LAK · Asia/Vientiane',{exact:true})).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:37:75
+
+    Error Context: test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\fe009.spec.ts:67:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version 
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected pattern: [32m/\/customers\/customer-/[39m
+    Received string:  [31m"http://127.0.0.1:59442/s/shop-demo/customers"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 5000ms[22m
+    [2m    9 × unexpected value "http://127.0.0.1:59442/s/shop-demo/customers"[22m
+
+
+      56 |     await dialog.getByLabel('Số liên hệ').fill('02012345678');
+      57 |     await dialog.getByRole('button',{name:'Lưu khách hàng',exact:true}).click();
+    > 58 |     await expect(page).toHaveURL(/\/customers\/customer-/);
+         |                        ^
+      59 |     await expect(page.getByRole('heading',{name:'Khách FE009 mới',exact:true})).toBeVisible();
+      60 |     await expect(page.getByLabel('Số liên hệ')).toHaveValue('02012345678');
+      61 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:58:24
+
+    Error Context: test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests\fe009.spec.ts:163:1 › team invitation and membership revoke stay shop-scoped and protect the active owner 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByRole('table', { name: 'Dữ liệu' }).locator('tbody tr')
+    Expected: [32m2[39m
+    Received: [31m7[39m
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('table', { name: 'Dữ liệu' }).locator('tbody tr')[22m
+    [2m    4 × locator resolved to 0 elements[22m
+    [2m      - unexpected value "0"[22m
+    [2m    4 × locator resolved to 7 elements[22m
+    [2m      - unexpected value "7"[22m
+
+
+      94 |     const table=page.getByRole('table',{name:'Dữ liệu'});
+      95 |     const rows=table.locator('tbody tr');
+    > 96 |     await expect(rows).toHaveCount(2);
+         |                        ^
+      97 |     const ownerRow=rows.filter({hasText:'Jokertrader'});
+      98 |     await expect(ownerRow.getByRole('button',{name:'Thu hồi'})).toBeDisabled();
+      99 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:96:24
+
+    Error Context: test-results\fe009-team-invitation-and--a0f1d-nd-protect-the-active-owner-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-team-invitation-and--a0f1d-nd-protect-the-active-owner-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-team-invitation-and--a0f1d-nd-protect-the-active-owner-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests\fe009.spec.ts:213:1 › privacy delete requests remain pending approval with no frontend step-up shortcut 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByText('pending_approval', { exact: true })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByText('pending_approval', { exact: true })[22m
+
+
+      124 |     await dialog.getByRole('button',{name:'Tạo yêu cầu chờ duyệt',exact:true}).click();
+      125 |     await expect(dialog).toHaveCount(0);
+    > 126 |     await expect(page.getByText('pending_approval',{exact:true})).toBeVisible();
+          |                                                                   ^
+      127 |     await expect(page.getByRole('button',{name:/duyệt ngay|xóa ngay|xác nhận xóa/i})).toHaveCount(0);
+      128 | });
+      129 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:126:67
+
+    Error Context: test-results\fe009-privacy-delete-reque-67500-o-frontend-step-up-shortcut-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-privacy-delete-reque-67500-o-frontend-step-up-shortcut-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-privacy-delete-reque-67500-o-frontend-step-up-shortcut-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [chromium] › tests\fe009.spec.ts:26:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route 
+    [chromium] › tests\fe009.spec.ts:67:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version 
+    [chromium] › tests\fe009.spec.ts:163:1 › team invitation and membership revoke stay shop-scoped and protect the active owner 
+    [chromium] › tests\fe009.spec.ts:213:1 › privacy delete requests remain pending approval with no frontend step-up shortcut 
+  1 passed (31.6s)
+EXIT_CODE=1

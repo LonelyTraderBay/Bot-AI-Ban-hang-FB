@@ -1,0 +1,75 @@
+{
+  "taskId": "FE002",
+  "stepId": "S04",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T12:56:00.365Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 on main + current frontend working tree",
+  "expected": "Run setup and doctor with the pinned local target and official MSW CLI; generator/worker setup and doctor checks pass, and existing .env.local is not overwritten.",
+  "observed": "setup exit 0 generated 11 outputs (283 schemas, 210 operations, 54 routes) and copied the MSW package worker; doctor exit 0 with all 9 checks PASS. .env.local SHA256 4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149 remained unchanged. Secret-like template values and evidence logs have zero findings.",
+  "command": "& 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=powershell.exe run setup 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-setup-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=powershell.exe run doctor 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0",
+    "details": "Current frontend workspace; install scripts and temp directory use exact hashes recorded in the evidence log.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 9,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE002/S04-current-run-20261001.log",
+  "logSha256": "bd2629c700fcf55513fea9cdd113ce6668f9728ae35321cf66132048982f80c8",
+  "sourceFiles": [
+    {
+      "path": ".env.example",
+      "sha256": "4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149"
+    },
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/public/mockServiceWorker.js",
+      "sha256": "3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output.log",
+      "sha256": "bf228dec45ea3c5e76f3b5dc2c2624620e59d3d596f1df67f814a025104c2388"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S04-setup-output.log",
+      "sha256": "03f855fbd9bfd99f47cc05fe3471e144e03489b292631d977e61ed535a9dbb7d"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    },
+    {
+      "path": "scripts/doctor.mjs",
+      "sha256": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    },
+    {
+      "path": "scripts/tools.mjs",
+      "sha256": "c5e8d51b9c60d48cdeadeff6422319c654fa08ae95bef2bb726926c85351aae0"
+    }
+  ],
+  "sourceSnapshotSha256": "48317480881a005a19406f7698f1e6c3c3578f153fe14a1625d4d13fe95b0748",
+  "commandId": "setup-doctor-capture"
+}

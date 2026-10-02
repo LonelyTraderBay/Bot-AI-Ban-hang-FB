@@ -1,0 +1,39 @@
+{
+  "taskId": "FE003",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T21:37:20.434Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current source snapshot 77269e09561a6d5d7af6f16e7888e85578889f1bf5a679e7e82f40abfc6b2490",
+  "expected": "Every registered frontend command matches a real package script or direct Node/Python command; actual checks are distinguished from declared-only commands.",
+  "observed": "Root package contains 17 scripts and apps/web contains 5. The current registry contains 25 commands: 24 VERIFIED_AVAILABLE and one DECLARED_NOT_RUN; all registered npm run names exist in the root manifest. Current FE017 source-map and E2E commands are registered separately.",
+  "command": "Read-only Node audit of root/app npm scripts and the frontend command registry",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0",
+    "details": "Local frontend working tree; React demo uses synthetic MSW only where browser/API behavior is exercised.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 6,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S01-map-refresh-20261001.log",
+  "logSha256": "b658ad503d072622698830dd998b96c125fd569efbb3be60109ddd44c733862d",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "ceabad973264eef6cc111ccb7a36e21accbea93be5df7e3d88ebc4ac2b8f03d1"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "c2ade4075e95934ca6204465f6ac6cdbe3767f6712e150950ebd1f71d250ea2a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    }
+  ],
+  "sourceSnapshotSha256": "77269e09561a6d5d7af6f16e7888e85578889f1bf5a679e7e82f40abfc6b2490",
+  "exitCode": 0
+}

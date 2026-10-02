@@ -1,0 +1,5 @@
+Current contract/query findings:
+- listOrders supports customerId via canonical CustomerFilter; generated Operations type exposes it.
+- listServiceCases supports only limit/cursor; it has no customerId filter. Customer detail now requests a bounded page, filters returned rows by customerId, labels completeness limitation, and links to the unfiltered list.
+- getCashflow and getProfitLoss require from/to/timezone. Finance screens currently rely on a generic URL query helper that does not guarantee those fields; follow up in finance-module scope before claiming contract-aligned finance reads.
+- Money amount is a decimal string and customer contact fields are nullable according to generated OpenAPI DTOs; current typed source/unit fixtures preserve these shapes.

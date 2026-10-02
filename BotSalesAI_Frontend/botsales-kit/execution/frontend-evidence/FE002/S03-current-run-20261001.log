@@ -1,0 +1,8 @@
+FE002.S03 npm install and real-lockfile verification
+ExecutedAt=2026-10-01T12:56:00.365Z
+Command=npm.cmd --script-shell=powershell.exe install
+Exit=0; current npm install stdout is preserved in S03-npm-install-current-20261001.log.
+Lock SHA256 before/after=15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce; unchanged=true; lockfileVersion=3. Root and workspace direct dependencies match lock metadata.
+Install result: 428 packages audited, 0 vulnerabilities; 88 funding notices. npm warns that esbuild@0.28.2 and msw@2.11.1 install scripts await approval; npm install exited 0 without executing these scripts.
+Expected: actual npm install validates/generates the real lockfile, package manifests and lock remain synchronized, and peer conflicts are resolved with evidence.
+Observed: registered npm install exited 0 on Node 24.19.0/npm 11.17.0; lockfile is real version 3 and remains byte-identical (no speculative transitive refresh). npm ls confirms a single React/React DOM version. No peer conflict or vulnerability was reported.

@@ -1,0 +1,90 @@
+FE004.S02 current source validation
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+HEAD=18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 + dirty frontend working tree
+node=v24.19.0; npm=11.17.0
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API
+command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run lint
+
+--- S01-typecheck-registered-current-20261001.log ---
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+--- S02-lint-registered-current-20261001.log ---
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+--- S02-type-suppression-scan-current-20261001.log ---
+PASS: no explicit any or TypeScript suppression in apps/web/src
+
+--- S03-dependencies-current-20261001.log ---
+botsales-frontend@0.1.0 C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+├─┬ @botsales/web@0.1.0 -> .\apps\web
+│ ├─┬ @emotion/react@11.14.0
+│ │ ├─┬ @emotion/use-insertion-effect-with-fallbacks@1.2.0
+│ │ │ └── react@19.1.1 deduped
+│ │ └── react@19.1.1 deduped
+│ ├─┬ @emotion/styled@11.14.1
+│ │ └── react@19.1.1 deduped
+│ ├─┬ @mui/icons-material@7.3.1
+│ │ ├── @mui/material@7.3.1 deduped
+│ │ └── react@19.1.1 deduped
+│ ├─┬ @mui/material@7.3.1
+│ │ ├─┬ @mui/system@7.3.11
+│ │ │ ├─┬ @mui/private-theming@7.3.11
+│ │ │ │ └── react@19.1.1 deduped
+│ │ │ ├─┬ @mui/styled-engine@7.3.10
+│ │ │ │ └── react@19.1.1 deduped
+│ │ │ └── react@19.1.1 deduped
+│ │ ├─┬ @mui/utils@7.3.11
+│ │ │ └── react@19.1.1 deduped
+│ │ ├── react-dom@19.1.1 deduped
+│ │ ├─┬ react-transition-group@4.4.5
+│ │ │ ├── react-dom@19.1.1 deduped
+│ │ │ └── react@19.1.1 deduped
+│ │ └── react@19.1.1 deduped
+│ ├─┬ @tanstack/react-query@5.85.5
+│ │ └── react@19.1.1 deduped
+│ ├─┬ @testing-library/react@16.3.0
+│ │ ├── react-dom@19.1.1 deduped
+│ │ └── react@19.1.1 deduped
+│ ├── react-dom@19.1.1 deduped
+│ ├─┬ react-hook-form@7.62.0
+│ │ └── react@19.1.1 deduped
+│ ├─┬ react-i18next@15.7.3
+│ │ └── react@19.1.1 deduped
+│ ├─┬ react-router-dom@7.18.4
+│ │ ├── react-dom@19.1.1 deduped
+│ │ ├─┬ react-router@7.18.4
+│ │ │ ├── react-dom@19.1.1 deduped
+│ │ │ └── react@19.1.1 deduped
+│ │ └── react@19.1.1 deduped
+│ ├── react@19.1.1 deduped
+│ └─┬ recharts@3.1.2
+│   ├─┬ @reduxjs/toolkit@2.13.0
+│   │ └── react@19.1.1 deduped
+│   ├── react-dom@19.1.1 deduped
+│   ├─┬ react-redux@9.3.0
+│   │ └── react@19.1.1 deduped
+│   ├── react@19.1.1 deduped
+│   └─┬ use-sync-external-store@1.7.0
+│     └── react@19.1.1 deduped
+├─┬ react-dom@19.1.1
+│ └── react@19.1.1 deduped
+└── react@19.1.1
+
+[review 1] PASS correct sequential frontend checkpoint selected
+status exit=0; selected=FE004.S02; blocked=[]
+
+[review 2] PASS required run logs exist
+execution/frontend-evidence/FE004/S01-typecheck-registered-current-20261001.log; execution/frontend-evidence/FE004/S02-lint-registered-current-20261001.log; execution/frontend-evidence/FE004/S02-type-suppression-scan-current-20261001.log; execution/frontend-evidence/FE004/S03-dependencies-current-20261001.log
+
+[review 3] PASS type and lint checks pass on strict source
+strict=true; noUncheckedIndexedAccess=true; lint command exited 0
+
+[review 4] PASS no explicit any or TypeScript suppression found
+PASS: no explicit any or TypeScript suppression in apps/web/src
+
+[review 5] PASS React/MUI/Query/Router dependency tree resolves once
+React 19.1.1 deduped; MUI 7.3.1, Query 5.85.5, Router 7.18.4
+
+result=PASS; checks=5; exitCode=0

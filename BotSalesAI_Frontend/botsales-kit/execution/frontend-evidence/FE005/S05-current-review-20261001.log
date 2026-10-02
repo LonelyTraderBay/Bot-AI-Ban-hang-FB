@@ -1,0 +1,75 @@
+FE005.S05 canonical contracts and transport verification
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+HEAD=18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 + dirty frontend working tree
+node=v24.19.0; npm=11.17.0; scope=FRONTEND_WITH_SYNTHETIC_MOCK_API
+commandId=contract-tests
+command=& 'C:\Program Files\nodejs\node.exe' --test tests/contracts/generator.test.mjs
+
+--- botsales-kit/execution/frontend-evidence/FE005/S01-source-registered-current-20261001.log ---
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs
+
+{
+  "checkedAt": "2026-10-01T13:35:34.596Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 58,
+  "operationCalls": 224,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+
+--- botsales-kit/execution/frontend-evidence/FE005/S02-generate-current-20261001.log ---
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+--- botsales-kit/execution/frontend-evidence/FE005/S03-S04-unit-current-20261001.log ---
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+
+ Test Files  7 passed (7)
+      Tests  66 passed (66)
+   Start at  20:35:34
+   Duration  4.89s (tests 54%, environment 21%, import 13%, setup 6%, transform 6%)
+
+--- botsales-kit/execution/frontend-evidence/FE005/S05-contract-tests-current-20261001.log ---
+✔ canonical contracts validate and generate the API base path from OpenAPI (21.2807ms)
+✔ generated operation registry preserves required and optional query parameter metadata (8.578ms)
+✔ rejects unresolved schema references before generation (21.2375ms)
+✔ rejects missing API version and a server URL outside same-origin path form (18.8937ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (17.3264ms)
+✔ detects a stale generated file and accepts it after regeneration (1.7724ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 145.1741
+
+--- botsales-kit/execution/frontend-evidence/FE005/S05-typecheck-current-20261001.log ---
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+[review 1] PASS correct sequential FE005 checkpoint selected
+status exit=0; next=FE005.S05; blocked=[]
+
+[review 2] PASS all current run logs exist
+botsales-kit/execution/frontend-evidence/FE005/S01-source-registered-current-20261001.log; botsales-kit/execution/frontend-evidence/FE005/S02-generate-current-20261001.log; botsales-kit/execution/frontend-evidence/FE005/S03-S04-unit-current-20261001.log; botsales-kit/execution/frontend-evidence/FE005/S05-contract-tests-current-20261001.log; botsales-kit/execution/frontend-evidence/FE005/S05-typecheck-current-20261001.log
+
+[review 3] PASS generator, contract negative fixtures and strict typecheck pass
+generate:check 11/283/210/54; generator tests 6/6; full strict typecheck exit 0; unit 66/66.
+
+[review 4] PASS canonical operation and transport scenario logs match current source
+Source audit 58 files/224 refs/54 routes; 202 wait and unresolved-schema negative fixture are checked.
+
+result=PASS; checks=4; exitCode=0

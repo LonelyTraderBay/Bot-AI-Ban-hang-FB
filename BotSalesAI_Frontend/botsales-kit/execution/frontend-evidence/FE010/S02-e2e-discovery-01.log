@@ -1,0 +1,131 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/fe010.spec.ts
+
+
+Running 4 tests using 1 worker
+
+(node:25388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe010.spec.ts:39:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (6.4s)
+(node:20104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium] › tests\fe010.spec.ts:152:1 › product update sends If-Match and keeps edits visible after a 412 conflict (2.2s)
+  x  3 [chromium] › tests\fe010.spec.ts:181:1 › categories create, search, update with a version, and render cursor pagination (6.2s)
+(node:30212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  4 [chromium] › tests\fe010.spec.ts:245:1 › CSV preview reports row-level errors and commits only valid product rows (6.4s)
+
+
+  1) [chromium] › tests\fe010.spec.ts:39:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveValue[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByLabel('Giá bán (VND)').first()
+    Expected string: [32m""[39m
+    Received string: [31m"0"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toHaveValue" with timeout 5000ms[22m
+    [2m  - waiting for getByLabel('Giá bán (VND)').first()[22m
+    [2m    9 × locator resolved to <input id="«ro»" type="text" inputmode="decimal" aria-invalid="false" name="variants.0.price" class="MuiInputBase-input MuiOutlinedInput-input css-1txw9lp-MuiInputBase-input-MuiOutlinedInput-input"/>[22m
+    [2m      - unexpected value "0"[22m
+
+
+      40 |     const skus=page.getByLabel('SKU');
+      41 |     const prices=page.getByLabel('Giá bán (VND)');
+    > 42 |     await expect(prices.first()).toHaveValue('');
+         |                                  ^
+      43 |     await name.fill('Sản phẩm FE010');
+      44 |     await skus.nth(0).fill('FE010-PRODUCT-M');
+      45 |     await page.getByRole('button',{name:'Lưu sản phẩm',exact:true}).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe010.spec.ts:42:34
+
+    Error Context: test-results\fe010-product-editor-valid-ea64e-t-payload-through-mock-HTTP-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe010-product-editor-valid-ea64e-t-payload-through-mock-HTTP-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe010-product-editor-valid-ea64e-t-payload-through-mock-HTTP-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\fe010.spec.ts:181:1 › categories create, search, update with a version, and render cursor pagination 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeDisabled[2m()[22m failed
+
+    Locator:  getByRole('button', { name: 'Trang tiếp' })
+    Expected: disabled
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeDisabled" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: 'Trang tiếp' })[22m
+
+
+      110 |     await gotoDemo(page,'/s/shop-demo/categories');
+      111 |     await expect(page.getByRole('heading',{name:'Danh mục',exact:true})).toBeVisible();
+    > 112 |     await expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled();
+          |                                                                ^
+      113 |     await page.getByRole('button',{name:'Thêm danh mục',exact:true}).click();
+      114 |     const dialog=page.getByRole('dialog',{name:'Thêm danh mục'});
+      115 |     await dialog.getByLabel('Tên').fill('Danh mục FE010');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe010.spec.ts:112:64
+
+    Error Context: test-results\fe010-categories-create-se-57e46-nd-render-cursor-pagination-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe010-categories-create-se-57e46-nd-render-cursor-pagination-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe010-categories-create-se-57e46-nd-render-cursor-pagination-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests\fe010.spec.ts:245:1 › CSV preview reports row-level errors and commits only valid product rows 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveAttribute[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByRole('link', { name: 'Tải CSV mẫu', exact: true })
+    Expected string: [32m"botsales-products.csv"[39m
+    Received: <element(s) not found>
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toHaveAttribute" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('link', { name: 'Tải CSV mẫu', exact: true })[22m
+
+
+      140 |     await expect(page.getByRole('heading',{name:'Nhập dữ liệu sản phẩm',exact:true})).toBeVisible();
+      141 |     const sampleLink=page.getByRole('link',{name:'Tải CSV mẫu',exact:true});
+    > 142 |     await expect(sampleLink).toHaveAttribute('download','botsales-products.csv');
+          |                              ^
+      143 |
+      144 |     const csv=[
+      145 |         'sku,name,price,description,currency',
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe010.spec.ts:142:30
+
+    Error Context: test-results\fe010-CSV-preview-reports--ca2f3-its-only-valid-product-rows-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe010-CSV-preview-reports--ca2f3-its-only-valid-product-rows-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe010-CSV-preview-reports--ca2f3-its-only-valid-product-rows-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › tests\fe010.spec.ts:39:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP 
+    [chromium] › tests\fe010.spec.ts:181:1 › categories create, search, update with a version, and render cursor pagination 
+    [chromium] › tests\fe010.spec.ts:245:1 › CSV preview reports row-level errors and commits only valid product rows 
+  1 passed (23.5s)

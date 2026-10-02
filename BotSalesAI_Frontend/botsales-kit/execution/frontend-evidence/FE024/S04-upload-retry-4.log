@@ -1,0 +1,49 @@
+
+[WebServer] (node:10776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:8964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries
+  1) [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('navigation', { name: 'Điều hướng chính' }).getByText('owner', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('navigation', { name: 'Điều hướng chính' }).getByText('owner', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('navigation', { name: 'Điều hướng chính' }).getByText('owner', { exact: true })
+
+
+      102 |   await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
+      103 |   await page.getByRole('option', { name: 'owner', exact: true }).click();
+    > 104 |   await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('owner', { exact: true })).toBeVisible();
+          |                                                                                                                ^
+      105 |   const first = await uploadStatus(page, 'product_import', 'same-upload-key', 'sku,name,price\nP-1,Sample,100');
+      106 |   const changed = await uploadStatus(page, 'product_import', 'same-upload-key', 'sku,name,price\nP-2,Changed,200');
+      107 |   expect(first.status).toBe(201);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\security.spec.ts:104:112
+
+    Error Context: test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\error-context.md
+
+    Error Context: test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries 

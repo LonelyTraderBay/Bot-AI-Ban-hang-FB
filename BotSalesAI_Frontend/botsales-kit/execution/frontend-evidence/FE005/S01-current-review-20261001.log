@@ -1,0 +1,59 @@
+FE005.S01 canonical contracts and transport verification
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+HEAD=18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 + dirty frontend working tree
+node=v24.19.0; npm=11.17.0; scope=FRONTEND_WITH_SYNTHETIC_MOCK_API
+commandId=source
+command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source
+
+--- botsales-kit/execution/frontend-evidence/FE005/S01-source-registered-current-20261001.log ---
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs
+
+{
+  "checkedAt": "2026-10-01T13:35:34.596Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 58,
+  "operationCalls": 224,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+
+--- botsales-kit/execution/frontend-evidence/FE005/S01-canonical-inventory-current-20261001.log ---
+{
+  "status": "PASS",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "openapi": "3.1.0",
+  "paths": 167,
+  "operations": 210,
+  "uniqueOperationIds": 210,
+  "routes": 54,
+  "checks": {
+    "openapi31": true,
+    "allOperationIdsUnique": true,
+    "canonicalRouteCount": true,
+    "moneyUsesDecimalString": true,
+    "idsAreStrings": true,
+    "nullableCustomerFieldsStayNullable": true,
+    "problemContractHasStructuredErrorFields": true,
+    "publishPermissionExists": true,
+    "publishedEventExists": true,
+    "knowledgeAllowedActionsAbsent": true
+  }
+}
+
+[review 1] PASS correct sequential FE005 checkpoint selected
+status exit=0; next=FE005.S01; blocked=[]
+
+[review 2] PASS all current run logs exist
+botsales-kit/execution/frontend-evidence/FE005/S01-source-registered-current-20261001.log; botsales-kit/execution/frontend-evidence/FE005/S01-canonical-inventory-current-20261001.log
+
+[review 3] PASS canonical contract inventory agrees with generated/source mapping
+OpenAPI 3.1.0: 210 unique operationIds; 54 routes; source map 58 files/224 operation refs. Money uses decimal string; ID string; nullable phone/email preserved.
+
+[review 4] PASS permission/event and Knowledge contract gap remain explicit
+knowledge.publish and knowledge.published exist; canonical Knowledge.allowedActions is absent and no contract/generated DTO was changed.
+
+result=PASS; checks=4; exitCode=0

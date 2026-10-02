@@ -1,0 +1,235 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (18.3181ms)
+✔ generated operation registry preserves required and optional query parameter metadata (8.0128ms)
+✔ rejects unresolved schema references before generation (21.5059ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.0331ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.8171ms)
+✔ detects a stale generated file and accepts it after regeneration (1.6363ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (35.9587ms)
+
+Running 30 tests using 1 worker
+
+(node:15600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (2.1s)
+  ok  2 [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (4.1s)
+  ok  3 [chromium] › tests\fe009.spec.ts:212:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.4s)
+  ok  4 [chromium] › tests\fe009.spec.ts:235:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.6s)
+  ok  5 [chromium] › tests\fe009.spec.ts:304:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.9s)
+  ok  6 [chromium] › tests\fe010.spec.ts:41:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (4.2s)
+  ok  7 [chromium] › tests\fe010.spec.ts:172:1 › product update sends If-Match and keeps edits visible after a 412 conflict (2.0s)
+  ok  8 [chromium] › tests\fe010.spec.ts:201:1 › warehouse role can read catalog products but cannot edit product fields or price cost data (972ms)
+  ok  9 [chromium] › tests\fe010.spec.ts:214:1 › categories create, search, update with a version, and render cursor pagination (2.2s)
+  ok 10 [chromium] › tests\fe010.spec.ts:278:1 › CSV preview reports row-level errors and commits only valid product rows (2.4s)
+  ok 11 [chromium] › tests\fe010.spec.ts:404:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible (2.5s)
+  ok 12 [chromium] › tests\fe010.spec.ts:475:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview (1.3s)
+  ok 13 [chromium] › tests\fe010.spec.ts:502:1 › demo upload rejects files over 5 MB and explains the limit (1.6s)
+  ok 14 [chromium] › tests\fe011.spec.ts:39:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result (1.8s)
+  x  15 [chromium] › tests\fe011.spec.ts:69:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once (7.1s)
+(node:10388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  16 [chromium] › tests\fe011.spec.ts:136:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically (7.3s)
+(node:21044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 17 [chromium] › tests\fe011.spec.ts:173:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state (2.1s)
+  x  18 [chromium] › tests\fe011.spec.ts:202:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it (7.1s)
+(node:28028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  19 [chromium] › tests\fe011.spec.ts:239:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source (2.8s)
+(node:25700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 20 [chromium] › tests\fe011.spec.ts:265:1 › FE011.AC03 unknown shop scope shows no stock from another shop (512ms)
+  ok 21 [chromium] › tests\frontend.spec.ts:42:1 › catalog create uses the HTTP mock and successful save clears the draft guard (1.9s)
+  ok 22 [chromium] › tests\frontend.spec.ts:80:1 › dirty drafts block in-app navigation and preserve input until the user decides (2.3s)
+  ok 23 [chromium] › tests\frontend.spec.ts:116:1 › all canonical routes render inside the real React demo application (15.3s)
+  ok 24 [chromium] › tests\frontend.spec.ts:131:1 › switching shops cancels a delayed request and loads only the new shop scope (5.3s)
+  ok 25 [chromium] › tests\frontend.spec.ts:166:1 › role changes remove restricted navigation and the route guard explains denied access (846ms)
+  ok 26 [chromium] › tests\frontend.spec.ts:185:1 › deep links survive browser refresh and logout clears the mock session (2.6s)
+  ok 27 [chromium] › tests\frontend.spec.ts:206:1 › logout asks before discarding a draft and retains the session when logout fails (1.8s)
+  ok 28 [chromium] › tests\frontend.spec.ts:328:1 › mobile navigation opens, routes, and closes without viewport overflow (1.0s)
+  ok 29 [chromium] › tests\frontend.spec.ts:360:1 › chunk loading errors use the route recovery boundary (872ms)
+  ok 30 [chromium] › tests\frontend.spec.ts:439:1 › live mode reports an unavailable session API without enabling mock data (338ms)
+
+
+  1) [chromium] › tests\fe011.spec.ts:69:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByRole('row').filter({ hasText: 'DEMO-001' })
+    Expected string: [32m"8"[39m
+    Received string: [31m"DEMO-001warehouse-01 · snapshot 21:00 29/9/26Mở sản phẩm100102100.000 ₫Đang hoạt độngĐiều chỉnh"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('row').filter({ hasText: 'DEMO-001' })[22m
+    [2m    4 × locator resolved to <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr>[22m
+    [2m      - unexpected value "DEMO-001warehouse-01 · snapshot 21:00 29/9/26Mở sản phẩm100102100.000 ₫Đang hoạt độngĐiều chỉnh"[22m
+
+
+      66 |     const submit = dialog.getByRole('button', { name: 'Xác nhận điều chỉnh' });
+      67 |     await expect(submit).toBeDisabled();
+    > 68 |     await expect(row).toContainText('8');
+         |                       ^
+      69 |     await expect(page.getByRole('alert').filter({ hasText: 'Điều chỉnh đã được xác nhận' })).toBeVisible({ timeout: 15000 });
+      70 |     await expect(row).toContainText('10');
+      71 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:68:23
+
+    Error Context: test-results\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\fe011.spec.ts:136:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByRole('row').filter({ hasText: 'DEMO-001' })
+    Expected string: [32m"8"[39m
+    Received: <element(s) not found>
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('row').filter({ hasText: 'DEMO-001' })[22m
+
+
+       97 |     await expect(dialog.getByRole('alert').filter({ hasText: 'dữ liệu bị thay đổi bởi người khác' })).toBeVisible();
+       98 |     await expect(dialog.getByLabel('Thay đổi số lượng')).toHaveValue('1');
+    >  99 |     await expect(row).toContainText('8');
+          |                       ^
+      100 |
+      101 |     await chooseOption(page, 'Trạng thái thử', 'Bình thường');
+      102 |     await dialog.getByLabel('Thay đổi số lượng').fill('-100');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:99:23
+
+    Error Context: test-results\fe011-FE011-AC03-conflict--32f45-never-update-optimistically-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe011-FE011-AC03-conflict--32f45-never-update-optimistically-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe011-FE011-AC03-conflict--32f45-never-update-optimistically-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests\fe011.spec.ts:202:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('dialog', { name: 'Điều chỉnh DEMO-001' }).getByRole('alert').filter({ hasText: 'chưa xác minh kết quả' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('dialog', { name: 'Điều chỉnh DEMO-001' }).getByRole('alert').filter({ hasText: 'chưa xác minh kết quả' })[22m
+
+
+      137 |     await expect(page.getByText(/thao tác chưa xác minh kết quả/)).toBeVisible();
+      138 |     await dialog.getByRole('button', { name: 'Xác nhận điều chỉnh' }).click();
+    > 139 |     await expect(dialog.getByRole('alert').filter({ hasText: 'chưa xác minh kết quả' })).toBeVisible();
+          |                                                                                          ^
+      140 |     expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/inventory/adjustments'))).toHaveLength(1);
+      141 |     await expect(page.getByRole('alert').filter({ hasText: 'Điều chỉnh đã được xác nhận' })).toHaveCount(0);
+      142 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:139:90
+
+    Error Context: test-results\fe011-FE011-AC03-unknown-c-24095-ared-recovery-reconciles-it-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe011-FE011-AC03-unknown-c-24095-ared-recovery-reconciles-it-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe011-FE011-AC03-unknown-c-24095-ared-recovery-reconciles-it-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests\fe011.spec.ts:239:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+    Received: [31mfalse[39m
+
+      154 |     await expect(page).toHaveURL(/variantId=v-p1/);
+      155 |     await expect(page).toHaveURL(/kind=adjustment/);
+    > 156 |     expect(calls.some(call => call.method === 'GET' && call.path.includes('/inventory/movements?') && call.path.includes('kind=adjustment') && call.path.includes('variantId=v-p1') && call.path.includes('warehouseId=warehouse-01'))).toBeTruthy();
+          |                                                                                                                                                                                                                                         ^
+      157 |     await expect(page.getByRole('button', { name: 'Xóa bộ lọc' })).toBeVisible();
+      158 | });
+      159 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:156:233
+
+    Error Context: test-results\fe011-FE011-AC04-movement--650cc-and-permission-gated-source-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe011-FE011-AC04-movement--650cc-and-permission-gated-source-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe011-FE011-AC04-movement--650cc-and-permission-gated-source-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [chromium] › tests\fe011.spec.ts:69:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once 
+    [chromium] › tests\fe011.spec.ts:136:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically 
+    [chromium] › tests\fe011.spec.ts:202:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it 
+    [chromium] › tests\fe011.spec.ts:239:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source 
+  26 passed (1.6m)

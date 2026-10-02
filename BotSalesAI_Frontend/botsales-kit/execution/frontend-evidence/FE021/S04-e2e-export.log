@@ -1,0 +1,54 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/fe021.spec.ts --grep export uses --reporter=line
+
+
+Running 1 test using 1 worker
+
+
+
+[1A[2K(node:34928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:34928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/1] [chromium] › tests\fe021.spec.ts:88:1 › FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination
+[1A[2K  1) [chromium] › tests\fe021.spec.ts:88:1 › FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeEnabled[2m()[22m failed
+
+    Locator:  getByRole('button', { name: 'Trang tiếp' })
+    Expected: enabled
+    Received: disabled
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeEnabled" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('button', { name: 'Trang tiếp' })[22m
+    [2m    5 × locator resolved to <button disabled tabindex="-1" type="button" class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-disableElevation Mui-disabled MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-disableElevation css-nrhm7v-MuiButtonBase-root-MuiButton-root">Trang tiếp</button>[22m
+    [2m      - unexpected value "disabled"[22m
+
+
+      110 |     expect(jobs.page.total).toBeGreaterThanOrEqual(12);
+      111 |     const nextPage = page.getByRole('button', { name: 'Trang tiếp' });
+    > 112 |     await expect(nextPage).toBeEnabled();
+          |                            ^
+      113 |     await nextPage.click();
+      114 |     await expect(page).toHaveURL(/cursor=/);
+      115 |     await expect(page.getByRole('button', { name: 'Trang tiếp' })).toBeDisabled();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe021.spec.ts:112:28
+
+    Error Context: test-results\fe021-FE021-export-uses-in-bc347--jobs-and-cursor-pagination-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe021-FE021-export-uses-in-bc347--jobs-and-cursor-pagination-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe021-FE021-export-uses-in-bc347--jobs-and-cursor-pagination-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  1 failed
+    [chromium] › tests\fe021.spec.ts:88:1 › FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination 

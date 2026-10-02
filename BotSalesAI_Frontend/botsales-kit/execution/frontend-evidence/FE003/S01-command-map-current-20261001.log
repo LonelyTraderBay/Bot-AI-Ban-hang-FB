@@ -1,0 +1,22 @@
+FE003.S01 current npm script and command-map audit
+ExecutedAt=2026-10-01T13:13:04.902Z
+HEAD=18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 branch=main cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+packageManager=npm@11.17.0; workspaces=apps/web
+Required verified mappings:
+generate:check => generate-check-windows [VERIFIED_AVAILABLE] :: npm script=node scripts/generate.mjs --check :: command=& 'C:\Program Files\nodejs\npm.cmd' --script-shell=cmd.exe run generate:check
+test:source => source [VERIFIED_AVAILABLE] :: npm script=node scripts/check-source.mjs :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source
+boundaries => boundaries [VERIFIED_AVAILABLE] :: npm script=node scripts/check-boundaries.mjs :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries
+typecheck => types [VERIFIED_AVAILABLE] :: npm script=tsc -p apps/web/tsconfig.json --noEmit :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck
+lint => lint [VERIFIED_AVAILABLE] :: npm script=eslint apps/web/src --max-warnings 0 :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run lint
+test:domain => domain [VERIFIED_AVAILABLE] :: npm script=node scripts/test-domain.mjs :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain
+test => unit [VERIFIED_AVAILABLE] :: npm script=vitest run --config apps/web/vitest.config.ts :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test
+build => build [VERIFIED_AVAILABLE] :: npm script=npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build
+build:demo => build-demo [VERIFIED_AVAILABLE] :: npm script=npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build:demo
+test:e2e => e2e [VERIFIED_AVAILABLE] :: npm script=npm run setup && npm run build && npm run build:demo && playwright test :: command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e
+setup => setup [VERIFIED_AVAILABLE] :: npm script=node scripts/setup.mjs :: command=npm.cmd --script-shell=powershell.exe run setup
+doctor => doctor [VERIFIED_AVAILABLE] :: npm script=node scripts/doctor.mjs :: command=npm.cmd --script-shell=powershell.exe run doctor
+Command statuses: VERIFIED_AVAILABLE=24; DECLARED_NOT_RUN=1
+contracts: This package script was removed; direct Node contract tests are registered separately as contract-tests
+No pnpm command/script is claimed.
+Expected: task commands use real npm scripts at frontend root, command map contains exact verified commands, and unrun commands remain unverified.
+Observed: root and workspace manifest scripts are mapped to registered VERIFIED_AVAILABLE commands; the removed test:contracts script remains DECLARED_NOT_RUN with an explicit reason. Node/npm versions are pinned in .node-version/packageManager. No pnpm substitution was added.

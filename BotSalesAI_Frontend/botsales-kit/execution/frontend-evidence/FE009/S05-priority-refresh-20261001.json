@@ -1,0 +1,424 @@
+{
+  "taskId": "FE009",
+  "stepId": "S05",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T13:57:56.700Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty working tree; files/logs are hashed below",
+  "expected": "Current React demo browser acceptance covers all FE009 happy/unhappy cases; strict type, lint, source, boundaries and current build/mock gates have actual passing evidence.",
+  "observed": "Fresh React Chromium suite passed 123/123, including all nine FE009 browser cases. Current gates passed: Vitest 66/66; source audit 58 files/224 operation refs/54 routes; boundaries 402 imports, zero issues/negative fixtures 8/8; domain/MSW 88/88; JSON schemas 356/356; generate:check, strict typecheck and lint. FE008 production/demo builds and artifact isolation are current; build warns above 500 kB with 730.13 kB raw production and 733.16 kB raw demo largest chunks. This is local mock frontend evidence, not CI/live/staging/production readiness.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "commandId": "e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Python 3.12.10 / Chromium Playwright",
+    "details": "Root frontend workspace. Python uses the isolated TEMP jsonschema target through PYTHONPATH when checking captured records. React, simulator, browser and API are synthetic/local; no backend/provider connection.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 123,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+  "logSha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724",
+  "sourceFiles": [
+    {
+      "path": "apps/web/index.html",
+      "sha256": "4f59d7af2e9306c4aeae1a343caca2c310aa58292104c932f44b45fdc2321825"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/app/ScopeEvents.tsx",
+      "sha256": "a0716132ba111081869ce96e973b83578f0c73d33ccb315d6a180d6b22416275"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13d7f0716a3234416cf7cec954ecdf1730e08694a0d99d5bdb788c378629487d"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "a331b5413e2d315e5d023c32c3e68efe58af66bb49e6383afc24e7e466abd081"
+    },
+    {
+      "path": "apps/web/src/app/dirty-drafts.ts",
+      "sha256": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13"
+    },
+    {
+      "path": "apps/web/src/app/navigation.ts",
+      "sha256": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "e8397a5fe134725482197098d6cad886429cfa0a10bd48f4e242c3062dfa2a63"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "apps/web/src/mocks/auxiliary.ts",
+      "sha256": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c"
+    },
+    {
+      "path": "apps/web/src/mocks/catalog.ts",
+      "sha256": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56"
+    },
+    {
+      "path": "apps/web/src/mocks/collections.json",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "apps/web/src/mocks/fulfillment.ts",
+      "sha256": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "0bb882dfa7291db7318382136d12238176fbb9f7fdad4af2ee522ded858ed29e"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "909a3195c2068f7b59f4ab26aa6b4e866bf67be3a39330a5990a8dd291c7ff01"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "b048a78717f62910c6a4cf5c6508dc05637da2c043d8e55c03d069caa2b2c0c5"
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "e424a7e78f6e4282c54c6ce29674e298cf1c671050c8591e5e200e7fc5385426"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4a4fe4c32470d08467dd0d56cbf69f5de912340b6c323c01cb844553e601edb1"
+    },
+    {
+      "path": "apps/web/src/shared/api/errors.ts",
+      "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/api/intents.ts",
+      "sha256": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b"
+    },
+    {
+      "path": "apps/web/src/shared/api/validation.ts",
+      "sha256": "64403d633b0be7118e36bee153ac4144c14b994b6b8c5ae18d13061ead274ee3"
+    },
+    {
+      "path": "apps/web/src/shared/model/auth.ts",
+      "sha256": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4"
+    },
+    {
+      "path": "apps/web/src/shared/model/dirty-drafts.ts",
+      "sha256": "87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc"
+    },
+    {
+      "path": "apps/web/src/shared/model/filters.ts",
+      "sha256": "0697d8fb60d076ce70391abe2e87607115bfbc502757279d69863bbdcfb3c0e8"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "8a8d6fc63cb2dc760def1a812fb4e52b4d36766e44741899eaafb221c6c59d44"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "92e263718c9276e33278a7541e61660e09db38b330abf17990cca30b32d1ba3e"
+    },
+    {
+      "path": "apps/web/tests/states/fe023-state.test.tsx",
+      "sha256": "7cf35848d9e828b238e3de5dbf3ea819b5613a3027300dbad1f1aaad68d2102c"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "1ab44beb54c70b09b2c3060613c0eddc4c32cd72fa04e93f9f9f5481ad66123b"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/docs/02_ARCHITECTURE.md",
+      "sha256": "8fd3805498d179f638ac0256af5ea61bfb9cd0a39db2108e3fcb670b44a49a04"
+    },
+    {
+      "path": "botsales-kit/docs/06_API_AND_REALTIME.md",
+      "sha256": "0ea1fddc67a9e1aa5de1865efa937a1d1e12a680236482a992ae1ec830997da5"
+    },
+    {
+      "path": "botsales-kit/docs/08_SECURITY_TENANCY_RBAC.md",
+      "sha256": "ee0c6fc7c44a1907c150b9b30e1f14de324a3a8cae68b3e7eeffd51a4a37cf00"
+    },
+    {
+      "path": "botsales-kit/docs/09_STATE_AND_DATA_ACCESS.md",
+      "sha256": "9279561702670366325d7dbdee8a74f7f3601ce1d66b8ae87b07ba71590949c8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "10fb7124e64b4f71bb161eb198cf0fd751fcc81173e0f1cf74ce5449af47d9c9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+      "sha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/unit-rerun-current-20261001.log",
+      "sha256": "f62c9ce2c73f66d727abf65dc2b6e9aff35c9875c8918ad42c0c02bc2689c5b3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-artifact-isolation-priority-20261001.mjs",
+      "sha256": "cc6ab59e8a153e327ed36c6e2af5dac5fc6f1a4e51e3a29c2a00f4e91398d57a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-artifact-isolation-rerun-current-20261001.log",
+      "sha256": "4e49120ddc9f027f7abc2d278712bf372f9d131fb9aaa2e6bbfd2d4d9f6a61e8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-demo-build-current-rerun-20261001.log",
+      "sha256": "85ab830dd5eaf606c1a9504cb991640185cadd5391aad78dc5b38843807c92d9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-priority-refresh-20261001.json",
+      "sha256": "b868019e62ffe6c2dd0b15653db2a180260c386121b47c5a8020caf4cde1ec99"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-production-build-current-rerun-20261001.log",
+      "sha256": "ab869ae2fc19fb126de4911da6c74b0c475786896a5c5e9a85695fa1ea40d1e4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/domain-priority-rerun-current-20261001.log",
+      "sha256": "3116bf6a93ad77c3d88f1ced7315478c9a3e2d3d859fbc14170fd8ef49bde28c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/schema-priority-rerun-current-20261001.log",
+      "sha256": "c487c0b4fa3c1950a4903178f4d3c11ff6d0a671e4ec00418bc81586aa8c0178"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S01-operation-map.md",
+      "sha256": "a514c158545002072c406c37de1908bd5da744fdc1dd6bba32423a12886e12a2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S05-generate-rerun-current-20261001.log",
+      "sha256": "ca8b29d53b347a1088b59171e4e10c34d0b565720edab2c1bfd9c90d62ddd9e3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S05-lint-rerun-current-20261001.log",
+      "sha256": "deaa6bda75076c2f27b2b2fe91bdba52c9cd3dbdf7d6e1a972c7e712997944f2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S05-typecheck-rerun-current-20261001.log",
+      "sha256": "4c9c1ce56d5a51cf58435886a701409f8adb255b5e959bdb079bccef11dc1d1d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/boundaries-rerun-current-20261001.log",
+      "sha256": "5f6f20c211a781983b9846f3c55ac337df422fad04b92c3b9241b4d1a860593e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/handoff.md",
+      "sha256": "4778c8e16de6e49cb5cdd3ab8a9c206d85538f01d562a14b8f5257bc4e59beb5"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/source-rerun-current-20261001.log",
+      "sha256": "918b2a9417a6649cbbce8fce4f154f9493ae73b590293524f2b29d7ea3146767"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "0c5e4be8ea4d15d35cc20377c284a1a794aaf6f42ad9bfd0eb0239412063ed99"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "e630656e8c168f7e4f204670a4ce1267603265ff485f868f8ca52c1ce9104b81"
+    },
+    {
+      "path": "packages/contracts/src/permissions.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "ede09183cabb844663c94ab08f4662f8bde06665ef77d544d9d5501725f566a5"
+    },
+    {
+      "path": "samples/MOCK_DATA.md",
+      "sha256": "611bda12baa1d8491e5d37d6410cddccc191561676a7a8f87da0683667f1d2ce"
+    },
+    {
+      "path": "scripts/check-boundaries.mjs",
+      "sha256": "6d3a9d997bc1787daa61b1e6cef816a4991bee8777355b32f9dafed283b4b00f"
+    },
+    {
+      "path": "scripts/check-source.mjs",
+      "sha256": "9fc8524e3899a3039e975b3cff2aae51fbabfbbb6ee3d6a2a17a35c866d91ca5"
+    },
+    {
+      "path": "tests/domain-scenarios.cjs",
+      "sha256": "ac65e916a6433de60f96292ac03381b625aece42a04f6ac37085eb1243766245"
+    },
+    {
+      "path": "tests/fe009.spec.ts",
+      "sha256": "5e5a60d0645fde99c0be179043a500fa7058da196e1851aa889ba290ea174ce9"
+    },
+    {
+      "path": "tests/fe011.spec.ts",
+      "sha256": "4935d39892497393840ba2bbe5f5dbe9b6ed1372aa0726e4d6dab94a80c566da"
+    },
+    {
+      "path": "tests/fe012.spec.ts",
+      "sha256": "fb815803a325d4606e6668140c12d4429bf563870167e2807cec8794fc27e628"
+    },
+    {
+      "path": "tests/fixtures/mock-network.mjs",
+      "sha256": "dc367b505a5cd380d40ab30619ec6f7e403cbd538f1ae87d09746b3384bca78c"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "21cb02e0c82634c208082c81f517c92e7bf58bcbdc36f59ca9d4126a9ca4e5e5"
+    },
+    {
+      "path": "tests/session/dirty-drafts.check.mjs",
+      "sha256": "3ba09b2563ab095a9525ff5e555459c0c18969e36eafd64a3b713eb2edd811ff"
+    },
+    {
+      "path": "tests/states/fe023.spec.ts",
+      "sha256": "80e4abfe6f751bfe4b2f447ff76331567add2288c887cc47f852bd4e199eeb7a"
+    },
+    {
+      "path": "tests/vertical-slices/fe022-flows.spec.ts",
+      "sha256": "e657f387ea49f5a163734679af87fafac27b0c15b280bd62b40b4af3ea5fdf53"
+    }
+  ],
+  "sourceSnapshotSha256": "cd4fcbba3fe2e7fdf724177b4333a6ab7f81915f3e5beb2ed42ccf0079bac034",
+  "supplementaryEvidence": [
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "commandId": "unit",
+      "logFile": "execution/frontend-evidence/FE007/unit-rerun-current-20261001.log",
+      "logSha256": "f62c9ce2c73f66d727abf65dc2b6e9aff35c9875c8918ad42c0c02bc2689c5b3",
+      "checksTotal": 66,
+      "failed": 0
+    },
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+      "commandId": "domain",
+      "logFile": "execution/frontend-evidence/FE008/domain-priority-rerun-current-20261001.log",
+      "logSha256": "3116bf6a93ad77c3d88f1ced7315478c9a3e2d3d859fbc14170fd8ef49bde28c",
+      "checksTotal": 88,
+      "failed": 0
+    },
+    {
+      "command": "python scripts/validate-mock-schemas.py",
+      "commandId": "schemas",
+      "logFile": "execution/frontend-evidence/FE008/schema-priority-rerun-current-20261001.log",
+      "logSha256": "c487c0b4fa3c1950a4903178f4d3c11ff6d0a671e4ec00418bc81586aa8c0178",
+      "checksTotal": 356,
+      "failed": 0
+    },
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source",
+      "commandId": "source",
+      "logFile": "execution/frontend-evidence/FE009/source-rerun-current-20261001.log",
+      "logSha256": "918b2a9417a6649cbbce8fce4f154f9493ae73b590293524f2b29d7ea3146767",
+      "checksTotal": 3,
+      "failed": 0
+    },
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries",
+      "commandId": "boundaries",
+      "logFile": "execution/frontend-evidence/FE009/boundaries-rerun-current-20261001.log",
+      "logSha256": "5f6f20c211a781983b9846f3c55ac337df422fad04b92c3b9241b4d1a860593e",
+      "checksTotal": 1,
+      "failed": 0
+    },
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run generate:check",
+      "commandId": "generate",
+      "logFile": "execution/frontend-evidence/FE009/S05-generate-rerun-current-20261001.log",
+      "logSha256": "ca8b29d53b347a1088b59171e4e10c34d0b565720edab2c1bfd9c90d62ddd9e3",
+      "checksTotal": 1,
+      "failed": 0
+    },
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck",
+      "commandId": "types",
+      "logFile": "execution/frontend-evidence/FE009/S05-typecheck-rerun-current-20261001.log",
+      "logSha256": "4c9c1ce56d5a51cf58435886a701409f8adb255b5e959bdb079bccef11dc1d1d",
+      "checksTotal": 1,
+      "failed": 0
+    },
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run lint",
+      "commandId": "lint",
+      "logFile": "execution/frontend-evidence/FE009/S05-lint-rerun-current-20261001.log",
+      "logSha256": "deaa6bda75076c2f27b2b2fe91bdba52c9cd3dbdf7d6e1a972c7e712997944f2",
+      "checksTotal": 1,
+      "failed": 0
+    },
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build",
+      "commandId": "build",
+      "logFile": "execution/frontend-evidence/FE008/S05-production-build-current-rerun-20261001.log",
+      "logSha256": "ab869ae2fc19fb126de4911da6c74b0c475786896a5c5e9a85695fa1ea40d1e4",
+      "checksTotal": 1,
+      "failed": 0
+    },
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build:demo",
+      "commandId": "build-demo",
+      "logFile": "execution/frontend-evidence/FE008/S05-demo-build-current-rerun-20261001.log",
+      "logSha256": "85ab830dd5eaf606c1a9504cb991640185cadd5391aad78dc5b38843807c92d9",
+      "checksTotal": 1,
+      "failed": 0
+    },
+    {
+      "command": "node botsales-kit/execution/frontend-evidence/FE008/S05-artifact-isolation-priority-20261001.mjs",
+      "logFile": "execution/frontend-evidence/FE008/S05-artifact-isolation-rerun-current-20261001.log",
+      "logSha256": "4e49120ddc9f027f7abc2d278712bf372f9d131fb9aaa2e6bbfd2d4d9f6a61e8",
+      "checksTotal": 1,
+      "failed": 0
+    }
+  ]
+}

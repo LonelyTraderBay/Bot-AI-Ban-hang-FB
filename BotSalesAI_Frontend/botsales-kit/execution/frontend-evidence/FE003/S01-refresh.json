@@ -1,0 +1,54 @@
+{
+  "taskId": "FE003",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T11:27:46.690Z",
+  "sourceRevision": "18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty tree; refreshed command-map audit after observed production build",
+  "expected": "Registered command names and working directories match package scripts. Successful commands are VERIFIED_AVAILABLE only with actual logs. E2E remains FAILED_BASELINE, and commands not run remain DECLARED_NOT_RUN.",
+  "observed": "Fresh audit found 18 root scripts, 5 app scripts, 20 command-map entries, 15 VERIFIED_AVAILABLE, 1 FAILED_BASELINE (e2e), and 4 DECLARED_NOT_RUN (contracts, domain, build-demo, schemas); zero VERIFIED_AVAILABLE run mappings reference missing root scripts. Production build now accurately records exit 0 with one 714.49 kB Rollup chunk warning, backed by the FE006 build log. Unit and source logs remain successful; the recorded Playwright failure remains before browser startup.",
+  "command": "PowerShell/Node audit of package scripts, frontend-command-map.json and recorded run logs",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0",
+    "details": "Current local frontend checkout; production build log is execution/frontend-evidence/FE006/S05-build.log",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 6,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S01-refresh.log",
+  "logSha256": "acf22d29d116d8a67b6f94b9ae03c1804c75ff39505ba2b2197dddef82c25460",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "ceabad973264eef6cc111ccb7a36e21accbea93be5df7e3d88ebc4ac2b8f03d1"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "54b60561ce078d7b9a457f1fa702a0ee6629512cc84a5888b048b6686a4e3670"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S01-refresh.log",
+      "sha256": "acf22d29d116d8a67b6f94b9ae03c1804c75ff39505ba2b2197dddef82c25460"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-e2e.log",
+      "sha256": "ebb2feb9601e0832ee0c9e01d87d29d36f4ecd7f4aaf92a419a205a8b4ca2fb4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-unit.log",
+      "sha256": "a4a63eda73b214b641b65d15385ad2f6db746a3e325456194364f4fdec9a35cc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE006/S05-build.log",
+      "sha256": "0a04038e51facd284d530b7b9a9d8b49e061363ed9bd6bf85e06c91f0dfcf116"
+    }
+  ],
+  "sourceSnapshotSha256": "f486b6b0ac0ec9a91fc47ab5e4a6b676a725043e7dea71cbf5b734c374d448f7"
+}

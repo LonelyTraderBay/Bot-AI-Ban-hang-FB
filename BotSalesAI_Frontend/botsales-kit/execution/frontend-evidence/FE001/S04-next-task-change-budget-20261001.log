@@ -1,0 +1,14 @@
+FE001.S04 next task and Change Budget revalidation
+ExecutedAt=2026-10-01T13:11:27.568Z
+CWD=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Target=FE002 priority=2: Toolchain và dependencies tái lập
+Dependencies=FE001
+RouteIds=(none)
+OperationIds=(none)
+VerificationLevel=V0–V3; V4 theo rủi ro frontend; API synthetic
+WriteScope=package.json, apps/web/package.json, package-lock.json, .node-version, scripts/setup.mjs, scripts/doctor.mjs, docs/PROJECT_CONTEXT.md
+Node=v24.19.0; npm=
+; .node-version exists=true
+Registered commands: install=VERIFIED_AVAILABLE (npm.cmd --script-shell=powershell.exe install) | clean-install-current=VERIFIED_AVAILABLE (& 'C:\Program Files\nodejs\node.exe' 'C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js' --prefix 'C:\Users\Joker-PC\AppData\Local\Temp\botsales-fe-clean-install-20260930' --script-shell=powershell.exe ci) | setup=VERIFIED_AVAILABLE (npm.cmd --script-shell=powershell.exe run setup) | doctor=VERIFIED_AVAILABLE (npm.cmd --script-shell=powershell.exe run doctor) | build=VERIFIED_AVAILABLE (set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build)
+Expected: identify the next dependency-ready frontend task, exact scope and verification budget from the approved frontend plan.
+Observed: FE002 is the first task after FE001, with no route/operation IDs and no backend dependency. Change Budget is limited to reproducible Node/npm dependencies, real lockfile, setup/doctor and project context. No stack/major upgrade without an observed compatibility failure. Clean npm ci must run in an isolated temp workspace. No route UI, canonical contract, generated source, whole-product tracker, backend or staging changes are in budget.

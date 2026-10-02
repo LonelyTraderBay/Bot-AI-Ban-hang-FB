@@ -1,0 +1,103 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/states/fe023.spec.ts --reporter=line --timeout=45000
+
+
+[1A[2K[WebServer] (node:11124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+
+
+[1A[2K(node:33408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:33408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/5] [chromium] › tests\states\fe023.spec.ts:14:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard
+[1A[2K[2/5] [chromium] › tests\states\fe023.spec.ts:53:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices
+[1A[2K[3/5] [chromium] › tests\states\fe023.spec.ts:118:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path
+[1A[2K[4/5] [chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope
+[1A[2K  1) [chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' })[22m
+
+
+      108 |     await page.getByRole('link', { name: /Joker Studio/ }).click();
+      109 |     const confirm = page.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' });
+    > 110 |     await expect(confirm).toBeVisible();
+          |                           ^
+      111 |     await expect(name).toHaveValue('Joker Studio chưa lưu');
+      112 |     await confirm.getByRole('button', { name: 'Tiếp tục sửa' }).click();
+      113 |     await expect(page).toHaveURL(/\/s\/shop-demo\/settings\/shop$/);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\states\fe023.spec.ts:110:27
+
+    Error Context: test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+[1A[2K(node:32448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+[1A[2K(node:32448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[5/5] [chromium] › tests\states\fe023.spec.ts:226:1 › FE023 a saved shop form resets its dirty baseline and reports success
+[1A[2K  2) [chromium] › tests\states\fe023.spec.ts:226:1 › FE023 a saved shop form resets its dirty baseline and reports success 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('status').filter({ hasText: 'Đã lưu cấu hình cửa hàng.' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('status').filter({ hasText: 'Đã lưu cấu hình cửa hàng.' })[22m
+
+
+      127 |     await name.fill(savedName);
+      128 |     await page.getByRole('button', { name: 'Lưu cấu hình' }).click();
+    > 129 |     await expect(page.getByRole('status').filter({ hasText: 'Đã lưu cấu hình cửa hàng.' })).toBeVisible();
+          |                                                                                             ^
+      130 |
+      131 |     await name.fill('Tên tạm thời');
+      132 |     await name.fill(savedName);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\states\fe023.spec.ts:129:93
+
+    Error Context: test-results\states-fe023-FE023-a-saved-d47e7-aseline-and-reports-success-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\states-fe023-FE023-a-saved-d47e7-aseline-and-reports-success-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\states-fe023-FE023-a-saved-d47e7-aseline-and-reports-success-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  2 failed
+    [chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope 
+    [chromium] › tests\states\fe023.spec.ts:226:1 › FE023 a saved shop form resets its dirty baseline and reports success 
+  3 passed (26.7s)

@@ -1,0 +1,134 @@
+{
+  "taskId": "FE001",
+  "stepId": "S02",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T12:28:06.4383592+00:00",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 + current dirty frontend source snapshot",
+  "expected": "Map all 54 canonical routes and 16 module directories to current source; distinguish route-mount/browser evidence from feature interaction evidence.",
+  "observed": "Source checker PASS: 58 TypeScript files, 224 operation references, 54 routes, zero issues. Independent audit PASS: all 54 route IDs/paths match the canonical manifest; every source and named component exists; 16 module directories and 17 mapped source files; all 54 route smoke cases are in the 123-pass current Chromium log. The matrix separately links all 65 feature-route entries/64 IDs to named interaction cases with explicit frontend-only gaps; no route mount is treated as feature completion.",
+  "command": "node scripts/check-source.mjs; node botsales-kit/execution/frontend-evidence/FE001/revalidate-route-map-current.mjs",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "details": "Read-only source/map audit, with route and feature interactions cross-checked against the existing full Chromium log.",
+    "dataSource": "synthetic-msw",
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Chromium synthetic demo"
+  },
+  "checksTotal": 123,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE001/S02-route-source-revalidation-20261001.log",
+  "logSha256": "e080cf51ee02e5e3fc228710ea1f2d1104c388d179f8a291cb34a7d3a6999e9f",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "a331b5413e2d315e5d023c32c3e68efe58af66bb49e6383afc24e7e466abd081"
+    },
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "sha256": "2a8352dda922319363cfbaa89b76beebc7f4e44f9a28512dd316bfb49f8a0d73"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "9fd1c5ae9119566f28a574470edc855f00ea7020faf9d7223777f9967256a084"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "3c20ffd4e544cfa618b26160f68df927dc395c1ee1725e6830d08c7de2143762"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "909a3195c2068f7b59f4ab26aa6b4e866bf67be3a39330a5990a8dd291c7ff01"
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "5406f2739b8f004961ef705ad0b19cd675e10866300c33ea7284d140f50d3395"
+    },
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "sha256": "fb40bb83fe40685563fa06ac5e9c59cad06327fa891c2a30e9baf91e4e8ef5db"
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "ab3b1a3df7e98b7c53787a7e96e7e2b08813425beccf2f810c02657efac2f512"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "sha256": "b17485f21c46e190660139b528fb3d7f19dbb4e1f6dc0a88187bbd9db922bcc7"
+    },
+    {
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "sha256": "a5dde136bdfd5b8a5afa82dad02fa4ff976dab4ec233f61d619b8b3228999afc"
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "sha256": "11f315c4c979141968e9dccec005820cbdcdf1109f47e51c59a98e53e45803cf"
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "0e79b1c50544dd896f176ecb87c196ab09601a6b219e83d1fcb2c3d7145b761d"
+    },
+    {
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "sha256": "002ac29ba8830e932a189e0e041556c11819211775551ad0e66a33429c42dc8c"
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "sha256": "34b4feb1dbd96116794819b7ecf676bcb9f332e58da8b8a526de6c525946ab90"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "b048a78717f62910c6a4cf5c6508dc05637da2c043d8e55c03d069caa2b2c0c5"
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "sha256": "57d24b82d9ba6085e5b83be3c81179b5f54c15f3ae5cca15effec8db0dff802a"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "00f578b5679001066c746fbcf33d7df245234a1eb740cf367f228984e604abf3"
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "e424a7e78f6e4282c54c6ce29674e298cf1c671050c8591e5e200e7fc5385426"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/revalidate-route-map-current.mjs",
+      "sha256": "19161e17bfd623ce072bab352840e6957ddd2e8ad4727fcec22c893e6af487c0"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE027/e2e-current-final-20261001-ui-coverage-complete.log",
+      "sha256": "5f17845031628c212400ad7bdb6f3047ab7052ef98a832846382900a1f1e93b6"
+    },
+    {
+      "path": "docs/route-implementation.json",
+      "sha256": "2ccd95ea1bb4dcbaa87211fa5c0deafe330202f67b4e9699f5f9da6530746d61"
+    },
+    {
+      "path": "evidence/source-check.json",
+      "sha256": "fba6dbc6cb1ace983cc161c76fa3393b5bd573cc0f6165ea2dc57968746459d9"
+    },
+    {
+      "path": "packages/contracts/src/routes.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "scripts/check-source.mjs",
+      "sha256": "9fc8524e3899a3039e975b3cff2aae51fbabfbbb6ee3d6a2a17a35c866d91ca5"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "21cb02e0c82634c208082c81f517c92e7bf58bcbdc36f59ca9d4126a9ca4e5e5"
+    }
+  ],
+  "sourceSnapshotSha256": "12616fe1604213590a37323c075a9bcd674d843d1f524c637a1be6ce50720e4d"
+}

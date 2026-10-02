@@ -1,0 +1,83 @@
+{
+  "taskId": "FE026",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T17:42:09.479Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 (main) + verified current working-tree snapshot",
+  "expected": "Chạy clean install/type/lint/unit/contract/build và demo build trên target/lock; kiểm bundle và network smoke. Verification: Production không request MSW hoặc nhúng mocks/secret; demo chạy React thật với MSW. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+  "observed": "Clean npm ci, production build, and demo build passed in an isolated copy. The latest integrated verify log separately records generated/source/boundary checks, lint, typecheck, domain/MSW 88/88, Vitest 71/71, and production build; the latest 143/143 browser run validates the built demo artifact. Supporting evidence: execution/frontend-evidence/FE026/verify-after-route-role-matrix-current-20261002.log SHA256=84e89e30c117192c42cc52b167501d942c6aacb3f63157475c20e5fb5b540887 Supporting evidence: execution/frontend-evidence/FE027/e2e-current-route-role-20261002.log SHA256=9ac2c25a2676856c41e2ac772ca5620ec3289fb084c3997036c46c2d867514a8",
+  "command": "npm.cmd --script-shell=cmd.exe ci",
+  "commandId": "clean-ci-20261002",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / v24.19.0 / npm 11.17.0",
+    "details": "Current repository working tree. Browser tests use Chromium against React and the synthetic MSW demo; local verification does not claim backend or staging behavior.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 3,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE026/cold-install-build-current-20261002.log",
+  "logSha256": "b5cf86e88412d59d2540d69eeea1f3355501916803ab7e5418c809b6124d18df",
+  "sourceFiles": [
+    {
+      "path": ".github/workflows/frontend.yml",
+      "sha256": "2842df4788c90b4c01b55f2fe8756261a4fd11b448727df61acb38213f5ccad3"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "1ab44beb54c70b09b2c3060613c0eddc4c32cd72fa04e93f9f9f5481ad66123b"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/design/tokens.json",
+      "sha256": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "13c46cd75f39c9e2d5409ce4001628ee2476ad55631851e08cc590afe38877cc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    },
+    {
+      "path": "README.md",
+      "sha256": "5d088f983679cd8ae1a46dbd6cf0bd5da34e39e08f9bea43980badece62b574d"
+    },
+    {
+      "path": "scripts/check-source.mjs",
+      "sha256": "9fc8524e3899a3039e975b3cff2aae51fbabfbbb6ee3d6a2a17a35c866d91ca5"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    }
+  ],
+  "sourceSnapshotSha256": "52d5005bc2f1f7b76b96745d29fde6cf65815367dbbec2ad02a179ce8f022d7e"
+}

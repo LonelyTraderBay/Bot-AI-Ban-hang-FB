@@ -1,0 +1,893 @@
+{
+  "scope": "Current frontend operation references and canonical frontend contracts; no API/provider execution",
+  "apiVersion": "2.0.0",
+  "apiBasePath": "/api/v2",
+  "canonicalOperations": 210,
+  "generatedOperations": 210,
+  "sourceCheck": {
+    "files": 53,
+    "operationCalls": 207,
+    "routes": 54,
+    "issues": 0,
+    "status": "PASS"
+  },
+  "routeManifestShape": {
+    "rootKeys": [
+      "version",
+      "status",
+      "shopPrefix",
+      "globalOperations",
+      "routingRules",
+      "routes",
+      "notes"
+    ]
+  },
+  "permissionCatalogShape": {
+    "rootKeys": [
+      "version",
+      "status",
+      "permissions",
+      "rolePresets",
+      "enforcement",
+      "agentRoles",
+      "enforcementV2",
+      "notesV2"
+    ]
+  },
+  "eventSchemaShape": {
+    "rootKeys": [
+      "$schema",
+      "$id",
+      "type",
+      "properties",
+      "required",
+      "additionalProperties",
+      "$defs"
+    ],
+    "definitionCount": 2
+  },
+  "selectedOperations": {
+    "listProducts": {
+      "operationId": "listProducts",
+      "method": "GET",
+      "path": "/shops/{shopId}/products",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "application/json": "#/components/schemas/ProductListResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": [
+        {
+          "name": "limit",
+          "required": false
+        },
+        {
+          "name": "cursor",
+          "required": false
+        },
+        {
+          "name": "q",
+          "required": false
+        },
+        {
+          "name": "status",
+          "required": false
+        },
+        {
+          "name": "sort",
+          "required": false
+        },
+        {
+          "name": "categoryId",
+          "required": false
+        }
+      ]
+    },
+    "createProduct": {
+      "operationId": "createProduct",
+      "method": "POST",
+      "path": "/shops/{shopId}/products",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {
+        "application/json": "#/components/schemas/ProductWrite"
+      },
+      "responses": {
+        "201": {
+          "application/json": "#/components/schemas/ProductResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": []
+    },
+    "updateProduct": {
+      "operationId": "updateProduct",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/products/{productId}",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "name": "productId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {
+        "application/json": "#/components/schemas/ProductWritePatch"
+      },
+      "responses": {
+        "200": {
+          "application/json": "#/components/schemas/ProductResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": []
+    },
+    "listCategories": {
+      "operationId": "listCategories",
+      "method": "GET",
+      "path": "/shops/{shopId}/categories",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "application/json": "#/components/schemas/CategoryListResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": [
+        {
+          "name": "limit",
+          "required": false
+        },
+        {
+          "name": "cursor",
+          "required": false
+        },
+        {
+          "name": "q",
+          "required": false
+        },
+        {
+          "name": "status",
+          "required": false
+        },
+        {
+          "name": "sort",
+          "required": false
+        }
+      ]
+    },
+    "getCategory": {
+      "operationId": "getCategory",
+      "method": "GET",
+      "path": "/shops/{shopId}/categories/{categoryId}",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "name": "categoryId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        }
+      ],
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "application/json": "#/components/schemas/CategoryResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": []
+    },
+    "uploadFile": {
+      "operationId": "uploadFile",
+      "method": "POST",
+      "path": "/shops/{shopId}/uploads",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {
+        "multipart/form-data": "#/components/schemas/FileUpload"
+      },
+      "responses": {
+        "201": {
+          "application/json": "#/components/schemas/FileObjectResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": []
+    },
+    "createProductImport": {
+      "operationId": "createProductImport",
+      "method": "POST",
+      "path": "/shops/{shopId}/imports",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {
+        "application/json": "#/components/schemas/ImportRequest"
+      },
+      "responses": {
+        "202": {
+          "application/json": "#/components/schemas/JobResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": []
+    },
+    "getJob": {
+      "operationId": "getJob",
+      "method": "GET",
+      "path": "/shops/{shopId}/jobs/{jobId}",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "name": "jobId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        }
+      ],
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "application/json": "#/components/schemas/JobResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": []
+    },
+    "commitProductImport": {
+      "operationId": "commitProductImport",
+      "method": "POST",
+      "path": "/shops/{shopId}/imports/{jobId}/commit",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "name": "jobId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {
+        "application/json": "#/components/schemas/ImportCommit"
+      },
+      "responses": {
+        "202": {
+          "application/json": "#/components/schemas/JobResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": []
+    },
+    "listServiceCases": {
+      "operationId": "listServiceCases",
+      "method": "GET",
+      "path": "/shops/{shopId}/service-cases",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "application/json": "#/components/schemas/ServiceCaseListResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": [
+        {
+          "name": "limit",
+          "required": false
+        },
+        {
+          "name": "cursor",
+          "required": false
+        }
+      ]
+    },
+    "getCashflow": {
+      "operationId": "getCashflow",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/cashflow",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "application/json": "#/components/schemas/CashflowResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": [
+        {
+          "name": "from",
+          "required": true
+        },
+        {
+          "name": "to",
+          "required": true
+        },
+        {
+          "name": "timezone",
+          "required": true
+        }
+      ]
+    },
+    "getProfitLoss": {
+      "operationId": "getProfitLoss",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/profit-loss",
+      "parameters": [
+        {
+          "name": "shopId",
+          "in": "path",
+          "required": true,
+          "schema": "#/components/schemas/Id"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        },
+        {
+          "required": false,
+          "schema": "unspecified"
+        }
+      ],
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "application/json": "#/components/schemas/ProfitLossResponse"
+        },
+        "400": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "401": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "403": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "404": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "409": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "412": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "422": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "428": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "429": {
+          "application/problem+json": "#/components/schemas/Problem"
+        },
+        "503": {
+          "application/problem+json": "#/components/schemas/Problem"
+        }
+      },
+      "generatedQueryParameters": [
+        {
+          "name": "from",
+          "required": true
+        },
+        {
+          "name": "to",
+          "required": true
+        },
+        {
+          "name": "timezone",
+          "required": true
+        }
+      ]
+    }
+  },
+  "verifiedContractLimits": [
+    "listServiceCases does not define customerId query filtering; detail UI may only filter the bounded response and must label the result incomplete.",
+    "getCashflow requires from, to and timezone; finance UI must supply them in its own task and FE005 must not invent a default reporting period.",
+    "No missing endpoint is added by this inventory."
+  ],
+  "status": "PASS",
+  "issues": []
+}

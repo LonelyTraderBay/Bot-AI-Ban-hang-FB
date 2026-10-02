@@ -1,0 +1,111 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/states/fe023.spec.ts --grep shop settings|saved shop form --reporter=line --timeout=45000
+
+
+[1A[2K[WebServer] (node:28520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+
+[1A[2K(node:596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[1/2] [chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope
+[1A[2K[chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope
+FE023 draft guard state {"hasForm":true,"formCount":1,"draftDirty":"true","values":[{"value":"Joker Studio chưa lưu","defaultValue":"Joker Studio chưa lưu","disabled":false},{"value":"VND","defaultValue":"VND","disabled":true},{"value":"Asia/Vientiane","defaultValue":"Asia/Vientiane","disabled":false},{"value":"vi-VN","defaultValue":"vi-VN","disabled":false},{"value":"Graphite Gold · Dark-only","defaultValue":"Graphite Gold · Dark-only","disabled":true}]}
+
+[1A[2K  1) [chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' })[22m
+
+
+      114 |     await page.getByRole('link', { name: /Joker Studio/ }).click();
+      115 |     const confirm = page.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' });
+    > 116 |     await expect(confirm).toBeVisible();
+          |                           ^
+      117 |     await expect(name).toHaveValue('Joker Studio chưa lưu');
+      118 |     await confirm.getByRole('button', { name: 'Tiếp tục sửa' }).click();
+      119 |     await expect(page).toHaveURL(/\/s\/shop-demo\/settings\/shop$/);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\states\fe023.spec.ts:116:27
+
+    Error Context: test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\states-fe023-FE023-unsaved-95b92-igation-switches-shop-scope-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:24824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K(node:24824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[2/2] [chromium] › tests\states\fe023.spec.ts:242:1 › FE023 a saved shop form resets its dirty baseline and reports success
+[1A[2K[chromium] › tests\states\fe023.spec.ts:242:1 › FE023 a saved shop form resets its dirty baseline and reports success
+FE023 shop save status [33m200[39m
+
+[1A[2KFE023 saved form state {
+  success: [33mfalse[39m,
+  alerts: [],
+  form: [32m'<form class="MuiStack-root css-197omqv-MuiStack-root" novalidate="" data-draft-clean="true"><div class="MuiFormControl-root MuiTextField-root css-1xp5r68-MuiFormControl-root-MuiTextField-root"><label class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInpu'[39m
+}
+
+[1A[2K  2) [chromium] › tests\states\fe023.spec.ts:242:1 › FE023 a saved shop form resets its dirty baseline and reports success 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('status').filter({ hasText: 'Đã lưu cấu hình cửa hàng.' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('status').filter({ hasText: 'Đã lưu cấu hình cửa hàng.' })[22m
+
+
+      136 |     console.log('FE023 shop save status', (await saveResponse).status());
+      137 |     console.log('FE023 saved form state', await page.locator('main').evaluate(main => ({ success: main.innerText.includes('Đã lưu cấu hình cửa hàng.'), alerts: Array.from(main.querySelectorAll('[role="alert"], [role="status"]')).map(node => node.textContent), form: main.querySelector('form')?.outerHTML.slice(0, 300) })));
+    > 138 |     await expect(page.getByRole('status').filter({ hasText: 'Đã lưu cấu hình cửa hàng.' })).toBeVisible();
+          |                                                                                             ^
+      139 |
+      140 |     await name.fill('Tên tạm thời');
+      141 |     await name.fill(savedName);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\states\fe023.spec.ts:138:93
+
+    Error Context: test-results\states-fe023-FE023-a-saved-d47e7-aseline-and-reports-success-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\states-fe023-FE023-a-saved-d47e7-aseline-and-reports-success-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\states-fe023-FE023-a-saved-d47e7-aseline-and-reports-success-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  2 failed
+    [chromium] › tests\states\fe023.spec.ts:188:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope 
+    [chromium] › tests\states\fe023.spec.ts:242:1 › FE023 a saved shop form resets its dirty baseline and reports success 

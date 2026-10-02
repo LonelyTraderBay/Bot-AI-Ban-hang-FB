@@ -1,0 +1,38 @@
+{
+  "taskId": "FE003",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T12:44:07.097Z",
+  "sourceRevision": "18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty working tree",
+  "command": "Review root and app package scripts against the frontend command registry and latest execution logs",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0",
+    "details": "Current frontend workspace, exact package scripts and registered command states; domain/schema are synthetic frontend checks.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 20,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S01-command-refresh-current.log",
+  "logSha256": "82afd81fb8ad506c3aa7318e623891f4d97adbca4ae07cf14c067f95c331da39",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "ceabad973264eef6cc111ccb7a36e21accbea93be5df7e3d88ebc4ac2b8f03d1"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "66923486c80f12468bb2ff37d38e505a0461371625dd2c5298e7f1ca3bb7db06"
+    }
+  ],
+  "sourceSnapshotSha256": "abfd3248a638bcc8d27b21f1b113dce91cafbdbabacf7c1e8e537735e784faf3",
+  "expected": "Root/app scripts match package manifests; commands are registered only after actual successful logs, while unrun or baseline-failed commands remain distinct.",
+  "observed": "17 root scripts and 5 app scripts reviewed against 20 registry rows. E2E is now VERIFIED_AVAILABLE after the full Chromium Playwright suite passed 9/9; build-demo and the deprecated contracts npm script remain DECLARED_NOT_RUN. The E2E log SHA is recorded in the review log."
+}

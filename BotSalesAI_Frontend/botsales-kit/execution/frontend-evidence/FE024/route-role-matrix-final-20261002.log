@@ -1,0 +1,50 @@
+
+[WebServer] (node:8288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:26796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\route-role-matrix.spec.ts:43:1 › route read access matches canonical permissions for every demo role
+  1) [chromium] › tests\route-role-matrix.spec.ts:43:1 › route read access matches canonical permissions for every demo role 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Vai trò mô phỏng đã được áp dụng.', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Vai trò mô phỏng đã được áp dụng.', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Vai trò mô phỏng đã được áp dụng.', { exact: true })
+
+
+      32 |     await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
+      33 |     await page.getByRole('option', { name: role, exact: true }).click();
+    > 34 |     await expect(page.getByText('Vai trò mô phỏng đã được áp dụng.', { exact: true })).toBeVisible();
+         |                                                                                        ^
+      35 | }
+      36 |
+      37 | function routePath(path: string) {
+        at chooseRole (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\route-role-matrix.spec.ts:34:88)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\route-role-matrix.spec.ts:54:13
+
+    Error Context: test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\error-context.md
+
+    Error Context: test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\route-role-matrix.spec.ts:43:1 › route read access matches canonical permissions for every demo role 

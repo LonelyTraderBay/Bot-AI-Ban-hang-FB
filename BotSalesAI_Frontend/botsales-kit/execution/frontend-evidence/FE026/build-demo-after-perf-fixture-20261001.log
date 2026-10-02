@@ -1,0 +1,58 @@
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2262 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist-demo/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist-demo/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist-demo/assets/DeleteOutlineRounded-TVhbfOvT.js    0.53 kB │ gzip:   0.31 kB
+dist-demo/assets/control-CtOW07w5.js                 0.72 kB │ gzip:   0.46 kB
+dist-demo/assets/hooks-fM7_ZNaO.js                   4.17 kB │ gzip:   1.94 kB
+dist-demo/assets/imports-BaT9gXbc.js                 5.01 kB │ gzip:   2.34 kB
+dist-demo/assets/index-ZrQUQ_DC.js                   7.76 kB │ gzip:   3.12 kB
+dist-demo/assets/index-Bw4g7FL0.js                   7.79 kB │ gzip:   3.14 kB
+dist-demo/assets/index-o7-4ylO0.js                   8.35 kB │ gzip:   3.54 kB
+dist-demo/assets/permissions-DSwmPBth.js             8.41 kB │ gzip:   1.94 kB
+dist-demo/assets/index-Dkux43fx.js                   9.06 kB │ gzip:   3.34 kB
+dist-demo/assets/index-CkWZzg-b.js                  11.38 kB │ gzip:   4.25 kB
+dist-demo/assets/index-DlEvoMzG.js                  12.06 kB │ gzip:   4.88 kB
+dist-demo/assets/index-nOrg8hGX.js                  12.32 kB │ gzip:   4.45 kB
+dist-demo/assets/index-B_ujvVgl.js                  12.67 kB │ gzip:   4.81 kB
+dist-demo/assets/index-7vriC9ms.js                  14.45 kB │ gzip:   4.85 kB
+dist-demo/assets/index-D3hgzEMc.js                  14.71 kB │ gzip:   4.82 kB
+dist-demo/assets/index-NNZFIKlF.js                  14.73 kB │ gzip:   4.90 kB
+dist-demo/assets/index-CI9bX9cA.js                  16.43 kB │ gzip:   6.06 kB
+dist-demo/assets/index-CQC7Y_jp.js                  24.83 kB │ gzip:   8.11 kB
+dist-demo/assets/index-BMaWphSZ.js                  28.42 kB │ gzip:   8.84 kB
+dist-demo/assets/index-D5WQn_Zb.js                  29.46 kB │ gzip:   8.60 kB
+dist-demo/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist-demo/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist-demo/assets/service-D2P8v09_.js               156.87 kB │ gzip:  33.98 kB
+dist-demo/assets/browser-CtK777gC.js               255.09 kB │ gzip:  86.76 kB
+dist-demo/assets/mui-D8ryPhxS.js                   322.10 kB │ gzip:  97.68 kB
+dist-demo/assets/index-TkH-vGq2.js                 324.66 kB │ gzip:  99.51 kB
+dist-demo/assets/index-B__9nCSf.js                 732.68 kB │ gzip: 185.07 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.90s

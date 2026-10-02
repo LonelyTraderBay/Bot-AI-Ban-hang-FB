@@ -1,0 +1,50 @@
+FE004.S03 current source validation
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+HEAD=18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 + dirty frontend working tree
+node=v24.19.0; npm=11.17.0
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API
+command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries
+
+--- S03-boundaries-registered-current-20261001.log ---
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-01T13:29:13.174Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 58,
+  "imports": 402,
+  "negativeFixtures": "Boundary fixtures: PASS 8/8 scenarios (allowed import, alias, relative, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+--- S03-unit-registered-current-20261001.log ---
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+
+ Test Files  7 passed (7)
+      Tests  66 passed (66)
+   Start at  20:29:11
+   Duration  4.81s (tests 53%, environment 22%, import 13%, setup 6%, transform 6%)
+
+[review 1] PASS correct sequential frontend checkpoint selected
+status exit=0; selected=FE004.S03; blocked=[]
+
+[review 2] PASS required run logs exist
+execution/frontend-evidence/FE004/S03-boundaries-registered-current-20261001.log; execution/frontend-evidence/FE004/S03-unit-registered-current-20261001.log
+
+[review 3] PASS boundary graph and unit suite pass
+58 files/402 imports/zero issues/8 of 8 boundary fixtures; unit 66/66 in 7 files
+
+[review 4] PASS single app composition root and feature-local entries verified
+one React root in main.tsx; one theme/query/router provider; one QueryClient/router; 16 feature folders
+
+[review 5] PASS no application/feature/mock dependency leaks reported
+AST checker parses TS/TSX, resolves aliases and cycles, and reports zero boundary/source violations.
+
+result=PASS; checks=5; exitCode=0

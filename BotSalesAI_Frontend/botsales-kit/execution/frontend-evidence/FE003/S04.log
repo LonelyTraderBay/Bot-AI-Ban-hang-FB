@@ -1,0 +1,7 @@
+FE003.S04 evidence
+Command: node scripts/progress.mjs validate/status/next; reject wrong-scope and missing-log checkpoint fixtures
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Exit code: 0 (checkpointing an observed passing/review result)
+Expected: Tracker structurally validates 28 frontend tasks/140 checkpoints and selects the next incomplete step.\nWrong verification scope and missing log are rejected.\nNegative probes leave the frontend ledger unchanged.
+Observed: Frontend plan validation passed. Before checkpoint, status and next selected FE003.S04. The tracker rejected a synthetic REAL_BACKEND evidence fixture with the frontend-scope guard and rejected a second fixture with a missing log path; both returned nonzero, and the frontend-progress.json SHA256 stayed unchanged. This verifies evidence guard behavior and state protection, not application functionality.
+

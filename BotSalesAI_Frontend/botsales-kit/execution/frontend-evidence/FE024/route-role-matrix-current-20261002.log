@@ -1,0 +1,52 @@
+
+[WebServer] (node:26504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:36588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\route-role-matrix.spec.ts:44:1 › route read access matches canonical permissions for every demo role
+  1) [chromium] › tests\route-role-matrix.spec.ts:44:1 › route read access matches canonical permissions for every demo role 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByRole('combobox', { name: 'Vai trò mô phỏng' })
+    Expected: "sales"
+    Received: "owner"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByRole('combobox', { name: 'Vai trò mô phỏng' }) with timeout 5000ms
+      - waiting for getByRole('combobox', { name: 'Vai trò mô phỏng' })
+        14 × locator resolved to <div tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Vai trò mô phỏng" class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-153zjs0-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input">owner</div>
+           - unexpected value "owner"
+
+
+      33 |     await control.click();
+      34 |     await page.getByRole('option', { name: role, exact: true }).click();
+    > 35 |     await expect(control).toHaveText(role);
+         |                           ^
+      36 | }
+      37 |
+      38 | function routePath(path: string) {
+        at chooseRole (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\route-role-matrix.spec.ts:35:27)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\route-role-matrix.spec.ts:55:9
+
+    Error Context: test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\error-context.md
+
+    Error Context: test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\route-role-matrix.spec.ts:44:1 › route read access matches canonical permissions for every demo role 

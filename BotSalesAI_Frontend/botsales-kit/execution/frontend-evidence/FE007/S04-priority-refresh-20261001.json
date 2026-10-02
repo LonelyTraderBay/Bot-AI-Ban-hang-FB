@@ -1,0 +1,241 @@
+{
+  "taskId": "FE007",
+  "stepId": "S04",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T13:54:18.030Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty working tree; task sources and supporting artifacts are hashed below",
+  "expected": "Shop-switch races, late responses, role denial, deep-link refresh/logout, chunk recovery and mobile navigation are exercised against mock network.",
+  "observed": "The current serialized Chromium run passed 123/123; named cases cover shop-switch cancellation, role guard, deep links after refresh, logout/draft handling, mobile menu without overflow, route chunk recovery, and live-mode-unavailable. Requests were served by synthetic MSW/local demo only.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "commandId": "e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Chromium Playwright",
+    "details": "Serialized full React demo browser suite with deterministic synthetic MSW; dirty-draft helper runs directly against the pure shared model. FE008 production/demo artifacts are local builds only; no live service was contacted.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 6,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+  "logSha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724",
+  "sourceFiles": [
+    {
+      "path": "apps/web/index.html",
+      "sha256": "4f59d7af2e9306c4aeae1a343caca2c310aa58292104c932f44b45fdc2321825"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/app/CommandRecovery.tsx",
+      "sha256": "d16515c44893ae0b6cd988a2dc100410818655d06e0707b0abf9e2867eb167c7"
+    },
+    {
+      "path": "apps/web/src/app/ScopeEvents.tsx",
+      "sha256": "a0716132ba111081869ce96e973b83578f0c73d33ccb315d6a180d6b22416275"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13d7f0716a3234416cf7cec954ecdf1730e08694a0d99d5bdb788c378629487d"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "a331b5413e2d315e5d023c32c3e68efe58af66bb49e6383afc24e7e466abd081"
+    },
+    {
+      "path": "apps/web/src/app/dirty-drafts.ts",
+      "sha256": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13"
+    },
+    {
+      "path": "apps/web/src/app/navigation.ts",
+      "sha256": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "e8397a5fe134725482197098d6cad886429cfa0a10bd48f4e242c3062dfa2a63"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4a4fe4c32470d08467dd0d56cbf69f5de912340b6c323c01cb844553e601edb1"
+    },
+    {
+      "path": "apps/web/src/shared/api/errors.ts",
+      "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/api/intents.ts",
+      "sha256": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b"
+    },
+    {
+      "path": "apps/web/src/shared/model/auth.ts",
+      "sha256": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4"
+    },
+    {
+      "path": "apps/web/src/shared/model/dirty-drafts.ts",
+      "sha256": "87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc"
+    },
+    {
+      "path": "apps/web/src/shared/model/filters.ts",
+      "sha256": "0697d8fb60d076ce70391abe2e87607115bfbc502757279d69863bbdcfb3c0e8"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "8a8d6fc63cb2dc760def1a812fb4e52b4d36766e44741899eaafb221c6c59d44"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "92e263718c9276e33278a7541e61660e09db38b330abf17990cca30b32d1ba3e"
+    },
+    {
+      "path": "apps/web/tests/states/fe023-state.test.tsx",
+      "sha256": "7cf35848d9e828b238e3de5dbf3ea819b5613a3027300dbad1f1aaad68d2102c"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "1ab44beb54c70b09b2c3060613c0eddc4c32cd72fa04e93f9f9f5481ad66123b"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/docs/02_ARCHITECTURE.md",
+      "sha256": "8fd3805498d179f638ac0256af5ea61bfb9cd0a39db2108e3fcb670b44a49a04"
+    },
+    {
+      "path": "botsales-kit/docs/06_API_AND_REALTIME.md",
+      "sha256": "0ea1fddc67a9e1aa5de1865efa937a1d1e12a680236482a992ae1ec830997da5"
+    },
+    {
+      "path": "botsales-kit/docs/08_SECURITY_TENANCY_RBAC.md",
+      "sha256": "ee0c6fc7c44a1907c150b9b30e1f14de324a3a8cae68b3e7eeffd51a4a37cf00"
+    },
+    {
+      "path": "botsales-kit/docs/09_STATE_AND_DATA_ACCESS.md",
+      "sha256": "9279561702670366325d7dbdee8a74f7f3601ce1d66b8ae87b07ba71590949c8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "10fb7124e64b4f71bb161eb198cf0fd751fcc81173e0f1cf74ce5449af47d9c9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+      "sha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/dirty-draft-rerun-current-20261001.log",
+      "sha256": "dc795a659fd6b6444950e256bc7807b4a9850d912eee7e1212d71c49a532b4e3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/handoff.md",
+      "sha256": "f5f6125f6b57558d1ccf326f758d5032c624fc28fba778c39b5aaef05c54388d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/unit-rerun-current-20261001.log",
+      "sha256": "f62c9ce2c73f66d727abf65dc2b6e9aff35c9875c8918ad42c0c02bc2689c5b3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-artifact-isolation-priority-20261001.mjs",
+      "sha256": "cc6ab59e8a153e327ed36c6e2af5dac5fc6f1a4e51e3a29c2a00f4e91398d57a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-artifact-isolation-rerun-current-20261001.log",
+      "sha256": "4e49120ddc9f027f7abc2d278712bf372f9d131fb9aaa2e6bbfd2d4d9f6a61e8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-demo-build-current-rerun-20261001.log",
+      "sha256": "85ab830dd5eaf606c1a9504cb991640185cadd5391aad78dc5b38843807c92d9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-priority-refresh-20261001.json",
+      "sha256": "b868019e62ffe6c2dd0b15653db2a180260c386121b47c5a8020caf4cde1ec99"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-production-build-current-rerun-20261001.log",
+      "sha256": "ab869ae2fc19fb126de4911da6c74b0c475786896a5c5e9a85695fa1ea40d1e4"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    },
+    {
+      "path": "tests/fe009.spec.ts",
+      "sha256": "5e5a60d0645fde99c0be179043a500fa7058da196e1851aa889ba290ea174ce9"
+    },
+    {
+      "path": "tests/fe010.spec.ts",
+      "sha256": "94b07fbc075b910b63c229a031be007824ab8621bd62353ae655da25c170a2e9"
+    },
+    {
+      "path": "tests/fe012.spec.ts",
+      "sha256": "fb815803a325d4606e6668140c12d4429bf563870167e2807cec8794fc27e628"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "21cb02e0c82634c208082c81f517c92e7bf58bcbdc36f59ca9d4126a9ca4e5e5"
+    },
+    {
+      "path": "tests/session/dirty-drafts.check.mjs",
+      "sha256": "3ba09b2563ab095a9525ff5e555459c0c18969e36eafd64a3b713eb2edd811ff"
+    },
+    {
+      "path": "tests/states/fe023.spec.ts",
+      "sha256": "80e4abfe6f751bfe4b2f447ff76331567add2288c887cc47f852bd4e199eeb7a"
+    },
+    {
+      "path": "tests/vertical-slices/fe022-flows.spec.ts",
+      "sha256": "e657f387ea49f5a163734679af87fafac27b0c15b280bd62b40b4af3ea5fdf53"
+    }
+  ],
+  "sourceSnapshotSha256": "3be26904143c7622a39fcaee898d5bd02ec926685387aaa9fada3c7bc72e0973",
+  "supplementaryEvidence": [
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "commandId": "unit",
+      "logFile": "execution/frontend-evidence/FE007/unit-rerun-current-20261001.log",
+      "logSha256": "f62c9ce2c73f66d727abf65dc2b6e9aff35c9875c8918ad42c0c02bc2689c5b3",
+      "checksTotal": 66,
+      "failed": 0
+    },
+    {
+      "command": "& 'C:\\Program Files\\nodejs\\node.exe' --test tests/session/dirty-drafts.check.mjs",
+      "commandId": "draft-helper",
+      "logFile": "execution/frontend-evidence/FE007/dirty-draft-rerun-current-20261001.log",
+      "logSha256": "dc795a659fd6b6444950e256bc7807b4a9850d912eee7e1212d71c49a532b4e3",
+      "checksTotal": 4,
+      "failed": 0
+    }
+  ]
+}

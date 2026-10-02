@@ -1,0 +1,142 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep FE011 --timeout=60000 --reporter=line
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (18.2257ms)
+✔ generated operation registry preserves required and optional query parameter metadata (8.047ms)
+✔ rejects unresolved schema references before generation (21.1386ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.216ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (15.1147ms)
+✔ detects a stale generated file and accepts it after regeneration (1.6895ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (109.0475ms)
+
+Running 7 tests using 1 worker
+
+
+
+[1A[2K(node:30880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:30880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/7] [chromium] › tests\fe011.spec.ts:39:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+[1A[2K[2/7] [chromium] › tests\fe011.spec.ts:69:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+[1A[2K  1) [chromium] › tests\fe011.spec.ts:69:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+    Received: [31mundefined[39m
+
+      74 |     const adjustmentCalls = calls.filter(call => call.method === 'POST' && call.path.endsWith('/inventory/adjustments'));
+      75 |     expect(adjustmentCalls).toHaveLength(1);
+    > 76 |     expect(adjustmentCalls[0].headers['x-idempotency-key']).toBeTruthy();
+         |                                                             ^
+      77 |     expect(adjustmentCalls[0].headers['x-csrf-token']).toBeTruthy();
+      78 |     expect(JSON.parse(adjustmentCalls[0].body || 'null')).toMatchObject({ variantId: 'v-p1', warehouseId: 'warehouse-01', quantityDelta: 2, reason: 'Kiểm kê FE011', expectedVersion: 1, unitCost: { amount: '100000', currency: 'VND' } });
+      79 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:76:61
+
+    Error Context: test-results\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:32696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:32696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[3/7] [chromium] › tests\fe011.spec.ts:140:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+[1A[2K  2) [chromium] › tests\fe011.spec.ts:140:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically 
+
+    [31mTest timeout of 60000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('combobox', { name: 'Trạng thái thử' })[22m
+
+
+      18 |
+      19 | async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
+    > 20 |     await page.getByRole('combobox', { name: label }).click();
+         |                                                       ^
+      21 |     await page.getByRole('option', { name: value, exact: true }).click();
+      22 | }
+      23 |
+        at chooseOption (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:20:55)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:102:11
+
+    Error Context: test-results\fe011-FE011-AC03-conflict--32f45-never-update-optimistically-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe011-FE011-AC03-conflict--32f45-never-update-optimistically-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe011-FE011-AC03-conflict--32f45-never-update-optimistically-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[1A[2K(node:27748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K(node:27748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1A[2K[4/7] [chromium] › tests\fe011.spec.ts:182:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+[1A[2K[5/7] [chromium] › tests\fe011.spec.ts:211:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[1A[2K[6/7] [chromium] › tests\fe011.spec.ts:248:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source
+[1A[2K[7/7] [chromium] › tests\fe011.spec.ts:280:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+[1A[2K  2 failed
+    [chromium] › tests\fe011.spec.ts:69:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once 
+    [chromium] › tests\fe011.spec.ts:140:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically 
+  5 passed (1.3m)

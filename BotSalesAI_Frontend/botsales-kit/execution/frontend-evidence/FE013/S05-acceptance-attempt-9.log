@@ -1,0 +1,121 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep stale claim conflict --timeout 60000
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (18.0425ms)
+✔ generated operation registry preserves required and optional query parameter metadata (8.3677ms)
+✔ rejects unresolved schema references before generation (20.4725ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.8016ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (15.0546ms)
+✔ detects a stale generated file and accepts it after regeneration (1.7072ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (43.1037ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (8.4433ms)
+
+Running 1 test using 1 worker
+
+(node:10524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once (1.0m)
+
+
+  1) [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once 
+
+    [31mTest timeout of 60000ms exceeded.[39m
+
+    Error: apiRequestContext._wrapApiCall: file data stream has unexpected number of bytes
+
+    Error: locator.click: Test ended.
+    Call log:
+    [2m  - waiting for getByRole('link', { name: 'Tạo vận đơn để bàn giao' })[22m
+
+
+      114 |     await prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last().click();
+      115 |
+    > 116 |     await page.getByRole('link', { name: 'Vận đơn & bàn giao', exact: true }).click();
+          |                                                                       ^
+      117 |     await page.getByRole('button', { name: 'Tạo vận đơn', exact: true }).click();
+      118 |     const createDialog = page.getByRole('dialog', { name: 'Tạo vận đơn' });
+      119 |     await expect(createDialog.getByRole('combobox', { name: 'Đơn đã đóng gói' })).toHaveText('DH-1001');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe013.spec.ts:116:71
+
+    Error: End of central directory record signature not found. Either not a zip file, or file is truncated.
+
+    Error Context: test-results\fe013-FE013-AC01–AC04-stal-e2b2e-e-current-API-versions-once-chromium\error-context.md
+
+  1 failed
+    [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once 

@@ -1,0 +1,7 @@
+FE003.S01 evidence
+Command: Check npm scripts against exact frontend-command-map entries and inspect fresh unit/E2E run logs
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Exit code: 0 (checkpointing an observed passing/review result)
+Expected: Every registered npm script maps to package.json.\nVerified gates have exact commands; unrun gates stay DECLARED_NOT_RUN.\nE2E failures are reported as failures, not PASS.
+Observed: Current validation found 18 root scripts and 20 command-map entries; zero VERIFIED_AVAILABLE entries reference missing npm scripts. 14 commands are verified, direct Node contract tests are separate, and the removed test:contracts alias is DECLARED_NOT_RUN. Domain/build/demo/schema remain not run. Fresh unit log records 25/25 tests passing under a clean process PATH; fresh Playwright log records E2E failure before browser tests because tests/frontend.spec.ts imports routes.json without a Node 24 JSON import attribute.
+

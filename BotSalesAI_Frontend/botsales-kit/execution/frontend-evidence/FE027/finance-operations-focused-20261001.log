@@ -1,0 +1,41 @@
+
+[WebServer] (node:12980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:5848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\fe015.spec.ts:109:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values
+[2/2] [chromium] › tests\fe020.spec.ts:192:1 › FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready
+  1) [chromium] › tests\fe020.spec.ts:192:1 › FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready 
+
+    TypeError: digests is not iterable
+
+      207 |     await expect(page.getByText('Đây là dữ liệu mô phỏng.', { exact: false })).toBeVisible();
+      208 |     await expect(page.getByRole('heading', { name: 'Bản tin điều hành', exact: true })).toBeVisible();
+    > 209 |     for (const digest of digests) {
+          |                          ^
+      210 |         await expect(page.getByText(digest.id, { exact: false })).toBeVisible();
+      211 |         await expect(page.getByText(digest.text, { exact: true })).toBeVisible();
+      212 |         expect(digest.status).toBe('draft');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe020.spec.ts:209:26
+
+    Error Context: test-results\fe020-FE020-F06-H01-digest-ed303--claiming-workers-are-ready-chromium\error-context.md
+
+    Error Context: test-results\fe020-FE020-F06-H01-digest-ed303--claiming-workers-are-ready-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe020-FE020-F06-H01-digest-ed303--claiming-workers-are-ready-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe020-FE020-F06-H01-digest-ed303--claiming-workers-are-ready-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\fe020.spec.ts:192:1 › FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready 
+  1 passed (4.6s)

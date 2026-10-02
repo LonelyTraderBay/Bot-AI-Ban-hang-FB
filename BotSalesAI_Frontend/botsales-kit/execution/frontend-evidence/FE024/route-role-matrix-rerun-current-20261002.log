@@ -1,0 +1,53 @@
+
+[WebServer] (node:15012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:16980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] [chromium] › tests\route-role-matrix.spec.ts:43:1 › route read access matches canonical permissions for every demo role
+  1) [chromium] › tests\route-role-matrix.spec.ts:43:1 › route read access matches canonical permissions for every demo role 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('status')
+    Expected substring: "Vai trò mô phỏng đã được áp dụng."
+    Error: strict mode violation: getByRole('status') resolved to 4 elements:
+        1) <div role="status" aria-live="polite" class="MuiStack-root css-1sgca4d-MuiStack-root">…</div> aka getByRole('status').first()
+        2) <div role="status" class="MuiBox-root css-19kzrtu">Đang tải số liệu tài chính…</div> aka getByText('Đang tải số liệu tài chính…')
+        3) <div role="status" aria-live="polite" class="MuiStack-root css-1sgca4d-MuiStack-root">…</div> aka getByRole('status').nth(2)
+        4) <div role="status" aria-live="polite" class="MuiStack-root css-1sgca4d-MuiStack-root">…</div> aka getByRole('status').nth(3)
+
+    Call log:
+      - Expect "toContainText" getByRole('status') with timeout 5000ms
+      - waiting for getByRole('status')
+
+
+      32 |     await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
+      33 |     await page.getByRole('option', { name: role, exact: true }).click();
+    > 34 |     await expect(page.getByRole('status')).toContainText('Vai trò mô phỏng đã được áp dụng.');
+         |                                            ^
+      35 | }
+      36 |
+      37 | function routePath(path: string) {
+        at chooseRole (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\route-role-matrix.spec.ts:34:44)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\route-role-matrix.spec.ts:54:13
+
+    Error Context: test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\error-context.md
+
+    Error Context: test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\route-role-matrix-route-re-638a3-issions-for-every-demo-role-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\route-role-matrix.spec.ts:43:1 › route read access matches canonical permissions for every demo role 

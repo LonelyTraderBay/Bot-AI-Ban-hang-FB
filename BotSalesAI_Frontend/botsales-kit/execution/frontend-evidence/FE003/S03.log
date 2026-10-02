@@ -1,0 +1,7 @@
+FE003.S03 evidence
+Command: Run current Vitest and Playwright gates; inspect Vitest/RTL/MSW/Playwright/axe configuration and test discovery
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Exit code: 0 (checkpointing an observed passing/review result)
+Expected: Vitest loads the actual app test suite and records any failures.\nPlaywright test discovery failure is captured without disabling tests.\nMSW stays mode-gated to demo; axe package/config usage is reported precisely.
+Observed: Vitest/jsdom/RTL loaded 3 files and passed 25/25 tests using clean PATH plus cmd.exe shell; APIs are mocked at the client level in these tests. Playwright exits 1 before browser tests: Node 24 rejects the test helper import of routes.json without an import attribute, then reports No tests found. No E2E/browser/axe execution occurred. Vite enables MSW only for mode=demo, rejects VITE_ENABLE_MOCKS=true in production and removes a prior demo worker from non-demo builds; Playwright uses one Chromium worker and starts npm run dev. @axe-core/playwright is installed but no axe invocation exists in the current tests/config. The failed gate remains visible.
+

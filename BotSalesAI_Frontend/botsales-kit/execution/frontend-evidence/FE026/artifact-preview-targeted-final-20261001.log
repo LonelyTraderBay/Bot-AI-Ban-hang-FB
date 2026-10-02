@@ -1,0 +1,61 @@
+
+[WebServer] (node:36760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:17100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/3] [chromium] › tests\artifacts\demo-preview.spec.ts:38:1 › the built demo artifact serves the React UI and synthetic API through preview
+[chromium] › tests\artifacts\demo-preview.spec.ts:38:1 › the built demo artifact serves the React UI and synthetic API through preview
+[artifact-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","browserMetrics":{"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36","viewport":{"width":1280,"height":720},"route":"/s/shop-demo/overview","domContentLoadedMs":68,"loadEventMs":68,"scriptCount":8,"scriptTransferBytes":442632,"scriptAssets":[{"file":"index-D0gZ1jcI.js","transferBytes":185362,"decodedBytes":732692,"durationMs":17},{"file":"react-NCqEdj2_.js","transferBytes":35705,"decodedBytes":104726,"durationMs":8},{"file":"mui-D8ryPhxS.js","transferBytes":97984,"decodedBytes":322099,"durationMs":11},{"file":"browser-oxvnobfw.js","transferBytes":87061,"decodedBytes":255090,"durationMs":8},{"file":"service-ChF_DBM3.js","transferBytes":34284,"decodedBytes":156872,"durationMs":6},{"file":"permissions-DSwmPBth.js","transferBytes":2236,"decodedBytes":8406,"durationMs":4},{"file":"index-D7ifWufJ.js","transferBytes":0,"decodedBytes":7792,"durationMs":53},{"file":"hooks-Bbfd5gWV.js","transferBytes":0,"decodedBytes":4166,"durationMs":56}]},"bundles":{"javascriptFiles":28,"totalBytes":2218833,"totalGzipBytes":647310,"initialRouteGzipBytes":445909,"proposedBudgets":{"initialRouteGzipKiB":500,"largestChunkGzipKiB":200,"basis":"Local demo preview limits for the measured Chromium artifact; not a backend or platform SLO."},"largest":[{"file":"apps/web/dist-demo/assets/index-D0gZ1jcI.js","bytes":732692,"gzipBytes":185062},{"file":"apps/web/dist-demo/assets/index-B6-AsPnv.js","bytes":324663,"gzipBytes":99507},{"file":"apps/web/dist-demo/assets/mui-D8ryPhxS.js","bytes":322099,"gzipBytes":97684},{"file":"apps/web/dist-demo/assets/browser-oxvnobfw.js","bytes":255090,"gzipBytes":86761},{"file":"apps/web/dist-demo/assets/service-ChF_DBM3.js","bytes":156872,"gzipBytes":33984}]},"observedApi":{"path":"/api/v2/session","status":200,"servedBy":"MSW in the built demo artifact"},"dataSource":"synthetic-msw"}
+
+[2/3] [chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+  1) [chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByRole('table').getByRole('row')
+    Expected: 21
+    Received: 5
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByRole('table').getByRole('row') with timeout 5000ms
+      - waiting for getByRole('table').getByRole('row')
+        14 × locator resolved to 5 elements
+           - unexpected value "5"
+
+
+      113 |     const envelope = await response.json() as { data: Array<{ id: string }>; page: { limit: number; total: number; hasMore: boolean; nextCursor: string | null } };
+      114 |     const renderedRows = page.getByRole('table').getByRole('row');
+    > 115 |     await expect(renderedRows).toHaveCount(21);
+          |                                ^
+      116 |     await expect(page.locator('a[href*="perf-customer-"]').first()).toBeVisible();
+      117 |
+      118 |     const report = {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\artifacts\demo-preview.spec.ts:115:32
+
+    Error Context: test-results\artifacts-demo-preview-a-t-5f07a--in-the-built-demo-artifact-chromium\error-context.md
+
+    Error Context: test-results\artifacts-demo-preview-a-t-5f07a--in-the-built-demo-artifact-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\artifacts-demo-preview-a-t-5f07a--in-the-built-demo-artifact-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\artifacts-demo-preview-a-t-5f07a--in-the-built-demo-artifact-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:8512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/3] [chromium] › tests\artifacts\demo-preview.spec.ts:138:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime
+  1 failed
+    [chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact 
+  2 passed (9.2s)

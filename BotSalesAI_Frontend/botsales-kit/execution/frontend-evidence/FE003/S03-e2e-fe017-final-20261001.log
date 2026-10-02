@@ -1,0 +1,215 @@
+✔ canonical contracts validate and generate the API base path from OpenAPI (18.1293ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.595ms)
+✔ rejects unresolved schema references before generation (20.0989ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.5331ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.6208ms)
+✔ detects a stale generated file and accepts it after regeneration (1.7754ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (42.0766ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (7.962ms)
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (6.9775ms)
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (7.8326ms)
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (7.5343ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.4306ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.204ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.16ms)
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":3}
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.5325ms)
+✔ FE017 upload and Knowledge DTO usage respects declared schema and records the allowedActions gap (0.1019ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.0786ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0552ms)
+
+Running 76 tests using 1 worker
+
+(node:30232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (2.0s)
+  ok  2 [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (4.1s)
+  ok  3 [chromium] › tests\fe009.spec.ts:212:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.4s)
+  ok  4 [chromium] › tests\fe009.spec.ts:235:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.6s)
+  ok  5 [chromium] › tests\fe009.spec.ts:304:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.8s)
+  ok  6 [chromium] › tests\fe010.spec.ts:41:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (4.3s)
+  ok  7 [chromium] › tests\fe010.spec.ts:172:1 › product update sends If-Match and keeps edits visible after a 412 conflict (2.0s)
+  ok  8 [chromium] › tests\fe010.spec.ts:201:1 › warehouse role can read catalog products but cannot edit product fields or price cost data (896ms)
+  ok  9 [chromium] › tests\fe010.spec.ts:214:1 › categories create, search, update with a version, and render cursor pagination (2.2s)
+  ok 10 [chromium] › tests\fe010.spec.ts:278:1 › CSV preview reports row-level errors and commits only valid product rows (2.4s)
+  ok 11 [chromium] › tests\fe010.spec.ts:404:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible (2.5s)
+  ok 12 [chromium] › tests\fe010.spec.ts:475:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview (1.3s)
+  ok 13 [chromium] › tests\fe010.spec.ts:502:1 › demo upload rejects files over 5 MB and explains the limit (1.6s)
+  ok 14 [chromium] › tests\fe011.spec.ts:40:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result (1.9s)
+  ok 15 [chromium] › tests\fe011.spec.ts:72:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once (4.0s)
+  ok 16 [chromium] › tests\fe011.spec.ts:143:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically (2.4s)
+  ok 17 [chromium] › tests\fe011.spec.ts:184:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state (1.9s)
+  ok 18 [chromium] › tests\fe011.spec.ts:213:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it (2.0s)
+  ok 19 [chromium] › tests\fe011.spec.ts:250:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source (2.5s)
+  ok 20 [chromium] › tests\fe011.spec.ts:282:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog (2.1s)
+  ok 21 [chromium] › tests\fe011.spec.ts:326:1 › FE011.AC03 unknown shop scope shows no stock from another shop (321ms)
+  ok 22 [chromium] › tests\fe012.spec.ts:40:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity (4.5s)
+  ok 23 [chromium] › tests\fe012.spec.ts:129:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation (4.4s)
+  ok 24 [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success (2.0s)
+  ok 25 [chromium] › tests\fe012.spec.ts:252:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft (1.2s)
+  ok 26 [chromium] › tests\fe012.spec.ts:272:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available (2.3s)
+  ok 27 [chromium] › tests\fe012.spec.ts:318:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time (3.2s)
+  ok 28 [chromium] › tests\fe012.spec.ts:346:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection (1.4s)
+  ok 29 [chromium] › tests\fe012.spec.ts:388:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund (3.0s)
+  ok 30 [chromium] › tests\fe012.spec.ts:503:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action (1.1s)
+  ok 31 [chromium] › tests\fe012.spec.ts:518:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks (1.5s)
+  ok 32 [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once (8.1s)
+  ok 33 [chromium] › tests\fe013.spec.ts:332:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation (3.7s)
+  ok 34 [chromium] › tests\fe013.spec.ts:420:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible (3.2s)
+  ok 35 [chromium] › tests\fe014.spec.ts:27:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent (3.7s)
+  ok 36 [chromium] › tests\fe014.spec.ts:116:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry (4.8s)
+  ok 37 [chromium] › tests\fe014.spec.ts:237:1 › FE014.S03 auto-send cannot be configured without an enabled procurement budget (2.7s)
+  ok 38 [chromium] › tests\fe014.spec.ts:264:1 › FE014.S03 manager without procurement.receive cannot open receipt actions (2.5s)
+  ok 39 [chromium] › tests\fe014.spec.ts:310:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once (4.1s)
+  ok 40 [chromium] › tests\fe015.spec.ts:64:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates (1.7s)
+  ok 41 [chromium] › tests\fe015.spec.ts:116:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings (1.5s)
+  ok 42 [chromium] › tests\fe015.spec.ts:208:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (1.9s)
+  ok 43 [chromium] › tests\fe015.spec.ts:253:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions (1.8s)
+  ok 44 [chromium] › tests\fe015.spec.ts:287:1 › FE015.AC03 COD settlement matches net remittance plus documented fee (3.5s)
+  ok 45 [chromium] › tests\fe015.spec.ts:349:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible (2.7s)
+  ok 46 [chromium] › tests\fe015.spec.ts:399:1 › FE015.AC03 unknown journal posting is not resent from the same draft (2.8s)
+  ok 47 [chromium] › tests\fe016.spec.ts:26:1 › FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details (2.3s)
+  ok 48 [chromium] › tests\fe016.spec.ts:65:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation (898ms)
+  ok 49 [chromium] › tests\fe016.spec.ts:91:1 › FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery (1.7s)
+  ok 50 [chromium] › tests\fe016.spec.ts:141:1 › FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft (1.5s)
+  ok 51 [chromium] › tests\fe016.spec.ts:198:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends (1.3s)
+  ok 52 [chromium] › tests\fe016.spec.ts:230:1 › FE016.AC04 role without customer/order permissions cannot open those cross-module references (906ms)
+  ok 53 [chromium] › tests\fe016.spec.ts:256:1 › FE016.S03 stale takeover preserves reason and reports the version conflict (1.9s)
+  ok 54 [chromium] › tests\fe017.spec.ts:26:1 › FE017.AC01 manual draft requires content, review uses current version, publish is tied to the evaluated revision (3.5s)
+  ok 55 [chromium] › tests\fe017.spec.ts:223:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status (1.8s)
+  ok 56 [chromium] › tests\fe017.spec.ts:289:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs (786ms)
+  ok 57 [chromium] › tests\fe017.spec.ts:351:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable (1.7s)
+  ok 58 [chromium] › tests\fe017.spec.ts:403:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only (2.8s)
+  ok 59 [chromium] › tests\fe017.spec.ts:479:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish (845ms)
+  ok 60 [chromium] › tests\fe017.spec.ts:543:1 › FE017.AC06 stale review preserves the reason and explains the conflict (1.2s)
+  ok 61 [chromium] › tests\fe019.spec.ts:19:1 › FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries (18ms)
+  ok 62 [chromium] › tests\fe019.spec.ts:65:1 › FE019.AC01 AI secret is write-only, cleared after submit, and absent from stored/read data (2.7s)
+  ok 63 [chromium] › tests\fe019.spec.ts:142:1 › FE019.AC01 invalid mock credential is rejected, cleared from the form, and not submitted (1.8s)
+  ok 64 [chromium] › tests\fe019.spec.ts:180:1 › FE019.AC02 channel OAuth failure stays on the page and never marks a channel connected (1.3s)
+  ok 65 [chromium] › tests\fe019.spec.ts:224:1 › FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not request OS permission (3.1s)
+  ok 66 [chromium] › tests\fe019.spec.ts:360:1 › FE019.AC05 notification policy validates canonical numeric bounds before sending and acknowledges only allowed work (2.3s)
+  ok 67 [chromium] › tests\frontend.spec.ts:42:1 › catalog create uses the HTTP mock and successful save clears the draft guard (1.7s)
+  ok 68 [chromium] › tests\frontend.spec.ts:80:1 › dirty drafts block in-app navigation and preserve input until the user decides (2.3s)
+  ok 69 [chromium] › tests\frontend.spec.ts:116:1 › all canonical routes render inside the real React demo application (12.4s)
+  ok 70 [chromium] › tests\frontend.spec.ts:131:1 › switching shops cancels a delayed request and loads only the new shop scope (5.2s)
+  ok 71 [chromium] › tests\frontend.spec.ts:166:1 › role changes remove restricted navigation and the route guard explains denied access (846ms)
+  ok 72 [chromium] › tests\frontend.spec.ts:185:1 › deep links survive browser refresh and logout clears the mock session (2.5s)
+  ok 73 [chromium] › tests\frontend.spec.ts:206:1 › logout asks before discarding a draft and retains the session when logout fails (1.7s)
+  ok 74 [chromium] › tests\frontend.spec.ts:328:1 › mobile navigation opens, routes, and closes without viewport overflow (952ms)
+  ok 75 [chromium] › tests\frontend.spec.ts:360:1 › chunk loading errors use the route recovery boundary (824ms)
+  ok 76 [chromium] › tests\frontend.spec.ts:439:1 › live mode reports an unavailable session API without enabling mock data (319ms)
+
+  76 passed (3.1m)

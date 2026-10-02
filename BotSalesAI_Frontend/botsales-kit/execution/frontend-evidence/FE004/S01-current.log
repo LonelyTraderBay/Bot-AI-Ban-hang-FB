@@ -1,0 +1,25 @@
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-09-30T09:36:25.369Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 51,
+  "imports": 374,
+  "negativeFixtures": "Boundary fixtures: PASS 8/8 scenarios (allowed import, alias, relative, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+Architecture map reviewed from current source:
+- App composition/public browser bootstrap: apps/web/src/main.tsx; route registration and route-to-module lazy loading: apps/web/src/app/router.tsx.
+- Application shell/session/feedback/scope/i18n: apps/web/src/app/.
+- 16 feature module directories under apps/web/src/modules; each feature owns its local screen exports. Catalog import screens stay in the catalog module folder.
+- Transport boundary: apps/web/src/shared/api/{client,hooks,errors,intents,validation}.ts; reusable non-domain state/model: apps/web/src/shared/model/; shared presentation/theme: apps/web/src/shared/ui/.
+- Canonical generated public exports: packages/contracts/src/index.ts and packages/design-tokens/src/index.ts.
+- Checked providers: one ThemeProvider/CssBaseline, one QueryClientProvider, one RouterProvider in main.tsx; createBrowserRouter is centralized in app/router.tsx.
+- Current evidence: strict typecheck has exit 0; boundary scanner parsed 51 files/374 imports, 8/8 negative fixtures, zero issues. No concrete type or architecture defect found in this read, so no broad restructure is justified by FE004.S01.

@@ -1,0 +1,59 @@
+
+[WebServer] (node:15020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 11 tests using 1 worker
+
+(node:27552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/11] [chromium] › tests\fe017.spec.ts:24:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+[2/11] [chromium] › tests\fe017.spec.ts:115:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+[3/11] [chromium] › tests\fe017.spec.ts:154:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+[4/11] [chromium] › tests\fe017.spec.ts:187:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+[5/11] [chromium] › tests\fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+  1) [chromium] › tests\fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: locator.click: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Đánh giá', exact: true }).first()
+
+
+      209 | test('FE017.AC04 feedback approval creates inert draft content and its first revision only', async ({ page }) => {
+      210 |     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+    > 211 |     await page.getByRole('button', { name: 'Đánh giá', exact: true }).first().click();
+          |                                                                               ^
+      212 |     const feedbackDialog = page.getByRole('dialog', { name: 'Đánh giá câu trả lời' });
+      213 |     await feedbackDialog.getByRole('textbox', { name: 'Nội dung đề xuất sửa' }).fill('Nên kiểm tra điều kiện đổi hàng trước khi tư vấn.');
+      214 |     const feedbackResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/feedback'));
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe017.spec.ts:211:79
+
+    Error Context: test-results\fe017-FE017-AC04-feedback--111ad-and-its-first-revision-only-chromium\error-context.md
+
+    Error Context: test-results\fe017-FE017-AC04-feedback--111ad-and-its-first-revision-only-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe017-FE017-AC04-feedback--111ad-and-its-first-revision-only-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe017-FE017-AC04-feedback--111ad-and-its-first-revision-only-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:8084) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[6/11] [chromium] › tests\fe017.spec.ts:242:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+[7/11] [chromium] › tests\fe017.spec.ts:263:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+[8/11] [chromium] › tests\security.spec.ts:35:1 › untrusted product text renders as text without activating markup
+[9/11] [chromium] › tests\security.spec.ts:53:1 › catalog import rejects a non-CSV file before an upload request
+[10/11] [chromium] › tests\security.spec.ts:71:1 › catalog import rejects files above the demo size limit before upload
+[11/11] [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries
+  1 failed
+    [chromium] › tests\fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only 
+  10 passed (3.3m)

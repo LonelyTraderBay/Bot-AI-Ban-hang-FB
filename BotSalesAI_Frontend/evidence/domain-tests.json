@@ -1,13 +1,21 @@
 {
-  "checkedAt": "2026-09-29T17:41:23.237Z",
-  "node": "v22.16.0",
-  "typescript": "5.8.3",
-  "compilerSource": "environment compiler (not installed project version)",
-  "scope": "Pure TypeScript in-memory API simulator. NOT React build, MSW transport, backend, real concurrency, finance certification or browser execution.",
+  "checkedAt": "2026-10-02T02:46:27.823Z",
+  "node": "v24.19.0",
+  "typescript": "5.9.2",
+  "compilerSource": "project dependency",
+  "scope": "Synthetic frontend checks: pure TypeScript in-memory simulator plus MSW HTTP/SSE transport. NOT backend, real concurrency, finance certification or browser E2E.",
   "status": "PASS",
   "checks": [
     {
       "name": "Full order lifecycle and purchase partial receiving use actual simulator handlers",
+      "status": "PASS"
+    },
+    {
+      "name": "Procurement rejects cross-shop and unapproved suppliers and unusable auto-send budgets",
+      "status": "PASS"
+    },
+    {
+      "name": "Stale purchase approval cannot authorize a changed resource version",
       "status": "PASS"
     },
     {
@@ -24,6 +32,10 @@
     },
     {
       "name": "Read-only role cannot create products",
+      "status": "PASS"
+    },
+    {
+      "name": "Revoked shop membership never falls back to another active shop membership",
       "status": "PASS"
     },
     {
@@ -582,10 +594,10 @@
       "requestSchema": "ShipmentEventWrite",
       "request": {
         "expectedVersion": 2,
-        "externalEventId": "delivery-1",
+        "externalEventId": "delivery-test-1",
         "eventType": "delivered",
         "occurredAt": "2026-09-29T14:00:27.000Z",
-        "evidenceRef": "delivery-proof"
+        "evidenceRef": "delivery-proof-test"
       },
       "schema": "ShipmentResponse",
       "data": {
@@ -603,10 +615,10 @@
         "shippingFeeActual": null,
         "events": [
           {
-            "externalEventId": "delivery-1",
+            "externalEventId": "delivery-test-1",
             "type": "delivered",
             "occurredAt": "2026-09-29T14:00:27.000Z",
-            "evidenceRef": "delivery-proof"
+            "evidenceRef": "delivery-proof-test"
           }
         ]
       }
@@ -621,9 +633,9 @@
           "currency": "VND"
         },
         "method": "bank_transfer",
-        "reference": "BANK1",
+        "reference": "BANK-TEST-1001",
         "reason": "Ghi nhận thu tiền đã đối chiếu",
-        "evidenceRef": "bank-proof-1"
+        "evidenceRef": "bank-proof-test"
       },
       "schema": "CommandResponse",
       "data": {
@@ -720,8 +732,8 @@
           "currency": "VND"
         },
         "reason": "Đã chuyển hoàn tiền theo bằng chứng",
-        "paymentReference": "REFUND1",
-        "evidenceRef": "refund-proof"
+        "paymentReference": "REFUND-TEST-1001",
+        "evidenceRef": "refund-proof-test"
       },
       "schema": "CommandResponse",
       "data": {
@@ -886,8 +898,8 @@
       "requestSchema": "PurchaseConfirm",
       "request": {
         "expectedVersion": 4,
-        "externalReference": "PO-EXT-1",
-        "supplierConfirmationRef": "supplier-proof"
+        "externalReference": "PO-TEST-EXT-1",
+        "supplierConfirmationRef": "supplier-proof-test"
       },
       "schema": "PurchaseOrderResponse",
       "data": {
@@ -919,7 +931,7 @@
         },
         "approvalId": "approval-10049",
         "intentHash": "a9440ba7752328d85738e9958a167973dfab1b6dbb9e9fcad2b381e868d041da",
-        "externalReference": "PO-EXT-1",
+        "externalReference": "PO-TEST-EXT-1",
         "budgetReservationId": null,
         "allowedActions": [
           "receive"
@@ -932,7 +944,7 @@
       "request": {
         "purchaseOrderId": "purchaseorder-10046",
         "expectedPurchaseVersion": 5,
-        "sourceDocumentRef": "GR-001",
+        "sourceDocumentRef": "GR-TEST-001",
         "lines": [
           {
             "purchaseLineId": "purchase-line-10045",
@@ -960,7 +972,7 @@
             "reason": "Kiểm 4 sản phẩm đạt"
           }
         ],
-        "sourceDocumentRef": "GR-001"
+        "sourceDocumentRef": "GR-TEST-001"
       }
     },
     {
@@ -1041,6 +1053,158 @@
       }
     },
     {
+      "op": "createPurchaseOrder",
+      "requestSchema": "PurchaseCreate",
+      "request": {
+        "supplierId": "supplier-01",
+        "warehouseId": "warehouse-01",
+        "suggestionId": null,
+        "lines": [
+          {
+            "variantId": "v-p1",
+            "supplierOfferId": "offer-p1",
+            "quantity": 5
+          }
+        ]
+      },
+      "schema": "PurchaseOrderResponse",
+      "data": {
+        "id": "purchaseorder-10002",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T14:00:02.000Z",
+        "updatedAt": "2026-09-29T14:00:02.000Z",
+        "supplierId": "supplier-01",
+        "warehouseId": "warehouse-01",
+        "status": "draft",
+        "lines": [
+          {
+            "id": "purchase-line-10001",
+            "variantId": "v-p1",
+            "supplierOfferId": "offer-p1",
+            "quantity": 5,
+            "unitCost": {
+              "amount": "100000",
+              "currency": "VND"
+            },
+            "receivedQuantity": 0,
+            "rejectedQuantity": 0
+          }
+        ],
+        "total": {
+          "amount": "500000",
+          "currency": "VND"
+        },
+        "approvalId": null,
+        "intentHash": "a28f1e9dba2331a930c1077901db1027f0322027c7af75483c84af9670ca8f0c",
+        "externalReference": null,
+        "budgetReservationId": null,
+        "allowedActions": [
+          "request_approval",
+          "cancel"
+        ]
+      }
+    },
+    {
+      "op": "requestPurchaseApproval",
+      "requestSchema": "VersionRequest",
+      "request": {
+        "expectedVersion": 1
+      },
+      "schema": "ApprovalResponse",
+      "data": {
+        "id": "approval-10005",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T14:00:05.000Z",
+        "updatedAt": "2026-09-29T14:00:05.000Z",
+        "action": "purchase.send",
+        "resource": {
+          "type": "purchase_order",
+          "id": "purchaseorder-10002"
+        },
+        "resourceVersion": 2,
+        "policyVersion": "synthetic-policy-1",
+        "intentHash": "a28f1e9dba2331a930c1077901db1027f0322027c7af75483c84af9670ca8f0c",
+        "amount": {
+          "amount": "500000",
+          "currency": "VND"
+        },
+        "status": "pending",
+        "expiresAt": "2026-09-29T14:15:04.000Z",
+        "requestedBy": "user-demo",
+        "decidedBy": null,
+        "decisionReason": null
+      }
+    },
+    {
+      "op": "listCustomers",
+      "requestSchema": null,
+      "schema": "CustomerListResponse",
+      "data": [
+        {
+          "id": "b-c1",
+          "shopId": "shop-second",
+          "version": 1,
+          "createdAt": "2026-09-29T14:00:00.000Z",
+          "updatedAt": "2026-09-29T14:00:00.000Z",
+          "displayName": "Linh (khách mẫu)",
+          "phone": "09•• ••• 121",
+          "email": null,
+          "notes": "Dữ liệu giả lập; không dùng để liên lạc.",
+          "redactedFields": [
+            "phone"
+          ],
+          "externalIdentity": "b-identity-1"
+        },
+        {
+          "id": "b-c2",
+          "shopId": "shop-second",
+          "version": 1,
+          "createdAt": "2026-09-29T14:00:00.000Z",
+          "updatedAt": "2026-09-29T14:00:00.000Z",
+          "displayName": "Minh (khách mẫu)",
+          "phone": "09•• ••• 122",
+          "email": null,
+          "notes": "Dữ liệu giả lập; không dùng để liên lạc.",
+          "redactedFields": [
+            "phone"
+          ],
+          "externalIdentity": "b-identity-2"
+        },
+        {
+          "id": "b-c3",
+          "shopId": "shop-second",
+          "version": 1,
+          "createdAt": "2026-09-29T14:00:00.000Z",
+          "updatedAt": "2026-09-29T14:00:00.000Z",
+          "displayName": "An (khách mẫu)",
+          "phone": "09•• ••• 123",
+          "email": null,
+          "notes": "Dữ liệu giả lập; không dùng để liên lạc.",
+          "redactedFields": [
+            "phone"
+          ],
+          "externalIdentity": "b-identity-3"
+        },
+        {
+          "id": "b-c4",
+          "shopId": "shop-second",
+          "version": 1,
+          "createdAt": "2026-09-29T14:00:00.000Z",
+          "updatedAt": "2026-09-29T14:00:00.000Z",
+          "displayName": "Hà (khách mẫu)",
+          "phone": "09•• ••• 124",
+          "email": null,
+          "notes": "Dữ liệu giả lập; không dùng để liên lạc.",
+          "redactedFields": [
+            "phone"
+          ],
+          "externalIdentity": "b-identity-4"
+        }
+      ]
+    },
+    {
       "op": "createCategory",
       "requestSchema": "CategoryWrite",
       "request": {
@@ -1049,11 +1213,11 @@
       },
       "schema": "CategoryResponse",
       "data": {
-        "id": "category-10075",
+        "id": "category-10008",
         "shopId": "shop-demo",
         "version": 1,
-        "createdAt": "2026-09-29T14:01:15.000Z",
-        "updatedAt": "2026-09-29T14:01:15.000Z",
+        "createdAt": "2026-09-29T14:00:08.000Z",
+        "updatedAt": "2026-09-29T14:00:08.000Z",
         "name": "Kiểm chống trùng",
         "parentId": null,
         "active": false,
@@ -1069,11 +1233,11 @@
       },
       "schema": "CategoryResponse",
       "data": {
-        "id": "category-10075",
+        "id": "category-10008",
         "shopId": "shop-demo",
         "version": 1,
-        "createdAt": "2026-09-29T14:01:15.000Z",
-        "updatedAt": "2026-09-29T14:01:15.000Z",
+        "createdAt": "2026-09-29T14:00:08.000Z",
+        "updatedAt": "2026-09-29T14:00:08.000Z",
         "name": "Kiểm chống trùng",
         "parentId": null,
         "active": false,
@@ -1092,10 +1256,10 @@
       "schema": "CashflowResponse",
       "data": {
         "shopId": "shop-demo",
-        "from": "2026-09-01T00:00:00Z",
-        "to": "2026-09-29T14:01:17.000Z",
+        "from": "2026-09-01T00:00:00.000Z",
+        "to": "2026-10-01T00:00:00.000Z",
         "timezone": "Asia/Vientiane",
-        "asOf": "2026-09-29T14:01:17.000Z",
+        "asOf": "2026-09-29T14:00:10.000Z",
         "receipts": {
           "amount": "249000",
           "currency": "VND"
@@ -1126,12 +1290,12 @@
       },
       "schema": "CommandResponse",
       "data": {
-        "id": "command-10079",
+        "id": "command-10012",
         "shopId": "shop-demo",
         "status": "unknown",
         "kind": "createInventoryAdjustment",
-        "createdAt": "2026-09-29T14:01:19.000Z",
-        "updatedAt": "2026-09-29T14:01:19.000Z",
+        "createdAt": "2026-09-29T14:00:12.000Z",
+        "updatedAt": "2026-09-29T14:00:12.000Z",
         "result": {
           "type": "stock",
           "id": "st-p1"
@@ -1152,12 +1316,12 @@
       },
       "schema": "CommandResponse",
       "data": {
-        "id": "command-10079",
+        "id": "command-10012",
         "shopId": "shop-demo",
         "status": "unknown",
         "kind": "createInventoryAdjustment",
-        "createdAt": "2026-09-29T14:01:19.000Z",
-        "updatedAt": "2026-09-29T14:01:19.000Z",
+        "createdAt": "2026-09-29T14:00:12.000Z",
+        "updatedAt": "2026-09-29T14:00:12.000Z",
         "result": {
           "type": "stock",
           "id": "st-p1"
@@ -1248,7 +1412,7 @@
               "finance.close",
               "bot.pause"
             ],
-            "permissionVersion": 4,
+            "permissionVersion": 6,
             "status": "active"
           },
           {
@@ -1313,7 +1477,7 @@
               "finance.close",
               "bot.pause"
             ],
-            "permissionVersion": 4,
+            "permissionVersion": 6,
             "status": "active"
           }
         ]
@@ -1457,6 +1621,143 @@
           ],
           "permissionVersion": 1,
           "status": "active"
+        },
+        {
+          "id": "member-demo-manager",
+          "userId": "user-manager",
+          "shopId": "shop-demo",
+          "roles": [
+            "manager"
+          ],
+          "permissions": [
+            "approvals.request",
+            "audit.read",
+            "bot.read",
+            "catalog.import",
+            "catalog.read",
+            "catalog.write",
+            "conversations.assign",
+            "conversations.read",
+            "conversations.reply",
+            "customers.read",
+            "customers.write",
+            "dashboard.read",
+            "finance.read",
+            "fulfillment.handover",
+            "fulfillment.read",
+            "fulfillment.write",
+            "integrations.read",
+            "inventory.adjust",
+            "inventory.read",
+            "jobs.read",
+            "knowledge.read",
+            "notifications.manage",
+            "notifications.read",
+            "operations.claim",
+            "operations.manage",
+            "operations.read",
+            "orders.confirm",
+            "orders.fulfill",
+            "orders.read",
+            "orders.return",
+            "orders.write",
+            "procurement.read",
+            "reports.export",
+            "reports.read"
+          ],
+          "permissionVersion": 1,
+          "status": "active"
+        },
+        {
+          "id": "member-demo-sales",
+          "userId": "user-sales",
+          "shopId": "shop-demo",
+          "roles": [
+            "sales"
+          ],
+          "permissions": [
+            "catalog.read",
+            "conversations.assign",
+            "conversations.read",
+            "conversations.reply",
+            "customers.read",
+            "customers.write",
+            "dashboard.read",
+            "inventory.read",
+            "jobs.read",
+            "knowledge.read",
+            "notifications.read",
+            "operations.read",
+            "orders.confirm",
+            "orders.read",
+            "orders.write"
+          ],
+          "permissionVersion": 1,
+          "status": "active"
+        },
+        {
+          "id": "member-demo-accountant",
+          "userId": "user-accountant",
+          "shopId": "shop-demo",
+          "roles": [
+            "accountant"
+          ],
+          "permissions": [
+            "approvals.read",
+            "audit.read",
+            "finance.close",
+            "finance.post",
+            "finance.read",
+            "finance.reconcile",
+            "finance.refund",
+            "jobs.read",
+            "operations.read",
+            "orders.read",
+            "reports.export",
+            "reports.read"
+          ],
+          "permissionVersion": 1,
+          "status": "active"
+        },
+        {
+          "id": "member-demo-bot_admin",
+          "userId": "user-bot_admin",
+          "shopId": "shop-demo",
+          "roles": [
+            "bot_admin"
+          ],
+          "permissions": [
+            "bot.configure",
+            "bot.publish",
+            "bot.read",
+            "catalog.read",
+            "conversations.read",
+            "integrations.read",
+            "jobs.read",
+            "knowledge.publish",
+            "knowledge.read",
+            "knowledge.write",
+            "operations.read"
+          ],
+          "permissionVersion": 1,
+          "status": "active"
+        },
+        {
+          "id": "member-demo-viewer",
+          "userId": "user-viewer",
+          "shopId": "shop-demo",
+          "roles": [
+            "viewer"
+          ],
+          "permissions": [
+            "catalog.read",
+            "dashboard.read",
+            "inventory.read",
+            "operations.read",
+            "orders.read"
+          ],
+          "permissionVersion": 1,
+          "status": "active"
         }
       ]
     },
@@ -1466,13 +1767,13 @@
       "schema": "DashboardResponse",
       "data": {
         "shopId": "shop-demo",
-        "asOf": "2026-09-29T14:01:21.000Z",
+        "asOf": "2026-09-29T14:00:14.000Z",
         "openConversations": 4,
-        "pendingOrders": 0,
-        "lowStockVariants": 2,
+        "pendingOrders": 1,
+        "lowStockVariants": 3,
         "botStatus": "paused",
         "recognizedRevenue": {
-          "amount": "0",
+          "amount": "498000",
           "currency": "VND"
         },
         "cashReceived": {
@@ -1753,11 +2054,11 @@
       "schema": "CategoryListResponse",
       "data": [
         {
-          "id": "category-10075",
+          "id": "category-10008",
           "shopId": "shop-demo",
           "version": 1,
-          "createdAt": "2026-09-29T14:01:15.000Z",
-          "updatedAt": "2026-09-29T14:01:15.000Z",
+          "createdAt": "2026-09-29T14:00:08.000Z",
+          "updatedAt": "2026-09-29T14:00:08.000Z",
           "name": "Kiểm chống trùng",
           "parentId": null,
           "active": false,
@@ -1872,7 +2173,7 @@
           "shopId": "shop-demo",
           "version": 2,
           "createdAt": "2026-09-29T14:00:00.000Z",
-          "updatedAt": "2026-09-29T14:01:17.000Z",
+          "updatedAt": "2026-09-29T14:00:10.000Z",
           "variantId": "v-p1",
           "warehouseId": "warehouse-01",
           "sku": "DEMO-001",
@@ -1884,14 +2185,14 @@
             "amount": "100000",
             "currency": "VND"
           },
-          "asOf": "2026-09-29T14:01:17.000Z"
+          "asOf": "2026-09-29T14:00:10.000Z"
         },
         {
           "id": "st-p2",
           "shopId": "shop-demo",
-          "version": 4,
+          "version": 1,
           "createdAt": "2026-09-29T14:00:00.000Z",
-          "updatedAt": "2026-09-29T14:00:37.000Z",
+          "updatedAt": "2026-09-29T14:00:00.000Z",
           "variantId": "v-p2",
           "warehouseId": "warehouse-01",
           "sku": "AO-002",
@@ -1903,7 +2204,7 @@
             "amount": "135000",
             "currency": "VND"
           },
-          "asOf": "2026-09-29T14:00:37.000Z"
+          "asOf": "2026-09-29T14:00:00.000Z"
         },
         {
           "id": "st-p3",
@@ -1965,21 +2266,21 @@
         {
           "id": "st-p6",
           "shopId": "shop-demo",
-          "version": 2,
+          "version": 1,
           "createdAt": "2026-09-29T14:00:00.000Z",
-          "updatedAt": "2026-09-29T14:01:01.000Z",
+          "updatedAt": "2026-09-29T14:00:00.000Z",
           "variantId": "v-p6",
           "warehouseId": "warehouse-01",
           "sku": "MU-006",
-          "onHand": 4,
+          "onHand": 0,
           "reserved": 0,
-          "available": 4,
+          "available": 0,
           "lowStockThreshold": 3,
           "unitCost": {
             "amount": "65000",
             "currency": "VND"
           },
-          "asOf": "2026-09-29T14:01:01.000Z"
+          "asOf": "2026-09-29T14:00:00.000Z"
         },
         {
           "id": "st-p7",
@@ -2027,7 +2328,7 @@
       "schema": "StockMovementListResponse",
       "data": [
         {
-          "id": "stockmovement-10078",
+          "id": "stockmovement-10011",
           "shopId": "shop-demo",
           "variantId": "v-p1",
           "warehouseId": "warehouse-01",
@@ -2036,71 +2337,7 @@
           "reservedDelta": 0,
           "reason": "Thử mất phản hồi sau xử lý",
           "sourceRef": null,
-          "createdAt": "2026-09-29T14:01:18.000Z",
-          "actorId": "user-demo"
-        },
-        {
-          "id": "stockmovement-10062",
-          "shopId": "shop-demo",
-          "variantId": "v-p6",
-          "warehouseId": "warehouse-01",
-          "kind": "receipt",
-          "quantityDelta": 4,
-          "reservedDelta": 0,
-          "reason": "Nhập hàng theo phiếu được kiểm nhận",
-          "sourceRef": {
-            "type": "goods_receipt",
-            "id": "goodsreceipt-10059"
-          },
-          "createdAt": "2026-09-29T14:01:02.000Z",
-          "actorId": "user-demo"
-        },
-        {
-          "id": "stockmovement-10038",
-          "shopId": "shop-demo",
-          "variantId": "v-p2",
-          "warehouseId": "warehouse-01",
-          "kind": "return",
-          "quantityDelta": 1,
-          "reservedDelta": 0,
-          "reason": "Kiểm hàng nguyên vẹn",
-          "sourceRef": {
-            "type": "return",
-            "id": "returncase-10035"
-          },
-          "createdAt": "2026-09-29T14:00:38.000Z",
-          "actorId": "user-demo"
-        },
-        {
-          "id": "stockmovement-10024",
-          "shopId": "shop-demo",
-          "variantId": "v-p2",
-          "warehouseId": "warehouse-01",
-          "kind": "fulfillment",
-          "quantityDelta": -1,
-          "reservedDelta": -1,
-          "reason": "Bàn giao kiện hàng mô phỏng",
-          "sourceRef": {
-            "type": "shipment",
-            "id": "shipment-10021"
-          },
-          "createdAt": "2026-09-29T14:00:24.000Z",
-          "actorId": "user-demo"
-        },
-        {
-          "id": "stockmovement-10008",
-          "shopId": "shop-demo",
-          "variantId": "v-p2",
-          "warehouseId": "warehouse-01",
-          "kind": "reserve",
-          "quantityDelta": 0,
-          "reservedDelta": 1,
-          "reason": "Giữ hàng khi xác nhận đơn",
-          "sourceRef": {
-            "type": "order",
-            "id": "DH-1001"
-          },
-          "createdAt": "2026-09-29T14:00:08.000Z",
+          "createdAt": "2026-09-29T14:00:11.000Z",
           "actorId": "user-demo"
         },
         {
@@ -2215,7 +2452,59 @@
       "schema": "OrderListResponse",
       "data": [
         {
-          "id": "DH-1001",
+          "id": "DH-DEMO-RETURN-02",
+          "shopId": "shop-demo",
+          "version": 2,
+          "createdAt": "2026-09-29T13:45:00.000Z",
+          "updatedAt": "2026-09-29T14:00:34.000Z",
+          "customerId": "c1",
+          "conversationId": "cv1",
+          "warehouseId": "warehouse-01",
+          "orderState": "completed",
+          "fulfillmentState": "delivered",
+          "paymentState": "verified",
+          "lines": [
+            {
+              "id": "seed-ol-return-02",
+              "variantId": "v-p2",
+              "sku": "AO-002",
+              "name": "Áo thun Essential · L · Than",
+              "quantity": 2,
+              "unitPrice": {
+                "amount": "249000",
+                "currency": "VND"
+              },
+              "discount": {
+                "amount": "0",
+                "currency": "VND"
+              },
+              "lineTotal": {
+                "amount": "498000",
+                "currency": "VND"
+              },
+              "costSnapshot": {
+                "amount": "135000",
+                "currency": "VND"
+              }
+            }
+          ],
+          "total": {
+            "amount": "498000",
+            "currency": "VND"
+          },
+          "allowedActions": [
+            "request_return"
+          ],
+          "redactedFields": [],
+          "prepTaskId": null,
+          "shipmentIds": [],
+          "paymentMethod": "prepay",
+          "customerConfirmationId": null,
+          "shippingAddressId": "address-synthetic",
+          "recognitionPolicyVersion": "synthetic-delivered-1"
+        },
+        {
+          "id": "DH-DEMO-PAID-01",
           "shopId": "shop-demo",
           "version": 9,
           "createdAt": "2026-09-29T14:00:00.000Z",
@@ -2228,7 +2517,7 @@
           "paymentState": "refunded",
           "lines": [
             {
-              "id": "ol-1001",
+              "id": "seed-ol-1001",
               "variantId": "v-p2",
               "sku": "AO-002",
               "name": "Áo thun Essential · L · Than",
@@ -2260,12 +2549,62 @@
             "request_refund"
           ],
           "redactedFields": [],
-          "prepTaskId": "workitem-10009",
+          "prepTaskId": "seed-workitem-10009",
           "shipmentIds": [
-            "shipment-10021"
+            "seed-shipment-10021"
           ],
           "paymentMethod": "cod",
-          "customerConfirmationId": "customerconfirmation-10005",
+          "customerConfirmationId": "seed-customerconfirmation-10005",
+          "shippingAddressId": "address-synthetic",
+          "recognitionPolicyVersion": "synthetic-delivered-1"
+        },
+        {
+          "id": "DH-1001",
+          "shopId": "shop-demo",
+          "version": 1,
+          "createdAt": "2026-09-29T14:00:00.000Z",
+          "updatedAt": "2026-09-29T14:00:00.000Z",
+          "customerId": "c1",
+          "conversationId": "cv1",
+          "warehouseId": "warehouse-01",
+          "orderState": "draft",
+          "fulfillmentState": "unfulfilled",
+          "paymentState": "unpaid",
+          "lines": [
+            {
+              "id": "ol-1001",
+              "variantId": "v-p2",
+              "sku": "AO-002",
+              "name": "Áo thun Essential · L · Than",
+              "quantity": 1,
+              "unitPrice": {
+                "amount": "249000",
+                "currency": "VND"
+              },
+              "discount": {
+                "amount": "0",
+                "currency": "VND"
+              },
+              "lineTotal": {
+                "amount": "249000",
+                "currency": "VND"
+              }
+            }
+          ],
+          "total": {
+            "amount": "249000",
+            "currency": "VND"
+          },
+          "allowedActions": [
+            "edit",
+            "quote",
+            "cancel"
+          ],
+          "redactedFields": [],
+          "prepTaskId": null,
+          "shipmentIds": [],
+          "paymentMethod": "cod",
+          "customerConfirmationId": null,
           "shippingAddressId": "address-synthetic",
           "recognitionPolicyVersion": "synthetic-delivered-1"
         }
@@ -2277,7 +2616,7 @@
       "schema": "FinanceEntryListResponse",
       "data": [
         {
-          "id": "financeentry-10068",
+          "id": "seed-financeentry-10068",
           "shopId": "shop-demo",
           "version": 2,
           "createdAt": "2026-09-29T14:01:08.000Z",
@@ -2295,7 +2634,7 @@
           "reversalOf": null
         },
         {
-          "id": "financeentry-10041",
+          "id": "seed-financeentry-10041",
           "shopId": "shop-demo",
           "version": 1,
           "createdAt": "2026-09-29T14:00:41.000Z",
@@ -2311,13 +2650,13 @@
           "description": "Đã chuyển hoàn tiền theo bằng chứng",
           "sourceRef": {
             "type": "order_refund",
-            "id": "DH-1001"
+            "id": "DH-DEMO-PAID-01"
           },
           "reversalOf": null,
           "paymentReference": "REFUND1"
         },
         {
-          "id": "financeentry-10031",
+          "id": "seed-financeentry-10031",
           "shopId": "shop-demo",
           "version": 1,
           "createdAt": "2026-09-29T14:00:31.000Z",
@@ -2333,7 +2672,7 @@
           "description": "Ghi nhận thu tiền đã đối chiếu",
           "sourceRef": {
             "type": "order",
-            "id": "DH-1001"
+            "id": "DH-DEMO-PAID-01"
           },
           "reversalOf": null
         }
@@ -2345,10 +2684,10 @@
       "schema": "CashflowResponse",
       "data": {
         "shopId": "shop-demo",
-        "from": "2026-09-01T00:00:00Z",
-        "to": "2026-09-29T14:01:21.000Z",
+        "from": "2026-09-01T00:00:00.000Z",
+        "to": "2026-10-01T00:00:00.000Z",
         "timezone": "Asia/Vientiane",
-        "asOf": "2026-09-29T14:01:21.000Z",
+        "asOf": "2026-09-29T14:00:14.000Z",
         "receipts": {
           "amount": "249000",
           "currency": "VND"
@@ -2372,13 +2711,13 @@
       "schema": "ProfitLossResponse",
       "data": {
         "shopId": "shop-demo",
-        "from": "2026-09-01T00:00:00Z",
-        "to": "2026-09-29T14:01:21.000Z",
+        "from": "2026-09-01T00:00:00.000Z",
+        "to": "2026-10-01T00:00:00.000Z",
         "timezone": "Asia/Vientiane",
-        "asOf": "2026-09-29T14:01:21.000Z",
+        "asOf": "2026-09-29T14:00:14.000Z",
         "policyVersion": "synthetic-policy-1",
         "grossSales": {
-          "amount": "249000",
+          "amount": "747000",
           "currency": "VND"
         },
         "discounts": {
@@ -2390,19 +2729,19 @@
           "currency": "VND"
         },
         "netSales": {
-          "amount": "0",
+          "amount": "498000",
           "currency": "VND"
         },
         "cogs": {
-          "amount": "0",
+          "amount": "135000",
           "currency": "VND"
         },
         "grossProfit": {
-          "amount": "0",
+          "amount": "363000",
           "currency": "VND"
         },
         "operatingProfit": {
-          "amount": "-25000",
+          "amount": "338000",
           "currency": "VND"
         },
         "completeness": "provisional",
@@ -2676,7 +3015,7 @@
           "createdAt": "2026-09-29T14:00:00.000Z",
           "updatedAt": "2026-09-29T14:00:00.000Z",
           "name": "Kết nối AI mô phỏng",
-          "providerId": "provider-demo",
+          "providerId": "mock",
           "adapterId": "mock",
           "modelId": "synthetic-model",
           "endpointUrl": null,
@@ -2730,7 +3069,7 @@
       "schema": "ReportSummaryResponse",
       "data": {
         "shopId": "shop-demo",
-        "asOf": "2026-09-29T14:01:21.000Z",
+        "asOf": "2026-09-29T14:00:14.000Z",
         "availableReports": [
           "inventory",
           "orders",
@@ -2754,7 +3093,20 @@
       "schema": "CommandListResponse",
       "data": [
         {
-          "id": "command-10079",
+          "id": "command-10012",
+          "shopId": "shop-demo",
+          "status": "unknown",
+          "kind": "createInventoryAdjustment",
+          "createdAt": "2026-09-29T14:00:12.000Z",
+          "updatedAt": "2026-09-29T14:00:12.000Z",
+          "result": {
+            "type": "stock",
+            "id": "st-p1"
+          },
+          "problem": null
+        },
+        {
+          "id": "seed-command-10079",
           "shopId": "shop-demo",
           "status": "unknown",
           "kind": "createInventoryAdjustment",
@@ -2767,7 +3119,7 @@
           "problem": null
         },
         {
-          "id": "command-10072",
+          "id": "seed-command-10072",
           "shopId": "shop-demo",
           "status": "succeeded",
           "kind": "postFinanceEntry",
@@ -2775,12 +3127,12 @@
           "updatedAt": "2026-09-29T14:01:12.000Z",
           "result": {
             "type": "finance_entry",
-            "id": "financeentry-10068"
+            "id": "seed-financeentry-10068"
           },
           "problem": null
         },
         {
-          "id": "command-10065",
+          "id": "seed-command-10065",
           "shopId": "shop-demo",
           "status": "succeeded",
           "kind": "postGoodsReceipt",
@@ -2788,12 +3140,12 @@
           "updatedAt": "2026-09-29T14:01:05.000Z",
           "result": {
             "type": "goods_receipt",
-            "id": "goodsreceipt-10059"
+            "id": "seed-goodsreceipt-10059"
           },
           "problem": null
         },
         {
-          "id": "command-10054",
+          "id": "seed-command-10054",
           "shopId": "shop-demo",
           "status": "succeeded",
           "kind": "sendPurchaseOrder",
@@ -2801,12 +3153,12 @@
           "updatedAt": "2026-09-29T14:00:54.000Z",
           "result": {
             "type": "purchase_order",
-            "id": "purchaseorder-10046"
+            "id": "seed-purchaseorder-10046"
           },
           "problem": null
         },
         {
-          "id": "command-10042",
+          "id": "seed-command-10042",
           "shopId": "shop-demo",
           "status": "succeeded",
           "kind": "refundOrder",
@@ -2814,12 +3166,12 @@
           "updatedAt": "2026-09-29T14:00:42.000Z",
           "result": {
             "type": "order",
-            "id": "DH-1001"
+            "id": "DH-DEMO-PAID-01"
           },
           "problem": null
         },
         {
-          "id": "command-10032",
+          "id": "seed-command-10032",
           "shopId": "shop-demo",
           "status": "succeeded",
           "kind": "payOrder",
@@ -2827,12 +3179,12 @@
           "updatedAt": "2026-09-29T14:00:32.000Z",
           "result": {
             "type": "order",
-            "id": "DH-1001"
+            "id": "DH-DEMO-PAID-01"
           },
           "problem": null
         },
         {
-          "id": "command-10025",
+          "id": "seed-command-10025",
           "shopId": "shop-demo",
           "status": "succeeded",
           "kind": "handoverShipment",
@@ -2840,12 +3192,12 @@
           "updatedAt": "2026-09-29T14:00:25.000Z",
           "result": {
             "type": "shipment",
-            "id": "shipment-10021"
+            "id": "seed-shipment-10021"
           },
           "problem": null
         },
         {
-          "id": "command-10012",
+          "id": "seed-command-10012",
           "shopId": "shop-demo",
           "status": "succeeded",
           "kind": "confirmOrder",
@@ -2853,7 +3205,7 @@
           "updatedAt": "2026-09-29T14:00:12.000Z",
           "result": {
             "type": "order",
-            "id": "DH-1001"
+            "id": "DH-DEMO-PAID-01"
           },
           "problem": null
         }
@@ -2865,20 +3217,72 @@
       "schema": "AuditEventListResponse",
       "data": [
         {
-          "id": "auditevent-10081",
+          "id": "auditevent-10014",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "createInventoryAdjustment",
           "resource": {
             "type": "CommandResponse",
-            "id": "command-10079"
+            "id": "command-10012"
+          },
+          "occurredAt": "2026-09-29T14:00:12.000Z",
+          "requestId": "request-10013",
+          "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
+        },
+        {
+          "id": "auditevent-10010",
+          "shopId": "shop-demo",
+          "actorId": "user-demo",
+          "action": "createCategory",
+          "resource": {
+            "type": "CategoryResponse",
+            "id": "category-10008"
+          },
+          "occurredAt": "2026-09-29T14:00:08.000Z",
+          "requestId": "request-10009",
+          "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
+        },
+        {
+          "id": "auditevent-10007",
+          "shopId": "shop-demo",
+          "actorId": "user-demo",
+          "action": "requestPurchaseApproval",
+          "resource": {
+            "type": "ApprovalResponse",
+            "id": "approval-10005"
+          },
+          "occurredAt": "2026-09-29T14:00:05.000Z",
+          "requestId": "request-10006",
+          "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
+        },
+        {
+          "id": "auditevent-10004",
+          "shopId": "shop-demo",
+          "actorId": "user-demo",
+          "action": "createPurchaseOrder",
+          "resource": {
+            "type": "PurchaseOrderResponse",
+            "id": "purchaseorder-10002"
+          },
+          "occurredAt": "2026-09-29T14:00:02.000Z",
+          "requestId": "request-10003",
+          "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
+        },
+        {
+          "id": "seed-auditevent-10081",
+          "shopId": "shop-demo",
+          "actorId": "user-demo",
+          "action": "createInventoryAdjustment",
+          "resource": {
+            "type": "CommandResponse",
+            "id": "seed-command-10079"
           },
           "occurredAt": "2026-09-29T14:01:19.000Z",
           "requestId": "request-10080",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10077",
+          "id": "seed-auditevent-10077",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "createCategory",
@@ -2891,286 +3295,286 @@
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10074",
+          "id": "seed-auditevent-10074",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "postFinanceEntry",
           "resource": {
             "type": "CommandResponse",
-            "id": "command-10072"
+            "id": "seed-command-10072"
           },
           "occurredAt": "2026-09-29T14:01:12.000Z",
           "requestId": "request-10073",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10070",
+          "id": "seed-auditevent-10070",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "createFinanceEntry",
           "resource": {
             "type": "FinanceEntryResponse",
-            "id": "financeentry-10068"
+            "id": "seed-financeentry-10068"
           },
           "occurredAt": "2026-09-29T14:01:08.000Z",
           "requestId": "request-10069",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10067",
+          "id": "seed-auditevent-10067",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "postGoodsReceipt",
           "resource": {
             "type": "CommandResponse",
-            "id": "command-10065"
+            "id": "seed-command-10065"
           },
           "occurredAt": "2026-09-29T14:01:05.000Z",
           "requestId": "request-10066",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10061",
+          "id": "seed-auditevent-10061",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "createGoodsReceipt",
           "resource": {
             "type": "GoodsReceiptResponse",
-            "id": "goodsreceipt-10059"
+            "id": "seed-goodsreceipt-10059"
           },
           "occurredAt": "2026-09-29T14:00:59.000Z",
           "requestId": "request-10060",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10058",
+          "id": "seed-auditevent-10058",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "confirmPurchaseOrder",
           "resource": {
             "type": "PurchaseOrderResponse",
-            "id": "purchaseorder-10046"
+            "id": "seed-purchaseorder-10046"
           },
           "occurredAt": "2026-09-29T14:00:56.000Z",
           "requestId": "request-10057",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10056",
+          "id": "seed-auditevent-10056",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "sendPurchaseOrder",
           "resource": {
             "type": "CommandResponse",
-            "id": "command-10054"
+            "id": "seed-command-10054"
           },
           "occurredAt": "2026-09-29T14:00:54.000Z",
           "requestId": "request-10055",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10053",
+          "id": "seed-auditevent-10053",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "decideApproval",
           "resource": {
             "type": "ApprovalResponse",
-            "id": "approval-10049"
+            "id": "seed-approval-10049"
           },
           "occurredAt": "2026-09-29T14:00:51.000Z",
           "requestId": "request-10052",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10051",
+          "id": "seed-auditevent-10051",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "requestPurchaseApproval",
           "resource": {
             "type": "ApprovalResponse",
-            "id": "approval-10049"
+            "id": "seed-approval-10049"
           },
           "occurredAt": "2026-09-29T14:00:49.000Z",
           "requestId": "request-10050",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10048",
+          "id": "seed-auditevent-10048",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "createPurchaseOrder",
           "resource": {
             "type": "PurchaseOrderResponse",
-            "id": "purchaseorder-10046"
+            "id": "seed-purchaseorder-10046"
           },
           "occurredAt": "2026-09-29T14:00:46.000Z",
           "requestId": "request-10047",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10044",
+          "id": "seed-auditevent-10044",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "refundOrder",
           "resource": {
             "type": "CommandResponse",
-            "id": "command-10042"
+            "id": "seed-command-10042"
           },
           "occurredAt": "2026-09-29T14:00:42.000Z",
           "requestId": "request-10043",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10040",
+          "id": "seed-auditevent-10040",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "inspectReturn",
           "resource": {
             "type": "ReturnCaseResponse",
-            "id": "returncase-10035"
+            "id": "seed-returncase-10035"
           },
           "occurredAt": "2026-09-29T14:00:38.000Z",
           "requestId": "request-10039",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10037",
+          "id": "seed-auditevent-10037",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "createReturnCase",
           "resource": {
             "type": "ReturnCaseResponse",
-            "id": "returncase-10035"
+            "id": "seed-returncase-10035"
           },
           "occurredAt": "2026-09-29T14:00:35.000Z",
           "requestId": "request-10036",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10034",
+          "id": "seed-auditevent-10034",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "payOrder",
           "resource": {
             "type": "CommandResponse",
-            "id": "command-10032"
+            "id": "seed-command-10032"
           },
           "occurredAt": "2026-09-29T14:00:32.000Z",
           "requestId": "request-10033",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10030",
+          "id": "seed-auditevent-10030",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "recordShipmentEvent",
           "resource": {
             "type": "ShipmentResponse",
-            "id": "shipment-10021"
+            "id": "seed-shipment-10021"
           },
           "occurredAt": "2026-09-29T14:00:28.000Z",
           "requestId": "request-10029",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10027",
+          "id": "seed-auditevent-10027",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "handoverShipment",
           "resource": {
             "type": "CommandResponse",
-            "id": "command-10025"
+            "id": "seed-command-10025"
           },
           "occurredAt": "2026-09-29T14:00:25.000Z",
           "requestId": "request-10026",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10023",
+          "id": "seed-auditevent-10023",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "createShipment",
           "resource": {
             "type": "ShipmentResponse",
-            "id": "shipment-10021"
+            "id": "seed-shipment-10021"
           },
           "occurredAt": "2026-09-29T14:00:21.000Z",
           "requestId": "request-10022",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10020",
+          "id": "seed-auditevent-10020",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "packPrepJob",
           "resource": {
             "type": "PrepJobResponse",
-            "id": "prepjob-10010"
+            "id": "seed-prepjob-10010"
           },
           "occurredAt": "2026-09-29T14:00:18.000Z",
           "requestId": "request-10019",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10018",
+          "id": "seed-auditevent-10018",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "pickPrepLine",
           "resource": {
             "type": "PrepJobResponse",
-            "id": "prepjob-10010"
+            "id": "seed-prepjob-10010"
           },
           "occurredAt": "2026-09-29T14:00:16.000Z",
           "requestId": "request-10017",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10016",
+          "id": "seed-auditevent-10016",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "acknowledgeNotification",
           "resource": {
             "type": "WorkItemResponse",
-            "id": "workitem-10009"
+            "id": "seed-workitem-10009"
           },
           "occurredAt": "2026-09-29T14:00:14.000Z",
           "requestId": "request-10015",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10014",
+          "id": "seed-auditevent-10014",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "confirmOrder",
           "resource": {
             "type": "CommandResponse",
-            "id": "command-10012"
+            "id": "seed-command-10012"
           },
           "occurredAt": "2026-09-29T14:00:12.000Z",
           "requestId": "request-10013",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10007",
+          "id": "seed-auditevent-10007",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "recordCustomerConfirmation",
           "resource": {
             "type": "CustomerConfirmationResponse",
-            "id": "customerconfirmation-10005"
+            "id": "seed-customerconfirmation-10005"
           },
           "occurredAt": "2026-09-29T14:00:05.000Z",
           "requestId": "request-10006",
           "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
         },
         {
-          "id": "auditevent-10003",
+          "id": "seed-auditevent-10003",
           "shopId": "shop-demo",
           "actorId": "user-demo",
           "action": "quoteOrder",
           "resource": {
             "type": "OrderQuoteResponse",
-            "id": "orderquote-10001"
+            "id": "seed-orderquote-10001"
           },
           "occurredAt": "2026-09-29T14:00:01.000Z",
           "requestId": "request-10002",
@@ -3260,6 +3664,26 @@
           {
             "userId": "user-warehouse",
             "displayName": "user-warehouse"
+          },
+          {
+            "userId": "user-manager",
+            "displayName": "user-manager"
+          },
+          {
+            "userId": "user-sales",
+            "displayName": "user-sales"
+          },
+          {
+            "userId": "user-accountant",
+            "displayName": "user-accountant"
+          },
+          {
+            "userId": "user-bot_admin",
+            "displayName": "user-bot_admin"
+          },
+          {
+            "userId": "user-viewer",
+            "displayName": "user-viewer"
           }
         ]
       }
@@ -3270,7 +3694,7 @@
       "schema": "WorkItemListResponse",
       "data": [
         {
-          "id": "workitem-10009",
+          "id": "seed-workitem-10009",
           "shopId": "shop-demo",
           "version": 3,
           "createdAt": "2026-09-29T14:00:09.000Z",
@@ -3278,11 +3702,62 @@
           "kind": "prepare_order",
           "source": {
             "type": "order",
-            "id": "DH-1001"
+            "id": "DH-DEMO-PAID-01"
           },
           "state": "completed",
           "assigneeUserId": "user-demo",
           "dueAt": null,
+          "blockedReason": null,
+          "allowedActions": []
+        },
+        {
+          "id": "demo-workitem-late-shipment",
+          "shopId": "shop-demo",
+          "version": 1,
+          "createdAt": "2026-09-29T13:20:00.000Z",
+          "updatedAt": "2026-09-29T13:20:00.000Z",
+          "kind": "late_shipment",
+          "source": {
+            "type": "shipment",
+            "id": "DEMO-SHIPMENT-LATE"
+          },
+          "state": "working",
+          "assigneeUserId": "user-demo",
+          "dueAt": "2026-09-29T13:30:00.000Z",
+          "blockedReason": null,
+          "allowedActions": []
+        },
+        {
+          "id": "demo-workitem-payment-mismatch",
+          "shopId": "shop-demo",
+          "version": 1,
+          "createdAt": "2026-09-29T13:40:00.000Z",
+          "updatedAt": "2026-09-29T13:40:00.000Z",
+          "kind": "payment_mismatch",
+          "source": {
+            "type": "bank_transaction",
+            "id": "DEMO-BANK-MISMATCH"
+          },
+          "state": "blocked",
+          "assigneeUserId": null,
+          "dueAt": "2026-09-29T13:45:00.000Z",
+          "blockedReason": "Số tiền đối soát chưa khớp chứng từ mẫu",
+          "allowedActions": []
+        },
+        {
+          "id": "demo-workitem-unclaimed-order",
+          "shopId": "shop-demo",
+          "version": 1,
+          "createdAt": "2026-09-29T13:50:00.000Z",
+          "updatedAt": "2026-09-29T13:50:00.000Z",
+          "kind": "prepare_order",
+          "source": {
+            "type": "order",
+            "id": "DEMO-ORDER-UNCLAIMED"
+          },
+          "state": "queued",
+          "assigneeUserId": null,
+          "dueAt": "2026-09-29T15:00:00.000Z",
           "blockedReason": null,
           "allowedActions": []
         }
@@ -3294,7 +3769,31 @@
       "schema": "ApprovalListResponse",
       "data": [
         {
-          "id": "approval-10049",
+          "id": "approval-10005",
+          "shopId": "shop-demo",
+          "version": 1,
+          "createdAt": "2026-09-29T14:00:05.000Z",
+          "updatedAt": "2026-09-29T14:00:05.000Z",
+          "action": "purchase.send",
+          "resource": {
+            "type": "purchase_order",
+            "id": "purchaseorder-10002"
+          },
+          "resourceVersion": 2,
+          "policyVersion": "synthetic-policy-1",
+          "intentHash": "a28f1e9dba2331a930c1077901db1027f0322027c7af75483c84af9670ca8f0c",
+          "amount": {
+            "amount": "500000",
+            "currency": "VND"
+          },
+          "status": "pending",
+          "expiresAt": "2026-09-29T14:15:04.000Z",
+          "requestedBy": "user-demo",
+          "decidedBy": null,
+          "decisionReason": null
+        },
+        {
+          "id": "seed-approval-10049",
           "shopId": "shop-demo",
           "version": 3,
           "createdAt": "2026-09-29T14:00:49.000Z",
@@ -3302,7 +3801,7 @@
           "action": "purchase.send",
           "resource": {
             "type": "purchase_order",
-            "id": "purchaseorder-10046"
+            "id": "seed-purchaseorder-10046"
           },
           "resourceVersion": 3,
           "policyVersion": "synthetic-policy-1",
@@ -3316,6 +3815,54 @@
           "requestedBy": "user-demo",
           "decidedBy": "user-demo",
           "decisionReason": "Duyệt nhập hàng cho mô phỏng"
+        },
+        {
+          "id": "demo-budget-expired",
+          "shopId": "shop-demo",
+          "version": 1,
+          "createdAt": "2026-09-29T13:50:00.000Z",
+          "updatedAt": "2026-09-29T13:55:00.000Z",
+          "action": "budget.update",
+          "resource": {
+            "type": "budget_policy",
+            "id": "budget-0"
+          },
+          "resourceVersion": 1,
+          "policyVersion": "synthetic-policy-1",
+          "intentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "amount": {
+            "amount": "350000",
+            "currency": "VND"
+          },
+          "status": "approved",
+          "expiresAt": "2026-09-29T13:59:00.000Z",
+          "requestedBy": "user-demo",
+          "decidedBy": "user-demo",
+          "decisionReason": "Dữ liệu mô phỏng phê duyệt ngân sách đã hết hạn"
+        },
+        {
+          "id": "demo-budget-valid",
+          "shopId": "shop-demo",
+          "version": 1,
+          "createdAt": "2026-09-29T14:00:00.000Z",
+          "updatedAt": "2026-09-29T14:00:00.000Z",
+          "action": "budget.update",
+          "resource": {
+            "type": "budget_policy",
+            "id": "budget-0"
+          },
+          "resourceVersion": 1,
+          "policyVersion": "synthetic-policy-1",
+          "intentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "amount": {
+            "amount": "350000",
+            "currency": "VND"
+          },
+          "status": "approved",
+          "expiresAt": "2026-09-29T14:15:00.000Z",
+          "requestedBy": "user-demo",
+          "decidedBy": "user-demo",
+          "decisionReason": "Dữ liệu mô phỏng phê duyệt ngân sách còn hiệu lực"
         }
       ]
     },
@@ -3344,19 +3891,19 @@
       "schema": "NotificationListResponse",
       "data": [
         {
-          "id": "notification-10011",
+          "id": "seed-notification-10011",
           "shopId": "shop-demo",
           "version": 2,
           "createdAt": "2026-09-29T14:00:11.000Z",
           "updatedAt": "2026-09-29T14:00:14.000Z",
-          "workItemId": "workitem-10009",
+          "workItemId": "seed-workitem-10009",
           "source": {
             "type": "order",
-            "id": "DH-1001"
+            "id": "DH-DEMO-PAID-01"
           },
           "recipientUserId": "user-demo",
           "channel": "in_app",
-          "title": "Đơn DH-1001 cần chuẩn bị",
+          "title": "Đơn DH-DEMO-PAID-01 cần chuẩn bị",
           "safeBody": "1 mặt hàng · Bấm để nhận việc.",
           "deliveryStatus": "queued",
           "openedAt": "2026-09-29T14:00:14.000Z",
@@ -3371,17 +3918,17 @@
       "schema": "PrepJobListResponse",
       "data": [
         {
-          "id": "prepjob-10010",
+          "id": "seed-prepjob-10010",
           "shopId": "shop-demo",
           "version": 5,
           "createdAt": "2026-09-29T14:00:10.000Z",
           "updatedAt": "2026-09-29T14:00:24.000Z",
-          "orderId": "DH-1001",
-          "workItemId": "workitem-10009",
+          "orderId": "DH-DEMO-PAID-01",
+          "workItemId": "seed-workitem-10009",
           "state": "handed_over",
           "lines": [
             {
-              "orderLineId": "ol-1001",
+              "orderLineId": "seed-ol-1001",
               "sku": "AO-002",
               "requiredQuantity": 1,
               "pickedQuantity": 1,
@@ -3398,12 +3945,12 @@
       "schema": "ShipmentListResponse",
       "data": [
         {
-          "id": "shipment-10021",
+          "id": "seed-shipment-10021",
           "shopId": "shop-demo",
           "version": 3,
           "createdAt": "2026-09-29T14:00:21.000Z",
           "updatedAt": "2026-09-29T14:00:27.000Z",
-          "orderId": "DH-1001",
+          "orderId": "DH-DEMO-PAID-01",
           "warehouseId": "warehouse-01",
           "carrierId": "carrier-demo",
           "trackingCode": null,
@@ -3427,16 +3974,34 @@
       "schema": "ReturnCaseListResponse",
       "data": [
         {
-          "id": "returncase-10035",
+          "id": "seed-returncase-10036",
+          "shopId": "shop-demo",
+          "version": 1,
+          "createdAt": "2026-09-29T14:00:33.000Z",
+          "updatedAt": "2026-09-29T14:00:34.000Z",
+          "orderId": "DH-DEMO-RETURN-02",
+          "state": "received",
+          "lines": [
+            {
+              "orderLineId": "seed-ol-return-02",
+              "quantity": 2,
+              "reason": "Kiểm thử kiểm nhận một phần hàng trả synthetic",
+              "disposition": "pending"
+            }
+          ],
+          "refundObligation": null
+        },
+        {
+          "id": "seed-returncase-10035",
           "shopId": "shop-demo",
           "version": 2,
           "createdAt": "2026-09-29T14:00:35.000Z",
           "updatedAt": "2026-09-29T14:00:38.000Z",
-          "orderId": "DH-1001",
+          "orderId": "DH-DEMO-PAID-01",
           "state": "inspected",
           "lines": [
             {
-              "orderLineId": "ol-1001",
+              "orderLineId": "seed-ol-1001",
               "quantity": 1,
               "reason": "Kiểm hàng nguyên vẹn",
               "disposition": "sellable"
@@ -3761,7 +4326,42 @@
       "schema": "PurchaseOrderListResponse",
       "data": [
         {
-          "id": "purchaseorder-10046",
+          "id": "purchaseorder-10002",
+          "shopId": "shop-demo",
+          "version": 3,
+          "createdAt": "2026-09-29T14:00:02.000Z",
+          "updatedAt": "2026-09-29T14:00:07.000Z",
+          "supplierId": "supplier-01",
+          "warehouseId": "warehouse-01",
+          "status": "pending_approval",
+          "lines": [
+            {
+              "id": "purchase-line-10001",
+              "variantId": "v-p1",
+              "supplierOfferId": "offer-p1",
+              "quantity": 5,
+              "unitCost": {
+                "amount": "100000",
+                "currency": "VND"
+              },
+              "receivedQuantity": 0,
+              "rejectedQuantity": 0
+            }
+          ],
+          "total": {
+            "amount": "500000",
+            "currency": "VND"
+          },
+          "approvalId": "approval-10005",
+          "intentHash": "a28f1e9dba2331a930c1077901db1027f0322027c7af75483c84af9670ca8f0c",
+          "externalReference": null,
+          "budgetReservationId": null,
+          "allowedActions": [
+            "cancel"
+          ]
+        },
+        {
+          "id": "seed-purchaseorder-10046",
           "shopId": "shop-demo",
           "version": 6,
           "createdAt": "2026-09-29T14:00:46.000Z",
@@ -3771,7 +4371,7 @@
           "status": "part_received",
           "lines": [
             {
-              "id": "purchase-line-10045",
+              "id": "seed-purchase-line-10045",
               "variantId": "v-p6",
               "supplierOfferId": "offer-p6",
               "quantity": 10,
@@ -3787,7 +4387,7 @@
             "amount": "650000",
             "currency": "VND"
           },
-          "approvalId": "approval-10049",
+          "approvalId": "seed-approval-10049",
           "intentHash": "a9440ba7752328d85738e9958a167973dfab1b6dbb9e9fcad2b381e868d041da",
           "externalReference": "PO-EXT-1",
           "budgetReservationId": null,
@@ -3803,17 +4403,17 @@
       "schema": "GoodsReceiptListResponse",
       "data": [
         {
-          "id": "goodsreceipt-10059",
+          "id": "seed-goodsreceipt-10059",
           "shopId": "shop-demo",
           "version": 2,
           "createdAt": "2026-09-29T14:00:59.000Z",
           "updatedAt": "2026-09-29T14:01:04.000Z",
-          "purchaseOrderId": "purchaseorder-10046",
+          "purchaseOrderId": "seed-purchaseorder-10046",
           "warehouseId": "warehouse-01",
           "status": "posted",
           "lines": [
             {
-              "purchaseLineId": "purchase-line-10045",
+              "purchaseLineId": "seed-purchase-line-10045",
               "acceptedQuantity": 4,
               "rejectedQuantity": 0,
               "reason": "Kiểm 4 sản phẩm đạt"
@@ -3829,13 +4429,13 @@
       "schema": "JournalListResponse",
       "data": [
         {
-          "id": "journal-10071",
+          "id": "seed-journal-10071",
           "shopId": "shop-demo",
           "version": 1,
           "createdAt": "2026-09-29T14:01:11.000Z",
           "updatedAt": "2026-09-29T14:01:11.000Z",
           "sourceType": "finance_entry",
-          "sourceId": "financeentry-10068",
+          "sourceId": "seed-financeentry-10068",
           "status": "posted",
           "effectiveDate": "2026-09-29",
           "periodId": "period-2026-09",
@@ -3869,13 +4469,13 @@
           "reversalOf": null
         },
         {
-          "id": "journal-10063",
+          "id": "seed-journal-10063",
           "shopId": "shop-demo",
           "version": 1,
           "createdAt": "2026-09-29T14:01:03.000Z",
           "updatedAt": "2026-09-29T14:01:03.000Z",
           "sourceType": "goods_receipt",
-          "sourceId": "goodsreceipt-10059",
+          "sourceId": "seed-goodsreceipt-10059",
           "status": "posted",
           "effectiveDate": "2026-09-29",
           "periodId": "period-2026-09",
@@ -3934,7 +4534,7 @@
       "schema": "DebtItemListResponse",
       "data": [
         {
-          "id": "debtitem-10064",
+          "id": "seed-debtitem-10064",
           "shopId": "shop-demo",
           "version": 1,
           "createdAt": "2026-09-29T14:01:04.000Z",
@@ -3943,7 +4543,7 @@
           "counterpartyId": "supplier-01",
           "source": {
             "type": "goods_receipt",
-            "id": "goodsreceipt-10059"
+            "id": "seed-goodsreceipt-10059"
           },
           "direction": "payable",
           "originalAmount": {
@@ -3958,7 +4558,7 @@
           "disputed": false
         },
         {
-          "id": "debtitem-10028",
+          "id": "seed-debtitem-10028",
           "shopId": "shop-demo",
           "version": 1,
           "createdAt": "2026-09-29T14:00:28.000Z",
@@ -3967,7 +4567,7 @@
           "counterpartyId": "carrier-demo",
           "source": {
             "type": "order",
-            "id": "DH-1001"
+            "id": "DH-DEMO-PAID-01"
           },
           "direction": "receivable",
           "originalAmount": {
@@ -4209,7 +4809,7 @@
           "user-demo"
         ],
         "fallbackUserIds": [],
-        "fallbackChannel": "telegram",
+        "fallbackChannel": "none",
         "urgentMayBypassQuietHours": false
       }
     },
@@ -4218,11 +4818,11 @@
       "requestSchema": null,
       "schema": "OperationsSummaryResponse",
       "data": {
-        "asOf": "2026-09-29T14:01:21.000Z",
-        "queuedTasks": 0,
-        "overdueTasks": 0,
-        "pendingApprovals": 0,
-        "unknownCommands": 1,
+        "asOf": "2026-09-29T14:00:14.000Z",
+        "queuedTasks": 1,
+        "overdueTasks": 2,
+        "pendingApprovals": 1,
+        "unknownCommands": 2,
         "roles": [
           {
             "id": "agent-0",
@@ -4331,17 +4931,33 @@
       "requestSchema": null,
       "schema": "MarketingSummaryResponse",
       "data": {
-        "asOf": "2026-09-29T14:01:21.000Z",
-        "knownAttributedOrders": 0,
-        "unknownAttributionOrders": 1,
+        "asOf": "2026-09-29T14:00:14.000Z",
+        "knownAttributedOrders": 3,
+        "unknownAttributionOrders": 5,
         "topQuestions": [
           "Shop ơi áo thun còn size L không?",
+          "Phí giao hàng về Vientiane là bao nhiêu?",
           "Mình muốn đổi size của đơn hàng.",
-          "Quần linen có dễ nhăn không?",
-          "Mình sẽ nhắn lại sau nhé."
+          "Sản phẩm có màu than không?"
         ],
-        "lostSaleReasons": [],
-        "estimatedSpend": null,
+        "lostSaleReasons": [
+          {
+            "reason": "Không còn đúng kích cỡ",
+            "count": 4
+          },
+          {
+            "reason": "Chưa rõ phí giao hàng",
+            "count": 3
+          },
+          {
+            "reason": "Chưa đủ thông tin sản phẩm",
+            "count": 2
+          }
+        ],
+        "estimatedSpend": {
+          "amount": "750000",
+          "currency": "VND"
+        },
         "actualSpend": null
       }
     }
@@ -4550,6 +5166,143 @@
           "procurement.read",
           "procurement.receive",
           "procurement.write"
+        ],
+        "permissionVersion": 1,
+        "status": "active"
+      },
+      {
+        "id": "member-demo-manager",
+        "userId": "user-manager",
+        "shopId": "shop-demo",
+        "roles": [
+          "manager"
+        ],
+        "permissions": [
+          "approvals.request",
+          "audit.read",
+          "bot.read",
+          "catalog.import",
+          "catalog.read",
+          "catalog.write",
+          "conversations.assign",
+          "conversations.read",
+          "conversations.reply",
+          "customers.read",
+          "customers.write",
+          "dashboard.read",
+          "finance.read",
+          "fulfillment.handover",
+          "fulfillment.read",
+          "fulfillment.write",
+          "integrations.read",
+          "inventory.adjust",
+          "inventory.read",
+          "jobs.read",
+          "knowledge.read",
+          "notifications.manage",
+          "notifications.read",
+          "operations.claim",
+          "operations.manage",
+          "operations.read",
+          "orders.confirm",
+          "orders.fulfill",
+          "orders.read",
+          "orders.return",
+          "orders.write",
+          "procurement.read",
+          "reports.export",
+          "reports.read"
+        ],
+        "permissionVersion": 1,
+        "status": "active"
+      },
+      {
+        "id": "member-demo-sales",
+        "userId": "user-sales",
+        "shopId": "shop-demo",
+        "roles": [
+          "sales"
+        ],
+        "permissions": [
+          "catalog.read",
+          "conversations.assign",
+          "conversations.read",
+          "conversations.reply",
+          "customers.read",
+          "customers.write",
+          "dashboard.read",
+          "inventory.read",
+          "jobs.read",
+          "knowledge.read",
+          "notifications.read",
+          "operations.read",
+          "orders.confirm",
+          "orders.read",
+          "orders.write"
+        ],
+        "permissionVersion": 1,
+        "status": "active"
+      },
+      {
+        "id": "member-demo-accountant",
+        "userId": "user-accountant",
+        "shopId": "shop-demo",
+        "roles": [
+          "accountant"
+        ],
+        "permissions": [
+          "approvals.read",
+          "audit.read",
+          "finance.close",
+          "finance.post",
+          "finance.read",
+          "finance.reconcile",
+          "finance.refund",
+          "jobs.read",
+          "operations.read",
+          "orders.read",
+          "reports.export",
+          "reports.read"
+        ],
+        "permissionVersion": 1,
+        "status": "active"
+      },
+      {
+        "id": "member-demo-bot_admin",
+        "userId": "user-bot_admin",
+        "shopId": "shop-demo",
+        "roles": [
+          "bot_admin"
+        ],
+        "permissions": [
+          "bot.configure",
+          "bot.publish",
+          "bot.read",
+          "catalog.read",
+          "conversations.read",
+          "integrations.read",
+          "jobs.read",
+          "knowledge.publish",
+          "knowledge.read",
+          "knowledge.write",
+          "operations.read"
+        ],
+        "permissionVersion": 1,
+        "status": "active"
+      },
+      {
+        "id": "member-demo-viewer",
+        "userId": "user-viewer",
+        "shopId": "shop-demo",
+        "roles": [
+          "viewer"
+        ],
+        "permissions": [
+          "catalog.read",
+          "dashboard.read",
+          "inventory.read",
+          "operations.read",
+          "orders.read"
         ],
         "permissionVersion": 1,
         "status": "active"
@@ -5071,11 +5824,11 @@
     ],
     "categories": [
       {
-        "id": "category-10075",
+        "id": "category-10008",
         "shopId": "shop-demo",
         "version": 1,
-        "createdAt": "2026-09-29T14:01:15.000Z",
-        "updatedAt": "2026-09-29T14:01:15.000Z",
+        "createdAt": "2026-09-29T14:00:08.000Z",
+        "updatedAt": "2026-09-29T14:00:08.000Z",
         "name": "Kiểm chống trùng",
         "parentId": null,
         "active": false,
@@ -5270,7 +6023,7 @@
         "shopId": "shop-demo",
         "version": 2,
         "createdAt": "2026-09-29T14:00:00.000Z",
-        "updatedAt": "2026-09-29T14:01:17.000Z",
+        "updatedAt": "2026-09-29T14:00:10.000Z",
         "variantId": "v-p1",
         "warehouseId": "warehouse-01",
         "sku": "DEMO-001",
@@ -5282,14 +6035,14 @@
           "amount": "100000",
           "currency": "VND"
         },
-        "asOf": "2026-09-29T14:01:17.000Z"
+        "asOf": "2026-09-29T14:00:10.000Z"
       },
       {
         "id": "st-p2",
         "shopId": "shop-demo",
-        "version": 4,
+        "version": 1,
         "createdAt": "2026-09-29T14:00:00.000Z",
-        "updatedAt": "2026-09-29T14:00:37.000Z",
+        "updatedAt": "2026-09-29T14:00:00.000Z",
         "variantId": "v-p2",
         "warehouseId": "warehouse-01",
         "sku": "AO-002",
@@ -5301,7 +6054,7 @@
           "amount": "135000",
           "currency": "VND"
         },
-        "asOf": "2026-09-29T14:00:37.000Z"
+        "asOf": "2026-09-29T14:00:00.000Z"
       },
       {
         "id": "st-p3",
@@ -5363,21 +6116,21 @@
       {
         "id": "st-p6",
         "shopId": "shop-demo",
-        "version": 2,
+        "version": 1,
         "createdAt": "2026-09-29T14:00:00.000Z",
-        "updatedAt": "2026-09-29T14:01:01.000Z",
+        "updatedAt": "2026-09-29T14:00:00.000Z",
         "variantId": "v-p6",
         "warehouseId": "warehouse-01",
         "sku": "MU-006",
-        "onHand": 4,
+        "onHand": 0,
         "reserved": 0,
-        "available": 4,
+        "available": 0,
         "lowStockThreshold": 3,
         "unitCost": {
           "amount": "65000",
           "currency": "VND"
         },
-        "asOf": "2026-09-29T14:01:01.000Z"
+        "asOf": "2026-09-29T14:00:00.000Z"
       },
       {
         "id": "st-p7",
@@ -5572,7 +6325,7 @@
     ],
     "movements": [
       {
-        "id": "stockmovement-10078",
+        "id": "stockmovement-10011",
         "shopId": "shop-demo",
         "variantId": "v-p1",
         "warehouseId": "warehouse-01",
@@ -5581,71 +6334,7 @@
         "reservedDelta": 0,
         "reason": "Thử mất phản hồi sau xử lý",
         "sourceRef": null,
-        "createdAt": "2026-09-29T14:01:18.000Z",
-        "actorId": "user-demo"
-      },
-      {
-        "id": "stockmovement-10062",
-        "shopId": "shop-demo",
-        "variantId": "v-p6",
-        "warehouseId": "warehouse-01",
-        "kind": "receipt",
-        "quantityDelta": 4,
-        "reservedDelta": 0,
-        "reason": "Nhập hàng theo phiếu được kiểm nhận",
-        "sourceRef": {
-          "type": "goods_receipt",
-          "id": "goodsreceipt-10059"
-        },
-        "createdAt": "2026-09-29T14:01:02.000Z",
-        "actorId": "user-demo"
-      },
-      {
-        "id": "stockmovement-10038",
-        "shopId": "shop-demo",
-        "variantId": "v-p2",
-        "warehouseId": "warehouse-01",
-        "kind": "return",
-        "quantityDelta": 1,
-        "reservedDelta": 0,
-        "reason": "Kiểm hàng nguyên vẹn",
-        "sourceRef": {
-          "type": "return",
-          "id": "returncase-10035"
-        },
-        "createdAt": "2026-09-29T14:00:38.000Z",
-        "actorId": "user-demo"
-      },
-      {
-        "id": "stockmovement-10024",
-        "shopId": "shop-demo",
-        "variantId": "v-p2",
-        "warehouseId": "warehouse-01",
-        "kind": "fulfillment",
-        "quantityDelta": -1,
-        "reservedDelta": -1,
-        "reason": "Bàn giao kiện hàng mô phỏng",
-        "sourceRef": {
-          "type": "shipment",
-          "id": "shipment-10021"
-        },
-        "createdAt": "2026-09-29T14:00:24.000Z",
-        "actorId": "user-demo"
-      },
-      {
-        "id": "stockmovement-10008",
-        "shopId": "shop-demo",
-        "variantId": "v-p2",
-        "warehouseId": "warehouse-01",
-        "kind": "reserve",
-        "quantityDelta": 0,
-        "reservedDelta": 1,
-        "reason": "Giữ hàng khi xác nhận đơn",
-        "sourceRef": {
-          "type": "order",
-          "id": "DH-1001"
-        },
-        "createdAt": "2026-09-29T14:00:08.000Z",
+        "createdAt": "2026-09-29T14:00:11.000Z",
         "actorId": "user-demo"
       },
       {
@@ -5859,7 +6548,59 @@
     ],
     "orders": [
       {
-        "id": "DH-1001",
+        "id": "DH-DEMO-RETURN-02",
+        "shopId": "shop-demo",
+        "version": 2,
+        "createdAt": "2026-09-29T13:45:00.000Z",
+        "updatedAt": "2026-09-29T14:00:34.000Z",
+        "customerId": "c1",
+        "conversationId": "cv1",
+        "warehouseId": "warehouse-01",
+        "orderState": "completed",
+        "fulfillmentState": "delivered",
+        "paymentState": "verified",
+        "lines": [
+          {
+            "id": "seed-ol-return-02",
+            "variantId": "v-p2",
+            "sku": "AO-002",
+            "name": "Áo thun Essential · L · Than",
+            "quantity": 2,
+            "unitPrice": {
+              "amount": "249000",
+              "currency": "VND"
+            },
+            "discount": {
+              "amount": "0",
+              "currency": "VND"
+            },
+            "lineTotal": {
+              "amount": "498000",
+              "currency": "VND"
+            },
+            "costSnapshot": {
+              "amount": "135000",
+              "currency": "VND"
+            }
+          }
+        ],
+        "total": {
+          "amount": "498000",
+          "currency": "VND"
+        },
+        "allowedActions": [
+          "request_return"
+        ],
+        "redactedFields": [],
+        "prepTaskId": null,
+        "shipmentIds": [],
+        "paymentMethod": "prepay",
+        "customerConfirmationId": null,
+        "shippingAddressId": "address-synthetic",
+        "recognitionPolicyVersion": "synthetic-delivered-1"
+      },
+      {
+        "id": "DH-DEMO-PAID-01",
         "shopId": "shop-demo",
         "version": 9,
         "createdAt": "2026-09-29T14:00:00.000Z",
@@ -5872,7 +6613,7 @@
         "paymentState": "refunded",
         "lines": [
           {
-            "id": "ol-1001",
+            "id": "seed-ol-1001",
             "variantId": "v-p2",
             "sku": "AO-002",
             "name": "Áo thun Essential · L · Than",
@@ -5904,12 +6645,62 @@
           "request_refund"
         ],
         "redactedFields": [],
-        "prepTaskId": "workitem-10009",
+        "prepTaskId": "seed-workitem-10009",
         "shipmentIds": [
-          "shipment-10021"
+          "seed-shipment-10021"
         ],
         "paymentMethod": "cod",
-        "customerConfirmationId": "customerconfirmation-10005",
+        "customerConfirmationId": "seed-customerconfirmation-10005",
+        "shippingAddressId": "address-synthetic",
+        "recognitionPolicyVersion": "synthetic-delivered-1"
+      },
+      {
+        "id": "DH-1001",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T14:00:00.000Z",
+        "updatedAt": "2026-09-29T14:00:00.000Z",
+        "customerId": "c1",
+        "conversationId": "cv1",
+        "warehouseId": "warehouse-01",
+        "orderState": "draft",
+        "fulfillmentState": "unfulfilled",
+        "paymentState": "unpaid",
+        "lines": [
+          {
+            "id": "ol-1001",
+            "variantId": "v-p2",
+            "sku": "AO-002",
+            "name": "Áo thun Essential · L · Than",
+            "quantity": 1,
+            "unitPrice": {
+              "amount": "249000",
+              "currency": "VND"
+            },
+            "discount": {
+              "amount": "0",
+              "currency": "VND"
+            },
+            "lineTotal": {
+              "amount": "249000",
+              "currency": "VND"
+            }
+          }
+        ],
+        "total": {
+          "amount": "249000",
+          "currency": "VND"
+        },
+        "allowedActions": [
+          "edit",
+          "quote",
+          "cancel"
+        ],
+        "redactedFields": [],
+        "prepTaskId": null,
+        "shipmentIds": [],
+        "paymentMethod": "cod",
+        "customerConfirmationId": null,
         "shippingAddressId": "address-synthetic",
         "recognitionPolicyVersion": "synthetic-delivered-1"
       },
@@ -5966,13 +6757,13 @@
     ],
     "quotes": [
       {
-        "id": "orderquote-10001",
+        "id": "seed-orderquote-10001",
         "shopId": "shop-demo",
-        "orderId": "DH-1001",
+        "orderId": "DH-DEMO-PAID-01",
         "orderVersion": 1,
         "lines": [
           {
-            "id": "ol-1001",
+            "id": "seed-ol-1001",
             "variantId": "v-p2",
             "sku": "AO-002",
             "name": "Áo thun Essential · L · Than",
@@ -6008,15 +6799,15 @@
     ],
     "confirmations": [
       {
-        "id": "customerconfirmation-10005",
+        "id": "seed-customerconfirmation-10005",
         "shopId": "shop-demo",
         "version": 1,
         "createdAt": "2026-09-29T14:00:05.000Z",
         "updatedAt": "2026-09-29T14:00:05.000Z",
-        "quoteId": "orderquote-10001",
+        "quoteId": "seed-orderquote-10001",
         "quoteHash": "5adc1e9f62c9691d7efa59973f9508d2ba7f256014789a6007eebf1424a8e2f7",
         "customerIdentityId": "identity-1",
-        "sourceMessageId": "message-10004",
+        "sourceMessageId": "seed-message-10004",
         "expiresAt": "2026-09-29T14:15:00.000Z",
         "status": "valid"
       }
@@ -6193,12 +6984,12 @@
     ],
     "messages": [
       {
-        "id": "message-10004",
+        "id": "seed-message-10004",
         "shopId": "shop-demo",
         "conversationId": "cv1",
         "direction": "inbound",
         "senderKind": "customer",
-        "text": "[CONFIRM:orderquote-10001] Khách mẫu xác nhận đúng bản báo giá này.",
+        "text": "[CONFIRM:seed-orderquote-10001] Khách mẫu xác nhận đúng bản báo giá này.",
         "status": "delivered",
         "createdAt": "2026-09-29T14:00:04.000Z",
         "clientMessageId": null,
@@ -6639,7 +7430,7 @@
         "createdAt": "2026-09-29T14:00:00.000Z",
         "updatedAt": "2026-09-29T14:00:00.000Z",
         "name": "Kết nối AI mô phỏng",
-        "providerId": "provider-demo",
+        "providerId": "mock",
         "adapterId": "mock",
         "modelId": "synthetic-model",
         "endpointUrl": null,
@@ -6665,7 +7456,7 @@
         "createdAt": "2026-09-29T14:00:00.000Z",
         "updatedAt": "2026-09-29T14:00:00.000Z",
         "name": "Kết nối AI mô phỏng",
-        "providerId": "provider-demo",
+        "providerId": "mock",
         "adapterId": "mock",
         "modelId": "synthetic-model",
         "endpointUrl": null,
@@ -6687,7 +7478,7 @@
     ],
     "financeEntries": [
       {
-        "id": "financeentry-10068",
+        "id": "seed-financeentry-10068",
         "shopId": "shop-demo",
         "version": 2,
         "createdAt": "2026-09-29T14:01:08.000Z",
@@ -6705,7 +7496,7 @@
         "reversalOf": null
       },
       {
-        "id": "financeentry-10041",
+        "id": "seed-financeentry-10041",
         "shopId": "shop-demo",
         "version": 1,
         "createdAt": "2026-09-29T14:00:41.000Z",
@@ -6721,13 +7512,13 @@
         "description": "Đã chuyển hoàn tiền theo bằng chứng",
         "sourceRef": {
           "type": "order_refund",
-          "id": "DH-1001"
+          "id": "DH-DEMO-PAID-01"
         },
         "reversalOf": null,
         "paymentReference": "REFUND1"
       },
       {
-        "id": "financeentry-10031",
+        "id": "seed-financeentry-10031",
         "shopId": "shop-demo",
         "version": 1,
         "createdAt": "2026-09-29T14:00:31.000Z",
@@ -6743,7 +7534,7 @@
         "description": "Ghi nhận thu tiền đã đối chiếu",
         "sourceRef": {
           "type": "order",
-          "id": "DH-1001"
+          "id": "DH-DEMO-PAID-01"
         },
         "reversalOf": null
       }
@@ -6751,7 +7542,20 @@
     "jobs": [],
     "commands": [
       {
-        "id": "command-10079",
+        "id": "command-10012",
+        "shopId": "shop-demo",
+        "status": "unknown",
+        "kind": "createInventoryAdjustment",
+        "createdAt": "2026-09-29T14:00:12.000Z",
+        "updatedAt": "2026-09-29T14:00:12.000Z",
+        "result": {
+          "type": "stock",
+          "id": "st-p1"
+        },
+        "problem": null
+      },
+      {
+        "id": "seed-command-10079",
         "shopId": "shop-demo",
         "status": "unknown",
         "kind": "createInventoryAdjustment",
@@ -6764,7 +7568,7 @@
         "problem": null
       },
       {
-        "id": "command-10072",
+        "id": "seed-command-10072",
         "shopId": "shop-demo",
         "status": "succeeded",
         "kind": "postFinanceEntry",
@@ -6772,12 +7576,12 @@
         "updatedAt": "2026-09-29T14:01:12.000Z",
         "result": {
           "type": "finance_entry",
-          "id": "financeentry-10068"
+          "id": "seed-financeentry-10068"
         },
         "problem": null
       },
       {
-        "id": "command-10065",
+        "id": "seed-command-10065",
         "shopId": "shop-demo",
         "status": "succeeded",
         "kind": "postGoodsReceipt",
@@ -6785,12 +7589,12 @@
         "updatedAt": "2026-09-29T14:01:05.000Z",
         "result": {
           "type": "goods_receipt",
-          "id": "goodsreceipt-10059"
+          "id": "seed-goodsreceipt-10059"
         },
         "problem": null
       },
       {
-        "id": "command-10054",
+        "id": "seed-command-10054",
         "shopId": "shop-demo",
         "status": "succeeded",
         "kind": "sendPurchaseOrder",
@@ -6798,12 +7602,12 @@
         "updatedAt": "2026-09-29T14:00:54.000Z",
         "result": {
           "type": "purchase_order",
-          "id": "purchaseorder-10046"
+          "id": "seed-purchaseorder-10046"
         },
         "problem": null
       },
       {
-        "id": "command-10042",
+        "id": "seed-command-10042",
         "shopId": "shop-demo",
         "status": "succeeded",
         "kind": "refundOrder",
@@ -6811,12 +7615,12 @@
         "updatedAt": "2026-09-29T14:00:42.000Z",
         "result": {
           "type": "order",
-          "id": "DH-1001"
+          "id": "DH-DEMO-PAID-01"
         },
         "problem": null
       },
       {
-        "id": "command-10032",
+        "id": "seed-command-10032",
         "shopId": "shop-demo",
         "status": "succeeded",
         "kind": "payOrder",
@@ -6824,12 +7628,12 @@
         "updatedAt": "2026-09-29T14:00:32.000Z",
         "result": {
           "type": "order",
-          "id": "DH-1001"
+          "id": "DH-DEMO-PAID-01"
         },
         "problem": null
       },
       {
-        "id": "command-10025",
+        "id": "seed-command-10025",
         "shopId": "shop-demo",
         "status": "succeeded",
         "kind": "handoverShipment",
@@ -6837,12 +7641,12 @@
         "updatedAt": "2026-09-29T14:00:25.000Z",
         "result": {
           "type": "shipment",
-          "id": "shipment-10021"
+          "id": "seed-shipment-10021"
         },
         "problem": null
       },
       {
-        "id": "command-10012",
+        "id": "seed-command-10012",
         "shopId": "shop-demo",
         "status": "succeeded",
         "kind": "confirmOrder",
@@ -6850,7 +7654,7 @@
         "updatedAt": "2026-09-29T14:00:12.000Z",
         "result": {
           "type": "order",
-          "id": "DH-1001"
+          "id": "DH-DEMO-PAID-01"
         },
         "problem": null
       }
@@ -6858,20 +7662,72 @@
     "files": [],
     "audit": [
       {
-        "id": "auditevent-10081",
+        "id": "auditevent-10014",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "createInventoryAdjustment",
         "resource": {
           "type": "CommandResponse",
-          "id": "command-10079"
+          "id": "command-10012"
+        },
+        "occurredAt": "2026-09-29T14:00:12.000Z",
+        "requestId": "request-10013",
+        "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
+      },
+      {
+        "id": "auditevent-10010",
+        "shopId": "shop-demo",
+        "actorId": "user-demo",
+        "action": "createCategory",
+        "resource": {
+          "type": "CategoryResponse",
+          "id": "category-10008"
+        },
+        "occurredAt": "2026-09-29T14:00:08.000Z",
+        "requestId": "request-10009",
+        "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
+      },
+      {
+        "id": "auditevent-10007",
+        "shopId": "shop-demo",
+        "actorId": "user-demo",
+        "action": "requestPurchaseApproval",
+        "resource": {
+          "type": "ApprovalResponse",
+          "id": "approval-10005"
+        },
+        "occurredAt": "2026-09-29T14:00:05.000Z",
+        "requestId": "request-10006",
+        "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
+      },
+      {
+        "id": "auditevent-10004",
+        "shopId": "shop-demo",
+        "actorId": "user-demo",
+        "action": "createPurchaseOrder",
+        "resource": {
+          "type": "PurchaseOrderResponse",
+          "id": "purchaseorder-10002"
+        },
+        "occurredAt": "2026-09-29T14:00:02.000Z",
+        "requestId": "request-10003",
+        "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
+      },
+      {
+        "id": "seed-auditevent-10081",
+        "shopId": "shop-demo",
+        "actorId": "user-demo",
+        "action": "createInventoryAdjustment",
+        "resource": {
+          "type": "CommandResponse",
+          "id": "seed-command-10079"
         },
         "occurredAt": "2026-09-29T14:01:19.000Z",
         "requestId": "request-10080",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10077",
+        "id": "seed-auditevent-10077",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "createCategory",
@@ -6884,286 +7740,286 @@
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10074",
+        "id": "seed-auditevent-10074",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "postFinanceEntry",
         "resource": {
           "type": "CommandResponse",
-          "id": "command-10072"
+          "id": "seed-command-10072"
         },
         "occurredAt": "2026-09-29T14:01:12.000Z",
         "requestId": "request-10073",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10070",
+        "id": "seed-auditevent-10070",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "createFinanceEntry",
         "resource": {
           "type": "FinanceEntryResponse",
-          "id": "financeentry-10068"
+          "id": "seed-financeentry-10068"
         },
         "occurredAt": "2026-09-29T14:01:08.000Z",
         "requestId": "request-10069",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10067",
+        "id": "seed-auditevent-10067",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "postGoodsReceipt",
         "resource": {
           "type": "CommandResponse",
-          "id": "command-10065"
+          "id": "seed-command-10065"
         },
         "occurredAt": "2026-09-29T14:01:05.000Z",
         "requestId": "request-10066",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10061",
+        "id": "seed-auditevent-10061",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "createGoodsReceipt",
         "resource": {
           "type": "GoodsReceiptResponse",
-          "id": "goodsreceipt-10059"
+          "id": "seed-goodsreceipt-10059"
         },
         "occurredAt": "2026-09-29T14:00:59.000Z",
         "requestId": "request-10060",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10058",
+        "id": "seed-auditevent-10058",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "confirmPurchaseOrder",
         "resource": {
           "type": "PurchaseOrderResponse",
-          "id": "purchaseorder-10046"
+          "id": "seed-purchaseorder-10046"
         },
         "occurredAt": "2026-09-29T14:00:56.000Z",
         "requestId": "request-10057",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10056",
+        "id": "seed-auditevent-10056",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "sendPurchaseOrder",
         "resource": {
           "type": "CommandResponse",
-          "id": "command-10054"
+          "id": "seed-command-10054"
         },
         "occurredAt": "2026-09-29T14:00:54.000Z",
         "requestId": "request-10055",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10053",
+        "id": "seed-auditevent-10053",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "decideApproval",
         "resource": {
           "type": "ApprovalResponse",
-          "id": "approval-10049"
+          "id": "seed-approval-10049"
         },
         "occurredAt": "2026-09-29T14:00:51.000Z",
         "requestId": "request-10052",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10051",
+        "id": "seed-auditevent-10051",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "requestPurchaseApproval",
         "resource": {
           "type": "ApprovalResponse",
-          "id": "approval-10049"
+          "id": "seed-approval-10049"
         },
         "occurredAt": "2026-09-29T14:00:49.000Z",
         "requestId": "request-10050",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10048",
+        "id": "seed-auditevent-10048",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "createPurchaseOrder",
         "resource": {
           "type": "PurchaseOrderResponse",
-          "id": "purchaseorder-10046"
+          "id": "seed-purchaseorder-10046"
         },
         "occurredAt": "2026-09-29T14:00:46.000Z",
         "requestId": "request-10047",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10044",
+        "id": "seed-auditevent-10044",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "refundOrder",
         "resource": {
           "type": "CommandResponse",
-          "id": "command-10042"
+          "id": "seed-command-10042"
         },
         "occurredAt": "2026-09-29T14:00:42.000Z",
         "requestId": "request-10043",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10040",
+        "id": "seed-auditevent-10040",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "inspectReturn",
         "resource": {
           "type": "ReturnCaseResponse",
-          "id": "returncase-10035"
+          "id": "seed-returncase-10035"
         },
         "occurredAt": "2026-09-29T14:00:38.000Z",
         "requestId": "request-10039",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10037",
+        "id": "seed-auditevent-10037",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "createReturnCase",
         "resource": {
           "type": "ReturnCaseResponse",
-          "id": "returncase-10035"
+          "id": "seed-returncase-10035"
         },
         "occurredAt": "2026-09-29T14:00:35.000Z",
         "requestId": "request-10036",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10034",
+        "id": "seed-auditevent-10034",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "payOrder",
         "resource": {
           "type": "CommandResponse",
-          "id": "command-10032"
+          "id": "seed-command-10032"
         },
         "occurredAt": "2026-09-29T14:00:32.000Z",
         "requestId": "request-10033",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10030",
+        "id": "seed-auditevent-10030",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "recordShipmentEvent",
         "resource": {
           "type": "ShipmentResponse",
-          "id": "shipment-10021"
+          "id": "seed-shipment-10021"
         },
         "occurredAt": "2026-09-29T14:00:28.000Z",
         "requestId": "request-10029",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10027",
+        "id": "seed-auditevent-10027",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "handoverShipment",
         "resource": {
           "type": "CommandResponse",
-          "id": "command-10025"
+          "id": "seed-command-10025"
         },
         "occurredAt": "2026-09-29T14:00:25.000Z",
         "requestId": "request-10026",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10023",
+        "id": "seed-auditevent-10023",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "createShipment",
         "resource": {
           "type": "ShipmentResponse",
-          "id": "shipment-10021"
+          "id": "seed-shipment-10021"
         },
         "occurredAt": "2026-09-29T14:00:21.000Z",
         "requestId": "request-10022",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10020",
+        "id": "seed-auditevent-10020",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "packPrepJob",
         "resource": {
           "type": "PrepJobResponse",
-          "id": "prepjob-10010"
+          "id": "seed-prepjob-10010"
         },
         "occurredAt": "2026-09-29T14:00:18.000Z",
         "requestId": "request-10019",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10018",
+        "id": "seed-auditevent-10018",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "pickPrepLine",
         "resource": {
           "type": "PrepJobResponse",
-          "id": "prepjob-10010"
+          "id": "seed-prepjob-10010"
         },
         "occurredAt": "2026-09-29T14:00:16.000Z",
         "requestId": "request-10017",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10016",
+        "id": "seed-auditevent-10016",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "acknowledgeNotification",
         "resource": {
           "type": "WorkItemResponse",
-          "id": "workitem-10009"
+          "id": "seed-workitem-10009"
         },
         "occurredAt": "2026-09-29T14:00:14.000Z",
         "requestId": "request-10015",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10014",
+        "id": "seed-auditevent-10014",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "confirmOrder",
         "resource": {
           "type": "CommandResponse",
-          "id": "command-10012"
+          "id": "seed-command-10012"
         },
         "occurredAt": "2026-09-29T14:00:12.000Z",
         "requestId": "request-10013",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10007",
+        "id": "seed-auditevent-10007",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "recordCustomerConfirmation",
         "resource": {
           "type": "CustomerConfirmationResponse",
-          "id": "customerconfirmation-10005"
+          "id": "seed-customerconfirmation-10005"
         },
         "occurredAt": "2026-09-29T14:00:05.000Z",
         "requestId": "request-10006",
         "summary": "Thao tác trên bộ dữ liệu mô phỏng; không gọi dịch vụ bên ngoài."
       },
       {
-        "id": "auditevent-10003",
+        "id": "seed-auditevent-10003",
         "shopId": "shop-demo",
         "actorId": "user-demo",
         "action": "quoteOrder",
         "resource": {
           "type": "OrderQuoteResponse",
-          "id": "orderquote-10001"
+          "id": "seed-orderquote-10001"
         },
         "occurredAt": "2026-09-29T14:00:01.000Z",
         "requestId": "request-10002",
@@ -7217,7 +8073,7 @@
     "privacyRequests": [],
     "workItems": [
       {
-        "id": "workitem-10009",
+        "id": "seed-workitem-10009",
         "shopId": "shop-demo",
         "version": 3,
         "createdAt": "2026-09-29T14:00:09.000Z",
@@ -7225,18 +8081,93 @@
         "kind": "prepare_order",
         "source": {
           "type": "order",
-          "id": "DH-1001"
+          "id": "DH-DEMO-PAID-01"
         },
         "state": "completed",
         "assigneeUserId": "user-demo",
         "dueAt": null,
         "blockedReason": null,
         "allowedActions": []
+      },
+      {
+        "id": "demo-workitem-late-shipment",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T13:20:00.000Z",
+        "updatedAt": "2026-09-29T13:20:00.000Z",
+        "kind": "late_shipment",
+        "source": {
+          "type": "shipment",
+          "id": "DEMO-SHIPMENT-LATE"
+        },
+        "state": "working",
+        "assigneeUserId": "user-demo",
+        "dueAt": "2026-09-29T13:30:00.000Z",
+        "blockedReason": null,
+        "allowedActions": []
+      },
+      {
+        "id": "demo-workitem-payment-mismatch",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T13:40:00.000Z",
+        "updatedAt": "2026-09-29T13:40:00.000Z",
+        "kind": "payment_mismatch",
+        "source": {
+          "type": "bank_transaction",
+          "id": "DEMO-BANK-MISMATCH"
+        },
+        "state": "blocked",
+        "assigneeUserId": null,
+        "dueAt": "2026-09-29T13:45:00.000Z",
+        "blockedReason": "Số tiền đối soát chưa khớp chứng từ mẫu",
+        "allowedActions": []
+      },
+      {
+        "id": "demo-workitem-unclaimed-order",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T13:50:00.000Z",
+        "updatedAt": "2026-09-29T13:50:00.000Z",
+        "kind": "prepare_order",
+        "source": {
+          "type": "order",
+          "id": "DEMO-ORDER-UNCLAIMED"
+        },
+        "state": "queued",
+        "assigneeUserId": null,
+        "dueAt": "2026-09-29T15:00:00.000Z",
+        "blockedReason": null,
+        "allowedActions": []
       }
     ],
     "approvals": [
       {
-        "id": "approval-10049",
+        "id": "approval-10005",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T14:00:05.000Z",
+        "updatedAt": "2026-09-29T14:00:05.000Z",
+        "action": "purchase.send",
+        "resource": {
+          "type": "purchase_order",
+          "id": "purchaseorder-10002"
+        },
+        "resourceVersion": 2,
+        "policyVersion": "synthetic-policy-1",
+        "intentHash": "a28f1e9dba2331a930c1077901db1027f0322027c7af75483c84af9670ca8f0c",
+        "amount": {
+          "amount": "500000",
+          "currency": "VND"
+        },
+        "status": "pending",
+        "expiresAt": "2026-09-29T14:15:04.000Z",
+        "requestedBy": "user-demo",
+        "decidedBy": null,
+        "decisionReason": null
+      },
+      {
+        "id": "seed-approval-10049",
         "shopId": "shop-demo",
         "version": 3,
         "createdAt": "2026-09-29T14:00:49.000Z",
@@ -7244,7 +8175,7 @@
         "action": "purchase.send",
         "resource": {
           "type": "purchase_order",
-          "id": "purchaseorder-10046"
+          "id": "seed-purchaseorder-10046"
         },
         "resourceVersion": 3,
         "policyVersion": "synthetic-policy-1",
@@ -7258,23 +8189,71 @@
         "requestedBy": "user-demo",
         "decidedBy": "user-demo",
         "decisionReason": "Duyệt nhập hàng cho mô phỏng"
+      },
+      {
+        "id": "demo-budget-expired",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T13:50:00.000Z",
+        "updatedAt": "2026-09-29T13:55:00.000Z",
+        "action": "budget.update",
+        "resource": {
+          "type": "budget_policy",
+          "id": "budget-0"
+        },
+        "resourceVersion": 1,
+        "policyVersion": "synthetic-policy-1",
+        "intentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "amount": {
+          "amount": "350000",
+          "currency": "VND"
+        },
+        "status": "approved",
+        "expiresAt": "2026-09-29T13:59:00.000Z",
+        "requestedBy": "user-demo",
+        "decidedBy": "user-demo",
+        "decisionReason": "Dữ liệu mô phỏng phê duyệt ngân sách đã hết hạn"
+      },
+      {
+        "id": "demo-budget-valid",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T14:00:00.000Z",
+        "updatedAt": "2026-09-29T14:00:00.000Z",
+        "action": "budget.update",
+        "resource": {
+          "type": "budget_policy",
+          "id": "budget-0"
+        },
+        "resourceVersion": 1,
+        "policyVersion": "synthetic-policy-1",
+        "intentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "amount": {
+          "amount": "350000",
+          "currency": "VND"
+        },
+        "status": "approved",
+        "expiresAt": "2026-09-29T14:15:00.000Z",
+        "requestedBy": "user-demo",
+        "decidedBy": "user-demo",
+        "decisionReason": "Dữ liệu mô phỏng phê duyệt ngân sách còn hiệu lực"
       }
     ],
     "notifications": [
       {
-        "id": "notification-10011",
+        "id": "seed-notification-10011",
         "shopId": "shop-demo",
         "version": 2,
         "createdAt": "2026-09-29T14:00:11.000Z",
         "updatedAt": "2026-09-29T14:00:14.000Z",
-        "workItemId": "workitem-10009",
+        "workItemId": "seed-workitem-10009",
         "source": {
           "type": "order",
-          "id": "DH-1001"
+          "id": "DH-DEMO-PAID-01"
         },
         "recipientUserId": "user-demo",
         "channel": "in_app",
-        "title": "Đơn DH-1001 cần chuẩn bị",
+        "title": "Đơn DH-DEMO-PAID-01 cần chuẩn bị",
         "safeBody": "1 mặt hàng · Bấm để nhận việc.",
         "deliveryStatus": "queued",
         "openedAt": "2026-09-29T14:00:14.000Z",
@@ -7324,7 +8303,7 @@
           "user-demo"
         ],
         "fallbackUserIds": [],
-        "fallbackChannel": "telegram",
+        "fallbackChannel": "none",
         "urgentMayBypassQuietHours": false
       },
       {
@@ -7342,23 +8321,23 @@
           "user-demo"
         ],
         "fallbackUserIds": [],
-        "fallbackChannel": "telegram",
+        "fallbackChannel": "none",
         "urgentMayBypassQuietHours": false
       }
     ],
     "prepJobs": [
       {
-        "id": "prepjob-10010",
+        "id": "seed-prepjob-10010",
         "shopId": "shop-demo",
         "version": 5,
         "createdAt": "2026-09-29T14:00:10.000Z",
         "updatedAt": "2026-09-29T14:00:24.000Z",
-        "orderId": "DH-1001",
-        "workItemId": "workitem-10009",
+        "orderId": "DH-DEMO-PAID-01",
+        "workItemId": "seed-workitem-10009",
         "state": "handed_over",
         "lines": [
           {
-            "orderLineId": "ol-1001",
+            "orderLineId": "seed-ol-1001",
             "sku": "AO-002",
             "requiredQuantity": 1,
             "pickedQuantity": 1,
@@ -7370,12 +8349,12 @@
     ],
     "shipments": [
       {
-        "id": "shipment-10021",
+        "id": "seed-shipment-10021",
         "shopId": "shop-demo",
         "version": 3,
         "createdAt": "2026-09-29T14:00:21.000Z",
         "updatedAt": "2026-09-29T14:00:27.000Z",
-        "orderId": "DH-1001",
+        "orderId": "DH-DEMO-PAID-01",
         "warehouseId": "warehouse-01",
         "carrierId": "carrier-demo",
         "trackingCode": null,
@@ -7394,16 +8373,34 @@
     ],
     "returns": [
       {
-        "id": "returncase-10035",
+        "id": "seed-returncase-10036",
+        "shopId": "shop-demo",
+        "version": 1,
+        "createdAt": "2026-09-29T14:00:33.000Z",
+        "updatedAt": "2026-09-29T14:00:34.000Z",
+        "orderId": "DH-DEMO-RETURN-02",
+        "state": "received",
+        "lines": [
+          {
+            "orderLineId": "seed-ol-return-02",
+            "quantity": 2,
+            "reason": "Kiểm thử kiểm nhận một phần hàng trả synthetic",
+            "disposition": "pending"
+          }
+        ],
+        "refundObligation": null
+      },
+      {
+        "id": "seed-returncase-10035",
         "shopId": "shop-demo",
         "version": 2,
         "createdAt": "2026-09-29T14:00:35.000Z",
         "updatedAt": "2026-09-29T14:00:38.000Z",
-        "orderId": "DH-1001",
+        "orderId": "DH-DEMO-PAID-01",
         "state": "inspected",
         "lines": [
           {
-            "orderLineId": "ol-1001",
+            "orderLineId": "seed-ol-1001",
             "quantity": 1,
             "reason": "Kiểm hàng nguyên vẹn",
             "disposition": "sellable"
@@ -7982,7 +8979,42 @@
     "suggestions": [],
     "purchases": [
       {
-        "id": "purchaseorder-10046",
+        "id": "purchaseorder-10002",
+        "shopId": "shop-demo",
+        "version": 3,
+        "createdAt": "2026-09-29T14:00:02.000Z",
+        "updatedAt": "2026-09-29T14:00:07.000Z",
+        "supplierId": "supplier-01",
+        "warehouseId": "warehouse-01",
+        "status": "pending_approval",
+        "lines": [
+          {
+            "id": "purchase-line-10001",
+            "variantId": "v-p1",
+            "supplierOfferId": "offer-p1",
+            "quantity": 5,
+            "unitCost": {
+              "amount": "100000",
+              "currency": "VND"
+            },
+            "receivedQuantity": 0,
+            "rejectedQuantity": 0
+          }
+        ],
+        "total": {
+          "amount": "500000",
+          "currency": "VND"
+        },
+        "approvalId": "approval-10005",
+        "intentHash": "a28f1e9dba2331a930c1077901db1027f0322027c7af75483c84af9670ca8f0c",
+        "externalReference": null,
+        "budgetReservationId": null,
+        "allowedActions": [
+          "cancel"
+        ]
+      },
+      {
+        "id": "seed-purchaseorder-10046",
         "shopId": "shop-demo",
         "version": 6,
         "createdAt": "2026-09-29T14:00:46.000Z",
@@ -7992,7 +9024,7 @@
         "status": "part_received",
         "lines": [
           {
-            "id": "purchase-line-10045",
+            "id": "seed-purchase-line-10045",
             "variantId": "v-p6",
             "supplierOfferId": "offer-p6",
             "quantity": 10,
@@ -8008,7 +9040,7 @@
           "amount": "650000",
           "currency": "VND"
         },
-        "approvalId": "approval-10049",
+        "approvalId": "seed-approval-10049",
         "intentHash": "a9440ba7752328d85738e9958a167973dfab1b6dbb9e9fcad2b381e868d041da",
         "externalReference": "PO-EXT-1",
         "budgetReservationId": null,
@@ -8019,17 +9051,17 @@
     ],
     "receipts": [
       {
-        "id": "goodsreceipt-10059",
+        "id": "seed-goodsreceipt-10059",
         "shopId": "shop-demo",
         "version": 2,
         "createdAt": "2026-09-29T14:00:59.000Z",
         "updatedAt": "2026-09-29T14:01:04.000Z",
-        "purchaseOrderId": "purchaseorder-10046",
+        "purchaseOrderId": "seed-purchaseorder-10046",
         "warehouseId": "warehouse-01",
         "status": "posted",
         "lines": [
           {
-            "purchaseLineId": "purchase-line-10045",
+            "purchaseLineId": "seed-purchase-line-10045",
             "acceptedQuantity": 4,
             "rejectedQuantity": 0,
             "reason": "Kiểm 4 sản phẩm đạt"
@@ -8040,13 +9072,13 @@
     ],
     "journals": [
       {
-        "id": "journal-10071",
+        "id": "seed-journal-10071",
         "shopId": "shop-demo",
         "version": 1,
         "createdAt": "2026-09-29T14:01:11.000Z",
         "updatedAt": "2026-09-29T14:01:11.000Z",
         "sourceType": "finance_entry",
-        "sourceId": "financeentry-10068",
+        "sourceId": "seed-financeentry-10068",
         "status": "posted",
         "effectiveDate": "2026-09-29",
         "periodId": "period-2026-09",
@@ -8080,13 +9112,13 @@
         "reversalOf": null
       },
       {
-        "id": "journal-10063",
+        "id": "seed-journal-10063",
         "shopId": "shop-demo",
         "version": 1,
         "createdAt": "2026-09-29T14:01:03.000Z",
         "updatedAt": "2026-09-29T14:01:03.000Z",
         "sourceType": "goods_receipt",
-        "sourceId": "goodsreceipt-10059",
+        "sourceId": "seed-goodsreceipt-10059",
         "status": "posted",
         "effectiveDate": "2026-09-29",
         "periodId": "period-2026-09",
@@ -8125,7 +9157,7 @@
     "reconciliations": [],
     "debts": [
       {
-        "id": "debtitem-10064",
+        "id": "seed-debtitem-10064",
         "shopId": "shop-demo",
         "version": 1,
         "createdAt": "2026-09-29T14:01:04.000Z",
@@ -8134,7 +9166,7 @@
         "counterpartyId": "supplier-01",
         "source": {
           "type": "goods_receipt",
-          "id": "goodsreceipt-10059"
+          "id": "seed-goodsreceipt-10059"
         },
         "direction": "payable",
         "originalAmount": {
@@ -8149,7 +9181,7 @@
         "disputed": false
       },
       {
-        "id": "debtitem-10028",
+        "id": "seed-debtitem-10028",
         "shopId": "shop-demo",
         "version": 1,
         "createdAt": "2026-09-29T14:00:28.000Z",
@@ -8158,7 +9190,7 @@
         "counterpartyId": "carrier-demo",
         "source": {
           "type": "order",
-          "id": "DH-1001"
+          "id": "DH-DEMO-PAID-01"
         },
         "direction": "receivable",
         "originalAmount": {
@@ -8575,6 +9607,64 @@
         "requireHumanOrderConfirmation": true,
         "publishedAt": null,
         "revision": 1
+      }
+    ]
+  },
+  "network": {
+    "status": "PASS",
+    "handlers": 210,
+    "checks": [
+      {
+        "name": "Registers every canonical HTTP operation and reports the custom SSE endpoint",
+        "status": "PASS"
+      },
+      {
+        "name": "Loads the service worker only in demo mode and guards production from mock activation",
+        "status": "PASS"
+      },
+      {
+        "name": "Covers the canonical route, feature, shop, and role catalogs",
+        "status": "PASS"
+      },
+      {
+        "name": "Returns schema-valid, paginated data and rejects stale cursors",
+        "status": "PASS"
+      },
+      {
+        "name": "Pages through a deterministic large dataset without dropping or duplicating rows",
+        "status": "PASS"
+      },
+      {
+        "name": "Scopes reads to the requested shop and role permissions",
+        "status": "PASS"
+      },
+      {
+        "name": "Maps request validation, CSRF, and missing If-Match to contract errors",
+        "status": "PASS"
+      },
+      {
+        "name": "Creates a product with schema-complete variants through HTTP",
+        "status": "PASS"
+      },
+      {
+        "name": "Preserves idempotency and exposes stale and unknown mutation outcomes over HTTP",
+        "status": "PASS"
+      },
+      {
+        "name": "Resets records, role, faults, idempotency keys, sequence, and fixed clock deterministically",
+        "status": "PASS"
+      },
+      {
+        "name": "Returns observable transient and empty states without fabricating records",
+        "status": "PASS"
+      },
+      {
+        "name": "Aborted delayed reads do not leak into the next request",
+        "status": "PASS"
+      },
+      {
+        "name": "Streams only the authorized shop and emits events matching the canonical v2 schema",
+        "status": "PASS"
       }
     ]
   }

@@ -1,0 +1,70 @@
+{
+  "taskId": "FE003",
+  "stepId": "S04",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T12:47:38.793Z",
+  "sourceRevision": "18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty working tree",
+  "command": "Run frontend progress validate/status/next; exercise wrong-scope and missing-log rejection; verify command registry and product ledger hash",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0",
+    "details": "Frontend progress tracker and isolated negative evidence fixtures; full-product progress.json was read only.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 8,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S04-progress-current.log",
+  "logSha256": "516cf65d3cfd765808e2368516d52a3ed9c79945e08cfb3c10c6bd940a7fed9a",
+  "sourceFiles": [
+    {
+      "path": "botsales-kit/scripts/progress.mjs",
+      "sha256": "24044a6d5bebcdf8f4995e07286b9aa76343c351f5b77b8f9ee06e0268f84aff"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "66923486c80f12468bb2ff37d38e505a0461371625dd2c5298e7f1ca3bb7db06"
+    },
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "ede09183cabb844663c94ab08f4662f8bde06665ef77d544d9d5501725f566a5"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S01-command-refresh.json",
+      "sha256": "f96619cce711b6f4515a738472ec1c29e462231714eea5a8ff8fac4eafc4f2fe"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03.json",
+      "sha256": "029607743e6a1a4e4174ad77a74440b95f29d415f23af0981796d96e8bae44b4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-negative-wrong-scope-current.json",
+      "sha256": "faf1f022f50adeb36648a26c29c3e8a7e71cd626f2875629377e0e9d7cd9fce4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-negative-missing-log-current.json",
+      "sha256": "987d14964634a841d65f81c208bf7fe1959ad93a81a443832db696ac4cdbba35"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-progress-current.log",
+      "sha256": "516cf65d3cfd765808e2368516d52a3ed9c79945e08cfb3c10c6bd940a7fed9a"
+    }
+  ],
+  "sourceSnapshotSha256": "f01d2c23bd83b08c3d49d4456273fa1280e6881243885ebb5368a900b90394f2",
+  "expected": "Tracker accepts the 28-task/140-checkpoint frontend plan, status and next identify the earliest incomplete checkpoint, invalid scope or missing log is rejected, and registered commands correspond to successful logs.",
+  "observed": "progress validate reports 28 tasks/140 checkpoints. status and next identify FE003.S04 after S03. Wrong-scope evidence is rejected with the mock-scope requirement; missing-log evidence is rejected with the expected missing-source error. The e2e command map records the exact command as VERIFIED_AVAILABLE after 9/9 Chromium tests, with current log SHA in the review log. Whole-product execution/progress.json remains unchanged at SHA256 23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed."
+}

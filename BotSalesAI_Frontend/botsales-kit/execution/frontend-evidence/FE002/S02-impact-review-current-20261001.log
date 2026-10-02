@@ -1,0 +1,12 @@
+FE002.S02 setup/doctor/install side-effect and registry review
+ExecutedAt=2026-10-01T12:56:00.365Z
+SourceRevision=HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 on main
+Registry ping exit=0; result=npm notice PING https://registry.npmjs.org/ | npm notice PONG 959ms | REGISTRY=https://registry.npmjs.org/ | CACHE=C:\Users\Joker-PC\AppData\Local\npm-cache | REGISTRY_EXIT=0 | CACHE_EXIT=0
+npm registry=https://registry.npmjs.org/; npm cache=C:\Users\Joker-PC\AppData\Local\npm-cache
+npm install writes node_modules and may update package-lock; this run exited 0 and preserved lock SHA256 15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce. npm v11 reports 2 pending dependency install scripts (esbuild and MSW); these were not approved/executed.
+setup.mjs runs the contract/token generator, then the installed MSW CLI init for apps/web/public; it copies .env.example only if .env.local is absent. .env.local existed and its SHA256 remained 4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149 across setup.
+doctor.mjs is read-only: checks Node major 24, TypeScript/Vite/React/MUI/React Query/MSW resolution, MSW worker presence, and package-lock presence.
+setup stdout shows 11 generated outputs, 283 schemas, 210 operations and 54 routes, then official MSW worker copy. doctor output shows all 9 checks PASS.
+Environment template secret-like keys with nonempty values=0; secret patterns in installation/setup/doctor logs=0. No .env.local contents were read into evidence.
+Expected: document actual cwd/side effects/cache/network and protect local env from overwrite.
+Observed: registry reachable (PONG); cache is the user npm cache; clean install is isolated; setup preserves the existing local env file; doctor only reports checks. The two pending install scripts are a recorded npm v11 warning, not a task blocker because clean esbuild/MSW imports passed and setup explicitly refreshes the MSW worker.

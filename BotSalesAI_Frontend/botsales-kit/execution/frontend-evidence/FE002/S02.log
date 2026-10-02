@@ -1,0 +1,7 @@
+FE002.S02 evidence
+Command: npm.cmd ping --fetch-retries=0 --fetch-timeout=10000; inspect npm cache/registry and setup/doctor scripts
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Exit code: 0 (checkpointing an observed passing/review result)
+Expected: Cwd, install conditions, cache and registry are observed.\nSetup generates the worker from the installed MSW package.\nSetup only creates .env.local when missing and does not overwrite existing settings.
+Observed: Registry ping returned PONG in 405ms. npm cache verify completed with all 1,793 content entries verified; npm registry is https://registry.npmjs.org/ and cache is under the current user profile. setup.mjs enforces Node 24, invokes canonical generator and installed MSW CLI, and only creates .env.local if absent. doctor checks Node, declared runtime packages, worker and lockfile. Lifecycle scripts for esbuild/MSW remain pending npm approval; install itself completed without running them.
+

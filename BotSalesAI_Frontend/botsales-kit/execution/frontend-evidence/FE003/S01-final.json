@@ -1,0 +1,46 @@
+{
+  "taskId": "FE003",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T16:35:54.955Z",
+  "sourceRevision": "Current dirty working tree; final command registry audit rerun locally",
+  "expected": "Root/app npm scripts and direct commands map to existing frontend-command-map entries; available commands have a successful recorded run, while contracts remains explicitly DECLARED_NOT_RUN.",
+  "observed": "Current audit passed: 17 root scripts, 5 app scripts, 23 registry entries, 22 VERIFIED_AVAILABLE, one DECLARED_NOT_RUN, zero FAILED_BASELINE, zero unmapped verified commands. The new demo build and FE011 focused E2E registrations match their actual successful logs. No backend, CI, staging or production deployment is inferred.",
+  "command": "node botsales-kit/execution/frontend-evidence/FE003/S01-command-map-audit.mjs",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0",
+    "details": "Local repository audit reads package scripts and the frontend command registry.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 23,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S01-command-map-final.log",
+  "logSha256": "0193d060d8b6a4e34acaf24c6d171bb9a86235ff2f6ae82962b8cb63e62abd91",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "ceabad973264eef6cc111ccb7a36e21accbea93be5df7e3d88ebc4ac2b8f03d1"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "32bf2c924a10495761af8d2ad0a41e52aa7d5256a8b558346e09e1e356add4f8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S01-command-map-audit.mjs",
+      "sha256": "700eff614d8afe7fcfb2d12c3a2832fce40428d7ec5f003ba429c142d8be3a5e"
+    }
+  ],
+  "sourceSnapshotSha256": "a934e8810b590ccf2e861c3508b9512fd07a1dd6e30aed00558b4bba289386ba"
+}

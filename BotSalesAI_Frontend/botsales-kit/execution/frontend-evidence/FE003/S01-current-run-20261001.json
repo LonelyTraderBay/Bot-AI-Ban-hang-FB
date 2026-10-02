@@ -1,0 +1,42 @@
+{
+  "taskId": "FE003",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T13:13:04.902Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 on main + current frontend working tree",
+  "expected": "Map the required frontend npm gates to real root/workspace scripts and current command-map entries. Keep removed or unrun commands DECLARED_NOT_RUN; do not substitute pnpm.",
+  "observed": "12 required gate/setup mappings are verified from package.json and frontend-command-map.json. Removed test:contracts remains DECLARED_NOT_RUN. No pnpm script or command exists. Root packageManager is npm@11.17.0; Node pin is 24.19.0.",
+  "command": "Read root/workspace npm scripts and validate command-map IDs/statuses against the real script strings",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0",
+    "details": "Current frontend-only working tree; see supporting run logs and source snapshot.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 12,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S01-command-map-current-20261001.log",
+  "logSha256": "4fedcced237df1644a5936bb75c0e2f239392aee6b05c5aedbb0be0c02c9327e",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "10fb7124e64b4f71bb161eb198cf0fd751fcc81173e0f1cf74ce5449af47d9c9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S01-command-map-current-20261001.log",
+      "sha256": "4fedcced237df1644a5936bb75c0e2f239392aee6b05c5aedbb0be0c02c9327e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    }
+  ],
+  "sourceSnapshotSha256": "b9cde620f6155c99b05bb49ec5fb27947816b541ace30fc80c22afa9aba9306f"
+}

@@ -1,0 +1,121 @@
+{
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "status": "PASS",
+  "route": "/s/shop-demo/overview",
+  "viewportWidths": [
+    320,
+    390,
+    768,
+    1440
+  ],
+  "checks": {
+    "canonicalTextContrast": [
+      {
+        "name": "primary text / canvas",
+        "foreground": "#F5F7FA",
+        "background": "#111318",
+        "ratio": 17.31,
+        "minimum": 4.5
+      },
+      {
+        "name": "primary text / surface",
+        "foreground": "#F5F7FA",
+        "background": "#1C2028",
+        "ratio": 15.21,
+        "minimum": 4.5
+      },
+      {
+        "name": "secondary text / surface",
+        "foreground": "#B9C2D0",
+        "background": "#1C2028",
+        "ratio": 9.09,
+        "minimum": 4.5
+      },
+      {
+        "name": "muted text / input",
+        "foreground": "#A6B1C2",
+        "background": "#171B22",
+        "ratio": 7.97,
+        "minimum": 4.5
+      },
+      {
+        "name": "accent / canvas",
+        "foreground": "#F6C85F",
+        "background": "#111318",
+        "ratio": 11.81,
+        "minimum": 4.5
+      },
+      {
+        "name": "on-accent / accent",
+        "foreground": "#15181E",
+        "background": "#F6C85F",
+        "ratio": 11.3,
+        "minimum": 4.5
+      },
+      {
+        "name": "success / success surface",
+        "foreground": "#4DD7A3",
+        "background": "#193B33",
+        "ratio": 6.74,
+        "minimum": 4.5
+      },
+      {
+        "name": "warning / warning surface",
+        "foreground": "#FFB078",
+        "background": "#3E3027",
+        "ratio": 7.08,
+        "minimum": 4.5
+      },
+      {
+        "name": "danger / danger surface",
+        "foreground": "#FF8596",
+        "background": "#402832",
+        "ratio": 5.77,
+        "minimum": 4.5
+      },
+      {
+        "name": "info / info surface",
+        "foreground": "#8ABCFB",
+        "background": "#25354B",
+        "ratio": 6.31,
+        "minimum": 4.5
+      }
+    ],
+    "controlBorderContrast": {
+      "name": "control border / input",
+      "foreground": "#7B879A",
+      "background": "#171B22",
+      "ratio": 4.75,
+      "minimum": 3
+    },
+    "pageOverflow": "PASS",
+    "preJavaScriptDark": {
+      "html": "rgb(17, 19, 24)",
+      "body": "rgb(17, 19, 24)",
+      "root": "rgb(17, 19, 24)",
+      "colorScheme": "dark"
+    },
+    "axe": {
+      "violations": 0,
+      "incompleteRules": [
+        "color-contrast"
+      ],
+      "note": "axe color-contrast is incomplete; the contrast ratios above cover the named canonical token pairs only."
+    }
+  },
+  "selfReview": {
+    "reviewer": "Codex self-review; no independent peer review",
+    "inspectedScreenshots": [
+      "S04-dashboard-320.png",
+      "S04-dashboard-1440.png"
+    ],
+    "observations": [
+      "At 320 CSS px, the page remains within the viewport and the table scrolls inside its labeled region with the hint visible.",
+      "At 1440 CSS px, dashboard hierarchy, semantic status labels and dark Graphite Gold surfaces remain visually distinct; no obvious clipping or contrast defect was seen in the inspected view."
+    ],
+    "limits": [
+      "This review covers the dashboard route and listed token pairs only.",
+      "No full keyboard, screen-reader, color-contrast axe completion, or product UAT is claimed."
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+FE002.S04 setup and doctor on the pinned local target
+ExecutedAt=2026-10-01T12:56:00.365Z
+Command=& 'C:\Program Files\nodejs\npm.cmd' --script-shell=powershell.exe run setup 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-setup-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & 'C:\Program Files\nodejs\npm.cmd' --script-shell=powershell.exe run doctor 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+Node=v24.19.0; npm=11.17.0; .node-version=24.19.0; npm packageManager=npm@11.17.0
+setup command exit=0; 11 generated outputs verified, MSW package worker copied to apps/web/public, setup reports demo remains synthetic.
+doctor command exit=0; all 9 checks PASS: Node.js 24, TypeScript, Vite, React, MUI, React Query, MSW, browser worker, lockfile.
+worker SHA256=3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc; existing .env.local SHA256=4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149 unchanged; .env.example secret-like values and logs scanned with 0 findings.
+Expected: actual Node/dependency/lock/worker setup is repeatable; no fake worker and no overwrite of existing environment values.
+Observed: the installed MSW CLI regenerated the official browser worker, generator completed, doctor passed, and setup left existing .env.local unchanged. npm v11 pending-script warning is recorded; clean install directly verified both esbuild and msw/browser imports.

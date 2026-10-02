@@ -1,0 +1,51 @@
+{
+  "taskId": "FE002",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T12:56:00.365Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 on main + current frontend working tree",
+  "expected": "Run real npm install on the approved root/workspace manifests; exit succeeds, lockfile remains real and synchronized, and React peers resolve without duplicate versions.",
+  "observed": "npm install exited 0 on Node v24.19.0/npm 11.17.0; 428 packages audited, zero reported vulnerabilities. Lockfile v3 SHA256 15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce did not change; direct dependencies match lock metadata. npm warns two dependency lifecycle scripts await approval; actual clean esbuild/MSW imports are verified separately in S05.",
+  "command": "npm.cmd --script-shell=powershell.exe install",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0",
+    "details": "Current frontend workspace; install scripts and temp directory use exact hashes recorded in the evidence log.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 6,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE002/S03-current-run-20261001.log",
+  "logSha256": "2ecd84515e050b4e6c2e14d63252cb014f925bb041cfe928323b6c578d4e4ca6",
+  "sourceFiles": [
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-current-20261001.log",
+      "sha256": "4af9ff7073ab87d9e452933cd0a98dc743b0399b15fecd8cc00917efd314792e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    }
+  ],
+  "sourceSnapshotSha256": "3438f3e3b9f19c72261bea31cc19cda6f347166316b4880619f92b6b93fb61bb",
+  "commandId": "install"
+}

@@ -1,0 +1,211 @@
+{
+  "taskId": "FE014",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T17:58:34.164Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 (main) + verified current working-tree snapshot",
+  "expected": "Kiểm supplier khác shop/chưa duyệt, thay giá/qty làm approval stale, thiếu budget, send unknown, receipt replay và permission. Verification: Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+  "observed": "143/143 Chromium browser tests passed on the built React demo artifact. The run includes 54 canonical routes, 65 direct feature-route interactions, 357 route-read permission checks across 51 shop routes × 7 mock roles, state cases, security checks, dataset pagination, and four cross-module journeys.",
+  "command": "npm.cmd --script-shell=cmd.exe run test:e2e",
+  "commandId": "e2e-current-20261002",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / v24.19.0 / npm 11.17.0",
+    "details": "Current repository working tree. Browser tests use Chromium against React and the synthetic MSW demo; local verification does not claim backend or staging behavior.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 143,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE027/e2e-current-route-role-20261002.log",
+  "logSha256": "9ac2c25a2676856c41e2ac772ca5620ec3289fb084c3997036c46c2d867514a8",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/app/CommandRecovery.tsx",
+      "sha256": "d16515c44893ae0b6cd988a2dc100410818655d06e0707b0abf9e2867eb167c7"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "288f2f6b882623a72f583fe440487bc46297e601fce2c3e59a2069d7bd3a36a8"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "86d2752f60f11a3849176087f0e0b611ea6ec5677e8c7019ca4d8c13091e8141"
+    },
+    {
+      "path": "apps/web/src/mocks/collections.json",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/procurement.ts",
+      "sha256": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "cabf9287b45fb90a76bd702461cf3227621b41ae20c56cf9eff10183a2e3cce4"
+    },
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "sha256": "8dbf3a6258e3d1035a6cbbedc5681eff1fdb93c4c279197328d78255fb1fa0fc"
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "sha256": "11f315c4c979141968e9dccec005820cbdcdf1109f47e51c59a98e53e45803cf"
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "sha256": "556ae2d777c9f54342be71c69cfbbe6e2cf8339cb9b941c8dbdd54a032bfcda5"
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "sha256": "57d24b82d9ba6085e5b83be3c81179b5f54c15f3ae5cca15effec8db0dff802a"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4a4fe4c32470d08467dd0d56cbf69f5de912340b6c323c01cb844553e601edb1"
+    },
+    {
+      "path": "apps/web/src/shared/api/errors.ts",
+      "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/api/intents.ts",
+      "sha256": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b"
+    },
+    {
+      "path": "apps/web/src/shared/model/format.ts",
+      "sha256": "865c0a60be3ead8df0744602090aafa12c52196f130d3a6a450acfad74eb7317"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "5415b58e05dae4c298a87bd1b558e01bbb52a8b306fbd026e38cae3cd74ad4c6"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "92e263718c9276e33278a7541e61660e09db38b330abf17990cca30b32d1ba3e"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/design/tokens.json",
+      "sha256": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "13c46cd75f39c9e2d5409ce4001628ee2476ad55631851e08cc590afe38877cc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "6208d7ddc930779551b4e345691596c6e4f6f8bf846a1cd4fe54ba7c5e5f0d38"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "26f0413036f6fdd4f401aab28e3c6063bcffec2f8d51669908dcb7f5c895f205"
+    },
+    {
+      "path": "evidence/REPORT.md",
+      "sha256": "15340146821b77268ab270c3c4e1ad841afadd4f13281e22d151650bdd99b262"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce"
+    },
+    {
+      "path": "package.json",
+      "sha256": "9281caf13ea0e6470daa7431aef1ad627fc52800edf569a605ae138fc7083b1f"
+    },
+    {
+      "path": "packages/contracts/src/generated.ts",
+      "sha256": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "e630656e8c168f7e4f204670a4ce1267603265ff485f868f8ca52c1ce9104b81"
+    },
+    {
+      "path": "packages/contracts/src/permissions.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "packages/contracts/src/routes.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "ede09183cabb844663c94ab08f4662f8bde06665ef77d544d9d5501725f566a5"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+    },
+    {
+      "path": "tests/domain-scenarios.cjs",
+      "sha256": "ac65e916a6433de60f96292ac03381b625aece42a04f6ac37085eb1243766245"
+    },
+    {
+      "path": "tests/fe014-source-map.test.mjs",
+      "sha256": "762b5759ec6efcd8db1dc9f4319f9385fa65832916dbc30747143a9bb72f63da"
+    },
+    {
+      "path": "tests/fe014.spec.ts",
+      "sha256": "79178d563cc32e6c149d2c594ae5eece8acf491a8d6a9efd866cfd6bca4e207b"
+    },
+    {
+      "path": "tests/fixtures/mock-network.mjs",
+      "sha256": "dc367b505a5cd380d40ab30619ec6f7e403cbd538f1ae87d09746b3384bca78c"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "4f98c24e05cdf9f984542764451df76117bc23027757697a5aff7167257221c0"
+    },
+    {
+      "path": "tests/session/demo-server.mjs",
+      "sha256": "4af989379bf20bd2bda83f02dcfd5edd3b4dcec27132fde07fd2952c82eecb20"
+    }
+  ],
+  "sourceSnapshotSha256": "67a4c955156a42b0b5ff67a7dfc35e2daded8d3fd9227f3b492cadaa1234ca40"
+}

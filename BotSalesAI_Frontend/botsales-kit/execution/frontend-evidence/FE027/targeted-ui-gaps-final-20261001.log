@@ -1,0 +1,105 @@
+
+[WebServer] (node:37844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 11 tests using 1 worker
+
+(node:22052) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/11] [chromium] › tests\fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers
+  1) [chromium] › tests\fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' })
+    Expected: visible
+    Error: strict mode violation: getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' }) resolved to 9 elements:
+        1) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu Liên hệ giả lậ' })
+        2) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu DEMO-001 100.' })
+        3) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu AO-002 135.000' })
+        4) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu QU-003 230.000' })
+        5) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu TU-004 80.000' })
+        6) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu AO-005 255.000' })
+        7) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu MU-006 65.000' })
+        8) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu QU-007 150.000' })
+        9) <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr> aka getByRole('row', { name: 'Xưởng hàng mẫu TU-008 180.000' })
+
+    Call log:
+      - Expect "toBeVisible" getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' }) with timeout 5000ms
+      - waiting for getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' })
+
+
+      78 |     await gotoDemo(page, '/s/shop-demo/suppliers');
+      79 |     const supplierRow = page.getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' });
+    > 80 |     await expect(supplierRow).toBeVisible();
+         |                               ^
+      81 |     await expect(page.getByRole('columnheader', { name: 'Tối thiểu / Quy cách' })).toBeVisible();
+      82 |     const detailWait = page.waitForResponse(response => response.request().method() === 'GET' && /\/suppliers\/[^/]+$/.test(new URL(response.url()).pathname));
+      83 |     await supplierRow.getByRole('button', { name: 'Sửa', exact: true }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:80:31
+
+    Error Context: test-results\fe014-FE027-D02-supplier-w-0b3a1-ion-and-displays-MOQ-offers-chromium\error-context.md
+
+    Error Context: test-results\fe014-FE027-D02-supplier-w-0b3a1-ion-and-displays-MOQ-offers-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe014-FE027-D02-supplier-w-0b3a1-ion-and-displays-MOQ-offers-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe014-FE027-D02-supplier-w-0b3a1-ion-and-displays-MOQ-offers-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:4512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/11] [chromium] › tests\fe016.spec.ts:206:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft
+[3/11] [chromium] › tests\fe016.spec.ts:222:1 › FE027.B02 inbox price and available stock preview uses current canonical mock reads
+[4/11] [chromium] › tests\fe016.spec.ts:243:1 › FE027.B03 order capture links the active customer and conversation into the manual order form
+[5/11] [chromium] › tests\fe016.spec.ts:253:1 › FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist
+[6/11] [chromium] › tests\fe017.spec.ts:278:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+[7/11] [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+  2) [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes 
+
+    Error: expect(received).toBeTruthy()
+
+    Received: null
+
+      298 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+      299 |     const original = (await (await detailWait).json()).data;
+    > 300 |     expect(original.publishedRevisionId).toBeTruthy();
+          |                                          ^
+      301 |     await page.getByRole('button', { name: 'Soạn phiên bản mới', exact: true }).click();
+      302 |     const dialog = page.getByRole('dialog', { name: 'Soạn phiên bản mới' });
+      303 |     await dialog.getByRole('textbox', { name: 'Tiêu đề' }).fill('Chính sách mẫu · bản mới');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe017.spec.ts:300:42
+
+    Error Context: test-results\fe017-FE027-G03-policy-rev-db5be-utable-when-a-draft-changes-chromium\error-context.md
+
+    Error Context: test-results\fe017-FE027-G03-policy-rev-db5be-utable-when-a-draft-changes-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe017-FE027-G03-policy-rev-db5be-utable-when-a-draft-changes-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe017-FE027-G03-policy-rev-db5be-utable-when-a-draft-changes-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:30316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[8/11] [chromium] › tests\fe018.spec.ts:223:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion
+[9/11] [chromium] › tests\fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states
+[10/11] [chromium] › tests\fe019.spec.ts:334:1 › FE027.A08 notification settings disclose server-only deduplication and callback safeguards
+[11/11] [chromium] › tests\fe020.spec.ts:225:1 › FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate
+  2 failed
+    [chromium] › tests\fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers 
+    [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes 
+  9 passed (18.7s)

@@ -1,0 +1,63 @@
+{
+  "taskId": "FE021",
+  "stepId": "S01",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T08:09:18.420Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current working tree; FE021 source files are hashed in this evidence.",
+  "expected": "R04/R31/R53 map to the canonical operations and permissions for dashboard, marketing and report export; preserve absent date-series and marketing insight contracts as explicit gaps.",
+  "observed": "The FE021 mapping suite passed 3/3. Dashboard, marketing summary and export actions map to canonical routes and permissions; the tests record missing date-series/marketing insight operations and confirm HTML rendering is not used.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+  "commandId": "unit",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows Node 24.19.0 / npm 11.17.0 / Vitest",
+    "details": "React frontend with synthetic fixtures/MSW only; no backend or live provider was contacted.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 3,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE021/unit-current-20261001.log",
+  "logSha256": "d3de671c72b9257820f538a96ec87d299a5c06f3d9bbf147e87a91dbd684b815",
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/mocks/files.ts",
+      "sha256": "95e88f98daa75d4ee43271ea104d545c0bbe732551e4a34b03fd8d4ab06bf814"
+    },
+    {
+      "path": "apps/web/src/mocks/marketing-fixture.ts",
+      "sha256": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb"
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "5406f2739b8f004961ef705ad0b19cd675e10866300c33ea7284d140f50d3395"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "00f578b5679001066c746fbcf33d7df245234a1eb740cf367f228984e604abf3"
+    },
+    {
+      "path": "apps/web/tests/fe021-source-map.test.ts",
+      "sha256": "da338ba6ffac50d042df60cf30f179a2b3c753d6beb5ecb3ae550db492c2d28a"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "packages/contracts/src/generated.ts",
+      "sha256": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709"
+    }
+  ],
+  "sourceSnapshotSha256": "addb4bb4a3f21fc266bebfb8fcc1480048170a790f445d790e20344538293a60"
+}

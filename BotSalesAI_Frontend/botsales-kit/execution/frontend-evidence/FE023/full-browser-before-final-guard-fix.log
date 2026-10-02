@@ -1,0 +1,190 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (17.6817ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.8182ms)
+✔ rejects unresolved schema references before generation (20.4855ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.4286ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.9619ms)
+✔ detects a stale generated file and accepts it after regeneration (2.0563ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (43.6462ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (10.3239ms)
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (8.4934ms)
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (7.7061ms)
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (7.6994ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.4665ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.2064ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.1484ms)
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.5021ms)
+✔ FE017 upload and Knowledge DTO usage respects declared schema and records the allowedActions gap (0.098ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.0554ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0455ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.4131ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.1158ms)
+✔ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (0.7198ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.1124ms)
+
+Running 106 tests using 1 worker
+
+(node:36012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   1 [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (1.9s)
+  ok   2 [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (4.1s)
+  ok   3 [chromium] › tests\fe009.spec.ts:212:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.4s)
+  ok   4 [chromium] › tests\fe009.spec.ts:235:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.7s)
+  ok   5 [chromium] › tests\fe009.spec.ts:304:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.8s)
+  ok   6 [chromium] › tests\fe010.spec.ts:41:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (4.6s)
+  ok   7 [chromium] › tests\fe010.spec.ts:172:1 › product update sends If-Match and keeps edits visible after a 412 conflict (2.1s)
+  ok   8 [chromium] › tests\fe010.spec.ts:201:1 › warehouse role can read catalog products but cannot edit product fields or price cost data (983ms)
+  ok   9 [chromium] › tests\fe010.spec.ts:214:1 › categories create, search, update with a version, and render cursor pagination (2.4s)
+  ok  10 [chromium] › tests\fe010.spec.ts:278:1 › CSV preview reports row-level errors and commits only valid product rows (2.7s)
+  ok  11 [chromium] › tests\fe010.spec.ts:404:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible (3.0s)
+  ok  12 [chromium] › tests\fe010.spec.ts:475:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview (1.5s)
+  ok  13 [chromium] › tests\fe010.spec.ts:502:1 › demo upload rejects files over 5 MB and explains the limit (1.8s)
+  ok  14 [chromium] › tests\fe011.spec.ts:40:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result (2.3s)
+  ok  15 [chromium] › tests\fe011.spec.ts:72:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once (4.5s)
+  x   16 [chromium] › tests\fe011.spec.ts:143:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically (8.2s)
+(node:24820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  17 [chromium] › tests\fe011.spec.ts:184:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state (2.1s)
+  ok  18 [chromium] › tests\fe011.spec.ts:213:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it (2.0s)
+  ok  19 [chromium] › tests\fe011.spec.ts:250:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source (2.6s)
+  x   20 [chromium] › tests\fe011.spec.ts:282:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog (7.2s)
+(node:13776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  21 [chromium] › tests\fe011.spec.ts:326:1 › FE011.AC03 unknown shop scope shows no stock from another shop (619ms)
+  ok  22 [chromium] › tests\fe012.spec.ts:40:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity (4.9s)
+  ok  23 [chromium] › tests\fe012.spec.ts:129:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation (4.6s)
+  ok  24 [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success (2.3s)
+  ok  25 [chromium] › tests\fe012.spec.ts:252:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft (1.3s)
+  ok  26 [chromium] › tests\fe012.spec.ts:272:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available (2.6s)
+  ok  27 [chromium] › tests\fe012.spec.ts:318:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time (2.5s)
+  ok  28 [chromium] › tests\fe012.spec.ts:346:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection (1.7s)
+  ok  29 [chromium] › tests\fe012.spec.ts:388:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund (3.5s)
+  ok  30 [chromium] › tests\fe012.spec.ts:503:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action (1.3s)
+  ok  31 [chromium] › tests\fe012.spec.ts:518:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks (1.8s)
+  x   32 [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once (3.0m)
+(node:34584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,150 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep FE012 --reporter=line
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (17.877ms)
+✔ generated operation registry preserves required and optional query parameter metadata (8.0606ms)
+✔ rejects unresolved schema references before generation (20.5141ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.6327ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (15.4618ms)
+✔ detects a stale generated file and accepts it after regeneration (2.0529ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (42.2492ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (122.4113ms)
+
+Running 10 tests using 1 worker
+
+
+
+[1A[2K(node:19324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:19324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/10] [chromium] › tests\fe012.spec.ts:40:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[1A[2K[2/10] [chromium] › tests\fe012.spec.ts:129:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[1A[2K[3/10] [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+[1A[2K  1) [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success 
+
+    Error: expect.toBeVisible: Error: strict mode violation: getByRole('alert') resolved to 4 elements:
+        1) <div role="alert" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-colorInfo MuiAlert-standardInfo MuiAlert-standard css-10cw8qh-MuiPaper-root-MuiAlert-root">…</div> aka getByRole('alert').filter({ hasText: 'Frontend review: API được mô' })
+        2) <div role="alert" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-colorError MuiAlert-standardError MuiAlert-standard css-198saz8-MuiPaper-root-MuiAlert-root">…</div> aka getByRole('alert').filter({ hasText: 'Mô phỏng dữ liệu bị thay đổi' })
+        3) <div role="alert" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-colorInfo MuiAlert-standardInfo MuiAlert-standard css-10cw8qh-MuiPaper-root-MuiAlert-root">…</div> aka getByRole('alert').filter({ hasText: 'Chưa có API CRUD địa chỉ giao' })
+        4) <div role="alert" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiAlert-root MuiAlert-colorInfo MuiAlert-standardInfo MuiAlert-standard css-10cw8qh-MuiPaper-root-MuiAlert-root">…</div> aka getByRole('alert').filter({ hasText: 'Tổng tiền và khả năng giữ hà' })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('alert')[22m
+
+
+      158 |     await page.getByRole('button', { name: 'Lưu đơn nháp' }).click();
+      159 |     expect((await staleSave).status()).toBe(412);
+    > 160 |     await expect(page.getByRole('alert')).toBeVisible();
+          |                                           ^
+      161 |     await expect(staleNotes).toHaveValue('Bản chỉnh sửa cần giữ lại khi có xung đột');
+      162 | });
+      163 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe012.spec.ts:160:43
+
+    Error Context: test-results\fe012-FE012-AC03-mock-stal-af427-s-and-does-not-show-success-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe012-FE012-AC03-mock-stal-af427-s-and-does-not-show-success-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe012-FE012-AC03-mock-stal-af427-s-and-does-not-show-success-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+[1A[2K(node:19644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+
+[1A[2K(node:19644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[4/10] [chromium] › tests\fe012.spec.ts:250:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+[1A[2K[5/10] [chromium] › tests\fe012.spec.ts:270:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[1A[2K[6/10] [chromium] › tests\fe012.spec.ts:316:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[1A[2K[7/10] [chromium] › tests\fe012.spec.ts:344:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[1A[2K[8/10] [chromium] › tests\fe012.spec.ts:386:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[1A[2K[9/10] [chromium] › tests\fe012.spec.ts:501:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[1A[2K[10/10] [chromium] › tests\fe012.spec.ts:516:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[1A[2K  1 failed
+    [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success 
+  9 passed (25.7s)

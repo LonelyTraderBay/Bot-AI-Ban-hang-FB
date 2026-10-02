@@ -1,0 +1,130 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep stale claim
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (18.0566ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.8035ms)
+✔ rejects unresolved schema references before generation (19.8394ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.3074ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.6895ms)
+✔ detects a stale generated file and accepts it after regeneration (1.7517ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (43.5121ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (115.9833ms)
+
+Running 1 test using 1 worker
+
+(node:7448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once (7.1s)
+
+
+  1) [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('row').filter({ hasText: 'DH-1001' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('row').filter({ hasText: 'DH-1001' })[22m
+
+
+      56 |     await gotoDemo(competingPage, '/s/shop-demo/fulfillment');
+      57 |     const competingRow = competingPage.getByRole('row').filter({ hasText: 'DH-1001' });
+    > 58 |     await expect(competingRow).toBeVisible();
+         |                                ^
+      59 |     await competingRow.getByRole('button', { name: 'Mở phiếu lấy hàng' }).click();
+      60 |     const competingDialog = competingPage.getByRole('dialog', { name: 'Phiếu chuẩn bị DH-1001' });
+      61 |     await expect(competingDialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe013.spec.ts:58:32
+
+    Error Context: test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once 

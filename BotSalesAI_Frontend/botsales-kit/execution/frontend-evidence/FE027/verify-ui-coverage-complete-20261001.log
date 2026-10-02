@@ -1,0 +1,117 @@
+
+> botsales-frontend@0.1.0 verify
+> npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs
+
+{
+  "checkedAt": "2026-10-01T11:07:04.725Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 58,
+  "operationCalls": 224,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-01T11:07:06.323Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 58,
+  "imports": 402,
+  "negativeFixtures": "Boundary fixtures: PASS 8/8 scenarios (allowed import, alias, relative, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> botsales-frontend@0.1.0 test:domain
+> node scripts/test-domain.mjs
+
+{"status":"PASS","simulatorChecks":75,"networkChecks":13,"networkHandlers":210,"passed":88,"operations":89,"node":"v24.19.0","typescript":"5.9.2"}
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+
+ Test Files  7 passed (7)
+      Tests  66 passed (66)
+   Start at  18:07:14
+   Duration  5.07s (tests 54%, environment 23%, import 12%, setup 5%, transform 5%)
+
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2047 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist/assets/hooks-CPYDTkAm.js                   4.17 kB │ gzip:   1.94 kB
+dist/assets/imports-Bw_KLmmX.js                 4.84 kB │ gzip:   2.25 kB
+dist/assets/index-anIWrp1x.js                   7.23 kB │ gzip:   2.93 kB
+dist/assets/index-Co0MVhr_.js                   7.80 kB │ gzip:   3.14 kB
+dist/assets/index-SzvAAIeO.js                   8.35 kB │ gzip:   3.54 kB
+dist/assets/index-D8ySiUmg.js                  11.80 kB │ gzip:   4.40 kB
+dist/assets/index-eGaW6J82.js                  12.08 kB │ gzip:   4.31 kB
+dist/assets/index-DOnL4K-o.js                  12.37 kB │ gzip:   5.06 kB
+dist/assets/index-DK0rP9KB.js                  12.68 kB │ gzip:   4.81 kB
+dist/assets/index-sYp8Tyhc.js                  14.57 kB │ gzip:   4.85 kB
+dist/assets/index-JdQwRAXO.js                  14.71 kB │ gzip:   4.82 kB
+dist/assets/index-BoFlmCYp.js                  14.73 kB │ gzip:   4.94 kB
+dist/assets/index-Dqd1QSp5.js                  15.05 kB │ gzip:   5.36 kB
+dist/assets/index-8zfweqGT.js                  23.37 kB │ gzip:   7.96 kB
+dist/assets/index-mlvhKdR9.js                  24.83 kB │ gzip:   8.11 kB
+dist/assets/index-Bi8sdm-H.js                  29.46 kB │ gzip:   8.60 kB
+dist/assets/index-DLwOYwdG.js                  30.27 kB │ gzip:   9.48 kB
+dist/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist/assets/index-JU4NRJ9U.js                 324.48 kB │ gzip:  99.45 kB
+dist/assets/index-Apm3iSNp.js                 730.13 kB │ gzip: 184.23 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.71s

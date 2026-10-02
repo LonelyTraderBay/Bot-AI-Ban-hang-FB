@@ -1,0 +1,11 @@
+FE003.S03 current test-runner configuration and execution audit
+ExecutedAt=2026-10-01T13:13:04.902Z
+HEAD=18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 branch=main cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Vitest config uses jsdom, React plugin, app aliases, and apps/web/tests/setup.ts; npm test executed 7 files / 66 tests, all passed.
+PowerShell npm script-shell attempt failed before tests because vitest.ps1 is blocked by Windows execution policy. Failure is preserved in S03-vitest-current-20261001.log; the registered cmd.exe runner passed without disabling suites.
+Playwright config loaded Chromium project; --list discovered 123 tests in 18 files; actual test:e2e completed 123/123 Chromium in 4.3m.
+test:e2e also executed setup, generated freshness (11 outputs/283 schemas/210 operations/54 routes), full typecheck, production build and demo build before browser tests.
+AxeBuilder import and browser case availability PASS; AXE_IMPORT_PASS function. The suite filter scan found no .only/.skip markers; scan exit 1 means no matches.
+Existing runner sources reviewed: package.json, apps/web/package.json, apps/web/vitest.config.ts, apps/web/vite.config.ts, apps/web/tests/setup.ts, apps/web/tests/components.test.tsx, apps/web/src/main.tsx, apps/web/src/mocks/browser.ts, playwright.config.ts, tests/design/browser-audit.mjs, tests/fe011.spec.ts, tests/frontend.spec.ts
+Expected: current Vitest/RTL/MSW/Playwright/axe configuration is loaded, baseline failures are recorded honestly, and no suite is disabled.
+Observed: the initial Windows shim failure was shell-specific and recovered through the registered cmd.exe invocation; Vitest 66/66 and full Chromium E2E 123/123 passed. Browser coverage includes axe checks and mock-specific flows. Production build emitted the known >500 kB chunk advisory but exited successfully.

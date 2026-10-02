@@ -1,0 +1,125 @@
+
+[WebServer] (node:24588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 10 tests using 1 worker
+
+
+(node:34332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/10] [chromium] › tests\fe016.spec.ts:206:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft
+  1) [chromium] › tests\fe016.spec.ts:206:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('tabpanel', { name: 'Kịch bản tư vấn mẫu' }).getByText(/Thiếu thông tin thì hỏi lại hoặc chuyển nhân viên/)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('tabpanel', { name: 'Kịch bản tư vấn mẫu' }).getByText(/Thiếu thông tin thì hỏi lại hoặc chuyển nhân viên/) with timeout 5000ms
+      - waiting for getByRole('tabpanel', { name: 'Kịch bản tư vấn mẫu' }).getByText(/Thiếu thông tin thì hỏi lại hoặc chuyển nhân viên/)
+
+
+      212 |     const preview = page.getByRole('tabpanel', { name: 'Kịch bản tư vấn mẫu' });
+      213 |     await expect(preview).toContainText('Bạn đang tìm kiểu dáng và dịp sử dụng nào?');
+    > 214 |     await expect(preview.getByText(/Thiếu thông tin thì hỏi lại hoặc chuyển nhân viên/)).toBeVisible();
+          |                                                                                          ^
+      215 |     await preview.getByRole('combobox', { name: 'Ngành hàng mẫu' }).click();
+      216 |     await page.getByRole('option', { name: 'Mỹ phẩm', exact: true }).click();
+      217 |     await expect(preview).toContainText('Bạn có dị ứng hoặc thành phần cần tránh không?');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe016.spec.ts:214:90
+
+    Error Context: test-results\fe016-FE027-B01-industry-s-3e65d-cts-and-stays-a-local-draft-chromium\error-context.md
+
+    Error Context: test-results\fe016-FE027-B01-industry-s-3e65d-cts-and-stays-a-local-draft-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe016-FE027-B01-industry-s-3e65d-cts-and-stays-a-local-draft-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe016-FE027-B01-industry-s-3e65d-cts-and-stays-a-local-draft-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:37596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/10] [chromium] › tests\fe016.spec.ts:222:1 › FE027.B02 inbox price and available stock preview uses current canonical mock reads
+[3/10] [chromium] › tests\fe016.spec.ts:243:1 › FE027.B03 order capture links the active customer and conversation into the manual order form
+[4/10] [chromium] › tests\fe016.spec.ts:253:1 › FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist
+[5/10] [chromium] › tests\fe017.spec.ts:278:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+[6/10] [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+  2) [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes 
+
+    SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+
+      297 |     const detailWait = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/knowledge/k3'));
+      298 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+    > 299 |     const original = (await (await detailWait).json()).data;
+          |                       ^
+      300 |     expect(original.publishedRevisionId).toBeTruthy();
+      301 |     await page.getByRole('button', { name: 'Soạn phiên bản mới', exact: true }).click();
+      302 |     const dialog = page.getByRole('dialog', { name: 'Soạn phiên bản mới' });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe017.spec.ts:299:23
+
+    Error Context: test-results\fe017-FE027-G03-policy-rev-db5be-utable-when-a-draft-changes-chromium\error-context.md
+
+    Error Context: test-results\fe017-FE027-G03-policy-rev-db5be-utable-when-a-draft-changes-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe017-FE027-G03-policy-rev-db5be-utable-when-a-draft-changes-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe017-FE027-G03-policy-rev-db5be-utable-when-a-draft-changes-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:33116) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[7/10] [chromium] › tests\fe018.spec.ts:223:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion
+[8/10] [chromium] › tests\fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states
+  3) [chromium] › tests\fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states 
+
+    TypeError: Cannot read properties of undefined (reading 'find')
+
+      313 |     expect(response.status()).toBe(200);
+      314 |     const result = (await response.json()).data as { data: Array<{ id: string; title: string; safeBody: string; deliveryStatus: string; openedAt: string | null; acknowledgedAt: string | null; workItemId: string | null; source: { type: string; id: string } }> };
+    > 315 |     const notice = result.data.find(item => item.source.type === 'order' && item.source.id === 'DH-DEMO-PAID-01');
+          |                                ^
+      316 |     expect(notice).toMatchObject({
+      317 |         title: 'Đơn DH-DEMO-PAID-01 cần chuẩn bị',
+      318 |         deliveryStatus: 'queued',
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe019.spec.ts:315:32
+
+    Error Context: test-results\fe019-FE027-A02-A07-prepar-22fab-ned-and-acknowledged-states-chromium\error-context.md
+
+    Error Context: test-results\fe019-FE027-A02-A07-prepar-22fab-ned-and-acknowledged-states-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe019-FE027-A02-A07-prepar-22fab-ned-and-acknowledged-states-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe019-FE027-A02-A07-prepar-22fab-ned-and-acknowledged-states-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:36236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[9/10] [chromium] › tests\fe019.spec.ts:332:1 › FE027.A08 notification settings disclose server-only deduplication and callback safeguards
+[10/10] [chromium] › tests\fe020.spec.ts:225:1 › FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate
+  3 failed
+    [chromium] › tests\fe016.spec.ts:206:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft 
+    [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes 
+    [chromium] › tests\fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states 
+  7 passed (22.8s)

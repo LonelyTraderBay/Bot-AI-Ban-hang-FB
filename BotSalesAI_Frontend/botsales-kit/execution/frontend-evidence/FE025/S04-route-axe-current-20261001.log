@@ -1,0 +1,108 @@
+
+[WebServer] (node:34720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:18084) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+  1) [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo 
+
+    Error: [
+      {
+        "routeId": "R05",
+        "id": "list",
+        "impact": "serious",
+        "help": "<ul> and <ol> must only directly contain <li>, <script> or <template> elements",
+        "nodes": [
+          {
+            "target": [
+              ".css-1aa2klz-MuiPaper-root > ul"
+            ],
+            "html": "<ul class=\"MuiList-root css-54zhjy-MuiList-root\">",
+            "summary": "Fix all of the following:\n  List element has direct children that are not allowed: a"
+          }
+        ]
+      },
+      {
+        "routeId": "R06",
+        "id": "list",
+        "impact": "serious",
+        "help": "<ul> and <ol> must only directly contain <li>, <script> or <template> elements",
+        "nodes": [
+          {
+            "target": [
+              ".css-olkvys-MuiPaper-root > ul"
+            ],
+            "html": "<ul class=\"MuiList-root css-54zhjy-MuiList-root\">",
+            "summary": "Fix all of the following:\n  List element has direct children that are not allowed: a"
+          }
+        ]
+      }
+    ]
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 34
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "help": "<ul> and <ol> must only directly contain <li>, <script> or <template> elements",
+    +     "id": "list",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       Object {
+    +         "html": "<ul class=\"MuiList-root css-54zhjy-MuiList-root\">",
+    +         "summary": "Fix all of the following:
+    +   List element has direct children that are not allowed: a",
+    +         "target": Array [
+    +           ".css-1aa2klz-MuiPaper-root > ul",
+    +         ],
+    +       },
+    +     ],
+    +     "routeId": "R05",
+    +   },
+    +   Object {
+    +     "help": "<ul> and <ol> must only directly contain <li>, <script> or <template> elements",
+    +     "id": "list",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       Object {
+    +         "html": "<ul class=\"MuiList-root css-54zhjy-MuiList-root\">",
+    +         "summary": "Fix all of the following:
+    +   List element has direct children that are not allowed: a",
+    +         "target": Array [
+    +           ".css-olkvys-MuiPaper-root > ul",
+    +         ],
+    +       },
+    +     ],
+    +     "routeId": "R06",
+    +   },
+    + ]
+
+      79 |     expect(results.filter(result => result.state === 'loaded')).toHaveLength(54);
+      80 |     expect(pageErrors).toEqual([]);
+    > 81 |     expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
+         |                                                             ^
+      82 | });
+      83 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\accessibility\routes.spec.ts:81:61
+
+    Error Context: test-results\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo 

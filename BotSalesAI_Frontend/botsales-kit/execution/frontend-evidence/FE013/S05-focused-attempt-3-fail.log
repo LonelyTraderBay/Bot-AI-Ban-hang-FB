@@ -1,0 +1,169 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep FE013
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (18.2013ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.7027ms)
+✔ rejects unresolved schema references before generation (20.3549ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.2524ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.7218ms)
+✔ detects a stale generated file and accepts it after regeneration (1.9996ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (42.0278ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (7.2373ms)
+
+Running 2 tests using 1 worker
+
+(node:34376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once (6.8s)
+(node:23884) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23884) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [chromium] › tests\fe013.spec.ts:310:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible (7.1s)
+
+
+  1) [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('row').filter({ hasText: 'DH-1001' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('row').filter({ hasText: 'DH-1001' })[22m
+
+
+      48 |     await gotoDemo(page, '/s/shop-demo/fulfillment');
+      49 |     const prepRow = page.getByRole('row').filter({ hasText: 'DH-1001' });
+    > 50 |     await expect(prepRow).toBeVisible();
+         |                           ^
+      51 |     await prepRow.getByRole('button', { name: 'Mở phiếu lấy hàng' }).click();
+      52 |     const prepDialog = page.getByRole('dialog', { name: 'Phiếu chuẩn bị DH-1001' });
+      53 |     await expect(prepDialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe013.spec.ts:50:27
+
+    Error Context: test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe013-FE013-AC01–AC04-stal-0ad93-e-current-API-versions-once-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\fe013.spec.ts:310:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('row').filter({ hasText: 'DH-1001' })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('row').filter({ hasText: 'DH-1001' })[22m
+
+
+      171 |     await gotoDemo(page, '/s/shop-demo/fulfillment');
+      172 |     const row = page.getByRole('row').filter({ hasText: 'DH-1001' });
+    > 173 |     await expect(row).toBeVisible();
+          |                       ^
+      174 |     await row.getByRole('button', { name: 'Mở phiếu lấy hàng' }).click();
+      175 |     const dialog = page.getByRole('dialog', { name: 'Phiếu chuẩn bị DH-1001' });
+      176 |     await expect(dialog.getByRole('alert').filter({ hasText: 'không có quyền nhận' })).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe013.spec.ts:173:23
+
+    Error Context: test-results\fe013-FE013-AC01-role-scop-d9bf1-ion-views-remain-accessible-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe013-FE013-AC01-role-scop-d9bf1-ion-views-remain-accessible-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe013-FE013-AC01-role-scop-d9bf1-ion-views-remain-accessible-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\fe013.spec.ts:52:1 › FE013.AC01–AC04 stale claim is reconciled; pick, pack, dispatch and delivery use current API versions once 
+    [chromium] › tests\fe013.spec.ts:310:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible 

@@ -1,0 +1,26 @@
+FE005.S02 canonical contracts and transport verification
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+HEAD=18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 + dirty frontend working tree
+node=v24.19.0; npm=11.17.0; scope=FRONTEND_WITH_SYNTHETIC_MOCK_API
+commandId=generate-check-windows
+command=& 'C:\Program Files\nodejs\npm.cmd' --script-shell=cmd.exe run generate:check
+
+--- botsales-kit/execution/frontend-evidence/FE005/S02-generate-current-20261001.log ---
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+[review 1] PASS correct sequential FE005 checkpoint selected
+status exit=0; next=FE005.S02; blocked=[]
+
+[review 2] PASS all current run logs exist
+botsales-kit/execution/frontend-evidence/FE005/S02-generate-current-20261001.log
+
+[review 3] PASS generated outputs are fresh
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+result=PASS; checks=3; exitCode=0

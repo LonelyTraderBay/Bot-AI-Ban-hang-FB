@@ -1,0 +1,91 @@
+{
+  "taskId": "FE004",
+  "stepId": "S01",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-09-30T14:58:40.400Z",
+  "sourceRevision": "HEAD 18be3c6 plus current dirty working tree; exact task/config hashes recorded below",
+  "expected": "The complete frontend TypeScript project compiles under the configured strict settings; app composition and router ownership remain centralized.",
+  "observed": "Current npm typecheck exited 0 with no diagnostics. Source review confirms main.tsx composes the single theme/query/session/router providers and app/router.tsx owns lazy route composition. The existing tsconfig has strict=true; noUncheckedIndexedAccess remains disabled because earlier compatibility diagnostics affect mock files outside FE004 source write scope.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck",
+  "commandId": "types",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0",
+    "details": "Current root frontend workspace; see exact command output log.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 1,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE004/S01-typecheck-current-refresh.log",
+  "logSha256": "fda5b5881857bc14ae1b2007da7f34ff646ee7d1218d55292bf572412729fc79",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "5ea8eb58f93d17d0ee83fc9368f3d9866c5d69e79250c673fbcc31ac5f2742c5"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "581a1e18f65c457ebb3e28a808dfbdfdeaf302b2997cf2493a3d308485b332f0"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "ceabad973264eef6cc111ccb7a36e21accbea93be5df7e3d88ebc4ac2b8f03d1"
+    },
+    {
+      "path": "apps/web/tsconfig.json",
+      "sha256": "da4b4ce1e7fd3cc94c5375430a0d3f09237021a8a0bd5dad1c83b334abd120e9"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "3381cb82771225f3650d352b1d7808382a62c3b674bedf0747cc26b2d81be19d"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "e8397a5fe134725482197098d6cad886429cfa0a10bd48f4e242c3062dfa2a63"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13d7f0716a3234416cf7cec954ecdf1730e08694a0d99d5bdb788c378629487d"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "sha256": "bcc7e843b4ad0f8e5609e262fb9d0d1e9f1845bd88b6153e3a9ef63cf7fde2c7"
+    },
+    {
+      "path": "packages/design-tokens/src/index.ts",
+      "sha256": "527d92791c58163352bbb84031c303b47b9eff0999f0698ec12eed35c9f5b49a"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "30083133132deddcf2d64b937840a8444372b809e9a86d969416107d8855b974"
+    },
+    {
+      "path": "scripts/check-boundaries.mjs",
+      "sha256": "6d3a9d997bc1787daa61b1e6cef816a4991bee8777355b32f9dafed283b4b00f"
+    },
+    {
+      "path": "tests/architecture/check-boundaries.mjs",
+      "sha256": "4f8d062e0a53d9cd6a2fdc70908efe56d8609c9fe88026c37e3655044f0a46a9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "629f53b85d615f5d533c2b395141a6047da53075165957978aa593b6618c2082"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE004/write-test-evidence.mjs",
+      "sha256": "4e31aa768efdbdcf9587efaae082885e9d36b44945bc0423e84d1c6e4725cd2a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE004/S01-typecheck-current-refresh.log",
+      "sha256": "fda5b5881857bc14ae1b2007da7f34ff646ee7d1218d55292bf572412729fc79"
+    }
+  ],
+  "sourceSnapshotSha256": "a1a21b9cb4ecd8766bff4f487e4ed985d6e9a4ac6ae3eaaaa6501d97fa4000a5"
+}

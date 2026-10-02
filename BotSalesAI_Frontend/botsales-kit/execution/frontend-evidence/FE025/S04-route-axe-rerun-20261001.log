@@ -1,0 +1,1949 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> npm run setup && npm run build && npm run build:demo && playwright test --grep all canonical routes pass whole-page WCAG 2.1 A/AA axe checks --reporter=line
+
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2049 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist/assets/download-8lJFmiSZ.js                0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist/assets/import-file-Ct8hcUTT.js             0.32 kB │ gzip:   0.26 kB
+dist/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist/assets/hooks-DbN9qClf.js                   4.17 kB │ gzip:   1.94 kB
+dist/assets/imports-B5n8LlCg.js                 5.14 kB │ gzip:   2.40 kB
+dist/assets/index-D9npdyb3.js                   7.23 kB │ gzip:   2.93 kB
+dist/assets/index-DEIvWzd_.js                   7.80 kB │ gzip:   3.14 kB
+dist/assets/index-DiQlP0lw.js                   8.35 kB │ gzip:   3.54 kB
+dist/assets/index-CA2XOGP-.js                  12.02 kB │ gzip:   4.50 kB
+dist/assets/index-Do4bQFJq.js                  12.08 kB │ gzip:   4.31 kB
+dist/assets/index-Cd2SGiTP.js                  12.37 kB │ gzip:   5.06 kB
+dist/assets/index-C683PnFG.js                  12.68 kB │ gzip:   4.81 kB
+dist/assets/index-BS73Jnhx.js                  14.57 kB │ gzip:   4.85 kB
+dist/assets/index-BLjS6zv6.js                  14.71 kB │ gzip:   4.82 kB
+dist/assets/index-BWo_s9wY.js                  14.73 kB │ gzip:   4.94 kB
+dist/assets/index-BILFPd8A.js                  15.05 kB │ gzip:   5.36 kB
+dist/assets/index-e7TnQREE.js                  23.67 kB │ gzip:   8.06 kB
+dist/assets/index-C0RJEh6H.js                  24.83 kB │ gzip:   8.11 kB
+dist/assets/index-DpQdYmTt.js                  29.46 kB │ gzip:   8.60 kB
+dist/assets/index-BgwIoi7t.js                  30.10 kB │ gzip:   9.40 kB
+dist/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist/assets/index-C-ve3MSA.js                 324.31 kB │ gzip:  99.40 kB
+dist/assets/index-BwXq15z-.js                 730.35 kB │ gzip: 184.29 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.65s
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2265 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist-demo/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist-demo/assets/download-CWiaXb8A.js                0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/filters-DHvyWlDw.js                 0.26 kB │ gzip:   0.22 kB
+dist-demo/assets/DeleteOutlineRounded-TVhbfOvT.js    0.53 kB │ gzip:   0.31 kB
+dist-demo/assets/import-file-DUoT3ERC.js             0.55 kB │ gzip:   0.37 kB
+dist-demo/assets/control-pXs0SAci.js                 0.72 kB │ gzip:   0.46 kB
+dist-demo/assets/hooks-MKb28Q6g.js                   4.17 kB │ gzip:   1.94 kB
+dist-demo/assets/imports-CWvhDEA5.js                 5.31 kB │ gzip:   2.49 kB
+dist-demo/assets/index-Bk5xowRn.js                   7.76 kB │ gzip:   3.12 kB
+dist-demo/assets/index-VBW9GpwR.js                   7.79 kB │ gzip:   3.14 kB
+dist-demo/assets/index-DeEgMpaa.js                   8.35 kB │ gzip:   3.54 kB
+dist-demo/assets/permissions-DSwmPBth.js             8.41 kB │ gzip:   1.94 kB
+dist-demo/assets/index-C83Sn2iF.js                  12.03 kB │ gzip:   4.50 kB
+dist-demo/assets/index-CcQr_Coh.js                  12.06 kB │ gzip:   4.88 kB
+dist-demo/assets/index-CPLTUnA1.js                  12.08 kB │ gzip:   4.31 kB
+dist-demo/assets/index-HAJ3KwLo.js                  14.71 kB │ gzip:   4.82 kB
+dist-demo/assets/index-RzO0xO9q.js                  14.73 kB │ gzip:   4.90 kB
+dist-demo/assets/index-D0nHEb83.js                  14.81 kB │ gzip:   5.48 kB
+dist-demo/assets/index-CRd2Kbke.js                  15.05 kB │ gzip:   5.36 kB
+dist-demo/assets/index-BGHYjKeX.js                  16.92 kB │ gzip:   5.70 kB
+dist-demo/assets/index-9nmbQsqZ.js                  21.31 kB │ gzip:   7.64 kB
+dist-demo/assets/index-C0f_ptAS.js                  24.83 kB │ gzip:   8.11 kB
+dist-demo/assets/index-CUttWRmM.js                  29.46 kB │ gzip:   8.60 kB
+dist-demo/assets/index-jYOAzQB1.js                  31.46 kB │ gzip:   9.88 kB
+dist-demo/assets/schemas-CP5ZQpDB.js                79.16 kB │ gzip:  24.02 kB
+dist-demo/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist-demo/assets/service-BSVcmaKx.js               158.93 kB │ gzip:  34.59 kB
+dist-demo/assets/browser-BKNeaMvq.js               255.09 kB │ gzip:  86.76 kB
+dist-demo/assets/mui-D8ryPhxS.js                   322.10 kB │ gzip:  97.68 kB
+dist-demo/assets/index-_dK_5DvW.js                 324.48 kB │ gzip:  99.45 kB
+dist-demo/assets/index-DZ-CavJM.js                 733.38 kB │ gzip: 185.24 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.93s
+[WebServer] (node:15180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (21.5337ms)
+✔ generated operation registry preserves required and optional query parameter metadata (8.1684ms)
+✔ rejects unresolved schema references before generation (20.5573ms)
+✔ rejects missing API version and a server URL outside same-origin path form (16.5962ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.0047ms)
+✔ detects a stale generated file and accepts it after regeneration (1.793ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (12.4427ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (13.9805ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (14.1179ms)
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (13.933ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (13.7559ms)
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.2637ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.1898ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.1716ms)
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.3396ms)
+✖ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (1.356ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.0772ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0561ms)
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.2695ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.1053ms)
+✔ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (0.8088ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.1099ms)
+
+Running 1 test using 1 worker
+
+(node:15124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+  1) [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo 
+
+    Error: [
+      {
+        "routeId": "R04",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R04",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R05",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R05",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R06",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R06",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R07",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R07",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R08",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R08",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R09",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R09",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R10",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R10",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R11",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R11",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R12",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R12",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R13",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R13",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R14",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R14",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R15",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R15",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R16",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R16",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R17",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R17",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R18",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R18",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R19",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R19",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R20",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R20",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R21",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R21",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R22",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R22",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R23",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R23",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R24",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R24",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R25",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R25",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R26",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R26",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R27",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R27",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R28",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R28",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R29",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R29",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R30",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R30",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R31",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R31",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R32",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R32",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R33",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R33",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R34",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R34",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R35",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R35",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R36",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R36",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R37",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R37",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R38",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R38",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R39",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R39",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R40",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R40",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R41",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R41",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R42",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R42",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R43",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R43",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R44",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R44",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R45",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R45",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R46",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R46",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R47",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R47",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R48",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R48",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R49",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R49",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R50",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R50",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R51",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R51",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R52",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R52",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R53",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R53",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      },
+      {
+        "routeId": "R54",
+        "id": "aria-progressbar-name",
+        "impact": "serious",
+        "nodes": [
+          ".MuiLinearProgress-root"
+        ]
+      },
+      {
+        "routeId": "R54",
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "nodes": [
+          ".css-19kzrtu"
+        ]
+      }
+    ]
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  -   1
+    + Received  + 818
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R04",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R04",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R05",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R05",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R06",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R06",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R07",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R07",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R08",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R08",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R09",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R09",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R10",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R10",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R11",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R11",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R12",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R12",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R13",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R13",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R14",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R14",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R15",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R15",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R16",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R16",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R17",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R17",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R18",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R18",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R19",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R19",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R20",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R20",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R21",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R21",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R22",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R22",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R23",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R23",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R24",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R24",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R25",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R25",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R26",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R26",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R27",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R27",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R28",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R28",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R29",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R29",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R30",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R30",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R31",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R31",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R32",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R32",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R33",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R33",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R34",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R34",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R35",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R35",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R36",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R36",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R37",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R37",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R38",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R38",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R39",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R39",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R40",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R40",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R41",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R41",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R42",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R42",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R43",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R43",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R44",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R44",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R45",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R45",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R46",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R46",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R47",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R47",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R48",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R48",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R49",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R49",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R50",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R50",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R51",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R51",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R52",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R52",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R53",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R53",
+    +   },
+    +   Object {
+    +     "id": "aria-progressbar-name",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".MuiLinearProgress-root",
+    +     ],
+    +     "routeId": "R54",
+    +   },
+    +   Object {
+    +     "id": "aria-prohibited-attr",
+    +     "impact": "serious",
+    +     "nodes": Array [
+    +       ".css-19kzrtu",
+    +     ],
+    +     "routeId": "R54",
+    +   },
+    + ]
+
+      71 |     expect(results).toHaveLength(54);
+      72 |     expect(pageErrors).toEqual([]);
+    > 73 |     expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
+         |                                                             ^
+      74 | });
+      75 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\accessibility\routes.spec.ts:73:61
+
+    Error Context: test-results\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo 

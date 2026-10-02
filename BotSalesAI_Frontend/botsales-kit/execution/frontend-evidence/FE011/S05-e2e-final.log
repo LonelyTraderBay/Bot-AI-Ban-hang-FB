@@ -1,0 +1,88 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (18.3753ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.6209ms)
+✔ rejects unresolved schema references before generation (20.0459ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.0412ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (15.7154ms)
+✔ detects a stale generated file and accepts it after regeneration (1.8207ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (145.3662ms)
+
+Running 31 tests using 1 worker
+
+(node:32032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (1.9s)
+  ok  2 [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (4.2s)
+  ok  3 [chromium] › tests\fe009.spec.ts:212:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.4s)
+  ok  4 [chromium] › tests\fe009.spec.ts:235:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.8s)
+  ok  5 [chromium] › tests\fe009.spec.ts:304:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.9s)
+  ok  6 [chromium] › tests\fe010.spec.ts:41:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (4.5s)
+  ok  7 [chromium] › tests\fe010.spec.ts:172:1 › product update sends If-Match and keeps edits visible after a 412 conflict (2.0s)
+  ok  8 [chromium] › tests\fe010.spec.ts:201:1 › warehouse role can read catalog products but cannot edit product fields or price cost data (896ms)
+  ok  9 [chromium] › tests\fe010.spec.ts:214:1 › categories create, search, update with a version, and render cursor pagination (2.2s)
+  ok 10 [chromium] › tests\fe010.spec.ts:278:1 › CSV preview reports row-level errors and commits only valid product rows (2.4s)
+  ok 11 [chromium] › tests\fe010.spec.ts:404:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible (2.6s)
+  ok 12 [chromium] › tests\fe010.spec.ts:475:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview (1.3s)
+  ok 13 [chromium] › tests\fe010.spec.ts:502:1 › demo upload rejects files over 5 MB and explains the limit (1.6s)
+  ok 14 [chromium] › tests\fe011.spec.ts:40:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result (1.9s)
+  ok 15 [chromium] › tests\fe011.spec.ts:72:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once (4.3s)
+  ok 16 [chromium] › tests\fe011.spec.ts:143:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically (2.4s)
+  ok 17 [chromium] › tests\fe011.spec.ts:184:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state (1.9s)
+  ok 18 [chromium] › tests\fe011.spec.ts:213:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it (2.0s)
+  ok 19 [chromium] › tests\fe011.spec.ts:250:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source (2.6s)
+  ok 20 [chromium] › tests\fe011.spec.ts:282:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog (2.1s)
+  ok 21 [chromium] › tests\fe011.spec.ts:326:1 › FE011.AC03 unknown shop scope shows no stock from another shop (326ms)
+  ok 22 [chromium] › tests\frontend.spec.ts:42:1 › catalog create uses the HTTP mock and successful save clears the draft guard (1.8s)
+  ok 23 [chromium] › tests\frontend.spec.ts:80:1 › dirty drafts block in-app navigation and preserve input until the user decides (2.3s)
+  ok 24 [chromium] › tests\frontend.spec.ts:116:1 › all canonical routes render inside the real React demo application (15.4s)
+  ok 25 [chromium] › tests\frontend.spec.ts:131:1 › switching shops cancels a delayed request and loads only the new shop scope (5.3s)
+  ok 26 [chromium] › tests\frontend.spec.ts:166:1 › role changes remove restricted navigation and the route guard explains denied access (867ms)
+  ok 27 [chromium] › tests\frontend.spec.ts:185:1 › deep links survive browser refresh and logout clears the mock session (2.5s)
+  ok 28 [chromium] › tests\frontend.spec.ts:206:1 › logout asks before discarding a draft and retains the session when logout fails (1.8s)
+  ok 29 [chromium] › tests\frontend.spec.ts:328:1 › mobile navigation opens, routes, and closes without viewport overflow (996ms)
+  ok 30 [chromium] › tests\frontend.spec.ts:360:1 › chunk loading errors use the route recovery boundary (867ms)
+  ok 31 [chromium] › tests\frontend.spec.ts:439:1 › live mode reports an unavailable session API without enabling mock data (330ms)
+
+  31 passed (1.4m)

@@ -1,0 +1,152 @@
+{
+  "taskId": "FE018",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T14:21:41.636Z",
+  "sourceRevision": "HEAD 18be3c6c75ed66ced592b2d58f36ffbdbd8ae221 plus current dirty working tree; bot, shell, mock, route map, contracts and tests are hashed below.",
+  "expected": "Stale configuration, wrong evaluation revision, budget/tool denial, wrong/expired approval, role permissions and unknown command retain input and never imply false success.",
+  "observed": "Nine FE018 behavioral cases passed. Mock 412/409/429/403 and unknown 202 scenarios kept draft/prompt/reason visible; no unapproved tool or budget action was granted, and unknown role command remained unresolved without retry or success claim.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "commandId": "e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Chromium Playwright",
+    "details": "React demo and bot/evaluation/budget/tool responses use deterministic synthetic MSW data; no LLM or external message delivery.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 9,
+  "failed": 0,
+  "exitCode": 0,
+  "logFile": "execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+  "logSha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724",
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/app/CommandRecovery.tsx",
+      "sha256": "d16515c44893ae0b6cd988a2dc100410818655d06e0707b0abf9e2867eb167c7"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "a331b5413e2d315e5d023c32c3e68efe58af66bb49e6383afc24e7e466abd081"
+    },
+    {
+      "path": "apps/web/src/mocks/auxiliary.ts",
+      "sha256": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c"
+    },
+    {
+      "path": "apps/web/src/mocks/control.ts",
+      "sha256": "a31158ee4f23fad040b66b8782ab3e8bb72a84aa968fcac32d91102f093a0e2e"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "0bb882dfa7291db7318382136d12238176fbb9f7fdad4af2ee522ded858ed29e"
+    },
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "sha256": "2a8352dda922319363cfbaa89b76beebc7f4e44f9a28512dd316bfb49f8a0d73"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4a4fe4c32470d08467dd0d56cbf69f5de912340b6c323c01cb844553e601edb1"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "8a8d6fc63cb2dc760def1a812fb4e52b4d36766e44741899eaafb221c6c59d44"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "92e263718c9276e33278a7541e61660e09db38b330abf17990cca30b32d1ba3e"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "10fb7124e64b4f71bb161eb198cf0fd751fcc81173e0f1cf74ce5449af47d9c9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE018/S01-route-operation-map.md",
+      "sha256": "b453f18fa3a1d4d23c311ac3a318a61f9931527b598de1219d5cd54854fe3d55"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE018/handoff.md",
+      "sha256": "3c1fb8645b436275ba301e712b00fcd2b7be97b8be21ed8e6e4449a60f0adb0b"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE018/write-priority-evidence-20261001.mjs",
+      "sha256": "5140d2d3db9ee6206437ba479f86846957cc8fc4fb1669eba942eb7638430e67"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "0c5e4be8ea4d15d35cc20377c284a1a794aaf6f42ad9bfd0eb0239412063ed99"
+    },
+    {
+      "path": "packages/contracts/src/generated.ts",
+      "sha256": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "e630656e8c168f7e4f204670a4ce1267603265ff485f868f8ca52c1ce9104b81"
+    },
+    {
+      "path": "packages/contracts/src/permissions.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "packages/contracts/src/routes.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "ede09183cabb844663c94ab08f4662f8bde06665ef77d544d9d5501725f566a5"
+    },
+    {
+      "path": "tests/fe018-source-map.test.mjs",
+      "sha256": "2ad5d83d76b4e94746b66b2ccaf64f375013408e5988fa58dbe02bcc69248096"
+    },
+    {
+      "path": "tests/fe018.spec.ts",
+      "sha256": "2b4c06c47c8e0472beeb05f53d114fe44de098caaa6d370ff61418fae1de2eed"
+    },
+    {
+      "path": "tests/session/demo-server.mjs",
+      "sha256": "4af989379bf20bd2bda83f02dcfd5edd3b4dcec27132fde07fd2952c82eecb20"
+    }
+  ],
+  "sourceSnapshotSha256": "71da7dfad382a5bc8c265c229682152e5c8959c165a56bca13112475d0870d28"
+}

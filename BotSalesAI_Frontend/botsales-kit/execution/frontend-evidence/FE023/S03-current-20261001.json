@@ -1,0 +1,123 @@
+{
+  "taskId": "FE023",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-01T14:41:05.847Z",
+  "sourceRevision": "HEAD HEAD-unavailable plus current dirty frontend working tree",
+  "expected": "Field validation, version conflicts, cursor lookup pagination and unsaved draft guards preserve user input and provide a deliberate recovery action.",
+  "observed": "Current unit/browser results verify 422 focus and retained input, 412/428 actions, paginated customer lookup preserving earlier choices, dirty dialog/shop guards, successful save baseline reset, and URL filter pagination. The browser checks use synthetic MSW; there is no claim of server persistence.",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "commandId": "e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0 / npm 11.17.0 / Chromium",
+    "details": "Vitest/Chromium against the React app and synthetic MSW fixtures.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 5,
+  "failed": 0,
+  "exitCode": 0,
+  "logFile": "execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+  "logSha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13d7f0716a3234416cf7cec954ecdf1730e08694a0d99d5bdb788c378629487d"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "a331b5413e2d315e5d023c32c3e68efe58af66bb49e6383afc24e7e466abd081"
+    },
+    {
+      "path": "apps/web/src/app/dirty-drafts.ts",
+      "sha256": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13"
+    },
+    {
+      "path": "apps/web/src/app/i18n.ts",
+      "sha256": "ff0218cd9bb4061927c765f6e371edbf5b40ed309c24534d28675ac61bb5f767"
+    },
+    {
+      "path": "apps/web/src/shared/model/dirty-drafts.ts",
+      "sha256": "87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "8a8d6fc63cb2dc760def1a812fb4e52b4d36766e44741899eaafb221c6c59d44"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "92e263718c9276e33278a7541e61660e09db38b330abf17990cca30b32d1ba3e"
+    },
+    {
+      "path": "apps/web/tests/states/fe023-state.test.tsx",
+      "sha256": "7cf35848d9e828b238e3de5dbf3ea819b5613a3027300dbad1f1aaad68d2102c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "10fb7124e64b4f71bb161eb198cf0fd751fcc81173e0f1cf74ce5449af47d9c9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-e2e-current-20261001.log",
+      "sha256": "600cea674d48852d07e9ec2f231d771ad5e894fbeb5fe948ce0013e0b08e1724"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/handoff.md",
+      "sha256": "80a31b0f9a39abdb83990e714678acc22f22e880b9031c01865f5f892adddb6c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/route-state-role-matrix-current-20261001.log",
+      "sha256": "dfd77c9a30ee1f17a98b10eb2e43e362b7cc2330ad6f4ead65b6a4ebe493272d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/unit-verbose-current-20261001.log",
+      "sha256": "ce5517a426fba9b65cf49b982eb3dbe7cd7f854511addfb97f7596987e367401"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "docs/route-state-role-matrix.json",
+      "sha256": "3244c6905408d8267ece891cd45da39b9ced4984862c3d5929b21b87d46ae4aa"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "21cb02e0c82634c208082c81f517c92e7bf58bcbdc36f59ca9d4126a9ca4e5e5"
+    },
+    {
+      "path": "tests/states/fe023.spec.ts",
+      "sha256": "80e4abfe6f751bfe4b2f447ff76331567add2288c887cc47f852bd4e199eeb7a"
+    },
+    {
+      "path": "tests/states/generate-fe023-evidence.mjs",
+      "sha256": "29a5a7634e2802a55cfe740125d42138c782bd251f6bb89f4c951ef84bf37119"
+    },
+    {
+      "path": "tests/states/generate-route-state-roles.mjs",
+      "sha256": "b9264238606163b28dd9eff0d91ecf48fe696fd1a1e3344142acb5adabc4abad"
+    }
+  ],
+  "sourceSnapshotSha256": "cdd53d2ac4168b67d1777cbfd69ed974c4cf9e9ee4d0cd6686f2ad12aace47bd",
+  "supportingLogs": [
+    {
+      "file": "execution/frontend-evidence/FE023/unit-verbose-current-20261001.log",
+      "sha256": "ce5517a426fba9b65cf49b982eb3dbe7cd7f854511addfb97f7596987e367401"
+    }
+  ],
+  "actualInvocation": "npm.cmd --script-shell=cmd.exe run test:e2e"
+}

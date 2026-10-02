@@ -1,0 +1,51 @@
+
+[WebServer] (node:29412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 11 tests using 1 worker
+
+(node:17548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/11] [chromium] › tests\fe017.spec.ts:24:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+[2/11] [chromium] › tests\fe017.spec.ts:115:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+[3/11] [chromium] › tests\fe017.spec.ts:154:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+[4/11] [chromium] › tests\fe017.spec.ts:187:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+[5/11] [chromium] › tests\fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+[6/11] [chromium] › tests\fe017.spec.ts:242:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+[7/11] [chromium] › tests\fe017.spec.ts:263:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+[8/11] [chromium] › tests\security.spec.ts:35:1 › untrusted product text renders as text without activating markup
+[9/11] [chromium] › tests\security.spec.ts:53:1 › catalog import rejects a non-CSV file before an upload request
+[10/11] [chromium] › tests\security.spec.ts:71:1 › catalog import rejects files above the demo size limit before upload
+[11/11] [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries
+  1) [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries 
+
+    Error: page.evaluate: SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+
+      20 |
+      21 | async function uploadStatus(page: import('@playwright/test').Page, purpose: string | null, key: string, contents: string) {
+    > 22 |   return page.evaluate(async ({ purpose, key, contents }) => {
+         |               ^
+      23 |     const csrf = (await (await fetch('/api/v2/auth/csrf')).json()).data.csrfToken as string;
+      24 |     const form = new FormData();
+      25 |     form.append('file', new File([contents], 'sample.csv', { type: 'text/csv' }));
+        at uploadStatus (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\security.spec.ts:22:15)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\security.spec.ts:91:32
+
+    Error Context: test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\error-context.md
+
+    Error Context: test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\security-mock-uploads-requ-9a942-nt-file-content-for-retries-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries 
+  10 passed (20.3s)

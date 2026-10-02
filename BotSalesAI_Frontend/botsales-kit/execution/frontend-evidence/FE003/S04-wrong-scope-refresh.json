@@ -1,0 +1,38 @@
+{
+  "taskId": "FE003",
+  "stepId": "S04",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "REAL_BACKEND",
+  "executedAt": "2026-10-01T06:36:11.934Z",
+  "sourceRevision": "Current dirty working tree; negative evidence probes use current source hashes",
+  "expected": "Current frontend tracker accepts its plan and rejects evidence outside frontend mock scope or with a missing log before changing its ledger.",
+  "observed": "Purpose-built probes contain current source hashes and source snapshot digest; only the targeted scope or log condition is invalid.",
+  "command": "node botsales-kit/scripts/progress.mjs checkpoint FE003 S04 <negative-fixture>",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0",
+    "details": "Current local frontend ledger and plan.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 1,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": "botsales-kit/scripts/progress.mjs",
+      "sha256": "938a8e5581c0884d27396adc58b473a06aa65585f4264ff4e31bb50778f59eb7"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "10fb7124e64b4f71bb161eb198cf0fd751fcc81173e0f1cf74ce5449af47d9c9"
+    }
+  ],
+  "sourceSnapshotSha256": "99f849c904d968ae087df2b080cd0d5fe6b0d5e482aa4eafb8f22633dd3caa7a",
+  "logFile": "execution/frontend-evidence/FE003/S03-e2e-full-rerun.log",
+  "logSha256": "d106b8e1ae071e80ecb67fe41dfcf98b7f2791ed6440cb136f1d6ba26f7aea09"
+}

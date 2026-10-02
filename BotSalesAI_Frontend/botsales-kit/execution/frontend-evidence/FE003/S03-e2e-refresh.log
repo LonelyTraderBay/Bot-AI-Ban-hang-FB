@@ -1,0 +1,74 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (19.8243ms)
+✔ generated operation registry preserves required and optional query parameter metadata (8.2896ms)
+✔ rejects unresolved schema references before generation (20.7161ms)
+✔ rejects missing API version and a server URL outside same-origin path form (18.1722ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (15.3842ms)
+✔ detects a stale generated file and accepts it after regeneration (1.8358ms)
+
+Running 23 tests using 1 worker
+
+  ok  1 [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (2.0s)
+  x   2 [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (5.3s)
+  ok  3 [chromium] › tests\fe009.spec.ts:212:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.8s)
+  ok  4 [chromium] › tests\fe009.spec.ts:235:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.7s)
+  ok  5 [chromium] › tests\fe009.spec.ts:304:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.9s)
+  ok  6 [chromium] › tests\fe010.spec.ts:41:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (4.3s)
+  ok  7 [chromium] › tests\fe010.spec.ts:172:1 › product update sends If-Match and keeps edits visible after a 412 conflict (2.0s)
+  ok  8 [chromium] › tests\fe010.spec.ts:201:1 › warehouse role can read catalog products but cannot edit product fields or price cost data (925ms)
+  ok  9 [chromium] › tests\fe010.spec.ts:214:1 › categories create, search, update with a version, and render cursor pagination (2.2s)
+  ok 10 [chromium] › tests\fe010.spec.ts:278:1 › CSV preview reports row-level errors and commits only valid product rows (2.4s)
+  ok 11 [chromium] › tests\fe010.spec.ts:404:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible (2.6s)
+  ok 12 [chromium] › tests\fe010.spec.ts:475:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview (1.3s)
+  ok 13 [chromium] › tests\fe010.spec.ts:502:1 › demo upload rejects files over 5 MB and explains the limit (1.6s)
+  ok 14 [chromium] › tests\frontend.spec.ts:42:1 › catalog create uses the HTTP mock and successful save clears the draft guard (1.8s)
+  ok 15 [chromium] › tests\frontend.spec.ts:80:1 › dirty drafts block in-app navigation and preserve input until the user decides (2.3s)
+  ok 16 [chromium] › tests\frontend.spec.ts:116:1 › all canonical routes render inside the real React demo application (12.3s)
+  ok 17 [chromium] › tests\frontend.spec.ts:131:1 › switching shops cancels a delayed request and loads only the new shop scope (5.2s)
+  ok 18 [chromium] › tests\frontend.spec.ts:166:1 › role changes remove restricted navigation and the route guard explains denied access (841ms)
+  ok 19 [chromium] › tests\frontend.spec.ts:185:1 › deep links survive browser refresh and logout clears the mock session (2.5s)
+  ok 20 [chromium] › tests\frontend.spec.ts:206:1 › logout asks before discarding a draft and retains the session when logout fails (1.7s)
+  ok 21 [chromium] › tests\frontend.spec.ts:328:1 › mobile navigation opens, routes, and closes without viewport overflow (959ms)
+  ok 22 [chromium] › tests\frontend.spec.ts:360:1 › chunk loading errors use the route recovery boundary (825ms)
+  ok 23 [chromium] › tests\frontend.spec.ts:439:1 › live mode reports an unavailable session API without enabling mock data (318ms)
+
+
+  1) [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m failed
+
+    Locator:  getByRole('heading', { name: 'Khách hàng', exact: true })
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Khách hàng', exact: true })[22m
+
+
+      58 |     const calls=observeShopRequests(page);
+      59 |     await gotoDemo(page,'/s/shop-demo/customers');
+    > 60 |     await expect(page.getByRole('heading',{name:'Khách hàng',exact:true})).toBeVisible();
+         |                                                                            ^
+      61 |     await page.getByRole('button',{name:'Thêm khách hàng',exact:true}).click();
+      62 |     const dialog=page.getByRole('dialog',{name:'Thêm khách hàng'});
+      63 |     const name=dialog.getByLabel('Tên hiển thị');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:60:76
+
+    Error Context: test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-customer-create-vali-7ae8d-edits-after-a-stale-version-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version 
+  22 passed (1.1m)

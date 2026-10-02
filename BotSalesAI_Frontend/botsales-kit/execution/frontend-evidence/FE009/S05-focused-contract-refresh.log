@@ -1,0 +1,53 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/fe009.spec.ts --timeout=45000
+
+
+Running 5 tests using 1 worker
+
+(node:10492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (2.0s)
+(node:25692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium] › tests\fe009.spec.ts:94:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (4.3s)
+  ok 3 [chromium] › tests\fe009.spec.ts:212:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.4s)
+  ok 4 [chromium] › tests\fe009.spec.ts:235:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.7s)
+  ok 5 [chromium] › tests\fe009.spec.ts:299:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.9s)
+
+
+  1) [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoMatchObject[2m([22m[32mexpected[39m[2m)[22m
+
+    [1mMatcher error[22m: [31mreceived[39m value must be a non-null object
+
+    Received has value: [31mnull[39m
+
+      48 |     await expect(page).toHaveURL(/\/s\/shop-[^/]+\/overview$/);
+      49 |     const createCall=calls.find(call=>call.method==='POST'&&call.path.endsWith('/shops'));
+    > 50 |     expect(JSON.parse(createCall?.body||'null')).toMatchObject({name:'Workspace kiểm thử FE009',currency:'LAK',timezone:'Asia/Vientiane',locale:'vi-VN'});
+         |                                                  ^
+      51 |     await expect(page.getByRole('navigation',{name:'Điều hướng chính'}).getByRole('link',{name:/Workspace kiểm thử FE009/})).toBeVisible();
+      52 |     await page.getByRole('navigation',{name:'Điều hướng chính'}).getByRole('link',{name:/Workspace kiểm thử FE009/}).click();
+      53 |     await expect(page.getByRole('heading',{name:'Workspace kiểm thử FE009',exact:true})).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe009.spec.ts:50:50
+
+    Error Context: test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe009-workspace-onboarding-2585e-returns-to-its-scoped-route-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route 
+  4 passed (15.0s)
+EXIT_CODE=1

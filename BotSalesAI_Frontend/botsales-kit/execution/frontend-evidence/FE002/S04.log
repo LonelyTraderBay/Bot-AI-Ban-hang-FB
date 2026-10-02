@@ -1,0 +1,7 @@
+FE002.S04 evidence
+Command: & 'C:\Program Files\nodejs\npm.cmd' --script-shell=powershell.exe run setup 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-setup-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & 'C:\Program Files\nodejs\npm.cmd' --script-shell=powershell.exe run doctor 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Exit code: 0 (checkpointing an observed passing/review result)
+Expected: Setup invokes the canonical contract generator and installed MSW CLI to create the browser worker.\nDoctor passes environment checks for Node, app dependencies, worker and lockfile.\nNo backend/provider credentials are required for frontend demo setup.
+Observed: Both setup and doctor exited 0. Generator reports 11 outputs/283 schemas/210 operations/54 routes; installed MSW CLI successfully copied its worker; doctor passes 9/9 checks including Node 24, TypeScript, Vite, React, MUI, React Query, MSW, browser worker and lockfile. setup.mjs only creates .env.local when absent; no secret was read. This verifies setup readiness, not app build.
+

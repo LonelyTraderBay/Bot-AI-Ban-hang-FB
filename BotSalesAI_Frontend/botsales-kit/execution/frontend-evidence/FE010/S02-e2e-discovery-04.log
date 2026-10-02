@@ -1,0 +1,50 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test tests/fe010.spec.ts --timeout=30000
+
+
+Running 4 tests using 1 worker
+
+(node:5824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\fe010.spec.ts:39:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (3.8s)
+(node:10932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium] › tests\fe010.spec.ts:159:1 › product update sends If-Match and keeps edits visible after a 412 conflict (2.2s)
+  ok 3 [chromium] › tests\fe010.spec.ts:188:1 › categories create, search, update with a version, and render cursor pagination (2.2s)
+  ok 4 [chromium] › tests\fe010.spec.ts:252:1 › CSV preview reports row-level errors and commits only valid product rows (2.4s)
+
+
+  1) [chromium] › tests\fe010.spec.ts:39:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      88 |     await chooseMockOption(page,'Danh mục','Áo');
+      89 |     await expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible();
+    > 90 |     expect(calls.some(call=>call.method==='GET'&&new URL(`http://localhost${call.path}`).searchParams.get('categoryId')==='cat-0')).toBe(true);
+         |                                                                                                                                     ^
+      91 |     await expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled();
+      92 | });
+      93 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe010.spec.ts:90:133
+
+    Error Context: test-results\fe010-product-editor-valid-ea64e-t-payload-through-mock-HTTP-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe010-product-editor-valid-ea64e-t-payload-through-mock-HTTP-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe010-product-editor-valid-ea64e-t-payload-through-mock-HTTP-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\fe010.spec.ts:39:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP 
+  3 passed (12.3s)

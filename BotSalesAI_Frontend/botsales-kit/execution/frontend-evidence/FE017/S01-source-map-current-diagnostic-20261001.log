@@ -1,0 +1,218 @@
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.828ms)
+✖ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (1.2204ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.093ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0731ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64.5548
+
+✖ failing tests:
+
+test at tests\fe017-source-map.test.mjs:45:1
+✖ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (1.2204ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Mục đích tải tệp không được hỗ trợ/. Input:
+  
+  "import { all, find, insert, ensure, job, str, num, rows, record, id, now, money, sum } from './database';\n" +
+    "import type { Input, Row } from './database';\n" +
+    "import { catalog } from './catalog';\n" +
+    'const uploads = new Map<string, {\n' +
+    '    text: string;\n' +
+    '    file: File;\n' +
+    '}>();\n' +
+    'const importRows = new Map<string, {\n' +
+    '    products: Row[];\n' +
+    '    token: string;\n' +
+    '    snapshot: string;\n' +
+    '    strategy: string;\n' +
+    '}>();\n' +
+    'const exportUrls = new Set<string>();\n' +
+    'export function clearFileState() {\n' +
+    '    uploads.clear();\n' +
+    '    importRows.clear();\n' +
+    '    for (const url of exportUrls)\n' +
+    '        URL.revokeObjectURL(url);\n' +
+    '    exportUrls.clear();\n' +
+    '}\n' +
+    'export function parseCSV(text: string): string[][] {\n' +
+    '    const result: string[][] = [];\n' +
+    '    let row: string[] = [];\n' +
+    "    let field = '';\n" +
+    '    let quote = false;\n' +
+    '    for (let i = 0; i < text.length; i++) {\n' +
+    '        const c = text[i];\n' +
+    `        if (c === '"') {\n` +
+    `            if (quote && text[i + 1] === '"') {\n` +
+    `                field += '"';\n` +
+    '                i++;\n' +
+    '            }\n' +
+    "            else if (quote || field === '')\n" +
+    '                quote = !quote;\n' +
+    '            else\n' +
+    "                throw new Error('Dấu nháy trong CSV không hợp lệ.');\n" +
+    '        }\n' +
+    "        else if (c === ',' && !quote) {\n" +
+    '            row.push(field);\n' +
+    "            field = '';\n" +
+    '        }\n' +
+    "        else if ((c === '\\n' || c === '\\r') && !quote) {\n" +
+    "            if (c === '\\r' && text[i + 1] === '\\n')\n" +
+    '                i++;\n' +
+    '            row.push(field);\n' +
+    '            if (row.some(Boolean))\n' +
+    '                result.push(row);\n' +
+    '            row = [];\n' +
+    "            field = '';\n" +
+    '        }\n' +
+    '        else\n' +
+    '            field += c;\n' +
+    '    }\n' +
+    "    ensure(!quote, 'CSV thiếu dấu nháy đóng.', 422);\n" +
+    '    row.push(field);\n' +
+    '    if (row.some(Boolean))\n' +
+    '        result.push(row);\n' +
+    '    return result;\n' +
+    '}\n' +
+    'export async function upload(input: Input, form: FormData) {\n' +
+    "    const value = form.get('file');\n" +
+    "    ensure(value instanceof File, 'Thiếu file upload.', 422);\n" +
+    "    const purpose = form.get('purpose');\n" +
+    '    // Bank/COD purposes are simulator-only adapters; the canonical API contract currently has no such upload purposes.\n' +
+    "    ensure(typeof purpose === 'string' && ['product_image', 'product_import', 'knowledge_source', 'bank_statement', 'cod_statement'].includes(purpose), 'Cần chỉ định mục đích tải tệp hợp lệ.', 422);\n" +
+    "    ensure(value.size <= 5 * 1024 * 1024, 'Tối đa 5 MB trong frontend mẫu.', 413);\n" +
+    "    const isCsv = value.name.toLowerCase().endsWith('.csv') && ['text/csv', 'application/vnd.ms-excel', 'application/octet-stream', ''].includes(value.type);\n" +
+    "    const isImage = ['image/png', 'image/jpeg', 'image/webp'].includes(value.type);\n" +
+    "    const isKnowledgeFile = ['application/pdf', 'text/plain'].includes(value.type) || isCsv;\n" +
+    "    const purposeTypeAllowed = purpose === 'product_image' ? isImage\n" +
+    "        : purpose === 'knowledge_source' ? isKnowledgeFile\n" +
+    '            : isCsv;\n' +
+    "    ensure(purposeTypeAllowed, 'Định dạng không phù hợp với mục đích tải tệp.', 415);\n" +
+    "    const row = insert('files', 'FileObject', input.shopId, { name: value.name, mimeType: value.type || 'text/csv', sizeBytes: value.size, status: 'ready', readUrl: null });\n" +
+    "    uploads.set(str(row.id), { text: value.name.toLowerCase().endsWith('.csv') || value.type.startsWith('text/') ? await value.text() : '', file: value });\n" +
+    '    return row;\n' +
+    '}\n' +
+    'function csvCell(value: unknown) { const v = typeof value === \'object\' ? JSON.stringify(value) : String(value ?? \'\'); return `"${(/^[\\s]*[=+\\-@\\t\\r]/.test(v) ? "\'" : \'\') + v.replace(/"/g, \'""\')}"`; }\n' +
+    'function localDate(value: string, timezone: string) {\n' +
+    "    return new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value));\n" +
+    '}\n' +
+    'type CsvRow = Record<string, unknown>;\n' +
+    'function exportRows(input: Input, type: string): { fields: string[]; rows: CsvRow[] } {\n' +
+    '    const { shopId, body } = input;\n' +
+    '    const from = str(body.from), to = str(body.to), timezone = str(body.timezone);\n' +
+    '    const start = Date.parse(from), end = Date.parse(to);\n' +
+    "    ensure(Number.isFinite(start) && Number.isFinite(end) && start <= end, 'Khoảng thời gian export không hợp lệ.', 422, 'INVALID_REPORT_RANGE');\n" +
+    '    // Validate the IANA zone before creating a job or a download URL.\n' +
+    '    try { localDate(from, timezone); }\n' +
+    "    catch { ensure(false, 'Múi giờ IANA của báo cáo không hợp lệ.', 422, 'INVALID_REPORT_TIMEZONE'); }\n" +
+    '    const fromDate = localDate(from, timezone), toDate = localDate(to, timezone);\n' +
+    '    const withinRange = (value: unknown) => {\n' +
+    "        if (typeof value !== 'string') return false;\n" +
+    '        const timestamp = Date.parse(value);\n' +
+    '        return Number.isFinite(timestamp) && timestamp >= start && timestamp <= end;\n' +
+    '    };\n' +
+    '    const inSnapshot = (value: unknown) => {\n' +
+    "        if (typeof value !== 'string') return false;\n" +
+    '        const timestamp = Date.parse(value);\n' +
+    '        return Number.isFinite(timestamp) && timestamp <= end;\n' +
+    '    };\n' +
+    "    if (type === 'inventory') {\n" +
+    "        const includeCost = input.permissions?.includes('finance.read') === true;\n" +
+    "        const rows = all('stock', shopId).filter(row => inSnapshot(row.asOf)).map(row => ({\n" +
+    '            sku: row.sku, variantId: row.variantId, warehouseId: row.warehouseId,\n' +
+    '            onHand: row.onHand, reserved: row.reserved, available: row.available,\n' +
+    '            ...(includeCost ? { unitCostAmount: record(row.unitCost).amount, unitCostCurrency: record(row.unitCost).currency } : {}),\n' +
+    '            asOf: row.asOf,\n' +
+    '        }));\n' +
+    "        return { fields: ['sku', 'variantId', 'warehouseId', 'onHand', 'reserved', 'available', ...(includeCost ? ['unitCostAmount', 'unitCostCurrency'] : []), 'asOf'], rows };\n" +
+    '    }\n' +
+    "    if (type === 'orders') {\n" +
+    "        const rows = all('orders', shopId).filter(row => withinRange(row.createdAt)).map(row => ({\n" +
+    '            orderId: row.id, createdAt: row.createdAt, orderState: row.orderState,\n' +
+    '            fulfillmentState: row.fulfillmentState, paymentState: row.paymentState,\n' +
+    '            totalAmount: record(row.total).amount, currency: record(row.total).currency,\n' +
+    '        }));\n' +
+    "        return { fields: ['orderId', 'createdAt', 'orderState', 'fulfillmentState', 'paymentState', 'totalAmount', 'currency'], rows };\n" +
+    '    }\n' +
+    "    if (type === 'cashflow') {\n" +
+    "        const rows = all('financeEntries', shopId).filter(row => withinRange(row.occurredAt)).map(row => ({\n" +
+    '            entryId: row.id, occurredAt: row.occurredAt, kind: row.kind, classification: row.classification,\n' +
+    '            status: row.status, amount: record(row.amount).amount, currency: record(row.amount).currency,\n' +
+    '        }));\n' +
+    "        return { fields: ['entryId', 'occurredAt', 'kind', 'classification', 'status', 'amount', 'currency'], rows };\n" +
+    '    }\n' +
+    "    if (type === 'profit_loss') {\n" +
+    "        const rows = all('journals', shopId).filter(row => typeof row.effectiveDate === 'string' && row.effectiveDate >= fromDate && row.effectiveDate <= toDate)\n" +
+    '            .flatMap(row => rowsFromJournal(row));\n' +
+    "        return { fields: ['effectiveDate', 'status', 'sourceType', 'accountId', 'debitAmount', 'debitCurrency', 'creditAmount', 'creditCurrency'], rows };\n" +
+    '    }\n' +
+    "    ensure(false, 'Không hỗ trợ loại báo cáo.', 422, 'UNSUPPORTED_REPORT');\n" +
+    '}\n' +
+    'function rowsFromJournal(journal: Row) {\n' +
+    '    return rows(journal.lines).map(line => ({\n' +
+    '        effectiveDate: journal.effectiveDate, status: journal.status, sourceType: journal.sourceType,\n' +
+    '        accountId: line.accountId, debitAmount: record(line.debit).amount, debitCurrency: record(line.debit).currency,\n' +
+    '        creditAmount: record(line.credit).amount, creditCurrency: record(line.credit).currency,\n' +
+    '    }));\n' +
+    '}\n' +
+    'export function files(op: string, input: Input): Row | undefined {\n' +
+    '    const { shopId, body } = input;\n' +
+    "    if (op === 'createProductImport') {\n" +
+    '        const uploaded = uploads.get(str(body.fileId));\n' +
+    "        find('files', str(body.fileId), shopId);\n" +
+    "        ensure(uploaded, 'File không còn trong phiên. Hãy tải lại.', 422);\n" +
+    '        const csv = parseCSV(uploaded.text);\n' +
+    "        ensure(csv.length > 1 && csv.length <= 1001, 'CSV cần 1–1000 dòng dữ liệu.', 422);\n" +
+    '        const header = csv[0];\n' +
+    "        ensure(header, 'CSV thiếu dòng tiêu đề.', 422, 'INVALID_CSV');\n" +
+    '        const mapped = rows(body.mapping);\n' +
+    '        const rowErrors: Row[] = [];\n' +
+    '        const products: Row[] = [];\n' +
+    '        const skus = new Set<string>();\n' +
+    '        csv.slice(1).forEach((r, index) => {\n' +
+    '            const values: Record<string, string> = {};\n' +
+    "            mapped.forEach(m => values[str(m.targetField)] = r[header.indexOf(str(m.sourceColumn))] || '');\n" +
+    "            if (!values.sku || !values.name || !/^\\d+(\\.\\d{1,4})?$/.test(values.price || '')) {\n" +
+    "                rowErrors.push({ row: index + 2, field: 'sku/name/price', code: 'INVALID_ROW', message: 'Thiếu SKU/tên hoặc giá không hợp lệ.' });\n" +
+    '                return;\n' +
+    '            }\n' +
+    '            if (skus.has(values.sku.toLowerCase())) {\n' +
+    "                rowErrors.push({ row: index + 2, field: 'sku', code: 'DUPLICATE', message: 'Trùng SKU trong file.' });\n" +
+    '                return;\n' +
+    '            }\n' +
+    '            skus.add(values.sku.toLowerCase());\n' +
+    "            const existing = all('products', shopId).find(p => rows(p.variants).some(v => v.sku === values.sku));\n" +
+    "            if (existing && body.duplicateStrategy === 'reject') {\n" +
+    "                rowErrors.push({ row: index + 2, field: 'sku', code: 'EXISTS', message: 'SKU đã có trong cửa hàng.' });\n" +
+    '                return;\n' +
+    '            }\n' +
+    '            products.push({\n' +
+    "                name: values.name, description: values.description || '', categoryId: null, status: 'active', imageFileIds: [], variants: [{\n" +
+    "                        sku: values.sku, name: values.variantName || 'Mặc định', options: {}, price: { amount: values.price, currency: values.currency || 'VND' }, active: true\n" +
+    '                    }], existingId: existing?.id ?? null\n' +
+    '            });\n' +
+    '        });\n' +
+    "        const token = id('validated');\n" +
+    "        const result = job(shopId, 'import', {\n" +
+    "            status: 'awaiting_confirmation', completed: csv.length - 1, total: csv.length - 1, errorCount: rowErrors.length, rowErrors, validationToken: token\n" +
+    '        });\n' +
+    '        importRo'... 7075 more characters
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/fe017-source-map.test.mjs:55:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'import { all, find, insert, ensure, job, str, num, rows, record, id, now, money, sum } from \'./database\';\nimport type { Input, Row } from \'./database\';\nimport { catalog } from \'./catalog\';\nconst uploads = new Map<string, {\n    text: string;\n    file: File;\n}>();\nconst importRows = new Map<string, {\n    products: Row[];\n    token: string;\n    snapshot: string;\n    strategy: string;\n}>();\nconst exportUrls = new Set<string>();\nexport function clearFileState() {\n    uploads.clear();\n    importRows.clear();\n    for (const url of exportUrls)\n        URL.revokeObjectURL(url);\n    exportUrls.clear();\n}\nexport function parseCSV(text: string): string[][] {\n    const result: string[][] = [];\n    let row: string[] = [];\n    let field = \'\';\n    let quote = false;\n    for (let i = 0; i < text.length; i++) {\n        const c = text[i];\n        if (c === \'"\') {\n            if (quote && text[i + 1] === \'"\') {\n                field += \'"\';\n                i++;\n            }\n            else if (quote || field === \'\')\n                quote = !quote;\n            else\n                throw new Error(\'Dấu nháy trong CSV không hợp lệ.\');\n        }\n        else if (c === \',\' && !quote) {\n            row.push(field);\n            field = \'\';\n        }\n        else if ((c === \'\\n\' || c === \'\\r\') && !quote) {\n            if (c === \'\\r\' && text[i + 1] === \'\\n\')\n                i++;\n            row.push(field);\n            if (row.some(Boolean))\n                result.push(row);\n            row = [];\n            field = \'\';\n        }\n        else\n            field += c;\n    }\n    ensure(!quote, \'CSV thiếu dấu nháy đóng.\', 422);\n    row.push(field);\n    if (row.some(Boolean))\n        result.push(row);\n    return result;\n}\nexport async function upload(input: Input, form: FormData) {\n    const value = form.get(\'file\');\n    ensure(value instanceof File, \'Thiếu file upload.\', 422);\n    const purpose = form.get(\'purpose\');\n    // Bank/COD purposes are simulator-only adapters; the canonical API contract currently has no such upload purposes.\n    ensure(typeof purpose === \'string\' && [\'product_image\', \'product_import\', \'knowledge_source\', \'bank_statement\', \'cod_statement\'].includes(purpose), \'Cần chỉ định mục đích tải tệp hợp lệ.\', 422);\n    ensure(value.size <= 5 * 1024 * 1024, \'Tối đa 5 MB trong frontend mẫu.\', 413);\n    const isCsv = value.name.toLowerCase().endsWith(\'.csv\') && [\'text/csv\', \'application/vnd.ms-excel\', \'application/octet-stream\', \'\'].includes(value.type);\n    const isImage = [\'image/png\', \'image/jpeg\', \'image/webp\'].includes(value.type);\n    const isKnowledgeFile = [\'application/pdf\', \'text/plain\'].includes(value.type) || isCsv;\n    const purposeTypeAllowed = purpose === \'product_image\' ? isImage\n        : purpose === \'knowledge_source\' ? isKnowledgeFile\n            : isCsv;\n    ensure(purposeTypeAllowed, \'Định dạng không phù hợp với mục đích tải tệp.\', 415);\n    const row = insert(\'files\', \'FileObject\', input.shopId, { name: value.name, mimeType: value.type || \'text/csv\', sizeBytes: value.size, status: \'ready\', readUrl: null });\n    uploads.set(str(row.id), { text: value.name.toLowerCase().endsWith(\'.csv\') || value.type.startsWith(\'text/\') ? await value.text() : \'\', file: value });\n    return row;\n}\nfunction csvCell(value: unknown) { const v = typeof value === \'object\' ? JSON.stringify(value) : String(value ?? \'\'); return `"${(/^[\\s]*[=+\\-@\\t\\r]/.test(v) ? "\'" : \'\') + v.replace(/"/g, \'""\')}"`; }\nfunction localDate(value: string, timezone: string) {\n    return new Intl.DateTimeFormat(\'en-CA\', { timeZone: timezone, year: \'numeric\', month: \'2-digit\', day: \'2-digit\' }).format(new Date(value));\n}\ntype CsvRow = Record<string, unknown>;\nfunction exportRows(input: Input, type: string): { fields: string[]; rows: CsvRow[] } {\n    const { shopId, body } = input;\n    const from = str(body.from), to = str(body.to), timezone = str(body.timezone);\n    const start = Date.parse(from), end = Date.parse(to);\n    ensure(Number.isFinite(start) && Number.isFinite(end) && start <= end, \'Khoảng thời gian export không hợp lệ.\', 422, \'INVALID_REPORT_RANGE\');\n    // Validate the IANA zone before creating a job or a download URL.\n    try { localDate(from, timezone); }\n    catch { ensure(false, \'Múi giờ IANA của báo cáo không hợp lệ.\', 422, \'INVALID_REPORT_TIMEZONE\'); }\n    const fromDate = localDate(from, timezone), toDate = localDate(to, timezone);\n    const withinRange = (value: unknown) => {\n        if (typeof value !== \'string\') return false;\n        const timestamp = Date.parse(value);\n        return Number.isFinite(timestamp) && timestamp >= start && timestamp <= end;\n    };\n    const inSnapshot = (value: unknown) => {\n        if (typeof value !== \'string\') return false;\n        const timestamp = Date.parse(value);\n        return Number.isFinite(timestamp) && timestamp <= end;\n    };\n    if (type === \'inventory\') {\n        const includeCost = input.permissions?.includes(\'finance.read\') === true;\n        const rows = all(\'stock\', shopId).filter(row => inSnapshot(row.asOf)).map(row => ({\n            sku: row.sku, variantId: row.variantId, warehouseId: row.warehouseId,\n            onHand: row.onHand, reserved: row.reserved, available: row.available,\n            ...(includeCost ? { unitCostAmount: record(row.unitCost).amount, unitCostCurrency: record(row.unitCost).currency } : {}),\n            asOf: row.asOf,\n        }));\n        return { fields: [\'sku\', \'variantId\', \'warehouseId\', \'onHand\', \'reserved\', \'available\', ...(includeCost ? [\'unitCostAmount\', \'unitCostCurrency\'] : []), \'asOf\'], rows };\n    }\n    if (type === \'orders\') {\n        const rows = all(\'orders\', shopId).filter(row => withinRange(row.createdAt)).map(row => ({\n            orderId: row.id, createdAt: row.createdAt, orderState: row.orderState,\n            fulfillmentState: row.fulfillmentState, paymentState: row.paymentState,\n            totalAmount: record(row.total).amount, currency: record(row.total).currency,\n        }));\n        return { fields: [\'orderId\', \'createdAt\', \'orderState\', \'fulfillmentState\', \'paymentState\', \'totalAmount\', \'currency\'], rows };\n    }\n    if (type === \'cashflow\') {\n        const rows = all(\'financeEntries\', shopId).filter(row => withinRange(row.occurredAt)).map(row => ({\n            entryId: row.id, occurredAt: row.occurredAt, kind: row.kind, classification: row.classification,\n            status: row.status, amount: record(row.amount).amount, currency: record(row.amount).currency,\n        }));\n        return { fields: [\'entryId\', \'occurredAt\', \'kind\', \'classification\', \'status\', \'amount\', \'currency\'], rows };\n    }\n    if (type === \'profit_loss\') {\n        const rows = all(\'journals\', shopId).filter(row => typeof row.effectiveDate === \'string\' && row.effectiveDate >= fromDate && row.effectiveDate <= toDate)\n            .flatMap(row => rowsFromJournal(row));\n        return { fields: [\'effectiveDate\', \'status\', \'sourceType\', \'accountId\', \'debitAmount\', \'debitCurrency\', \'creditAmount\', \'creditCurrency\'], rows };\n    }\n    ensure(false, \'Không hỗ trợ loại báo cáo.\', 422, \'UNSUPPORTED_REPORT\');\n}\nfunction rowsFromJournal(journal: Row) {\n    return rows(journal.lines).map(line => ({\n        effectiveDate: journal.effectiveDate, status: journal.status, sourceType: journal.sourceType,\n        accountId: line.accountId, debitAmount: record(line.debit).amount, debitCurrency: record(line.debit).currency,\n        creditAmount: record(line.credit).amount, creditCurrency: record(line.credit).currency,\n    }));\n}\nexport function files(op: string, input: Input): Row | undefined {\n    const { shopId, body } = input;\n    if (op === \'createProductImport\') {\n        const uploaded = uploads.get(str(body.fileId));\n        find(\'files\', str(body.fileId), shopId);\n        ensure(uploaded, \'File không còn trong phiên. Hãy tải lại.\', 422);\n        const csv = parseCSV(uploaded.text);\n        ensure(csv.length > 1 && csv.length <= 1001, \'CSV cần 1–1000 dòng dữ liệu.\', 422);\n        const header = csv[0];\n        ensure(header, \'CSV thiếu dòng tiêu đề.\', 422, \'INVALID_CSV\');\n        const mapped = rows(body.mapping);\n        const rowErrors: Row[] = [];\n        const products: Row[] = [];\n        const skus = new Set<string>();\n        csv.slice(1).forEach((r, index) => {\n            const values: Record<string, string> = {};\n            mapped.forEach(m => values[str(m.targetField)] = r[header.indexOf(str(m.sourceColumn))] || \'\');\n            if (!values.sku || !values.name || !/^\\d+(\\.\\d{1,4})?$/.test(values.price || \'\')) {\n                rowErrors.push({ row: index + 2, field: \'sku/name/price\', code: \'INVALID_ROW\', message: \'Thiếu SKU/tên hoặc giá không hợp lệ.\' });\n                return;\n            }\n            if (skus.has(values.sku.toLowerCase())) {\n                rowErrors.push({ row: index + 2, field: \'sku\', code: \'DUPLICATE\', message: \'Trùng SKU trong file.\' });\n                return;\n            }\n            skus.add(values.sku.toLowerCase());\n            const existing = all(\'products\', shopId).find(p => rows(p.variants).some(v => v.sku === values.sku));\n            if (existing && body.duplicateStrategy === \'reject\') {\n                rowErrors.push({ row: index + 2, field: \'sku\', code: \'EXISTS\', message: \'SKU đã có trong cửa hàng.\' });\n                return;\n            }\n            products.push({\n                name: values.name, description: values.description || \'\', categoryId: null, status: \'active\', imageFileIds: [], variants: [{\n                        sku: values.sku, name: values.variantName || \'Mặc định\', options: {}, price: { amount: values.price, currency: values.currency || \'VND\' }, active: true\n                    }], existingId: existing?.id ?? null\n            });\n        });\n        const token = id(\'validated\');\n        const result = job(shopId, \'import\', {\n            status: \'awaiting_confirmation\', completed: csv.length - 1, total: csv.length - 1, errorCount: rowErrors.length, rowErrors, validationToken: token\n        });\n        importRo'... 7075 more characters,
+    expected: /Mục đích tải tệp không được hỗ trợ/,
+    operator: 'match',
+    diff: 'simple'
+  }

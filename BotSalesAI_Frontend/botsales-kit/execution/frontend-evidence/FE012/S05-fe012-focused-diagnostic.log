@@ -1,0 +1,105 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep FE012 --reporter=line
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (17.955ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.7892ms)
+✔ rejects unresolved schema references before generation (20.3514ms)
+✔ rejects missing API version and a server URL outside same-origin path form (16.7567ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.4711ms)
+✔ detects a stale generated file and accepts it after regeneration (1.7627ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (41.8123ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 33
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (48.6347ms)
+
+Running 8 tests using 1 worker
+
+
+
+[1A[2K(node:16484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:16484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/8] [chromium] › tests\fe012.spec.ts:40:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[1A[2K[2/8] [chromium] › tests\fe012.spec.ts:129:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[1A[2K[3/8] [chromium] › tests\fe012.spec.ts:230:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[1A[2K[4/8] [chromium] › tests\fe012.spec.ts:276:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[1A[2K[5/8] [chromium] › tests\fe012.spec.ts:304:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[1A[2K[6/8] [chromium] › tests\fe012.spec.ts:346:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[1A[2K[7/8] [chromium] › tests\fe012.spec.ts:401:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[1A[2K[8/8] [chromium] › tests\fe012.spec.ts:416:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[1A[2K  8 passed (20.5s)

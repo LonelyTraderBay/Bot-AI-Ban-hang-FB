@@ -1,0 +1,179 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> playwright test --grep list cursor --timeout=15000 --reporter=line
+
+✔ canonical contracts validate and generate the API base path from OpenAPI (17.5726ms)
+✔ generated operation registry preserves required and optional query parameter metadata (7.8665ms)
+✔ rejects unresolved schema references before generation (20.2089ms)
+✔ rejects missing API version and a server URL outside same-origin path form (17.5228ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (14.5434ms)
+✔ detects a stale generated file and accepts it after regeneration (1.7394ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (42.4434ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (7.9173ms)
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (7.2814ms)
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (8.3087ms)
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (7.4652ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.4918ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.2064ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.1674ms)
+
+Running 1 test using 1 worker
+
+
+
+[1A[2K(node:8540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1A[2K(node:8540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1A[2K[1/1] [chromium] › tests\fe016.spec.ts:65:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation
+[1A[2K[chromium] › tests\fe016.spec.ts:65:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation
+FE016 draft form diagnostic [{"excludedSearch":false,"controls":[{"tag":"INPUT","aria":null,"label":"Tìm kiếm​Tìm kiếm","name":"","value":"","defaultValue":"","type":"text","checked":false,"defaultChecked":false,"html":"<input aria-invalid=\"false\" id=\"«re»\" placeholder=\"Tìm hội thoại…\" class=\"MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall MuiInputBase-inputAdornedStart css-1orfag2-MuiInputBase-input-MuiOutlinedInput-input\" type=\"text"}]},{"excludedSearch":false,"controls":[{"tag":"INPUT","aria":null,"name":"","value":"on","defaultValue":"","type":"checkbox","checked":false,"defaultChecked":false,"html":"<input data-indeterminate=\"false\" class=\"PrivateSwitchBase-input css-12xagqm-MuiSwitchBase-root\" type=\"checkbox\">"},{"tag":"TEXTAREA","aria":null,"label":"Nội dung trả lời kháchNội dung trả lời khách","name":"","value":"","defaultValue":"","type":"textarea","html":"<textarea aria-invalid=\"false\" id=\"«r12»\" maxlength=\"20000\" class=\"MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1n5pdcw-MuiInputBase-input-MuiOutlinedInput-input\" style=\"height: 40px;\"></textarea>"},{"tag":"TEXTAREA","aria":null,"label":"Nội dung trả lời kháchNội dung trả lời khách","name":"","value":"x","defaultValue":"","type":"textarea","html":"<textarea aria-hidden=\"true\" class=\"MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1n5pdcw-MuiInputBase-input-MuiOutlinedInput-input\" readonly=\"\" tabindex=\"-1\" style=\"visibility: hidden; position: absolute; overfl"}]}]
+
+[1A[2K  1) [chromium] › tests\fe016.spec.ts:65:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation 
+
+    Error: [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected pattern: [32m/cursor=cv1/[39m
+    Received string:  [31m"http://127.0.0.1:57149/s/shop-demo/inbox/cv2?listCursor=cv1"[39m
+    Timeout: 5000ms
+
+    Call log:
+    [2m  - Expect "toHaveURL" with timeout 5000ms[22m
+    [2m    9 × unexpected value "http://127.0.0.1:57149/s/shop-demo/inbox/cv2?listCursor=cv1"[22m
+
+
+      72 |     })));
+      73 |     console.log('FE016 draft form diagnostic', JSON.stringify(formControls));
+    > 74 |     await expect(page).toHaveURL(/cursor=cv1/);
+         |                        ^
+      75 | });
+      76 |
+      77 | test('FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery', async ({ page }) => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe016.spec.ts:74:24
+
+    Error Context: test-results\fe016-FE016-AC01-list-curs-9b974-restored-on-back-navigation-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe016-FE016-AC01-list-curs-9b974-restored-on-back-navigation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe016-FE016-AC01-list-curs-9b974-restored-on-back-navigation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  1 failed
+    [chromium] › tests\fe016.spec.ts:65:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation 
