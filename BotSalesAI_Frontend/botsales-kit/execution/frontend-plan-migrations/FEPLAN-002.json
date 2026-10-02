@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "id": "FEPLAN-002",
+  "status": "APPROVED_BY_USER_AUTHORIZATION",
+  "authorizationRef": "User request 2026-10-02: fully unblock and finish frontend UI using synthetic mock data; no real API is required.",
+  "fromPlanSha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e",
+  "toPlanSha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f",
+  "baselineReport": {
+    "path": "execution/frontend-progress-report.json",
+    "sha256": "1b7448f378d4f100bb14ef04d7429e77107499238a29de1223259d81af17e1cc",
+    "generatedAt": "2026-10-01T21:47:26.331Z"
+  },
+  "reason": "Replace the obsolete allowedActions gate for Knowledge with the current user-approved frontend mock substitute: contract permission plus resource lifecycle, without adding a non-canonical DTO/API field.",
+  "changes": [
+    {
+      "taskId": "FE017",
+      "field": "acceptanceCases[0]",
+      "before": "FE017.AC01 — Draft/review/published/version history phân biệt; publish cần allowedActions.",
+      "after": "FE017.AC01 — Draft/review/published/version history phân biệt; dùng allowedActions khi contract có khai báo. Knowledge hiện chưa có field này trong OpenAPI, nên luồng mock kiểm quyền bằng permission chuẩn knowledge.publish cùng lifecycle ready_for_review; không thêm field vào DTO/API/generated.",
+      "reason": "The user explicitly superseded the prior contract-wait blocker and authorized synthetic-only frontend acceptance."
+    }
+  ],
+  "invariants": {
+    "taskCount": 28,
+    "stepCount": 140,
+    "phaseWeights": [
+      10,
+      25,
+      40,
+      20,
+      5
+    ],
+    "changedTaskIds": [
+      "FE017"
+    ],
+    "changedFields": [
+      "acceptanceCases[0]"
+    ],
+    "removedScopePaths": []
+  }
+}

@@ -1,34 +1,20 @@
-# BotSales AI 2.1.1 — bắt đầu tại đây
+# BotSales AI — bắt đầu frontend với mock API
 
-**Mục tiêu:** đội vận hành bốn vai trò AI cho shop Facebook; chủ shop tập trung marketing. Gói này gồm đặc tả, demo bấm thử, kế hoạch và bộ theo dõi. Không có backend sản phẩm đã hoàn thiện hoặc thông báo điện thoại thật trong gói.
+Phạm vi người dùng xác nhận ngày 30/09/2026: frontend React/TypeScript hiện có, mock data đủ để nghiệm thu UI và các luồng. Production-Ready/Enterprise-Grade Frontend Architecture là mục tiêu kiểm chứng theo AI_RULES.md, chưa phải kết quả đã đạt. Kit đặc tả 2.1.1, API2.0.0 và Graphite Gold token2.1 giữ làm nguồn chuẩn.
 
-## Dùng với repo
-Giải nén, đổi tên folder ngoài thành `botsales-kit` và đặt cạnh source dự án (ví dụ `my-project/botsales-kit/`). Đừng giải nén chồng vào root đang có AGENTS/AI_RULES. Mở repo bằng AI lập trình có quyền đọc/ghi/chạy test; gửi nội dung PROJECT_BUILD_PROMPT_VI.txt. AI bắt đầu T001 hoặc resume tracker. T001–T006 là khởi động có bằng chứng, không người dùng tự điền mẫu.
+Đọc root AGENTS.md/AI_RULES.md nguyên bản, docs/FRONTEND_SCOPE.md, PROJECT_CONTEXT.md, CONTINUE_FRONTEND.md, KNOWN_GAPS.md, evidence/REPORT.md; rồi IMPLEMENTATION_PLAN.md và docs/02,06,18 của kit. Khi được giao implement, dùng PROJECT_BUILD_PROMPT_VI.txt và nhận task FE. Giữ source đã có; không port prototype HTML hoặc dựng lại stack.
 
-## Các file chính
-- IMPLEMENTATION_PLAN.md: toàn bộ 84 task/420 bước, thứ tự, phụ thuộc, vùng sửa và tiến độ hiện tại.
-- execution/PROGRESS.html: bảng tiến độ mở bằng trình duyệt; sinh lại sau cập nhật tracker. Bản đầu 0% ứng dụng thật.
-- execution/plan.json: task canonical, trọng số/dependency không sửa để làm % đẹp.
-- execution/progress.json + evidence/: tiến độ và log bằng chứng do AI duy trì.
-- docs/: 28 tài liệu nguồn (00–27), contracts/: API/routes/feature/permission/state.
-- prototype/index.html: demo review có dữ liệu giả, không API thật. Thay đổi trong tab; góp ý có export.
-- AI_RULES.md: Universal 3.1 giữ nguyên; AI_RULES_PROJECT.md là phần riêng.
+| Vai trò | Nguồn |
+|---|---|
+| Kế hoạch đọc | IMPLEMENTATION_PLAN.md — 28 task/140 bước frontend |
+| Task/tiến độ chuẩn | execution/frontend-plan.json / frontend-progress.json |
+| Phiếu/tiến độ đọc | execution/frontend-tasks/FE*.md / FRONTEND_PROGRESS.md |
+| Hướng dẫn sinh | execution/FRONTEND_PLAN_GUIDE.md |
+| API/UI | contracts/openapi.json, route-manifest.json, permission-catalog.json, design/tokens.json |
+| Full-product ngoài scope | execution/plan.json, progress.json, tasks/T*.md, PROGRESS.* — giữ nguyên, chỉ đọc |
 
-## Lệnh có sẵn, chạy tại folder kit
-```bash
-node scripts/progress.mjs validate
-node scripts/progress.mjs status
-node scripts/progress.mjs next
-node scripts/progress.mjs report
-node scripts/validate-kit.mjs
-```
-Lệnh kiểm code sản phẩm sẽ được xác minh/tạo ở T005–T012, không có sẵn chỉ vì plan ghi `pnpm test:e2e`. Công cụ tiến độ chạy với Node có sẵn (đã kiểm Node 22 trong môi trường bàn giao; runtime app mục tiêu chốt Node LTS ở T003).
+Tại kit chạy `node scripts/progress.mjs validate`, `status`, `next`, `report`. Mặc định tracker chọn frontend. `--full-product validate|status|next` chỉ đọc kế hoạch 84 task/420 bước gốc. Lệnh app là npm scripts ở root frontend; đọc CONTINUE_FRONTEND.md, không chạy pnpm dự kiến từ kit gốc.
 
-## Đừng hiểu nhầm
-Có tài liệu không đồng nghĩa AI tự chạy khi đóng phiên. AI cần môi trường code và công cụ thực sự; tài khoản Meta/provider/thiết bị và phép triển khai phải được cấp đúng gate. 100% checkpoint cũng không tự là quyền phát hành. Theme dark-only đã chốt, không hỏi lại hoặc thêm light. Bộ cũ chỉ được lưu read-only trong reference/, không là kế hoạch song song.
+Nghiệm thu dùng React build demo thật, browser/contract/component tests và dữ liệu MSW tổng hợp có nhãn. Build production phải tách mocks/seed; chưa có backend thật không chặn nghiệm thu mock frontend. Gap contract hoặc gate frontend chưa đạt vẫn cần giải quyết/ghi rõ; không claim từ số route/tài liệu. Không cần credentials provider thật cho UAT mock và không tự gửi tin/chi tiền/triển khai.
 
-## Màu chính thức và phiên bản
-
-Gói **2.1.1** tiếp nhận **Graphite Gold dark-only** đã duyệt trong `design/decision.json`. Token vẫn phiên bản **2.1**, HEX giữ nguyên; API **2.0.0**, phạm vi/kế hoạch nghiệp vụ **2.0**, Universal **3.1** không bị nâng giả chỉ để trùng số phiên bản. `release.json` giải thích từng miền phiên bản.
-
-Đọc `DOCUMENT_INDEX.md` để tìm nguồn chuẩn, `UPGRADE.md` trước thay bộ cũ, và `RELEASE_NOTES.md` để biết điểm đã sửa. Hướng dẫn task đã đồng bộ nhưng không đổi 84 việc/420 bước hoặc cộng tiến độ sản phẩm. Chỉ một kit được chỉ định hiện hành trong repo; archive/reference không là nguồn màu hay kế hoạch đang chạy.
+Universal3.1 giữ nguyên. Graphite Gold dark-only ở design/decision.json và tokens.json đã duyệt; không hỏi lại màu hoặc thêm theme. Xem execution/FRONTEND_SCOPE_ADOPTION.md về cách bảo toàn ledger toàn sản phẩm.

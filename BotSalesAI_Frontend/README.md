@@ -4,11 +4,13 @@
 
 Đây là **mã nguồn React/TypeScript**, không phải file HTML demo cũ và không bao gồm backend sản phẩm. Có khai báo và component cho 54 route chuẩn; dữ liệu thử đi qua lớp HTTP MSW, UI dùng TanStack Query và hợp đồng OpenAPI gốc. API mô phỏng chỉ giữ dữ liệu trong bộ nhớ của tab.
 
+## Phạm vi hiện hành — 02/10/2026
+
+Phát triển và nghiệm thu **frontend-only bằng synthetic mock API** theo [kế hoạch frontend](botsales-kit/IMPLEMENTATION_PLAN.md). Trên Windows Node 24.19.0/npm 11.17.0, `npm run verify` đạt và bộ Playwright Chromium đạt 143/143. Ma trận có 54 route, 64 feature ID và 65/65 feature-route entries đều có tương tác UI mô phỏng gắn với test cụ thể; 357/357 quyền đọc route × role được kiểm trên 51 route cửa hàng × 7 role; bốn luồng xuyên module cũng đạt. Axe/keyboard và reflow 320 CSS px được kiểm trên đủ 54 route. Xem [CONTINUE_FRONTEND.md](docs/CONTINUE_FRONTEND.md), [KNOWN_GAPS.md](docs/KNOWN_GAPS.md) và [báo cáo kiểm chứng](evidence/REPORT.md) để biết giới hạn route-state, screen-reader, zoom thực và UAT.
+
 ## Trạng thái bàn giao — đọc trước
 
-**Bản này chưa được nghiệm thu là frontend hoàn chỉnh chạy thành công.** Trong môi trường tạo gói, npm registry không truy cập được; React/Vite/MUI/MSW chưa cài, Node hiện có là 22.16.0 thay vì mục tiêu Node 24. Vì vậy **full React typecheck, lint theo dependencies của dự án, build và kiểm thử trình duyệt chưa xác minh**. Không có thư mục dist hoặc lockfile giả. Cài thư viện đúng môi trường rồi chạy các cổng dưới đây; có thể còn lỗi tương thích/type/runtime cần sửa. Xem `evidence/REPORT.md` và `docs/KNOWN_GAPS.md`.
-
-Các kiểm tra đã chạy chỉ là parser/ranh giới source, sinh hợp đồng, biên dịch TypeScript thuần của mock service, thực thi mock service bằng Node và đối chiếu JSON Schema. Không dùng chúng để khẳng định React đã render hoặc tích hợp thật đã hoạt động.
+**Trạng thái hiện tại:** React production build và demo preview chạy với API mô phỏng; domain/MSW đạt 88/88, Vitest 71/71, Chromium E2E 143/143. Các chức năng ngoài contract được trình bày thành preview/giới hạn rõ ràng, không giả lập lưu máy chủ hay tích hợp provider thật. Ma trận role-route kiểm trực tiếp 357 trường hợp; state variants vẫn chỉ được khẳng định nơi có test cụ thể. Tracker frontend chỉ tính checkpoint còn khớp evidence/source hash; xem `node botsales-kit/scripts/progress.mjs status`. Backend/provider thật không chặn nghiệm thu UI mock; GitHub CI, kiểm screen-reader đầy đủ, zoom browser thực và owner UAT chưa được xác nhận.
 
 ## 1. Mở trong VS Code
 
@@ -17,16 +19,16 @@ Giải nén toàn bộ ZIP vào thư mục mới, chọn **File → Open Folder 
 Trong terminal tại thư mục có `package.json` gốc:
 
 ```bash
-npm install
+npm ci
 npm run setup
 npm run dev
 ```
 
 Địa chỉ phát triển được cấu hình là `http://127.0.0.1:5173`. Đừng mở `apps/web/index.html` bằng cách nhấp đúp hoặc VS Code Live Server: đây là ứng dụng Vite cần tiến trình phát triển.
 
-`npm install` sẽ tạo **package-lock.json thật**. Đọc và lưu lockfile vào source control khi bạn cho phép; những máy khác dùng `npm ci`. Không chạy `npm audit fix --force`, bỏ strict hoặc tắt test để ép build xanh.
+Repo hiện có `package-lock.json`; `npm ci` cài đúng lockfile. Không chạy `npm audit fix --force`, bỏ strict hoặc tắt test để ép build xanh.
 
-Trên Windows có `START_WINDOWS.cmd` hỗ trợ cùng quy trình và dừng khi gặp lỗi. Cấu hình VS Code tại `.vscode/tasks.json`; có thể dùng **Terminal → Run Task**. Script Windows và trình duyệt thật chưa được kiểm tra trong môi trường bàn giao.
+Trên Windows có `START_WINDOWS.cmd` hỗ trợ cùng quy trình và dừng khi gặp lỗi. Cấu hình VS Code tại `.vscode/tasks.json`; có thể dùng **Terminal → Run Task**. Playwright Chromium đã kiểm tra tự động; riêng `START_WINDOWS.cmd` và thao tác trình duyệt thủ công chưa được kiểm tra.
 
 ## 2. Chế độ chạy
 
@@ -55,7 +57,7 @@ apps/web/src/
   mocks/                  API mô phỏng DEV/TEST, dữ liệu tổng hợp
 packages/contracts/src/   kiểu/API/route được sinh từ OpenAPI gốc
 packages/design-tokens/   token được sinh từ nguồn đã duyệt
-botsales-kit/            bộ tài liệu 2.1.1 nguyên trạng
+botsales-kit/            contracts/tokens 2.1.1 + kế hoạch frontend/mock hiện hành
 scripts/                 generator, kiểm nguồn/ranh giới, thiết lập và kiểm mock
 samples/                 CSV mẫu để thử import
 ```

@@ -6,5 +6,9 @@ Nguồn chuẩn: botsales-kit/contracts/openapi.json, route-manifest.json và de
 Chạy npm run generate:check; không sửa packages/*/src/generated* bằng tay.
 Frontend-only không hoàn thành các gate backend/staging trong tracker toàn dự án.
 Không ghi tăng execution/progress.json của kit khi chưa đủ bằng chứng nguyên task.
+Mục tiêu hiện hành: frontend với mock API tổng hợp đủ nghiệm thu, theo botsales-kit/IMPLEMENTATION_PLAN.md.
+Task chuẩn: botsales-kit/execution/frontend-plan.json; ledger: botsales-kit/execution/frontend-progress.json. Tracker mặc định dùng FE001–FE028.
+botsales-kit/execution/plan.json, progress.json và tasks/T*.md là kế hoạch toàn sản phẩm ngoài scope, giữ nguyên và chỉ đọc.
+Áp dụng AI_RULES.md nguyên bản; Production-Ready/Enterprise-Grade Frontend chỉ được đề nghị sau các gate FE-G01..09 có bằng chứng.
 Một MUI/Query/Router; module không import module khác. MSW chỉ trong chế độ demo.
 Đọc evidence/REPORT.md trước tuyên bố kết quả build; không nhận test chưa chạy là PASS.

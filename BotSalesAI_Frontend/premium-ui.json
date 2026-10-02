@@ -1,0 +1,39 @@
+{
+  "profile": "product-admin",
+  "sourceRoots": ["apps/web/src"],
+  "locale": "vi",
+  "canonicalMap": "UX-CONTRACT.md",
+  "requiredCapabilities": [
+    "Select/Listbox",
+    "Date",
+    "Form",
+    "Scrollbar",
+    "CRUD"
+  ],
+  "ownership": {
+    "Select/Listbox": "authored",
+    "Date": "native"
+  },
+  "requiredCommands": [
+    "unit",
+    "e2e",
+    "accessibility",
+    "generate",
+    "typecheck",
+    "lint",
+    "build"
+  ],
+  "commands": {
+    "unit": "npm test",
+    "e2e": "npm run test:e2e",
+    "accessibility": "npm run test:e2e (includes Playwright Axe and keyboard route checks)",
+    "generate": "npm run generate:check",
+    "typecheck": "npm run typecheck",
+    "lint": "npm run lint",
+    "build": "npm run build"
+  },
+  "evidence": {
+    "crudFullFlow": "tests/vertical-slices/fe022-flows.spec.ts",
+    "failurePaths": "tests/states/route-error-composition.spec.ts"
+  }
+}

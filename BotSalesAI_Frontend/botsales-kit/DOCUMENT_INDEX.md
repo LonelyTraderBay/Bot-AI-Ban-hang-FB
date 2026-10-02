@@ -11,14 +11,16 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 |---|---|---|
 | Bắt đầu | [START_HERE.md](START_HERE.md) | Cách đặt kit và giao việc |
 | Giao AI code | [PROJECT_BUILD_PROMPT_VI.txt](PROJECT_BUILD_PROMPT_VI.txt) | Thực hiện trong repo/công cụ có quyền |
-| Kế hoạch | [execution/plan.json](execution/plan.json) | Task, phụ thuộc, trọng số; không sửa để tăng % |
-| Bản kế hoạch để đọc | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Sinh từ plan, progress và PLAN_GUIDE |
-| Tiến độ thực | [execution/progress.json](execution/progress.json) | Chỉ bằng chứng ứng dụng có hiệu lực mới có điểm |
-| Xem tiến độ | [execution/PROGRESS.html](execution/PROGRESS.html) | Sinh bằng tracker report |
+| Kế hoạch frontend | [execution/frontend-plan.json](execution/frontend-plan.json) | FE001–FE028; mock API đủ nghiệm thu frontend |
+| Bản kế hoạch để đọc | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Sinh từ frontend-plan, frontend-progress và FRONTEND_PLAN_GUIDE |
+| Tiến độ frontend | [execution/frontend-progress.json](execution/frontend-progress.json) | Chỉ evidence frontend đúng diff mới có điểm |
+| Xem tiến độ frontend | [execution/FRONTEND_PROGRESS.md](execution/FRONTEND_PROGRESS.md) | Sinh bằng tracker report mặc định |
+| Full-product ngoài scope | [execution/plan.json](execution/plan.json), [progress.json](execution/progress.json) | 84 task/420 bước gốc giữ nguyên, chỉ đọc |
+| Tiếp nhận scope | [execution/FRONTEND_SCOPE_ADOPTION.md](execution/FRONTEND_SCOPE_ADOPTION.md) | Quyết định phạm vi và bảo toàn nguồn |
 | Màu đã duyệt | [design/decision.json](design/decision.json) | ADR-VIS-021; không mở lại quyết định |
 | Giá trị màu | [design/tokens.json](design/tokens.json) | Nguồn HEX/semantic token duy nhất |
 | Bảng màu đọc được | [design/PALETTE.md](design/PALETTE.md) | Sinh từ token, không sửa tay |
-| MUI mapping | [design/IMPLEMENTATION_NOTES.md](design/IMPLEMENTATION_NOTES.md) | Làm tại T010 trước T011 |
+| MUI mapping | [design/IMPLEMENTATION_NOTES.md](design/IMPLEMENTATION_NOTES.md) | FE006 trước FE007; T010/T011 chỉ là đặc tả gốc |
 | Chuẩn AI dùng chung | [AI_RULES.md](AI_RULES.md) | Universal 3.1 nguyên bản |
 | Chuẩn dự án | [AI_RULES_PROJECT.md](AI_RULES_PROJECT.md) | Không ghi đè quy tắc gốc repo |
 | API hiện hành | [contracts/openapi.json](contracts/openapi.json) | JSON nguồn, YAML/index là output |

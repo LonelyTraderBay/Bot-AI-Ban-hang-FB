@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "id": "FEPLAN-001",
+  "status": "APPROVED_BY_USER_AUTHORIZATION",
+  "authorizationRef": "User request 2026-09-30: implement the approved frontend plan through 100% in priority order, with frontend-only synthetic mock acceptance and original AI_RULES applied.",
+  "fromPlanSha256": "2ef99cf5869212f391c0a240089a39f0db6579bb78a0f5cc8f934bfd463a2bf1",
+  "toPlanSha256": "09d2e154002ad7ff71edcaf5a3119a44ac75a12b0eff2826d929a6f9fdebfc2e",
+  "baselineReport": {
+    "path": "execution/frontend-progress-report.json",
+    "sha256": "cc47e85a0ececfac579fbe2562ec5bb4774d66b11c2546b3d70c52ff097b03a4",
+    "generatedAt": "2026-09-30T08:52:33.924Z"
+  },
+  "reason": "FE005 strict typecheck showed that contract-required If-Match versions must be supplied by the existing module callers; those callers were updated from their loaded resource versions. The implementation scope therefore records those six frontend entry files explicitly.",
+  "changes": [
+    {
+      "taskId": "FE005",
+      "field": "writeScope",
+      "before": [
+        "scripts/generate.mjs",
+        "apps/web/src/shared/api/",
+        "apps/web/src/shared/model/",
+        "tests/contracts/",
+        "apps/web/tests/"
+      ],
+      "after": [
+        "scripts/generate.mjs",
+        "apps/web/src/shared/api/",
+        "apps/web/src/shared/model/",
+        "apps/web/src/modules/bot/index.tsx",
+        "apps/web/src/modules/catalog/index.tsx",
+        "apps/web/src/modules/customers/index.tsx",
+        "apps/web/src/modules/integrations/index.tsx",
+        "apps/web/src/modules/knowledge/index.tsx",
+        "apps/web/src/modules/workspace/index.tsx",
+        "tests/contracts/",
+        "apps/web/tests/"
+      ],
+      "added": [
+        "apps/web/src/modules/bot/index.tsx",
+        "apps/web/src/modules/catalog/index.tsx",
+        "apps/web/src/modules/customers/index.tsx",
+        "apps/web/src/modules/integrations/index.tsx",
+        "apps/web/src/modules/knowledge/index.tsx",
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "reason": "Declare the existing caller files required to provide resource versions for contract-mandated If-Match requests."
+    },
+    {
+      "taskId": "FE005",
+      "field": "deliverables",
+      "before": [
+        "scripts/generate.mjs",
+        "apps/web/src/shared/api/",
+        "apps/web/src/shared/model/",
+        "tests/contracts/",
+        "apps/web/tests/"
+      ],
+      "after": [
+        "scripts/generate.mjs",
+        "apps/web/src/shared/api/",
+        "apps/web/src/shared/model/",
+        "apps/web/src/modules/bot/index.tsx",
+        "apps/web/src/modules/catalog/index.tsx",
+        "apps/web/src/modules/customers/index.tsx",
+        "apps/web/src/modules/integrations/index.tsx",
+        "apps/web/src/modules/knowledge/index.tsx",
+        "apps/web/src/modules/workspace/index.tsx",
+        "tests/contracts/",
+        "apps/web/tests/"
+      ],
+      "added": [
+        "apps/web/src/modules/bot/index.tsx",
+        "apps/web/src/modules/catalog/index.tsx",
+        "apps/web/src/modules/customers/index.tsx",
+        "apps/web/src/modules/integrations/index.tsx",
+        "apps/web/src/modules/knowledge/index.tsx",
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "reason": "Keep deliverables aligned with the explicit, bounded FE005 caller scope."
+    }
+  ],
+  "invariants": {
+    "taskCount": 28,
+    "stepCount": 140,
+    "phaseWeights": [10, 25, 40, 20, 5],
+    "changedTaskIds": ["FE005"],
+    "changedFields": ["writeScope", "deliverables"],
+    "removedScopePaths": []
+  }
+}

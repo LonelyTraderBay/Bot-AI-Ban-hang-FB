@@ -1,11 +1,15 @@
-# BotSales AI — Project policy 2.1.1
+# BotSales AI — policy frontend với mock API
 
-Đọc START_HERE.md, AI_RULES.md Universal nguyên bản, IMPLEMENTATION_PLAN.md và tracker. Không sửa Universal. Repo mới theo docs/02; repo cũ khảo sát và migrate từng lát cắt. Dark-only. Canonical JSON contracts/plan; generated YAML/DTO/report không sửa tay. Một chủ nhiệm nguồn chung.
+Scope hiện hành theo yêu cầu người dùng 30/09/2026: apps/web, frontend tests/config/tooling và mock API tổng hợp đủ nghiệm thu frontend. Áp dụng root AGENTS.md/AI_RULES.md Universal3.1 nguyên bản. Backend/worker/provider/staging trong docs kit chỉ là đặc tả tham chiếu trong repo này.
 
-Thực hiện 84 task theo dependency và priority, không sinh trang giả thay backend thật. Báo cáo tiến độ chỉ tính checkpoint verified với log/source hashes. Demo không là app production. Block đúng task thiếu credentials/business policy/authority, tiếp tục task độc lập. Không tự gửi tin mua hàng/chuyển tiền/đưa live. Khi được giao implement, làm code/test trong active session rồi handoff; file hướng dẫn không chạy nền.
+Đọc START_HERE.md, IMPLEMENTATION_PLAN.md, execution/SESSION_HANDOFF.md và nguồn task. Task chuẩn: execution/frontend-plan.json; ledger: frontend-progress.json; dùng FE001–FE028. Không nhận T001–T084 hoặc thay execution/progress.json toàn sản phẩm. Kế hoạch/phiếu là đầu ra sinh, không sửa tay.
 
-## Màu chính thức và phiên bản
+Quy trình: baseline/quyền/nguồn → Definition of Ready/Change Budget → Complexity Gate nếu liên quan → sửa nhỏ theo contract → Verification Ladder → diff/docs/evidence/handoff → Production Claim Gate. AI tự tìm dữ kiện trong repo; chỉ hỏi quyết định chưa thể xác minh.
 
-Gói **2.1.1** tiếp nhận **Graphite Gold dark-only** đã duyệt trong `design/decision.json`. Token vẫn phiên bản **2.1**, HEX giữ nguyên; API **2.0.0**, phạm vi/kế hoạch nghiệp vụ **2.0**, Universal **3.1** không bị nâng giả chỉ để trùng số phiên bản. `release.json` giải thích từng miền phiên bản.
+Một MUI/theme/Router/Query; module không import module khác, app ghép public entries, shared không nghiệp vụ. Không generic CRUD engine hoặc framework vì dự đoán mở rộng. DTO/routes/tokens sinh từ canonical JSON, không sửa output. Graphite Gold dark-only giữ nguyên.
 
-Đọc `DOCUMENT_INDEX.md` để tìm nguồn chuẩn, `UPGRADE.md` trước thay bộ cũ, và `RELEASE_NOTES.md` để biết điểm đã sửa. Hướng dẫn task đã đồng bộ nhưng không đổi 84 việc/420 bước hoặc cộng tiến độ sản phẩm. Chỉ một kit được chỉ định hiện hành trong repo; archive/reference không là nguồn màu hay kế hoạch đang chạy.
+MSW chỉ demo/test ở lớp HTTP. Dữ liệu tổng hợp/schema-valid, seed/reset/clock/scenarios phủ success/error/permission/shop/version/unknown và các luồng; chạy React/browser thật. Không fixture JSX, provider SDK/secret trong bundle, mock fallback production hoặc thành công giả. Mock service không chứng minh DB/ledger/provider thật.
+
+Production-Ready/Enterprise-Grade Frontend là mục tiêu FE-G01..09 trong IMPLEMENTATION_PLAN.md. Đạt frontend mock không đồng nghĩa toàn hệ thống production. Ghi ĐẠT/CHƯA ĐẠT/CHƯA XÁC MINH/N/A đúng scope; missing/test chưa chạy không PASS. Thiếu backend credentials không chặn UAT mock; thiếu contract/test frontend bắt buộc chặn đúng phần.
+
+Một writer cho shared/router/contracts/tokens/lockfile/CI/ledger. Không tự push/merge/deploy/gửi tin/chi tiền hoặc giả peer review/owner acceptance. Handoff mỗi phiên ghi task/step/revision+diff/log/environment/gaps/next thật.
