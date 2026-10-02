@@ -9,13 +9,52 @@ export function SessionProvider({ children }: {
 }) {
     const cache = useQueryClient();
     const [online, setOnline] = useState(navigator.onLine);
+    const [forcedAnonymous, setForcedAnonymous] = useState(false);
     const query = useQuery({ queryKey: ['session'], queryFn: ({ signal }) => request('getSession', { signal }), retry: false, staleTime: 15000 });
     const { refetch } = query;
     useEffect(() => { if (query.data)
         setCsrfToken(query.data.data.csrfToken); }, [query.data]);
-    const refresh = useCallback(async () => { cancelScopeRequests(); await cache.cancelQueries({ queryKey: ['scope'] }); cache.removeQueries({ queryKey: ['scope'] }); cache.removeQueries({ queryKey: ['shop'] }); await refetch(); }, [cache, refetch]);
-    useEffect(() => { const off = () => setOnline(false); const on = () => { setOnline(true); void refresh(); }; const changed = () => { if (document.visibilityState === 'visible' && navigator.onLine)
-        void refetch(); }; window.addEventListener('offline', off); window.addEventListener('online', on); document.addEventListener('visibilitychange', changed); return () => { window.removeEventListener('offline', off); window.removeEventListener('online', on); document.removeEventListener('visibilitychange', changed); }; }, [refresh, refetch]);
-    const logout = useCallback(async () => { await request('logout'); cancelScopeRequests(); setCsrfToken(''); cache.clear(); window.location.assign('/login'); }, [cache]);
-    return <SessionContext.Provider value={{ session: query.data?.data || null, loading: query.isPending, error: query.error, refresh, logout, online }}>{children}</SessionContext.Provider>;
+    const refresh = useCallback(async () => {
+        cancelScopeRequests();
+        await Promise.all([
+            cache.cancelQueries({ queryKey: ['scope'] }),
+            cache.cancelQueries({ queryKey: ['shop'] }),
+            cache.cancelQueries({ queryKey: ['shops'] }),
+        ]);
+        cache.removeQueries({ queryKey: ['scope'] });
+        cache.removeQueries({ queryKey: ['shop'] });
+        cache.removeQueries({ queryKey: ['shops'] });
+        const result = await refetch();
+        if (result.isError || !result.data) {
+            setCsrfToken('');
+            setForcedAnonymous(true);
+            return;
+        }
+        setCsrfToken(result.data.data.csrfToken);
+        setForcedAnonymous(false);
+    }, [cache, refetch]);
+    useEffect(() => {
+        const off = () => setOnline(false);
+        const on = () => { setOnline(true); void refresh(); };
+        const changed = () => {
+            if (document.visibilityState === 'visible' && navigator.onLine)
+                void refresh();
+        };
+        window.addEventListener('offline', off);
+        window.addEventListener('online', on);
+        document.addEventListener('visibilitychange', changed);
+        return () => {
+            window.removeEventListener('offline', off);
+            window.removeEventListener('online', on);
+            document.removeEventListener('visibilitychange', changed);
+        };
+    }, [refresh]);
+    const logout = useCallback(async () => {
+        await request('logout');
+        setForcedAnonymous(true);
+        cancelScopeRequests();
+        setCsrfToken('');
+        cache.clear();
+    }, [cache]);
+    return <SessionContext.Provider value={{ session: forcedAnonymous ? null : query.data?.data || null, loading: query.isPending, error: query.error, refresh, logout, online }}>{children}</SessionContext.Provider>;
 }

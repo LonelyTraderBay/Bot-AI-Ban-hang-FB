@@ -1,16 +1,35 @@
 import { all, find, insert, ensure, checkVersion, touch, command, str, num, rows, record, now, units, sum, money, zero, assertOpenPeriod } from './database';
 import type { Input, Row } from './database';
-export function cashflow(shopId: string): Row {
-    const entries = all('financeEntries', shopId).filter(e => e.status === 'posted' && e.cashImpact !== false);
+type ReportWindow = { from: string; to: string; timezone: string; start: number; end: number };
+export function allTimeReportWindow(shopId: string): ReportWindow {
+    const timezone = str(all('shops', shopId)[0]?.timezone) || 'UTC';
+    return { from: '1970-01-01T00:00:00.000Z', to: '9999-12-31T23:59:59.999Z', timezone, start: 0, end: Date.parse('9999-12-31T23:59:59.999Z') };
+}
+function reportWindow(input: Input): ReportWindow {
+    const from = input.query.get('from') || '';
+    const to = input.query.get('to') || '';
+    const timezone = input.query.get('timezone') || '';
+    const start = Date.parse(from), end = Date.parse(to);
+    ensure(Number.isFinite(start) && Number.isFinite(end) && start < end, 'Khoảng báo cáo cần from < to theo ISO 8601.', 422, 'INVALID_REPORT_WINDOW');
+    try { new Intl.DateTimeFormat('en', { timeZone: timezone }).format(new Date(start)); }
+    catch { ensure(false, 'Múi giờ báo cáo không hợp lệ.', 422, 'INVALID_TIMEZONE'); }
+    return { from, to, timezone, start, end };
+}
+function inReportWindow(value: unknown, window: ReportWindow) {
+    const timestamp = Date.parse(str(value));
+    return Number.isFinite(timestamp) && timestamp >= window.start && timestamp < window.end;
+}
+export function cashflow(shopId: string, window: ReportWindow): Row {
+    const entries = all('financeEntries', shopId).filter(e => e.status === 'posted' && e.cashImpact !== false && inReportWindow(e.occurredAt, window));
     const received = sum(entries.filter(e => e.kind === 'receipt'), 'amount'), spent = sum(entries.filter(e => e.kind === 'disbursement'), 'amount');
     return {
-        shopId, from: '2026-09-01T00:00:00Z', to: now(), timezone: 'Asia/Vientiane', asOf: now(), receipts: money(received), disbursements: money(spent), netCashMovement: money(received - spent), warnings: ['Số liệu của phiên mô phỏng; không phải số dư tài khoản ngân hàng.']
+        shopId, from: window.from, to: window.to, timezone: window.timezone, asOf: now(), receipts: money(received), disbursements: money(spent), netCashMovement: money(received - spent), warnings: ['Số liệu của phiên mô phỏng; không phải số dư tài khoản ngân hàng.']
     };
 }
-export function profitLoss(shopId: string): Row {
-    const delivered = all('orders', shopId).filter(o => ['delivered', 'part_returned', 'returned'].includes(str(o.fulfillmentState)));
+export function profitLoss(shopId: string, window: ReportWindow): Row {
+    const delivered = all('orders', shopId).filter(o => ['delivered', 'part_returned', 'returned'].includes(str(o.fulfillmentState)) && inReportWindow(o.updatedAt, window));
     const revenue = sum(delivered, 'total');
-    const returned = all('returns', shopId).filter(r => ['inspected', 'closed'].includes(str(r.state)));
+    const returned = all('returns', shopId).filter(r => ['inspected', 'closed'].includes(str(r.state)) && inReportWindow(r.updatedAt, window));
     const refunds = sum(returned, 'refundObligation');
     const lines = delivered.flatMap(o => rows(o.lines));
     let cogs = lines.reduce((sum, l) => sum + (l.costSnapshot ? units(l.costSnapshot) : 0n), 0n);
@@ -22,19 +41,19 @@ export function profitLoss(shopId: string): Row {
                 cogs -= units(original.costSnapshot) * BigInt(num(l.quantity)) / BigInt(num(original.quantity));
         }
     }
-    const entries = all('financeEntries', shopId).filter(e => e.status === 'posted' && e.kind === 'disbursement');
+    const entries = all('financeEntries', shopId).filter(e => e.status === 'posted' && e.kind === 'disbursement' && inReportWindow(e.occurredAt, window));
     const expense = (classification: string) => sum(entries.filter(e => e.classification === classification), 'amount');
     const ops = expense('shipping') + expense('platform_fee') + expense('payment_fee') + expense('ai_expense') + expense('operating_expense');
     const complete = lines.every(l => l.costSnapshot !== null && l.costSnapshot !== undefined);
     return {
-        shopId, from: '2026-09-01T00:00:00Z', to: now(), timezone: 'Asia/Vientiane', asOf: now(), policyVersion: 'synthetic-policy-1', grossSales: money(revenue), discounts: zero(), salesReturns: money(refunds), netSales: money(revenue - refunds), cogs: complete ? money(cogs) : null, grossProfit: complete ? money(revenue - refunds - cogs) : null, operatingProfit: complete ? money(revenue - refunds - cogs - ops) : null, completeness: complete ? 'provisional' : 'incomplete', warnings: ['Báo cáo mô phỏng theo sự kiện giao hàng; chưa đối chiếu thuế hoặc ngân hàng thực.'], shippingIncome: zero(), shippingExpense: money(expense('shipping')), platformFees: money(expense('platform_fee')), paymentFees: money(expense('payment_fee')), aiExpense: money(expense('ai_expense')), otherOperatingExpenses: money(expense('operating_expense'))
+        shopId, from: window.from, to: window.to, timezone: window.timezone, asOf: now(), policyVersion: 'synthetic-policy-1', grossSales: money(revenue), discounts: zero(), salesReturns: money(refunds), netSales: money(revenue - refunds), cogs: complete ? money(cogs) : null, grossProfit: complete ? money(revenue - refunds - cogs) : null, operatingProfit: complete ? money(revenue - refunds - cogs - ops) : null, completeness: complete ? 'provisional' : 'incomplete', warnings: ['Báo cáo mô phỏng theo sự kiện giao hàng; chưa đối chiếu thuế hoặc ngân hàng thực.'], shippingIncome: zero(), shippingExpense: money(expense('shipping')), platformFees: money(expense('platform_fee')), paymentFees: money(expense('payment_fee')), aiExpense: money(expense('ai_expense')), otherOperatingExpenses: money(expense('operating_expense'))
     };
 }
 export function finance(op: string, input: Input): Row | undefined {
     const { shopId, body } = input;
     switch (op) {
-        case 'getCashflow': return cashflow(shopId);
-        case 'getProfitLoss': return profitLoss(shopId);
+        case 'getCashflow': return cashflow(shopId, reportWindow(input));
+        case 'getProfitLoss': return profitLoss(shopId, reportWindow(input));
         case 'createFinanceEntry': {
             ensure(units(body.amount) > 0n, 'Số tiền phải lớn hơn 0.', 422);
             return insert('financeEntries', 'FinanceEntry', shopId, { ...body, status: 'draft', reversalOf: null });

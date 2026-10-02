@@ -36,6 +36,8 @@ void start().catch(() => { const root = document.getElementById('root'); if (roo
     const title = document.createElement('h1');
     title.textContent = 'Chưa khởi động được ứng dụng';
     const text = document.createElement('p');
-    text.textContent = 'Chạy npm run setup để tạo service worker mô phỏng, rồi npm run dev. Xem README nếu trình duyệt chặn Service Worker.';
+    text.textContent = __MOCK__
+        ? 'Chạy npm run setup để tạo service worker mô phỏng, rồi npm run dev. Xem README nếu trình duyệt chặn Service Worker.'
+        : 'Không thể khởi tạo ứng dụng. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp tục.';
     root.append(title, text);
 } });

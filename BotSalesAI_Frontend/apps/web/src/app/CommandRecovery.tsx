@@ -5,7 +5,7 @@ import { request } from '@/shared/api/client';
 import { intentSnapshot, subscribeIntents, resolveObservedIntent } from '@/shared/api/intents';
 import { useScope } from '@/shared/model/scope';
 export function CommandRecovery() {
-    const { shop } = useScope();
+    const { shop, session, membership } = useScope();
     const cache = useQueryClient();
     const intents = useSyncExternalStore(subscribeIntents, intentSnapshot, intentSnapshot).filter(x => x.shopId === shop.id);
     const [message, setMessage] = useState('');
@@ -21,7 +21,7 @@ export function CommandRecovery() {
             const result = await request('getCommand', { path: { shopId: shop.id, commandId: intent.commandId } });
             if (result.data.status === 'succeeded' || result.data.status === 'failed') {
                 resolveObservedIntent(intent.intentId);
-                await cache.invalidateQueries({ queryKey: ['scope'] });
+                await cache.invalidateQueries({ queryKey: ['scope', session.user.id, shop.id, membership.permissionVersion] });
             }
             else
                 setMessage('Backend chưa xác minh kết quả. Thao tác tương ứng tiếp tục bị khóa.');

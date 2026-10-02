@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import type { ComponentType, ReactNode } from 'react';
-import { createBrowserRouter, Navigate, useRouteError, Link as RouterLink } from 'react-router-dom';
+import { createBrowserRouter, Navigate, useLocation, useRouteError, Link as RouterLink } from 'react-router-dom';
 import { Alert, Box, Button, LinearProgress, Stack, Typography } from '@mui/material';
 import { routeManifest } from '@botsales/contracts';
 import type { CustomerConfirmationRequest } from '@botsales/contracts';
@@ -125,7 +125,7 @@ export const pages: Record<string, ComponentType> = {
     R53: MarketingPage,
     R54: ServiceCasesPage,
 };
-function Loading() { return <Box sx={{ p: 3 }} aria-label="Đang tải màn hình"><LinearProgress /></Box>; }
+function Loading() { return <Box sx={{ p: 3 }} role="status"><LinearProgress aria-label="Đang tải màn hình" /></Box>; }
 function PermissionGate({ permission, children }: {
     permission: string | null;
     children: ReactNode;
@@ -140,8 +140,8 @@ function GlobalGate({ children }: {
 }) { const auth = useSession(); if (auth.loading)
     return <Loading />; if (!auth.session)
     return <Navigate to="/login" replace/>; return <>{children}</>; }
-function RouteError() { const error = useRouteError(); return <Box sx={{ p: 4 }}><Typography component="h1" variant="h5">Không thể mở màn hình</Typography><Alert severity="error" sx={{ my: 2 }}>Có lỗi tải hoặc hiển thị. Bản nháp chưa gửi không được coi là đã lưu. {error instanceof Error ? 'Mở nhật ký đã khử dữ liệu nhạy cảm để chẩn đoán.' : ''}</Alert><Stack direction="row" gap={1}><Button onClick={() => window.location.reload()}>Tải lại</Button><Button component={RouterLink} to="/workspaces">Chọn cửa hàng</Button></Stack></Box>; }
-function NotFound() { return <Box sx={{ p: 4 }}><Typography variant="h4" component="h1">Không tìm thấy trang</Typography><Button component={RouterLink} to="/workspaces">Về cửa hàng</Button></Box>; }
+function RouteError() { const error = useRouteError(); const location = useLocation(); const shopScoped = location.pathname.startsWith('/s/'); return <Box component={shopScoped ? 'div' : 'main'} id={shopScoped ? undefined : 'main-content'} tabIndex={-1} sx={{ p: 4, outline: 'none' }}><Typography component="h1" variant="h5">Không thể mở màn hình</Typography><Alert severity="error" sx={{ my: 2 }}>Có lỗi tải hoặc hiển thị. Bản nháp chưa gửi không được coi là đã lưu. {error instanceof Error ? 'Mở nhật ký đã khử dữ liệu nhạy cảm để chẩn đoán.' : ''}</Alert><Stack direction="row" gap={1}><Button onClick={() => window.location.reload()}>Tải lại</Button><Button component={RouterLink} to="/workspaces">Chọn cửa hàng</Button></Stack></Box>; }
+function NotFound() { return <Box component="main" id="main-content" tabIndex={-1} sx={{ p: 4, outline: 'none' }}><Typography variant="h4" component="h1">Không tìm thấy trang</Typography><Button component={RouterLink} to="/workspaces">Về cửa hàng</Button></Box>; }
 export const router = createBrowserRouter([
     { path: '/', element: <Navigate to="/workspaces" replace/> },
     ...routeManifest.routes.filter(r => !r.path.startsWith('/s/')).map(r => { const Page = pages[r.id]; if (!Page)

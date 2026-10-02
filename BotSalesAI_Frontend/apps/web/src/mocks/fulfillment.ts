@@ -1,4 +1,4 @@
-import { all, find, insert, ensure, checkVersion, touch, command, str, num, rows, now, stockFor, move, units, money } from './database';
+import { all, find, insert, ensure, checkVersion, touch, command, str, strings, num, rows, now, stockFor, move, units, money } from './database';
 import type { Input, Row } from './database';
 export function fulfillment(op: string, input: Input): Row | undefined {
     const { shopId, body } = input;
@@ -9,10 +9,12 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             if (notification) {
                 checkVersion(notification, input);
                 ensure(notification.recipientUserId === input.userId, 'Thông báo dành cho nhân viên khác.', 403);
+                ensure(strings(notification.allowedActions).includes('acknowledge'), 'Thông báo không còn cho phép nhận việc.', 409, 'CAPABILITY_UNAVAILABLE');
             }
             const task = find('workItems', notification ? str(notification.workItemId) : input.id, shopId);
             if (!notification)
                 checkVersion(task, input);
+            ensure(strings(task.allowedActions).includes('claim'), 'Công việc không còn cho phép nhận việc.', 409, 'CAPABILITY_UNAVAILABLE');
             ensure(task.state === 'queued' && !task.assigneeUserId, 'Công việc đã được nhận hoặc không còn hiệu lực.');
             task.state = 'claimed';
             task.assigneeUserId = input.userId;
@@ -36,24 +38,32 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             const task = find('workItems', input.id, shopId);
             checkVersion(task, input);
             const action = str(body.action);
+            const allowedActions = strings(task.allowedActions);
+            ensure(allowedActions.includes(action), 'Hành động không còn được phép theo công việc hiện tại.', 409, 'CAPABILITY_UNAVAILABLE');
             ensure(task.state !== 'cancelled' && task.state !== 'completed', 'Công việc đã kết thúc.');
             if (action === 'begin') {
                 ensure(task.assigneeUserId === input.userId, 'Bạn chưa nhận việc.');
+                ensure(['claimed', 'blocked'].includes(str(task.state)), 'Công việc chưa ở trạng thái có thể bắt đầu.');
                 task.state = 'working';
+                task.allowedActions = task.kind === 'prepare_order' ? ['block'] : ['complete', 'block'];
             }
             if (action === 'block') {
                 ensure(str(body.reason).trim().length >= 5, 'Cần lý do cụ thể.', 422);
                 task.state = 'blocked';
                 task.blockedReason = body.reason;
+                task.allowedActions = ['begin', ...(allowedActions.includes('reassign') ? ['reassign'] : [])];
             }
             if (action === 'complete') {
                 ensure(task.kind !== 'prepare_order', 'Việc chuẩn bị chỉ hoàn tất qua luồng bàn giao hàng.');
+                ensure(task.state === 'working', 'Chỉ hoàn tất công việc đang xử lý.');
                 task.state = 'completed';
+                task.allowedActions = [];
             }
             if (action === 'reassign') {
                 ensure(all('members', shopId).some(m => m.userId === body.assigneeUserId && m.status === 'active'), 'Người nhận không hợp lệ.', 422);
                 task.assigneeUserId = body.assigneeUserId;
                 task.state = 'claimed';
+                task.allowedActions = ['begin', 'block'];
             }
             return touch(task);
         }
@@ -160,14 +170,15 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             for (const inspected of rows(body.lines)) {
                 const line = rows(r.lines).find(l => l.orderLineId === inspected.orderLineId);
                 ensure(line, 'Dòng trả không hợp lệ.', 422);
-                ensure(num(inspected.acceptedQuantity) === num(line.quantity), 'Mẫu yêu cầu kiểm đúng lượng đã khai báo; sửa yêu cầu trước nếu lệch.');
+                const acceptedQuantity = num(inspected.acceptedQuantity);
+                ensure(Number.isInteger(acceptedQuantity) && acceptedQuantity >= 0 && acceptedQuantity <= num(line.quantity), 'Số lượng nhận phải là số nguyên từ 0 đến số lượng đã yêu cầu.', 422);
                 const original = rows(order.lines).find(l => l.id === line.orderLineId);
                 ensure(original, 'Dòng đơn không tồn tại.');
                 line.disposition = inspected.disposition;
                 line.reason = inspected.reason;
-                if (inspected.disposition === 'sellable')
-                    move(input, stockFor(shopId, str(original.variantId), str(order.warehouseId)), num(line.quantity), 0, 'return', str(inspected.reason), { type: 'return', id: r.id });
-                refund += units(original.unitPrice) * BigInt(num(line.quantity));
+                if (inspected.disposition === 'sellable' && acceptedQuantity > 0)
+                    move(input, stockFor(shopId, str(original.variantId), str(order.warehouseId)), acceptedQuantity, 0, 'return', str(inspected.reason), { type: 'return', id: r.id });
+                refund += units(original.unitPrice) * BigInt(acceptedQuantity);
             }
             ensure(rows(r.lines).every(l => l.disposition !== 'pending'), 'Phải kiểm đủ các dòng.');
             r.state = 'inspected';

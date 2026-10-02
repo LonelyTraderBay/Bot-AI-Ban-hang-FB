@@ -4,11 +4,12 @@ import { Alert, Box, Button, Divider, IconButton, MenuItem, Stack, TextField, Ty
 import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import AddRounded from '@mui/icons-material/AddRounded';
 import type { Order, OrderQuote, CustomerConfirmationRequest, CustomerConfirmation, ReturnCase, ReturnInspection } from '@botsales/contracts';
-import { useApi, useCommand } from '@/shared/api/hooks';
+import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { dateTime } from '@/shared/model/format';
-import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine } from '@/shared/ui/components';
+import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
+import { getDemoAddressOptions } from './demo-address-preview';
 export function OrdersPage() { const { shop } = useScope(); const navigate = useNavigate(); const list = useApi('listOrders', { query: useListQuery() }); return <><PageHeader title="Đơn hàng" subtitle="Tách riêng trạng thái đơn, giao hàng và thanh toán." actions={<MutationButton permission="orders.write" variant="contained" onClick={() => navigate(`/s/${shop.id}/orders/new`)}>Tạo đơn hàng</MutationButton>}/><Panel><Toolbar placeholder="Tìm mã đơn hoặc khách hàng…"/><QueryState query={list}>{list.data && <><DataTable rows={list.data.data} rowKey={o => o.id} columns={[
     {
         key: 'id', label: 'Đơn hàng', render: o => <Stack><Typography fontWeight={650}>{o.id}</Typography><Typography variant="caption" color="text.secondary">{dateTime(o.createdAt, shop.timezone)}</Typography></Stack>
@@ -21,15 +22,28 @@ function DraftForm({ initial, onSaved }: {
 }) {
     const { shop } = useScope();
     const [params] = useSearchParams();
-    const customers = useApi('listCustomers', { query: { limit: 100 } });
-    const products = useApi('listProducts', { query: { limit: 100 } });
-    const conv = useApi('listConversations', { query: { limit: 100 } }, useCan('conversations.read'));
+    const canReadCustomers = useCan('customers.read');
+    const canReadProducts = useCan('catalog.read');
+    const canReadConversations = useCan('conversations.read');
+    const canWriteOrders = useCan('orders.write');
+    const [customerSearch, setCustomerSearch] = useState('');
+    const [productSearch, setProductSearch] = useState('');
+    const customers = usePagedApi('listCustomers', { query: { q: customerSearch.trim() || undefined, limit: 20 } }, canReadCustomers);
+    const products = usePagedApi('listProducts', { query: { q: productSearch.trim() || undefined, limit: 20 } }, canReadProducts);
     const create = useCommand('createOrder', ['listOrders']);
     const update = useCommand('updateOrderDraft', ['getOrder', 'listOrders']);
-    const [customerId, setCustomer] = useState(initial?.customerId || params.get('customerId') || ''), [conversationId, setConversation] = useState(initial?.conversationId || params.get('conversationId') || ''), [warehouse, setWarehouse] = useState(initial?.warehouseId || shop.defaultWarehouseId), [addressId, setAddress] = useState(initial?.shippingAddressId || ''), [method, setMethod] = useState<'cod' | 'prepay'>(initial?.paymentMethod || 'cod'), [notes, setNotes] = useState('');
-    const [lines, setLines] = useState(initial?.lines.map(l => ({ key: l.id, variantId: l.variantId, quantity: String(l.quantity) })) || [{ key: crypto.randomUUID(), variantId: '', quantity: '1' }]);
+    const initialNotes = typeof initial?.notes === 'string' ? initial.notes : '';
+    const [customerId, setCustomer] = useState(initial?.customerId || params.get('customerId') || ''), [conversationId, setConversation] = useState(initial?.conversationId || params.get('conversationId') || ''), [warehouse, setWarehouse] = useState(initial?.warehouseId || shop.defaultWarehouseId), [addressId, setAddress] = useState(initial?.shippingAddressId || ''), [method, setMethod] = useState<'cod' | 'prepay'>(initial?.paymentMethod || 'cod'), [notes, setNotes] = useState(initialNotes);
+    const conv = usePagedApi('listConversations', { query: { customerId: customerId || undefined, limit: 20 } }, canReadConversations && !!customerId);
+    const [lines, setLines] = useState(initial?.lines.map(l => ({ key: l.id, variantId: l.variantId, variantLabel: `${l.name} · ${l.sku}`, quantity: String(l.quantity) })) || [{ key: crypto.randomUUID(), variantId: '', variantLabel: '', quantity: '1' }]);
     const variants = products.data?.data.filter(p => p.status === 'active').flatMap(p => p.variants.filter(v => v.active).map(v => ({ ...v, productName: p.name }))) || [];
-    const valid = !!customerId && !!warehouse && lines.length > 0 && lines.every(l => l.variantId && /^\d+$/.test(l.quantity) && Number(l.quantity) > 0) && new Set(lines.map(l => l.variantId)).size === lines.length;
+    const lineQuantityError = (value: string) => value.length > 0 && (!/^\d+$/.test(value) || Number(value) < 1 || Number(value) > 1_000_000);
+    const duplicateVariants = new Set(lines.map(l => l.variantId).filter(Boolean)).size !== lines.filter(l => l.variantId).length;
+    const valid = !!customerId && !!warehouse.trim() && lines.length > 0 && lines.length <= 100 && lines.every(l => l.variantId && !lineQuantityError(l.quantity)) && !duplicateVariants && notes.length <= 2_000 && (initial !== undefined || (canReadCustomers && canReadProducts));
+    const chooseVariant = (key: string, variantId: string) => {
+        const selected = variants.find(v => v.id === variantId);
+        setLines(current => current.map(line => line.key === key ? { ...line, variantId, variantLabel: selected ? `${selected.productName} · ${selected.name} · ${selected.sku}` : line.variantLabel } : line));
+    };
     const save = async () => { try {
         const base = {
             customerId, conversationId: conversationId || null, warehouseId: warehouse, lines: lines.map(l => ({ variantId: l.variantId, quantity: Number(l.quantity) })), notes
@@ -38,7 +52,58 @@ function DraftForm({ initial, onSaved }: {
         onSaved(response.data);
     }
     catch { /* preserve selections and errors */ } };
-    return <Stack gap={3}><ErrorNotice error={create.error || update.error}/><Panel title="Người mua và giao hàng"><Stack gap={2} sx={{ p: 3 }}><TextField select label="Khách hàng" value={customerId} onChange={e => { setCustomer(e.target.value); setConversation(''); }}>{customers.data?.data.map(c => <MenuItem key={c.id} value={c.id}>{c.displayName}</MenuItem>)}</TextField><TextField select label="Hội thoại liên quan" value={conversationId} onChange={e => setConversation(e.target.value)}><MenuItem value="">Không liên kết</MenuItem>{conv.data?.data.filter(c => c.customerId === customerId).map(c => <MenuItem key={c.id} value={c.id}>{c.displayName} · {c.id}</MenuItem>)}</TextField><Stack direction={{ xs: 'column', md: 'row' }} gap={2}><TextField label="Mã kho xuất" value={warehouse} onChange={e => setWarehouse(e.target.value)} fullWidth/><TextField label="Mã địa chỉ đã xác minh" value={addressId} onChange={e => setAddress(e.target.value)} disabled={!!initial} fullWidth helperText="Hợp đồng hiện nhận shippingAddressId từ hệ thống địa chỉ. Không tự coi ghi chú là địa chỉ được xác minh."/></Stack><TextField label="Thanh toán" select value={method} onChange={e => setMethod(e.target.value as typeof method)} disabled={!!initial}><MenuItem value="cod">Thu khi giao (COD)</MenuItem><MenuItem value="prepay">Trả trước, cần xác minh tiền</MenuItem></TextField></Stack></Panel><Panel title="Sản phẩm đặt mua" action={<Button startIcon={<AddRounded />} onClick={() => setLines([...lines, { key: crypto.randomUUID(), variantId: '', quantity: '1' }])}>Thêm dòng</Button>}><Stack gap={2} sx={{ p: 3 }}>{lines.map((line, index) => <Stack key={line.key} direction={{ xs: 'column', sm: 'row' }} gap={2}><TextField label={`Sản phẩm ${index + 1}`} select fullWidth value={line.variantId} onChange={e => setLines(lines.map(l => l.key === line.key ? { ...l, variantId: e.target.value } : l))}>{variants.map(v => <MenuItem key={v.id} value={v.id}>{v.productName} · {v.name} · {v.sku}</MenuItem>)}</TextField><TextField label="Số lượng" value={line.quantity} onChange={e => setLines(lines.map(l => l.key === line.key ? { ...l, quantity: e.target.value } : l))} inputProps={{ inputMode: 'numeric' }} sx={{ minWidth: 100, maxWidth: { sm: 140 } }}/><IconButton aria-label={`Bỏ dòng ${index + 1}`} disabled={lines.length === 1} onClick={() => setLines(lines.filter(l => l.key !== line.key))}><DeleteOutlineRounded /></IconButton></Stack>)}<Alert severity="info">Tổng tiền và khả năng giữ hàng được tính lại bởi API khi lấy báo giá và xác nhận; không tin tổng do trình duyệt tự tính.</Alert><TextField label="Ghi chú chuẩn bị" value={notes} onChange={e => setNotes(e.target.value)} multiline minRows={2}/></Stack></Panel><MutationButton permission="orders.write" variant="contained" busy={create.pending || update.pending} disabled={!valid} onClick={() => void save()}>Lưu đơn nháp</MutationButton></Stack>;
+    const selectedCustomer = customers.data?.data.find(customer => customer.id === customerId);
+    return <Stack gap={3}>
+        <ErrorNotice error={create.error || update.error}/>
+        {!canReadCustomers && <Alert severity="warning">Bạn cần quyền customers.read để tìm và tạo đơn với khách hàng. Đơn nháp hiện có vẫn giữ nguyên mã khách.</Alert>}
+        {!canReadProducts && <Alert severity="warning">Bạn cần quyền catalog.read để tìm và chọn sản phẩm cho đơn hàng.</Alert>}
+        {customers.isError && <ErrorNotice error={customers.error}/>}
+        {products.isError && <ErrorNotice error={products.error}/>}
+        <Panel title="Người mua và giao hàng"><Stack gap={2} sx={{ p: 3 }}>
+            <TextField label="Tìm khách hàng" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} disabled={!canReadCustomers} helperText="Tìm qua listCustomers với q; chỉ chọn mã do API trả về."/>
+            <TextField select label="Khách hàng" value={customerId} onChange={e => { setCustomer(e.target.value); setConversation(''); }} disabled={!canReadCustomers && !initial} error={canReadCustomers && !customers.isPending && !customerId} helperText={canReadCustomers ? (customers.isPending ? 'Đang tải khách hàng…' : customers.data?.data.length === 0 ? 'Không tìm thấy khách phù hợp.' : undefined) : undefined}>
+                {customerId && !selectedCustomer && <MenuItem value={customerId}>Đang giữ mã khách: {customerId}</MenuItem>}
+                {customers.data?.data.map(customer => <MenuItem key={customer.id} value={customer.id}>{customer.displayName}</MenuItem>)}
+            </TextField>
+            <LookupLoadMore label="khách hàng" loadedCount={customers.loadedCount} hasMore={customers.hasMore} busy={customers.isLoadingMore} onLoadMore={customers.loadMore}/>
+            <TextField select label="Hội thoại liên quan" value={conversationId} onChange={e => setConversation(e.target.value)} disabled={!canReadConversations || !customerId} helperText={!canReadConversations ? 'Không có quyền đọc hội thoại; liên kết hội thoại là tùy chọn.' : undefined}>
+                <MenuItem value="">Không liên kết</MenuItem>{conv.data?.data.filter(conversation => conversation.customerId === customerId).map(conversation => <MenuItem key={conversation.id} value={conversation.id}>{conversation.displayName} · {conversation.id}</MenuItem>)}
+            </TextField>
+            <LookupLoadMore label="hội thoại" loadedCount={conv.loadedCount} hasMore={conv.hasMore} busy={conv.isLoadingMore} onLoadMore={conv.loadMore}/>
+            <Stack direction={{ xs: 'column', md: 'row' }} gap={2}>
+                <TextField label="Mã kho xuất" value={warehouse} onChange={e => setWarehouse(e.target.value)} fullWidth/>
+                {__MOCK__ ? <TextField select label="Địa chỉ giao hàng (mẫu demo)" value={addressId} onChange={e => setAddress(e.target.value)} disabled={!!initial} fullWidth helperText="Lựa chọn tổng hợp để kiểm thử luồng đơn hàng.">
+                    <MenuItem value="">Chưa chọn địa chỉ</MenuItem>
+                    {getDemoAddressOptions(shop.id).map(address => <MenuItem key={address.id} value={address.id}>{address.label}</MenuItem>)}
+                </TextField> : <TextField label="Mã địa chỉ đã xác minh" value={addressId} onChange={e => setAddress(e.target.value)} disabled={!!initial} fullWidth helperText="Nhập ID do hệ thống địa chỉ cung cấp."/>}
+            </Stack>
+            {__MOCK__ ? <Alert severity="info">Địa chỉ mẫu chỉ phục vụ nghiệm thu giao diện. Dữ liệu demo không đại diện địa chỉ thật và không xác minh địa chỉ với khách hàng.</Alert> : <Alert severity="info">Contract frontend chưa có API CRUD địa chỉ giao hàng; chỉ sử dụng ID do hệ thống địa chỉ cung cấp.</Alert>}
+            <TextField label="Thanh toán" select value={method} onChange={e => setMethod(e.target.value as typeof method)} disabled={!!initial}><MenuItem value="cod">Thu khi giao (COD)</MenuItem><MenuItem value="prepay">Trả trước, cần xác minh tiền</MenuItem></TextField>
+        </Stack></Panel>
+        <Panel title="Sản phẩm đặt mua" subtitle="Bộ chọn tìm kiếm từ API; giá và tồn kho chỉ được chốt khi lấy báo giá." action={<Button startIcon={<AddRounded />} disabled={lines.length >= 100} onClick={() => setLines(current => [...current, { key: crypto.randomUUID(), variantId: '', variantLabel: '', quantity: '1' }])}>Thêm dòng</Button>}>
+            <Stack gap={2} sx={{ p: 3 }}>
+                <TextField label="Tìm sản phẩm hoặc SKU" value={productSearch} onChange={e => setProductSearch(e.target.value)} disabled={!canReadProducts} helperText="Tìm từ listProducts với q; biến thể không hoạt động không được chọn."/>
+                {lines.map((line, index) => {
+                    const selectedVariant = variants.find(variant => variant.id === line.variantId);
+                    const quantityInvalid = lineQuantityError(line.quantity);
+                    return <Stack key={line.key} direction={{ xs: 'column', sm: 'row' }} gap={2}>
+                        <TextField label={`Sản phẩm ${index + 1}`} select fullWidth value={line.variantId} disabled={!canReadProducts && !initial} onChange={event => chooseVariant(line.key, event.target.value)} error={duplicateVariants && !!line.variantId} helperText={duplicateVariants && line.variantId ? 'Không thêm cùng một biến thể hai lần; hãy gộp số lượng vào một dòng.' : undefined}>
+                            {line.variantId && !selectedVariant && <MenuItem value={line.variantId}>{line.variantLabel || `Đang giữ biến thể: ${line.variantId}`}</MenuItem>}
+                            {variants.map(variant => <MenuItem key={variant.id} value={variant.id} disabled={lines.some(other => other.key !== line.key && other.variantId === variant.id)}>{variant.productName} · {variant.name} · {variant.sku}</MenuItem>)}
+                            {canReadProducts && !products.isPending && variants.length === 0 && !line.variantId && <MenuItem disabled value="">Không tìm thấy sản phẩm/biến thể phù hợp</MenuItem>}
+                        </TextField>
+                        <TextField label="Số lượng" value={line.quantity} onChange={event => setLines(current => current.map(item => item.key === line.key ? { ...item, quantity: event.target.value } : item))} error={quantityInvalid} helperText={quantityInvalid ? 'Nhập số nguyên từ 1 đến 1.000.000.' : 'Số lượng nguyên theo hợp đồng.'} inputProps={{ inputMode: 'numeric', 'aria-invalid': quantityInvalid }} sx={{ minWidth: 100, maxWidth: { sm: 180 } }}/>
+                        <IconButton aria-label={`Bỏ dòng ${index + 1}`} disabled={lines.length === 1} onClick={() => setLines(current => current.filter(item => item.key !== line.key))}><DeleteOutlineRounded /></IconButton>
+                    </Stack>;
+                })}
+                <LookupLoadMore label="sản phẩm" loadedCount={products.loadedCount} hasMore={products.hasMore} busy={products.isLoadingMore} onLoadMore={products.loadMore}/>
+                {lines.length >= 100 && <Alert severity="warning">Đơn nháp đạt giới hạn 100 dòng theo hợp đồng.</Alert>}
+                <Alert severity="info">Tổng tiền và khả năng giữ hàng được tính lại bởi API khi lấy báo giá và xác nhận; không tin tổng do trình duyệt tự tính.</Alert>
+                <TextField label="Ghi chú chuẩn bị" value={notes} onChange={e => setNotes(e.target.value)} error={notes.length > 2_000} helperText={`${notes.length}/2.000 ký tự`} multiline minRows={2} inputProps={{ maxLength: 2_000 }}/>
+            </Stack>
+        </Panel>
+        <MutationButton permission="orders.write" variant="contained" busy={create.pending || update.pending} disabled={!valid || !canWriteOrders} onClick={() => void save()}>Lưu đơn nháp</MutationButton>
+    </Stack>;
 }
 export function NewOrderPage() { const { shop } = useScope(); const navigate = useNavigate(); return <><PageHeader title="Tạo đơn hàng" subtitle="Lưu nháp trước, sau đó báo giá và xác nhận khách." actions={<RouteLink to={`/s/${shop.id}/orders`}>Danh sách đơn</RouteLink>}/><DraftForm onSaved={o => navigate(`/s/${shop.id}/orders/${o.id}`)}/></>; }
 export function OrderDetailPage({ simulateCustomerConfirmation }: {
@@ -48,7 +113,7 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
     const { shop } = useScope();
     const get = useApi('getOrder', { path: { orderId } });
     const order = get.data?.data;
-    const quoteOp = useCommand('quoteOrder', []);
+    const quoteOp = useCommand('quoteOrder', ['getOrder']);
     const record = useCommand('recordCustomerConfirmation', []);
     const confirm = useCommand('confirmOrder', ['getOrder', 'listOrders', 'listStockSnapshots', 'getDashboard', 'listWorkItems', 'listNotifications', 'listPrepJobs']);
     const cancel = useCommand('cancelOrder', ['getOrder', 'listOrders', 'listStockSnapshots', 'listWorkItems', 'listPrepJobs']);
@@ -56,6 +121,22 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
     const refund = useCommand('refundOrder', ['getOrder', 'listOrders', 'getCashflow']);
     const [quote, setQuote] = useState<OrderQuote | null>(null), [confirmation, setConfirmation] = useState<CustomerConfirmation | null>(null), [editing, setEditing] = useState(false), [action, setAction] = useState<'cancel' | 'pay' | 'refund' | 'evidence' | null>(null), [error, setError] = useState<Error | null>(null);
     const [hash, setHash] = useState(''), [identity, setIdentity] = useState(''), [messageId, setMessage] = useState(''), [amount, setAmount] = useState(''), [reference, setReference] = useState(''), [evidenceRef, setEvidence] = useState(''), [reason, setReason] = useState('');
+    const [nowMs, setNowMs] = useState(() => Date.now());
+    const [serverOffsetMs, setServerOffsetMs] = useState(0);
+    const synchronizeApiTime = (asOf: string) => {
+        const apiTime = Date.parse(asOf);
+        if (Number.isFinite(apiTime))
+            setServerOffsetMs(apiTime - nowMs);
+    };
+    useEffect(() => {
+        if (!quote)
+            return;
+        const timer = window.setInterval(() => setNowMs(Date.now()), 1_000);
+        return () => window.clearInterval(timer);
+    }, [quote]);
+    const effectiveNowMs = nowMs + serverOffsetMs;
+    const quoteExpired = !!quote && Date.parse(quote.expiresAt) <= effectiveNowMs;
+    const confirmationExpired = !!confirmation && (confirmation.status !== 'valid' || Date.parse(confirmation.expiresAt) <= effectiveNowMs);
     useEffect(() => { if (order && quote && order.version !== quote.orderVersion) {
         setQuote(null);
         setConfirmation(null);
@@ -63,6 +144,7 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
     const collect = async () => { if (!quote)
         return; try {
         const r = await record.execute({ path: { orderId }, body: { quoteId: quote.id, quoteHash: hash, quoteVersion: quote.orderVersion, customerIdentityId: identity, sourceMessageId: messageId } });
+        synchronizeApiTime(r.meta.asOf);
         setConfirmation(r.data);
         setAction(null);
     }
@@ -74,6 +156,7 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
         setIdentity(evidence.customerIdentityId);
         setMessage(evidence.sourceMessageId);
         const r = await record.execute({ path: { orderId }, body: evidence });
+        synchronizeApiTime(r.meta.asOf);
         setConfirmation(r.data);
     }
     catch (e) {
@@ -90,12 +173,13 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
             ]}/><Box sx={{ p: 3, textAlign: 'right' }}><Typography color="text.secondary">Tổng từ API</Typography><Typography variant="h4"><Amount value={order.total}/></Typography></Box></Panel><Panel title="Thông tin xử lý"><Box sx={{ px: 3, pb: 2 }}><DetailLine label="Khách"><RouteLink to={`/s/${shop.id}/customers/${order.customerId}`}>{order.customerId}</RouteLink></DetailLine><DetailLine label="Kho">{order.warehouseId}</DetailLine><DetailLine label="Địa chỉ">{order.shippingAddressId || 'Chưa có địa chỉ được xác minh'}</DetailLine><DetailLine label="Thanh toán">{order.paymentMethod === 'cod' ? 'COD' : 'Trả trước'}</DetailLine>{order.conversationId && <RouteLink to={`/s/${shop.id}/inbox/${order.conversationId}`}>Mở hội thoại</RouteLink>}{order.prepTaskId && <RouteLink to={`/s/${shop.id}/fulfillment?orderId=${order.id}`}>Chuẩn bị đơn</RouteLink>}</Box></Panel></Box>
  <Stack direction="row" gap={1.5} flexWrap="wrap" sx={{ mt: 3 }}><MutationButton permission="orders.write" allowedActions={order.allowedActions} action="edit" onClick={() => setEditing(true)}>Sửa đơn nháp</MutationButton><MutationButton permission="orders.write" allowedActions={order.allowedActions} action="quote" variant="contained" busy={quoteOp.pending} onClick={async () => { try {
                 const r = await quoteOp.execute({ path: { orderId }, version: order.version });
+                synchronizeApiTime(r.meta.asOf);
                 setQuote(r.data);
                 setConfirmation(null);
                 setHash(typeof r.data.quoteHash === 'string' ? r.data.quoteHash : '');
             }
             catch { /* errors visible */ } }}>Lấy báo giá hiện tại</MutationButton><MutationButton permission="orders.write" allowedActions={order.allowedActions} action="cancel" color="error" onClick={() => setAction('cancel')}>Hủy đơn</MutationButton><MutationButton permission="finance.post" allowedActions={order.allowedActions} action="record_payment" onClick={() => { setAmount(order.total?.amount || ''); setReason(''); setReference(''); setEvidence(''); setAction('pay'); }}>Ghi nhận tiền đã thu</MutationButton><MutationButton permission="finance.refund" allowedActions={order.allowedActions} action="request_refund" onClick={() => { setAmount(''); setReason(''); setReference(''); setEvidence(''); setAction('refund'); }}>Ghi nhận khoản đã hoàn</MutationButton>{order.allowedActions.includes('request_return') && <RouteLink to={`/s/${shop.id}/returns?orderId=${order.id}`}>Tạo yêu cầu trả hàng</RouteLink>}</Stack>
- {quote && <Panel title="Báo giá và xác nhận khách" subtitle={`Bản đơn ${quote.orderVersion} · Hết hạn ${dateTime(quote.expiresAt, shop.timezone)}`} sx={{ mt: 3 }}><Stack gap={2} sx={{ p: 3 }}><Typography variant="h5"><Amount value={quote.total}/></Typography>{quote.warnings.map((w, i) => <Alert key={i} severity="info">{w}</Alert>)}<Typography variant="body2">Mã báo giá: {quote.id}</Typography><Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>Hash do server cung cấp: {hash || 'Chưa có. Backend phải cung cấp hash và bằng chứng khách trước khi chốt.'}</Typography>{confirmation ? <Alert severity="success">Đã ghi nhận bằng chứng {confirmation.id}. Xác nhận lại giá/tồn khi chốt đơn.</Alert> : <Stack direction="row" gap={1} flexWrap="wrap"><Button onClick={() => setAction('evidence')}>Nhập bằng chứng xác nhận khách</Button>{simulateCustomerConfirmation && <Button variant="outlined" disabled={record.pending} onClick={() => void mockConfirm()}>Mô phỏng khách đồng ý báo giá</Button>}</Stack>}<MutationButton permission="orders.confirm" variant="contained" disabled={!confirmation} busy={confirm.pending} onClick={async () => { if (!confirmation)
+ {quote && <Panel title="Báo giá và xác nhận khách" subtitle={`Bản đơn ${quote.orderVersion} · Hết hạn ${dateTime(quote.expiresAt, shop.timezone)}`} sx={{ mt: 3 }}><Stack gap={2} sx={{ p: 3 }}><Typography variant="h5"><Amount value={quote.total}/></Typography>{quote.warnings.map((w, i) => <Alert key={i} severity="info">{w}</Alert>)}<Typography variant="body2">Mã báo giá: {quote.id}</Typography><Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>Hash do server cung cấp: {hash || 'Chưa có. Backend phải cung cấp hash và bằng chứng khách trước khi chốt.'}</Typography>{quoteExpired && <Alert severity="warning">Báo giá đã hết hạn. Lấy báo giá mới và xác nhận lại với khách trước khi chốt.</Alert>}{confirmation ? <Alert severity={confirmationExpired ? 'warning' : 'success'}>{confirmationExpired ? 'Bằng chứng khách đã hết hạn hoặc bị thay thế. Cần ghi nhận xác nhận cho báo giá hiện tại.' : `Đã ghi nhận bằng chứng ${confirmation.id}. Xác nhận lại giá/tồn khi chốt đơn.`}</Alert> : <Stack direction="row" gap={1} flexWrap="wrap"><Button onClick={() => setAction('evidence')}>Nhập bằng chứng xác nhận khách</Button>{simulateCustomerConfirmation && <Button variant="outlined" disabled={record.pending} onClick={() => void mockConfirm()}>Mô phỏng khách đồng ý báo giá</Button>}</Stack>}<MutationButton permission="orders.confirm" allowedActions={order.allowedActions} action="confirm" variant="contained" disabled={!confirmation || quoteExpired || confirmationExpired} busy={confirm.pending} onClick={async () => { if (!confirmation || quoteExpired || confirmationExpired)
                 return; try {
                 await confirm.execute({
                     path: { orderId }, version: order.version, body: { expectedVersion: order.version, quoteId: quote.id, customerConfirmationId: confirmation.id }
@@ -126,34 +210,103 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
 export function ReturnsPage() {
     const { shop } = useScope();
     const [params] = useSearchParams();
+    const canReadOrders = useCan('orders.read');
+    const canCreateReturn = useCan('orders.return');
+    const canInspectReturn = useCan('inventory.adjust');
     const list = useApi('listReturnCases', { query: useListQuery() });
-    const orders = useApi('listOrders', { query: { limit: 100 } });
+    const orders = useApi('listOrders', { query: { limit: 100 } }, canReadOrders);
     const create = useCommand('createReturnCase', ['listReturnCases']);
-    const inspect = useCommand('inspectReturn', ['listReturnCases', 'listStockSnapshots', 'getProfitLoss']);
+    const inspect = useCommand('inspectReturn', ['listReturnCases', 'getReturnCase', 'listStockSnapshots', 'getProfitLoss']);
     const [open, setOpen] = useState(false), [orderId, setOrder] = useState(params.get('orderId') || ''), [reason, setReason] = useState(''), [quantities, setQuantities] = useState<Record<string, string>>({});
     const selectedOrder = orders.data?.data.find(o => o.id === orderId);
     const [selected, setSelected] = useState<ReturnCase | null>(null), [inspections, setInspections] = useState<ReturnInspection['lines']>([]);
-    const editInspection = (r: ReturnCase) => { setSelected(r); setInspections(r.lines.map(l => ({
-        orderLineId: l.orderLineId, acceptedQuantity: l.quantity, disposition: 'quarantined', reason: 'Chờ kiểm tra tình trạng hàng nhận lại'
-    }))); };
-    return <><PageHeader title="Đổi và trả hàng" subtitle="Nhận lại, kiểm tình trạng, xác định nghĩa vụ hoàn. Không tự cộng hàng chưa kiểm vào tồn bán." actions={<MutationButton permission="orders.return" variant="contained" onClick={() => setOpen(true)}>Tạo yêu cầu trả</MutationButton>}/><Panel><Toolbar /><QueryState query={list}>{list.data && <><DataTable rows={list.data.data} rowKey={r => r.id} columns={[
-        { key: 'id', label: 'Yêu cầu', render: r => r.id }, { key: 'order', label: 'Đơn gốc', render: r => <RouteLink to={`/s/${shop.id}/orders/${r.orderId}`}>{r.orderId}</RouteLink> }, { key: 'state', label: 'Trạng thái', render: r => <Status value={r.state}/> }, { key: 'refund', label: 'Nghĩa vụ hoàn', render: r => <Amount value={r.refundObligation}/> },
-        {
-            key: 'action', label: '', render: r => <MutationButton permission="inventory.adjust" disabled={['inspected', 'closed', 'rejected'].includes(r.state)} onClick={() => editInspection(r)}>Kiểm nhận</MutationButton>
-        }
-    ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
- <EditDialog open={open} title="Yêu cầu trả hàng" onClose={() => setOpen(false)} busy={create.pending} actions={<Button variant="contained" disabled={!orderId || reason.trim().length < 5 || !Object.values(quantities).some(q => Number(q) > 0) || create.pending} onClick={async () => { try {
-        await create.execute({ body: {
-                orderId, reason, lines: Object.entries(quantities).filter(([, q]) => Number(q) > 0).map(([orderLineId, q]) => ({ orderLineId, quantity: Number(q) }))
-            } });
-        setOpen(false);
-        setQuantities({});
-    }
-    catch { /* visible */ } }}>Tạo yêu cầu</Button>}><ErrorNotice error={create.error}/><Stack gap={2}><TextField label="Đơn hàng đã giao" select value={orderId} onChange={e => { setOrder(e.target.value); setQuantities({}); }}>{orders.data?.data.filter(o => ['delivered', 'part_returned'].includes(o.fulfillmentState)).map(o => <MenuItem key={o.id} value={o.id}>{o.id}</MenuItem>)}</TextField>{selectedOrder?.lines.map(l => <TextField key={l.id} label={`${l.name} (tối đa ${l.quantity})`} type="number" inputProps={{ min: 0, max: l.quantity }} value={quantities[l.id] || '0'} onChange={e => setQuantities({ ...quantities, [l.id]: e.target.value })}/>)}<TextField label="Lý do trả" multiline value={reason} onChange={e => setReason(e.target.value)}/></Stack></EditDialog>
- <EditDialog open={!!selected} title="Kiểm nhận hàng trả" onClose={() => setSelected(null)} busy={inspect.pending} actions={<MutationButton permission="inventory.adjust" variant="contained" busy={inspect.pending} onClick={async () => { if (!selected)
-        return; try {
-        await inspect.execute({ path: { resourceId: selected.id }, body: { expectedVersion: selected.version, lines: inspections } });
-        setSelected(null);
-    }
-    catch { /* visible */ } }}>Xác nhận kiểm nhận</MutationButton>}><ErrorNotice error={inspect.error}/><Stack gap={2}><Alert severity="warning">Người thật xác nhận đã nhận và kiểm hàng. Chỉ “Bán lại được” mới được bổ sung tồn khả dụng.</Alert>{inspections.map((line, i) => <Stack key={line.orderLineId} gap={1}><Typography>{line.orderLineId}</Typography><TextField label="Số lượng nhận" type="number" value={line.acceptedQuantity} onChange={e => setInspections(inspections.map((l, j) => i === j ? { ...l, acceptedQuantity: Number(e.target.value) } : l))}/><TextField select label="Tình trạng" value={line.disposition} onChange={e => setInspections(inspections.map((l, j) => i === j ? { ...l, disposition: e.target.value as typeof line.disposition } : l))}><MenuItem value="quarantined">Cách ly / chờ xác minh</MenuItem><MenuItem value="sellable">Bán lại được</MenuItem><MenuItem value="damaged">Hư hỏng</MenuItem></TextField><TextField label="Ghi nhận kiểm tra" value={line.reason} onChange={e => setInspections(inspections.map((l, j) => i === j ? { ...l, reason: e.target.value } : l))}/><Divider /></Stack>)}</Stack></EditDialog></>;
+    const [initializedReturnId, setInitializedReturnId] = useState('');
+    const selectedReturn = useApi('getReturnCase', { path: { resourceId: selected?.id || '' } }, !!selected && canReadOrders);
+    const inspectionCase = selectedReturn.data?.data;
+    const detailsReady = !!selected && !!inspectionCase && inspectionCase.id === selected.id && initializedReturnId === selected.id;
+    useEffect(() => {
+        if (!selected || !inspectionCase || inspectionCase.id !== selected.id || initializedReturnId === selected.id)
+            return;
+        setInspections(inspectionCase.lines.map(line => ({
+            orderLineId: line.orderLineId,
+            acceptedQuantity: line.quantity,
+            disposition: 'quarantined',
+            reason: 'Chờ kiểm tra tình trạng hàng nhận lại',
+        })));
+        setInitializedReturnId(selected.id);
+    }, [initializedReturnId, inspectionCase, selected]);
+    const editInspection = (r: ReturnCase) => { setSelected(r); setInspections([]); setInitializedReturnId(''); };
+    const requestedLines = selectedOrder?.lines.map(line => {
+        const quantity = quantities[line.id] ?? '0';
+        return {
+            orderLineId: line.id,
+            quantity,
+            invalid: quantity !== '0' && (!/^\d+$/.test(quantity) || Number(quantity) < 1 || Number(quantity) > line.quantity)
+        };
+    }).filter(line => line.quantity !== '0') || [];
+    const createInvalid = !selectedOrder || !['delivered', 'part_returned'].includes(selectedOrder.fulfillmentState) || !reason.trim() || reason.length > 1_000 || requestedLines.length === 0 || requestedLines.some(line => line.invalid);
+    const inspectionInvalid = !detailsReady || !inspectionCase || inspections.length === 0 || inspections.some(line => {
+        const returned = inspectionCase.lines.find(item => item.orderLineId === line.orderLineId)?.quantity ?? 0;
+        return !Number.isInteger(line.acceptedQuantity) || line.acceptedQuantity < 0 || line.acceptedQuantity > returned || !line.reason.trim() || line.reason.length > 1_000;
+    });
+    return <>
+        <PageHeader title="Đổi và trả hàng" subtitle="Nhận lại, kiểm tình trạng, xác định nghĩa vụ hoàn. Không tự cộng hàng chưa kiểm vào tồn bán." actions={<MutationButton permission="orders.return" variant="contained" disabled={!canReadOrders} onClick={() => setOpen(true)}>Tạo yêu cầu trả</MutationButton>}/>
+        {!canReadOrders && <Alert severity="warning" sx={{ mb: 2 }}>Cần quyền orders.read để chọn đơn gốc và xử lý yêu cầu trả.</Alert>}
+        <Panel><Toolbar /><QueryState query={list}>{list.data && <><DataTable rows={list.data.data} rowKey={r => r.id} columns={[
+            { key: 'id', label: 'Yêu cầu', render: r => r.id },
+            { key: 'order', label: 'Đơn gốc', render: r => <RouteLink to={`/s/${shop.id}/orders/${r.orderId}`}>{r.orderId}</RouteLink> },
+            { key: 'state', label: 'Trạng thái', render: r => <Status value={r.state}/> },
+            { key: 'refund', label: 'Nghĩa vụ hoàn', render: r => <Amount value={r.refundObligation}/> },
+            { key: 'action', label: '', render: r => <MutationButton permission="inventory.adjust" disabled={!canInspectReturn || ['inspected', 'closed', 'rejected'].includes(r.state)} onClick={() => editInspection(r)}>Kiểm nhận</MutationButton> }
+        ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
+        <EditDialog open={open} title="Yêu cầu trả hàng" onClose={() => setOpen(false)} busy={create.pending} actions={<Button variant="contained" disabled={createInvalid || !canReadOrders || !canCreateReturn || create.pending} onClick={async () => {
+            try {
+                await create.execute({ body: { orderId, reason: reason.trim(), lines: requestedLines.map(line => ({ orderLineId: line.orderLineId, quantity: Number(line.quantity) })) } });
+                setOpen(false);
+                setQuantities({});
+            }
+            catch { /* keep user inputs and show the API error */ }
+        }}>Tạo yêu cầu</Button>}>
+            <ErrorNotice error={create.error}/>
+            <Stack gap={2}>
+                {!canReadOrders && <Alert severity="warning">Không có quyền đọc danh sách đơn.</Alert>}
+                {orders.isError && <ErrorNotice error={orders.error}/>}
+                <TextField label="Đơn hàng đã giao" select value={orderId} onChange={event => { setOrder(event.target.value); setQuantities({}); }} disabled={!canReadOrders || orders.isPending} helperText="Chỉ đơn đã giao hoặc đang trả một phần. API kiểm tra tổng số lượng còn được trả.">
+                    {orders.data?.data.filter(order => ['delivered', 'part_returned'].includes(order.fulfillmentState)).map(order => <MenuItem key={order.id} value={order.id}>{order.id}</MenuItem>)}
+                </TextField>
+                {selectedOrder?.lines.map(line => {
+                    const field = requestedLines.find(item => item.orderLineId === line.id);
+                    return <TextField key={line.id} label={`${line.name} (tối đa ${line.quantity})`} type="number" inputProps={{ min: 0, max: line.quantity, step: 1 }} value={quantities[line.id] ?? '0'} error={!!field?.invalid} helperText={field?.invalid ? `Nhập số nguyên từ 1 đến ${line.quantity}; API kiểm tra các yêu cầu trả trước đó.` : `Số lượng gốc ${line.quantity}; giới hạn còn lại do API quyết định.`} onChange={event => setQuantities(current => ({ ...current, [line.id]: event.target.value }))}/>;
+                })}
+                <TextField label="Lý do trả" multiline value={reason} onChange={event => setReason(event.target.value)} error={!reason.trim() || reason.length > 1_000} helperText={`${reason.length}/1.000 ký tự`}/>
+            </Stack>
+        </EditDialog>
+        <EditDialog open={!!selected} title="Kiểm nhận hàng trả" onClose={() => { setSelected(null); setInspections([]); setInitializedReturnId(''); }} busy={inspect.pending} actions={<MutationButton permission="inventory.adjust" variant="contained" disabled={inspectionInvalid || !canInspectReturn} busy={inspect.pending} onClick={async () => {
+            if (!selected || !inspectionCase || inspectionInvalid)
+                return;
+            try {
+                await inspect.execute({ path: { resourceId: inspectionCase.id }, body: { expectedVersion: inspectionCase.version, lines: inspections } });
+                setSelected(null); setInspections([]); setInitializedReturnId('');
+            }
+            catch { /* keep inspection values and show the API error */ }
+        }}>Xác nhận kiểm nhận</MutationButton>}>
+            <ErrorNotice error={inspect.error}/>
+            <Stack gap={2}>
+                <Alert severity="warning">Người thật xác nhận đã nhận và kiểm hàng. Chỉ “Bán lại được” mới được bổ sung tồn khả dụng.</Alert>
+                {selectedReturn.isPending && <Typography role="status">Đang tải hồ sơ trả hàng mới nhất…</Typography>}
+                {selectedReturn.isError && <Stack gap={1}><ErrorNotice error={selectedReturn.error}/><Button onClick={() => { void selectedReturn.refetch(); }}>Tải lại hồ sơ</Button></Stack>}
+                {detailsReady && inspections.map((line, index) => {
+                    const returnedQuantity = inspectionCase.lines.find(item => item.orderLineId === line.orderLineId)?.quantity ?? 0;
+                    const invalidQuantity = !Number.isInteger(line.acceptedQuantity) || line.acceptedQuantity < 0 || line.acceptedQuantity > returnedQuantity;
+                    return <Stack key={line.orderLineId} gap={1}>
+                        <Typography>{line.orderLineId}</Typography>
+                        <TextField label="Số lượng nhận" type="number" inputProps={{ min: 0, max: returnedQuantity, step: 1 }} value={Number.isNaN(line.acceptedQuantity) ? '' : line.acceptedQuantity} error={invalidQuantity} helperText={invalidQuantity ? `Nhập số nguyên từ 0 đến ${returnedQuantity}.` : `Tối đa ${returnedQuantity} theo yêu cầu trả.`} onChange={event => setInspections(current => current.map((item, row) => index === row ? { ...item, acceptedQuantity: event.target.value === '' ? Number.NaN : Number(event.target.value) } : item))}/>
+                        <TextField select label="Tình trạng" value={line.disposition} onChange={event => setInspections(current => current.map((item, row) => index === row ? { ...item, disposition: event.target.value as typeof line.disposition } : item))}><MenuItem value="quarantined">Cách ly / chờ xác minh</MenuItem><MenuItem value="sellable">Bán lại được</MenuItem><MenuItem value="damaged">Hư hỏng</MenuItem></TextField>
+                        <TextField label="Ghi nhận kiểm tra" value={line.reason} error={!line.reason.trim() || line.reason.length > 1_000} helperText={`${line.reason.length}/1.000 ký tự`} onChange={event => setInspections(current => current.map((item, row) => index === row ? { ...item, reason: event.target.value } : item))}/>
+                        <Divider />
+                    </Stack>;
+                })}
+            </Stack>
+        </EditDialog>
+    </>;
 }

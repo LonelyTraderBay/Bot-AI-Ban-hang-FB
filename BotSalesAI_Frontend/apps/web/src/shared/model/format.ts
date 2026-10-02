@@ -18,7 +18,7 @@ export function dateTime(value: string | null | undefined, timezone = 'Asia/Vien
     return new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'short', timeZone: timezone }).format(d);
 }
 export function safeInternalPath(input: string | null, fallback = '/workspaces'): string {
-    if (!input || !input.startsWith('/') || input.startsWith('//') || /[\\\r\n\u0000]/.test(input))
+    if (!input || !input.startsWith('/') || input.startsWith('//') || /[\\\r\n]/.test(input) || input.includes('\0'))
         return fallback;
     const u = new URL(input, 'https://botsales.invalid');
     return u.origin === 'https://botsales.invalid' ? u.pathname + u.search + u.hash : fallback;

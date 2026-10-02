@@ -14,18 +14,25 @@ export function catalog(op: string, input: Input): Row | undefined {
             for (const v of variants) {
                 ensure(!all('products', shopId).some(p => p.id !== existing?.id && rows(p.variants).some(other => str(other.sku).toLowerCase() === str(v.sku).toLowerCase())), 'Mã SKU đã tồn tại.', 422, 'SKU_EXISTS');
                 ensure(units(v.price) >= 0n, 'Giá bán phải không âm.', 422);
-                if (!v.id)
-                    v.id = id('variant');
+                const previous = rows(existing?.variants).find(item => item.id === v.id);
+                Object.assign(v, {
+                    id: str(v.id) || id('variant'), shopId,
+                    version: previous ? num(previous.version) + 1 : 1,
+                    createdAt: previous ? str(previous.createdAt) : now(),
+                    updatedAt: now(), productId: existing?.id || ''
+                });
             }
             if (body.categoryId)
                 find('categories', str(body.categoryId), shopId);
             const data = { ...body, variants };
             const product = existing ? touch(Object.assign(existing, data)) : insert('products', 'Product', shopId, { ...data, categoryId: body.categoryId ?? null, imageFileIds: body.imageFileIds || [], description: body.description || '' });
-            for (const v of variants)
+            for (const v of variants) {
+                v.productId = str(product.id);
                 if (!all('stock', shopId).some(s => s.variantId === v.id)) {
                     const warehouseId = str(find('shops', shopId, shopId).defaultWarehouseId);
                     insert('stock', 'StockSnapshot', shopId, { variantId: v.id, warehouseId, sku: v.sku, onHand: 0, reserved: 0, available: 0, lowStockThreshold: 0, unitCost: null, asOf: now() });
                 }
+            }
             return product;
         }
         case 'archiveProduct': {

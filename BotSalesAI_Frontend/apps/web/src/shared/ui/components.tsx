@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
-import { Alert, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, InputAdornment, LinearProgress, Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { Alert, AlertTitle, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, InputAdornment, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import SearchRounded from '@mui/icons-material/SearchRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import ArrowForwardRounded from '@mui/icons-material/ArrowForwardRounded';
 import type { Page, Money } from '@botsales/contracts';
-import { colors } from '@botsales/tokens';
+import { colors, tokens } from '@botsales/tokens';
 import { ApiError, UnknownResultError, errorMessage } from '../api/errors';
 import { formatMoney } from '../model/format';
 import { label } from '../model/labels';
@@ -29,7 +30,7 @@ export function Panel({ title, subtitle, children, action, sx }: {
     action?: ReactNode;
     sx?: object;
 }) {
-    return <Paper variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden', ...sx }}>{title && <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2.5 }}><Box><Typography variant="h6">{title}</Typography>{subtitle && <Typography variant="body2" color="text.secondary" sx={{ mt: .5 }}>{subtitle}</Typography>}</Box>{action}</Stack>}{children}</Paper>;
+    return <Paper variant="outlined" sx={{ borderRadius: `${tokens.radius.card}px`, overflow: 'hidden', ...sx }}>{title && <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 3 }}><Box><Typography variant="h6">{title}</Typography>{subtitle && <Typography variant="body2" color="text.secondary" sx={{ mt: .5 }}>{subtitle}</Typography>}</Box>{action}</Stack>}{children}</Paper>;
 }
 export function Stat({ title, value, note, accent = false, icon }: {
     title: string;
@@ -38,11 +39,11 @@ export function Stat({ title, value, note, accent = false, icon }: {
     accent?: boolean;
     icon?: ReactNode;
 }) {
-    return <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 3, minWidth: 0 }}><Stack direction="row" justifyContent="space-between" gap={1}><Typography color="text.secondary" variant="body2">{title}</Typography><Box sx={{ color: accent ? 'primary.main' : 'text.secondary' }}>{icon}</Box></Stack><Typography variant="h4" sx={{ mt: 1.3, fontVariantNumeric: 'tabular-nums', color: accent ? 'primary.main' : undefined, overflowWrap: 'anywhere' }}>{value}</Typography><Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{note}</Typography></Paper>;
+    return <Paper variant="outlined" sx={{ p: 3, borderRadius: `${tokens.radius.card}px`, minWidth: 0 }}><Stack direction="row" justifyContent="space-between" gap={1}><Typography color="text.secondary" variant="body2">{title}</Typography><Box sx={{ color: accent ? 'primary.main' : 'text.secondary' }}>{icon}</Box></Stack><Typography variant="h4" sx={{ mt: 1.5, fontVariantNumeric: 'tabular-nums', color: accent ? 'primary.main' : undefined, overflowWrap: 'anywhere' }}>{value}</Typography>{note && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{note}</Typography>}</Paper>;
 }
 export function Stats({ children }: {
     children: ReactNode;
-}) { return <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' }, gap: 2, mb: 3 }}>{children}</Box>; }
+}) { return <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' }, gap: 2, mb: 3 }}>{children}</Box>; }
 export function Amount({ value }: {
     value: Money | null | undefined;
 }) { return <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{formatMoney(value)}</Box>; }
@@ -68,33 +69,69 @@ export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ li
     empty?: string;
     label?: string;
 }) {
-    return <TableContainer sx={{ maxWidth: '100%' }} tabIndex={0} aria-label={tableLabel}><Table size="small"><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}{rows.length === 0 && <TableRow><TableCell colSpan={columns.length}><Empty text={empty}/></TableCell></TableRow>}</TableBody></Table></TableContainer>;
+    return <>
+        <Typography variant="caption" color="text.secondary" sx={{ display: { xs: 'block', md: 'none' }, px: 2, pt: 1 }}>Cuộn ngang để xem đủ cột.</Typography>
+        <TableContainer sx={{ maxWidth: '100%' }} tabIndex={0} role="region" aria-label={tableLabel}><Table size="small" aria-label={tableLabel} sx={{ minWidth: { xs: 600, md: 'auto' } }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}{rows.length === 0 && <TableRow><TableCell colSpan={columns.length}><Empty text={empty}/></TableCell></TableRow>}</TableBody></Table></TableContainer>
+    </>;
 }
 export function Empty({ text, action }: {
     text: string;
     action?: ReactNode;
-}) { return <Stack alignItems="center" gap={2} sx={{ py: 6, px: 2 }}><Box sx={{ width: 42, height: 42, borderRadius: 2, bgcolor: colors.raised, display: 'grid', placeItems: 'center', color: 'text.secondary' }}>—</Box><Typography color="text.secondary" textAlign="center">{text}</Typography>{action}</Stack>; }
+}) { return <Stack role="status" aria-live="polite" alignItems="center" gap={2} sx={{ py: 6, px: 2 }}><Box aria-hidden="true" sx={{ width: tokens.layout.touchTarget, height: tokens.layout.touchTarget, borderRadius: `${tokens.radius.control}px`, bgcolor: colors.raised, display: 'grid', placeItems: 'center', color: 'text.secondary' }}>—</Box><Typography color="text.secondary" textAlign="center">{text}</Typography>{action}</Stack>; }
 export function QueryState({ query, children }: {
     query: {
         isPending: boolean;
         isError: boolean;
         error: Error | null;
         refetch: () => unknown;
+        data?: unknown;
+        isFetching?: boolean;
     };
     children: ReactNode;
 }) {
+    const { t } = useTranslation();
+    const hasData = query.data !== undefined && query.data !== null;
     if (query.isPending)
-        return <Stack gap={2} aria-label="Đang tải"><Skeleton height={60}/><Skeleton variant="rounded" height={260}/></Stack>;
-    if (query.isError)
-        return <Alert severity={query.error instanceof ApiError && query.error.status === 403 ? 'warning' : 'error'} action={<Button onClick={() => query.refetch()} color="inherit">Thử lại</Button>}>{errorMessage(query.error)}</Alert>;
-    return <>{children}</>;
+        return <Stack role="status" aria-live="polite" alignItems="center" justifyContent="center" gap={2} sx={{ minHeight: 240, color: 'text.secondary' }}><CircularProgress size={28} aria-label={t('app.loading')}/><Typography>{t('app.loading')}</Typography></Stack>;
+    if (query.isError && !hasData) {
+        const status = query.error instanceof ApiError ? query.error.status : 0;
+        const title = status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : t('state.requestErrorTitle');
+        return <Alert severity={status === 403 ? 'warning' : 'error'} role="alert" action={status === 403 || status === 404 ? undefined : <Button onClick={() => { void query.refetch(); }} color="inherit">{t('app.retry')}</Button>}><AlertTitle>{title}</AlertTitle>{errorMessage(query.error)}</Alert>;
+    }
+    return <>
+        {query.isError && hasData && <Alert severity="warning" role="status" action={<Button onClick={() => { void query.refetch(); }} color="inherit">{t('app.retry')}</Button>} sx={{ mb: 2 }}><AlertTitle>{t('state.stale')}</AlertTitle>{errorMessage(query.error)}</Alert>}
+        {!query.isError && query.isFetching && hasData && <Alert severity="info" role="status" sx={{ mb: 2 }}><LinearProgress aria-label={t('app.loading')} sx={{ mb: 1 }}/>{t('state.updating')}</Alert>}
+        {children}
+    </>;
 }
 export function ErrorNotice({ error }: {
     error: unknown;
 }) {
+    const { t } = useTranslation();
+    const alertRef = useRef<HTMLDivElement>(null);
+    const validationFields = error instanceof ApiError && error.status === 422 ? error.problem?.errors : undefined;
+    useEffect(() => {
+        if (!validationFields?.length || !alertRef.current)
+            return;
+        const scope = alertRef.current.closest('[role="dialog"]') || alertRef.current.closest('form') || alertRef.current.closest('main') || document;
+        const names = validationFields.flatMap(field => {
+            const normalized = field.path.replace(/^\//, '').replace(/~1/g, '/').replace(/~0/g, '~');
+            const lastSegment = normalized.split(/[./]/).flatMap(segment => segment.split('[').flatMap(part => part.split(']'))).filter(Boolean).at(-1) || normalized;
+            return [normalized, lastSegment];
+        });
+        const firstInvalid = Array.from(scope.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('[name]'))
+            .find(control => names.includes(control.name));
+        if (firstInvalid) {
+            firstInvalid.setAttribute('aria-invalid', 'true');
+            firstInvalid.focus();
+        }
+    }, [error, validationFields]);
     if (!error)
         return null;
-    return <Alert severity={error instanceof UnknownResultError ? 'warning' : 'error'} sx={{ mb: 2 }} role="alert">{errorMessage(error)}{error instanceof ApiError && error.problem?.errors?.map(e => <div key={e.path}>{e.path}: {e.message}</div>)}{error instanceof UnknownResultError && error.commandId && <div>Mã lệnh cần kiểm tra: {error.commandId}</div>}</Alert>;
+    const status = error instanceof ApiError ? error.status : 0;
+    const title = error instanceof UnknownResultError ? t('state.unknownTitle') : status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : status === 409 || status === 412 ? t('state.conflictTitle') : status === 422 ? t('state.validationTitle') : status === 428 ? t('state.versionRequiredTitle') : t('state.requestErrorTitle');
+    const guidance = status === 409 || status === 412 ? t('state.conflictHelp') : status === 422 ? t('state.validationHelp') : status === 428 ? t('state.versionRequiredHelp') : undefined;
+    return <Alert ref={alertRef} severity={error instanceof UnknownResultError || status === 403 || status === 409 || status === 412 || status === 428 ? 'warning' : 'error'} sx={{ mb: 2 }} role="alert"><AlertTitle>{title}</AlertTitle>{errorMessage(error)}{guidance && <Typography component="div" variant="body2" sx={{ mt: 1 }}>{guidance}</Typography>}{validationFields?.map(field => <div key={field.path}><strong>{t('state.field')} {field.path}:</strong> {field.message}</div>)}{error instanceof UnknownResultError && error.commandId && <div>{t('state.command')}: {error.commandId}</div>}</Alert>;
 }
 export function Toolbar({ placeholder = 'Tìm kiếm...', extra }: {
     placeholder?: string;
@@ -102,12 +139,28 @@ export function Toolbar({ placeholder = 'Tìm kiếm...', extra }: {
 }) {
     const [params, setParams] = useSearchParams();
     const [draft, setDraft] = useState(params.get('q') || '');
+    const inputRef = useRef<HTMLInputElement>(null);
     useEffect(() => { setDraft(params.get('q') || ''); }, [params]);
-    return <Stack component="form" onSubmit={e => { e.preventDefault(); const next = new URLSearchParams(params); if (draft)
-        next.set('q', draft);
-    else
-        next.delete('q'); next.delete('cursor'); setParams(next); }} direction={{ xs: 'column', sm: 'row' }} gap={1.5} sx={{ p: 2 }}>
- <TextField size="small" value={draft} onChange={e => setDraft(e.target.value)} placeholder={placeholder} inputProps={{ 'aria-label': placeholder }} slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchRounded fontSize="small"/></InputAdornment> } }} sx={{ minWidth: 240, flex: 1 }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>;
+    const updateSearch = (value: string) => {
+        const next = new URLSearchParams(params);
+        const query = value.trim();
+        if (query)
+            next.set('q', query);
+        else
+            next.delete('q');
+        next.delete('cursor');
+        setParams(next);
+    };
+    const clearSearch = () => {
+        setDraft('');
+        updateSearch('');
+        inputRef.current?.focus();
+    };
+    return <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }} direction={{ xs: 'column', md: 'row' }} gap={1.5} sx={{ p: 2 }}>
+ <TextField inputRef={inputRef} label="Tìm kiếm" placeholder={placeholder} size="small" value={draft} onChange={e => setDraft(e.target.value)} slotProps={{
+     htmlInput: { onKeyDown: (event: ReactKeyboardEvent<HTMLInputElement>) => { if (event.key === 'Enter' && event.nativeEvent.isComposing) event.preventDefault(); } },
+     input: { startAdornment: <InputAdornment position="start"><SearchRounded fontSize="small"/></InputAdornment>, endAdornment: draft ? <InputAdornment position="end"><IconButton aria-label="Xóa tìm kiếm" edge="end" onMouseDown={event => event.preventDefault()} onClick={clearSearch}><CloseRounded fontSize="small"/></IconButton></InputAdornment> : undefined }
+ }} sx={{ width: '100%', minWidth: 0, flex: 1 }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>;
 }
 export function Pager({ page }: {
     page?: Page;
@@ -117,6 +170,20 @@ export function Pager({ page }: {
         return null;
     return <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}><Typography variant="caption" color="text.secondary">{typeof page.total === 'number' ? `${page.total} kết quả` : `Tối đa ${page.limit} dòng / trang`}</Typography><Stack direction="row" gap={1}><Button size="small" disabled={!params.has('cursor')} onClick={() => { const next = new URLSearchParams(params); next.delete('cursor'); setParams(next); }}>Đầu danh sách</Button><Button size="small" disabled={!page.hasMore} onClick={() => { const next = new URLSearchParams(params); if (page.nextCursor)
         next.set('cursor', page.nextCursor); setParams(next); }}>Trang tiếp</Button></Stack></Stack>;
+}
+export function LookupLoadMore({ label, loadedCount, hasMore, busy = false, onLoadMore }: {
+    label: string;
+    loadedCount: number;
+    hasMore: boolean;
+    busy?: boolean;
+    onLoadMore: () => unknown;
+}) {
+    if (loadedCount === 0 && !hasMore)
+        return null;
+    return <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1} sx={{ px: 1, mt: .5 }}>
+        <Typography variant="caption" color="text.secondary">Đã tải {loadedCount} lựa chọn</Typography>
+        {hasMore && <Button size="small" disabled={busy} onClick={() => { void onLoadMore(); }} aria-label={`Tải thêm ${label}`}>{busy ? 'Đang tải…' : 'Tải thêm'}</Button>}
+    </Stack>;
 }
 export function RouteLink({ to, children }: {
     to: string;
@@ -140,15 +207,157 @@ export function MutationButton({ permission, allowedActions, action, busy, child
         return null;
     return <Button {...props} disabled={props.disabled || busy || !online} startIcon={busy ? <CircularProgress size={16}/> : undefined}>{children}</Button>;
 }
-export function EditDialog({ open, title, onClose, children, actions, busy = false }: {
+function draftControlValue(control: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
+    if (control instanceof HTMLInputElement && (control.type === 'checkbox' || control.type === 'radio'))
+        return `checked:${control.checked}`;
+    if (control instanceof HTMLInputElement && control.type === 'file')
+        return `files:${Array.from(control.files || []).map(file => `${file.name}:${file.size}`).join('|')}`;
+    if (control instanceof HTMLSelectElement)
+        return `selected:${Array.from(control.selectedOptions).map(option => option.value).join('|')}`;
+    return control.value;
+}
+export function EditDialog({ open, title, description, onClose, children, actions, busy = false, dirtyGuard = true, draftCommit }: {
     open: boolean;
     title: string;
+    description?: string;
     onClose: () => void;
     children: ReactNode;
     actions: ReactNode;
     busy?: boolean;
+    dirtyGuard?: boolean;
+    /** Mark controls within one persisted draft scope clean after its mutation succeeds. */
+    draftCommit?: { scope: string | null; sequence: number };
 }) {
-    return <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="sm" aria-labelledby="edit-dialog-title"><DialogTitle id="edit-dialog-title">{title}<IconButton aria-label="Đóng" disabled={busy} onClick={onClose} sx={{ position: 'absolute', right: 12, top: 12 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress />}<DialogContent dividers>{children}</DialogContent><DialogActions sx={{ p: 2 }}><Button onClick={onClose} disabled={busy}>Hủy</Button>{actions}</DialogActions></Dialog>;
+    const { t } = useTranslation();
+    const titleId = `edit-dialog-title-${useId()}`;
+    const descriptionId = description ? `${titleId}-description` : undefined;
+    const contentRef = useRef<HTMLDivElement>(null);
+    const baselineRef = useRef<Map<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, string>>(new Map());
+    const baselineReadyRef = useRef(false);
+    const interactionRef = useRef(false);
+    const [discardOpen, setDiscardOpen] = useState(false);
+    const [dialogDirty, setDialogDirty] = useState(false);
+    const establishBaseline = useCallback(() => {
+        if (baselineReadyRef.current || !contentRef.current)
+            return;
+        const root = contentRef.current;
+        const controls = Array.from(root.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea'));
+        if (!controls.length)
+            return;
+        baselineRef.current = new Map(controls.map(control => [control, draftControlValue(control)]));
+        baselineReadyRef.current = true;
+    }, []);
+    const updateDirtyState = useCallback(() => {
+        establishBaseline();
+        if (!contentRef.current)
+            return;
+        const currentControls = Array.from(contentRef.current.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea'));
+        const dirty = baselineReadyRef.current && (currentControls.length !== baselineRef.current.size || currentControls.some(control => !baselineRef.current.has(control) || draftControlValue(control) !== baselineRef.current.get(control)));
+        setDialogDirty(dirty);
+        const dialog = contentRef.current.closest<HTMLElement>('[role="dialog"]');
+        if (dialog) {
+            if (dirty)
+                dialog.dataset.draftDirty = 'true';
+            else
+                delete dialog.dataset.draftDirty;
+        }
+    }, [establishBaseline]);
+    const updateAfterInteraction = useCallback(() => {
+        interactionRef.current = true;
+        updateDirtyState();
+    }, [updateDirtyState]);
+    const refreshBaseline = useCallback((scope?: string) => {
+        const root = contentRef.current;
+        if (!root)
+            return;
+        let target: ParentNode = root;
+        if (scope !== undefined) {
+            const scopedElement = Array.from(root.querySelectorAll<HTMLElement>('[data-draft-scope]'))
+                .find(element => element.dataset.draftScope === scope);
+            if (!scopedElement)
+                return;
+            target = scopedElement;
+        }
+        const controls = Array.from(target.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea'));
+        for (const control of controls)
+            baselineRef.current.set(control, draftControlValue(control));
+        baselineReadyRef.current = baselineRef.current.size > 0;
+        if (scope === undefined)
+            interactionRef.current = false;
+        updateDirtyState();
+    }, [updateDirtyState]);
+    useEffect(() => {
+        if (!open || !contentRef.current)
+            return;
+        const root = contentRef.current;
+        setDialogDirty(false);
+        baselineRef.current.clear();
+        baselineReadyRef.current = false;
+        interactionRef.current = false;
+        const dialog = root.closest<HTMLElement>('[role="dialog"]');
+        establishBaseline();
+        const observer = new MutationObserver(establishBaseline);
+        const baselineFrame = window.requestAnimationFrame(() => {
+            if (!interactionRef.current)
+                refreshBaseline();
+        });
+        observer.observe(root, { childList: true, subtree: true });
+        root.addEventListener('focusin', establishBaseline, true);
+        root.addEventListener('beforeinput', establishBaseline, true);
+        root.addEventListener('input', updateAfterInteraction, true);
+        root.addEventListener('change', updateAfterInteraction, true);
+        return () => {
+            window.cancelAnimationFrame(baselineFrame);
+            observer.disconnect();
+            root.removeEventListener('focusin', establishBaseline, true);
+            root.removeEventListener('beforeinput', establishBaseline, true);
+            root.removeEventListener('input', updateAfterInteraction, true);
+            root.removeEventListener('change', updateAfterInteraction, true);
+            baselineReadyRef.current = false;
+            if (dialog)
+                delete dialog.dataset.draftDirty;
+        };
+    }, [open, establishBaseline, refreshBaseline, updateAfterInteraction]);
+    useEffect(() => {
+        if (draftCommit)
+            refreshBaseline(draftCommit.scope ?? undefined);
+    }, [draftCommit, refreshBaseline]);
+    useEffect(() => {
+        if (!open)
+            setDiscardOpen(false);
+    }, [open]);
+    const requestClose = () => {
+        if (busy)
+            return;
+        const currentControls = contentRef.current ? Array.from(contentRef.current.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea')) : [];
+        const changedSinceOpen = baselineReadyRef.current && (currentControls.length !== baselineRef.current.size || currentControls.some(control => !baselineRef.current.has(control) || draftControlValue(control) !== baselineRef.current.get(control)));
+        if (dirtyGuard && (dialogDirty || changedSinceOpen)) {
+            setDiscardOpen(true);
+            return;
+        }
+        onClose();
+    };
+    const discardChanges = () => {
+        setDiscardOpen(false);
+        onClose();
+    };
+    return <>
+        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={titleId}>{title}<IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ position: 'absolute', right: 12, top: 12 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} dividers onFocusCapture={establishBaseline} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={{ mb: 2 }}>{description}</Typography>}{children}</DialogContent><DialogActions sx={{ p: 2 }}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{actions}</DialogActions></Dialog>
+        <Dialog open={open && discardOpen} onClose={() => setDiscardOpen(false)} aria-labelledby={`${titleId}-draft-warning`} aria-describedby={`${titleId}-draft-description`}>
+            <DialogTitle id={`${titleId}-draft-warning`}>{t('draft.closeTitle')}</DialogTitle>
+            <DialogContent><DialogContentText id={`${titleId}-draft-description`}>{t('draft.closeDescription')}</DialogContentText></DialogContent>
+            <DialogActions><Button onClick={() => setDiscardOpen(false)}>{t('draft.continueEditing')}</Button><Button color="warning" variant="contained" onClick={discardChanges}>{t('draft.discard')}</Button></DialogActions>
+        </Dialog>
+    </>;
+}
+
+export function PartialDataNotice({ children = 'Một số phần của màn hình chưa có dữ liệu đầy đủ.' }: { children?: ReactNode }) {
+    return <Alert severity="info" role="status" sx={{ mb: 2 }}>{children}</Alert>;
+}
+
+export function CapabilityUnavailable({ children }: { children?: ReactNode }) {
+    const { t } = useTranslation();
+    return <Alert severity="info" role="status">{children || t('state.capabilityUnavailable')}</Alert>;
 }
 export function ConfirmDialog({ open, title, description, onClose, onConfirm, busy, error, requireReason = false }: {
     open: boolean;
@@ -161,9 +370,9 @@ export function ConfirmDialog({ open, title, description, onClose, onConfirm, bu
     requireReason?: boolean;
 }) {
     const [reason, setReason] = useState('');
-    return <EditDialog open={open} title={title} onClose={onClose} busy={busy} actions={<Button variant="contained" disabled={busy || (requireReason && reason.trim().length < 5)} onClick={() => { void onConfirm(reason).then(() => { setReason(''); onClose(); }).catch(() => undefined); }}>Xác nhận</Button>}><ErrorNotice error={error}/><Typography sx={{ mb: 2 }}>{description}</Typography>{requireReason && <TextField label="Lý do (ít nhất 5 ký tự)" value={reason} onChange={e => setReason(e.target.value)} fullWidth multiline minRows={2}/>}</EditDialog>;
+    return <EditDialog open={open} title={title} description={description} onClose={onClose} busy={busy} actions={<Button variant="contained" disabled={busy || (requireReason && reason.trim().length < 5)} onClick={() => { void onConfirm(reason).then(() => { setReason(''); onClose(); }).catch(() => undefined); }}>Xác nhận</Button>}><ErrorNotice error={error}/>{requireReason && <TextField label="Lý do (ít nhất 5 ký tự)" value={reason} onChange={e => setReason(e.target.value)} fullWidth multiline minRows={2}/>}</EditDialog>;
 }
 export function DetailLine({ label: caption, children }: {
     label: string;
     children: ReactNode;
-}) { return <><Stack direction="row" justifyContent="space-between" gap={2} sx={{ py: 1.6 }}><Typography color="text.secondary">{caption}</Typography><Box sx={{ textAlign: 'right', overflowWrap: 'anywhere' }}>{children}</Box></Stack><Divider /></>; }
+}) { return <><Stack direction="row" justifyContent="space-between" gap={2} sx={{ py: 1.5 }}><Typography color="text.secondary">{caption}</Typography><Box sx={{ textAlign: 'right', overflowWrap: 'anywhere' }}>{children}</Box></Stack><Divider /></>; }

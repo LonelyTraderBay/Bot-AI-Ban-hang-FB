@@ -1,4 +1,4 @@
-import { all, find, insert, ensure, job, str, num, rows, id, now, money, sum, zero } from './database';
+import { all, find, insert, ensure, job, str, num, rows, record, id, now, money, sum } from './database';
 import type { Input, Row } from './database';
 import { catalog } from './catalog';
 const uploads = new Map<string, {
@@ -11,6 +11,14 @@ const importRows = new Map<string, {
     snapshot: string;
     strategy: string;
 }>();
+const exportUrls = new Set<string>();
+export function clearFileState() {
+    uploads.clear();
+    importRows.clear();
+    for (const url of exportUrls)
+        URL.revokeObjectURL(url);
+    exportUrls.clear();
+}
 export function parseCSV(text: string): string[][] {
     const result: string[][] = [];
     let row: string[] = [];
@@ -53,14 +61,84 @@ export function parseCSV(text: string): string[][] {
 export async function upload(input: Input, form: FormData) {
     const value = form.get('file');
     ensure(value instanceof File, 'Thiếu file upload.', 422);
+    const purpose = form.get('purpose');
+    // Bank/COD purposes are simulator-only adapters; the canonical API contract currently has no such upload purposes.
+    ensure(typeof purpose === 'string' && ['product_image', 'product_import', 'knowledge_source', 'bank_statement', 'cod_statement'].includes(purpose), 'Cần chỉ định mục đích tải tệp hợp lệ.', 422);
     ensure(value.size <= 5 * 1024 * 1024, 'Tối đa 5 MB trong frontend mẫu.', 413);
-    const allowed = ['image/png', 'image/jpeg', 'image/webp', 'text/csv', 'text/plain', 'application/pdf'];
-    ensure(allowed.includes(value.type) || value.name.toLowerCase().endsWith('.csv'), 'Định dạng không được hỗ trợ.', 415);
+    const isCsv = value.name.toLowerCase().endsWith('.csv') && ['text/csv', 'application/vnd.ms-excel', 'application/octet-stream', ''].includes(value.type);
+    const isImage = ['image/png', 'image/jpeg', 'image/webp'].includes(value.type);
+    const isKnowledgeFile = ['application/pdf', 'text/plain'].includes(value.type) || isCsv;
+    const purposeTypeAllowed = purpose === 'product_image' ? isImage
+        : purpose === 'knowledge_source' ? isKnowledgeFile
+            : isCsv;
+    ensure(purposeTypeAllowed, 'Định dạng không phù hợp với mục đích tải tệp.', 415);
     const row = insert('files', 'FileObject', input.shopId, { name: value.name, mimeType: value.type || 'text/csv', sizeBytes: value.size, status: 'ready', readUrl: null });
     uploads.set(str(row.id), { text: value.name.toLowerCase().endsWith('.csv') || value.type.startsWith('text/') ? await value.text() : '', file: value });
     return row;
 }
-function csvCell(value: unknown) { const v = typeof value === 'object' ? JSON.stringify(value) : String(value ?? ''); return `"${(/^[=+\-@\t\r]/.test(v) ? "'" : '') + v.replace(/"/g, '""')}"`; }
+function csvCell(value: unknown) { const v = typeof value === 'object' ? JSON.stringify(value) : String(value ?? ''); return `"${(/^[\s]*[=+\-@\t\r]/.test(v) ? "'" : '') + v.replace(/"/g, '""')}"`; }
+function localDate(value: string, timezone: string) {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(value));
+}
+type CsvRow = Record<string, unknown>;
+function exportRows(input: Input, type: string): { fields: string[]; rows: CsvRow[] } {
+    const { shopId, body } = input;
+    const from = str(body.from), to = str(body.to), timezone = str(body.timezone);
+    const start = Date.parse(from), end = Date.parse(to);
+    ensure(Number.isFinite(start) && Number.isFinite(end) && start <= end, 'Khoảng thời gian export không hợp lệ.', 422, 'INVALID_REPORT_RANGE');
+    // Validate the IANA zone before creating a job or a download URL.
+    try { localDate(from, timezone); }
+    catch { ensure(false, 'Múi giờ IANA của báo cáo không hợp lệ.', 422, 'INVALID_REPORT_TIMEZONE'); }
+    const fromDate = localDate(from, timezone), toDate = localDate(to, timezone);
+    const withinRange = (value: unknown) => {
+        if (typeof value !== 'string') return false;
+        const timestamp = Date.parse(value);
+        return Number.isFinite(timestamp) && timestamp >= start && timestamp <= end;
+    };
+    const inSnapshot = (value: unknown) => {
+        if (typeof value !== 'string') return false;
+        const timestamp = Date.parse(value);
+        return Number.isFinite(timestamp) && timestamp <= end;
+    };
+    if (type === 'inventory') {
+        const includeCost = input.permissions?.includes('finance.read') === true;
+        const rows = all('stock', shopId).filter(row => inSnapshot(row.asOf)).map(row => ({
+            sku: row.sku, variantId: row.variantId, warehouseId: row.warehouseId,
+            onHand: row.onHand, reserved: row.reserved, available: row.available,
+            ...(includeCost ? { unitCostAmount: record(row.unitCost).amount, unitCostCurrency: record(row.unitCost).currency } : {}),
+            asOf: row.asOf,
+        }));
+        return { fields: ['sku', 'variantId', 'warehouseId', 'onHand', 'reserved', 'available', ...(includeCost ? ['unitCostAmount', 'unitCostCurrency'] : []), 'asOf'], rows };
+    }
+    if (type === 'orders') {
+        const rows = all('orders', shopId).filter(row => withinRange(row.createdAt)).map(row => ({
+            orderId: row.id, createdAt: row.createdAt, orderState: row.orderState,
+            fulfillmentState: row.fulfillmentState, paymentState: row.paymentState,
+            totalAmount: record(row.total).amount, currency: record(row.total).currency,
+        }));
+        return { fields: ['orderId', 'createdAt', 'orderState', 'fulfillmentState', 'paymentState', 'totalAmount', 'currency'], rows };
+    }
+    if (type === 'cashflow') {
+        const rows = all('financeEntries', shopId).filter(row => withinRange(row.occurredAt)).map(row => ({
+            entryId: row.id, occurredAt: row.occurredAt, kind: row.kind, classification: row.classification,
+            status: row.status, amount: record(row.amount).amount, currency: record(row.amount).currency,
+        }));
+        return { fields: ['entryId', 'occurredAt', 'kind', 'classification', 'status', 'amount', 'currency'], rows };
+    }
+    if (type === 'profit_loss') {
+        const rows = all('journals', shopId).filter(row => typeof row.effectiveDate === 'string' && row.effectiveDate >= fromDate && row.effectiveDate <= toDate)
+            .flatMap(row => rowsFromJournal(row));
+        return { fields: ['effectiveDate', 'status', 'sourceType', 'accountId', 'debitAmount', 'debitCurrency', 'creditAmount', 'creditCurrency'], rows };
+    }
+    ensure(false, 'Không hỗ trợ loại báo cáo.', 422, 'UNSUPPORTED_REPORT');
+}
+function rowsFromJournal(journal: Row) {
+    return rows(journal.lines).map(line => ({
+        effectiveDate: journal.effectiveDate, status: journal.status, sourceType: journal.sourceType,
+        accountId: line.accountId, debitAmount: record(line.debit).amount, debitCurrency: record(line.debit).currency,
+        creditAmount: record(line.credit).amount, creditCurrency: record(line.credit).currency,
+    }));
+}
 export function files(op: string, input: Input): Row | undefined {
     const { shopId, body } = input;
     if (op === 'createProductImport') {
@@ -70,6 +148,7 @@ export function files(op: string, input: Input): Row | undefined {
         const csv = parseCSV(uploaded.text);
         ensure(csv.length > 1 && csv.length <= 1001, 'CSV cần 1–1000 dòng dữ liệu.', 422);
         const header = csv[0];
+        ensure(header, 'CSV thiếu dòng tiêu đề.', 422, 'INVALID_CSV');
         const mapped = rows(body.mapping);
         const rowErrors: Row[] = [];
         const products: Row[] = [];
@@ -114,6 +193,7 @@ export function files(op: string, input: Input): Row | undefined {
             if (existingId) {
                 const existing = find('products', str(existingId), shopId);
                 const imported = rows(data.variants)[0];
+                ensure(imported, 'Dòng nhập không có biến thể.', 422, 'INVALID_ROW');
                 const matched = rows(existing.variants).find(v => v.sku === imported.sku);
                 ensure(matched, 'SKU không còn tồn tại.', 412);
                 data.variants = rows(existing.variants).map(v => v.id === matched.id ? { ...v, ...imported, id: v.id } : v);
@@ -137,30 +217,44 @@ export function files(op: string, input: Input): Row | undefined {
         const csv = parseCSV(uploaded.text);
         ensure(csv.length > 1 && csv.length <= 1001, 'CSV cần 1–1000 dòng.', 422);
         const header = csv[0];
+        ensure(header, 'CSV thiếu dòng tiêu đề.', 422, 'INVALID_CSV');
         const errors: Row[] = [];
         let completed = 0;
         for (let i = 1; i < csv.length; i++) {
-            const values = Object.fromEntries(header.map((h, j) => [h, csv[i][j] || '']));
+            const row = csv[i];
+            ensure(row, 'CSV thiếu dòng dữ liệu.', 422, 'INVALID_CSV');
+            const values: Record<string, string> = Object.fromEntries(header.map((h, j) => [h, row[j] || '']));
             try {
                 if (op === 'importBankStatement') {
-                    ensure(values.externalTransactionId && /^\d+(\.\d{1,4})?$/.test(values.amount) && ['credit', 'debit'].includes(values.direction) && !Number.isNaN(Date.parse(values.occurredAt)), 'Thiếu hoặc sai dữ liệu giao dịch.', 422);
-                    ensure(!all('bankTransactions', shopId).some(t => t.accountId === body.accountOrCarrierId && t.externalTransactionId === values.externalTransactionId), 'Mã giao dịch đã nhập.', 422);
+                    const externalTransactionId = values.externalTransactionId || '';
+                    const amount = values.amount || '';
+                    const direction = values.direction || '';
+                    const occurredAt = values.occurredAt || '';
+                    ensure(externalTransactionId && /^\d+(\.\d{1,4})?$/.test(amount) && ['credit', 'debit'].includes(direction) && !Number.isNaN(Date.parse(occurredAt)), 'Thiếu hoặc sai dữ liệu giao dịch.', 422);
+                    ensure(str(body.accountOrCarrierId).trim(), 'Cần chọn mã tài khoản ngân hàng.', 422);
+                    ensure(!all('bankTransactions', shopId).some(t => t.accountId === body.accountOrCarrierId && t.externalTransactionId === externalTransactionId), 'Mã giao dịch đã nhập.', 422);
+                    const shopCurrency = str(find('shops', shopId, shopId).currency);
+                    const currency = values.currency || shopCurrency;
+                    ensure(currency === shopCurrency, 'Bộ mô phỏng chỉ hỗ trợ tiền cơ sở của cửa hàng; chưa có chính sách quy đổi ngoại tệ.', 422, 'CURRENCY_POLICY_REQUIRED');
                     const tx = insert('bankTransactions', 'BankTransaction', shopId, {
-                        accountId: body.accountOrCarrierId, externalTransactionId: values.externalTransactionId, amount: { amount: values.amount, currency: values.currency || 'VND' }, direction: values.direction, occurredAt: values.occurredAt, referenceText: values.referenceText, matchState: 'unmatched'
+                        accountId: body.accountOrCarrierId, externalTransactionId, amount: { amount, currency }, direction, occurredAt, referenceText: values.referenceText || '', matchState: 'unmatched'
                     });
                     insert('reconciliations', 'ReconciliationCase', shopId, {
                         transactionId: tx.id, state: 'unmatched', suggestedResourceIds: [], difference: tx.amount, reason: 'Chưa đối soát; không tự xác nhận tiền.'
                     });
                 }
                 else {
-                    const orderIds = values.orderIds.split(';').filter(Boolean);
-                    ensure(orderIds.length > 0 && values.externalBatchId, 'Thiếu mã đợt/đơn hàng.', 422);
+                    const orderIds = (values.orderIds || '').split(';').filter(Boolean);
+                    const externalBatchId = values.externalBatchId || '';
+                    ensure(orderIds.length > 0 && externalBatchId, 'Thiếu mã đợt/đơn hàng.', 422);
+                    ensure(str(body.accountOrCarrierId).trim(), 'Cần chọn mã đơn vị vận chuyển.', 422);
                     const orders = orderIds.map(orderId => find('orders', orderId, shopId));
-                    ensure(orders.every(o => o.paymentMethod === 'cod' && o.fulfillmentState === 'delivered'), 'Đơn không phải COD đã giao.', 422);
+                    const shopCurrency = str(find('shops', shopId, shopId).currency);
+                    ensure(orders.every(o => o.paymentMethod === 'cod' && ['delivered', 'part_returned', 'returned'].includes(str(o.fulfillmentState)) && record(o.total).currency === shopCurrency), 'Chỉ đối soát đơn COD đã giao trong tiền cơ sở của shop.', 422);
                     ensure(!all('codSettlements', shopId).some(c => c.carrierId === body.accountOrCarrierId && (c.externalBatchId === values.externalBatchId || orderIds.some(orderId => Array.isArray(c.orderIds) && c.orderIds.includes(orderId)))), 'Đợt hoặc đơn COD đã được nhập.', 422);
                     const gross = sum(orders, 'total');
                     insert('codSettlements', 'CODSettlement', shopId, {
-                        carrierId: body.accountOrCarrierId, externalBatchId: values.externalBatchId, orderIds, grossDue: money(gross), actualFees: zero(), bankReceived: zero(), difference: money(gross), status: 'pending', bankTransactionId: null
+                        carrierId: body.accountOrCarrierId, externalBatchId, orderIds, grossDue: money(gross, shopCurrency), actualFees: money(0n, shopCurrency), bankReceived: money(0n, shopCurrency), difference: money(gross, shopCurrency), status: 'pending', bankTransactionId: null
                     });
                 }
                 completed++;
@@ -174,12 +268,11 @@ export function files(op: string, input: Input): Row | undefined {
         });
     }
     if (op === 'createExport') {
-        const collection = ({ inventory: 'stock', orders: 'orders', cashflow: 'financeEntries', profit_loss: 'journals' } as Record<string, string>)[str(body.reportType)];
-        ensure(collection, 'Không hỗ trợ loại báo cáo.', 422);
-        const data = all(collection, shopId);
-        const fields = [...new Set(data.flatMap(row => Object.keys(row)))].filter(key => !['credential', 'endpoint', 'auth'].includes(key));
+        ensure(['inventory', 'orders', 'cashflow', 'profit_loss'].includes(str(body.reportType)), 'Không hỗ trợ loại báo cáo.', 422, 'UNSUPPORTED_REPORT');
+        const { fields, rows: data } = exportRows(input, str(body.reportType));
         const text = '\uFEFF' + [fields.map(csvCell).join(','), ...data.map(row => fields.map(key => csvCell(row[key])).join(','))].join('\r\n');
         const url = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+        exportUrls.add(url);
         return job(shopId, 'export', { total: data.length, completed: data.length, downloadUrl: url });
     }
     return undefined;

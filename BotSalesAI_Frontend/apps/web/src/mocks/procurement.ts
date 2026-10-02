@@ -8,7 +8,8 @@ export async function procurement(op: string, input: Input): Promise<Row | undef
         case 'updateSupplier': {
             const s = find('suppliers', input.id, shopId);
             checkVersion(s, input);
-            return touch(Object.assign(s, body));
+            const { expectedVersion: _expectedVersion, ...patch } = body;
+            return touch(Object.assign(s, patch));
         }
         case 'setSupplierStatus': {
             const s = find('suppliers', input.id, shopId);
@@ -24,8 +25,11 @@ export async function procurement(op: string, input: Input): Promise<Row | undef
         case 'updateReorderRule': {
             find('offers', str(body.supplierOfferId), shopId);
             ensure(num(body.targetQuantity) >= num(body.reorderPoint), 'Mức nhập tới phải >= điểm nhập lại.', 422);
-            if (body.mode === 'auto_send')
-                ensure(body.budgetPolicyId, 'Tự gửi đơn cần chính sách ngân sách được duyệt.');
+            if (body.mode === 'auto_send') {
+                ensure(body.budgetPolicyId, 'Tự gửi đơn cần chính sách ngân sách được duyệt.', 422);
+                const policy = find('budgets', str(body.budgetPolicyId), shopId);
+                ensure(policy.kind === 'procurement' && policy.enabled && !!policy.limitAmount, 'Tự gửi chỉ dùng chính sách ngân sách mua hàng đang bật và có hạn mức.', 422);
+            }
             const { expectedVersion, ...data } = body;
             void expectedVersion;
             if (op === 'createReorderRule')
@@ -38,7 +42,7 @@ export async function procurement(op: string, input: Input): Promise<Row | undef
             for (const rule of all('reorderRules', shopId).filter(r => r.enabled)) {
                 const s = stockFor(shopId, str(rule.variantId), str(rule.warehouseId));
                 const offer = find('offers', str(rule.supplierOfferId), shopId);
-                const active = all('purchases', shopId).filter(p => !['cancelled', 'received'].includes(str(p.status)));
+                const active = all('purchases', shopId).filter(p => p.warehouseId === rule.warehouseId && !['cancelled', 'received'].includes(str(p.status)));
                 const incoming = active.filter(p => ['confirmed', 'part_received'].includes(str(p.status))).flatMap(p => rows(p.lines)).filter(l => l.variantId === rule.variantId).reduce((n, l) => n + num(l.quantity) - num(l.receivedQuantity) - num(l.rejectedQuantity), 0);
                 const proposed = active.filter(p => !['confirmed', 'part_received'].includes(str(p.status))).flatMap(p => rows(p.lines)).filter(l => l.variantId === rule.variantId).reduce((n, l) => n + num(l.quantity), 0);
                 const deficit = num(rule.targetQuantity) - num(s.available) - incoming - proposed;
@@ -64,6 +68,8 @@ export async function procurement(op: string, input: Input): Promise<Row | undef
             const lines = rows(body.lines).map(l => {
                 const offer = find('offers', str(l.supplierOfferId), shopId);
                 ensure(offer.supplierId === supplier.id && offer.variantId === l.variantId, 'Báo giá sai nhà cung cấp/SKU.', 422);
+                ensure(record(offer.unitCost).currency === supplier.currency, 'Đơn vị tiền tệ báo giá khác nhà cung cấp.', 422);
+                ensure(!offer.validUntil || Date.parse(str(offer.validUntil)) > Date.parse(now()), 'Báo giá đã hết hiệu lực.', 422);
                 ensure(num(l.quantity) >= num(offer.minimumQuantity) && num(l.quantity) % num(offer.packSize) === 0, 'Số lượng không đúng MOQ/quy cách.', 422);
                 return {
                     id: id('purchase-line'), variantId: l.variantId, supplierOfferId: l.supplierOfferId, quantity: l.quantity, unitCost: offer.unitCost, receivedQuantity: 0, rejectedQuantity: 0
@@ -157,6 +163,7 @@ export async function procurement(op: string, input: Input): Promise<Row | undef
                 const line = rows(p.lines).find(x => x.id === l.purchaseLineId);
                 ensure(line, 'Sai dòng mua.', 422);
                 ensure(num(l.acceptedQuantity) + num(l.rejectedQuantity) > 0 && num(l.acceptedQuantity) + num(l.rejectedQuantity) <= num(line.quantity) - num(line.receivedQuantity) - num(line.rejectedQuantity), 'Lượng nhập vượt lượng còn lại.', 422);
+                ensure(num(l.rejectedQuantity) === 0 || str(l.reason).trim().length > 0, 'Hàng bị từ chối cần có lý do kiểm nhận.', 422);
             }
             return insert('receipts', 'GoodsReceipt', shopId, {
                 purchaseOrderId: p.id, warehouseId: p.warehouseId, status: 'draft', lines: body.lines, sourceDocumentRef: body.sourceDocumentRef

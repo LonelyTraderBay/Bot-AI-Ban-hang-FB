@@ -85,27 +85,38 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             const f = find('feedback', input.id, shopId);
             checkVersion(f, input);
             ensure(f.status === 'pending', 'Phản hồi đã được duyệt.');
+            ensure(body.decision !== 'approve' || str(body.redactedCorrection).trim().length > 0, 'Cần nội dung đã loại dữ liệu riêng tư trước khi chấp nhận.', 422);
             f.status = body.decision === 'approve' ? 'approved' : 'rejected';
             f.reviewReason = body.reason;
             if (body.decision === 'approve') {
                 const k = insert('knowledge', 'Knowledge', shopId, {
                     title: 'Đề xuất từ phản hồi', sourceKind: 'feedback', fileId: null, content: body.redactedCorrection, revision: 1, status: 'draft', contentHash: null, publishedAt: null, approvedBy: null, warnings: [], publishedRevisionId: null, draftRevisionId: null
                 });
+                const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
+                k.draftRevisionId = revision.id;
+                revision.draftRevisionId = revision.id;
                 f.knowledgeDraftId = k.id;
             }
             return touch(f);
         }
         case 'createKnowledge': {
+            ensure(str(body.content).trim() || body.fileId, 'Cần nội dung hoặc tệp nguồn.', 422);
+            if (body.fileId)
+                find('files', str(body.fileId), shopId);
             const k = insert('knowledge', 'Knowledge', shopId, {
                 ...body, revision: 1, status: 'draft', contentHash: await hashValue(body.content), publishedAt: null, approvedBy: null, warnings: [], publishedRevisionId: null, draftRevisionId: null
             });
             const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
             k.draftRevisionId = revision.id;
+            revision.draftRevisionId = revision.id;
             return k;
         }
         case 'updateKnowledge': {
             const k = find('knowledge', input.id, shopId);
             checkVersion(k, input);
+            ensure(k.status !== 'published', 'Bản đã xuất bản bất biến; hãy tạo revision mới.', 409);
+            if (body.fileId)
+                find('files', str(body.fileId), shopId);
             Object.assign(k, body);
             k.revision = num(k.revision) + 1;
             k.status = 'draft';
@@ -113,11 +124,13 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             touch(k);
             const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
             k.draftRevisionId = revision.id;
+            revision.draftRevisionId = revision.id;
             return k;
         }
         case 'submitKnowledgeReview': {
             const k = find('knowledge', input.id, shopId);
             checkVersion(k, input);
+            ensure(['draft', 'rejected', 'failed'].includes(str(k.status)), 'Chỉ có thể gửi bản nháp để đánh giá.', 409);
             ensure(k.content || k.fileId, 'Thiếu nội dung.', 422);
             k.status = 'ready_for_review';
             touch(k);
@@ -140,6 +153,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
         case 'retireKnowledge': {
             const k = find('knowledge', input.id, shopId);
             checkVersion(k, input);
+            ensure(k.status === 'published', 'Chỉ có thể ngừng một nguồn đang xuất bản.', 409);
             k.status = 'retired';
             touch(k);
             return command(shopId, op, { type: 'knowledge', id: k.id });
@@ -147,13 +161,15 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
         case 'createKnowledgeRevision':
         case 'restoreKnowledgeRevision': {
             const k = find('knowledge', str(input.path.knowledgeId), shopId);
+            checkVersion(k, input);
             let content = body;
             if (op === 'restoreKnowledgeRevision') {
-                checkVersion(k, input);
                 const old = find('revisions', str(input.path.revisionId), shopId);
                 ensure(old.documentId === k.id, 'Phiên bản không thuộc tài liệu.', 404);
                 content = { title: old.title, sourceKind: old.sourceKind, fileId: old.fileId, content: old.content };
             }
+            if (content.fileId)
+                find('files', str(content.fileId), shopId);
             Object.assign(k, content);
             k.revision = num(k.revision) + 1;
             k.status = 'draft';
@@ -161,6 +177,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             touch(k);
             const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
             k.draftRevisionId = revision.id;
+            revision.draftRevisionId = revision.id;
             return revision;
         }
         case 'restoreBotRevision': {
@@ -286,15 +303,19 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
                 return command(shopId, op, { type: 'conversation', id: c.id });
             }
             const targets = body.scope === 'role' ? [find('agentRoles', str(body.resourceId), shopId)] : all('agentRoles', shopId);
-            if (body.scope === 'role')
-                checkVersion(targets[0], input);
+            if (body.scope === 'role') {
+                const target = targets[0];
+                ensure(target, 'Không tìm thấy vai trò bot.', 404, 'NOT_FOUND');
+                checkVersion(target, input);
+            }
             for (const r of targets) {
                 r.status = body.action === 'pause' ? 'paused' : 'not_configured';
                 r.generation = num(r.generation) + 1;
                 touch(r);
             }
             const bot = first('bots', shopId);
-            if (body.action === 'pause') {
+            // A role-level kill switch must not pause the entire shop bot.
+            if (body.scope === 'shop' && body.action === 'pause') {
                 bot.status = 'paused';
                 touch(bot);
             }
@@ -304,7 +325,14 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             const b = find('budgets', input.id, shopId);
             checkVersion(b, input);
             const approval = find('approvals', str(body.approvalId), shopId);
-            ensure(approval.status === 'approved' && record(approval.resource).id === b.id, 'Chưa có phê duyệt đúng hạn mức.');
+            const resource = record(approval.resource);
+            ensure(
+                approval.status === 'approved' &&
+                resource.type === 'budget_policy' && resource.id === b.id &&
+                num(approval.resourceVersion) === num(b.version) &&
+                Date.parse(str(approval.expiresAt)) > Date.parse(now()),
+                'Phê duyệt đã hết hạn, sai phiên bản hoặc không thuộc hạn mức này.'
+            );
             b.limitAmount = body.limitAmount;
             b.period = body.period;
             return touch(b);
@@ -312,7 +340,14 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
         case 'createApproval': return insert('approvals', 'Approval', shopId, {
             action: body.action, resource: body.resource, resourceVersion: body.resourceVersion, policyVersion: 'synthetic-policy-1', intentHash: body.intentHash, amount: null, status: 'pending', expiresAt: future(), requestedBy: input.userId, decidedBy: null, decisionReason: null
         });
-        case 'createServiceCase': return insert('serviceCases', 'ServiceCase', shopId, { ...body, state: 'open', workItemId: null });
+        case 'createServiceCase': {
+            const customer = find('customers', str(body.customerId), shopId);
+            if (body.orderId) {
+                const order = find('orders', str(body.orderId), shopId);
+                ensure(order.customerId === customer.id, 'Đơn hàng không thuộc hồ sơ khách hàng đã chọn.');
+            }
+            return insert('serviceCases', 'ServiceCase', shopId, { ...body, state: 'open', workItemId: null });
+        }
         case 'setServiceCaseStatus': {
             const c = find('serviceCases', input.id, shopId);
             checkVersion(c, input);

@@ -6,9 +6,10 @@ import { catalog } from './catalog';
 import { orders } from './orders';
 import { fulfillment } from './fulfillment';
 import { procurement } from './procurement';
-import { finance, cashflow, profitLoss } from './finance';
+import { allTimeReportWindow, finance, cashflow, profitLoss } from './finance';
 import { auxiliary } from './auxiliary';
-import { files, upload } from './files';
+import { clearFileState, files, upload } from './files';
+import { marketingFixture } from './marketing-fixture';
 export { MockFailure };
 export const CSRF = 'botsales-demo-csrf-not-a-real-secret';
 let loggedIn = true;
@@ -18,7 +19,7 @@ const seen = new Map<string, {
     body: string;
     response: unknown;
 }>();
-export type Fault = 'none' | 'slow' | 'error' | 'empty' | 'stale' | 'unknown' | 'forbidden';
+export type Fault = 'none' | 'slow' | 'error' | 'error_persistent' | 'error_persistent_all' | 'empty' | 'empty_persistent' | 'stale' | 'unknown' | 'forbidden' | 'budget_exceeded' | 'tool_denied';
 let fault: Fault = 'none';
 type ChangeEvent = {
     eventId: string;
@@ -35,12 +36,12 @@ let eventSequence = 0;
 const listeners = new Set<(event: ChangeEvent) => void>();
 export function subscribeChanges(listener: (event: ChangeEvent) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; }
 function notify(shopId: string) { const sequence = ++eventSequence; const event: ChangeEvent = {
-    eventId: `mock-${sequence}`, type: 'resync.required', schemaVersion: 1, shopId, resourceType: 'shop', resourceId: shopId, resourceVersion: 0, occurredAt: now(), sequence
+    eventId: `mock-${sequence}`, type: 'resync.required', schemaVersion: 2, shopId, resourceType: 'shop', resourceId: shopId, resourceVersion: 0, occurredAt: now(), sequence
 }; for (const listener of listeners)
     listener(event); }
 export function setFault(value: Fault) { fault = value; }
-export function setRole(value: string) { ensure(grantedPermissions(value).length > 0, 'Vai trò không có trong catalog.', 422); role = value; permissionVersion++; }
-export function resetService() { resetDb(); seen.clear(); role = 'owner'; permissionVersion++; fault = 'none'; loggedIn = true; }
+export function setRole(value: string) { ensure(grantedPermissions(value).length > 0, 'Vai trò không có trong catalog.', 422); role = value; permissionVersion++; seen.clear(); }
+export function resetService() { resetDb(); clearFileState(); seen.clear(); role = 'owner'; permissionVersion++; fault = 'none'; loggedIn = true; }
 export function currentSession(): Row {
     ensure(loggedIn, 'Phiên đăng nhập đã kết thúc.', 401, 'UNAUTHENTICATED');
     return {
@@ -91,7 +92,7 @@ function read(op: string, input: Input): unknown {
         return all('botRevisions', shopId);
     if (op === 'getDashboard')
         return {
-            shopId, asOf: now(), openConversations: all('conversations', shopId).filter(c => c.status === 'open').length, pendingOrders: all('orders', shopId).filter(o => ['draft', 'confirmed'].includes(str(o.orderState))).length, lowStockVariants: all('stock', shopId).filter(s => num(s.available) <= num(s.lowStockThreshold)).length, botStatus: first('bots', shopId).status, recognizedRevenue: grantedPermissions(role).includes('finance.read') ? profitLoss(shopId).netSales : null, cashReceived: grantedPermissions(role).includes('finance.read') ? cashflow(shopId).receipts : null, warnings: ['Môi trường mô phỏng. Các kết nối ngoài chưa hoạt động.']
+            shopId, asOf: now(), openConversations: all('conversations', shopId).filter(c => c.status === 'open').length, pendingOrders: all('orders', shopId).filter(o => ['draft', 'confirmed'].includes(str(o.orderState))).length, lowStockVariants: all('stock', shopId).filter(s => num(s.available) <= num(s.lowStockThreshold)).length, botStatus: first('bots', shopId).status, recognizedRevenue: grantedPermissions(role).includes('finance.read') ? profitLoss(shopId, allTimeReportWindow(shopId)).netSales : null, cashReceived: grantedPermissions(role).includes('finance.read') ? cashflow(shopId, allTimeReportWindow(shopId)).receipts : null, warnings: ['Môi trường mô phỏng. Các kết nối ngoài chưa hoạt động.']
         };
     if (op === 'getOperationsSummary')
         return {
@@ -99,32 +100,39 @@ function read(op: string, input: Input): unknown {
         };
     if (op === 'getMarketingSummary')
         return {
-            asOf: now(), knownAttributedOrders: 0, unknownAttributionOrders: all('orders', shopId).length, topQuestions: all('conversations', shopId).map(c => str(c.lastMessagePreview)), lostSaleReasons: [], estimatedSpend: null, actualSpend: null
+            asOf: now(), ...(shopId === 'shop-demo' ? marketingFixture : {
+                knownAttributedOrders: 0, unknownAttributionOrders: all('orders', shopId).length,
+                topQuestions: all('conversations', shopId).map(c => str(c.lastMessagePreview)), lostSaleReasons: [], estimatedSpend: null, actualSpend: null
+            })
         };
     if (op === 'getReportSummary')
         return {
-            shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'], warnings: ['Dữ liệu mô phỏng trong phiên, không có tài khoản quảng cáo thật.']
+            shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'].filter(type => grantedPermissions(role).includes(({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[type] || '')), warnings: ['Dữ liệu mô phỏng trong phiên, không có tài khoản quảng cáo thật.']
         };
-    const schema = opMap[op]?.responseSchema?.replace(/ListResponse$|Response$/, '');
+    const responseSchema = opMap[op]?.responseSchema;
+    const schema = responseSchema?.replace(/ListResponse$|Response$/, '');
     const collection = schema ? schemaToCollection[schema] : undefined;
     if (!collection)
         return undefined;
-    if (opMap[op].responseSchema?.endsWith('ListResponse')) {
+    if (responseSchema?.endsWith('ListResponse')) {
         let data = all(collection, shopId);
         if (input.path.conversationId)
             data = data.filter(r => r.conversationId === input.path.conversationId);
         if (input.path.knowledgeId)
             data = data.filter(r => r.documentId === input.path.knowledgeId);
-        for (const filter of ['status', 'state', 'orderId', 'customerId', 'variantId', 'warehouseId', 'supplierId', 'purchaseOrderId', 'kind']) {
+        for (const filter of ['status', 'state', 'orderId', 'customerId', 'variantId', 'warehouseId', 'supplierId', 'purchaseOrderId', 'kind', 'mode', 'channelId', 'assignedUserId']) {
             const value = input.query.get(filter);
             if (value)
                 data = data.filter(r => (r[filter] ?? r.orderState) === value);
         }
+        if (op === 'listProducts' && input.query.has('categoryId'))
+            data = data.filter(r => r.categoryId === input.query.get('categoryId'));
         const search = input.query.get('q')?.toLocaleLowerCase('vi');
         if (search)
             data = data.filter(r => JSON.stringify(r).toLocaleLowerCase('vi').includes(search));
-        if (fault === 'empty') {
-            fault = 'none';
+        if (fault === 'empty' || fault === 'empty_persistent') {
+            if (fault === 'empty')
+                fault = 'none';
             return [];
         }
         if (collection === 'stock' && !grantedPermissions(role).includes('finance.read'))
@@ -148,7 +156,7 @@ async function execute(request: MockRequest): Promise<MockResult> {
     const shopId = request.path.shopId || '';
     const key = Object.entries(request.path).filter(([k]) => k !== 'shopId').at(-1)?.[1] || shopId;
     const input: Input = {
-        shopId, id: key, path: request.path, query: request.query || new URLSearchParams(), body, version: headers['if-match'] ? Number(headers['if-match'].replaceAll('"', '')) : undefined, userId: 'user-demo'
+        shopId, id: key, path: request.path, query: request.query || new URLSearchParams(), body, version: headers['if-match'] ? Number(headers['if-match'].replaceAll('"', '')) : undefined, userId: 'user-demo', permissions: grantedPermissions(role)
     };
     const mutating = meta.method !== 'GET';
     if (request.op === 'getCsrfToken')
@@ -163,6 +171,8 @@ async function execute(request: MockRequest): Promise<MockResult> {
     }
     if (request.op === 'logout') {
         loggedIn = false;
+        seen.clear();
+        clearFileState();
         return { status: 204, data: undefined };
     }
     currentSession();
@@ -191,6 +201,30 @@ async function execute(request: MockRequest): Promise<MockResult> {
     }
     if (meta.permission)
         ensure(grantedPermissions(role).includes(meta.permission), 'Bạn không có quyền thực hiện thao tác này.', 403, 'FORBIDDEN');
+    if (request.op === 'createExport') {
+        const sourcePermission = ({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[str(body.reportType)];
+        ensure(sourcePermission && grantedPermissions(role).includes(sourcePermission), 'Bạn không có quyền đọc nguồn dữ liệu của báo cáo này.', 403, 'SOURCE_PERMISSION_REQUIRED');
+    }
+    if (fault === 'budget_exceeded' && request.op === 'runPlayground') {
+        fault = 'none';
+        throw new MockFailure(429, 'BUDGET_EXCEEDED', 'Hạn mức AI mô phỏng đã đạt giới hạn; yêu cầu thử không tạo kết quả.');
+    }
+    if (fault === 'tool_denied' && request.op === 'runPlayground') {
+        fault = 'none';
+        throw new MockFailure(403, 'TOOL_NOT_ALLOWED', 'Công cụ yêu cầu không thuộc allowedToolIds; không thực thi thao tác.');
+    }
+    if (request.op === 'uploadFile') {
+        const purpose = request.form?.get('purpose');
+        ensure(typeof purpose === 'string', 'Cần chỉ định mục đích tải tệp.', 422, 'UPLOAD_PURPOSE_REQUIRED');
+        // Financial statement purposes are demo-only adapters; the canonical FileUpload enum does not include them.
+        const requiredPermission: Record<string, string> = {
+            product_image: 'catalog.write', product_import: 'catalog.import', knowledge_source: 'knowledge.write',
+            bank_statement: 'finance.reconcile', cod_statement: 'finance.reconcile'
+        };
+        const permission = requiredPermission[purpose];
+        ensure(permission, 'Mục đích tải tệp không được hỗ trợ.', 422);
+        ensure(grantedPermissions(role).includes(permission), 'Bạn không có quyền tải loại tệp này.', 403, 'FORBIDDEN');
+    }
     if (fault === 'slow') {
         fault = 'none';
         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -203,12 +237,28 @@ async function execute(request: MockRequest): Promise<MockResult> {
         fault = 'none';
         throw new MockFailure(503, 'SIMULATED_FAILURE', 'Lỗi dịch vụ mô phỏng. Đổi “Thử trạng thái” về bình thường để tiếp tục.');
     }
+    if (fault === 'error_persistent_all')
+        throw new MockFailure(503, 'SIMULATED_FAILURE', 'API mô phỏng đang lỗi liên tục. Đổi “Trạng thái thử” về bình thường rồi thử lại.');
+    if (fault === 'error_persistent' && request.op === 'listDevices')
+        throw new MockFailure(503, 'SIMULATED_FAILURE', 'Danh sách thiết bị đang lỗi mô phỏng. Đổi “Thử trạng thái” về bình thường rồi thử tải lại.');
     if (fault === 'stale' && mutating) {
         fault = 'none';
         throw new MockFailure(412, 'STALE_VERSION', 'Mô phỏng dữ liệu bị thay đổi bởi người khác.');
     }
     const dedupeKey = [input.userId, shopId, request.op, headers['idempotency-key'] || ''].join('|');
-    const bodyHash = JSON.stringify({ path: request.path, body: request.body });
+    const formEntries: Array<[string, string | { name: string; type: string; size: number; sha256: string }]> = [];
+    for (const [name, value] of request.form?.entries() || []) {
+        if (value instanceof File) {
+            const digest = await crypto.subtle.digest('SHA-256', await value.arrayBuffer());
+            formEntries.push([name, {
+                name: value.name, type: value.type, size: value.size,
+                sha256: Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('')
+            }]);
+        }
+        else formEntries.push([name, value]);
+    }
+    const canonicalBody = JSON.stringify({ path: request.path, body: request.body, form: formEntries });
+    const bodyHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonicalBody))), byte => byte.toString(16).padStart(2, '0')).join('');
     if (mutating && headers['idempotency-key']) {
         const previous = seen.get(dedupeKey);
         if (previous) {

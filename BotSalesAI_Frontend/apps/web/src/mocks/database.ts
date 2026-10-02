@@ -12,6 +12,7 @@ export type Input = {
     body: Row;
     version?: number;
     userId: string;
+    permissions?: string[];
 };
 export class MockFailure extends Error {
     constructor(public status: number, public code: string, message: string) { super(message); }
@@ -31,6 +32,25 @@ export const now = () => new Date(Date.parse('2026-09-29T14:00:00Z') + (sequence
 export const future = () => new Date(Date.parse(now()) + 15 * 60000).toISOString();
 export let db: Store = structuredClone(seed) as Store;
 export function resetDb() { db = structuredClone(seed) as Store; sequence = 10000; }
+export function loadLargeCustomerDataset(count = 1000) {
+    resetDb();
+    const customers = db.customers ?? (db.customers = []);
+    const sample = customers.find(customer => customer.shopId === 'shop-demo');
+    ensure(sample, 'Không có mẫu khách hàng cho fixture hiệu năng.');
+    for (let index = 1; index <= count; index++) {
+        const suffix = String(index).padStart(4, '0');
+        customers.push({
+            ...sample,
+            id: `perf-customer-${suffix}`,
+            displayName: `Khách hàng tổng hợp ${suffix}`,
+            phone: null,
+            email: null,
+            notes: 'Bản ghi giả lập được tạo cho phép đo frontend.',
+            redactedFields: [],
+            externalIdentity: null,
+        });
+    }
+}
 export function restoreDb(snapshot: Store) { db = snapshot; }
 export const all = (collection: string, shopId: string) => (db[collection] || []).filter(row => row.shopId === shopId || (collection === 'shops' && row.id === shopId));
 export function find(collection: string, resourceId: string, shopId: string): Row {
@@ -105,7 +125,8 @@ export function units(value: unknown): bigint {
     const text = typeof value === 'string' ? value : str(record(value).amount);
     ensure(/^-?\d+(\.\d{1,4})?$/.test(text), 'Số tiền không hợp lệ.', 422, 'INVALID_MONEY');
     const negative = text.startsWith('-');
-    const [integer, fraction = ''] = text.replace('-', '').split('.');
+    const [integer = '', fraction = ''] = text.replace('-', '').split('.');
+    ensure(integer.length > 0, 'Số tiền không hợp lệ.', 422, 'INVALID_MONEY');
     return (BigInt(integer) * SCALE + BigInt(fraction.padEnd(4, '0'))) * (negative ? -1n : 1n);
 }
 export function money(value: bigint, currency = 'VND'): Row {

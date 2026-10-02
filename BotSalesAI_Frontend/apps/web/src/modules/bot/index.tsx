@@ -23,8 +23,9 @@ export function BotConfigPage() {
             key: 'action', label: '', render: r => <MutationButton permission="bot.configure" onClick={() => setRestore(r)}>Khôi phục vào nháp</MutationButton>
         }
     ]}/></QueryState></Panel>
- <EditDialog open={!!editing} title="Cấu hình bản nháp" onClose={() => setEdit(null)} busy={update.pending} actions={<Button variant="contained" disabled={!instructions || !connection || !budget || update.pending} onClick={async () => { try {
-        await update.execute({ version: editing?.version, body: {
+ <EditDialog open={!!editing} title="Cấu hình bản nháp" onClose={() => setEdit(null)} busy={update.pending} actions={<Button variant="contained" disabled={!editing || !instructions || !connection || !budget || update.pending} onClick={async () => { if (!editing)
+        return; try {
+        await update.execute({ version: editing.version, body: {
                 connectionId: connection, instructions, knowledgeRevisionIds: knowledge.split(/\s+/).filter(Boolean), maxToolSteps: Number(steps), dailyBudget: { amount: budget, currency: shop.currency }, requireHumanOrderConfirmation: true
             } });
         setEdit(null);
@@ -45,7 +46,7 @@ export function PlaygroundPage() {
         const r = await run.execute({ body: { configRevision: config.data?.data.draftRevision || 1, text, customerContextId: customer || null } });
         setResult(r.data);
     }
-    catch { /* visible */ } }}><ErrorNotice error={run.error}/><Stack gap={2}><TextField label="Nội dung khách hỏi" multiline minRows={9} value={text} onChange={e => setText(e.target.value)}/><TextField label="Mã khách để thử ngữ cảnh (tùy chọn)" value={customer} onChange={e => setCustomer(e.target.value)}/><MutationButton permission="bot.configure" type="submit" variant="contained" busy={run.pending} disabled={!text.trim() || !config.data}>Chạy thử</MutationButton></Stack></Box></Panel><Panel title="Kết quả có nguồn"><Box sx={{ p: 3 }}>{result ? <><Typography sx={{ whiteSpace: 'pre-wrap' }}>{result.text}</Typography><DetailLine label="Phiên bản cấu hình">{result.configRevision}</DetailLine><DetailLine label="Độ trễ">{result.latencyMs} ms</DetailLine><DetailLine label="Chi phí ước tính"><Amount value={result.estimatedCost}/></DetailLine><DetailLine label="Token vào / ra">{result.inputTokens ?? 'Chưa rõ'} / {result.outputTokens ?? 'Chưa rõ'}</DetailLine><DetailLine label="Gửi ra ngoài">Không</DetailLine><Typography variant="subtitle2" sx={{ mt: 2 }}>Nguồn</Typography>{result.sources.map(s => <Chip key={s.type + s.id} label={`${s.type} / ${s.id}`} sx={{ m: .5 }}/>)}{result.warnings.map(w => <Alert key={w} severity="warning" sx={{ mt: 2 }}>{w}</Alert>)}</> : <Typography color="text.secondary">Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.</Typography>}</Box></Panel></Box></>;
+    catch { /* visible */ } }}><ErrorNotice error={run.error}/><QueryState query={config}>{config.data?.data && <Alert severity="info">Phòng thử dùng bản nháp #{config.data.data.draftRevision} · {config.data.data.status === 'active' ? `đang chạy bản #${config.data.data.liveRevision || 'chưa có'}` : 'cấu hình bot đang tạm dừng'}. Nội dung thử không gửi ra ngoài.</Alert>}</QueryState><Stack gap={2} sx={{ mt: config.data ? 2 : 0 }}><TextField label="Nội dung khách hỏi" multiline minRows={9} value={text} onChange={e => setText(e.target.value)}/><TextField label="Mã khách để thử ngữ cảnh (tùy chọn)" value={customer} onChange={e => setCustomer(e.target.value)}/><MutationButton permission="bot.configure" type="submit" variant="contained" busy={run.pending} disabled={!text.trim() || !config.data}>Chạy thử</MutationButton></Stack></Box></Panel><Panel title="Kết quả có nguồn"><Box sx={{ p: 3 }}>{result ? <><Typography sx={{ whiteSpace: 'pre-wrap' }}>{result.text}</Typography><DetailLine label="Phiên bản cấu hình">{result.configRevision}</DetailLine><DetailLine label="Độ trễ">{result.latencyMs} ms</DetailLine><DetailLine label="Chi phí ước tính"><Amount value={result.estimatedCost}/></DetailLine><DetailLine label="Token vào / ra">{result.inputTokens ?? 'Chưa rõ'} / {result.outputTokens ?? 'Chưa rõ'}</DetailLine><DetailLine label="Gửi ra ngoài">Không</DetailLine><Typography variant="subtitle2" sx={{ mt: 2 }}>Nguồn</Typography>{result.sources.map(s => <Chip key={s.type + s.id} label={`${s.type} / ${s.id}`} sx={{ m: .5 }} />)}{result.warnings.map(w => <Alert key={w} severity="warning" sx={{ mt: 2 }}>{w}</Alert>)}</> : <Typography color="text.secondary">Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.</Typography>}</Box></Panel></Box></>;
 }
 export function EvaluationsPage() {
     const { shop } = useScope();
@@ -81,6 +82,14 @@ export function AgentTeamPage() {
             key: 'action', label: '', render: b => <MutationButton permission="operations.manage" onClick={() => { setBudget(b); setAmount(b.limitAmount?.amount || ''); setApproval(''); }}>Đổi có phê duyệt</MutationButton>
         }
     ]}/></QueryState></Panel>
+ <Panel title="Chi phí AI & dự phòng nhà cung cấp" sx={{ mt: 3 }}>
+    <Stack gap={1.5} sx={{ p: 3 }} data-testid="provider-failover-preview">
+        <Alert severity="info">Chi phí trong phòng thử là ước tính mô phỏng. Chỉ dùng provider dự phòng đã được phê duyệt; demo không chuyển dữ liệu khách sang provider khác.</Alert>
+        <DetailLine label="Ngân sách token / kênh">Theo chính sách và hạn mức do hệ thống trả về; không dùng chung với ngân sách mua hàng.</DetailLine>
+        <DetailLine label="Provider dự phòng">Chưa có trạng thái failover được xác minh trong dữ liệu frontend.</DetailLine>
+        <DetailLine label="Khi hết hạn mức">Dừng câu trả lời tự động và chuyển nhân viên xử lý; không âm thầm đổi provider.</DetailLine>
+    </Stack>
+ </Panel>
  <EditDialog open={!!editing} title="Giao trách nhiệm và cấu hình vai trò" onClose={() => setEditing(null)} busy={update.pending} actions={<Button variant="contained" disabled={!owner || !connection || !policy || update.pending} onClick={async () => { try {
         await update.execute({ path: { resourceId: editing?.id || '' }, body: { expectedVersion: editing?.version || 1, humanOwnerId: owner, modelConnectionId: connection, policyVersion: policy } });
         setEditing(null);
