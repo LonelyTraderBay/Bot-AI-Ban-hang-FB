@@ -1,0 +1,40 @@
+{
+  "id": "S15-browser-readiness-before-fix-20261007",
+  "date": "2026-10-07",
+  "scope": "Browser readiness and pre-fix layout reproduction for the marked Imports route and Finance Panel consumers",
+  "imports": {
+    "command": "node node_modules/@playwright/test/cli.js test tests/ui-catalog-layout.spec.ts --grep \"Imports review notice\" --reporter=line",
+    "result": "PASS",
+    "passed": 2,
+    "engines": ["Chromium", "Firefox"],
+    "route": "/s/shop-demo/imports",
+    "viewportCssPx": { "width": 806, "height": 884 },
+    "readinessAssertions": ["exact route URL", "exact page h1", "review alert visible", "demo controls visible", "three comboboxes"],
+    "observation": {
+      "reviewAlertBottom": 150,
+      "firstControlBorderTop": 174,
+      "controlClearance": 24,
+      "firstFieldLabelTop": 165,
+      "labelClearance": 15,
+      "documentWidth": 806,
+      "pageErrors": 0
+    },
+    "conclusion": "At the marked viewport the alert-to-control clearance matches the shared 24px owner and the label stays 12–18px below the alert; this observation does not prove every Imports state or viewport."
+  },
+  "financeBaseline": {
+    "evidence": "S11-finance-before-fix-20261007.json",
+    "result": "EXPECTED_REPRODUCTION_FAIL",
+    "expectedObservationCount": 9,
+    "actualGapsCssPx": { "width390": [32, 32, 32], "width806": [40, 40, 40], "width1440": [40, 40, 40] },
+    "pageErrors": 0
+  },
+  "stillOpen": [
+    "Reusable collector positive cases for distinct nested surfaces, fragments, and wrapped actions.",
+    "Post-fix paired Finance evidence and broader route/state closure; tracked in S15 and S19."
+  ],
+  "sha256": {
+    "tests/ui-catalog-layout.spec.ts": "DAD7B7C9C4FB9F4B4CCA3E41EA4AF4AE7CB3C1758DB3376901F31C31649C55A5",
+    "tests/ui-finance-layout.spec.ts": "B449E71D03934BFC5AB94AFA1B6AE5300BC6A4313409E4A6D4A55B3BFBD97D46",
+    "apps/web/src/app/Shell.tsx": "54062999115C0D16097DD715C9D3D089D9EE4F11E40220636B1F67028E96D00D"
+  }
+}

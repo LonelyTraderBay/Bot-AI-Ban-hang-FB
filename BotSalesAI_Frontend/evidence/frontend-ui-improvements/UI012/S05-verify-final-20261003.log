@@ -1,0 +1,15 @@
+Date: 2026-10-03
+Scope: frontend source checks and production artifact; Windows, Node 24.19.0, npm 11.17.0.
+Command: npm.cmd run verify with Node added to PATH and `npm_config_script_shell=C:\Users\Joker-PC\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe`. An initial run through the default nested CMD shell could not resolve `node`/`npm`; the same package scripts passed after selecting PowerShell as the script shell.
+Result: PASS.
+
+Checks reported:
+- generate:check: PASS; 11 outputs, 283 schemas, 210 operations, 54 routes.
+- source check: PASS; 62 files, 220 operation calls, 54 routes, 0 issues; source-checker tests 3/3.
+- module boundaries: PASS; 411 imports, negative fixtures 8/8, 0 issues.
+- ESLint: PASS; TypeScript typecheck: PASS.
+- domain/MSW: PASS; 88/88 checks across 89 operations and 210 handlers.
+- Vitest: PASS; 9 files, 76/76 tests.
+- production build: PASS; Vite transformed 2,051 modules.
+
+Build advisory remains: largest production chunk 732.44 kB raw / 185.09 kB gzip exceeds Vite's 500 kB raw warning threshold. This is not a build failure. No full-product tracker or backend/staging gate was updated by this frontend verification.

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W25",
+  "date": "2026-10-06",
+  "scope": "apps/web/src/modules/reports/index.tsx; routes R31 and R53",
+  "baseline": {
+    "phase": "pre-source-edit",
+    "file": "layout-before-spacing-current-2026-10-06.json",
+    "manifest": "baseline-manifest-current-20261006.json",
+    "files": 67,
+    "findings": 20,
+    "findingsByProperty": {
+      "gap": 9,
+      "p": 5,
+      "px": 1,
+      "py": 1,
+      "mb": 2,
+      "pl": 1,
+      "mt": 1
+    },
+    "owner": "apps/web/src/modules/reports/index.tsx"
+  },
+  "after": {
+    "phase": "post-source-edit",
+    "file": "layout-after-spacing-current-2026-10-06.json",
+    "files": 67,
+    "findings": 0,
+    "status": "PASS",
+    "exceptionsUsed": ["UI028-A11Y-SKIP-LINK-PADDING"],
+    "exceptionsUnused": []
+  },
+  "delta": {
+    "ownerFindingsRemoved": 20,
+    "globalFindingsRemoved": 20,
+    "newFindings": 0,
+    "findingsOutsideOwner": 0,
+    "checkerThresholdChanged": false,
+    "exceptionRegistryRelaxed": false
+  },
+  "pairedRender": {
+    "before": "render-before-current-2026-10-06.json",
+    "after": "render-after-current-2026-10-06.json",
+    "routeViewports": [
+      {"routeId": "R31", "path": "/s/shop-demo/reports?reportType=orders&fromDate=2026-09-28&toDate=2026-09-29", "widths": [390, 1280]},
+      {"routeId": "R53", "path": "/s/shop-demo/reports/marketing", "widths": [390, 1280]}
+    ],
+    "browser": "Chromium",
+    "documentHorizontalOverflow": 0,
+    "routeWrites": 0,
+    "apiErrors": 0,
+    "pageErrors": 0,
+    "geometry": {
+      "R53ChartFrame": {
+        "390": {"before": {"x": 17, "y": 1569.5625, "width": 356, "height": 260, "padding": "16px"}, "after": {"x": 17, "y": 1569.5625, "width": 356, "height": 260, "padding": "16px"}},
+        "1280": {"before": {"x": 773, "y": 725.484375, "width": 482, "height": 260, "padding": "16px"}, "after": {"x": 773, "y": 725.484375, "width": 482, "height": 260, "padding": "16px"}}
+      },
+      "R53ChartSvg": {
+        "390": {"before": {"x": 33, "y": 1585.5625, "width": 324, "height": 228}, "after": {"x": 33, "y": 1585.5625, "width": 324, "height": 228}},
+        "1280": {"before": {"x": 789, "y": 741.484375, "width": 450, "height": 228}, "after": {"x": 789, "y": 741.484375, "width": 450, "height": 228}}
+      },
+      "R53ChartTextAndTicks": "All recorded label/tick strings and SVG coordinates are identical in the two captures.",
+      "R53QuestionList": {
+        "390": {"beforeEffectiveTextInset": 40, "afterSurfaceInset": 24, "afterListInset": 16, "afterEffectiveTextInset": 40, "firstItemXBefore": 57, "firstItemXAfter": 57},
+        "1280": {"beforeEffectiveTextInset": 40, "afterSurfaceInset": 24, "afterListInset": 16, "afterEffectiveTextInset": 40, "firstItemXBefore": 305, "firstItemXAfter": 305}
+      }
+    },
+    "baselineInstrumentationCaveat": "The immutable pre-source capture helper used invalid selectors for mainGrid and reportPanel, so those two baseline fields are null/zero and are not used for a paired delta. Chart, question-list, document, route, and viewport observations used here were present in both captures. The after helper was corrected; the original baseline files were not edited."
+  },
+  "browserRegression": {
+    "log": "targeted-e2e-current-20261006.log",
+    "projects": ["Chromium", "Firefox"],
+    "files": ["ui028-w25-reports-layout.spec.ts", "fe021.spec.ts", "ui011-date-time.spec.ts", "ui012-keyboard.spec.ts", "ui013-url-state.spec.ts"],
+    "passed": 50,
+    "failed": 0,
+    "result": "PASS"
+  }
+}

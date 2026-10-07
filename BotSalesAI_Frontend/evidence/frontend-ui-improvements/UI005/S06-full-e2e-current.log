@@ -1,0 +1,495 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> npm run setup && npm run build && npm run build:demo && playwright test
+
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2051 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist/assets/download-8lJFmiSZ.js                0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-BA4iHnhs.js                 0.30 kB │ gzip:   0.23 kB
+dist/assets/import-file-Ct8hcUTT.js             0.32 kB │ gzip:   0.26 kB
+dist/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist/assets/hooks-FdfTTGry.js                   4.17 kB │ gzip:   1.94 kB
+dist/assets/imports-a3N7DQHw.js                 6.19 kB │ gzip:   2.76 kB
+dist/assets/index-DE_Fcckb.js                   7.27 kB │ gzip:   2.94 kB
+dist/assets/index-DyhqGeKM.js                   7.80 kB │ gzip:   3.14 kB
+dist/assets/index-DNyjtQ2y.js                   8.35 kB │ gzip:   3.54 kB
+dist/assets/index-BVEbyFGd.js                  12.08 kB │ gzip:   4.31 kB
+dist/assets/index-B5sHabam.js                  12.73 kB │ gzip:   5.22 kB
+dist/assets/index-Ba2m0mDK.js                  13.21 kB │ gzip:   4.98 kB
+dist/assets/index-D_MWUMvC.js                  14.47 kB │ gzip:   5.21 kB
+dist/assets/index-DU1pTOAV.js                  14.73 kB │ gzip:   4.94 kB
+dist/assets/index-CWyASyGU.js                  15.81 kB │ gzip:   5.23 kB
+dist/assets/index-Cst3xdd-.js                  16.21 kB │ gzip:   5.68 kB
+dist/assets/index-Bn1ZGpsi.js                  17.55 kB │ gzip:   5.81 kB
+dist/assets/index-BI0HJrHy.js                  23.67 kB │ gzip:   8.06 kB
+dist/assets/index-CPTg_cy9.js                  24.70 kB │ gzip:   8.07 kB
+dist/assets/index-CLskUyaA.js                  29.46 kB │ gzip:   8.60 kB
+dist/assets/index-9KKCHhxu.js                  30.83 kB │ gzip:   9.62 kB
+dist/assets/schemas-BNOgWa61.js                79.17 kB │ gzip:  24.03 kB
+dist/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist/assets/index-J_ctRH44.js                 324.31 kB │ gzip:  99.40 kB
+dist/assets/index-I-HVnqjH.js                 730.75 kB │ gzip: 184.42 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.70s
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2267 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist-demo/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist-demo/assets/download-CWiaXb8A.js                0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/filters-BA4iHnhs.js                 0.30 kB │ gzip:   0.23 kB
+dist-demo/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist-demo/assets/import-file-DUoT3ERC.js             0.55 kB │ gzip:   0.37 kB
+dist-demo/assets/control-gbiJCaWN.js                 0.80 kB │ gzip:   0.48 kB
+dist-demo/assets/hooks-DRcgwSBN.js                   4.17 kB │ gzip:   1.94 kB
+dist-demo/assets/imports-BizEcKqT.js                 6.37 kB │ gzip:   2.85 kB
+dist-demo/assets/index-qr26HtkB.js                   7.79 kB │ gzip:   3.14 kB
+dist-demo/assets/index-DwXlRW3k.js                   7.80 kB │ gzip:   3.13 kB
+dist-demo/assets/index-CibpmlAs.js                   8.35 kB │ gzip:   3.54 kB
+dist-demo/assets/permissions-DSwmPBth.js             8.41 kB │ gzip:   1.94 kB
+dist-demo/assets/index-eNQxtUlI.js                  12.08 kB │ gzip:   4.31 kB
+dist-demo/assets/index-BU6qqq24.js                  12.43 kB │ gzip:   5.03 kB
+dist-demo/assets/index-92pr2IbN.js                  14.48 kB │ gzip:   5.22 kB
+dist-demo/assets/index-BS6dpiwf.js                  15.96 kB │ gzip:   5.28 kB
+dist-demo/assets/index-DZTFtv4h.js                  16.21 kB │ gzip:   5.68 kB
+dist-demo/assets/index-CA6KZ64Y.js                  16.92 kB │ gzip:   5.69 kB
+dist-demo/assets/index-DUrOpVmc.js                  17.55 kB │ gzip:   5.81 kB
+dist-demo/assets/index-DpO-VPEZ.js                  20.61 kB │ gzip:   7.34 kB
+dist-demo/assets/index-DYPXO7D0.js                  21.31 kB │ gzip:   7.64 kB
+dist-demo/assets/index-Bo8O1WAE.js                  25.16 kB │ gzip:   8.21 kB
+dist-demo/assets/index-hu7d3gOb.js                  29.46 kB │ gzip:   8.60 kB
+dist-demo/assets/index-CH1kzOfO.js                  32.84 kB │ gzip:  10.30 kB
+dist-demo/assets/schemas-BNOgWa61.js                79.17 kB │ gzip:  24.03 kB
+dist-demo/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist-demo/assets/service-DdTVDmp5.js               159.28 kB │ gzip:  34.68 kB
+dist-demo/assets/browser-3vUk7_SQ.js               255.09 kB │ gzip:  86.76 kB
+dist-demo/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist-demo/assets/index-CAokGgvl.js                 324.48 kB │ gzip:  99.45 kB
+dist-demo/assets/index-CO7ZWnsJ.js                 734.04 kB │ gzip: 185.44 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.98s
+[WebServer] (node:14712) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+✔ canonical contracts validate and generate the API base path from OpenAPI (21.6052ms)
+✔ generated operation registry preserves required and optional query parameter metadata (11.2919ms)
+✔ rejects unresolved schema references before generation (22.1587ms)
+✔ rejects missing API version and a server URL outside same-origin path form (15.5729ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (19.1977ms)
+✔ detects a stale generated file and accepts it after regeneration (1.816ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (9.0932ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (16.0987ms)
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (15.368ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (31.2274ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (32.4259ms)
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.2698ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.1969ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.2003ms)
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.3855ms)
+✔ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (0.0976ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.0548ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0517ms)
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.2894ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.1064ms)
+✔ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (0.7264ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.0953ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (0.6994ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (153.085ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (145.329ms)
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-29568-6e845561-7e7e-42ee-92ff-a8d50b619a3c\deps\react-dom_client.js?v=fbfe2bfe as it exceeds the max of 500KB.
+
+Running 159 tests using 1 worker
+
+(node:6624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   1 [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo (1.0m)
+[artifact-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","browserMetrics":{"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36","viewport":{"width":1280,"height":720},"route":"/s/shop-demo/overview","domContentLoadedMs":68,"loadEventMs":68,"scriptCount":8,"scriptTransferBytes":443702,"scriptAssets":[{"file":"index-CO7ZWnsJ.js","transferBytes":185739,"decodedBytes":734039,"durationMs":20},{"file":"react-NCqEdj2_.js","transferBytes":35705,"decodedBytes":104726,"durationMs":10},{"file":"mui-CPcoVmWS.js","transferBytes":97979,"decodedBytes":322091,"durationMs":14},{"file":"browser-3vUk7_SQ.js","transferBytes":87062,"decodedBytes":255090,"durationMs":9},{"file":"service-DdTVDmp5.js","transferBytes":34981,"decodedBytes":159284,"durationMs":6},{"file":"permissions-DSwmPBth.js","transferBytes":2236,"decodedBytes":8406,"durationMs":5},{"file":"index-qr26HtkB.js","transferBytes":0,"decodedBytes":7792,"durationMs":53},{"file":"hooks-DRcgwSBN.js","transferBytes":0,"decodedBytes":4166,"durationMs":55}]},"bundles":{"javascriptFiles":30,"totalBytes":2259187,"totalGzipBytes":660635,"initialRouteGzipBytes":446982,"proposedBudgets":{"initialRouteGzipKiB":500,"largestChunkGzipKiB":200,"basis":"Local demo preview limits for the measured Chromium artifact; not a backend or platform SLO."},"largest":[{"file":"apps/web/dist-demo/assets/index-CO7ZWnsJ.js","bytes":734039,"gzipBytes":185439},{"file":"apps/web/dist-demo/assets/index-CAokGgvl.js","bytes":324481,"gzipBytes":99453},{"file":"apps/web/dist-demo/assets/mui-CPcoVmWS.js","bytes":322091,"gzipBytes":97679},{"file":"apps/web/dist-demo/assets/browser-3vUk7_SQ.js","bytes":255090,"gzipBytes":86762},{"file":"apps/web/dist-demo/assets/service-DdTVDmp5.js","bytes":159284,"gzipBytes":34681}]},"observedApi":{"path":"/api/v2/session","status":200,"servedBy":"MSW in the built demo artifact"},"dataSource":"synthetic-msw"}
+  ok   2 [chromium] › tests\artifacts\demo-preview.spec.ts:38:1 › the built demo artifact serves the React UI and synthetic API through preview (753ms)
+[large-dataset-api] {"url":"http://127.0.0.1:58434/api/v2/shops/shop-demo/customers?limit=20","count":20,"page":{"limit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"firstIds":["c1","c2","c3"]}
+[large-dataset-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","datasetId":"FE025-LARGE-CUSTOMERS-1000-V1","generatedRows":1000,"firstPageIds":["c1","c2","c3","c4","perf-customer-0001","perf-customer-0002","perf-customer-0003","perf-customer-0004","perf-customer-0005","perf-customer-0006","perf-customer-0007","perf-customer-0008","perf-customer-0009","perf-customer-0010","perf-customer-0011","perf-customer-0012","perf-customer-0013","perf-customer-0014","perf-customer-0015","perf-customer-0016"],"api":{"status":200,"pageLimit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"domRowsIncludingHeader":21,"firstPageReadyMs":362,"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36","viewport":{"width":1280,"height":720},"note":"Synthetic customer identities only; the React screen renders one API page and exposes the next cursor instead of mounting the full collection."}
+  ok   3 [chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact (997ms)
+  ok   4 [chromium] › tests\artifacts\demo-preview.spec.ts:138:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime (9ms)
+  ok   5 [chromium] › tests\fe009.spec.ts:35:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route (2.2s)
+  ok   6 [chromium] › tests\fe009.spec.ts:57:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version (3.7s)
+  ok   7 [chromium] › tests\fe009.spec.ts:110:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save (1.2s)
+  ok   8 [chromium] › tests\fe009.spec.ts:124:1 › FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified (1.1s)
+  ok   9 [chromium] › tests\fe009.spec.ts:137:1 › FE009.G05 marketing consent preview is interactive but never claims server opt-out (1.2s)
+  ok  10 [chromium] › tests\fe009.spec.ts:152:1 › FE009.H06 audit screen distinguishes available fields from missing contract detail (1.1s)
+  ok  11 [chromium] › tests\fe009.spec.ts:161:1 › FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment (5.0s)
+  ok  12 [chromium] › tests\fe009.spec.ts:193:1 › team invitation and membership revoke stay shop-scoped and protect the active owner (2.2s)
+  ok  13 [chromium] › tests\fe009.spec.ts:229:1 › privacy delete requests remain pending approval with no frontend step-up shortcut (2.6s)
+  ok  14 [chromium] › tests\fe010.spec.ts:37:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP (3.7s)
+  ok  15 [chromium] › tests\fe010.spec.ts:105:1 › product update sends If-Match and keeps edits visible after a 412 conflict (1.8s)
+  ok  16 [chromium] › tests\fe010.spec.ts:123:1 › warehouse role can read catalog products but cannot edit product fields or price cost data (734ms)
+  ok  17 [chromium] › tests\fe010.spec.ts:132:1 › categories create, search, update with a version, and render cursor pagination (1.9s)
+  ok  18 [chromium] › tests\fe010.spec.ts:161:1 › CSV preview reports row-level errors and commits only valid product rows (2.1s)
+  ok  19 [chromium] › tests\fe010.spec.ts:233:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible (2.1s)
+  ok  20 [chromium] › tests\fe010.spec.ts:265:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview (1.2s)
+  ok  21 [chromium] › tests\fe010.spec.ts:278:1 › demo upload rejects files over 5 MB before making an upload request (1.4s)
+UI005 acceptance: {"categoryTotal":105,"createCategoryId":"cat-2","editCategoryId":"cat-0","categoryRequests":20}
+  ok  22 [chromium] › tests\fe010.spec.ts:289:1 › product category lookup pages the full collection and preserves the selected category while editing (10.1s)
+  ok  23 [chromium] › tests\fe011.spec.ts:35:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result (1.3s)
+  ok  24 [chromium] › tests\fe011.spec.ts:54:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once (3.7s)
+  ok  25 [chromium] › tests\fe011.spec.ts:92:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically (2.2s)
+  ok  26 [chromium] › tests\fe011.spec.ts:120:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state (1.7s)
+  ok  27 [chromium] › tests\fe011.spec.ts:136:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it (1.8s)
+  ok  28 [chromium] › tests\fe011.spec.ts:154:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source (2.3s)
+  ok  29 [chromium] › tests\fe011.spec.ts:176:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog (1.9s)
+  ok  30 [chromium] › tests\fe011.spec.ts:199:1 › FE011.AC03 unknown shop scope shows no stock from another shop (294ms)
+  ok  31 [chromium] › tests\fe012.spec.ts:35:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity (3.9s)
+  ok  32 [chromium] › tests\fe012.spec.ts:93:1 › FE012 demo address choice is labeled synthetic and completes the mock order flow (4.9s)
+  ok  33 [chromium] › tests\fe012.spec.ts:122:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation (4.1s)
+  ok  34 [chromium] › tests\fe012.spec.ts:180:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success (1.9s)
+  ok  35 [chromium] › tests\fe012.spec.ts:194:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft (1.1s)
+  ok  36 [chromium] › tests\fe012.spec.ts:206:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available (2.0s)
+  ok  37 [chromium] › tests\fe012.spec.ts:233:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time (2.5s)
+  ok  38 [chromium] › tests\fe012.spec.ts:253:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection (1.2s)
+  ok  39 [chromium] › tests\fe012.spec.ts:277:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund (2.4s)
+  ok  40 [chromium] › tests\fe012.spec.ts:330:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action (1.1s)
+  ok  41 [chromium] › tests\fe012.spec.ts:337:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks (1.4s)
+  ok  42 [chromium] › tests\fe013.spec.ts:40:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote (2.9s)
+  ok  43 [chromium] › tests\fe013.spec.ts:65:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once (7.0s)
+  ok  44 [chromium] › tests\fe013.spec.ts:198:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation (3.4s)
+  ok  45 [chromium] › tests\fe013.spec.ts:242:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible (3.0s)
+  ok  46 [chromium] › tests\fe014.spec.ts:25:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent (3.2s)
+  ok  47 [chromium] › tests\fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers (1.5s)
+  ok  48 [chromium] › tests\fe014.spec.ts:95:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry (4.6s)
+  ok  49 [chromium] › tests\fe014.spec.ts:154:1 › FE014.S03 auto-send cannot be configured without an enabled procurement budget (2.6s)
+  ok  50 [chromium] › tests\fe014.spec.ts:169:1 › FE014.S03 manager without procurement.receive cannot open receipt actions (2.4s)
+  ok  51 [chromium] › tests\fe014.spec.ts:189:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once (3.5s)
+  ok  52 [chromium] › tests\fe014.spec.ts:260:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals (2.0s)
+  ok  53 [chromium] › tests\fe015.spec.ts:49:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates (1.2s)
+  ok  54 [chromium] › tests\fe015.spec.ts:95:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data (1.1s)
+  ok  55 [chromium] › tests\fe015.spec.ts:116:1 › UI003 report timestamps follow the active shop timezone (2.1s)
+  ok  56 [chromium] › tests\fe015.spec.ts:173:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values (682ms)
+  ok  57 [chromium] › tests\fe015.spec.ts:201:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings (2.5s)
+  ok  58 [chromium] › tests\fe015.spec.ts:236:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (1.6s)
+  ok  59 [chromium] › tests\fe015.spec.ts:256:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions (1.5s)
+  ok  60 [chromium] › tests\fe015.spec.ts:279:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page (6.4s)
+  ok  61 [chromium] › tests\fe015.spec.ts:405:1 › FE015.AC03 COD settlement matches net remittance plus documented fee (3.0s)
+  ok  62 [chromium] › tests\fe015.spec.ts:439:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible (2.3s)
+  ok  63 [chromium] › tests\fe015.spec.ts:464:1 › FE015.AC03 unknown journal posting is not resent from the same draft (3.8s)
+  ok  64 [chromium] › tests\fe016.spec.ts:67:1 › FE016 conversation keeps its composer visible while long demo context scrolls independently (1.1s)
+  ok  65 [chromium] › tests\fe016.spec.ts:100:1 › FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details (2.5s)
+  ok  66 [chromium] › tests\fe016.spec.ts:128:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation (783ms)
+  ok  67 [chromium] › tests\fe016.spec.ts:147:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change (2.3s)
+  ok  68 [chromium] › tests\fe016.spec.ts:236:1 › UI002 mobile keeps the list page while messages page and Back restores it (1.9s)
+  ok  69 [chromium] › tests\fe016.spec.ts:280:1 › UI002 Inbox search resets only the list cursor while a message page is open (1.6s)
+  ok  70 [chromium] › tests\fe016.spec.ts:337:1 › UI002 deep link, refresh and mobile Back preserve their own cursors (1.3s)
+  ok  71 [chromium] › tests\fe016.spec.ts:391:1 › UI002 list and message panel errors remain isolated (4.9s)
+  ok  72 [chromium] › tests\fe016.spec.ts:415:1 › UI002 send, invalidation and resync keep both cursors and send only once (1.7s)
+  ok  73 [chromium] › tests\fe016.spec.ts:475:1 › FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery (1.6s)
+  ok  74 [chromium] › tests\fe016.spec.ts:502:1 › FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft (1.4s)
+  ok  75 [chromium] › tests\fe016.spec.ts:533:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends (1.2s)
+  ok  76 [chromium] › tests\fe016.spec.ts:554:1 › FE016.AC04 role without customer/order permissions cannot open those cross-module references (787ms)
+  ok  77 [chromium] › tests\fe016.spec.ts:565:1 › FE016.S03 stale takeover preserves reason and reports the version conflict (1.8s)
+  ok  78 [chromium] › tests\fe016.spec.ts:581:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount (1.1s)
+  ok  79 [chromium] › tests\fe016.spec.ts:595:1 › FE016.B08 image and voice preview is synthetic and stays local (1.1s)
+  ok  80 [chromium] › tests\fe016.spec.ts:610:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft (1.4s)
+  ok  81 [chromium] › tests\fe016.spec.ts:626:1 › FE027.B02 inbox price and available stock preview uses current canonical mock reads (771ms)
+  ok  82 [chromium] › tests\fe016.spec.ts:647:1 › FE027.B03 order capture links the active customer and conversation into the manual order form (1.2s)
+  ok  83 [chromium] › tests\fe016.spec.ts:657:1 › FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist (1.1s)
+  ok  84 [chromium] › tests\fe017-validation.spec.ts:15:1 › FE017 synthetic 422 keeps the knowledge draft fields and shows field errors (1.2s)
+  ok  85 [chromium] › tests\fe017.spec.ts:24:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field (2.8s)
+  ok  86 [chromium] › tests\fe017.spec.ts:115:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status (1.6s)
+  ok  87 [chromium] › tests\fe017.spec.ts:154:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs (691ms)
+  ok  88 [chromium] › tests\fe017.spec.ts:187:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable (1.5s)
+  ok  89 [chromium] › tests\fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only (2.4s)
+  ok  90 [chromium] › tests\fe017.spec.ts:242:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish (702ms)
+  ok  91 [chromium] › tests\fe017.spec.ts:263:1 › FE017.AC06 stale review preserves the reason and explains the conflict (1.2s)
+  ok  92 [chromium] › tests\fe017.spec.ts:278:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally (1.1s)
+  ok  93 [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes (805ms)
+  ok  94 [chromium] › tests\fe018.spec.ts:125:1 › FE018.S01 maps routes and operations to the canonical OpenAPI permissions (459ms)
+  ok  95 [chromium] › tests\fe018.spec.ts:142:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict (2.9s)
+  ok  96 [chromium] › tests\fe018.spec.ts:173:1 › FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft (2.8s)
+  ok  97 [chromium] › tests\fe018.spec.ts:197:1 › FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary (2.7s)
+  ok  98 [chromium] › tests\fe018.spec.ts:227:1 › FE018.AC03 playground sends no external message and preserves unknown cost and token values (1.6s)
+  ok  99 [chromium] › tests\fe018.spec.ts:249:1 › FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer (3.0s)
+  ok 100 [chromium] › tests\fe018.spec.ts:275:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion (1.6s)
+  ok 101 [chromium] › tests\fe018.spec.ts:289:1 › FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot (3.2s)
+  ok 102 [chromium] › tests\fe018.spec.ts:330:1 › FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results (1.8s)
+  ok 103 [chromium] › tests\fe018.spec.ts:358:1 › FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions (1.7s)
+  ok 104 [chromium] › tests\fe018.spec.ts:390:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption (2.3s)
+UI004_25_ACCEPTANCE={"total":25,"pageSizes":[20,5],"cursor":"evaluation-10016","oldestRecord":"evaluation-10001","oldestReachable":true,"detailPreservedCursor":true,"browserBackRestoredFirstPage":true,"searchResetCursor":true}
+  ok 105 [chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state (2.6s)
+UI004_105_ACCEPTANCE={"total":105,"pageSizes":[20,20,20,20,20,5],"pagesVisited":6,"cursorRequests":["evaluation-10256","evaluation-10196","evaluation-10136","evaluation-10076","evaluation-10016"],"uniqueRecords":105,"oldestRecord":"evaluation-10001","oldestReachable":true,"failedCursorRetainedForRetry":"evaluation-10196","errorShowsNoFabricatedRows":true,"retrySucceeded":true}
+  ok 106 [chromium] › tests\fe018.spec.ts:452:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry (6.9s)
+  ok 107 [chromium] › tests\fe019.spec.ts:21:1 › FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries (15ms)
+  ok 108 [chromium] › tests\fe019.spec.ts:70:1 › FE019.AC01 AI secret is write-only, cleared after submit, and absent from stored/read data (2.1s)
+  ok 109 [chromium] › tests\fe019.spec.ts:117:1 › FE019.AC01 invalid mock credential is rejected, cleared from the form, and not submitted (1.7s)
+  ok 110 [chromium] › tests\fe019.spec.ts:138:1 › FE019.AC02 channel OAuth failure stays on the page and never marks a channel connected (1.2s)
+  ok 111 [chromium] › tests\fe019.spec.ts:172:1 › FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not request OS permission (2.8s)
+  ok 112 [chromium] › tests\fe019.spec.ts:251:1 › FE019.AC05 notification policy validates canonical numeric bounds before sending and acknowledges only allowed work (2.1s)
+  ok 113 [chromium] › tests\fe019.spec.ts:273:1 › FE019.A03 notification order link stays within the active shop scope (1.2s)
+  ok 114 [chromium] › tests\fe019.spec.ts:282:1 › FE019.A05 reminder policy saves shop-local schedule and quiet hours through the synthetic API (1.2s)
+  ok 115 [chromium] › tests\fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states (641ms)
+  ok 116 [chromium] › tests\fe019.spec.ts:334:1 › FE027.A08 notification settings disclose server-only deduplication and callback safeguards (1.1s)
+  ok 117 [chromium] › tests\fe020.spec.ts:41:1 › FE020.AC01 approval detail is fetched and a changed source resource rejects the stale decision (2.9s)
+  ok 118 [chromium] › tests\fe020.spec.ts:87:1 › FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic (2.4s)
+  ok 119 [chromium] › tests\fe020.spec.ts:137:1 › FE020.AC03 role pause control uses the canonical versioned mock and never claims readiness (1.5s)
+  ok 120 [chromium] › tests\fe020.spec.ts:154:1 › FE020.F03 operations exception filter groups overdue, blocked, and unclaimed synthetic work (1.2s)
+  ok 121 [chromium] › tests\fe020.spec.ts:175:1 › FE020.F05 delegation rule preview stays local and grants no API approval capability (1.6s)
+  ok 122 [chromium] › tests\fe020.spec.ts:192:1 › FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready (702ms)
+  ok 123 [chromium] › tests\fe020.spec.ts:225:1 › FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate (1.1s)
+  ok 124 [chromium] › tests\fe021.spec.ts:29:1 › FE021 dashboard keeps independent panels usable and hides finance fields without finance.read (775ms)
+  ok 125 [chromium] › tests\fe021.spec.ts:39:1 › FE021 marketing chart and table match the same synthetic API fixture and preserve missing actual spend (1.6s)
+  ok 126 [chromium] › tests\fe021.spec.ts:63:1 › FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination (2.4s)
+  ok 127 [chromium] › tests\fe021.spec.ts:118:1 › FE021 mock rejects an export when reports.export lacks the source permission (776ms)
+  ok 128 [chromium] › tests\fe021.spec.ts:138:1 › FE021 mock rejects an invalid report timezone before creating an export job (1.1s)
+  ok 129 [chromium] › tests\fe021.spec.ts:158:1 › FE021 ambiguous export result preserves the selected dates and never exposes a download (2.4s)
+  ok 130 [chromium] › tests\fe021.spec.ts:171:1 › FE021 empty report and marketing payloads render explicit empty states (1.9s)
+  ok 131 [chromium] › tests\fe021.spec.ts:190:1 › FE021 stale export conflict preserves dates and never exposes a download (2.3s)
+  ok 132 [chromium] › tests\frontend.spec.ts:39:1 › catalog create uses the HTTP mock and successful save clears the draft guard (1.4s)
+  ok 133 [chromium] › tests\frontend.spec.ts:56:1 › dirty drafts block in-app navigation and preserve input until the user decides (1.9s)
+  ok 134 [chromium] › tests\frontend.spec.ts:74:1 › all canonical routes render inside the real React demo application (31.3s)
+  ok 135 [chromium] › tests\frontend.spec.ts:99:1 › switching shops cancels a delayed request and loads only the new shop scope (5.2s)
+  ok 136 [chromium] › tests\frontend.spec.ts:117:1 › role changes remove restricted navigation and the route guard explains denied access (724ms)
+  ok 137 [chromium] › tests\frontend.spec.ts:130:1 › deep links survive browser refresh and logout clears the mock session (2.9s)
+  ok 138 [chromium] › tests\frontend.spec.ts:141:1 › logout asks before discarding a draft and retains the session when logout fails (1.8s)
+  ok 139 [chromium] › tests\frontend.spec.ts:198:1 › mobile navigation opens, routes, and closes without viewport overflow (815ms)
+  ok 140 [chromium] › tests\frontend.spec.ts:212:1 › chunk loading errors use the route recovery boundary (624ms)
+  ok 141 [chromium] › tests\frontend.spec.ts:251:1 › live mode reports an unavailable session API without enabling mock data (223ms)
+ROUTE_ROLE_MATRIX_CASES=357 ROLES=7 PRIVATE_ROUTES=51 RESULT=PASS
+  ok 142 [chromium] › tests\route-role-matrix.spec.ts:42:1 › route read access matches canonical permissions for every demo role (10.9s)
+  ok 143 [chromium] › tests\security.spec.ts:35:1 › untrusted product text renders as text without activating markup (1.4s)
+  ok 144 [chromium] › tests\security.spec.ts:53:1 › catalog import rejects a non-CSV file before an upload request (1.0s)
+  ok 145 [chromium] › tests\security.spec.ts:71:1 › catalog import rejects files above the demo size limit before upload (1.4s)
+  ok 146 [chromium] › tests\security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries (1.1s)
+VITE_CACHE_ISOLATION=PASS rootA=C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\test-demo\playwright-6624-a4baed41-d55b-4b8c-8e7c-d97a0e274b1b-parallel-a rootB=C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\test-demo\playwright-6624-a4baed41-d55b-4b8c-8e7c-d97a0e274b1b-parallel-b otherCheckout=true
+  ok 147 [chromium] › tests\session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app (1.1s)
+  ok 148 [chromium] › tests\states\fe023.spec.ts:17:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard (1.5s)
+  ok 149 [chromium] › tests\states\fe023.spec.ts:35:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices (1.5s)
+  ok 150 [chromium] › tests\states\fe023.spec.ts:76:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path (6.2s)
+  ok 151 [chromium] › tests\states\fe023.spec.ts:103:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope (2.5s)
+  ok 152 [chromium] › tests\states\fe023.spec.ts:121:1 › FE023 a saved shop form resets its dirty baseline and reports success (1.3s)
+ROUTE_EMPTY_COMPOSITION_PROGRESS=3/9
+ROUTE_EMPTY_COMPOSITION_PROGRESS=6/9
+ROUTE_EMPTY_COMPOSITION_PROGRESS=9/9
+ROUTE_EMPTY_COMPOSITION=9/9 RESULT=PASS
+  ok 153 [chromium] › tests\states\route-empty-composition.spec.ts:27:1 › empty collection responses render accessible empty states on canonical list routes (2.0s)
+  x  154 [chromium] › tests\states\route-error-composition.spec.ts:26:1 › every shop route composes the shared API error state with its page content (27.3s)
+(node:7404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 155 [chromium] › tests\vertical-slices\fe022-flows.spec.ts:36:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked (3.4s)
+  ok 156 [chromium] › tests\vertical-slices\fe022-flows.spec.ts:90:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity (6.4s)
+  ok 157 [chromium] › tests\vertical-slices\fe022-flows.spec.ts:166:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation (1.9s)
+  ok 158 [chromium] › tests\vertical-slices\fe022-flows.spec.ts:202:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs (3.1s)
+  ok 159 [chromium] › tests\vertical-slices\fe022-flows.spec.ts:244:1 › FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps (254ms)
+
+
+  1) [chromium] › tests\states\route-error-composition.spec.ts:26:1 › every shop route composes the shared API error state with its page content 
+
+    Error: R10 should explain when category choices cannot load
+
+    expect(locator).toBeVisible() failed
+
+    Locator: locator('main#main-content').getByRole('alert').filter({ hasText: 'Không tải được danh mục' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - R10 should explain when category choices cannot load locator('main#main-content').getByRole('alert').filter({ hasText: 'Không tải được danh mục' }) with timeout 10000ms
+      - waiting for locator('main#main-content').getByRole('alert').filter({ hasText: 'Không tải được danh mục' })
+
+
+      52 |                 if (route.id === 'R10') {
+      53 |                     const categoryError = main.getByRole('alert').filter({ hasText: 'Không tải được danh mục' });
+    > 54 |                     await expect(categoryError, `${route.id} should explain when category choices cannot load`).toBeVisible({ timeout: 10_000 });
+         |                                                                                                                 ^
+      55 |                     await chooseMockOption(page, 'Trạng thái thử', 'Bình thường');
+      56 |                     await categoryError.getByRole('button', { name: 'Thử lại danh mục' }).click();
+      57 |                     await expect(categoryError).toHaveCount(0);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\states\route-error-composition.spec.ts:54:113
+
+    Error Context: test-results\states-route-error-composi-a8cb0-state-with-its-page-content-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\states-route-error-composi-a8cb0-state-with-its-page-content-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\states-route-error-composi-a8cb0-state-with-its-page-content-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\states\route-error-composition.spec.ts:26:1 › every shop route composes the shared API error state with its page content 
+  158 passed (7.8m)

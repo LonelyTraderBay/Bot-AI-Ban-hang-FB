@@ -1,0 +1,41 @@
+
+[WebServer] (node:36700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:38628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\fe018.spec.ts:374:1 › UI004 baseline: evaluation API reports another page while R28 exposes only the first page
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-39484-107734fa-1d69-4e18-8b57-6496c3041862\deps\react-dom_client.js?v=ad16567e as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\fe018.spec.ts:374:1 › UI004 baseline: evaluation API reports another page while R28 exposes only the first page 
+
+    Error: page.evaluate: SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+
+      72 |
+      73 | async function seedEvaluationRows(page: import('@playwright/test').Page, count: number) {
+    > 74 |     return page.evaluate(async (total) => {
+         |                 ^
+      75 |         const csrfResponse = await fetch('/api/v2/auth/csrf');
+      76 |         const csrf = (await csrfResponse.json()).data.csrfToken as string;
+      77 |         const ids: string[] = [];
+        at seedEvaluationRows (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe018.spec.ts:74:17)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe018.spec.ts:376:30
+
+    Error Context: test-results\fe018-UI004-baseline-evalu-12221-exposes-only-the-first-page-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe018-UI004-baseline-evalu-12221-exposes-only-the-first-page-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe018-UI004-baseline-evalu-12221-exposes-only-the-first-page-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\fe018.spec.ts:374:1 › UI004 baseline: evaluation API reports another page while R28 exposes only the first page 
+EXIT_CODE=1

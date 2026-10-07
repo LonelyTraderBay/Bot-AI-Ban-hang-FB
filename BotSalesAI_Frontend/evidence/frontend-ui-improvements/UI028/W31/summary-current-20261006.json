@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W31",
+  "recordedAt": "2026-10-06",
+  "scope": "Frontend-only local demo with synthetic MSW; selected Chromium and Firefox regression suites",
+  "result": "PASS",
+  "tests": {
+    "passed": 148,
+    "failed": 0,
+    "suites": [
+      {
+        "name": "Scope/dialog/keyboard/URL/permission",
+        "passed": 32,
+        "log": "affected-journeys-current-20261006.log"
+      },
+      {
+        "name": "stale/conflict/query/empty/error route composition",
+        "passed": 68,
+        "log": "state-conflict-and-route-regression-current-20261006.log"
+      },
+      {
+        "name": "order command, unknown result, cursor and Back",
+        "passed": 48,
+        "log": "command-unknown-and-back-regression-current-20261006.log"
+      }
+    ]
+  },
+  "scenarios": {
+    "routeEmpty": "11/11 routes per browser",
+    "routeError": "51/51 routes per browser",
+    "cursor25": "25 records across 2 pages; search resets cursor; detail preserves cursor; browser Back returns to prior page",
+    "cursor105": "105/105 records across 6 pages; failed cursor retained for retry",
+    "unknownCommand": "Duplicate write blocked; shared command recovery exposed",
+    "conflicts": [
+      "422 field validation",
+      "412 stale version preserves draft"
+    ],
+    "scope": "Shop switch does not leak delayed response",
+    "keyboard": "Dialog and error interactions preserve focus",
+    "permissions": "Role-specific access remains enforced"
+  },
+  "limitations": [
+    "Local mock frontend evidence only; no backend, provider, persistence, hosted CI, staging or production claim",
+    "W30 native text resize/browser zoom remains NOT_RUN independently"
+  ],
+  "noProgressLedgerWrite": true
+}

@@ -1,0 +1,53 @@
+
+[WebServer] (node:28468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:41092) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\ui011-date-time.spec.ts:16:1 › UI011 report defaults use the active shop calendar month at a UTC month boundary
+
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-23436-c646b9b8-62e0-49f2-93d7-e0ee544d7eb0\deps\react-dom_client.js?v=dfc0de51 as it exceeds the max of 500KB.
+  1) [chromium] › tests\ui011-date-time.spec.ts:16:1 › UI011 report defaults use the active shop calendar month at a UTC month boundary 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByRole('textbox', { name: 'Từ ngày' })
+    Expected: "2026-09-01"
+    Received: "2026-08-01"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByRole('textbox', { name: 'Từ ngày' }) with timeout 5000ms
+      - waiting for getByRole('textbox', { name: 'Từ ngày' })
+        14 × locator resolved to <input id="«rk»" type="date" value="2026-08-01" aria-invalid="false" class="MuiInputBase-input MuiOutlinedInput-input css-1txw9lp-MuiInputBase-input-MuiOutlinedInput-input"/>
+           - unexpected value "2026-08-01"
+
+
+      23 |     await page.clock.pauseAt(fixedInstant);
+      24 |
+    > 25 |     await expect(from).toHaveValue('2026-09-01');
+         |                        ^
+      26 |     await expect(to).toHaveValue('2026-10-01');
+      27 | });
+      28 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui011-date-time.spec.ts:25:24
+
+    Error Context: test-results\ui011-date-time-UI011-repo-e4f85-nth-at-a-UTC-month-boundary-chromium\error-context.md
+
+    Error Context: test-results\ui011-date-time-UI011-repo-e4f85-nth-at-a-UTC-month-boundary-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui011-date-time-UI011-repo-e4f85-nth-at-a-UTC-month-boundary-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui011-date-time-UI011-repo-e4f85-nth-at-a-UTC-month-boundary-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\ui011-date-time.spec.ts:16:1 › UI011 report defaults use the active shop calendar month at a UTC month boundary 

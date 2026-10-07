@@ -1,4 +1,6 @@
-# Frontend design audit reconciliation — 02/10/2026
+# Frontend design audit reconciliation — snapshot 02/10/2026 (superseded for current source on 03/10/2026)
+
+Historical snapshot only. The line mappings below were refreshed against current React source in [UI021/S01](frontend-ui-improvements/UI021/S01-current-source-inventory.md). Do not use this file as a current-source crosswalk; the latest audit JSON itself has not been rerun after subsequent source changes.
 
 Scope: `apps/web/src` as declared by `premium-ui.json`. The strict audit exits 1 with 12 `affordance.actionless-button` findings and no unresolved ownership findings. The previous MUI select ownership finding is resolved: demo controls now use labelled MUI `TextField select` fields with a 44px minimum control height.
 

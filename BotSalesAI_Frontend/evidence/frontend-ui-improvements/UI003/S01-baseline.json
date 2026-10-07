@@ -1,0 +1,47 @@
+{
+  "taskId": "UI003",
+  "title": "Timestamp theo timezone shop/report",
+  "capturedOn": "2026-10-02",
+  "status": "BASELINE_FAIL_REPRODUCED",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "baselineRevision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "trigger": "Trong Thiết lập cửa hàng, đổi timezone shop-demo từ Asia/Vientiane sang UTC, lưu thành công, rồi điều hướng client-side sang Dòng tiền khi API mock còn giữ trạng thái trong runtime.",
+  "browser": "Chromium via Playwright; browser timezone was not pinned in this baseline run.",
+  "contract": {
+    "source": "botsales-kit/contracts/openapi.json",
+    "operation": "getCashflow",
+    "fields": {
+      "from": "DateTime",
+      "to": "DateTime",
+      "asOf": "DateTime",
+      "timezone": "shop timezone string"
+    },
+    "contractChanged": false
+  },
+  "expected": {
+    "activeShopTimezone": "UTC",
+    "rangeStartLabel": "00:00 1/9/26",
+    "rangeEndLabel": "00:00 1/10/26",
+    "snapshotLabel": "14:00 29/9/26",
+    "dateOnly": "Keep the selected YYYY-MM-DD calendar date; do not convert it as a UTC instant before building the report window."
+  },
+  "observed": {
+    "reportTimezoneLabel": "UTC",
+    "rangeStartLabel": "07:00 1/9/26",
+    "rangeEndLabel": "07:00 1/10/26",
+    "snapshotLabel": "21:00 29/9/26",
+    "reason": "The shared dateTime helper defaulted to Asia/Vientiane; the range timestamps were therefore rendered at UTC+07 even though the report and shop timezone were UTC."
+  },
+  "result": "FAIL: UI labels for the UTC report range were 7 hours ahead. Baseline log captures the failing browser assertion and visible DOM text.",
+  "evidence": [
+    "S01-baseline.log",
+    "S01-baseline-trace.zip",
+    "S01-baseline-error-context.md",
+    "S00-harness-navigation-reset.log"
+  ],
+  "harnessNote": "The first attempt navigated with a full page reload; the demo MSW runtime resets its in-memory database on reload, so that attempt saw Asia/Vientiane again. It is preserved as S00 and excluded from the product baseline. The accepted S01 run uses client-side SPA navigation and observes the successful UTC shop update.",
+  "scopeLimits": [
+    "Only synthetic frontend API data was used; no backend, provider, or staging behavior is established.",
+    "The report's from/to fields are DateTime instants. Date-only fields remain local calendar values and use report boundary helpers."
+  ]
+}

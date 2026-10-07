@@ -1,0 +1,47 @@
+{
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "canonicalTokenParity": {
+    "kitAndPackageBytesEqual": true,
+    "generatedCssMarker": true,
+    "themeAndLayoutImportCanonicalTokenPackage": true
+  },
+  "negativeTests": {
+    "copiedHexAndLightPaletteFixtureInComponentTests": true,
+    "rawVisualLiteralFixturesInCheckerTests": true,
+    "verifySuiteIncludesVitestAndVisualTokenChecker": true
+  },
+  "publicApi": {
+    "namedExports": [
+      "PageHeader",
+      "Panel",
+      "Stat",
+      "Stats",
+      "Amount",
+      "CopyableCode",
+      "Status",
+      "Column",
+      "DataTable",
+      "Empty",
+      "QueryState",
+      "ErrorNotice",
+      "Toolbar",
+      "Pager",
+      "LookupLoadMore",
+      "RouteLink",
+      "MutationButton",
+      "EditDialog",
+      "PartialDataNotice",
+      "CapabilityUnavailable",
+      "ConfirmDialog",
+      "DetailLine"
+    ],
+    "typedSimpleDataTable": "DataTable<T> accepts typed rows, typed render columns, explicit rowKey, empty copy and accessible label; query/pagination/business mutation stay in separate components.",
+    "dialog": "EditDialog composes caller-owned children/actions and exposes explicit open/title/description/close/busy/dirty-guard/draft-commit props; no schema-generated form API.",
+    "noGenericFormEngine": true
+  },
+  "limits": [
+    "The shared component source contains a typed generic table renderer; it does not own route queries, sorting, business mutations, or schema-driven forms.",
+    "This is a source/API review plus local verification, not independent design review or production integration proof."
+  ]
+}

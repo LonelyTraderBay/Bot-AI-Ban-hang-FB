@@ -1,0 +1,44 @@
+✔ React cloneElement checks the cloned MUI element and preserves native props (4033.6648ms)
+✔ Emotion css props and object factories are inspected with native CSS semantics (3070.9047ms)
+✔ Inline style elements in JSX, React factories, DOM and the HTML entry fail closed (8077.604ms)
+✖ DOM CSSOM spacing writes use semantic roles and reject opaque style strings (954.0434ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 3
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16203.1281
+
+✖ failing tests:
+
+test at tests\ui-layout-binding-gates.test.mjs:411:1
+✖ DOM CSSOM spacing writes use semantic roles and reject opaque style strings (954.0434ms)
+  AssertionError [ERR_ASSERTION]: check-layout failed: TypeError: Cannot read properties of undefined (reading 'kind')
+      at isDeclarationNameOrImportPropertyName (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\node_modules\typescript\lib\typescript.js:94889:23)
+      at getTypeOfNode (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\node_modules\typescript\lib\typescript.js:92049:9)
+      at Object.getTypeAtLocation (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\node_modules\typescript\lib\typescript.js:51179:21)
+      at typeName (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/scripts/check-layout.mjs:746:52)
+      at hasCssStyleAttribute (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/scripts/check-layout.mjs:751:40)
+      at visit (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/scripts/check-layout.mjs:1086:54)
+      at visitNode2 (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\node_modules\typescript\lib\typescript.js:32437:18)
+      at forEachChildInExpressionStatement (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\node_modules\typescript\lib\typescript.js:32667:12)
+      at Object.forEachChild (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\node_modules\typescript\lib\typescript.js:32958:35)
+      at visit (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/scripts/check-layout.mjs:1116:16)
+  
+      at audit (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:38:12)
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:412:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

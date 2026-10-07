@@ -1,0 +1,53 @@
+
+[WebServer] (node:11336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:36388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\ui011-date-time.spec.ts:41:1 › UI011 shipment event input and API instant use the shop timezone, not browser timezone
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-27724-66f5f95c-34dd-4962-83a8-c02284284806\deps\react-dom_client.js?v=400b70ab as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui011-date-time.spec.ts:41:1 › UI011 shipment event input and API instant use the shop timezone, not browser timezone 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByRole('dialog', { name: 'Cập nhật hành trình có bằng chứng' }).getByRole('textbox', { name: 'Thời gian sự kiện' })
+    Expected: "2026-10-01T00:30"
+    Received: "2026-09-30T10:30"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByRole('dialog', { name: 'Cập nhật hành trình có bằng chứng' }).getByRole('textbox', { name: 'Thời gian sự kiện' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Cập nhật hành trình có bằng chứng' }).getByRole('textbox', { name: 'Thời gian sự kiện' })
+        14 × locator resolved to <input id="«r1e»" aria-invalid="false" type="datetime-local" value="2026-09-30T10:30" aria-describedby="«r1e»-helper-text" class="MuiInputBase-input MuiOutlinedInput-input css-1txw9lp-MuiInputBase-input-MuiOutlinedInput-input"/>
+           - unexpected value "2026-09-30T10:30"
+
+
+      52 |         const dialog = page.getByRole('dialog', { name: 'Cập nhật hành trình có bằng chứng' });
+      53 |         const occurredAt = dialog.getByRole('textbox', { name: 'Thời gian sự kiện' });
+    > 54 |         await expect(occurredAt).toHaveValue('2026-10-01T00:30');
+         |                                  ^
+      55 |         await occurredAt.fill('2026-10-01T12:00');
+      56 |         await dialog.getByRole('textbox', { name: 'Mã sự kiện bên vận chuyển' }).fill('ui011-shop-local-event');
+      57 |         await dialog.getByRole('textbox', { name: 'Mã bằng chứng' }).fill('ui011-local-proof');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui011-date-time.spec.ts:54:34
+
+    Error Context: test-results\ui011-date-time-UI011-ship-e77a2-mezone-not-browser-timezone-chromium\error-context.md
+
+    Error Context: test-results\ui011-date-time-UI011-ship-e77a2-mezone-not-browser-timezone-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui011-date-time-UI011-ship-e77a2-mezone-not-browser-timezone-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui011-date-time-UI011-ship-e77a2-mezone-not-browser-timezone-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\ui011-date-time.spec.ts:41:1 › UI011 shipment event input and API instant use the shop timezone, not browser timezone 

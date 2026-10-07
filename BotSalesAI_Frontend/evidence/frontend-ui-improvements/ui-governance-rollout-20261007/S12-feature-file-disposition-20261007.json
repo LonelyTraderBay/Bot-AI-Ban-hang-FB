@@ -1,0 +1,373 @@
+{
+  "schemaVersion": 1,
+  "step": "S12",
+  "capturedAt": "2026-10-06T19:23:26.165Z",
+  "scope": "The canonical 24 feature files in FRONTEND_UI_IMPROVEMENT_PLAN.md §16.11; per-file S12 treatment only, not full S19 acceptance.",
+  "sourceOfTruth": [
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan",
+    "botsales-kit/contracts/route-manifest.json",
+    "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-profile-migration-20261007.json"
+  ],
+  "counts": {
+    "featureFiles": 24,
+    "modules": 16,
+    "queryStatePlacements": 86,
+    "section": 62,
+    "inline": 24
+  },
+  "missing": [],
+  "files": [
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "routeIds": [
+        "R20",
+        "R21",
+        "R22",
+        "R48",
+        "R49",
+        "R50"
+      ],
+      "sha256": "6edee787cf58f16b01a8135fe2195b83d83178aa5e5b61705e160930618b481b",
+      "queryStatePlacements": 14,
+      "sectionProfiles": 9,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/finance/demo-account-preview.ts",
+      "module": "finance",
+      "routeIds": [
+        "R20",
+        "R21",
+        "R22",
+        "R48",
+        "R49",
+        "R50"
+      ],
+      "sha256": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60",
+      "queryStatePlacements": 0,
+      "sectionProfiles": 0,
+      "treatment": "KEEP_VERIFY",
+      "rationale": "No QueryState JSX placement in this file; preserve its current feature/helper behavior, with project-wide source/type checks and final module impact review in S19."
+    },
+    {
+      "path": "apps/web/src/modules/finance/report-explanations.ts",
+      "module": "finance",
+      "routeIds": [
+        "R20",
+        "R21",
+        "R22",
+        "R48",
+        "R49",
+        "R50"
+      ],
+      "sha256": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
+      "queryStatePlacements": 0,
+      "sectionProfiles": 0,
+      "treatment": "KEEP_VERIFY",
+      "rationale": "No QueryState JSX placement in this file; preserve its current feature/helper behavior, with project-wide source/type checks and final module impact review in S19."
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "module": "catalog",
+      "routeIds": [
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14"
+      ],
+      "sha256": "98e8ac7e9600837171d4e9a2d36a7d03978071c4dfc7d87fcc2617655c8c1639",
+      "queryStatePlacements": 4,
+      "sectionProfiles": 2,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "module": "catalog",
+      "routeIds": [
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14"
+      ],
+      "sha256": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da",
+      "queryStatePlacements": 2,
+      "sectionProfiles": 2,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/catalog/import-file.ts",
+      "module": "catalog",
+      "routeIds": [
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14"
+      ],
+      "sha256": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
+      "queryStatePlacements": 0,
+      "sectionProfiles": 0,
+      "treatment": "KEEP_VERIFY",
+      "rationale": "No QueryState JSX placement in this file; preserve its current feature/helper behavior, with project-wide source/type checks and final module impact review in S19."
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "module": "orders",
+      "routeIds": [
+        "R17",
+        "R18",
+        "R19",
+        "R43"
+      ],
+      "sha256": "d1cad2cb0dbbfa618dc6cd5c7096711354feaecb977807037b8c6a2748ed6da7",
+      "queryStatePlacements": 3,
+      "sectionProfiles": 3,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/orders/demo-address-preview.ts",
+      "module": "orders",
+      "routeIds": [
+        "R17",
+        "R18",
+        "R19",
+        "R43"
+      ],
+      "sha256": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a",
+      "queryStatePlacements": 0,
+      "sectionProfiles": 0,
+      "treatment": "KEEP_VERIFY",
+      "rationale": "No QueryState JSX placement in this file; preserve its current feature/helper behavior, with project-wide source/type checks and final module impact review in S19."
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "routeIds": [
+        "R44",
+        "R45",
+        "R46",
+        "R47"
+      ],
+      "sha256": "137c535a1c086c6e998281e3e9d4620adf9f3d6b41a0e775add49339b6f82bc1",
+      "queryStatePlacements": 9,
+      "sectionProfiles": 6,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "module": "customers",
+      "routeIds": [
+        "R07",
+        "R08",
+        "R54"
+      ],
+      "sha256": "1f6d62a562b6ec124fb3029fdce8eeb9937d09323abb5a523aad496343a4531b",
+      "queryStatePlacements": 6,
+      "sectionProfiles": 3,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "module": "inventory",
+      "routeIds": [
+        "R15",
+        "R16"
+      ],
+      "sha256": "7b5d0a356390cba43b8bf16c162dd499150bee37d353945d552504a1eee2bd1b",
+      "queryStatePlacements": 2,
+      "sectionProfiles": 2,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "module": "fulfillment",
+      "routeIds": [
+        "R41",
+        "R42"
+      ],
+      "sha256": "8e292f70195d3f65c62f9a81d0cad8ec44ad677526e2fb59af59bed9e6fbfc17",
+      "queryStatePlacements": 4,
+      "sectionProfiles": 2,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "module": "workspace",
+      "routeIds": [
+        "R01",
+        "R02",
+        "R03",
+        "R32",
+        "R33",
+        "R34",
+        "R35",
+        "R36"
+      ],
+      "sha256": "2ea39976473d8dfc2a0da5f0ea8b3e7912d098e4e427487fde5b59479091c269",
+      "queryStatePlacements": 6,
+      "sectionProfiles": 6,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "module": "bot",
+      "routeIds": [
+        "R26",
+        "R27",
+        "R28",
+        "R51"
+      ],
+      "sha256": "cbca27471ea771f325b3577095a6ff30f66b29c711c0138b3678a8dc4c1d40af",
+      "queryStatePlacements": 6,
+      "sectionProfiles": 5,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "module": "integrations",
+      "routeIds": [
+        "R29",
+        "R30"
+      ],
+      "sha256": "21c786a8280031a029af35e434f7f755b6c81acbab59ca3098d87028aab7aa65",
+      "queryStatePlacements": 2,
+      "sectionProfiles": 2,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "module": "knowledge",
+      "routeIds": [
+        "R23",
+        "R24",
+        "R25"
+      ],
+      "sha256": "7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b",
+      "queryStatePlacements": 6,
+      "sectionProfiles": 6,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "module": "notifications",
+      "routeIds": [
+        "R39",
+        "R40"
+      ],
+      "sha256": "03bdd21513eb173f92b8e416a4f875bdac600cdb0273ea0e9d4c0237fc217dda",
+      "queryStatePlacements": 3,
+      "sectionProfiles": 2,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/notifications/push-capabilities.ts",
+      "module": "notifications",
+      "routeIds": [
+        "R39",
+        "R40"
+      ],
+      "sha256": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
+      "queryStatePlacements": 0,
+      "sectionProfiles": 0,
+      "treatment": "KEEP_VERIFY",
+      "rationale": "No QueryState JSX placement in this file; preserve its current feature/helper behavior, with project-wide source/type checks and final module impact review in S19."
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "module": "operations",
+      "routeIds": [
+        "R37",
+        "R38",
+        "R52"
+      ],
+      "sha256": "1710a8b4a14e75a91ce608d47567cba8297ccab4a4c6d5cc347a9dce956979e7",
+      "queryStatePlacements": 7,
+      "sectionProfiles": 3,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "module": "inbox",
+      "routeIds": [
+        "R05",
+        "R06"
+      ],
+      "sha256": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b",
+      "queryStatePlacements": 5,
+      "sectionProfiles": 3,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "module": "inbox",
+      "routeIds": [
+        "R05",
+        "R06"
+      ],
+      "sha256": "9611c21db12bdac47fbead422c4fe047902a5df0e6359b73e81ea813ba26177d",
+      "queryStatePlacements": 0,
+      "sectionProfiles": 0,
+      "treatment": "KEEP_VERIFY",
+      "rationale": "No QueryState JSX placement in this file; preserve its current feature/helper behavior, with project-wide source/type checks and final module impact review in S19."
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "module": "reports",
+      "routeIds": [
+        "R31",
+        "R53"
+      ],
+      "sha256": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754",
+      "queryStatePlacements": 3,
+      "sectionProfiles": 3,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    },
+    {
+      "path": "apps/web/src/modules/reports/report-utils.ts",
+      "module": "reports",
+      "routeIds": [
+        "R31",
+        "R53"
+      ],
+      "sha256": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
+      "queryStatePlacements": 0,
+      "sectionProfiles": 0,
+      "treatment": "KEEP_VERIFY",
+      "rationale": "No QueryState JSX placement in this file; preserve its current feature/helper behavior, with project-wide source/type checks and final module impact review in S19."
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "module": "dashboard",
+      "routeIds": [
+        "R04"
+      ],
+      "sha256": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef",
+      "queryStatePlacements": 4,
+      "sectionProfiles": 3,
+      "treatment": "EDIT_VERIFY",
+      "rationale": "Shared QueryState callsites were assigned their inventory-approved loading profile; full affected route/state closure remains in S19."
+    }
+  ]
+}

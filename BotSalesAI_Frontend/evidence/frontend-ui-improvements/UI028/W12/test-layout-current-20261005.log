@@ -1,0 +1,93 @@
+
+> botsales-frontend@0.1.0 test:layout
+> node --test tests/layout-checker.test.mjs && node scripts/check-layout.mjs
+
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (203.6729ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (199.281ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (201.3923ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (196.0699ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (573.4154ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (582.8974ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (821.2976ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (389.9053ms)
+✔ report mode inventories migration debt without turning findings into PASS (195.9253ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3418.758
+layout-check FAIL: 67 source files, 346 finding(s), 1 exception(s) used
+  SPACING_LITERAL: 346
+Migration debt by component:
+  module:inbox: 46 finding(s)
+  module:workspace: 37 finding(s)
+  module:dashboard: 36 finding(s)
+  module:procurement: 36 finding(s)
+  module:operations: 30 finding(s)
+  module:finance: 27 finding(s)
+  module:bot: 25 finding(s)
+  module:notifications: 25 finding(s)
+  module:reports: 20 finding(s)
+  module:knowledge: 19 finding(s)
+  module:fulfillment: 17 finding(s)
+  module:customers: 15 finding(s)
+  module:integrations: 13 finding(s)
+Most affected files:
+  apps/web/src/modules/workspace/index.tsx: 37 finding(s)
+  apps/web/src/modules/dashboard/index.tsx: 36 finding(s)
+  apps/web/src/modules/procurement/index.tsx: 36 finding(s)
+  apps/web/src/modules/inbox/index.tsx: 35 finding(s)
+  apps/web/src/modules/operations/index.tsx: 30 finding(s)
+  apps/web/src/modules/finance/index.tsx: 27 finding(s)
+  apps/web/src/modules/bot/index.tsx: 25 finding(s)
+  apps/web/src/modules/notifications/index.tsx: 25 finding(s)
+  apps/web/src/modules/reports/index.tsx: 20 finding(s)
+  apps/web/src/modules/knowledge/index.tsx: 19 finding(s)
+  apps/web/src/modules/fulfillment/index.tsx: 17 finding(s)
+  apps/web/src/modules/customers/index.tsx: 15 finding(s)
+  apps/web/src/modules/integrations/index.tsx: 13 finding(s)
+  apps/web/src/modules/inbox/conversation-components.tsx: 11 finding(s)
+  apps/web/src/modules/bot/index.tsx:20:341 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:20:849 SPACING_LITERAL my=3
+  apps/web/src/modules/bot/index.tsx:20:1204 SPACING_LITERAL gap=1
+  apps/web/src/modules/bot/index.tsx:20:1217 SPACING_LITERAL mt=2
+  apps/web/src/modules/bot/index.tsx:33:98 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:38:99 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:45:199 SPACING_LITERAL gap=3
+  apps/web/src/modules/bot/index.tsx:45:262 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:49:398 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:49:425 SPACING_LITERAL mt=2
+  apps/web/src/modules/bot/index.tsx:49:894 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:49:1416 SPACING_LITERAL mt=2
+  apps/web/src/modules/bot/index.tsx:49:1529 SPACING_LITERAL m=.5
+  apps/web/src/modules/bot/index.tsx:49:1609 SPACING_LITERAL mt=2
+  apps/web/src/modules/bot/index.tsx:57:304 SPACING_LITERAL mb=2
+  apps/web/src/modules/bot/index.tsx:65:97 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:79:251 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:79:377 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:79:603 SPACING_LITERAL gap=1
+  apps/web/src/modules/bot/index.tsx:79:648 SPACING_LITERAL my=2
+  apps/web/src/modules/bot/index.tsx:79:752 SPACING_LITERAL gap=1
+  apps/web/src/modules/bot/index.tsx:86:17 SPACING_LITERAL gap=1.5
+  apps/web/src/modules/bot/index.tsx:86:31 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:97:103 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:105:112 SPACING_LITERAL gap=2
+  apps/web/src/modules/customers/index.tsx:63:450 SPACING_LITERAL gap=2
+  apps/web/src/modules/customers/index.tsx:101:117 SPACING_LITERAL gap=3
+  apps/web/src/modules/customers/index.tsx:103:130 SPACING_LITERAL gap=2
+  apps/web/src/modules/customers/index.tsx:103:142 SPACING_LITERAL p=3
+  apps/web/src/modules/customers/index.tsx:110:29 SPACING_LITERAL gap=3
+  apps/web/src/modules/customers/index.tsx:112:41 SPACING_LITERAL p=2
+  apps/web/src/modules/customers/index.tsx:128:68 SPACING_LITERAL p=2
+  apps/web/src/modules/customers/index.tsx:128:78 SPACING_LITERAL gap=1.5
+  apps/web/src/modules/customers/index.tsx:132:100 SPACING_LITERAL p=1.5
+  apps/web/src/modules/customers/index.tsx:133:124 SPACING_LITERAL gap=1
+  apps/web/src/modules/customers/index.tsx:145:63 SPACING_LITERAL m=2
+  apps/web/src/modules/customers/index.tsx:149:60 SPACING_LITERAL p=2
+  apps/web/src/modules/customers/index.tsx:152:96 SPACING_LITERAL mt=1
+  apps/web/src/modules/customers/index.tsx:203:25 SPACING_LITERAL gap=2
+  apps/web/src/modules/customers/index.tsx:227:25 SPACING_LITERAL gap=2
+  ... 306 additional finding(s); use --json for the complete inventory

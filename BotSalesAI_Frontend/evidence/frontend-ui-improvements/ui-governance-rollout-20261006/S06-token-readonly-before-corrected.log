@@ -1,0 +1,59 @@
+✔ public layout mapping cannot be written through a direct consumer reference (524.3443ms)
+✔ public layout nested aliases remain readonly (402.238ms)
+✔ public visual mapping already rejects consumer writes (112.0449ms)
+✔ canonical readonly style maps remain readable by consumers (371.386ms)
+✖ canonical token space cannot be overwritten through an alias (117.9094ms)
+✖ public color export cannot be overwritten (112.9135ms)
+✔ readonly token and color reads retain their public types (113.1216ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 5
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1948.5007
+
+✖ failing tests:
+
+test at tests\ui-canonical-readonly.test.mjs:37:1
+✖ canonical token space cannot be overwritten through an alias (117.9094ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(errors.some(error => error.code === 2540))
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-canonical-readonly.test.mjs:39:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\ui-canonical-readonly.test.mjs:41:1
+✖ public color export cannot be overwritten (112.9135ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(errors.some(error => error.code === 2540))
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-canonical-readonly.test.mjs:43:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

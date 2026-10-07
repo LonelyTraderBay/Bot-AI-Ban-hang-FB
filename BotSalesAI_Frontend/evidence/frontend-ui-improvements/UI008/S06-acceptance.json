@@ -1,0 +1,86 @@
+{
+  "task": "UI008",
+  "title": "Accessible empty states for integration card collections",
+  "status": "PASS",
+  "completedAt": "2026-10-02",
+  "scope": "React frontend with synthetic MSW API only",
+  "baseline": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingSourceInventory": "S01-source-inventory.md",
+    "baselineReproduction": {
+      "path": "S01-baseline-browser.log",
+      "routes": {
+        "R29": "HTTP 200, data=[], blank channel card region",
+        "R30": "HTTP 200, data=[], blank AI connection card region"
+      },
+      "screenshots": ["S01-R29-empty-before.png", "S01-R30-empty-before.png"]
+    }
+  },
+  "checkpoints": {
+    "C01": "PASS: current React source, routes, canonical operations, permissions, tokens and test coverage inventoried; both blank-success states reproduced before changes.",
+    "C02": "PASS: R29 and R30 render shared accessible Empty UI for successful empty lists; primary CTA moves into empty state and is hidden from read-only bot_admin.",
+    "C03": "PASS: seven browser acceptance cases cover empty success, read-only permission, loading delay, 403, 503/retry and R30; canonical empty-route suite covers 11 routes.",
+    "C04": "PASS: npm run verify completed with exit code 0.",
+    "C05": "PASS: npm run test:e2e completed with exit code 0, 174/174 Chromium tests on the rebuilt demo artifact."
+  },
+  "sourceChanges": [
+    "apps/web/src/modules/integrations/index.tsx",
+    "tests/ui008-integration-empty.spec.ts",
+    "tests/states/route-empty-composition.spec.ts"
+  ],
+  "testEvidence": {
+    "targeted": {
+      "path": "S03-targeted-acceptance.log",
+      "ui008Passed": 7,
+      "ui008Failed": 0,
+      "emptyRouteCount": "11/11"
+    },
+    "verify": {
+      "path": "S04-verify-final.log",
+      "exitCode": 0,
+      "generation": "11 outputs, 283 schemas, 210 operations, 54 routes",
+      "sourceChecker": "62 files, 220 operation references",
+      "boundaries": "411 imports, 8/8 negative fixtures",
+      "domainAndMocks": "88/88",
+      "vitest": "72/72",
+      "lintTypecheckProductionBuild": "PASS"
+    },
+    "fullE2E": {
+      "path": "S05-full-e2e-final.log",
+      "passed": 174,
+      "failed": 0,
+      "duration": "10.3m",
+      "roleMatrix": "357/357",
+      "emptyComposition": "11/11",
+      "routeErrorComposition": "51/51",
+      "productionArtifactMockIsolation": "PASS"
+    },
+    "debugHistory": "S02-test-debug-notes.md"
+  },
+  "finalScreenshots": ["S04-R29-empty-after.png", "S04-R30-empty-after.png"],
+  "measuredDemoMetrics": {
+    "source": "botsales-kit/execution/frontend-evidence/FE025",
+    "browser": "Chromium 153 on Windows x64, 1280x720",
+    "initialRouteGzipBytes": 447015,
+    "largestChunkGzipBytes": 185440,
+    "syntheticCustomerRows": 1004,
+    "pageLimit": 20,
+    "firstPageReadyMs": 362,
+    "scopeNote": "Local built demo with synthetic MSW data; not a multi-device SLO or real API measurement."
+  },
+  "remainingReadinessGaps": [
+    "FE-G05: manual browser zoom, screen-reader and contrast review remains open.",
+    "FE-G09: product-owner acceptance remains open."
+  ],
+  "sourceFingerprints": {
+    "apps/web/src/modules/integrations/index.tsx": "DE8A8C8407B80792E2B8C3B25D5A31DC8239A99654F3DF254F2685E9A4D2F44B",
+    "tests/ui008-integration-empty.spec.ts": "4D23AA105A89F53AAAA2C536DF7EB2A2E3626685470CAB85B3BA1DE358F40CF5",
+    "tests/states/route-empty-composition.spec.ts": "2384BC24A01D1ED0EE2D142BFD706AE91BFEC625381DDF1793FE6BEAF5149CA0"
+  },
+  "limitations": [
+    "No backend, real provider, staging, deployment or production runtime was tested.",
+    "Read-only role behavior is exercised using the synthetic bot_admin role; real authorization must be enforced by the server.",
+    "The advisory production build chunk is 730.75 kB raw and 184.43 kB gzip; it remains below the local 200 KiB gzip chunk budget.",
+    "No FE tracker, frontend task ledger, product-wide plan/progress, OpenAPI, route manifest, design tokens or generated outputs were changed."
+  ]
+}

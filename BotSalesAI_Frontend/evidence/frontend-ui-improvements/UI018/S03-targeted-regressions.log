@@ -1,0 +1,19 @@
+UI018 C03 targeted regression evidence
+Date: 2026-10-03
+Scope: local React demo/Vite and synthetic MSW data only.
+
+Unit tests
+Command: node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/timezone.test.ts apps/web/tests/report-utils.test.ts
+Result on final UI018 source: PASS; 2 test files, 15 tests.
+Coverage includes UTC/offset/day boundary, DST start, skipped midnight (America/Sao_Paulo), skipped date (Pacific/Apia), invalid calendar date/timezone, inclusive report end and existing wall-time gap/fold behavior.
+
+Browser regressions
+Command: node node_modules/@playwright/test/cli.js test tests/fe015.spec.ts tests/fe021.spec.ts tests/ui011-date-time.spec.ts
+Result: PASS; 22/22 Chromium tests in 56.3s. This covered the full selected FE015, FE021 and UI011 files in local demo mode with synthetic MSW data.
+Key UI018 assertions: FE015.AC01 “report filters use exact timezone boundaries and mock API aggregates” PASS; FE021 “export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination” PASS. UI011 report default/month boundary and shipment datetime-local browser-timezone cases PASS.
+
+Final-source focused rerun after the last resolver adjustment:
+Command: node node_modules/@playwright/test/cli.js test tests/fe015.spec.ts tests/fe021.spec.ts --grep "FE015.AC01 report filters|FE021 export uses inclusive"
+Result: PASS; 2/2 Chromium tests in 7.5s.
+
+The browser cases exercise the current Vite demo server and mock API. They are not a rebuilt-demo full-suite, live API, backend, staging, production, or owner-UAT result.

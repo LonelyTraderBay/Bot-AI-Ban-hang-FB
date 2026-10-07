@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "step": "UI028.W05",
+  "capturedOn": "2026-10-05",
+  "phase": "PRE_IMPLEMENTATION_DESIGN_CONTRACT",
+  "scope": "Shared theme and app-owned global CSS; no API/state/route changes",
+  "routes": [
+    "/s/shop-demo/orders",
+    "/s/shop-demo/imports"
+  ],
+  "profile": "Dense collection/table with form helper and global shell fallback",
+  "owners": [
+    {
+      "area": "MUI MuiTableCell",
+      "owner": "shared/ui/theme.ts",
+      "role": "layoutCss.table.cellInset",
+      "visualMeaning": "12px block × 16px inline, preserve existing density"
+    },
+    {
+      "area": "#root top-level fallback title/paragraph",
+      "owner": "app/bootstrap.css",
+      "role": "generated CSS var --space-xl",
+      "visualMeaning": "24px outer fallback margin sourced from design/tokens.json"
+    },
+    {
+      "area": "keyboard skip link",
+      "owner": "app/bootstrap.css",
+      "role": "exact exception UI028-A11Y-SKIP-LINK-PADDING",
+      "visualMeaning": "Preserve 12px padding and keyboard focus target; W09 owns migration"
+    }
+  ],
+  "breakpoints": "No breakpoint behavior change; table inset remains fixed semantic table profile; global fallback remains intrinsic",
+  "typography": "Existing canonical theme typography tokens unchanged",
+  "statesToPreserve": [
+    "table row hover/selection and long cell text",
+    "TextField helper/error labels and floating label/notch geometry",
+    "visible keyboard focus and skip-link activation",
+    "forced-colors and reduced-motion global behavior"
+  ],
+  "implementationConstraints": [
+    "Use layoutCss.table.cellInset in the shared theme; do not locally recompose tokens.space in theme overrides",
+    "Generate --space-* variables from canonical tokens.space in scripts/generate.mjs; never hand-edit generated tokens.css",
+    "Replace #root margin literal with the generated --space-xl variable",
+    "Keep skip-link exact exception until W09"
+  ],
+  "baseline": {
+    "strictFindingCount": 505,
+    "directlyOwnedFindings": [
+      "apps/web/src/shared/ui/theme.ts:31 SPACING_LITERAL padding",
+      "apps/web/src/app/bootstrap.css:1 CSS_SPACING_LITERAL margin"
+    ],
+    "sourceHashes": {
+      "apps/web/src/shared/ui/theme.ts": "ef20ec162ff218146b8f0c19c7522b25840d04cac524e7158ef6473376b889d8",
+      "apps/web/src/app/bootstrap.css": "fd4b4f77d3cc9dc8394960a6f12dcd6f79e0516338e5c44619b9a6c062f2e482",
+      "scripts/generate.mjs": "d27e6db7c6d03e5e5b685243f6e2a38fe468232bb2c9f581dc5267f9f97881e7",
+      "apps/web/src/app/tokens.css": "1b86a93043f137cc3a57db3cbc8a3e969623e5e164472c33db30b2edc3685c62"
+    },
+    "strictReport": "../W04/strict-layout-check-current-20261005.json"
+  },
+  "acceptance": [
+    "theme and CSS scan no longer report the two W05-owned spacing findings",
+    "generated output is fresh",
+    "typecheck/build and representative table/helper render preserve geometry and focus",
+    "strict whole-source result records remaining debt without suppression"
+  ]
+}

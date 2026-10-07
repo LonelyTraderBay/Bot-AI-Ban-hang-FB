@@ -1,0 +1,48 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI021",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "IN_PROGRESS",
+  "checkpointCount": "4/5",
+  "scope": "Current React source at apps/web/src; strict auditor provenance, source crosswalk, and a confirmed destination-permission UI edge. Frontend and synthetic MSW only.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Dirty. S08 fingerprint covers 159 scoped source/test/config inputs and current production/demo artifacts. No commit or clean revision is claimed."
+  },
+  "pairedAcceptance": {
+    "ui": "PASS for the R35-to-R07 destination-permission edge: with customers.read the link is visible and navigates; without it the CTA is hidden and direct R07 access is denied.",
+    "architecture": "PRESERVED: Workspace owns R35, Customers owns R07, and the canonical route guard remains authoritative. The existing useCan permission value is reused; no cross-module import, contract, generated source, role catalog, or permission policy was added.",
+    "pairingRule": "UI behavior and route/module ownership were evaluated in the same UI021 item. The strict audit result remains its actual exit 1; no allowlist, fake handler, or root audit edit was used."
+  },
+  "checkpoints": {
+    "C01": "PASS — source inventory and all 13 current scanner anchors are crosswalked in S08-current-source-crosswalk.md.",
+    "C02": "PASS — canonical R35 privacy.manage and R07 customers.read are treated as independent route permissions; the CTA now honors the destination permission. Synthetic membership testing does not claim Backend permission assignment policy.",
+    "C03": "PASS — UI021/S08 focused permission regression 2/2; prior UI021/S03 44/44 Chromium and 17/17 shared UI regressions remain additional recorded evidence. Current full suite also includes the two new tests.",
+    "C04": "PARTIAL — current strict scan S08 over apps/web/src reports 13 affordance.actionless-button errors, 0 warnings, 0 unresolved, exit 1. The crosswalk maps actual React semantics but does not turn that scanner result into PASS.",
+    "C05": "PASS — S08 strict JSON/log, current-source crosswalk, current worktree/artifact fingerprint, verification summary, focused test, and updated acceptance are linked. Root premium-audit.json was byte-identical before/after the scan."
+  },
+  "verification": {
+    "generateCheck": "PASS; 11 outputs, 283 schemas, 210 operations, 54 routes.",
+    "verify": "PASS; source 64 files/220 API references/54 routes; source checker 3/3; boundaries 427 imports/0 issues/8/8 negative fixtures; lint/typecheck; domain/MSW 88/88; Vitest 85/85; production build.",
+    "permissionRegression": "PASS 2/2 Chromium in tests/ui021-permission-edge.spec.ts: normal owner link visible and navigates; synthetic active membership with privacy.manage but without customers.read sees no CTA and R07 denies direct access.",
+    "fullDemoE2E": "PASS 190/190 in 10.7 minutes on local Windows, Chromium 153 and synthetic MSW. Route-role 357/357, empty state 11/11, route-error 51/51, all-route axe, production mock isolation, four FE022 journeys and the new UI021 tests passed.",
+    "strictAudit": "NOT_PASS; frontend-design-premium v1.4.0 strict scan exits 1 with 13 affordance.actionless-button findings, 0 warnings, 0 unresolved. See S08-current-frontend-design-audit.json and S08-current-audit-run-20261003.log.",
+    "currentFingerprint": "S08-current-worktree-and-artifact-fingerprint.json; 159 scoped inputs, production artifact 32 files, demo artifact 37 files; working tree is dirty at e68cb65e61c5c1aab2ae169dd8033df305df8872.",
+    "artifactPreservation": "41 pre-existing evidence files were snapshotted; 6 overwritten by the suite were restored; all 41 SHA-256 values matched afterward. Current preview outputs are saved as S08 files.",
+    "readiness": "Frontend readiness remains 7/9 = 77.8% by the project gate rubric; FE-G02 is PASS. This is not an architecture-only score. FE-G05 manual accessibility and FE-G09 owner UAT remain open."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "7/10",
+    "totalDone": "20/26",
+    "checkpoints": "113/130",
+    "next": "UI021 C04 remains partial until the strict auditor is corrected upstream or its rule scope is formally accepted. UI012 screen-reader/manual accessibility, UI020 owner support matrix, UI022 hosted GitHub run, and UI023 owner UAT remain open."
+  },
+  "limitations": [
+    "The strict auditor still exits 1 even though the 13 findings map to real RouterLink, handler, file input, download, or submit semantics; do not call the scan PASS.",
+    "The permission-edge regression synthesizes a frontend session response and establishes UI behavior only; it does not prove server authorization or real membership policy.",
+    "The 190/190 suite uses local Chromium and synthetic MSW; it is not hosted CI, Backend/provider, staging, production runtime, screen-reader, manual accessibility, or owner UAT evidence.",
+    "The S08 source/artifact fingerprint describes a dirty worktree and is not a committed release artifact."
+  ]
+}

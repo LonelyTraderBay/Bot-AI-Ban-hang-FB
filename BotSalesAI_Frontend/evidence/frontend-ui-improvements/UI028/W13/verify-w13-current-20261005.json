@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W13",
+  "status": "DONE_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+  "scope": "Frontend React/TypeScript with synthetic in-memory MSW only",
+  "routes": ["R44", "R45", "R46", "R47"],
+  "source": {
+    "owner": "apps/web/src/modules/procurement/index.tsx",
+    "sha256": "c50293d689c3617a849274a3e5a3d9ff599b224da6aa8e91af905b0044af5765",
+    "change": "Replaced all Procurement spacing literals with existing semantic layoutSx roles; no design-system role or route/API behavior was added."
+  },
+  "preservedInvariants": [
+    "Supplier approval and permission checks",
+    "Offer MOQ and pack-size validation",
+    "Reorder offer, SKU, warehouse, and budget constraints",
+    "Purchase intent/version/approval and unknown-send safeguards",
+    "Receipt accepted/rejected quantity, version, and posting rules",
+    "Existing staged and unstaged work in the repository"
+  ],
+  "spacing": {
+    "checker": "scripts/check-layout.mjs",
+    "globalBefore": 346,
+    "globalAfter": 310,
+    "procurementBefore": 36,
+    "procurementAfter": 0,
+    "newFindings": 0,
+    "unknownStyleSources": 0,
+    "fixtures": "PASS 9/9",
+    "strictGlobalGate": "FAIL: 310 SPACING_LITERAL findings remain in other modules assigned to W14-W25"
+  },
+  "pairedRender": {
+    "status": "PASS_LOCAL_PAIRED_RENDER_AND_MODULE_SPACING_DELTA",
+    "browser": "Chromium 153.0.8010.12",
+    "observations": 22,
+    "viewports": ["390x844", "1280x900"],
+    "pageErrors": 0,
+    "writeRequests": 0,
+    "horizontalOverflow": 0,
+    "mainGutterChanged": false,
+    "dialogsOutsideViewport": 0,
+    "baseline": "render-before-source-edit-current-20261005.json",
+    "after": "render-after-source-edit-v2-current-20261005.json",
+    "delta": "layout-report-delta-v2-current-20261005.json"
+  },
+  "browserTests": {
+    "responsiveViewports": [320, 390, 768, 1280, 1440],
+    "routes": 4,
+    "layoutTests": "Chromium 2/2 PASS; Firefox 2/2 PASS",
+    "procurementAndPurchaseReceiptJourney": "Chromium 8/8 PASS (FE014 cases plus FE022.VS02)",
+    "canonicalSourceMap": "PASS: 95 assertions across 13 operations and R44-R47"
+  },
+  "frontendGates": {
+    "generateCheck": "PASS: 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "sourceCheck": "PASS: 66 files, 220 operation references, 54 routes",
+    "boundaries": "PASS: 444 imports, 0 issues/cycles, 10/10 negative fixtures",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "domainAndMSW": "PASS: 88/88",
+    "vitest": "PASS: 88/88",
+    "productionBuild": "PASS: 2056 modules; largest JS chunk 328.33 kB raw",
+    "fullVerify": "Exit 1 only at final strict global layout scan after all preceding gates passed; exact reason is the 310 known SPACING_LITERAL findings above."
+  },
+  "verdict": {
+    "ui": "PASS: paired route/dialog review and responsive/behavior regressions passed in local synthetic scope",
+    "architecture": "PASS_WITH_KNOWN_GLOBAL_SPACING_AND_VISUAL_TOKEN_DEBT",
+    "limitations": [
+      "The overall strict spacing gate remains failing until W26 resolves all remaining findings.",
+      "SPC-046 visual-token automation remains planned for W26-W27; W13 used manual source/render review.",
+      "No backend, hosted CI, staging, production, or owner acceptance is claimed."
+    ]
+  },
+  "logs": {
+    "fullVerify": "verify-w13-final-current-20261005.log",
+    "chromiumLayout": "ui-procurement-layout-chromium-final-current-20261005.log",
+    "firefoxLayout": "ui-procurement-layout-firefox-final-current-20261005.log",
+    "procurementJourney": "fe014-procurement-journey-chromium-current-20261005.log",
+    "canonicalSourceMap": "fe014-source-map-current-20261005.log",
+    "visualSourceReview": "visual-source-review-current-20261005.md"
+  },
+  "ledgerPolicy": "W13 is a child step under UI028; no frontend-progress.json, full-product progress, or generated IMPLEMENTATION_PLAN.md state was edited. Read-only FE status after W13 remains 0/140 current VERIFIED, FE001-FE028 STALE, blocked=[], next FE001.S01 because the AGENTS.md fingerprint changed; see fe-ledger-status-final-current-20261005.log."
+}

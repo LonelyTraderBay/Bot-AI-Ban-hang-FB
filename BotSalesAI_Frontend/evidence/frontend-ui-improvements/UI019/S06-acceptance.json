@@ -1,0 +1,93 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI019",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "DONE",
+  "scope": "Local React/TypeScript frontend production and demo artifacts with synthetic MSW; selected Chromium emulation only, no backend/CDN/physical-device/SLO claim.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Pre-existing dirty work was preserved. UI019 made no source/runtime changes; generated dist outputs are fingerprinted separately and are not source changes."
+  },
+  "pairedAcceptance": {
+    "ui": "PASS within measured local profile: production and demo byte budgets pass; constrained-profile route-ready median 3.887 s remains a UX risk because no approved latency target exists.",
+    "architecture": "PRESERVED / NO_CHANGE: app already has lazy route imports and shared React/MUI chunks; no module-level attribution or approved target supports a safe code split.",
+    "pairingRule": "UI outcome and architecture preservation/no-change decision were reviewed together within UI019."
+  },
+  "checkpoints": {
+    "C01": "PASS — inventories production entry/preloads, 26 JS assets, 52 lazy-import call sites, existing budgets and single-sample device limitations.",
+    "C02": "PASS — one warm-up + five cold contexts on current demo; Chromium 153, 1280x720, cache disabled, 4x CPU, 150ms RTT, 1.6/0.75 Mbit/s, gzip static responses; route-ready median 3887ms (3865.5–3976.2), list-ready median 659.3ms (637.5–862.3), API 200, 21 rows on every sample.",
+    "C03": "PASS — NO_CHANGE under existing byte budgets; route-ready 3.887s recorded as risk, no user-approved timing target or module attribution to pick a split; no source/warning-limit change.",
+    "C04": "PASS — production and demo builds, repeated browser profile, production artifact isolation; source gates reused from UI018 S04 on unchanged source. Monolithic npm run verify and full E2E not rerun.",
+    "C05": "PASS — S01–S04, runner, generated artifact SHA-256 manifest, paired decision, limitations and current docs fingerprints stored; FE/product ledgers unchanged."
+  },
+  "verification": {
+    "productionBuild": "PASS; 737.92 kB raw / 186.81 kB gzip largest entry; existing raw warning retained.",
+    "demoBuild": "PASS; 741.57 kB raw / 187.95 kB gzip largest chunk; existing raw warning retained.",
+    "productionInitialScripts": "319362 bytes local Node gzip level 9 across entry + React/MUI static preloads; not browser transfer capture.",
+    "demoInitialScriptTransfer": "446252 bytes on each of five Playwright profile samples; static resources confirmed gzip content-encoding.",
+    "performance": "n=5 after warm-up; route-ready median 3887ms, min 3865.5, max 3976.2; customer first page median 659.3ms, min 637.5, max 862.3; 1,004 synthetic customers, 20 API records + header.",
+    "profileLimits": "Desktop Chromium simulated 4x CPU/network; no actual mobile hardware, production CDN, real API/backend, accepted route-ready SLA or p95.",
+    "artifactIsolation": "No setupWorker(, WorkerChannel, msw/browser or @mswjs/interceptors in production JS; no mockServiceWorker.js file; one old-worker cleanup reference.",
+    "sourceGates": "Reused UI018 S04 on unchanged source: generate 11/283/210/54, source64/220/54, boundaries427 + fixtures8/8, source checker3/3, lint/typecheck, domain/MSW88/88, Vitest85/85.",
+    "fullVerify": "Monolithic npm run verify NOT RUN for UI019.",
+    "fullE2E": "NOT RUN for UI019; latest full rebuilt-demo suite remains UI017 187/187.",
+    "diffCheck": "PASS; only existing LF-to-CRLF advisory messages."
+  },
+  "gates": {
+    "FE_G02": "PASS by unchanged-source constituent gates; no monolithic verify.",
+    "FE_G03": "No contract/mock source changes; synthetic MSW only.",
+    "FE_G04": "Five measured Chromium routes/actions reached API 200 and 21 rows; no full route suite claim.",
+    "FE_G05": "No new manual accessibility/device evidence.",
+    "FE_G07": "PASS for current local byte budgets; no mobile device or timing SLO certification. Route-ready latency remains risk.",
+    "FE_G08": "Production/demo builds and isolation scan pass locally; CI not run.",
+    "FE_G09": "Owner acceptance remains open.",
+    "readiness": "Evidence remains 7/9; no Production-Ready/Enterprise-Grade claim."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "6/10",
+    "totalDone": "19/26",
+    "checkpoints": "104/130",
+    "next": "UI020.C02 owner-approved browser/device support matrix; UI012/UI015 manual evidence and FE-G05/FE-G09 remain open."
+  },
+  "evidence": [
+    "S01-bundle-device-inventory.md",
+    "S02-repeat-profile.mjs",
+    "S02-performance-repeat.log",
+    "S03-no-change-decision.md",
+    "S04-production-build.log",
+    "S04-demo-build.log",
+    "S04-build-and-regression-checks.log",
+    "S04-artifact-sha256.json"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprintRefreshNote": "Shared plan/context/known-gaps/report fingerprints refreshed after UI020.C01 inventory on 2026-10-03; item-specific results remain scoped to their original acceptance evidence; shared docs and downstream acceptance references refreshed after UI022 root-workflow correction on 2026-10-03; shared docs and downstream acceptance references refreshed after UI022 Windows runner correction on 2026-10-03.",
+  "fingerprints": {
+    "apps/web/vite.config.ts": "73384F107FE348C120F479138038177F0D71DB511FCE2A90B6F111FB6F01DCA9",
+    "apps/web/src/app/router.tsx": "288F2F6B882623A72F583FE440487BC46297E601FCE2C3E59A2069D7BD3A36A8",
+    "apps/web/src/main.tsx": "2FBB13874110B3E6FC3F5583D36FC50A409F3DD5E28D7946F8B5B61C946D6BBB",
+    "apps/web/public/manifest.webmanifest": "EA8E42E73426D3A399074BDA5BC722B60955B8BB93D3BE1D32425882FBB6CA53",
+    "apps/web/public/app-sw.js": "9080A6F5BFDD8753D64BC3A5632EE626517A79BD9D989EDB3CC54F089E721936",
+    "apps/web/src/modules/notifications/push-capabilities.ts": "5AFB7D25417142B10F9DF582062FF0103B17E89514AF11DB2F6138093259FF0A",
+    "apps/web/src/modules/notifications/index.tsx": "B5B78947F8D0B370EC66ADEF252EE0BDD25EF1DD2967F1AAB2A661DA02774BC8",
+    "tests/fe019.spec.ts": "96310D25E03FE47D512EFE3CADBF9FD53997C82B4B95FF5099272D6A68633425",
+    "playwright.config.ts": "034BF2D12517A7D274386B14B670BDB9765EE0DA9897435089ECF66E452D995E",
+    "botsales-kit/contracts/openapi.json": "D88A70957A9DE36402FF5AC0CB757A2F1C496519C7E1FD2E28DF17E867F78C7C",
+    "botsales-kit/contracts/route-manifest.json": "360871C008FAC723CFC77DEC79417838D24D4FAE844452909EB347EC8893F2B2",
+    "botsales-kit/design/tokens.json": "B4083EB2032D9EBAC7F1F793F3AAE1CDA6A30E075B0DD9E19F241567651D1895",
+    "evidence/frontend-ui-improvements/UI019/S01-bundle-device-inventory.md": "D73F11038D670AEFF9948FA26AFD581DFB1762ECDFF727B88FEC20515C402B7E",
+    "evidence/frontend-ui-improvements/UI019/S02-repeat-profile.mjs": "9B4789B1C3F0AC2BF13A395CE69E8D676ED17E0A70656D68BF5C83716F45C0B1",
+    "evidence/frontend-ui-improvements/UI019/S02-performance-repeat.log": "506FE134EF0C029EAE783DF2E302BF421C4571CAD6E4F56A36731A71374FF139",
+    "evidence/frontend-ui-improvements/UI019/S03-no-change-decision.md": "85C8730F25F4C5267C1A39A5EFB5050DE446E4D319A0F85E08B45DF438CBBA72",
+    "evidence/frontend-ui-improvements/UI019/S04-build-and-regression-checks.log": "82A44BBC9ACE963CE1AD85D44322FFBADF344930CC09851C805023C5FBC4A400",
+    "evidence/frontend-ui-improvements/UI019/S04-production-build.log": "0659C2080E55392E7995D2905E04503BA314BB9E518EF668F0B7A14C5D19789A",
+    "evidence/frontend-ui-improvements/UI019/S04-demo-build.log": "C6D8F422047303EA2287B87A5A79AAB4D6ED6985855F8D6307AC4004D7950ABD",
+    "evidence/frontend-ui-improvements/UI019/S04-artifact-sha256.json": "379D5D1519F157FCDF396E70E9124DE5ADEC163C70895B5B5A6F91A1B3EB511D",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC",
+    "evidence/frontend-ui-improvements/UI018/S06-acceptance.json": "C911A1DF0B5973FA7C56E4BF825DCC432377ACCB972B89039BD9984EF0817699"
+  }
+}

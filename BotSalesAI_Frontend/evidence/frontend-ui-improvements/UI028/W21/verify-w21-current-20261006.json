@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W21",
+  "date": "2026-10-06",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "owner": "apps/web/src/modules/operations/index.tsx",
+  "routes": ["R37", "R38", "R52"],
+  "source": {
+    "beforeSha256": "f228f311285d9361ea9ba5a0117b8d03a6d02e00edf1baffddeba647ec4a59ba",
+    "afterSha256": "adcc18195d09a583e2a0f660198838cd03dbd95eebf2dc5c2a62cd4c799b8406",
+    "sharedLayoutSha256": "02365c3c7fcb50c60707d3a4cb205537a7ed4dbd8a9975bf8a4fb80e00de9b06",
+    "sharedComponentsSha256": "66be880a201fe2a490a21b8332fbe6be934d12a2339d48632e519ff624834301",
+    "behaviorContractChanged": false
+  },
+  "spacing": {
+    "reportBefore": "layout-before-spacing-current-20261006.json",
+    "reportAfter": "layout-after-spacing-current-20261006.json",
+    "totalBefore": 169,
+    "totalAfter": 139,
+    "ownerFindingsBefore": 30,
+    "ownerFindingsAfter": 0,
+    "removed": 30,
+    "added": 0,
+    "identityOrCountChangesOutsideOwner": 0,
+    "exceptionsAdded": 0,
+    "globalStrictGate": "FAIL_REMAINING_W22_W25_DEBT",
+    "initialAfterScanFollowUp": "One R52 grid literal was corrected under an exact source hash; final owner finding count is zero."
+  },
+  "render": {
+    "beforeObservations": 6,
+    "afterObservations": 6,
+    "viewports": ["390x844", "1280x900"],
+    "routesAndStates": ["R37 operations-summary-and-work-items", "R38 approval-queue-and-delegation-preview", "R52 digests-health-and-readiness"],
+    "writes": 0,
+    "pageErrors": 0,
+    "horizontalOverflowObservations": 0
+  },
+  "targetedE2E": {
+    "command": "npm run test:e2e -- tests/ui-operations-layout.spec.ts tests/fe020.spec.ts tests/states/route-empty-composition.spec.ts",
+    "result": "PASS",
+    "total": 20,
+    "chromium": 10,
+    "firefox": 10,
+    "newLayoutCoverageWidths": [320, 390, 768, 1280, 1440],
+    "dialogCoverageWidths": [320, 390, 1280]
+  },
+  "fullVerify": {
+    "command": "npm run verify",
+    "result": "EXIT_1_AT_FINAL_STRICT_LAYOUT_SCAN",
+    "generator": "PASS: 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "source": "PASS: 66 files, 220 operation references, 54 routes; fixtures 3/3",
+    "boundaries": "PASS: 452 imports, 10/10 negative fixtures",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "domainAndNetwork": "PASS: 88/88",
+    "unit": "PASS: 88/88",
+    "productionBuild": "PASS: 2056 modules",
+    "layoutFixtures": "PASS: 9/9",
+    "finalStrictLayout": "FAIL: 139 findings remain outside Operations in W22-W25 owners"
+  },
+  "evidence": {
+    "preEditContract": "design-contract-pre-spacing-current-20261006.md",
+    "renderBefore": "render-before-spacing-current-20261006.json",
+    "renderAfter": "render-after-spacing-current-20261006.json",
+    "layoutDelta": "layout-delta-current-20261006.json",
+    "visualSourceReview": "visual-source-review-current-20261006.md",
+    "targetedE2ELog": "targeted-e2e-current-20261006.log",
+    "fullVerifyLog": "full-verify-current-20261006.log",
+    "interruptedFirstAttempt": "targeted-e2e-first-attempt-interrupted-current-20261006.log"
+  },
+  "limitations": [
+    "Local frontend evidence against synthetic MSW only.",
+    "No live worker/provider health, durable job processing, backup restore, Backend, hosted CI, staging, production runtime, screen-reader speech, or owner acceptance is established.",
+    "No FE ledger, full-product tracker, generated plan, or generated source was changed."
+  ]
+}

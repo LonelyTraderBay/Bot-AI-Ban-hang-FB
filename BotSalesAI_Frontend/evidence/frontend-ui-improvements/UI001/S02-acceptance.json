@@ -1,0 +1,85 @@
+{
+  "taskId": "UI001",
+  "checkedAt": "2026-10-02T11:18:31Z",
+  "owner": "Codex",
+  "scope": "React frontend with synthetic MSW API only",
+  "baselineHead": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "route": "R49 /s/:shopId/finance/reconciliation",
+  "operations": [
+    "listBankTransactions",
+    "listCODSettlements",
+    "listReconciliationCases",
+    "listDebtItems",
+    "getBankTransaction",
+    "matchCODSettlement"
+  ],
+  "baseline": {
+    "evidence": "evidence/frontend-ui-reaudit-20261002/browser-probes.json#RECONCILIATION_SHARED_CURSOR",
+    "fixture": "25 bank transactions and 1 COD settlement",
+    "observed": "After moving the bank table to page 2, switching to COD sent the bank collection cursor to listCODSettlements and received 422 INVALID_CURSOR."
+  },
+  "implementation": {
+    "apps/web/src/shared/model/filters.ts": "useListQuery accepts a collection-specific URL parameter and exposes its value as the API cursor.",
+    "apps/web/src/shared/ui/components.tsx": "Pager updates the owning collection cursor while preserving unrelated route query parameters.",
+    "apps/web/src/modules/finance/index.tsx": [
+      "Bank, COD and reconciliation-case tables use bankCursor, codCursor and caseCursor independently.",
+      "COD dialog loads bank choices through its own usePagedApi query and exposes load-more, loading and error state.",
+      "Case dialog loads a transaction by ID and obtains debt choices through an independent paged query.",
+      "Settled, zero-balance debts are excluded from allocation choices."
+    ]
+  },
+  "acceptance": {
+    "C01_baseline_and_contract": "PASS; baseline repro, source ownership, route R49 and typed API operations recorded in S01-baseline.json.",
+    "C02_collection_cursor_ownership": "PASS; bank page 2 uses bankCursor; COD/cases/debts do not receive that cursor; browser Back clears the bank cursor.",
+    "C03_independent_lookups": "PASS; COD lookup loads and enables an off-page bank transaction; case transaction detail and debt lookup work while the bank table remains on page 2.",
+    "C04_regression_and_ui_states": "PASS; COD match receives 202; a settled zero-balance debt is absent from the next allocation options; no invalid-cursor response is observed.",
+    "C05_architecture_and_scope": "PASS; existing typed API hooks, query scope, shared Pager and QueryState are used; no contract/generated file, cross-module import, direct fetch, Backend or staging claim was added."
+  },
+  "checks": {
+    "targeted_browser": {
+      "command": "npm.cmd exec -- playwright test tests/fe015.spec.ts -g UI001 --reporter=html --timeout=30000",
+      "result": "PASS 1/1 Chromium test",
+      "evidence": "evidence/frontend-ui-improvements/UI001/S03-playwright-report/index.html"
+    },
+    "finance_regression": {
+      "command": "npm.cmd exec -- playwright test tests/fe015.spec.ts --reporter=line --timeout=60000",
+      "result": "PASS 10/10 Chromium tests",
+      "evidence": "evidence/frontend-ui-improvements/UI001/S04-fe015-current.log"
+    },
+    "repository_verify": {
+      "command": "npm.cmd run verify",
+      "exitCode": 0,
+      "result": "PASS: generate 11 outputs/283 schemas/210 operations/54 routes; source 62 files/227 API references/54 routes; boundaries 410 imports and 8/8 negative fixtures; lint; typecheck; domain/MSW 88/88; Vitest 71/71; production build.",
+      "evidence": "evidence/frontend-ui-improvements/UI001/S05-verify-current.log",
+      "buildAdvisory": "Vite reports one 730.75 kB raw / 184.41 kB gzip chunk above its 500 kB raw warning threshold."
+    }
+  },
+  "readiness": {
+    "latestFullSuiteSnapshot": "evidence/REPORT.md reports 147/147 Chromium tests and 7/9 gates with full-suite evidence before the UI001 source diff.",
+    "currentDiffFullSuite": "NOT_RUN; the full E2E suite has not been repeated on the UI001 diff, so current-diff FE-G04 and total readiness score are not recalculated.",
+    "remainingManualEvidence": [
+      "FE-G05: actual browser zoom, screen reader and complete manual contrast review.",
+      "FE-G09: product-owner UAT acceptance."
+    ]
+  },
+  "trackerReadOnlySnapshot": {
+    "command": "node botsales-kit/scripts/progress.mjs status",
+    "verifiedSteps": 2,
+    "totalSteps": 140,
+    "overallPercent": 1.33,
+    "staleTasks": 28,
+    "changedByThisTask": false
+  },
+  "limitations": [
+    "All interactive and API assertions use the frontend MSW demo; they do not prove Backend, database, provider, staging or production behavior.",
+    "The case table can display an internal transaction resource ID when its related bank row is outside the bank table's current page; opening the case resolves and displays the external transaction ID through getBankTransaction. This display fallback remains a follow-up candidate if product acceptance requires external IDs in every table row.",
+    "The fixture contains only two debt records; the independent debt lookup is exercised, but debt page 2 is not.",
+    "No full E2E rerun on the final UI001 diff, manual accessibility review or owner UAT was performed."
+  ],
+  "changedFileSha256": {
+    "apps/web/src/modules/finance/index.tsx": "202758F084EA23CF6EB72E1D8C49C3A4AD7F250BF6EFD8DA4D90DB6A3004D19C",
+    "apps/web/src/shared/model/filters.ts": "913C3C6AE29ECECF4DE4DAE865598BBBA6B954FA10807A957B9360F21833BC4D",
+    "apps/web/src/shared/ui/components.tsx": "74FF7864CF5BCBFF94DFF507DDEC1205EBE7E4D3563AE3BC5C3881D0863380D2",
+    "tests/fe015.spec.ts": "BB6FA2CD80D6D74F2CAA26D0A43D8ED8BB9F3ABA73A62E1D7AD28E0A9531594B"
+  }
+}

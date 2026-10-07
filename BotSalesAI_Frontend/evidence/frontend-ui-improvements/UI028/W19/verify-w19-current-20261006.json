@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W19",
+  "capturedAt": "2026-10-06",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": ["R29", "R30"],
+  "source": {
+    "path": "apps/web/src/modules/integrations/index.tsx",
+    "beforeSha256": "de8a8c8407b80792e2b8c3b25d5a31dc8239a99654f3df254f2685e9a4d2f44b",
+    "afterSha256": "824d9e3c0a656b0ce7ebef6942b4f3c3c699bb73cca47601a5950db31b1374a1",
+    "preExistingStagedChangeAtIntake": true
+  },
+  "layout": {
+    "globalSpacingFindingsBefore": 207,
+    "globalSpacingFindingsAfter": 194,
+    "integrationsOwnerFindingsBefore": 13,
+    "integrationsOwnerFindingsAfter": 0,
+    "removedOccurrences": 13,
+    "removedIdentities": 6,
+    "addedOccurrences": 0,
+    "addedIdentities": 0,
+    "nonIntegrationsIdentityChanges": 0,
+    "layoutFixtures": "PASS 9/9",
+    "strictGlobalGate": "FAIL_WITH_KNOWN_MIGRATION_DEBT; 194 findings remain, assigned to W20-W25"
+  },
+  "checks": {
+    "generator": "PASS; 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "source": "PASS; 66 files, 220 operation calls, 54 routes, 0 issues; checker fixtures 3/3",
+    "boundaries": "PASS; 450 imports, 10/10 negative fixtures, 0 issues",
+    "lint": "PASS; eslint apps/web/src --max-warnings 0",
+    "typecheck": "PASS; tsc -p apps/web/tsconfig.json --noEmit",
+    "domainAndNetwork": "PASS; 75 simulator + 13 network checks, 88/88",
+    "vitest": "PASS; 88/88 across 10 files",
+    "productionBuild": "PASS; Vite production build, 2056 modules",
+    "fe019ContractAndCredentialBehavior": "PASS; FE019.S01 route/operation/schema/mock boundary and credential write-only/clearing cases executed in Chromium and Firefox",
+    "targetedPlaywright": "PASS; 38/38 across Chromium 19/19 and Firefox 19/19; FE019 behavior, UI008 integration state coverage, and R29/R30 responsive/dialog layout",
+    "layoutRegression": "PASS; routes at 320/390/768/1280/1440 px and dialogs at 320/390/1280 px",
+    "visualSourceReview": "PASS_FOR_W19_SPACING_DELTA; manual source review and paired Chromium captures; not an accessibility certification",
+    "fullVerify": "Exit 1 only at final strict layout source scan; all preceding verify stages passed and 194 known findings remain in W20-W25"
+  },
+  "browserEvidence": {
+    "engine": "Chromium for paired visual captures; Chromium and Firefox for Playwright",
+    "pairedObservations": "12 before + 12 after across R29/R30 at 390x844 and 1280x900",
+    "pageErrors": 0,
+    "captureWrites": 0,
+    "horizontalOverflowObservations": 0,
+    "outOfViewportDialogs": 0,
+    "dialogWidths": "326px at 390px and 768px at 1280px"
+  },
+  "runner": {
+    "verifiedCommand": "Locked npm CLI invoked with PATH trimmed to host workaround limits",
+    "fullVerifyExitCode": 1,
+    "fullVerifyLog": "full-verify-current-20261006.log",
+    "targetedE2eLog": "targeted-integrations-e2e-current-20261006.log",
+    "strictGateResult": "Expected migration debt only; 194 SPACING_LITERAL findings assigned W20-W25"
+  },
+  "verdict": {
+    "ui": "PASS",
+    "architecture": "PASS_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "task": "DONE_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "limitations": [
+      "The strict global spacing gate remains red until W20-W25 migrate the remaining 194 findings; its threshold was not changed.",
+      "The layout checker currently enforces spacing only; visual-token source checking remains scheduled for W26-W27, so this task has a manual VISUAL_SOURCE_REVIEW, not an automated visual-token PASS.",
+      "Evidence is local React with synthetic in-memory MSW; it does not establish Backend/provider integration, hosted CI, staging, production behavior, screen-reader results, or owner acceptance."
+    ]
+  },
+  "evidence": [
+    "design-contract-pre-spacing-current-20261006.md",
+    "render-before-spacing-current-20261006.json",
+    "layout-after-spacing-current-20261006.json",
+    "layout-delta-current-20261006.json",
+    "render-after-spacing-current-20261006.json",
+    "targeted-integrations-e2e-current-20261006.log",
+    "full-verify-current-20261006.log",
+    "visual-source-review-current-20261006.md"
+  ]
+}

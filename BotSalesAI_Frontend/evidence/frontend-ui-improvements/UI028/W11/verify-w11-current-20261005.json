@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W11",
+  "capturedAt": "2026-10-05",
+  "revision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "status": "PASS_WITH_KNOWN_GLOBAL_MIGRATION_DEBT",
+  "uiVerdict": "PASS",
+  "archVerdict": "PASS_WITH_KNOWN_GLOBAL_MIGRATION_DEBT",
+  "scope": {
+    "module": "apps/web/src/modules/orders/index.tsx",
+    "routes": ["R17", "R18", "R19", "R43"],
+    "canonicalInputsChanged": false,
+    "apiRoutePermissionOrBusinessStateChanged": false,
+    "preexistingStagedAndUnstagedOrdersChangesPreserved": true
+  },
+  "sourceSha256": {
+    "apps/web/src/modules/orders/index.tsx": "73ebb05af15736b30d4caa57e6c77fff55acce0359777ded6f84af3b4041f043",
+    "tests/ui-orders-layout.spec.ts": "962772b04d85359908300e0aaae238dbea39a5ab5ac6f2ad92944a8dffe09dd3"
+  },
+  "designContract": "design-contract-pre-code-current-20261005.md",
+  "renderEvidence": {
+    "baseline": "render-before-source-edit-stable-current-20261005.json",
+    "initialCaptureWithTransitionArtifactsPreservedButNotUsedAsComparator": "render-before-source-edit-current-20261005.json",
+    "after": "render-after-source-edit-current-20261005.json",
+    "comparison": "layout-report-delta-current-20261005.json",
+    "browser": "Chromium 153.0.8010.12",
+    "syntheticMockMode": true,
+    "routeStateViewportObservationsBefore": 18,
+    "routeStateViewportObservationsAfter": 18,
+    "pageErrorsBefore": 0,
+    "pageErrorsAfter": 0,
+    "horizontalOverflowBeforeOrAfter": false,
+    "interactiveWrites": {
+      "draftOrReturnSubmissions": 0,
+      "orderQuoteMockCommandOnly": true,
+      "customerConfirmationOrInspectionSubmitted": false
+    }
+  },
+  "spc045": {
+    "checker": "scripts/check-layout.mjs",
+    "findingIdentity": ["file", "property", "normalized value", "code", "multiplicity"],
+    "globalBefore": 375,
+    "globalAfter": 350,
+    "ordersBefore": 25,
+    "ordersAfter": 0,
+    "resolvedInOrders": 25,
+    "newInTouchedFile": 0,
+    "unknownStyleSourceAfter": 0,
+    "deltaStatus": "PASS_NO_NEW_FINDINGS_TOUCHED_FILE_CLEAN",
+    "remainingDebtOwner": "UI028.W12-W25"
+  },
+  "checks": {
+    "generateCheck": { "status": "PASS", "outputs": 11, "schemas": 283, "operations": 210, "routes": 54 },
+    "source": { "status": "PASS", "files": 66, "operationCalls": 220, "routes": 54, "fixtures": "3/3" },
+    "boundaries": { "status": "PASS", "imports": 442, "negativeFixtures": "10/10" },
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "domainAndMock": { "status": "PASS", "checks": 88 },
+    "vitest": { "status": "PASS", "files": 10, "tests": 88 },
+    "productionBuild": { "status": "PASS", "modules": 2056 },
+    "layoutCheckerFixtures": { "status": "PASS", "tests": 9 },
+    "strictApplicationLayoutGate": { "status": "EXPECTED_NONZERO", "exitCode": 1, "spacingFindings": 350, "unknown": 0 },
+    "demoBuild": { "status": "PASS", "log": "build-demo-w11-current-20261005.log" },
+    "ordersResponsiveAndWorkflowPlaywright": { "status": "PASS", "tests": "2/2", "log": "ui-orders-layout-playwright-isolated-current-20261005.log" },
+    "existingOrdersRegressionPlaywright": { "status": "PASS", "tests": "11/11", "log": "fe012-orders-regression-current-20261005.log" },
+    "fullVerifyLog": "verify-w11-current-20261005.log"
+  },
+  "limitations": [
+    "The repository-wide strict spacing gate is still nonzero from module debt assigned to W12-W25; no global PASS is claimed.",
+    "This is local React with synthetic in-memory MSW data; it is not Backend, hosted CI, staging, production runtime, screen-reader certification or owner acceptance.",
+    "The independent FE progress ledger and generated full-product plan were not edited."
+  ]
+}

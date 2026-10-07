@@ -1,0 +1,160 @@
+{
+  "checkedAt": "2026-10-06T15:41:26.308Z",
+  "step": "S05",
+  "status": "DONE_BINDING_CAPABILITY_SCOPED",
+  "coverage": [
+    {
+      "file": "S05-current-layout.json",
+      "expected": 75,
+      "actual": 75,
+      "missing": [],
+      "extra": [],
+      "status": "PASS"
+    },
+    {
+      "file": "S05-current-visual.json",
+      "expected": 75,
+      "actual": 75,
+      "missing": [],
+      "extra": [],
+      "status": "PASS"
+    },
+    {
+      "file": "S05-current-composition.json",
+      "expected": 74,
+      "actual": 74,
+      "missing": [],
+      "extra": [],
+      "status": "PASS"
+    }
+  ],
+  "checks": [
+    {
+      "command": "node scripts/check-layout.mjs --json",
+      "exit": 0,
+      "output": "S05-current-layout.json",
+      "outputSha256": "aead71315b876bb3ed09ca47c50490b941dbb2a87a02ca47c03a7608c8dc1a80"
+    },
+    {
+      "command": "node scripts/check-ui-composition.mjs --json",
+      "exit": 0,
+      "output": "S05-current-composition.json",
+      "outputSha256": "83643608e16542e58688e225d32591f08c0d3aec336732e982b8142c35d2a791"
+    },
+    {
+      "command": "node scripts/check-visual-tokens.mjs --json",
+      "exit": 0,
+      "output": "S05-current-visual.json",
+      "outputSha256": "ef098bc48fa640a721feaaf0cda6c895cfc3ea8b152225ff0a672ec47e17e2ca"
+    },
+    {
+      "command": "node node_modules/typescript/lib/tsc.js -p apps/web/tsconfig.json --noEmit",
+      "exit": 0,
+      "output": "S05-typecheck.log",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "node scripts/check-boundaries.mjs",
+      "exit": 0,
+      "output": "S05-boundaries.log",
+      "outputSha256": "86e77cbee0a11e440af8b6fbfa10ded8e172c1d7f53032f9de1ce34bbd544529"
+    },
+    {
+      "command": "node scripts/generate.mjs --check",
+      "exit": 0,
+      "output": "S05-generator.log",
+      "outputSha256": "9cefafdc5cc383f856c99fb5aa32c42cd866a8f9d28115c87c9c96695f162544"
+    }
+  ],
+  "fixtureEvidence": {
+    "log": "S05-binding-acceptance-fixtures.log",
+    "sha256": "7f7b3accd0eae915485f516930ae8b0e08089efcccdf35f80b1f5e5c41be5915",
+    "passed": 118,
+    "failed": 0,
+    "exitRecordedByCaller": 0
+  },
+  "changedOwnerHashes": [
+    {
+      "file": "scripts/ui-bindings.mjs",
+      "sha256": "946e745ec3ff6cfb9609dd507bac90d21bbfbb8195f06bece58fc118dfda8449"
+    },
+    {
+      "file": "scripts/check-layout.mjs",
+      "sha256": "618e10abacdb8cd8a51c0a38ecf4b50ca803e548f211954bca231372f8bea1a5"
+    },
+    {
+      "file": "scripts/check-ui-composition.mjs",
+      "sha256": "2589d5f980d395d02b3d5b02b5761c655352d3c2a2839c8b9186408cee064548"
+    },
+    {
+      "file": "scripts/check-visual-tokens.mjs",
+      "sha256": "144f844c7ae2447136580054abde6b07610623a6ba3b3e25db887d8d378a61d6"
+    },
+    {
+      "file": "tests/ui-bindings.test.mjs",
+      "sha256": "1bc80a89420d3147211c8bb0445791b1721f266b09497d06b5d3e40d0160021c"
+    },
+    {
+      "file": "tests/ui-binding-gates.test.mjs",
+      "sha256": "d537e23d08bcb7cee4bf0c244f6b8fd579ac86fa7d6180a8cbd234941b411443"
+    },
+    {
+      "file": "tests/ui-layout-binding-gates.test.mjs",
+      "sha256": "ef834747c9fa1d0afe47ddfebdc1a805c419f854daff5694c3cd7b0d893a9842"
+    },
+    {
+      "file": "tests/layout-checker.test.mjs",
+      "sha256": "db1917d9f18a62cfefc6091ac73be6be6816850cc7d4edbe057ceaf1422d4896"
+    }
+  ],
+  "protectedFiles": [
+    {
+      "file": "botsales-kit/execution/plan.json",
+      "sha256": "c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16",
+      "currentSha256": "c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/progress.json",
+      "sha256": "23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed",
+      "currentSha256": "23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f",
+      "currentSha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/frontend-progress.json",
+      "sha256": "fa1fd588fc8a807ed334b48b0766cabfa621d45817c551f28ae3243c30330ef9",
+      "currentSha256": "fa1fd588fc8a807ed334b48b0766cabfa621d45817c551f28ae3243c30330ef9",
+      "unchanged": true
+    },
+    {
+      "file": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "currentSha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "currentSha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "unchanged": true
+    }
+  ],
+  "indexUnchanged": true,
+  "runtimeSourceChangesSinceS03": [],
+  "pending": [
+    "Readonly/mutation/style/value/slot/ancestry hardening S06–S10",
+    "UI owner/consumer migration and full acceptance S11–S20"
+  ],
+  "limits": [
+    "Legacy virtual/syntax fixtures are not production resolver proof",
+    "Controlled MUI declarations in unit fixtures are not real MUI typecheck proof",
+    "No shared/feature UI edits or browser verification in this batch",
+    "No full conformance, owner acceptance or Enterprise certification"
+  ]
+}

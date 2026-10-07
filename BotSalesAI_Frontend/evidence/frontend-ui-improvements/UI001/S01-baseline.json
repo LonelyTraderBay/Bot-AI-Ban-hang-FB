@@ -1,0 +1,48 @@
+{
+  "id": "UI001",
+  "checkpoint": "C01",
+  "status": "PASS",
+  "capturedAt": "2026-10-02",
+  "owner": "Codex",
+  "revision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "scope": [
+    "apps/web/src/modules/finance/index.tsx",
+    "apps/web/src/shared/model/filters.ts",
+    "apps/web/src/shared/ui/components.tsx",
+    "tests/fe015.spec.ts"
+  ],
+  "route": "R49 /s/:shopId/finance/reconciliation",
+  "contracts": [
+    "listBankTransactions",
+    "listCODSettlements",
+    "listReconciliationCases",
+    "listDebtItems",
+    "getBankTransaction"
+  ],
+  "trigger": "Bank list page 2 carries audit-bank-20 into the COD list request.",
+  "baselineObserved": {
+    "fixture": "25 bank transactions and 1 COD settlement",
+    "codStatus": 422,
+    "code": "INVALID_CURSOR",
+    "detail": "Cursor không còn phù hợp. Mở lại đầu danh sách.",
+    "source": "evidence/frontend-ui-reaudit-20261002/browser-probes.json#RECONCILIATION_SHARED_CURSOR"
+  },
+  "sourceFindings": [
+    "ReconciliationPage called useListQuery() for the bank, COD, reconciliation-case and debt operations; the helper read the same URL key cursor for each operation.",
+    "The COD match dialog populated bank choices from the currently paged bank list.",
+    "The reconciliation dialog populated debt choices from the currently paged debt list and searched the current bank page for transaction details."
+  ],
+  "expectedUi": [
+    "A page cursor is sent only to the collection that owns it; tab switching and browser Back do not send an invalid cursor.",
+    "COD matching can page through bank choices independently of the bank table page.",
+    "Case matching resolves its transaction by ID and pages debt choices independently of list-table state.",
+    "Lookup loading and errors use the shared QueryState behavior."
+  ],
+  "architectureInvariants": [
+    "Use typed operations and existing useApi/usePagedApi hooks; preserve shop, principal and permission query-key scope.",
+    "Use only contract-defined request fields and keep URL cursors distinct per collection.",
+    "Do not add cross-module imports or direct fetch calls."
+  ],
+  "affectedGates": ["FE-G02", "FE-G03", "FE-G04", "FE-G06"],
+  "notes": "C01 is baseline acceptance only; it does not claim the new implementation or current FE gates pass."
+}

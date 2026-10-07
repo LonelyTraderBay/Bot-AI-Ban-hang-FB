@@ -1,0 +1,49 @@
+FE008.S02 current HTTP/MSW transport proof
+executedAt=2026-10-06T06:20:43.916Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+commandId=domain; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain; exitCode=0
+registered networkChecks=13/13; networkHandlers=210; simulatorChecks=75/75
+FE008.S02 operationId/MSW transport and activation audit
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+result=PASS canonical operations=210; MSW network handlers=210; network scenarios=13/13; domain simulator=75/75
+demo=explicit mode; live=separate mode; production mock flag rejected; unhandled API requests fail
+module mock fixture imports=0
+NETWORK PASS: Registers every canonical HTTP operation and reports the custom SSE endpoint
+NETWORK PASS: Loads the service worker only in demo mode and guards production from mock activation
+NETWORK PASS: Covers the canonical route, feature, shop, and role catalogs
+NETWORK PASS: Returns schema-valid, paginated data and rejects stale cursors
+NETWORK PASS: Pages through a deterministic large dataset without dropping or duplicating rows
+NETWORK PASS: Scopes reads to the requested shop and role permissions
+NETWORK PASS: Maps request validation, CSRF, and missing If-Match to contract errors
+NETWORK PASS: Creates a product with schema-complete variants through HTTP
+NETWORK PASS: Preserves idempotency and exposes stale and unknown mutation outcomes over HTTP
+NETWORK PASS: Resets records, role, faults, idempotency keys, sequence, and fixed clock deterministically
+NETWORK PASS: Returns observable transient and empty states without fabricating records
+NETWORK PASS: Aborted delayed reads do not leak into the next request
+NETWORK PASS: Streams only the authorized shop and emits events matching the canonical v2 schema
+Scope=local React frontend + synthetic MSW; no real backend or provider integration claimed.
+sourceSnapshotSha256=189d732610b47847f22db2c007108d042e385c34886d71e7d725cdd1c1d52bee
+SOURCE AGENTS.md sha256=5ce332e1cf4b96c61cd7546669a13577672e3cc3c01ebd78230f96aa6b027fab
+SOURCE AI_RULES.md sha256=1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE apps/web/src/main.tsx sha256=2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb
+SOURCE apps/web/src/mocks/browser.ts sha256=91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9
+SOURCE apps/web/src/mocks/database.ts sha256=093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c
+SOURCE apps/web/src/mocks/handlers.ts sha256=e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608
+SOURCE apps/web/src/mocks/service.ts sha256=e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69
+SOURCE apps/web/src/shared/api/client.ts sha256=4986739ee8ddf673d0d94a0702e7251c087e69824b88e37b5ec644ddf72fa39e
+SOURCE apps/web/vite.config.ts sha256=5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a
+SOURCE botsales-kit/contracts/feature-catalog.json sha256=7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d
+SOURCE botsales-kit/contracts/openapi.json sha256=d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c
+SOURCE botsales-kit/contracts/permission-catalog.json sha256=58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1
+SOURCE botsales-kit/contracts/route-manifest.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S02-domain-spc059-current-20261006.log sha256=89464b808703a56d40fe2e3b934b4c5c735cd7a4478e51785f36258c2c3e9970
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S02-transport-audit-spc059-current-20261006.json sha256=44d2afbfe8d8a1ccea222e3eeaba2cc346c75fadca1e4e84f71462b0186dae7a
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S02-transport-audit-spc059-current-20261006.log sha256=27325c950d3b7e7876bfaefb8658a0e7a899881ee7638c3d24ba02cd4b24b6b8
+SOURCE botsales-kit/execution/frontend-evidence/FE008/audit-s02-transport-current-20261006.mjs sha256=dcebc39e2b128662fe06f956c2292da23e86022c8f86599040651c9a243716b2
+SOURCE evidence/domain-tests.json sha256=c71340c61535f8bd43aa02b326b915249576dc674e0ec876491f6000cc233c56
+SOURCE packages/contracts/src/operations.json sha256=1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88
+SOURCE scripts/test-domain.mjs sha256=6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a
+SOURCE tests/fixtures/mock-network.mjs sha256=dc367b505a5cd380d40ab30619ec6f7e403cbd538f1ae87d09746b3384bca78c
+reviewer=Codex self-review; no independent peer review claimed

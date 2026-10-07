@@ -1,0 +1,27 @@
+{
+  "taskId": "UI002",
+  "checkpoint": "C01 — Tiếp nhận và tái hiện trước sửa",
+  "capturedOn": "2026-10-02",
+  "scope": "LOCAL_REACT_DEV_WITH_SYNTHETIC_MSW_ONLY",
+  "sourceRevision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "baselineInboxGitBlob": "4a3b914bc8294bc1de0fb5ceb97c1a3f5907bff7",
+  "fixture": {
+    "conversations": 45,
+    "messages": 105,
+    "activeConversation": "ui002-conversation-41",
+    "listPageCursor": "ui002-conversation-40"
+  },
+  "expected": "Mở conversation ở list page 2 vẫn giữ conversation hiện chọn trong trang list; message pagination chỉ thay cursor tin nhắn.",
+  "observed": "Trước sửa, mở UI002 Conversation 41 chuyển list cursor sang listCursor nhưng query list trong InboxPage chỉ đọc cursor. Trang detail vì thế nạp lại list page 1, không còn listitem UI002 Conversation 41; baseline test thất bại tại assertion giữ selected row.",
+  "independentBrowserProbe": {
+    "id": "INBOX_SHARED_CURSOR",
+    "messageCursor": "audit-message-100",
+    "listConversationsStatus": 422,
+    "problemCode": "INVALID_CURSOR",
+    "source": "../../frontend-ui-reaudit-20261002/browser-probes.json"
+  },
+  "command": "node node_modules/@playwright/test/cli.js test tests/fe016.spec.ts -g UI002 --reporter=line --timeout=30000",
+  "result": "FAIL_EXPECTED_BEFORE_FIX",
+  "log": "S01-baseline.log",
+  "evidenceBoundary": "Reproduction uses synthetic rows in the browser MSW in-memory store; it is not evidence of a live API or backend."
+}

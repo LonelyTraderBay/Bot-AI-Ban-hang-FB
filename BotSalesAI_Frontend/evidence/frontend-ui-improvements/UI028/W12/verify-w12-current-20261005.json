@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W12",
+  "capturedAt": "2026-10-05",
+  "revision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "status": "PASS_WITH_KNOWN_GLOBAL_MIGRATION_DEBT",
+  "uiVerdict": "PASS_FOR_INVENTORY_LAYOUT_SCOPE",
+  "archVerdict": "PASS_WITH_KNOWN_SPACING_AND_VISUAL_TOKEN_DEBT",
+  "scope": {
+    "module": "apps/web/src/modules/inventory/index.tsx",
+    "routes": ["R15", "R16"],
+    "canonicalInputsChanged": false,
+    "apiRoutePermissionOrBusinessStateChanged": false,
+    "filterQueryAndAdjustmentCommandSemanticsPreserved": true,
+    "newNonSpacingVisualLiterals": 0
+  },
+  "sourceSha256": {
+    "apps/web/src/modules/inventory/index.tsx": "6df6821c0a87af71baa5fce4b242021da0df4dd8af8e0919779092f7e1d66ad2",
+    "tests/ui-inventory-layout.spec.ts": "8a17a9565676ccb7187edcaf216766f1df6127f2db62931e1aecf5fec5f9fd27"
+  },
+  "designContract": "design-contract-pre-code-current-20261005.md",
+  "renderEvidence": {
+    "baseline": "render-before-source-edit-current-20261005.json",
+    "after": "render-after-source-edit-current-20261005.json",
+    "comparison": "layout-report-delta-current-20261005.json",
+    "manualVisualSourceReview": "visual-source-review-current-20261005.md",
+    "browser": "Chromium 153.0.8010.12",
+    "syntheticMockMode": true,
+    "routeStateViewportObservationsBefore": 6,
+    "routeStateViewportObservationsAfter": 6,
+    "pageErrorsBefore": 0,
+    "pageErrorsAfter": 0,
+    "documentHorizontalOverflowBeforeOrAfter": false,
+    "shellGutterPreserved": "16px at 390px; 24px at 1280px",
+    "dialogGeometryPreserved": true
+  },
+  "spc045": {
+    "checker": "scripts/check-layout.mjs",
+    "findingIdentity": ["file", "property", "normalized value", "code", "multiplicity"],
+    "globalBefore": 350,
+    "globalAfter": 346,
+    "inventoryBefore": 4,
+    "inventoryAfter": 0,
+    "resolvedInInventory": 4,
+    "newInTouchedFile": 0,
+    "unknownStyleSourceAfter": 0,
+    "deltaStatus": "PASS_NO_NEW_FINDINGS_TOUCHED_FILE_CLEAN",
+    "remainingDebtOwner": "UI028.W13-W25"
+  },
+  "spc046": {
+    "status": "MANUAL_SOURCE_REVIEW_RECORDED_AUTOMATED_CHECKER_NOT_IMPLEMENTED",
+    "newVisualLiterals": 0,
+    "preexistingTypographyOverrides": [650, 750],
+    "sourceReview": "visual-source-review-current-20261005.md",
+    "plannedChecker": "UI028.W26-W27"
+  },
+  "checks": {
+    "generateCheck": {"status": "PASS", "outputs": 11, "schemas": 283, "operations": 210, "routes": 54},
+    "source": {"status": "PASS", "files": 66, "operationCalls": 220, "routes": 54, "fixtures": "3/3"},
+    "boundaries": {"status": "PASS", "imports": 443, "negativeFixtures": "10/10"},
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "domainAndMock": {"status": "PASS", "checks": 88},
+    "vitest": {"status": "PASS", "files": 10, "tests": 88},
+    "productionBuild": {"status": "PASS", "modules": 2056},
+    "layoutCheckerFixtures": {"status": "PASS", "tests": 9},
+    "strictApplicationLayoutGate": {"status": "FAIL_KNOWN_GLOBAL_DEBT", "exitCode": 1, "spacingFindings": 346, "inventoryFindings": 0, "unknown": 0},
+    "inventoryResponsiveAndBehaviorPlaywright": {
+      "chromium": {"status": "PASS", "tests": "2/2", "routeViewportPairs": 10, "log": "ui-inventory-layout-playwright-chromium-current-20261005.log"},
+      "firefox": {"status": "PASS", "tests": "2/2", "routeViewportPairs": 10, "log": "ui-inventory-layout-playwright-firefox-current-20261005.log"}
+    },
+    "fullVerifyLog": "verify-w12-current-20261005.log",
+    "layoutGateLog": "test-layout-current-20261005.log"
+  },
+  "limitations": [
+    "The repository-wide strict spacing gate remains nonzero due to debt assigned to W13-W25; no global PASS is claimed.",
+    "SPC-046 source audit remains manual until its W26-W27 checker, fixtures, and verify integration are implemented and run.",
+    "This is a local React app with synthetic in-memory MSW data; it does not prove Backend, hosted CI, staging, production, screen-reader conformance, or owner acceptance.",
+    "The independent FE progress ledger and generated full-product plan were not edited."
+  ]
+}

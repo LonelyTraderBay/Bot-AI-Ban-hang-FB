@@ -1,0 +1,334 @@
+{
+  "checkedAt": "2026-10-02T10:00:32.434Z",
+  "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "metric": {
+    "name": "Mandatory frontend gate closure rate",
+    "formula": "PASS gates / 9 applicable gates * 100",
+    "passed": 6,
+    "total": 9,
+    "percent": 66.66666666666666,
+    "equalWeight": true,
+    "note": "Evidence-backed gate count, not a universal React certification score or percentage of all possible application correctness. No partial credit for open manual/owner criteria."
+  },
+  "readyForClaim": false,
+  "gates": [
+    {
+      "id": "FE-G01",
+      "status": "PASS",
+      "basis": [
+        "cold-install.json",
+        "cold-build.json",
+        "freshness-and-artifacts.json"
+      ]
+    },
+    {
+      "id": "FE-G02",
+      "status": "PASS",
+      "basis": [
+        "verify-after-setup.json",
+        "source-check.json",
+        "boundaries.json",
+        "structure.json"
+      ]
+    },
+    {
+      "id": "FE-G03",
+      "status": "PASS",
+      "basis": [
+        "verify-after-setup.json",
+        "schema-with-dependencies.json",
+        "mock-schema-check.json",
+        "domain-tests.json"
+      ]
+    },
+    {
+      "id": "FE-G04",
+      "status": "FAIL",
+      "basis": [
+        "browser-probes.json",
+        "e2e.json",
+        "coverage-counts.json"
+      ],
+      "reason": "Five reproducible P1 frontend behaviors and one P2 empty-state gap remain; current suite omits these triggers."
+    },
+    {
+      "id": "FE-G05",
+      "status": "PARTIAL_UNVERIFIED",
+      "basis": [
+        "e2e.json",
+        "verify-after-setup.json",
+        "../../docs/KNOWN_GAPS.md"
+      ],
+      "reason": "Manual browser zoom, screen-reader and complete contrast verification remain open."
+    },
+    {
+      "id": "FE-G06",
+      "status": "PASS",
+      "basis": [
+        "e2e.log",
+        "audit.json"
+      ],
+      "scope": "Only executed frontend XSS/upload/scope/command cases and dependency audit; not backend authorization or an exhaustive security assessment."
+    },
+    {
+      "id": "FE-G07",
+      "status": "PASS",
+      "basis": [
+        "demo-preview-metrics.json",
+        "large-dataset-metrics.json"
+      ],
+      "scope": "Existing local Chromium demo budgets only; not a mobile, multi-browser or backend SLO."
+    },
+    {
+      "id": "FE-G08",
+      "status": "PASS",
+      "basis": [
+        "cold-build.json",
+        "e2e.log",
+        "freshness-and-artifacts.json"
+      ],
+      "scope": "Production/demo builds and executed isolation/live-mode tests; remote CI not executed."
+    },
+    {
+      "id": "FE-G09",
+      "status": "PARTIAL_UNVERIFIED",
+      "basis": [
+        "e2e.log",
+        "../../docs/KNOWN_GAPS.md"
+      ],
+      "reason": "Owner UAT acceptance is not recorded; known mandatory frontend issues remain open."
+    }
+  ],
+  "checks": {
+    "setup": {
+      "id": "setup",
+      "command": "npm.cmd run setup",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:48:50.044Z",
+      "finishedAt": "2026-10-02T09:48:50.462Z",
+      "exitCode": 0,
+      "log": "evidence/frontend-architecture-audit-20261002/setup.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "verify": {
+      "id": "verify",
+      "command": "npm.cmd run verify",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:46:55.465Z",
+      "finishedAt": "2026-10-02T09:47:30.082Z",
+      "exitCode": 1,
+      "log": "evidence/frontend-architecture-audit-20261002/verify.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "verify-after-setup": {
+      "id": "verify-after-setup",
+      "command": "npm.cmd run verify",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:48:50.507Z",
+      "finishedAt": "2026-10-02T09:49:13.568Z",
+      "exitCode": 0,
+      "log": "evidence/frontend-architecture-audit-20261002/verify-after-setup.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "e2e": {
+      "id": "e2e",
+      "command": "npm.cmd run test:e2e",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:50:07.680Z",
+      "finishedAt": "2026-10-02T09:59:17.849Z",
+      "exitCode": 1,
+      "log": "evidence/frontend-architecture-audit-20261002/e2e.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "audit": {
+      "id": "audit",
+      "command": "npm.cmd audit --json",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:50:17.985Z",
+      "finishedAt": "2026-10-02T09:50:18.904Z",
+      "exitCode": 0,
+      "log": "evidence/frontend-architecture-audit-20261002/audit.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "schema": {
+      "id": "schema",
+      "command": "\"C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" scripts/validate-mock-schemas.py",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:50:42.886Z",
+      "finishedAt": "2026-10-02T09:50:42.915Z",
+      "exitCode": 1,
+      "log": "evidence/frontend-architecture-audit-20261002/schema.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "schema-direct": {
+      "id": "schema-direct",
+      "command": "C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe scripts/validate-mock-schemas.py",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:50:59.786Z",
+      "finishedAt": "2026-10-02T09:50:59.842Z",
+      "exitCode": 1,
+      "log": "evidence/frontend-architecture-audit-20261002/schema-direct.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "schema-dependencies": {
+      "id": "schema-dependencies",
+      "command": "python -m pip install --target .audit-python jsonschema",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:52:48.768Z",
+      "finishedAt": "2026-10-02T09:52:50.702Z",
+      "exitCode": 0,
+      "log": "evidence/frontend-architecture-audit-20261002/schema-dependencies.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "schema-with-dependencies": {
+      "id": "schema-with-dependencies",
+      "command": "python scripts/validate-mock-schemas.py",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-bIZMa5",
+      "startedAt": "2026-10-02T09:52:50.751Z",
+      "finishedAt": "2026-10-02T09:52:50.984Z",
+      "exitCode": 0,
+      "log": "evidence/frontend-architecture-audit-20261002/schema-with-dependencies.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "existing installation via junction; not a cold install"
+      }
+    },
+    "cold-install": {
+      "id": "cold-install",
+      "command": "npm.cmd ci",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-xrukvi",
+      "startedAt": "2026-10-02T09:52:49.679Z",
+      "finishedAt": "2026-10-02T09:53:22.683Z",
+      "exitCode": 0,
+      "log": "evidence/frontend-architecture-audit-20261002/cold-install.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "fresh install in separate snapshot"
+      }
+    },
+    "cold-build": {
+      "id": "cold-build",
+      "command": "npm.cmd run setup && npm.cmd run build && npm.cmd run build:demo",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-xrukvi",
+      "startedAt": "2026-10-02T09:53:22.739Z",
+      "finishedAt": "2026-10-02T09:53:37.315Z",
+      "exitCode": 0,
+      "log": "evidence/frontend-architecture-audit-20261002/cold-build.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "fresh install in separate snapshot"
+      }
+    },
+    "cold-empty-regression": {
+      "id": "cold-empty-regression",
+      "command": "npx.cmd playwright test tests/states/route-empty-composition.spec.ts",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-architecture-20261002-xrukvi",
+      "startedAt": "2026-10-02T10:00:05.457Z",
+      "finishedAt": "2026-10-02T10:00:10.437Z",
+      "exitCode": 0,
+      "log": "evidence/frontend-architecture-audit-20261002/cold-empty-regression.log",
+      "sourceFingerprint": "3b64c934f8a06cd4bb322227b28022632448e5772abe7c4fa59072c5f1e49f46",
+      "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+      "environment": {
+        "node": "v24.19.0",
+        "dependencySource": "fresh install in separate snapshot"
+      }
+    }
+  },
+  "suite": {
+    "full": {
+      "passed": 146,
+      "failed": 1,
+      "total": 147,
+      "exitCode": 1
+    },
+    "focusedEmptyRerun": {
+      "passed": 1,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "note": "Full run remains FAIL. The isolated rerun does not retroactively make the full run 147/147 PASS."
+  },
+  "measured": {
+    "initialDemoGzipBytes": 446928,
+    "largestDemoChunkGzipBytes": 185429,
+    "firstCustomerPageMs": 342,
+    "customerTotal": 1004,
+    "customerRenderedRows": 21
+  },
+  "reproducedIssues": [
+    {
+      "id": "PAGINATION_EVALUATIONS",
+      "reproduced": true
+    },
+    {
+      "id": "SHOP_TIMEZONE_CASHFLOW",
+      "reproduced": true
+    },
+    {
+      "id": "CHANNELS_EMPTY_COMPOSITION",
+      "reproduced": true
+    },
+    {
+      "id": "RECONCILIATION_SHARED_CURSOR",
+      "reproduced": true
+    },
+    {
+      "id": "INBOX_SHARED_CURSOR",
+      "reproduced": true
+    },
+    {
+      "id": "PRODUCT_CATEGORY_LOOKUP_100_LIMIT",
+      "reproduced": true
+    }
+  ],
+  "sourceChangesDuringAudit": []
+}

@@ -1,0 +1,18 @@
+UI012/S33 targeted browser regression — Knowledge synthetic 422 field copy
+Timestamp: 2026-10-03T19:25Z (UTC)
+Working directory: BotSalesAI_Frontend
+
+Final acceptance command:
+node node_modules/@playwright/test/cli.js test --config C:\Users\Joker-PC\AppData\Local\Temp\botsales-ui012-s33-playwright.config.mjs tests/ui012-keyboard.spec.ts -g 'synthetic 422'
+
+The temporary Playwright config ran Chromium against tests/ and used a temporary outputDir outside the repository. It omitted the config's unused fixed-port webServer because this spec starts its own isolated demo server in beforeAll. The run exited 0:
+
+Running 1 test using 1 worker
+ok 1 [chromium] › tests\ui012-keyboard.spec.ts:103:1 › UI012 keyboard validation focuses the field named by a synthetic 422 response (3.8s)
+1 passed (4.7s)
+
+Assertions: the alert displays `Nội dung: Hãy rà soát nội dung nguồn.`, does not display `content:`, and the associated textarea receives focus and `aria-invalid="true"` after the synthetic 422.
+
+Runner note: an earlier attempt with the repository Playwright config printed the individual case as passed but kept the suite process open on teardown; it was interrupted and is not counted as a passing command. The isolated-config rerun above is the accepted result. No full E2E suite was run for S33; S30's 194/194 remains a prior source snapshot.
+
+Scope: Chromium + React demo app + synthetic fetch response only. This does not establish screen-reader speech, broad manual accessibility review, real API behavior, hosted CI, or owner UAT.

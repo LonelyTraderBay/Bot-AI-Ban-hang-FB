@@ -1,0 +1,76 @@
+{
+  "taskId": "UI002",
+  "title": "Cursor Inbox độc lập",
+  "status": "DONE",
+  "closedOn": "2026-10-02",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "baselineRevision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "files": {
+    "apps/web/src/modules/inbox/index.tsx": "EC8F63F9C9C6926CDF7DF750820697D5C47552217963B79092E8CE399D7B7508",
+    "apps/web/src/shared/ui/components.tsx": "110D98CDDA975C3D98D2BE0A89A66EE8AB76AC260A06DDDC82AD38933D191B2C",
+    "apps/web/src/mocks/service.ts": "1F9D50AFE6C083193EB934D672DA49B7BDAD1095929CB58C122DDA7674FDF450",
+    "tests/fe016.spec.ts": "DA25178F4E6BD1ACA434D80FDAE9D850A4EC1D09952F76D23188F72BBF2A7B25"
+  },
+  "checkpoints": {
+    "C01": {
+      "status": "PASS",
+      "expected": "Reproduce list/message cursor collision and identify route/API boundary before code changes.",
+      "observed": "S01 captured the missing selected row after page-2 navigation; the preceding browser probe returned 422 INVALID_CURSOR when message cursor audit-message-100 reached listConversations.",
+      "evidence": ["S01-baseline.json", "S01-baseline.log", "../../frontend-ui-reaudit-20261002/browser-probes.json"]
+    },
+    "C02": {
+      "status": "PASS",
+      "expected": "Implement the Inbox UI and cursor ownership together without changing API contracts or scope keys.",
+      "observed": "InboxPage reads cursor for the root conversation list and listCursor on detail routes. detailHref preserves listCursor and clears a previous message cursor when changing conversation. List Pager and Toolbar clear/write only their configured cursor; message Pager retains cursor. The demo mock gained deterministic operation-scoped error injection for isolated panel tests.",
+      "evidence": ["../../../apps/web/src/modules/inbox/index.tsx", "../../../apps/web/src/shared/ui/components.tsx", "../../../apps/web/src/mocks/service.ts"]
+    },
+    "C03": {
+      "status": "PASS",
+      "expected": "Run targeted UI and architecture cases for independent pagination, query ownership, filters, draft, cursor identity, and scoped requests.",
+      "observed": "Six UI002 browser cases passed with 45 conversations and 105 messages. List/message requests use independent cursor values; filter in detail removes listCursor and retains message cursor; request keys and active shop scope remain separate; draft survives message paging; POST is observed once and send/refetch/resync keep both cursors.",
+      "evidence": ["S04-targeted.log", "S03-playwright-report/index.html"]
+    },
+    "C04": {
+      "status": "PASS",
+      "expected": "Run regression coverage for desktop/mobile, deep-link refresh/Back, panel-specific error states, changed conversation, and changed shop.",
+      "observed": "All 20 tests in fe016.spec.ts and all 155 built-demo Chromium E2E tests passed. Deep link / refresh uses listCursor=cv1 and message cursor=m2; mobile Back restores cursor=cv1. List 503 leaves messages usable, and message 503 leaves list/conversation detail usable. Shop-second requests contain no shop-demo cursor or data.",
+      "evidence": ["S05-fe016-current.log", "S07-full-e2e-current.log", "S03-playwright-report/index.html"]
+    },
+    "C05": {
+      "status": "PASS",
+      "expected": "Save UI and architecture evidence and record test scope, limitations, and current gate status.",
+      "observed": "This acceptance file, baseline record, six-case Playwright report, current verify log, FE016 log, and full E2E log are saved. Plan status/checkpoints were updated without editing frontend-progress.json, frontend-plan.json, product plan.json, progress.json, or tasks/T*.md.",
+      "evidence": ["../../../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md", "S06-verify-current.log", "S07-full-e2e-current.log"]
+    }
+  },
+  "commands": [
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/fe016.spec.ts -g UI002 --timeout=30000 --reporter=line,html",
+      "result": "PASS 6/6",
+      "log": "S04-targeted.log",
+      "report": "S03-playwright-report/index.html"
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/fe016.spec.ts --timeout=30000 --reporter=line",
+      "result": "PASS 20/20",
+      "log": "S05-fe016-current.log"
+    },
+    {
+      "command": "npm.cmd run verify",
+      "result": "PASS exit 0; generate 11 outputs/283 schemas/210 operations/54 routes; source 62 files/227 API refs/54 routes; boundaries 410 imports; domain/MSW 88/88; Vitest 71/71; lint, typecheck, production build passed",
+      "log": "S06-verify-current.log"
+    },
+    {
+      "command": "npm.cmd run test:e2e",
+      "result": "PASS 155/155 Chromium on built React demo artifact",
+      "log": "S07-full-e2e-current.log"
+    }
+  ],
+  "limitations": [
+    "All Inbox API and SSE behavior is synthetic MSW; no live backend/provider/persistence or staging was tested.",
+    "Production build retains the existing advisory chunk size of 730.77 kB raw / 184.43 kB gzip.",
+    "FE-G05 automated accessibility checks pass, but manual zoom, screen-reader, and color-contrast review remain open.",
+    "FE-G09 automated UAT suite passes; product-owner acceptance remains open.",
+    "The standard FE ledger reports 2/140 VERIFIED and 28 STALE after package.json changed; it was read only and not edited."
+  ]
+}

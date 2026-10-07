@@ -1,0 +1,57 @@
+{
+  "checkedAt": "2026-10-06T15:49:44.276Z",
+  "scope": "S06 public layout readonly type only; not UI geometry migration or browser proof",
+  "sourcePath": "apps/web/src/shared/ui/layout.ts",
+  "compilerVersion": "5.9.2",
+  "sourceSha256": "dc04944a0a3319174877554a5dc300bbd640af5a552e4cee161190d6fe61140b",
+  "emittedJsSha256": "8a6cb52aabaa3a28daa79a919b7445ef1829ffb80ab9949e4514ce1da3874e27",
+  "sourceChanged": true,
+  "emittedJsUnchanged": true,
+  "compilerUnchanged": true,
+  "status": "IN_PROGRESS_LAYOUT_READONLY_ONLY",
+  "pending": [
+    "Canonical token/color readonly public types",
+    "Consumer mutation/assignment/Object.assign guard with positive/negative fixtures",
+    "S06 final capability verification and broader S07–S20 rollout"
+  ],
+  "browserChecks": "NOT_RUN: this edit is type-only with byte-identical emitted layout JavaScript; no visual change claimed",
+  "fixtures": {
+    "command": "node --test tests/ui-canonical-readonly.test.mjs",
+    "callerRecordedExit": 0,
+    "passed": 4,
+    "failed": 0,
+    "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S06-readonly-after.log",
+    "sha256": "fce0b02309088c564fe428e2c032d765fe00b274863e15824c1e94102c62d37d"
+  },
+  "checks": [
+    {
+      "gate": "layout",
+      "status": "PASS",
+      "files": 75,
+      "callerRecordedExit": 0,
+      "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S06-readonly-layout.json",
+      "sha256": "aead71315b876bb3ed09ca47c50490b941dbb2a87a02ca47c03a7608c8dc1a80"
+    },
+    {
+      "gate": "visual",
+      "status": "PASS",
+      "files": 75,
+      "callerRecordedExit": 0,
+      "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S06-readonly-visual.json",
+      "sha256": "ef098bc48fa640a721feaaf0cda6c895cfc3ea8b152225ff0a672ec47e17e2ca"
+    },
+    {
+      "gate": "composition",
+      "status": "PASS",
+      "files": 74,
+      "callerRecordedExit": 0,
+      "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S06-readonly-composition.json",
+      "sha256": "cdd46198d1c4fe67d7ee8856ea39dddf6d082253f819dd51b0fd069d1a80430b"
+    }
+  ],
+  "typecheck": {
+    "command": "node node_modules/typescript/lib/tsc.js -p apps/web/tsconfig.json --noEmit",
+    "callerRecordedExit": 0,
+    "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S06-layout-readonly-typecheck.log"
+  }
+}

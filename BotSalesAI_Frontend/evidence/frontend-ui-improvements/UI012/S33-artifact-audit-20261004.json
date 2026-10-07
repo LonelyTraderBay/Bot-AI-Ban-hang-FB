@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "UI012/S33-artifact-audit",
+  "checkedAtUtc": "2026-10-03T19:37:31.8226749Z",
+  "scope": "Current S33 source production/demo Vite builds written to fresh temporary output directories; production MSW startup-marker and worker-file isolation scan.",
+  "production": {
+    "mode": "production",
+    "outputDirectory": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-ui012-s33-production",
+    "exitCode": 0,
+    "modulesTransformed": 2055,
+    "fileCount": 32,
+    "totalBytes": 1853203,
+    "largestChunk": {
+      "file": "assets/index-D5PbVAni.js",
+      "rawBytes": 738198,
+      "gzipBytes": 186880
+    },
+    "mockServiceWorkerPresent": false,
+    "forbiddenRuntimeMarkers": [
+      "setupWorker",
+      "WorkerChannel",
+      "msw/browser",
+      "@mswjs/interceptors"
+    ],
+    "forbiddenRuntimeMarkersFound": false,
+    "sampleHashes": {
+      "index.html": "75586B0356546D1CC4D5905219CE582F889D4538F748F508C75A555C8E1ABD7F",
+      "assets/index-D5PbVAni.js": "6A5DDCDF3EC5D22390CBDAA36D3BCE2CF57975053F0017B85235179A13A6B745"
+    }
+  },
+  "demo": {
+    "mode": "demo",
+    "outputDirectory": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-ui012-s33-demo",
+    "exitCode": 0,
+    "modulesTransformed": 2271,
+    "fileCount": 37,
+    "totalBytes": 2300566,
+    "largestChunk": {
+      "file": "assets/index-CU1SGhSR.js",
+      "rawBytes": 741841,
+      "gzipBytes": 188060
+    },
+    "mockServiceWorkerPresent": true,
+    "sampleHashes": {
+      "index.html": "37FE4FC56DD90AD5990A543A612E84BD2CA2E47503CCFE45D8589A0151956F5D",
+      "assets/index-CU1SGhSR.js": "C02AB2831DCC524E7C2D11E88A4DBCAE4E5191B2FA6FB8DB54E6914E6CF8536B",
+      "mockServiceWorker.js": "3E3B8FD4D49F22241F1782E15474251074AB5E9AD129FDFFC8A3192630941CCC"
+    }
+  },
+  "result": "PASS for local production/demo artifact separation and production MSW isolation.",
+  "limitations": [
+    "The full rebuilt-demo E2E suite was not run for S33; FE-G04 remains NEEDS_REVERIFY.",
+    "This local build/scan is not GitHub Actions, staging, production deployment, or owner UAT evidence.",
+    "The Vite build retains its advisory for chunks larger than 500 kB raw."
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "workItem": "UI028.W06",
+  "status": "DONE",
+  "capturedAt": "2026-10-05",
+  "baselineHead": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "uiVerdict": "PASS",
+  "architectureVerdict": "PASS",
+  "scope": "Frontend-only shared layout owners; synthetic MSW local UI; no backend or full-product tracker claims.",
+  "changes": {
+    "semanticRoles": [
+      "page.sectionBefore",
+      "page.sectionAfter",
+      "pageHeader.columnsGap",
+      "surface.headerInset",
+      "surface.bodyInsetAfterHeader",
+      "surface.sectionBefore",
+      "surface.headerFlowGap",
+      "stats.afterGap"
+    ],
+    "sharedComponents": [
+      "PageHeader",
+      "Panel",
+      "Stat",
+      "Stats",
+      "MutationButton"
+    ],
+    "panelApi": {
+      "bodyMode": [
+        "inset",
+        "flush"
+      ],
+      "beforeGap": [
+        "section",
+        "surface"
+      ],
+      "afterGap": [
+        "section"
+      ],
+      "geometryAllowed": [
+        "display",
+        "flexDirection",
+        "height",
+        "gridColumn"
+      ],
+      "genericSx": false
+    },
+    "callerProps": {
+      "beforeGap": 14,
+      "afterGap": 1,
+      "geometry": 5,
+      "bodyModeInsetRepresentativeForm": 1,
+      "removedNestedPadding": 1
+    },
+    "checker": [
+      "Rejects uninspectable Panel geometry sources.",
+      "Rejects spacing keys hidden in Panel.geometry.",
+      "Continues to reject generic spacing literals.",
+      "Resolves semantic role arrays guarded by logical &&."
+    ],
+    "newPolicy": "SPC-042 added to spacing standard v1.4, AGENTS.md and continuation documentation."
+  },
+  "checks": {
+    "fullVerify": {
+      "command": "npm.cmd run verify",
+      "exitCode": 1,
+      "reason": "All checks passed through build and 9/9 layout fixtures; strict source scan returned nonzero for remaining migration debt.",
+      "passed": {
+        "generator": "11 outputs / 283 schemas / 210 operations / 54 routes",
+        "source": "66 files / 220 calls / 54 routes",
+        "boundaries": "434 imports / 10/10 negative fixtures",
+        "lint": "PASS",
+        "typecheck": "PASS",
+        "domainMSW": "88/88",
+        "vitest": "85/85",
+        "productionBuild": "PASS; 2056 modules transformed",
+        "layoutFixtures": "9/9"
+      }
+    },
+    "strictLayout": {
+      "status": "FAIL",
+      "findings": 473,
+      "counts": {
+        "SPACING_LITERAL": 473,
+        "UNKNOWN_STYLE_SOURCE": 0
+      },
+      "beforeW06": 503,
+      "reducedBy": 30,
+      "ownerAreas": 18,
+      "filesWithDebt": 24,
+      "sharedUIResidual": 25,
+      "residualOwners": "W07/W08 components in shared/ui/components.tsx"
+    },
+    "render": {
+      "browser": "Chromium via local Playwright",
+      "routes": [
+        "/s/shop-demo/orders",
+        "/s/shop-demo/orders/new",
+        "/s/shop-demo/overview"
+      ],
+      "viewports": [
+        "1280x900",
+        "390x844"
+      ],
+      "measured": {
+        "pageHeaderGap": "16px",
+        "pageHeaderDescriptionGap": "8px",
+        "pageHeaderAfter": "24px",
+        "panelTitleToFirstFieldGap": "16px",
+        "panelInsetDesktop": "24px",
+        "panelInsetMobile": "16px",
+        "statsGutter": "16px",
+        "statsAfter": "24px",
+        "statInsetDesktop": "24px",
+        "statInsetMobile": "16px",
+        "tableCell": "12px 16px",
+        "documentScrollWidthEqualsViewport": true,
+        "pageErrors": 0
+      }
+    }
+  },
+  "evidenceFiles": [
+    "design-contract-pre-code-20261005.json",
+    "verify-w06-current-20261005.log",
+    "render-check-current-20261005.json",
+    "strict-layout-check-current-20261005.json",
+    "strict-layout-check-current-20261005.log",
+    "migration-debt-report-current-20261005.json",
+    "w06-orders-desktop.png",
+    "w06-order-form-desktop.png",
+    "w06-dashboard-desktop.png",
+    "w06-order-form-mobile.png",
+    "w06-dashboard-mobile.png",
+    "fe-ledger-status-current-20261005.json"
+  ],
+  "sourceHashes": {
+    "AGENTS.md": "a9b3ab9a4d493733079178bd3f8d8db6e807472e",
+    "docs/FRONTEND_SCOPE.md": "12d3a27bde41a26fc3d070619aad3197809c5865",
+    "docs/FRONTEND_SPACING_STANDARD.md": "59e2fc9fd3b2889473e1e9e63713656a232f18a2",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "1bc6b7b50d77e63fcfb509ca742b1c1fed3103ed",
+    "docs/PROJECT_CONTEXT.md": "7df1fdfabec80d2d1e735cf55eac0c755e95e4dc",
+    "docs/CONTINUE_FRONTEND.md": "83b98d2192737b3741613609d0678b3b9e7a0aaf",
+    "apps/web/src/shared/ui/components.tsx": "30ceb6e6e6c1fc718dea3c0960078624870a5865",
+    "apps/web/src/shared/ui/layout.ts": "f4bcbba0e64715df790535dd09a01297b4422f8d",
+    "apps/web/src/modules/workspace/index.tsx": "bd98873d03cd8b163abac046f5e52b5dc42e77e4",
+    "apps/web/src/modules/procurement/index.tsx": "8db9aab8fc6200c89a941e49b689d5c5ab4b926c",
+    "apps/web/src/modules/orders/index.tsx": "ae5c824b73c9d63a4b0cfcf626830e706a940d2f",
+    "apps/web/src/modules/operations/index.tsx": "dc94b19643f9792fe9637719906fb30458d42fc5",
+    "apps/web/src/modules/knowledge/index.tsx": "d872a08b868e5dcd0f4fa4a834f373a38b2cd1cd",
+    "apps/web/src/modules/bot/index.tsx": "97d8916bd67a6a99b088c6e7d689fadf8453ce24",
+    "apps/web/src/modules/finance/index.tsx": "dba770130c816d457708756b5ba2f49cf0f5567b",
+    "apps/web/src/modules/catalog/index.tsx": "8dce9e4ad174187e828a393f19342342feca93d8",
+    "apps/web/src/modules/catalog/imports.tsx": "465c2641349891576ad02c83cfe5f542704d0c90",
+    "apps/web/src/modules/inbox/index.tsx": "57a7991e7132d3984fa352386a95728021133b8b",
+    "apps/web/src/modules/dashboard/index.tsx": "b4646295842b4bfcb31c204e8dd2b2e411005b29",
+    "scripts/check-layout.mjs": "7fc3127aa364070909b76aa85a1c08719c6d5b1b",
+    "tests/layout-checker.test.mjs": "bd4b959362b6f602d5233c779e96171399e9610e"
+  },
+  "gitStatusAtCapture": "MM AGENTS.md\nMM apps/web/src/modules/bot/index.tsx\nMM apps/web/src/modules/catalog/imports.tsx\nMM apps/web/src/modules/catalog/index.tsx\nMM apps/web/src/modules/dashboard/index.tsx\nMM apps/web/src/modules/finance/index.tsx\nMM apps/web/src/modules/inbox/index.tsx\nMM apps/web/src/modules/knowledge/index.tsx\nMM apps/web/src/modules/operations/index.tsx\nMM apps/web/src/modules/orders/index.tsx\nMM apps/web/src/modules/procurement/index.tsx\nMM apps/web/src/modules/workspace/index.tsx\nMM apps/web/src/shared/ui/components.tsx\nMM docs/CONTINUE_FRONTEND.md\nMM docs/FRONTEND_SCOPE.md\nAM docs/FRONTEND_UI_IMPROVEMENT_PLAN.md\nMM docs/PROJECT_CONTEXT.md\n?? apps/web/src/shared/ui/layout.ts\n?? docs/FRONTEND_SPACING_STANDARD.md\n?? scripts/check-layout.mjs\n?? tests/layout-checker.test.mjs",
+  "preservation": "The checkout already had staged user changes at W06 intake. No git add/reset/clean/commit/stage operation was run; only targeted worktree edits were made.",
+  "frontendTrackerSnapshot": {
+    "source": "node botsales-kit/scripts/progress.mjs status",
+    "overallPercent": 0,
+    "verifiedSteps": 0,
+    "totalSteps": 140,
+    "staleTasks": 28,
+    "blocked": 0,
+    "next": "FE001",
+    "note": "Read-only recheck; FE ledger was not modified."
+  }
+}

@@ -1,0 +1,26 @@
+FE002.S04 current test evidence
+executedAt=2026-10-06T02:21:33.323Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+command=& 'C:\Program Files\nodejs\npm.cmd' --script-shell=powershell.exe run setup 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-setup-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & 'C:\Program Files\nodejs\npm.cmd' --script-shell=powershell.exe run doctor 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+exitCode=0
+expected=Chạy npm setup và doctor với target thực; dùng worker MSW từ package, không tự viết worker giả.
+observed=setup and doctor exited 0; all doctor checks PASS; existing .env.local and MSW worker hashes unchanged; no Backend or provider used.
+checksTotal=3; failed=0
+CHECK setup and doctor: PASS
+Registered setup-doctor-capture command exited 0; setup completion observed; every doctor row PASS
+CHECK existing local environment preserved: PASS
+Hash equality checked in memory; .env.local contents/hash were not written to evidence
+CHECK MSW worker consistency: PASS
+Worker content hash checked in memory and unchanged; initialized by the installed MSW package
+runLog=botsales-kit/execution/frontend-evidence/FE002/S04-run-post-fix-current-20261006.log; runLogSha256=488e2b13b50c1b39db0a173d6def5c643ce3a13b5c648dd5e92554c66aab6c9f
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no Backend/provider/staging result is claimed.
+sourceSnapshotSha256=a751279dc96f273e1151f3f2c2f60854811a225efd62fdfd044ee736ded94b29
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE .env.example sha256=4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149
+SOURCE scripts/setup.mjs sha256=fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa
+SOURCE scripts/doctor.mjs sha256=6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e
+SOURCE scripts/tools.mjs sha256=c5e8d51b9c60d48cdeadeff6422319c654fa08ae95bef2bb726926c85351aae0
+SOURCE apps/web/public/mockServiceWorker.js sha256=3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE002/record-test-run-post-spc056-current-20261006.mjs sha256=0f5c305342161ff68e0503c4789d785ee9d9561e3a8d775e020c975d449d3698
+reviewer=Codex self-review; no independent peer review claimed.

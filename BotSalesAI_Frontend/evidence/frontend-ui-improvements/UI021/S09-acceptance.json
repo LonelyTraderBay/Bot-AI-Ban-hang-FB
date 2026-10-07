@@ -1,0 +1,61 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI021",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "IN_PROGRESS",
+  "checkpointCount": "4/5",
+  "scope": "Current React source at apps/web/src; strict auditor provenance and source crosswalk, following S27. Frontend and synthetic MSW only.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Dirty; S09 fingerprint lists all 64 .ts/.tsx source files plus config, runner, report, log, provenance and crosswalk."
+  },
+  "pairedAcceptance": {
+    "ui": "PASS for reviewed semantics of all 13 current scanner anchors; no actionless control was confirmed in the crosswalk. R35-to-R07 destination permission behavior remains covered by the S08 2/2 browser regression.",
+    "architecture": "PRESERVED: canonical route/module ownership and permissions remain authoritative; no cross-module import, contract, generated source, role catalog, route or token change.",
+    "pairingRule": "UI and architecture were evaluated within UI021. Crosswalk does not override strict tool exit status; no allowlist, fake handler or root audit edit was used."
+  },
+  "checkpoints": {
+    "C01": "PASS — current source inventory and 13 current strict scanner anchors are recorded in S09-current-source-crosswalk.md.",
+    "C02": "PASS — R35 privacy.manage and R07 customers.read remain independent; CTA is guarded by the destination permission, with synthetic UI regression retained from S08.",
+    "C03": "PASS — S08 focused permission regression 2/2; latest full local Chromium + synthetic MSW suite is S27 193/193.",
+    "C04": "PARTIAL — current strict scan S09 over apps/web/src reports 13 affordance.actionless-button errors, 0 warnings, 0 unresolved, exit 1. Crosswalk semantics do not turn the scanner result into PASS.",
+    "C05": "PASS — S09 strict JSON/log, source crosswalk, provenance, source/config/runner fingerprint and this acceptance record are linked. Root premium-audit.json hash remained unchanged across the run."
+  },
+  "strictAudit": {
+    "tool": "frontend-design-premium v1.4.0",
+    "mode": "strict",
+    "exitCode": 1,
+    "errors": 13,
+    "violations": 13,
+    "warnings": 0,
+    "unresolved": 0,
+    "ruleCounts": {
+      "affordance.actionless-button": 13
+    },
+    "report": "S09-current-frontend-design-audit.json",
+    "log": "S09-current-audit-run-20261003.log",
+    "crosswalk": "S09-current-source-crosswalk.md",
+    "provenance": "S09-current-audit-provenance.md",
+    "fingerprint": "S09-current-scan-fingerprint.json",
+    "rootPremiumAuditSha256BeforeAndAfter": "12E315CB06ABF4C2390EAC41C1C8E2C58472530ADFEC542F374CE621FB655A01"
+  },
+  "verification": {
+    "currentFullDemoE2E": "S27: PASS 193/193 in local Chromium with synthetic MSW; this audit run made no application-source changes.",
+    "generateCheck": "PASS: npm.cmd run generate:check under isolated process PATH, 11 outputs/283 schemas/210 operations/54 routes. The initial inherited-shell invocation failed to resolve node; direct Node invocation also passed. Logs: S09-generate-check-20261003.log, S09-generate-check-direct-20261003.log, S09-generate-check-npm-isolated.log.",
+    "strictAudit": "NOT_PASS; exit 1 with the 13 findings above."
+  },
+  "readiness": "Frontend readiness remains 7/9 = 77.8% by project gate count; this is not an architecture-only score. FE-G05 manual accessibility and FE-G09 owner UAT remain open.",
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "7/10",
+    "totalDone": "20/26",
+    "checkpoints": "113/130",
+    "next": "UI021 C04 remains partial until the strict rule correctly evaluates React/MUI polymorphic semantics or the project owner formally accepts the criterion. UI012 screen-reader/manual accessibility, UI020 owner support matrix, UI022 hosted GitHub run, and UI023 owner UAT remain open."
+  },
+  "limitations": [
+    "Static crosswalk does not change strict audit exit code or certify every dynamic interaction state.",
+    "Local S27 browser evidence is not hosted CI, backend/provider, staging, production, screen-reader, broad manual accessibility or owner UAT evidence.",
+    "Worktree is dirty and the fingerprint is not a committed release artifact."
+  ]
+}

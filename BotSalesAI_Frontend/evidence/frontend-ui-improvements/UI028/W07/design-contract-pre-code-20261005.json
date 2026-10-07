@@ -1,0 +1,32 @@
+{
+  "workItem": "UI028.W07",
+  "status": "PRE_CODE_CONTRACT",
+  "capturedAt": "2026-10-05",
+  "scope": "Shared Toolbar, DataTable, Pager, CopyableCode, LookupLoadMore, DetailLine. Preserve search, query cursor, copy feedback, keyboard-scroll, selected lookup and long-value behavior.",
+  "sourceHashesBeforeCode": {
+    "apps/web/src/shared/ui/components.tsx": "30ceb6e6e6c1fc718dea3c0960078624870a5865",
+    "apps/web/src/shared/ui/layout.ts": "f4bcbba0e64715df790535dd09a01297b4422f8d",
+    "docs/FRONTEND_SPACING_STANDARD.md": "59e2fc9fd3b2889473e1e9e63713656a232f18a2",
+    "scripts/check-layout.mjs": "7fc3127aa364070909b76aa85a1c08719c6d5b1b",
+    "tests/layout-checker.test.mjs": "bd4b959362b6f602d5233c779e96171399e9610e"
+  },
+  "uiDesignContract": {
+    "routesAndProfiles": [
+      { "route": "/s/shop-demo/orders", "profile": "collection/table/search/pagination" },
+      { "route": "/s/shop-demo/imports", "profile": "lookup/form/status" },
+      { "route": "/s/shop-demo/integrations/channels", "profile": "detail/value/copyable identifier (R29 from route-manifest.json)" }
+    ],
+    "breakpoints": [320, 390, 767, 768, 1024, 1279, 1280, 1440, 1920],
+    "spacingOwners": {
+      "mobile table hint": "DataTable; inline inset16 and block-start8; cells remain theme-owned 12×16",
+      "toolbar controls": "Toolbar; control gap12 and surface inset16; responsive flow owner remains Toolbar",
+      "pager actions": "Pager; inset16 and action gap8",
+      "lookup load-more row": "LookupLoadMore; gap8, inline inset8, preceding gap4",
+      "copy value/control": "CopyableCode; inline gap4, long identifiers wrap anywhere",
+      "detail label/value row": "DetailLine; inline gap16 and block inset12"
+    },
+    "stateAndInteraction": "Search query is trimmed, clear removes q and returns focus, Enter/IME behavior is unchanged, search resets only its configured cursor; Pager preserves unrelated query params and its configured cursor; table retains keyboard horizontal scroll and inner-only overflow; copy feedback remains polite; lookup identity/loading/retry stays intact; detail values may be long and wrap.",
+    "verification": "Run typecheck, 9 checker fixtures plus strict debt report, full verify, then Chromium collection/import/detail checks at 1280×900 and 390×844. Assert measured roles, no document overflow, no page errors, and interact with search/clear/pagination/copy where the route exposes the control. CopyableCode is used on /s/shop-demo/overview (and CommandRecovery); measure its shared row and exercise clipboard feedback on the overview route. Current strict baseline is 473 findings/18 owner areas/24 files; W07 may only remove its owned findings and must not suppress unrelated debt.",
+    "preservation": "Shared components.tsx remains staged by the user at intake; edit only W07-owned component bodies and preserve all staged/unrelated behavior. Do not stage or rewrite the Git index."
+  }
+}

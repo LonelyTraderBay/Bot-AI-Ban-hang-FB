@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "step": "UI028.W04",
+  "capturedOn": "2026-10-05",
+  "scope": "Frontend-only: apps/web React/TypeScript and owned CSS",
+  "packageScripts": {
+    "testLayout": "node --test tests/layout-checker.test.mjs && node scripts/check-layout.mjs",
+    "verifySuffix": "... && npm run build && npm run test:layout"
+  },
+  "verify": {
+    "command": "npm.cmd run verify",
+    "exitCode": 1,
+    "expected": true,
+    "prerequisiteGates": {
+      "generator": "PASS (11 outputs, 283 schemas, 210 operations, 54 routes)",
+      "source": "PASS (66 files, 220 operation calls, 54 routes)",
+      "boundary": "PASS (432 imports, 0 issues, 10/10 negative fixtures)",
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "domainMSW": "PASS (88/88)",
+      "unit": "PASS (85/85)",
+      "productionBuild": "PASS"
+    },
+    "layoutFixtures": {
+      "command": "node --test tests/layout-checker.test.mjs",
+      "passed": 8,
+      "failed": 0
+    },
+    "strictGate": {
+      "command": "node scripts/check-layout.mjs",
+      "exitCode": 1,
+      "expected": true,
+      "status": "FAIL",
+      "findings": 505,
+      "counts": {
+        "SPACING_LITERAL": 502,
+        "CSS_SPACING_LITERAL": 1,
+        "UNKNOWN_STYLE_SOURCE": 2
+      },
+      "exceptionUsed": "UI028-A11Y-SKIP-LINK-PADDING",
+      "meaning": "The gate is enforced and correctly blocks the remaining un-migrated source; this is not an application-wide layout PASS."
+    }
+  },
+  "migrationDebt": {
+    "componentGroups": 18,
+    "fileGroups": 26,
+    "byComponent": [
+      {
+        "key": "app-shell",
+        "findings": 53,
+        "counts": {
+          "CSS_SPACING_LITERAL": 1,
+          "SPACING_LITERAL": 52
+        }
+      },
+      {
+        "key": "module:inbox",
+        "findings": 47,
+        "counts": {
+          "SPACING_LITERAL": 47
+        }
+      },
+      {
+        "key": "shared-ui",
+        "findings": 40,
+        "counts": {
+          "SPACING_LITERAL": 38,
+          "UNKNOWN_STYLE_SOURCE": 2
+        }
+      },
+      {
+        "key": "module:workspace",
+        "findings": 38,
+        "counts": {
+          "SPACING_LITERAL": 38
+        }
+      },
+      {
+        "key": "module:dashboard",
+        "findings": 37,
+        "counts": {
+          "SPACING_LITERAL": 37
+        }
+      },
+      {
+        "key": "module:procurement",
+        "findings": 37,
+        "counts": {
+          "SPACING_LITERAL": 37
+        }
+      },
+      {
+        "key": "module:operations",
+        "findings": 32,
+        "counts": {
+          "SPACING_LITERAL": 32
+        }
+      },
+      {
+        "key": "module:bot",
+        "findings": 28,
+        "counts": {
+          "SPACING_LITERAL": 28
+        }
+      },
+      {
+        "key": "module:finance",
+        "findings": 28,
+        "counts": {
+          "SPACING_LITERAL": 28
+        }
+      },
+      {
+        "key": "module:orders",
+        "findings": 27,
+        "counts": {
+          "SPACING_LITERAL": 27
+        }
+      },
+      {
+        "key": "module:notifications",
+        "findings": 25,
+        "counts": {
+          "SPACING_LITERAL": 25
+        }
+      },
+      {
+        "key": "module:catalog",
+        "findings": 24,
+        "counts": {
+          "SPACING_LITERAL": 24
+        }
+      },
+      {
+        "key": "module:knowledge",
+        "findings": 20,
+        "counts": {
+          "SPACING_LITERAL": 20
+        }
+      },
+      {
+        "key": "module:reports",
+        "findings": 20,
+        "counts": {
+          "SPACING_LITERAL": 20
+        }
+      },
+      {
+        "key": "module:fulfillment",
+        "findings": 17,
+        "counts": {
+          "SPACING_LITERAL": 17
+        }
+      },
+      {
+        "key": "module:customers",
+        "findings": 15,
+        "counts": {
+          "SPACING_LITERAL": 15
+        }
+      },
+      {
+        "key": "module:integrations",
+        "findings": 13,
+        "counts": {
+          "SPACING_LITERAL": 13
+        }
+      },
+      {
+        "key": "module:inventory",
+        "findings": 4,
+        "counts": {
+          "SPACING_LITERAL": 4
+        }
+      }
+    ]
+  },
+  "fingerprints": {
+    "sourceTreeAlgorithm": "SHA-256 over sorted apps/web/src TS/TSX/CSS relative paths and bytes with NUL separators",
+    "sourceFiles": 68,
+    "sourceTreeSha256": "5b4a2c6b41e39ecc3d643371e9e3bf679b3d728d747b0638b88dc4a0496b641e",
+    "packageJson": "a83a07356614ac92119ee392813e7e374d90d0316c7d291342e0da0feeefbd5d",
+    "checker": "861616e956c06de8c56020c3b3d6d716bf966c86984d61e1ad348eecc4fa3193",
+    "fixtures": "3ce322ff1179cae35b343b2a1b4073070206ba9f0326ff4a620a97c769bcd94b",
+    "verifyLog": "219065c88f6f655f5851c342866880799f20c096d841e0c4917ac465dfe00062"
+  }
+}

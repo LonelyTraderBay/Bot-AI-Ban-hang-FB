@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W24",
+  "status": "DONE",
+  "date": "2026-10-06",
+  "revision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "scope": "Frontend React/TypeScript Inbox R05/R06 with local synthetic MSW only",
+  "sourceHashes": {
+    "apps/web/src/modules/inbox/index.tsx": "ec76f1a8216e106c8ab9d3f196770ad3daefdf5d96ca50e7a8229783bad0bbb7",
+    "apps/web/src/modules/inbox/conversation-components.tsx": "bd1e1ed2b804628fca7d67692f27bdc95eb4441e9dd23b297d68dd26ae52abcb",
+    "apps/web/src/shared/ui/layout.ts": "aae5892995033f7522520d5403a049886059bb378280f68a5130d95928cceec6",
+    "docs/FRONTEND_SPACING_STANDARD.md": "7b197734417a1255c947b094b1d0c4ef9058be187a89fa7ee08cd3171d4f20df"
+  },
+  "designContract": "design-contract-pre-spacing-current-20261006.md",
+  "baselineManifest": "baseline-manifest-current-20261006.json",
+  "layoutDelta": "layout-delta-current-2026-10-06.json",
+  "visualSourceReview": "visual-source-review-current-2026-10-06.md",
+  "commands": [
+    { "command": "node scripts/generate.mjs --check", "exitCode": 0, "result": "PASS: 11 outputs, 283 schemas, 210 operations, 54 routes" },
+    { "command": "node scripts/check-source.mjs", "exitCode": 0, "result": "PASS: 66 files, 220 operation calls, 54 routes, 0 issues" },
+    { "command": "node --test tests/source-checker.test.mjs", "exitCode": 0, "result": "PASS: 3/3" },
+    { "command": "node scripts/check-boundaries.mjs", "exitCode": 0, "result": "PASS: 456 imports, 10/10 negative fixtures, 0 issues" },
+    { "command": "node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit", "exitCode": 0, "result": "PASS" },
+    { "command": "node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0", "exitCode": 0, "result": "PASS" },
+    { "command": "node --test tests/layout-checker.test.mjs", "exitCode": 0, "result": "PASS: 9/9" },
+    { "command": "node scripts/check-layout.mjs --report --json", "exitCode": 0, "result": "FAIL report status, exactly 20 findings in Reports/W25; zero W24 findings" },
+    { "command": "node scripts/check-layout.mjs", "exitCode": 1, "result": "Expected strict failure: 20 Reports/W25 findings; W24 has zero" },
+    { "command": "node node_modules/@playwright/test/cli.js test tests/fe016.spec.ts tests/ui028-w24-inbox-layout.spec.ts --config=playwright.config.ts --project=chromium --workers=1", "exitCode": 0, "result": "PASS: 22/22 focused Chromium tests" },
+    { "command": "node node_modules/vite/bin/vite.js build apps/web --config apps/web/vite.config.ts --mode production --outDir <isolated temp dir>", "exitCode": 0, "result": "PASS: 2056 modules; artifact tree SHA-256 e8871f8befb72d09b60faf5c1dd2419fc90e1f27a031a92a71115ac1f07038d6" },
+    { "command": "node node_modules/vite/bin/vite.js build apps/web --config apps/web/vite.config.ts --mode demo --outDir <isolated temp dir>", "exitCode": 0, "result": "PASS: 2272 modules; artifact tree SHA-256 64e9d41d0cfdfebaac4604b4e80870112f266078655e984b63259256a1ec3de4" },
+    { "command": "production and demo artifact marker scan", "exitCode": 0, "result": "PASS: production has no MSW setup/interceptor markers; demo includes setupWorker" }
+  ],
+  "buildArtifacts": {
+    "production": { "path": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-w24-production-93170a0098bf45ec9583395fd5ca9379", "files": 34, "treeSha256": "e8871f8befb72d09b60faf5c1dd2419fc90e1f27a031a92a71115ac1f07038d6" },
+    "demo": { "path": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-w24-demo-5abb2b163fd04a77bea29cf380be48c7", "files": 38, "treeSha256": "64e9d41d0cfdfebaac4604b4e80870112f266078655e984b63259256a1ec3de4" }
+  },
+  "spacing": {
+    "baselineTotal": 66,
+    "baselineW24Owner": 46,
+    "finalTotal": 20,
+    "finalW24Owner": 0,
+    "finalW25Reports": 20,
+    "newFindings": 0,
+    "outsideOwnerFindingsChanged": false,
+    "strictGlobalGate": "FAIL_W25_ONLY"
+  },
+  "render": {
+    "before": "render-before-current-2026-10-06.json",
+    "after": "render-after-current-2026-10-06.json",
+    "beforeCaptures": 6,
+    "afterCaptures": 6,
+    "viewports": ["390x844", "1280x900"],
+    "states": ["R05 inbox list", "R06 latest conversation", "R06 paged conversation cv2?listCursor=cv1&cursor=m2"],
+    "documentOverflow": false,
+    "writes": [],
+    "apiErrors": [],
+    "pageErrors": []
+  },
+  "verdicts": {
+    "ui": "PASS",
+    "architecture": "PASS_WITH_KNOWN_W25_DEBT",
+    "backendOrStaging": "NOT_IN_SCOPE_NOT_VERIFIED",
+    "hostedCI": "NOT_RUN",
+    "screenReader": "NOT_RUN",
+    "ownerAcceptance": "NOT_RECORDED"
+  },
+  "ledgersChanged": false
+}

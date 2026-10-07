@@ -1,0 +1,56 @@
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2272 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.19 kB │ gzip:   0.60 kB
+dist-demo/assets/index-CNveuCZ2.css               2.48 kB │ gzip:   0.99 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/filters-BJmJubfC.js              0.31 kB │ gzip:   0.23 kB
+dist-demo/assets/control-B9mHuWYJ.js              0.72 kB │ gzip:   0.43 kB
+dist-demo/assets/hooks-DAbooXky.js                3.19 kB │ gzip:   1.62 kB
+dist-demo/assets/index-CayYF6A5.js                8.32 kB │ gzip:   3.32 kB
+dist-demo/assets/index-CiMFwuzv.js                8.48 kB │ gzip:   3.61 kB
+dist-demo/assets/index-CeN4v2mN.js                9.03 kB │ gzip:   3.50 kB
+dist-demo/assets/index-DDjjOeqZ.js               13.29 kB │ gzip:   5.46 kB
+dist-demo/assets/index-OPCpB0aA.js               13.33 kB │ gzip:   4.42 kB
+dist-demo/assets/index-Dj9QE9SV.js               13.57 kB │ gzip:   5.17 kB
+dist-demo/assets/index-DP11wM4B.js               16.20 kB │ gzip:   5.39 kB
+dist-demo/assets/index-UZK-Uru8.js               17.21 kB │ gzip:   6.09 kB
+dist-demo/assets/index-D5217fCY.js               18.07 kB │ gzip:   6.12 kB
+dist-demo/assets/index-BCu_N9Pz.js               18.07 kB │ gzip:   6.03 kB
+dist-demo/assets/index-tX7JMSBS.js               21.25 kB │ gzip:   7.50 kB
+dist-demo/assets/index-B8etdByf.js               22.26 kB │ gzip:   7.53 kB
+dist-demo/assets/index-CeNDWt5E.js               22.61 kB │ gzip:   8.13 kB
+dist-demo/assets/index-eSF7fezu.js               26.41 kB │ gzip:   8.56 kB
+dist-demo/assets/index-B7B9D_g6.js               33.04 kB │ gzip:  10.36 kB
+dist-demo/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-CbPpxkBV.js               36.85 kB │ gzip:  10.02 kB
+dist-demo/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-D1r7AhF1.js               79.13 kB │ gzip:  26.14 kB
+dist-demo/assets/schemas-jpQ0XMzw.js             79.18 kB │ gzip:  24.03 kB
+dist-demo/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-C09KbfDh.js            159.35 kB │ gzip:  34.71 kB
+dist-demo/assets/browser-2S7QtkIa.js            255.20 kB │ gzip:  86.82 kB
+dist-demo/assets/contract-data-Bmlj3jVV.js      267.78 kB │ gzip:  36.38 kB
+dist-demo/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-RcpaDpmM.js             313.03 kB │ gzip:  94.99 kB
+dist-demo/assets/mui-azn9KfGV.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 3.02s

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W18",
+  "capturedAt": "2026-10-06",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": ["R26", "R27", "R28", "R51"],
+  "source": {
+    "path": "apps/web/src/modules/bot/index.tsx",
+    "beforeSha256": "c7336421c40188823de27438a11d282a5e88980a815fe8729cef5a3fe34aa57c",
+    "afterSha256": "e5148341c5e95c1b3e8b5c61555d02738a24e307d27910b70820740feff72297",
+    "preExistingStagedAndUnstagedChangesAtIntake": true
+  },
+  "layout": {
+    "globalSpacingFindingsBefore": 232,
+    "globalSpacingFindingsAfter": 207,
+    "botOwnerFindingsBefore": 25,
+    "botOwnerFindingsAfter": 0,
+    "removedOccurrences": 25,
+    "removedIdentities": 10,
+    "addedOccurrences": 0,
+    "addedIdentities": 0,
+    "nonBotIdentityChanges": 0,
+    "layoutFixtures": "PASS 9/9",
+    "strictGlobalGate": "FAIL_WITH_KNOWN_MIGRATION_DEBT; 207 findings remain, assigned to W19-W25"
+  },
+  "checks": {
+    "generator": "PASS; 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "source": "PASS; 66 files, 220 operation calls, 54 routes, 0 issues; checker fixtures 3/3",
+    "boundaries": "PASS; 449 imports, 10/10 negative fixtures, 0 issues",
+    "lint": "PASS; eslint apps/web/src --max-warnings 0",
+    "typecheck": "PASS; tsc -p apps/web/tsconfig.json --noEmit",
+    "domainAndNetwork": "PASS; 75 simulator + 13 network checks, 88/88",
+    "vitest": "PASS; 88/88 across 10 files",
+    "productionBuild": "PASS; Vite production build, 2056 modules",
+    "fe018SourceMap": "PASS; 2/2 canonical route/action source-map tests",
+    "targetedPlaywright": "PASS; 30/30 across Chromium 15/15 and Firefox 15/15; FE018/FE027 behavior plus R26/R27/R28/R51 responsive/dialog layout",
+    "layoutRegression": "PASS; routes at 320/390/768/1280/1440 px and dialogs at 320/390/1280 px",
+    "visualSourceReview": "PASS_FOR_W18_SPACING_DELTA; manual source review and paired Chromium captures; not an accessibility certification",
+    "fullVerify": "Exit 1 only at final strict layout source scan; all preceding verify stages passed and 207 known findings remain in W19-W25"
+  },
+  "browserEvidence": {
+    "engine": "Chromium for paired visual captures; Chromium and Firefox for Playwright",
+    "pairedObservations": "18 before + 18 after across R26/R27/R28/R51 at 390x844 and 1280x900",
+    "pageErrors": 0,
+    "syntheticPlaygroundWrites": "2 local POST /api/v2/shops/shop-demo/bot/playground per capture run to render a synthetic R27 result",
+    "horizontalOverflow": "none observed; scrollWidth equals clientWidth in all 18 after observations",
+    "dialogBounds": "all captured dialogs inside viewport; widths 326px at 390px and 768px at 1280px"
+  },
+  "runner": {
+    "verifiedCommand": "Locked npm CLI invoked with PATH trimmed to host workaround limits",
+    "fullVerifyExitCode": 1,
+    "fullVerifyLog": "full-verify-current-20261006.log",
+    "strictGateResult": "Expected migration debt only; 207 SPACING_LITERAL findings assigned W19-W25"
+  },
+  "verdict": {
+    "ui": "PASS",
+    "architecture": "PASS_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "task": "DONE_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "limitations": [
+      "The strict global spacing gate remains red until W19-W25 migrate the remaining 207 findings; its threshold was not changed.",
+      "The layout checker currently enforces spacing only; visual-token source checking remains scheduled for W26-W27, so this task has a manual VISUAL_SOURCE_REVIEW, not an automated visual-token PASS.",
+      "Evidence is local React with synthetic in-memory MSW; it does not establish Backend/provider integration, hosted CI, staging, production behavior, screen-reader results, or owner acceptance."
+    ]
+  },
+  "evidence": [
+    "design-contract-pre-spacing-current-20261006.md",
+    "layout-before-spacing-current-20261006.json",
+    "layout-after-spacing-current-20261006.json",
+    "layout-delta-current-20261006.json",
+    "render-before-spacing-current-20261006.json",
+    "render-after-spacing-current-20261006.json",
+    "targeted-bot-e2e-current-20261006.log",
+    "source-map-after-current-20261006.log",
+    "full-verify-current-20261006.log",
+    "visual-source-review-current-20261006.md"
+  ]
+}

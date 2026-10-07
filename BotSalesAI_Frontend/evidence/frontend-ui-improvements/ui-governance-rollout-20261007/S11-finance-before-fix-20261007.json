@@ -1,0 +1,38 @@
+{
+  "id": "S11-finance-before-fix-20261007",
+  "date": "2026-10-07",
+  "scope": "Three titled Finance Panels using synthetic demo API state",
+  "command": "node node_modules/@playwright/test/cli.js test tests/ui-finance-layout.spec.ts --grep \"titled Finance Panels\" --project=chromium --reporter=line",
+  "result": "EXPECTED_REPRODUCTION_FAIL",
+  "exitCode": 1,
+  "expectedGapCssPx": 16,
+  "toleranceCssPx": 0.5,
+  "viewportHeightCssPx": 900,
+  "routeReadiness": "Exact path and h2 visibility checked for each panel; all 9 observations collected.",
+  "pageErrors": [],
+  "headerAction": "The Profit/Loss details Panel retained its second header child in all 3 viewports.",
+  "observations": [
+    { "route": "/s/shop-demo/finance", "heading": "Kỳ báo cáo", "width": 390, "headerContentBottom": 1196.515625, "firstContentTop": 1228.515625, "gap": 32, "bodyPaddingTop": 16, "bodyPaddingInlineStart": 16, "bodyPaddingBottom": 16, "firstContentPaddingTop": 12, "hasAction": false },
+    { "route": "/s/shop-demo/finance/profit-loss", "heading": "Chi tiết kết quả kinh doanh", "width": 390, "headerContentBottom": 1200.515625, "firstContentTop": 1232.515625, "gap": 32, "bodyPaddingTop": 16, "bodyPaddingInlineStart": 16, "bodyPaddingBottom": 16, "firstContentPaddingTop": 12, "hasAction": true },
+    { "route": "/s/shop-demo/finance/profit-loss", "heading": "Hỏi đáp có nguồn", "width": 390, "headerContentBottom": 2041.8125, "firstContentTop": 2073.8125, "gap": 32, "bodyPaddingTop": 16, "bodyPaddingInlineStart": 16, "bodyPaddingBottom": 16, "firstContentPaddingTop": 6, "hasAction": false },
+    { "route": "/s/shop-demo/finance", "heading": "Kỳ báo cáo", "width": 806, "headerContentBottom": 754.203125, "firstContentTop": 794.203125, "gap": 40, "bodyPaddingTop": 24, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 12, "hasAction": false },
+    { "route": "/s/shop-demo/finance/profit-loss", "heading": "Chi tiết kết quả kinh doanh", "width": 806, "headerContentBottom": 761.90625, "firstContentTop": 801.90625, "gap": 40, "bodyPaddingTop": 24, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 12, "hasAction": true },
+    { "route": "/s/shop-demo/finance/profit-loss", "heading": "Hỏi đáp có nguồn", "width": 806, "headerContentBottom": 1564.203125, "firstContentTop": 1604.203125, "gap": 40, "bodyPaddingTop": 24, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 6, "hasAction": false },
+    { "route": "/s/shop-demo/finance", "heading": "Kỳ báo cáo", "width": 1440, "headerContentBottom": 611.609375, "firstContentTop": 651.609375, "gap": 40, "bodyPaddingTop": 24, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 12, "hasAction": false },
+    { "route": "/s/shop-demo/finance/profit-loss", "heading": "Chi tiết kết quả kinh doanh", "width": 1440, "headerContentBottom": 619.3125, "firstContentTop": 659.3125, "gap": 40, "bodyPaddingTop": 24, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 12, "hasAction": true },
+    { "route": "/s/shop-demo/finance/profit-loss", "heading": "Hỏi đáp có nguồn", "width": 1440, "headerContentBottom": 1421.609375, "firstContentTop": 1461.609375, "gap": 40, "bodyPaddingTop": 24, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 6, "hasAction": false }
+  ],
+  "diagnosis": {
+    "cause": "Finance consumers apply surface.inset to their first body owner while the titled Panel header already owns the 16px header-to-body clearance.",
+    "mobileComposition": "header bottom inset 16px + child surface top inset 16px = 32px measured boundary",
+    "tabletAndDesktopComposition": "header bottom inset 16px + child surface top inset 24px = 40px measured boundary",
+    "targetOwner": "Panel bodyMode=inset owns horizontal/bottom inset with zero top inset; Finance content children remain flush at the shared Panel body boundary."
+  },
+  "sha256BeforeSourceEdit": {
+    "apps/web/src/shared/ui/components.tsx": "46B21165EF33CCF54F32167762D580179359DFD6AF189E906B4E92AD92CF449C",
+    "apps/web/src/shared/ui/layout.ts": "2D9A0321DBDEC0F5E1D3454A6F65C690DC57CCD57F682EF2C6DC32DA5C6721B6",
+    "apps/web/src/modules/finance/index.tsx": "E78855ACF05CB9777A3BDDCD8A1CD1A0434CD5F131D5D91ABD8DCAB19072440C",
+    "tests/ui-finance-layout.spec.ts": "B449E71D03934BFC5AB94AFA1B6AE5300BC6A4313409E4A6D4A55B3BFBD97D46",
+    "docs/FRONTEND_SPACING_STANDARD.md": "207F13CD159DDC16288354FEEF4DC68E3AD3EA7CE2C0CDA5310D59D3E3BF4EF5"
+  }
+}

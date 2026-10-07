@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W33",
+  "recordedAt": "2026-10-06",
+  "scope": "Frontend-only metric and artifact review; no Backend or production claims",
+  "result": "IN_PROGRESS",
+  "metrics": {
+    "M01_atomicSource": {
+      "status": "PASS",
+      "evidence": "Canonical token/theme source and generated check: 11 outputs, 283 schemas, 210 operations, 54 routes",
+      "source": "botsales-kit/design/tokens.json; node scripts/generate.mjs --check"
+    },
+    "M02_semanticOwnership": {
+      "status": "PASS",
+      "evidence": "AST audit confirms exact type/implementation map: 110 roles across 24 owners; all 110 have an in-scope consumer. CSS bridge has one used role; no speculative or unused exports remain.",
+      "source": "evidence/frontend-ui-improvements/UI028/W33/role-owner-exception-matrix-current-20261006.json; apps/web/src/shared/ui/layout.ts; docs/FRONTEND_SPACING_STANDARD.md; node --test tests/layout-checker.test.mjs"
+    },
+    "M03_literalDrift": {
+      "status": "PASS",
+      "evidence": "W26 strict spacing gate: 68 source files, 0 findings; visual-token gate: 68 source files, 0 findings",
+      "source": "evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log"
+    },
+    "M04_classification": {
+      "status": "PASS",
+      "evidence": "Exception inventory is 1/1 used by the strict gate, exact-scoped A11Y_MECHANISM owned by app shell accessibility, with the current review trigger. Zero stale/unused exceptions; current checker fixtures 10/10 pass, including exact scope, stale/mismatch, and unowned CSS role rejection.",
+      "source": "evidence/frontend-ui-improvements/UI028/W33/role-owner-exception-matrix-current-20261006.json; evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log"
+    },
+    "M05_composition": {
+      "status": "PASS",
+      "evidence": "54 routes measured across 390/1440px and Chromium/Firefox; 216 observations, zero issue/page error",
+      "source": "evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-390-current-20261006.json; W32 built-demo route evidence"
+    },
+    "M06_routeCoverage": {
+      "status": "PASS",
+      "evidence": "54/54 canonical routes; 216 built-artifact route/viewport/browser observations, all on one verified SHA-256",
+      "artifactSha256": "6f4120d693536fd4f9ca8d417604c9d4cc16cfc2bcc46ccddbbec25405d978f2"
+    },
+    "M07_resilience": {
+      "status": "PASS",
+      "evidence": "W29 viewport reflow 18/18 and W30 synthetic DOM stress 10/10 pass; actual Chromium browser zoom 200% and Firefox native text-only resize 200% each pass 5/5 states in isolated profiles. Native text resize kept CSS viewport/DPR fixed, measured 2x text size, and recorded zero page overflow/clipped targets/page errors/write requests. Five captures were visually reviewed.",
+      "source": "evidence/frontend-ui-improvements/UI028/W30/summary-current-20261006.json; evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-current-20261006.json; evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-visual-review-current-20261006.md"
+    },
+    "M08_architectureDelivery": {
+      "status": "PARTIAL",
+      "evidence": "Generator, source checks, boundaries, lint, typecheck, domain, unit, production build, layout and visual-token gates passed via ordered direct-Node equivalent. Canonical FE ledger remains 0/140 verified, 28 stale, blocked=[]; next FE001.S01 after AGENTS dependency change.",
+      "source": "evidence/frontend-ui-improvements/UI028/W33/role-lifecycle-recheck-current-20261006.json; node botsales-kit/scripts/progress.mjs status"
+    }
+  },
+  "artifact": {
+    "demoPath": "apps/web/dist-demo",
+    "sha256": "6f4120d693536fd4f9ca8d417604c9d4cc16cfc2bcc46ccddbbec25405d978f2",
+    "fileCount": 38,
+    "smoke": "2/2 PASS",
+    "routeMatrix": "216/216 PASS"
+  },
+  "regression": {
+    "defaultRun": "480/484 pass; four stale-selector failures",
+    "currentSourceRetest": "4/4 targeted tests pass",
+    "reportingRule": "Do not describe the initial full run as a single 484/484 clean pass"
+  },
+  "openItems": [
+    "Revalidate FE acceptance using the canonical tracker only when each task has its required evidence; do not write the ledger by hand"
+  ],
+  "noProgressLedgerWrite": true
+}

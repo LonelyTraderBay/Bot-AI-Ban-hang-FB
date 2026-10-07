@@ -1,0 +1,37 @@
+{
+  "task": "UI004",
+  "checkpoint": "C01 baseline",
+  "measuredAt": "2026-10-02",
+  "scope": "Frontend React route R28 using browser + synthetic MSW API only",
+  "route": "/s/shop-demo/bot/evaluations",
+  "sourceBeforeFix": "apps/web/src/modules/bot/index.tsx:51-59 renders DataTable and Toolbar without Pager",
+  "contractEvidence": {
+    "operationId": "listEvaluations",
+    "openapiPath": "/shops/{shopId}/bot/evaluations",
+    "supportsCursor": true,
+    "responsePageFieldsObserved": ["limit", "total", "hasMore", "nextCursor"]
+  },
+  "scenario": {
+    "syntheticRowsCreated": 25,
+    "request": "/api/v2/shops/shop-demo/bot/evaluations?limit=20",
+    "httpStatus": 200,
+    "apiRowsReturned": 20,
+    "apiTotal": 25,
+    "apiHasMore": true,
+    "apiNextCursor": "evaluation-10016",
+    "visibleRows": 20,
+    "pagerButtonPresent": false,
+    "oldestExpectedRecordId": "evaluation-10001",
+    "oldestExpectedRecordVisible": false
+  },
+  "result": "Reproduced: API indicates a second page and identifies a cursor, but R28 offers no navigation control; 5 of 25 records, including the oldest, cannot be reached from the UI.",
+  "artifacts": [
+    "S01-baseline.log",
+    "S01-baseline-first-page.png",
+    "S00-harness-api-not-ready.log"
+  ],
+  "limits": [
+    "The result verifies only the frontend and local synthetic MSW behavior; it is not evidence of a live backend.",
+    "A first harness attempt reached the Vite HTML fallback before MSW startup; it is retained separately and excluded from the product reproduction."
+  ]
+}

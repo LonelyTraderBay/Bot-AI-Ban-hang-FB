@@ -1,0 +1,205 @@
+{
+  "workItem": "UI028.W07",
+  "status": "DONE",
+  "capturedAt": "2026-10-05",
+  "baselineHead": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "uiVerdict": "PASS",
+  "architectureVerdict": "PASS",
+  "scope": "Frontend React/TypeScript shared UI with local synthetic/mock API; no backend, staging, production, owner acceptance, or full UI028 completion claim.",
+  "changes": {
+    "semanticRoles": [
+      "code.inlineGap:4px",
+      "table.mobileHintInset:16px inline / 8px block-start",
+      "lookup.loadMoreRow:8px gap / 8px inline inset / 4px preceding gap",
+      "detail.valueGap:16px"
+    ],
+    "consumers": [
+      "Toolbar",
+      "DataTable mobile hint",
+      "Pager",
+      "CopyableCode",
+      "LookupLoadMore",
+      "DetailLine"
+    ],
+    "preservation": [
+      "Search trims input and clear returns focus",
+      "Pager preserves unrelated filters and cursor behavior",
+      "Table retains keyboard horizontal scrolling",
+      "Long identifiers wrap",
+      "Copy action and polite success/failure feedback preserved"
+    ]
+  },
+  "checks": {
+    "targetedVitest": {
+      "command": "npm.cmd test -- apps/web/tests/components.test.tsx",
+      "exitCode": 0,
+      "files": "1 passed",
+      "tests": "18 passed",
+      "newAssertion": "CopyableCode semantic gap, long-value wrapping, clipboard action, polite feedback"
+    },
+    "fullVerify": {
+      "command": "npm.cmd run verify",
+      "exitCode": 1,
+      "reason": "All gates through production build and layout fixtures passed; strict layout source gate failed on remaining unapproved UI028 migration literals.",
+      "passed": {
+        "generator": "11 outputs / 283 schemas / 210 operations / 54 routes",
+        "source": "67 files / 220 operation calls / 54 routes",
+        "boundaries": "434 imports / 10 of 10 negative fixtures",
+        "lint": "PASS",
+        "typecheck": "PASS",
+        "domainMSW": "88 of 88",
+        "vitest": "86 of 86",
+        "productionBuild": "PASS; 2056 modules transformed",
+        "layoutFixtures": "9 of 9"
+      }
+    },
+    "strictLayout": {
+      "status": "FAIL",
+      "findings": 461,
+      "counts": {
+        "SPACING_LITERAL": 461
+      },
+      "beforeW07": 473,
+      "reducedBy": 12,
+      "ownerAreas": 18,
+      "filesWithDebt": 24,
+      "sharedUiRemaining": 13,
+      "unknownStyleSource": 0,
+      "nextOwner": "W08 Empty/QueryState/ErrorNotice/PartialDataNotice/CapabilityUnavailable/EditDialog/ConfirmDialog"
+    },
+    "browser": {
+      "status": "PASS",
+      "engine": "Chromium via Playwright",
+      "routes": [
+        "/s/shop-demo/customers",
+        "/s/shop-demo/imports",
+        "/s/shop-demo/integrations/channels",
+        "/s/shop-demo/orders",
+        "/s/shop-demo/orders/new",
+        "/s/shop-demo/overview"
+      ],
+      "measurements": 10,
+      "viewports": [
+        "1280x900",
+        "390x844"
+      ],
+      "checks": {
+        "routesFound": true,
+        "noDocumentOverflow": true,
+        "toolbarInsetAndGap": true,
+        "mobileHintInset": true,
+        "lookupSemanticSpacing": true,
+        "detailSemanticSpacing": true,
+        "keyboardScroll": true,
+        "clearReturnsFocus": true,
+        "copyWorks": true,
+        "noPageErrors": true
+      },
+      "interactions": {
+        "searchCommitted": {
+          "query": "DH-DEMO-RETURN",
+          "cursor": null
+        },
+        "clear": {
+          "query": null,
+          "cursor": null,
+          "focusReturned": true
+        },
+        "pager": {
+          "enabled": false,
+          "cursor": null
+        },
+        "keyboardTable": {
+          "before": {
+            "scrollLeft": 0,
+            "scrollWidth": 749,
+            "clientWidth": 356
+          },
+          "after": {
+            "scrollLeft": 40,
+            "scrollWidth": 749,
+            "clientWidth": 356
+          },
+          "scrollChanged": true
+        },
+        "lookup": {
+          "rowPresent": true,
+          "rowText": "Đã tải 4 lựa chọn",
+          "loadMoreExposed": false,
+          "enabled": null,
+          "nextPageUnavailableInDemoSeed": true
+        },
+        "copy": {
+          "value": "DH-DEMO-RETURN-02",
+          "clipboardMatches": true,
+          "feedbackVisible": true
+        }
+      },
+      "datasetLimits": [
+        "Lookup row showed 4 loaded choices and had no load-more button because the local seed had no next page.",
+        "Pager was disabled for the default collection seed; cursor/filter behavior is covered by component tests."
+      ],
+      "screenshots": [
+        "w07-orders-desktop.png",
+        "w07-orders-mobile.png",
+        "w07-order-create-desktop.png",
+        "w07-order-create-mobile.png",
+        "w07-customers-desktop.png",
+        "w07-customers-mobile.png",
+        "w07-imports-desktop.png",
+        "w07-imports-mobile.png",
+        "w07-integration-channels-desktop.png",
+        "w07-overview-copy-desktop.png"
+      ]
+    }
+  },
+  "sourceHashesAfter": {
+    "apps/web/src/shared/ui/layout.ts": "a8a0c2c4fd5513e6bd8b437e78374682f63654f9fa57454923676681f5848983",
+    "apps/web/src/shared/ui/components.tsx": "209db1a119d2620041057b6e0f01f35838c35c5790074d3db7d87314ea922193",
+    "apps/web/tests/components.test.tsx": "de5c9c26af857f7623f136292f27d7deb097da70b7061a8ff8a0dc786ae108fc",
+    "scripts/check-layout.mjs": "a5dc5614b3f4f83e21318df23de39970cfd686427f7c63f69d55e1a4bcfcbf84",
+    "tests/layout-checker.test.mjs": "43c755f96be9bcf522f1553144f0cb7bcde1bbf6ffeb6e089918f4784759a6ac",
+    "docs/FRONTEND_SPACING_STANDARD.md": "602f2bb366b25e807a8a83df4d78ee9a406ffdfbb8186c7a01b78e75e14249a7",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "6407c784c1f002d30dbc83aa39b96742c9324c3b1b286bc10aed5512346f69f5",
+    "docs/CONTINUE_FRONTEND.md": "e9ce6062acfffeee3d98c3c532caa2e6b598fa69fe5e1546e6d3b511254b4caf",
+    "docs/FRONTEND_SCOPE.md": "9850d82db7d6840c03dc81845e7e2b5e03cef2334b19c469adf67b05a8c4bc22",
+    "docs/PROJECT_CONTEXT.md": "798b1a19057184839dce31af7802a4dd459b881e98c316fc60f13acab680f837",
+    "evidence/REPORT.md": "effc4247eb53307e152e44e551a2ed2a98b8dc4ff0e5bdd046efd3cd987512ac"
+  },
+  "sourceHashesBefore": {
+    "apps/web/src/shared/ui/components.tsx": "30ceb6e6e6c1fc718dea3c0960078624870a5865",
+    "apps/web/src/shared/ui/layout.ts": "f4bcbba0e64715df790535dd09a01297b4422f8d",
+    "docs/FRONTEND_SPACING_STANDARD.md": "59e2fc9fd3b2889473e1e9e63713656a232f18a2",
+    "scripts/check-layout.mjs": "7fc3127aa364070909b76aa85a1c08719c6d5b1b",
+    "tests/layout-checker.test.mjs": "bd4b959362b6f602d5233c779e96171399e9610e"
+  },
+  "evidenceFiles": [
+    "design-contract-pre-code-20261005.json",
+    "verify-w07-current-20261005.log",
+    "verify-w07-render-20261005.mjs",
+    "render-check-current-20261005.json",
+    "strict-layout-check-current-20261005.log",
+    "strict-layout-check-current-20261005.json",
+    "migration-debt-report-current-20261005.json",
+    "w07-orders-desktop.png",
+    "w07-orders-mobile.png",
+    "w07-order-create-desktop.png",
+    "w07-order-create-mobile.png",
+    "w07-imports-desktop.png",
+    "w07-imports-mobile.png",
+    "w07-customers-desktop.png",
+    "w07-customers-mobile.png",
+    "w07-integration-channels-desktop.png",
+    "w07-overview-copy-desktop.png"
+  ],
+  "feLedgerSnapshot": {
+    "command": "node botsales-kit/scripts/progress.mjs status",
+    "readOnly": true,
+    "verifiedSteps": 0,
+    "totalSteps": 140,
+    "staleTasks": 28,
+    "blocked": [],
+    "next": "FE001.S01",
+    "note": "Status comes from changed AGENTS.md dependency; not a statement that implementation is 0%, and no ledger was written."
+  }
+}

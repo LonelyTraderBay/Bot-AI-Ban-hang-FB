@@ -1,0 +1,33 @@
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (9.1962ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 62.2675

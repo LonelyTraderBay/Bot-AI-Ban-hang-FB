@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W25",
+  "phase": "pre-source-edit",
+  "date": "2026-10-06",
+  "revision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "workspaceState": "apps/web/src/modules/reports/index.tsx had a staged modification before W25 intake; the captured working-tree source is preserved and W25 edits remain unstaged",
+  "checker": "node scripts/check-layout.mjs --report --json",
+  "layoutReport": {
+    "file": "layout-before-spacing-current-2026-10-06.json",
+    "status": "FAIL",
+    "scannedFiles": 67,
+    "totalFindings": 20,
+    "reportsIndexFindings": 20,
+    "otherW25Findings": 0
+  },
+  "sourceHashes": {
+    "apps/web/src/modules/reports/index.tsx": "88911e0be20acb3d1a30a98169236f7392441ec2393f44bdf78663ad99e452f0",
+    "apps/web/src/modules/reports/report-utils.ts": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
+    "apps/web/src/modules/dashboard/index.tsx": "89107fbadbcd6de71dae06899bb6a4cf5ce5546c97eb0af015a9ed2ec0eb1166",
+    "apps/web/src/shared/ui/layout.ts": "aae5892995033f7522520d5403a049886059bb378280f68a5130d95928cceec6",
+    "apps/web/src/shared/ui/components.tsx": "66be880a201fe2a490a21b8332fbe6be934d12a2339d48632e519ff624834301",
+    "tests/fe021.spec.ts": "26afef11d6424ce8c12454bc6969cf0a78e292dc32837e8fa57863d8804d9fe7",
+    "botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "botsales-kit/contracts/openapi.json": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c",
+    "UX-CONTRACT.md": "da010abf3cf9ba37fd3ad9f7ee3ee201adf985d8a84c3fef2ff7469b5d2e72f2",
+    "botsales-kit/design/tokens.json": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895",
+    "docs/FRONTEND_SPACING_STANDARD.md": "7b197734417a1255c947b094b1d0c4ef9058be187a89fa7ee08cd3171d4f20df",
+    "evidence/frontend-ui-improvements/UI028/W25/design-contract-pre-spacing-current-20261006.md": "a02b4311f0cc2ce6390d220c5e170c2922c1760214137785540545548e3cdc39"
+  },
+  "routes": [
+    { "id": "R31", "path": "/s/shop-demo/reports?reportType=orders&fromDate=2026-09-28&toDate=2026-09-29", "readOperations": ["getReportSummary", "listJobs"], "state": "export form and empty recent jobs page" },
+    { "id": "R53", "path": "/s/shop-demo/reports/marketing", "readOperations": ["getMarketingSummary"], "state": "mock metrics, questions, loss chart and table" }
+  ],
+  "profileReferences": {
+    "R31": "FRONTEND_SPACING_STANDARD.md §13.3 composed form/settings + collection/table + detail/job semantic profiles; no same-composition migrated route claimed",
+    "R53": "Dashboard/report profile; migrated R04 source and W23 captures prove header/Stats/grouped-panel slots, while R53 chart geometry is measured from its own source/render"
+  },
+  "capture": {
+    "script": "capture-w25-current-20261006.mjs before",
+    "browser": "Chromium",
+    "mode": "local Vite demo with synthetic MSW; read-only",
+    "captures": 4,
+    "viewports": ["390x844", "1280x900"],
+    "documentOverflow": false,
+    "writes": [],
+    "apiErrors": [],
+    "pageErrors": [],
+    "renderReport": "render-before-current-2026-10-06.json"
+  }
+}

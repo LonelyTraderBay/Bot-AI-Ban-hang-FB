@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-06",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "sourceRevision": "HEAD e68cb65e61c5c1aab2ae169dd8033df305df8872 plus current frontend working tree",
+  "reviewKind": "Current local evidence review; no Backend, hosted CI, staging, production runtime, or user acceptance claim",
+  "trackerSnapshotBeforeFE028": {
+    "verifiedSteps": 135,
+    "totalSteps": 140,
+    "blocked": [],
+    "stale": ["FE028"],
+    "next": "FE028.S01",
+    "meaning": "Canonical tracker snapshot immediately before FE028 final review; read progress.mjs status for the post-review result."
+  },
+  "rubric": {
+    "passed": 7,
+    "total": 9,
+    "ratio": "7/9",
+    "meaning": "Evidence gate count for the explicitly scoped local Frontend artifact; not an architecture or code-completion percentage."
+  },
+  "gates": [
+    {
+      "id": "FE-G01",
+      "title": "Môi trường tái lập",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Current W26 verify/production build and FE026 clean build/artifact manifest are recorded for Windows Node 24.19.0/npm 11.17.0; production and demo artifacts are isolated.",
+      "evidence": [
+        "evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log",
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-spc059-current-20261006.log",
+        "botsales-kit/execution/frontend-evidence/FE026/artifact-manifest-spc059-current-20261006.json"
+      ],
+      "limits": ["npm reports esbuild/MSW allowScripts notices; no lifecycle script was silently approved."]
+    },
+    {
+      "id": "FE-G02",
+      "title": "Code và kiến trúc",
+      "status": "ĐẠT",
+      "basis": "Generator 11/283/210/54; source 67/220/54; boundaries 67 files and 475 imports with zero issue/cycle and 10/10 negative fixtures; lint and strict TypeScript pass. Current architecture self-review is linked.",
+      "evidence": [
+        "evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log",
+        "botsales-kit/execution/frontend-evidence/FE028/architecture-review-spc060-current-20261006.md"
+      ],
+      "limits": ["Codex self-review and automated checks; independent peer review is not claimed."]
+    },
+    {
+      "id": "FE-G03",
+      "title": "Contract và mocks",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Canonical generated/source checks, synthetic domain/MSW 88/88 and Vitest 93/93 pass; runtime cases use synthetic data.",
+      "evidence": ["evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log"],
+      "limits": ["Does not establish live API, provider, or Backend transaction behavior."]
+    },
+    {
+      "id": "FE-G04",
+      "title": "Phủ chức năng",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Built-demo browser run passes 484/484 on Chromium and Firefox. UAT matrix covers 54 routes, 64 features, 65 feature-route interaction rows, 22 journeys, 357/357 private route-role cases, empty 11/11, error 51/51, and zero untested applicable state cells.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE008/S03-e2e-spc059-current-20261006.log",
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-spc059-current-20261006.json",
+        "evidence/frontend-ui-improvements/UI028/W32/summary-current-20261006.json"
+      ],
+      "limits": ["Synthetic UI permissions do not prove server authorization; browser coverage applies only to the logged artifact, routes, states, and cases."]
+    },
+    {
+      "id": "FE-G05",
+      "title": "UI/UX và accessibility",
+      "status": "CHƯA_ĐẠT_ĐẦY_ĐỦ",
+      "basis": "Automated keyboard, axe, contrast, layout, reflow, text-flow, native text resize, browser zoom, and target evidence exists for the routes/states recorded in linked runs. SPC-060 adds a repeat-prevention design contract for future UI.",
+      "evidence": [
+        "evidence/frontend-ui-improvements/UI012/S47-technical-accessibility-acceptance-20261004.md",
+        "evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log",
+        "evidence/frontend-ui-improvements/UI028/W30/summary-current-20261006.json",
+        "botsales-kit/execution/frontend-evidence/FE028/architecture-review-spc060-current-20261006.md"
+      ],
+      "limits": ["Narrator speech/transcript and broad human conformance review remain NOT_RUN; no full WCAG conformance claim. Automated spacing/token scans do not prove semantic profile parity on every existing route."]
+    },
+    {
+      "id": "FE-G06",
+      "title": "An toàn Frontend",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Current npm audit records zero vulnerabilities across 463 audited dependency entries; app tests/build run locally.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE024/npm-audit-spc059-current-20261006.json",
+        "evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log"
+      ],
+      "limits": ["Does not prove server-side authorization, tenant isolation, or live PII handling."]
+    },
+    {
+      "id": "FE-G07",
+      "title": "Hiệu năng Frontend",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Paired local responsive performance records and current production/demo builds are present; largest production chunk is 328.33 kB raw, under Vite's 500 kB warning threshold.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE025/S01-responsive-performance-spc059-current-20261006.json",
+        "botsales-kit/execution/frontend-evidence/FE025/build-demo-spc059-current-20261006.log",
+        "botsales-kit/execution/frontend-evidence/FE026/artifact-manifest-spc059-current-20261006.json"
+      ],
+      "limits": ["Synthetic/local measurements do not establish physical-device, CDN, production-user, or Backend SLOs."]
+    },
+    {
+      "id": "FE-G08",
+      "title": "Artifact và CI",
+      "status": "ĐẠT_LOCAL_EQUIVALENT",
+      "basis": "Clean local production/demo builds, artifact isolation/reproduction and built-demo preview/regression pass; the approved Frontend rubric accepts the local equivalent.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-spc059-current-20261006.log",
+        "botsales-kit/execution/frontend-evidence/FE026/artifact-manifest-spc059-current-20261006.json",
+        "evidence/frontend-ui-improvements/UI028/W32/summary-current-20261006.json",
+        "botsales-kit/execution/frontend-evidence/FE008/S03-e2e-spc059-current-20261006.log"
+      ],
+      "limits": ["Hosted GitHub Actions remains NOT_RUN; no deployment was made."]
+    },
+    {
+      "id": "FE-G09",
+      "title": "UAT và bàn giao",
+      "status": "CHỜ_NGHIỆM_THU_NGƯỜI_DÙNG",
+      "basis": "Technical synthetic-MSW UAT matrix, current architecture/gate review, SPC-060 design standard, and handoff instructions are prepared for the user's final review.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-spc059-current-20261006.json",
+        "botsales-kit/execution/frontend-evidence/FE028/handoff.md"
+      ],
+      "limits": ["Final acceptance belongs to the user; no owner approval is self-recorded."]
+    }
+  ],
+  "spc060": {
+    "standard": "docs/FRONTEND_SPACING_STANDARD.md",
+    "rule": "SPC-060",
+    "standardVersion": "1.22",
+    "futureUiControls": [
+      "Select a composition/density layout profile before JSX/CSS.",
+      "Record semantic spacing role and owner for page, section, surface, field/list, and inline control spacing in the existing design contract.",
+      "Keep same-profile routes on the same token/preset rhythm; deviations need workflow/responsive rationale and a shared named variant with a real consumer.",
+      "Compare rendered results with a same-profile route at the same viewport/state and test all affected consumers when a shared owner changes.",
+      "Run strict layout and visual-token gates plus targeted render/reflow checks; unresolved findings or missing evidence remain NOT_RUN and cannot close the UI task."
+    ],
+    "automatedEvidence": {
+      "layoutTests": "10/10",
+      "strictLayoutScan": "68 source files; 0 findings; 1 exact scoped exception used",
+      "visualTokenTests": "5/5",
+      "strictVisualTokenScan": "68 source files; 0 findings",
+      "evidenceDirectory": "evidence/frontend-spacing-audit-20261005/policy-spc060-current-20261006"
+    },
+    "interpretation": "This verifies current automated guards and the newly recorded design rule. It does not retroactively certify every current route's semantic profile parity."
+  },
+  "result": "READY_FOR_FINAL_USER_REVIEW_WITH_LIMITS",
+  "productionReadyClaim": "NOT_MADE",
+  "ownerAcceptance": "PENDING_USER"
+}

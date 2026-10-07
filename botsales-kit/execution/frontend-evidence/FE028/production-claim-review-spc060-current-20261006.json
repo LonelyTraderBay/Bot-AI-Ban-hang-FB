@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "rule": "AI_RULES.md §19.6 Production Claim Gate",
+  "reviewedAt": "2026-10-06",
+  "reviewer": "Codex self-review",
+  "subject": {
+    "artifact": "BotSalesAI_Frontend working tree and local React application under apps/web",
+    "revision": "HEAD e68cb65e61c5c1aab2ae169dd8033df305df8872 plus current staged/unstaged working tree",
+    "environment": "Windows local verification; synthetic MSW demo; Chromium 153 / Firefox 155 where recorded",
+    "claimScope": "Frontend source/build/UAT evidence for user acceptance only"
+  },
+  "criteria": {
+    "canonicalSources": [
+      "botsales-kit/contracts/openapi.json",
+      "botsales-kit/contracts/route-manifest.json",
+      "botsales-kit/contracts/permission-catalog.json",
+      "botsales-kit/design/tokens.json",
+      "docs/FRONTEND_SPACING_STANDARD.md SPC-001–060"
+    ],
+    "mandatoryFrontendGates": "FE-G01..FE-G09 in quality-gate-matrix-spc060-current-20261006.json",
+    "acceptanceBoundary": "FRONTEND_WITH_SYNTHETIC_MOCK_API; no live Backend/provider/staging/deployment proof"
+  },
+  "evidence": {
+    "localVerifyBuild": "PASS in UI028 W26 log; includes generator, source/boundary, lint, typecheck, domain/MSW, Vitest, production build, layout and visual-token gates",
+    "builtDemoBrowser": "484/484 Chromium + Firefox in FE008 current log; W32 identifies the tested demo artifact and 216/216 route observations",
+    "spacingPolicyGuards": "SPC-060 synchronized; layout 10/10 and strict 68-file scan 0 findings; visual-token 5/5 and strict 68-file scan 0 findings",
+    "security": "npm audit 0 vulnerabilities in 463 dependency entries",
+    "artifact": "Clean local production/demo manifests and isolation evidence; no hosted deployment"
+  },
+  "exceptionsAndOpenEvidence": [
+    {
+      "id": "FE-G05",
+      "status": "PARTIAL_NOT_RUN",
+      "missing": ["Narrator speech/transcript", "broad human accessibility/conformance review"],
+      "effect": "Blocks a full accessibility or full WCAG conformance claim."
+    },
+    {
+      "id": "FE-G09",
+      "status": "PENDING_USER_AUTHORITY",
+      "missing": ["User's final acceptance decision"],
+      "effect": "The assistant cannot record acceptance on the user's behalf."
+    },
+    {
+      "id": "hosted-ci",
+      "status": "NOT_RUN",
+      "effect": "FE-G08 relies on the rubric-approved clean local equivalent; no hosted CI PASS is claimed."
+    },
+    {
+      "id": "live-services",
+      "status": "OUT_OF_SCOPE_NOT_VERIFIED",
+      "missing": ["Backend", "provider", "server authorization", "persistence", "staging", "production operations"],
+      "effect": "No whole-system production readiness inference is allowed."
+    },
+    {
+      "id": "SPC-060-profile-parity",
+      "status": "POLICY_AND_AUTOMATED_GUARDS_VERIFIED; GLOBAL_VISUAL_PARITY_NOT_CLAIMED",
+      "effect": "Future UI tasks must supply profile-specific design/render evidence; the current strict source scans alone do not prove every route's semantic spacing rhythm."
+    }
+  ],
+  "authority": {
+    "authorized": ["Review source and evidence", "Run local Frontend checks", "Prepare a scoped handoff"],
+    "notAuthorizedOrNotClaimed": ["Self-record user acceptance", "Claim hosted CI PASS", "Deploy or publish", "Certify Backend/staging/production", "Waive missing mandatory evidence"]
+  },
+  "decision": {
+    "technicalRecommendation": "READY_FOR_FINAL_USER_REVIEW_WITH_LIMITS",
+    "productionReadyOrEnterpriseGradeClaim": "NOT_MADE",
+    "why": "The scoped local Frontend evidence supports final user review, while FE-G05 and FE-G09 remain unresolved and hosted/live-system evidence is absent.",
+    "releaseAuthority": "User/project release authority remains separate from this technical review."
+  }
+}

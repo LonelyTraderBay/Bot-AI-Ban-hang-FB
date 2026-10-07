@@ -1,0 +1,12 @@
+UI012/S33 complete keyboard regression file — current source
+Run window: 2026-10-03T19:39Z (UTC)
+Working directory: BotSalesAI_Frontend
+
+Command:
+node node_modules/@playwright/test/cli.js test --config C:\Users\Joker-PC\AppData\Local\Temp\botsales-ui012-s33-keyboard.config.mjs tests/ui012-keyboard.spec.ts
+
+The isolated temporary config used Chromium, one worker, an output directory under the system Temp folder, and no unused fixed-port Playwright webServer. The spec starts its own demo server. Result: exit 0, **9/9 passed** in 20.8 seconds.
+
+Cases cover keyboard-only Finance edit/discard and focus return; the Knowledge synthetic 422 field mapping/focus; CSV chooser activation/discard with no upload; chart table access and horizontal scrolling; three chart labels with table alternative; Inbox message action names/focus return; order draft required-field announcement; long BotConfig policy wrapping at 320 CSS px; and Dashboard hover/pressed/focus feedback.
+
+This is one focused UI012 keyboard spec file, not the full rebuilt-demo suite. It does not establish screen-reader speech/transcript, broad manual review, real API behavior, hosted CI, or owner UAT.

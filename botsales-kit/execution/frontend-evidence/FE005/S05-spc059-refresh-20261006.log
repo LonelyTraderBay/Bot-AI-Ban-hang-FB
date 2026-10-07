@@ -1,0 +1,60 @@
+FE005.S05 final generator, contract, helper and type gates
+executedAt=2026-10-06T06:06:56.775Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+COMMAND generate: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run generate:check
+COMMAND types: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck
+COMMAND unit: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test
+COMMAND contractTests: & 'C:\Program Files\nodejs\node.exe' --test tests/contracts/generator.test.mjs
+COMMAND diff: scoped git diff --check
+LOG botsales-kit/execution/frontend-evidence/FE005/S05-generate-check-spc059-current-20261006.log; sha256=c7aa886473210279feb176653171a4299022c223c273f746f904d69576367bc0
+LOG botsales-kit/execution/frontend-evidence/FE005/S05-typecheck-spc059-current-20261006.log; sha256=0ed5b080f4e4a0456f15fae4dba1fefa1d9869f775a4f6740d682b8ad73f0b12
+LOG botsales-kit/execution/frontend-evidence/FE005/S05-unit-spc059-current-20261006.log; sha256=ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4
+LOG botsales-kit/execution/frontend-evidence/FE005/S05-contract-tests-spc059-current-20261006.log; sha256=70a04aff923e7ab326b7ca7c40441357e9cb7f16d0a90ac4e52149c81ff7805e
+LOG botsales-kit/execution/frontend-evidence/FE005/S05-diff-check-spc059-current-20261006.log; sha256=3b192b13be16b8cfdb877049feed93edf187b21fbe70267a602b5ecd3ef5d104
+generate=11 outputs/283 schemas/210 operations/54 routes; contracts=7/7; units=93/93
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; generated outputs checked only; no live backend execution.
+checksTotal=5; failed=0
+CHECK fresh generator outputs: PASS
+generate:check passed 11 outputs, 283 schemas, 210 operations and 54 routes without writing generated output.
+CHECK canonical projection guards: PASS
+Negative tests reject YAML/index drift from canonical OpenAPI and verify generated operation parameter metadata.
+CHECK contract drift/schema/version fixtures: PASS
+Contract test suite passed 7/7, including unresolved schema, missing API version, route drift and stale generated output.
+CHECK runtime type safety: PASS
+Registered strict TypeScript check exited 0; request body/parameter schema rejection cases are present and covered by the 93/93 unit suite.
+CHECK scoped change review: PASS
+Staged/unstaged diff checks on generator, contract tests and transport sources exited 0.
+sourceSnapshotSha256=76fa998368af91728f98f0a3cc77f67312b9d29bd67b1d57253dd556b76accbe
+SOURCE apps/web/public/app-icon.svg sha256=d0ed30dd4410fde97ebac0d7be8f2a6329cde38effdd109dd219036b85fdab27
+SOURCE apps/web/public/manifest.webmanifest sha256=ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53
+SOURCE apps/web/src/app/tokens.css sha256=f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca
+SOURCE apps/web/src/shared/api/client.ts sha256=4986739ee8ddf673d0d94a0702e7251c087e69824b88e37b5ec644ddf72fa39e
+SOURCE apps/web/src/shared/api/validation.ts sha256=5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1
+SOURCE apps/web/tests/api-client.test.tsx sha256=b815743fd0a61b13ea6b387beb6052281b905bb256dd4241f01d4cb9ee7e798e
+SOURCE botsales-kit/contracts/events.schema.json sha256=7f2071f90cc925b4c32cb6d6de0ef99f8cc14b618c0e04224f024f3aa83c21ee
+SOURCE botsales-kit/contracts/openapi.json sha256=d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c
+SOURCE botsales-kit/contracts/openapi.yaml sha256=c3afa8ea1a2022581955fc62348f2264ab25fa3db0ffb2c46f04572e6741256f
+SOURCE botsales-kit/contracts/operation-index.json sha256=6927578fa9cad2799d1e4ab8c27b2ed010c4e83227c8576f5fb0802a37c37d99
+SOURCE botsales-kit/contracts/permission-catalog.json sha256=58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1
+SOURCE botsales-kit/contracts/route-manifest.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE botsales-kit/design/tokens.json sha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S05-contract-tests-spc059-current-20261006.log sha256=70a04aff923e7ab326b7ca7c40441357e9cb7f16d0a90ac4e52149c81ff7805e
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S05-diff-check-spc059-current-20261006.log sha256=3b192b13be16b8cfdb877049feed93edf187b21fbe70267a602b5ecd3ef5d104
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S05-generate-check-spc059-current-20261006.log sha256=c7aa886473210279feb176653171a4299022c223c273f746f904d69576367bc0
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S05-typecheck-spc059-current-20261006.log sha256=0ed5b080f4e4a0456f15fae4dba1fefa1d9869f775a4f6740d682b8ad73f0b12
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S05-unit-spc059-current-20261006.log sha256=ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4
+SOURCE botsales-kit/execution/frontend-evidence/FE005/capture-s05-spc059-refresh-20261006.mjs sha256=1ea9daab4a05136e3239f315adad8a9b31db0a2417e0c58052b182038a6dcf7a
+SOURCE botsales-kit/execution/frontend-plan.json sha256=4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f
+SOURCE package-lock.json sha256=a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE packages/contracts/src/generated.ts sha256=0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709
+SOURCE packages/contracts/src/index.ts sha256=bcc7e843b4ad0f8e5609e262fb9d0d1e9f1845bd88b6153e3a9ef63cf7fde2c7
+SOURCE packages/contracts/src/operations.json sha256=1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88
+SOURCE packages/contracts/src/permissions.json sha256=58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1
+SOURCE packages/contracts/src/routes.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE packages/contracts/src/schemas.json sha256=9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1
+SOURCE packages/design-tokens/src/index.ts sha256=527d92791c58163352bbb84031c303b47b9eff0999f0698ec12eed35c9f5b49a
+SOURCE packages/design-tokens/src/tokens.json sha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0
+SOURCE scripts/generate.mjs sha256=beae96652c33bdfa46f90a0660b670db4d9f45a69a227e10dcacd2adfc722d5f
+SOURCE tests/contracts/generator.test.mjs sha256=7ff255de33ec7c1d2f78773aabc7de17829ae83d4d8067fedddc942c03a457d0
+reviewer=Codex self-review; no independent peer review claimed

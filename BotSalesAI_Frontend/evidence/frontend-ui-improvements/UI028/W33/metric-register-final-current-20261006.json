@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W33",
+  "recordedAt": "2026-10-06T10:33:31.091Z",
+  "scope": "Frontend-only metric and artifact review; no Backend or production claims",
+  "result": "PASS_WITH_SCOPE_LIMITS",
+  "metrics": {
+    "M01_atomicSource": {
+      "status": "PASS",
+      "evidence": "Canonical token/theme source and generated check: 11 outputs, 283 schemas, 210 operations, 54 routes",
+      "source": "botsales-kit/design/tokens.json; node scripts/generate.mjs --check"
+    },
+    "M02_semanticOwnership": {
+      "status": "PASS",
+      "evidence": "AST audit confirms exact type/implementation map: 110 roles across 24 owners; all 110 have an in-scope consumer. CSS bridge has one used role; no speculative or unused exports remain.",
+      "source": "evidence/frontend-ui-improvements/UI028/W33/role-owner-exception-matrix-current-20261006.json; apps/web/src/shared/ui/layout.ts; docs/FRONTEND_SPACING_STANDARD.md; node --test tests/layout-checker.test.mjs"
+    },
+    "M03_literalDrift": {
+      "status": "PASS",
+      "evidence": "W26 strict spacing gate: 68 source files, 0 findings; visual-token gate: 68 source files, 0 findings",
+      "source": "evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log"
+    },
+    "M04_classification": {
+      "status": "PASS",
+      "evidence": "Exception inventory is 1/1 used by the strict gate, exact-scoped A11Y_MECHANISM owned by app shell accessibility, with the current review trigger. Zero stale/unused exceptions; current checker fixtures 10/10 pass, including exact scope, stale/mismatch, and unowned CSS role rejection.",
+      "source": "evidence/frontend-ui-improvements/UI028/W33/role-owner-exception-matrix-current-20261006.json; evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log"
+    },
+    "M05_composition": {
+      "status": "PASS",
+      "evidence": "54 routes measured across 390/1440px and Chromium/Firefox; 216 observations, zero issue/page error",
+      "source": "evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-390-current-20261006.json; W32 built-demo route evidence"
+    },
+    "M06_routeCoverage": {
+      "status": "PASS",
+      "evidence": "54/54 canonical routes; 216 built-artifact route/viewport/browser observations, all on one verified SHA-256",
+      "artifactSha256": "6f4120d693536fd4f9ca8d417604c9d4cc16cfc2bcc46ccddbbec25405d978f2"
+    },
+    "M07_resilience": {
+      "status": "PASS",
+      "evidence": "W29 viewport reflow 18/18 and W30 synthetic DOM stress 10/10 pass; actual Chromium browser zoom 200% and Firefox native text-only resize 200% each pass 5/5 states in isolated profiles. Native text resize kept CSS viewport/DPR fixed, measured 2x text size, and recorded zero page overflow/clipped targets/page errors/write requests. Five captures were visually reviewed.",
+      "source": "evidence/frontend-ui-improvements/UI028/W30/summary-current-20261006.json; evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-current-20261006.json; evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-visual-review-current-20261006.md"
+    },
+    "M08_architectureDelivery": {
+      "status": "PASS",
+      "evidence": "Canonical FE tracker 140/140 with no stale/blocked/next; W35 checked all 140 evidence blobs and all recorded source hashes against the live files; W36 ordered direct-node verify 13/13 and built-demo E2E 484/484 PASS; W34 SPC-060 policy sync and W36 handoff/fingerprints are current. This closes the technical Frontend handoff only.",
+      "source": "evidence/frontend-ui-improvements/UI028/W35/fe-evidence-dependency-audit-spc060-final-current-20261006.json; evidence/frontend-ui-improvements/UI028/W36/verify-equivalent-final-current-20261006-v2.log; evidence/frontend-ui-improvements/UI028/W36/built-demo-e2e-final-current-20261006.log; node botsales-kit/scripts/progress.mjs status",
+      "limits": [
+        "FE-G05 Narrator/screen-reader and human conformance remain NOT_RUN",
+        "FE-G09 owner acceptance remains user-owned and is not recorded by this evidence"
+      ]
+    }
+  },
+  "artifact": {
+    "demoPath": "apps/web/dist-demo",
+    "sha256": "57be39bc03668006880322124b0f203712241dbe609140fa316bbedc2b8d995d",
+    "fileCount": 38,
+    "smoke": "2/2 PASS",
+    "routeMatrix": "216/216 PASS",
+    "fingerprintMethod": "SHA-256 over sorted relative-path:file-SHA-256 lines"
+  },
+  "regression": {
+    "defaultRun": "484/484 PASS on the current built synthetic-MSW demo with the repository-configured single Playwright worker",
+    "priorSnapshot": "Earlier W32 480/484 plus 4/4 targeted retests remains a historical snapshot and is not used as the current full-run result.",
+    "currentLog": "evidence/frontend-ui-improvements/UI028/W36/built-demo-e2e-final-current-20261006.log"
+  },
+  "openItems": [
+    "FE-G05 human/Narrator review is not claimed",
+    "FE-G09 user acceptance is pending the user",
+    "No Backend, hosted CI, staging, production deployment, or enterprise-wide claim is made"
+  ],
+  "noProgressLedgerWrite": true,
+  "uiVerdict": "PASS",
+  "architectureVerdict": "PASS_WITH_SCOPE_LIMITS"
+}

@@ -1,0 +1,36 @@
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+ ❯ apps/web/tests/components.test.tsx (23 tests | 2 failed | 21 skipped) 153ms
+   ❯ Accessible shared presentation (17)
+     × disables next when the page claims more results but has no usable cursor (null) 94ms
+     × disables next when the page claims more results but has no usable cursor () 58ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/tests/components.test.tsx > Accessible shared presentation > disables next when the page claims more results but has no usable cursor (null)
+ FAIL  apps/web/tests/components.test.tsx > Accessible shared presentation > disables next when the page claims more results but has no usable cursor ()
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ apps/web/tests/components.test.tsx:264:35
+    262|         const initiallyDisabled=(next as HTMLButtonElement).disabled;
+    263|         await user.click(next);
+    264|         expect(initiallyDisabled).toBe(true);
+       |                                   ^
+    265|         expect(screen.getByLabelText('Bộ lọc')).toHaveTextContent('sta…
+    266|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 21 skipped (23)
+   Start at  02:12:44
+   Duration  1.58s (import 49%, environment 23%, transform 12%, tests 11%, setup 5%)
+

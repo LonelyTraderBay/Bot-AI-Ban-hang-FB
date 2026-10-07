@@ -1,0 +1,49 @@
+{
+  "id": "S15-browser-readiness-after-panel-fix-20261007",
+  "date": "2026-10-07",
+  "scope": "Paired browser readiness evidence for the marked Imports alert and confirmed shared Panel boundary consumers",
+  "imports": {
+    "result": "PASS",
+    "passed": 2,
+    "engines": ["Chromium", "Firefox"],
+    "route": "/s/shop-demo/imports",
+    "viewportCssPx": { "width": 806, "height": 884 },
+    "observedCssPx": { "alertBottom": 150, "firstControlTop": 174, "controlClearance": 24, "firstLabelTop": 165, "labelClearance": 15, "documentWidth": 806 },
+    "pageErrors": 0,
+    "conclusion": "No overlap is reproduced at the marked viewport; measured clearances match the existing shared shell role."
+  },
+  "pairedPanelCases": {
+    "finance": {
+      "before": "S11-finance-before-fix-20261007.json",
+      "after": "S11-shared-panel-after-fix-20261007.json",
+      "beforeGapsCssPx": { "width390": [32, 32, 32], "width806": [40, 40, 40], "width1440": [40, 40, 40] },
+      "afterGapsCssPx": { "width390": [16, 16, 16], "width806": [16, 16, 16], "width1440": [16, 16, 16] },
+      "result": "paired PASS; Chromium and Firefox"
+    },
+    "fulfillmentR42": {
+      "before": "S11-fulfillment-panel-before-fix-20261007.json",
+      "after": "S11-shared-panel-after-fix-20261007.json",
+      "beforeGapsCssPx": { "width390": 32, "width806": 40, "width1440": 40 },
+      "afterGapsCssPx": { "width390": 16, "width806": 16, "width1440": 16 },
+      "result": "paired PASS; Chromium and Firefox"
+    }
+  },
+  "collectorGuards": [
+    "Exact route URL and exact main/Panel headings before sampling.",
+    "Required controls visible for Imports and Fulfillment; Finance waits for each target heading and retained header action.",
+    "Minimum sample counts: 9 Finance boundaries and 3 Fulfillment boundaries; page errors must be empty.",
+    "Assertions cover body top inset, responsive inline/bottom inset, wrap-aware header bottom, and 16px boundary tolerance."
+  ],
+  "remaining": [
+    "Positive browser collector cases for distinct nested surface, conditional/fragment ancestry, and additional wrapped action states beyond current Finance are still open.",
+    "Whole route/state closure and full rebuilt-demo E2E remain S19 work."
+  ],
+  "sha256": {
+    "apps/web/src/app/Shell.tsx": "54062999115C0D16097DD715C9D3D089D9EE4F11E40220636B1F67028E96D00D",
+    "apps/web/src/modules/finance/index.tsx": "C979A9CD6198A04D94C62EE4DA902932E09BAA55F9B010E493FAED43C32CE061",
+    "apps/web/src/modules/fulfillment/index.tsx": "F890FF4642778F4CCDEFE799C97FA80121AED6AD5539684D2AE7DE22607A8418",
+    "tests/ui-catalog-layout.spec.ts": "DAD7B7C9C4FB9F4B4CCA3E41EA4AF4AE7CB3C1758DB3376901F31C31649C55A5",
+    "tests/ui-finance-layout.spec.ts": "B449E71D03934BFC5AB94AFA1B6AE5300BC6A4313409E4A6D4A55B3BFBD97D46",
+    "tests/ui-panel-layout.spec.ts": "6BC207480E1AE6AD33FCB01DC349798F5C01D0B349CAEC5FC5B81AC81457BE1B"
+  }
+}

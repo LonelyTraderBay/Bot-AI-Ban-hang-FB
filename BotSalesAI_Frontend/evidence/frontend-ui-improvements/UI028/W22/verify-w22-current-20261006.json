@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W22",
+  "date": "2026-10-06",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "owner": "apps/web/src/modules/workspace/index.tsx",
+  "routes": ["R01", "R02", "R03", "R32", "R33", "R34", "R35", "R36"],
+  "status": "DONE",
+  "source": {
+    "beforeSha256": "a59f54d27b4973fd8e015b129e1756748ba325cf85e99a35c636623f773cd43d",
+    "afterSha256": "9b974c488fdc41bc18f7ae6f5d56970df76c62c59753f63dc46961eed3a37d2d",
+    "sharedLayoutBeforeSha256": "02365c3c7fcb50c60707d3a4cb205537a7ed4dbd8a9975bf8a4fb80e00de9b06",
+    "sharedLayoutAfterSha256": "6970c56454d90b6e07b1614962f1c12bb7b095328bb5a8ad96b38163f2f273ee",
+    "routeManifestOpenapiUxTokensAndComponentsUnchanged": true,
+    "behaviorContractChanged": false
+  },
+  "spacing": {
+    "reportBefore": "layout-before-spacing-current-20261006.json",
+    "reportAfter": "layout-after-spacing-current-20261006.json",
+    "totalBefore": 139,
+    "totalAfter": 102,
+    "ownerFindingsBefore": 37,
+    "ownerFindingsAfter": 0,
+    "removed": 37,
+    "added": 0,
+    "identityOrCountChangesOutsideOwner": 0,
+    "exceptionsChanged": false,
+    "globalStrictGate": "FAIL_REMAINING_W23_W25_DEBT"
+  },
+  "render": {
+    "browser": "Chromium",
+    "beforeObservations": 16,
+    "afterObservations": 16,
+    "viewports": ["390x844", "1280x900"],
+    "sameRoutesStatesAndViewports": true,
+    "apiWrites": 0,
+    "pageErrors": 0,
+    "documentHorizontalOverflowObservations": 0,
+    "notes": [
+      "Tables may use their documented internal horizontal scroll region; the measured document itself did not overflow.",
+      "R02 and auth surfaces now follow the shared responsive page/auth inset roles.",
+      "R35 uses the shared Panel header/body inset contract, removing the former duplicate top inset after titled headers.",
+      "SPC-048 reference review corrected the initial R17/R20 misclassification before W22 closure."
+    ]
+  },
+  "targetedE2E": {
+    "result": "PASS",
+    "total": 26,
+    "chromium": 13,
+    "firefox": 13,
+    "coverage": [
+      {"spec": "tests/ui-workspace-layout.spec.ts", "total": 4, "chromium": 2, "firefox": 2, "focus": "8 routes at 320/390/768/1280/1440 and team/privacy dialog bounds"},
+      {"spec": "tests/fe009.spec.ts", "total": 18, "chromium": 9, "firefox": 9, "focus": "onboarding, checklist, consent, audit, team membership and privacy requests plus related route flows"},
+      {"spec": "tests/ui021-permission-edge.spec.ts", "total": 4, "chromium": 2, "firefox": 2, "focus": "privacy customer-link permission visibility"}
+    ]
+  },
+  "orderedVerifyEquivalent": {
+    "packageScript": "verify",
+    "npmLauncher": "NOT_RUN_SUCCESSFULLY: npm.cmd run verify exits before nested scripts because cmd cannot resolve nested npm in this host environment; attempts are preserved separately",
+    "execution": "Package verify legs were executed in order with the bundled Node runtime; the initial Vite invocation from repository root was corrected and rerun from apps/web.",
+    "generator": "PASS: 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "source": "PASS: 66 files, 220 operation references, 54 routes; checker fixtures 3/3",
+    "boundaries": "PASS: 453 imports, 10/10 negative fixtures",
+    "lint": "PASS: ESLint --max-warnings 0",
+    "typecheck": "PASS",
+    "domainAndNetwork": "PASS: 88/88 (75 simulator + 13 network)",
+    "unit": "PASS: 10 files, 88/88 tests",
+    "productionBuild": "PASS: 2056 modules",
+    "layoutFixtures": "PASS: 9/9",
+    "finalStrictLayout": "EXIT_1: 102 SPACING_LITERAL findings remain, all owned by W23 Dashboard, W24 Inbox and W25 Reports"
+  },
+  "profileReferenceAudit": {
+    "initialMisclassifications": [
+      {"route": "R03", "initialReference": "R17", "finding": "R17 is the orders collection, not a form"},
+      {"route": "R34", "initialReference": "R20", "finding": "R20 is a cash-flow summary, not a collection/table composition"}
+    ],
+    "correctedReferences": [
+      {"route": "R03", "reference": "SPC-048 semantic auth/form profile; R01 only for shared auth shell"},
+      {"route": "R34", "reference": "W21 R38 toolbar/DataTable/pager collection profile"}
+    ],
+    "guardrailAdded": "SPC-048 now requires route ID/path/title plus capture/source proof; shared domain/module/component alone is insufficient; a semantic profile table is available when no matching route exists."
+  },
+  "evidence": {
+    "preEditContract": "design-contract-pre-spacing-current-20261006.md",
+    "profileVisualReview": "visual-source-review-current-20261006.md",
+    "renderBefore": "render-before-spacing-current-20261006.json",
+    "renderAfter": "render-after-spacing-current-20261006.json",
+    "layoutDelta": "layout-delta-current-20261006.json",
+    "targetedLayoutE2E": "targeted-layout-e2e-current-20261006.log",
+    "targetedWorkspaceE2E": "targeted-workspace-e2e-current-20261006.log",
+    "targetedPermissionE2E": "targeted-permission-e2e-current-20261006.log",
+    "orderedVerifyLog": "direct-verify-current-20261006.log",
+    "npmVerifyLaunchDiagnostics": ["npm-verify-launch-diagnostic-current-20261006.log", "npm-verify-launch-retry-diagnostic-current-20261006.log"]
+  },
+  "tracker": {
+    "ui028Checkpoint": "2/5 unchanged",
+    "feLedgerChanged": false,
+    "fullProductTrackerChanged": false,
+    "generatedImplementationPlanEdited": false
+  },
+  "limitations": [
+    "Local React/browser evidence uses the synthetic demo/mock API only.",
+    "No Backend/provider/hosted CI/staging/production, screen-reader speech or owner acceptance is established.",
+    "The strict whole-app spacing scan remains red until W23-W25 are completed."
+  ]
+}

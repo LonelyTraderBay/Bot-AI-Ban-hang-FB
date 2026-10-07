@@ -1,0 +1,152 @@
+{
+  "capturedAt": "2026-10-05T13:36:46.907Z",
+  "task": "UI028.W09",
+  "scope": "Frontend shell, fallbacks, navigation, demo controls and route error composition only",
+  "verdict": "PASS_WITH_KNOWN_GLOBAL_MIGRATION_DEBT",
+  "ui": "PASS",
+  "architecture": "PASS_WITH_KNOWN_GLOBAL_MIGRATION_DEBT",
+  "browser": {
+    "engine": "Chromium",
+    "cases": 4,
+    "routes": [
+      "/s/shop-demo/overview",
+      "/s/shop-demo/imports",
+      "/workspaces",
+      "R13 API error composition"
+    ],
+    "viewports": [
+      "1280x900",
+      "390x844"
+    ],
+    "sourceRender": "render-after-source-edit-v3-current-20261005.json"
+  },
+  "layoutDebt": {
+    "before": 448,
+    "after": 396,
+    "resolved": 52,
+    "newFindings": 0,
+    "touchedFileFindings": 0,
+    "unknownStyleSources": 0
+  },
+  "checks": [
+    {
+      "name": "generate:check",
+      "command": "node scripts/generate.mjs --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "typecheck",
+      "command": "node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "lint",
+      "command": "node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "boundaries",
+      "command": "node scripts/check-boundaries.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "source-check",
+      "command": "node scripts/check-source.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "source-checker-fixtures",
+      "command": "node --test tests/source-checker.test.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "layout-checker-fixtures",
+      "command": "node --test tests/layout-checker.test.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "ui-shell-layout-playwright",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui-shell-layout.spec.ts --project=chromium",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "route-error-composition-playwright-R13",
+      "command": "node node_modules/@playwright/test/cli.js test tests/states/route-error-composition.spec.ts --project=chromium",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "production-build",
+      "command": "node ../../node_modules/vite/bin/vite.js build --mode production",
+      "cwd": "apps/web",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "demo-build",
+      "command": "node ../../node_modules/vite/bin/vite.js build --mode demo --outDir dist-demo",
+      "cwd": "apps/web",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "strict-layout-scan",
+      "command": "node scripts/check-layout.mjs",
+      "cwd": ".",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "status": "EXPECTED_MIGRATION_DEBT"
+    }
+  ],
+  "sourceSha256": {
+    "apps/web/src/app/Shell.tsx": "46d9a6015c733035212a36571249aed97d5b7407158f6f0e46de444fa1962be7",
+    "apps/web/src/app/router.tsx": "8f46f9e2942cf54ee9edafc9268c5e630f8cb31ab5e52d22f22274ca9c27c69e",
+    "apps/web/src/app/ScopeEvents.tsx": "65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219",
+    "apps/web/src/app/CommandRecovery.tsx": "26d8b18891ab26986655bb5396db2d1198eb0f38f784464d27de04669dd0b3f9",
+    "apps/web/src/app/feedback.tsx": "8802b649ee7eb563b37ae015331434ac385799834a8338d8b43f11c2da73d19c",
+    "apps/web/src/shared/ui/layout.ts": "59c218da90f3c423b1ba84ec8aa2d1d4f1dd54b482ee5e76604c8b72ccfa37dc",
+    "tests/ui-shell-layout.spec.ts": "006372e66ef61ed508e9d47e04da667e874dadd81fe2ab677e8152feadac0b35"
+  },
+  "limitations": [
+    "Strict application-wide layout scan intentionally remains nonzero because 396 SPACING_LITERAL findings are assigned to module work W10-W25.",
+    "Local Chromium and synthetic demo API evidence only; no backend, hosted CI, staging, production deployment or owner acceptance is claimed."
+  ],
+  "artifacts": [
+    "design-contract-pre-code-20261005.md",
+    "baseline-before-source-edit-current-20261005.json",
+    "layout-report-before-source-edit-current-20261005.json",
+    "layout-report-after-source-edit-v3-current-20261005.json",
+    "layout-report-delta-v3-current-20261005.json",
+    "render-after-source-edit-v3-current-20261005.json",
+    "semantic-role-register-current-20261005.md",
+    "verify-w09-current-20261005.log"
+  ]
+}

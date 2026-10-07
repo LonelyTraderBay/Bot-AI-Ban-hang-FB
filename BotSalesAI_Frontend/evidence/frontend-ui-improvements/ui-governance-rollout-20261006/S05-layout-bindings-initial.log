@@ -1,0 +1,79 @@
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (909.227ms)
+✔ rejects a CSS spacing role without a declared shared owner (949.7167ms)
+✖ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (903.582ms)
+✖ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (909.2813ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (929.9376ms)
+✖ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (1760.8541ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (2572.361ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (3464.2555ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (1730.3214ms)
+✔ report mode inventories migration debt without turning findings into PASS (860.7133ms)
+✔ layout gate rejects raw spacing on const alias of MUI component (918.4123ms)
+✔ layout gate rejects parameter shadow of canonical layout name (949.2851ms)
+✔ layout gate follows genuine renamed styled factory (903.6639ms)
+✔ layout gate accepts canonical namespace, element access and barrel alias (900.7263ms)
+✔ layout gate does not mistake local component named Stack for MUI (946.1321ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 12
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15049.0345
+
+✖ failing tests:
+
+test at tests\layout-checker.test.mjs:103:1
+✖ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (903.582ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  4 !== 6
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/layout-checker.test.mjs:111:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 4,
+    expected: 6,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\layout-checker.test.mjs:115:1
+✖ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (909.2813ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(report.findings.some(finding => finding.file.endsWith('index.tsx') && finding.property === 'padding' && finding.code === 'SPACING_LITERAL'))
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/layout-checker.test.mjs:139:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\layout-checker.test.mjs:160:1
+✖ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (1760.8541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'PASS' !== 'FAIL'
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/layout-checker.test.mjs:169:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'PASS',
+    expected: 'FAIL',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

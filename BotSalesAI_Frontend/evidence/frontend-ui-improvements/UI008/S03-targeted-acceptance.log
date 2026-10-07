@@ -1,0 +1,160 @@
+[WebServer] (node:21252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+✔ canonical contracts validate and generate the API base path from OpenAPI (20.5594ms)
+✔ generated operation registry preserves required and optional query parameter metadata (10.7751ms)
+✔ rejects unresolved schema references before generation (18.9356ms)
+✔ rejects missing API version and a server URL outside same-origin path form (16.2727ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (15.8331ms)
+✔ detects a stale generated file and accepts it after regeneration (1.8498ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (14.3548ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (14.2218ms)
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (11.2606ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (23.0298ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (23.4339ms)
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.3054ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.391ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.4137ms)
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.5595ms)
+✔ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (0.1976ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.1596ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.1018ms)
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.5819ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.1628ms)
+✔ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (0.9746ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.1286ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (0.4916ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (155.7411ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (150.6997ms)
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-22032-cdcbd85a-495c-4af6-8260-19842cd57fe3\deps\react-dom_client.js?v=378d8b06 as it exceeds the max of 500KB.
+
+Running 8 tests using 1 worker
+
+(node:41480) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ROUTE_EMPTY_COMPOSITION_PROGRESS=3/11
+ROUTE_EMPTY_COMPOSITION_PROGRESS=6/11
+ROUTE_EMPTY_COMPOSITION_PROGRESS=9/11
+ROUTE_EMPTY_COMPOSITION=11/11 RESULT=PASS
+  ok 1 [chromium] › tests\states\route-empty-composition.spec.ts:27:1 › empty collection responses render accessible empty states on canonical list routes (3.3s)
+  ok 2 [chromium] › tests\ui008-integration-empty.spec.ts:53:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA (1.3s)
+  ok 3 [chromium] › tests\ui008-integration-empty.spec.ts:71:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action (1.2s)
+  ok 4 [chromium] › tests\ui008-integration-empty.spec.ts:86:1 › UI008 R29 pending channel query stays loading until its response arrives (1.7s)
+  ok 5 [chromium] › tests\ui008-integration-empty.spec.ts:104:1 › UI008 R29 forbidden channel query is not presented as empty or retryable (778ms)
+  ok 6 [chromium] › tests\ui008-integration-empty.spec.ts:118:1 › UI008 R29 503 remains an error and recovers through its retry control (2.2s)
+  ok 7 [chromium] › tests\ui008-integration-empty.spec.ts:139:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA (818ms)
+  ok 8 [chromium] › tests\ui008-integration-empty.spec.ts:157:1 › UI008 R30 read-only bot_admin sees the empty state without an add action (1.2s)
+
+  8 passed (15.6s)

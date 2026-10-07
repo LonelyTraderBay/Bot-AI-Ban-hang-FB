@@ -1,0 +1,113 @@
+
+> botsales-frontend@0.1.0 verify
+> npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs
+
+{
+  "checkedAt": "2026-10-02T09:46:56.438Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "environment compiler (not installed project version)",
+  "files": 62,
+  "operationCalls": 227,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-02T09:46:58.190Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 62,
+  "imports": 410,
+  "negativeFixtures": "Boundary fixtures: PASS 8/8 scenarios (allowed import, alias, relative, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> botsales-frontend@0.1.0 test:domain
+> node scripts/test-domain.mjs
+
+{"status":"PASS","simulatorChecks":75,"networkChecks":13,"networkHandlers":210,"passed":88,"operations":89,"node":"v24.19.0","typescript":"5.9.2"}
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/AppData/Local/Temp/botsales-architecture-20261002-bIZMa5
+
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.waitFor: Timeout 20000ms exceeded.
+Call log:
+[2m  - waiting for locator('main#main-content h1') to be visible[22m
+
+    at runDesignBrowserAudit (C:\Users\Joker-PC\AppData\Local\Temp\botsales-architecture-20261002-bIZMa5\tests\design\browser-audit.mjs:42:52)
+    at async file:///C:/Users/Joker-PC/AppData/Local/Temp/botsales-architecture-20261002-bIZMa5/tests/design/run-browser-audit.mjs:3:16 {
+  log: [ "  - waiting for locator('main#main-content h1') to be visible" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0
+ ❯ apps/web/tests/components.test.tsx (17 tests | 1 failed) 22300ms
+   ❯ Accessible shared presentation (11)
+     × reflows the real mock application from 320px to 1440px and passes browser axe 21302ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/tests/components.test.tsx > Accessible shared presentation > reflows the real mock application from 320px to 1440px and passes browser axe
+Error: Command failed: C:\Program Files\nodejs\node.exe C:\Users\Joker-PC\AppData\Local\Temp\botsales-architecture-20261002-bIZMa5\tests\design\run-browser-audit.mjs
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.waitFor: Timeout 20000ms exceeded.
+Call log:
+[2m  - waiting for locator('main#main-content h1') to be visible[22m
+
+    at runDesignBrowserAudit (C:\Users\Joker-PC\AppData\Local\Temp\botsales-architecture-20261002-bIZMa5\tests\design\browser-audit.mjs:42:52)
+    at async file:///C:/Users/Joker-PC/AppData/Local/Temp/botsales-architecture-20261002-bIZMa5/tests/design/run-browser-audit.mjs:3:16 {
+  log: [ "  - waiting for locator('main#main-content h1') to be visible" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0
+
+ ❯ runDesignBrowserAudit tests/design/browser-audit.mjs:42:52
+ ❯ apps/web/tests/components.test.tsx:218:27
+    216|
+    217|     it('reflows the real mock application from 320px to 1440px and pas…
+    218|         const auditOutput=execFileSync(process.execPath,[path.join(pro…
+       |                           ^
+    219|         const reportLine=auditOutput.split(/\r?\n/).find(line=>line.st…
+    220|         expect(reportLine).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  1 failed | 70 passed (71)
+   Start at  16:47:06
+   Duration  23.38s (tests 83%, environment 8%, import 4%, transform 2%, setup 2%)
+

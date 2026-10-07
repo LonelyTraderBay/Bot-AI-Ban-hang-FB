@@ -1,0 +1,176 @@
+
+Running 146 tests using 1 worker
+
+
+
+(node:10492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/146] [chromium] › tests\fe010.spec.ts:37:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP
+[2/146] [chromium] › tests\fe010.spec.ts:107:1 › product update sends If-Match and keeps edits visible after a 412 conflict
+[3/146] [chromium] › tests\fe010.spec.ts:125:1 › warehouse role can read catalog products but cannot edit product fields or price cost data
+[4/146] [chromium] › tests\fe010.spec.ts:134:1 › categories create, search, update with a version, and render cursor pagination
+[5/146] [chromium] › tests\fe010.spec.ts:163:1 › CSV preview reports row-level errors and commits only valid product rows
+[6/146] [chromium] › tests\fe010.spec.ts:235:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible
+[7/146] [chromium] › tests\fe010.spec.ts:267:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview
+[8/146] [chromium] › tests\fe010.spec.ts:280:1 › demo upload rejects files over 5 MB before making an upload request
+[9/146] [chromium] › tests\fe010.spec.ts:291:1 › product category lookup pages the full collection and preserves the selected category while editing
+[chromium] › tests\fe010.spec.ts:291:1 › product category lookup pages the full collection and preserves the selected category while editing
+UI005 acceptance: {"categoryTotal":105,"createCategoryId":"cat-2","editCategoryId":"cat-0","categoryRequests":18}
+
+[10/146] [chromium] › tests\fe011.spec.ts:35:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+[11/146] [chromium] › tests\fe011.spec.ts:54:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+[12/146] [chromium] › tests\fe011.spec.ts:92:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+[13/146] [chromium] › tests\fe011.spec.ts:120:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+[14/146] [chromium] › tests\fe011.spec.ts:136:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[15/146] [chromium] › tests\fe011.spec.ts:154:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source
+[16/146] [chromium] › tests\fe011.spec.ts:176:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+[17/146] [chromium] › tests\fe011.spec.ts:199:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+[18/146] [chromium] › tests\fe012.spec.ts:35:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[19/146] [chromium] › tests\fe012.spec.ts:93:1 › FE012 demo address choice is labeled synthetic and completes the mock order flow
+[20/146] [chromium] › tests\fe012.spec.ts:122:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[21/146] [chromium] › tests\fe012.spec.ts:182:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+[22/146] [chromium] › tests\fe012.spec.ts:196:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+[23/146] [chromium] › tests\fe012.spec.ts:208:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[24/146] [chromium] › tests\fe012.spec.ts:254:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[25/146] [chromium] › tests\fe012.spec.ts:274:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[26/146] [chromium] › tests\fe012.spec.ts:298:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[27/146] [chromium] › tests\fe012.spec.ts:351:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[28/146] [chromium] › tests\fe012.spec.ts:358:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[29/146] [chromium] › tests\fe017.spec.ts:24:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+[30/146] [chromium] › tests\fe017.spec.ts:115:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+[31/146] [chromium] › tests\fe017.spec.ts:154:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+[32/146] [chromium] › tests\fe017.spec.ts:187:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+[33/146] [chromium] › tests\fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+[34/146] [chromium] › tests\fe017.spec.ts:242:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+[35/146] [chromium] › tests\fe017.spec.ts:263:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+[36/146] [chromium] › tests\fe017.spec.ts:278:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+[37/146] [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+[38/146] [chromium] › tests\fe018.spec.ts:125:1 › FE018.S01 maps routes and operations to the canonical OpenAPI permissions
+[39/146] [chromium] › tests\fe018.spec.ts:142:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict
+[40/146] [chromium] › tests\fe018.spec.ts:173:1 › FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft
+[41/146] [chromium] › tests\fe018.spec.ts:197:1 › FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary
+[42/146] [chromium] › tests\fe018.spec.ts:227:1 › FE018.AC03 playground sends no external message and preserves unknown cost and token values
+[43/146] [chromium] › tests\fe018.spec.ts:249:1 › FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer
+[44/146] [chromium] › tests\fe018.spec.ts:275:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion
+[45/146] [chromium] › tests\fe018.spec.ts:289:1 › FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot
+[46/146] [chromium] › tests\fe018.spec.ts:330:1 › FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results
+[47/146] [chromium] › tests\fe018.spec.ts:358:1 › FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions
+[48/146] [chromium] › tests\fe018.spec.ts:390:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+[49/146] [chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+[chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+UI004_25_ACCEPTANCE={"total":25,"pageSizes":[20,5],"cursor":"evaluation-10016","oldestRecord":"evaluation-10001","oldestReachable":true,"detailPreservedCursor":true,"browserBackRestoredFirstPage":true,"searchResetCursor":true}
+
+[50/146] [chromium] › tests\fe018.spec.ts:452:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+[chromium] › tests\fe018.spec.ts:452:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+UI004_105_ACCEPTANCE={"total":105,"pageSizes":[20,20,20,20,20,5],"pagesVisited":6,"cursorRequests":["evaluation-10256","evaluation-10196","evaluation-10136","evaluation-10076","evaluation-10016"],"uniqueRecords":105,"oldestRecord":"evaluation-10001","oldestReachable":true,"failedCursorRetainedForRetry":"evaluation-10196","errorShowsNoFabricatedRows":true,"retrySucceeded":true}
+
+[51/146] [chromium] › tests\ui006-lookups.spec.ts:68:1 › UI006.C05 lookup and table cursors reach records after 150 synthetic suppliers, offers, and orders
+[52/146] [chromium] › tests\ui006-lookups.spec.ts:214:1 › UI006.C04 bounded previews disclose their sample and link to full collections
+[53/146] [chromium] › tests\ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry
+[54/146] [chromium] › tests\ui007-query-states.spec.ts:30:1 › UI007 secondary order query loads independently while the customer profile remains available
+[55/146] [chromium] › tests\ui007-query-states.spec.ts:60:1 › UI007 order query 503 is isolated from the primary customer query and retries only that query
+[56/146] [chromium] › tests\ui007-query-states.spec.ts:94:1 › UI007 forbidden order query is an access state and a successful empty query is distinct
+[57/146] [chromium] › tests\ui007-query-states.spec.ts:114:1 › UI007 supplier and offer failures keep purchase suggestions visible and have operation-specific recovery
+[58/146] [chromium] › tests\ui007-query-states.spec.ts:150:1 › UI007 auto-send budget query is lazy, permission-aware, and blocks an unverified budget
+[59/146] [chromium] › tests\ui009-scope-regression.spec.ts:23:1 › UI009 delayed customer orders from the previous shop cannot leak into the new shop profile
+[60/146] [chromium] › tests\ui010-dialog-draft.spec.ts:15:1 › UI010 a discarded confirmation reason is cleared before the dialog opens again
+[61/146] [chromium] › tests\ui011-date-time.spec.ts:16:1 › UI011 report defaults use the active shop calendar month at a UTC month boundary
+[62/146] [chromium] › tests\ui011-date-time.spec.ts:29:1 › UI011 journal effective date defaults to the active shop calendar date
+[63/146] [chromium] › tests\ui011-date-time.spec.ts:41:1 › UI011 shipment event input and API instant use the shop timezone, not browser timezone
+[64/146] [chromium] › tests\ui013-url-state.spec.ts:19:1 › UI013 reconciliation tab deep links and survives refresh; malformed tab safely falls back
+[65/146] [chromium] › tests\ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state
+[66/146] [chromium] › tests\ui013-url-state.spec.ts:70:1 › UI013 report type and export date filters are deep-linkable, refreshable and malformed values fall back safely
+[67/146] [chromium] › tests\ui021-permission-edge.spec.ts:4:1 › privacy page keeps the customers link when the destination permission is present
+[68/146] [chromium] › tests\ui021-permission-edge.spec.ts:19:1 › privacy page hides the customers link when the destination permission is missing
+[69/146] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:36:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+[70/146] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:90:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity
+[71/146] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:166:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation
+[72/146] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:202:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+[73/146] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:244:1 › FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps
+
+(node:64312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[74/146] [firefox] › tests\fe010.spec.ts:37:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP
+[75/146] [firefox] › tests\fe010.spec.ts:107:1 › product update sends If-Match and keeps edits visible after a 412 conflict
+[76/146] [firefox] › tests\fe010.spec.ts:125:1 › warehouse role can read catalog products but cannot edit product fields or price cost data
+[77/146] [firefox] › tests\fe010.spec.ts:134:1 › categories create, search, update with a version, and render cursor pagination
+[78/146] [firefox] › tests\fe010.spec.ts:163:1 › CSV preview reports row-level errors and commits only valid product rows
+[79/146] [firefox] › tests\fe010.spec.ts:235:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible
+[80/146] [firefox] › tests\fe010.spec.ts:267:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview
+[81/146] [firefox] › tests\fe010.spec.ts:280:1 › demo upload rejects files over 5 MB before making an upload request
+[82/146] [firefox] › tests\fe010.spec.ts:291:1 › product category lookup pages the full collection and preserves the selected category while editing
+[firefox] › tests\fe010.spec.ts:291:1 › product category lookup pages the full collection and preserves the selected category while editing
+UI005 acceptance: {"categoryTotal":105,"createCategoryId":"cat-2","editCategoryId":"cat-0","categoryRequests":18}
+
+[83/146] [firefox] › tests\fe011.spec.ts:35:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+[84/146] [firefox] › tests\fe011.spec.ts:54:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+[85/146] [firefox] › tests\fe011.spec.ts:92:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+[86/146] [firefox] › tests\fe011.spec.ts:120:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+[87/146] [firefox] › tests\fe011.spec.ts:136:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[88/146] [firefox] › tests\fe011.spec.ts:154:1 › FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source
+[89/146] [firefox] › tests\fe011.spec.ts:176:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+[90/146] [firefox] › tests\fe011.spec.ts:199:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+[91/146] [firefox] › tests\fe012.spec.ts:35:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[92/146] [firefox] › tests\fe012.spec.ts:93:1 › FE012 demo address choice is labeled synthetic and completes the mock order flow
+[93/146] [firefox] › tests\fe012.spec.ts:122:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[94/146] [firefox] › tests\fe012.spec.ts:182:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+[95/146] [firefox] › tests\fe012.spec.ts:196:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+[96/146] [firefox] › tests\fe012.spec.ts:208:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[97/146] [firefox] › tests\fe012.spec.ts:254:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[98/146] [firefox] › tests\fe012.spec.ts:274:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[99/146] [firefox] › tests\fe012.spec.ts:298:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[100/146] [firefox] › tests\fe012.spec.ts:351:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[101/146] [firefox] › tests\fe012.spec.ts:358:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[102/146] [firefox] › tests\fe017.spec.ts:24:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+[103/146] [firefox] › tests\fe017.spec.ts:115:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+[104/146] [firefox] › tests\fe017.spec.ts:154:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+[105/146] [firefox] › tests\fe017.spec.ts:187:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+[106/146] [firefox] › tests\fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+[107/146] [firefox] › tests\fe017.spec.ts:242:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+[108/146] [firefox] › tests\fe017.spec.ts:263:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+[109/146] [firefox] › tests\fe017.spec.ts:278:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+[110/146] [firefox] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+[111/146] [firefox] › tests\fe018.spec.ts:125:1 › FE018.S01 maps routes and operations to the canonical OpenAPI permissions
+[112/146] [firefox] › tests\fe018.spec.ts:142:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict
+[113/146] [firefox] › tests\fe018.spec.ts:173:1 › FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft
+[114/146] [firefox] › tests\fe018.spec.ts:197:1 › FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary
+[115/146] [firefox] › tests\fe018.spec.ts:227:1 › FE018.AC03 playground sends no external message and preserves unknown cost and token values
+[116/146] [firefox] › tests\fe018.spec.ts:249:1 › FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer
+[117/146] [firefox] › tests\fe018.spec.ts:275:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion
+[118/146] [firefox] › tests\fe018.spec.ts:289:1 › FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot
+[119/146] [firefox] › tests\fe018.spec.ts:330:1 › FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results
+[120/146] [firefox] › tests\fe018.spec.ts:358:1 › FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions
+[121/146] [firefox] › tests\fe018.spec.ts:390:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+[122/146] [firefox] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+[firefox] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+UI004_25_ACCEPTANCE={"total":25,"pageSizes":[20,5],"cursor":"evaluation-10016","oldestRecord":"evaluation-10001","oldestReachable":true,"detailPreservedCursor":true,"browserBackRestoredFirstPage":true,"searchResetCursor":true}
+
+[123/146] [firefox] › tests\fe018.spec.ts:452:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+[firefox] › tests\fe018.spec.ts:452:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+UI004_105_ACCEPTANCE={"total":105,"pageSizes":[20,20,20,20,20,5],"pagesVisited":6,"cursorRequests":["evaluation-10256","evaluation-10196","evaluation-10136","evaluation-10076","evaluation-10016"],"uniqueRecords":105,"oldestRecord":"evaluation-10001","oldestReachable":true,"failedCursorRetainedForRetry":"evaluation-10196","errorShowsNoFabricatedRows":true,"retrySucceeded":true}
+
+[124/146] [firefox] › tests\ui006-lookups.spec.ts:68:1 › UI006.C05 lookup and table cursors reach records after 150 synthetic suppliers, offers, and orders
+[125/146] [firefox] › tests\ui006-lookups.spec.ts:214:1 › UI006.C04 bounded previews disclose their sample and link to full collections
+[126/146] [firefox] › tests\ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry
+[127/146] [firefox] › tests\ui007-query-states.spec.ts:30:1 › UI007 secondary order query loads independently while the customer profile remains available
+[128/146] [firefox] › tests\ui007-query-states.spec.ts:60:1 › UI007 order query 503 is isolated from the primary customer query and retries only that query
+[129/146] [firefox] › tests\ui007-query-states.spec.ts:94:1 › UI007 forbidden order query is an access state and a successful empty query is distinct
+[130/146] [firefox] › tests\ui007-query-states.spec.ts:114:1 › UI007 supplier and offer failures keep purchase suggestions visible and have operation-specific recovery
+[131/146] [firefox] › tests\ui007-query-states.spec.ts:150:1 › UI007 auto-send budget query is lazy, permission-aware, and blocks an unverified budget
+[132/146] [firefox] › tests\ui009-scope-regression.spec.ts:23:1 › UI009 delayed customer orders from the previous shop cannot leak into the new shop profile
+[133/146] [firefox] › tests\ui010-dialog-draft.spec.ts:15:1 › UI010 a discarded confirmation reason is cleared before the dialog opens again
+[134/146] [firefox] › tests\ui011-date-time.spec.ts:16:1 › UI011 report defaults use the active shop calendar month at a UTC month boundary
+[135/146] [firefox] › tests\ui011-date-time.spec.ts:29:1 › UI011 journal effective date defaults to the active shop calendar date
+[136/146] [firefox] › tests\ui011-date-time.spec.ts:41:1 › UI011 shipment event input and API instant use the shop timezone, not browser timezone
+[137/146] [firefox] › tests\ui013-url-state.spec.ts:19:1 › UI013 reconciliation tab deep links and survives refresh; malformed tab safely falls back
+[138/146] [firefox] › tests\ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state
+[139/146] [firefox] › tests\ui013-url-state.spec.ts:70:1 › UI013 report type and export date filters are deep-linkable, refreshable and malformed values fall back safely
+[140/146] [firefox] › tests\ui021-permission-edge.spec.ts:4:1 › privacy page keeps the customers link when the destination permission is present
+[141/146] [firefox] › tests\ui021-permission-edge.spec.ts:19:1 › privacy page hides the customers link when the destination permission is missing
+[142/146] [firefox] › tests\vertical-slices\fe022-flows.spec.ts:36:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+[143/146] [firefox] › tests\vertical-slices\fe022-flows.spec.ts:90:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity
+[144/146] [firefox] › tests\vertical-slices\fe022-flows.spec.ts:166:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation
+[145/146] [firefox] › tests\vertical-slices\fe022-flows.spec.ts:202:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+[146/146] [firefox] › tests\vertical-slices\fe022-flows.spec.ts:244:1 › FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps
+  146 passed (8.1m)

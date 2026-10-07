@@ -1,0 +1,86 @@
+[WebServer] (node:13948) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 14 tests using 1 worker
+
+(node:42640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-31848-6c162e76-0397-4e7b-addb-950a7426d9bb\deps\react-dom_client.js?v=78076268 as it exceeds the max of 500KB.
+  x   1 [chromium] › tests\fe015.spec.ts:49:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates (3.0m)
+(node:33204) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 [chromium] › tests\fe015.spec.ts:95:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data (2.0s)
+  ok  3 [chromium] › tests\fe015.spec.ts:116:1 › UI003 report timestamps follow the active shop timezone (3.0s)
+  ok  4 [chromium] › tests\fe015.spec.ts:173:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values (868ms)
+  ok  5 [chromium] › tests\fe015.spec.ts:201:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings (2.7s)
+  ok  6 [chromium] › tests\fe015.spec.ts:236:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (1.9s)
+  ok  7 [chromium] › tests\fe015.spec.ts:257:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions (1.8s)
+  x   8 [chromium] › tests\fe015.spec.ts:280:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page (5.0s)
+(node:41224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  9 [chromium] › tests\fe015.spec.ts:406:1 › FE015.AC03 COD settlement matches net remittance plus documented fee (4.3s)
+  ok 10 [chromium] › tests\fe015.spec.ts:440:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible (2.7s)
+  ok 11 [chromium] › tests\fe015.spec.ts:465:1 › FE015.AC03 unknown journal posting is not resent from the same draft (4.1s)
+  ok 12 [chromium] › tests\ui013-url-state.spec.ts:19:1 › UI013 reconciliation tab deep links and survives refresh; malformed tab safely falls back (4.6s)
+  ok 13 [chromium] › tests\ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state (2.5s)
+  ok 14 [chromium] › tests\ui013-url-state.spec.ts:70:1 › UI013 report type and export date filters are deep-linkable, refreshable and malformed values fall back safely (3.9s)
+
+
+  1) [chromium] › tests\fe015.spec.ts:49:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: page.waitForResponse: Test timeout of 180000ms exceeded.
+
+      53 |     await expect(from).toBeVisible();
+      54 |
+    > 55 |     const septemberResponseWait = page.waitForResponse(response => {
+         |                                        ^
+      56 |         const url = new URL(response.url());
+      57 |         return response.request().method() === 'GET' && url.pathname.endsWith('/finance/cashflow') && url.searchParams.get('from') === '2026-08-31T17:00:00.000Z' && url.searchParams.get('to') === '2026-10-01T17:00:00.000Z';
+      58 |     });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:55:40
+
+    Error Context: test-results\fe015-FE015-AC01-report-fi-8b751-ies-and-mock-API-aggregates-chromium\error-context.md
+
+    Error Context: test-results\fe015-FE015-AC01-report-fi-8b751-ies-and-mock-API-aggregates-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe015-FE015-AC01-report-fi-8b751-ies-and-mock-API-aggregates-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe015-FE015-AC01-report-fi-8b751-ies-and-mock-API-aggregates-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\fe015.spec.ts:280:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page 
+
+    Error: expect(received).toBeDefined()
+
+    Received: undefined
+
+      347 |         }
+      348 |     }
+    > 349 |     expect(caseRow).toBeDefined();
+          |                     ^
+      350 |     const bankDetailResponse = page.waitForResponse(response => response.request().method() === 'GET' && /\/bank-transactions\/[^/?]+$/.test(new URL(response.url()).pathname));
+      351 |     await caseRow!.getByRole('button', { name: 'Ghép giao dịch' }).click();
+      352 |     const bankDetail = (await bankDetailResponse).json();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:349:21
+
+    Error Context: test-results\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\error-context.md
+
+    Error Context: test-results\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\fe015.spec.ts:49:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates 
+    [chromium] › tests\fe015.spec.ts:280:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page 
+  12 passed (3.7m)

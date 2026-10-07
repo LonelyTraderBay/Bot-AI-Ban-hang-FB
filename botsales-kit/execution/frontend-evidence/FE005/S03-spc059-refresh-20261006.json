@@ -1,0 +1,373 @@
+{
+  "taskId": "FE005",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-06T06:06:00.726Z",
+  "sourceRevision": "HEAD e68cb65 on main plus current frontend working tree",
+  "expected": "The typed client uses generated contract metadata for credentials, CSRF/version/idempotency, cancellation, Problem parsing, and request/response validation; no module bypasses transport.",
+  "observed": "Registered unit command passed 93/93; focused API client tests passed 23/23. Contract metadata covers 210 operations and the sole fetch call is in the shared API client.",
+  "commandId": "unit",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / local frontend test toolchain",
+    "details": "Registered full frontend unit suite passed. A focused Vitest invocation was recorded as supplemental transport evidence; all API responses were synthetic test fixtures.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 6,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE005/S03-spc059-refresh-20261006.log",
+  "logSha256": "ea0f4e619d7590b68d2978ce86ff701243ead9bdd6d9d5f757526e92af12b936",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/app/CommandRecovery.tsx",
+      "sha256": "d0b36435907e63ed596a338c0f6e04b7869a2f698232d11995c55ef94c16d601"
+    },
+    {
+      "path": "apps/web/src/app/ScopeEvents.tsx",
+      "sha256": "65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "f52c5f9b676b583b1160f3bff4b7655cf43721a09009d5ce33a2f007a14d417f"
+    },
+    {
+      "path": "apps/web/src/app/dirty-drafts.ts",
+      "sha256": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13"
+    },
+    {
+      "path": "apps/web/src/app/feedback.tsx",
+      "sha256": "8802b649ee7eb563b37ae015331434ac385799834a8338d8b43f11c2da73d19c"
+    },
+    {
+      "path": "apps/web/src/app/i18n.ts",
+      "sha256": "535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340"
+    },
+    {
+      "path": "apps/web/src/app/locales/vi/customers.ts",
+      "sha256": "a2a880bc7aad48e156e0fe8d6cafd63a453a91187af62b398ae5c8247312e97b"
+    },
+    {
+      "path": "apps/web/src/app/locales/vi/knowledge.ts",
+      "sha256": "a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9"
+    },
+    {
+      "path": "apps/web/src/app/navigation.ts",
+      "sha256": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "8f46f9e2942cf54ee9edafc9268c5e630f8cb31ab5e52d22f22274ca9c27c69e"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "apps/web/src/mocks/auxiliary.ts",
+      "sha256": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/src/mocks/catalog.ts",
+      "sha256": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56"
+    },
+    {
+      "path": "apps/web/src/mocks/control.ts",
+      "sha256": "2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "apps/web/src/mocks/files.ts",
+      "sha256": "21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd"
+    },
+    {
+      "path": "apps/web/src/mocks/finance.ts",
+      "sha256": "c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d"
+    },
+    {
+      "path": "apps/web/src/mocks/fulfillment.ts",
+      "sha256": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/marketing-fixture.ts",
+      "sha256": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb"
+    },
+    {
+      "path": "apps/web/src/mocks/orders.ts",
+      "sha256": "c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4"
+    },
+    {
+      "path": "apps/web/src/mocks/procurement.ts",
+      "sha256": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+    },
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "sha256": "cf824f1adb9764d2e6fa7b7b7af178620203033629935496a4f6bba5ad92c398"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/import-file.ts",
+      "sha256": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "c74cc7ffdc06680a7d6350255c1bf71ccc41a7e7ea32775df8f86f881bf38433"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "790d840a250c401163970e503beb37b5e14c5541fb1f4233a494085be515caa9"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "4d081abc0d4c8eebd2089cf55bbd89990bd1834d7cc27451e9c5b81fdb3ec36a"
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "1d40fa1a16117f39e8935d3a45bf39b93588e0186a5f62af5b7e72fe59fd3813"
+    },
+    {
+      "path": "apps/web/src/modules/finance/demo-account-preview.ts",
+      "sha256": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60"
+    },
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "sha256": "36c7b229cfeb401a60de4ab47f9f86cccfa57806b2849143134ee2d6dc7a73d6"
+    },
+    {
+      "path": "apps/web/src/modules/finance/report-explanations.ts",
+      "sha256": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020"
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "9ed2f4aa4932e42d1e4ce2b70583367e949638b707248b2c1e85bbaf5456da01"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "sha256": "9611c21db12bdac47fbead422c4fe047902a5df0e6359b73e81ea813ba26177d"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "sha256": "be9a9c5d9f22ffb7b8a048d0de375e94e1dabaf96880f225420b0d1ecb49bf50"
+    },
+    {
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "sha256": "824d9e3c0a656b0ce7ebef6942b4f3c3c699bb73cca47601a5950db31b1374a1"
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "sha256": "61c8fc1af4023b63d9a67f91218c85d0bd30a4bdf5ec25e5bbae6752de931249"
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "cfe7ab9b697837e39fc67b8219af745a39ff21649dafd02d42311548cc21966b"
+    },
+    {
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "sha256": "a06b90a598afec2874ab9aa69631e96f5693fbeca3f37d69f3f843e491ef09ad"
+    },
+    {
+      "path": "apps/web/src/modules/notifications/push-capabilities.ts",
+      "sha256": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a"
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "sha256": "27e9ed668f70660c0c9da920f7274b20549c9d90528835b78f5b301085079b4e"
+    },
+    {
+      "path": "apps/web/src/modules/orders/demo-address-preview.ts",
+      "sha256": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "d351611b3611e19937192f505cbf1f21c0a7c2a446dbdc00a859a818a922b36a"
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "sha256": "8f03dd8066f5ccf84cc13f2295ddab0077a51970b87c0d9f6680e1c43d7e07a1"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "fb7c9eaf4c66507bd83a82625cc52e5b2d29923999c8f02bdf65f611d251594f"
+    },
+    {
+      "path": "apps/web/src/modules/reports/report-utils.ts",
+      "sha256": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0"
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "db6bdce8c0f4ab91c8c9640cbb6a20fc63ea4ea004c6abab2af2b2800a598325"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4986739ee8ddf673d0d94a0702e7251c087e69824b88e37b5ec644ddf72fa39e"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.type-contracts.ts",
+      "sha256": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e"
+    },
+    {
+      "path": "apps/web/src/shared/api/errors.ts",
+      "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/api/intents.ts",
+      "sha256": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b"
+    },
+    {
+      "path": "apps/web/src/shared/api/validation.ts",
+      "sha256": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1"
+    },
+    {
+      "path": "apps/web/src/shared/model/auth.ts",
+      "sha256": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4"
+    },
+    {
+      "path": "apps/web/src/shared/model/dirty-drafts.ts",
+      "sha256": "87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc"
+    },
+    {
+      "path": "apps/web/src/shared/model/download.ts",
+      "sha256": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c"
+    },
+    {
+      "path": "apps/web/src/shared/model/filters.ts",
+      "sha256": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d"
+    },
+    {
+      "path": "apps/web/src/shared/model/format.ts",
+      "sha256": "32d13ed518870d525b857a8be711b24b7d56b0f5c7eff4699ba4f572e958b223"
+    },
+    {
+      "path": "apps/web/src/shared/model/labels.ts",
+      "sha256": "7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "a87cf998f5dce3b234210ed08ba33f957c243b07b5bfe3eef7f6c82fc125e5f4"
+    },
+    {
+      "path": "apps/web/src/shared/ui/layout.ts",
+      "sha256": "b8e97da448a469f21bafe7c5c5ffadacd81cbd5d022484e4cc56d1a9afb6915f"
+    },
+    {
+      "path": "apps/web/src/shared/ui/theme.ts",
+      "sha256": "dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532"
+    },
+    {
+      "path": "apps/web/src/shared/ui/visual.ts",
+      "sha256": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d"
+    },
+    {
+      "path": "apps/web/src/vite-env.d.ts",
+      "sha256": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "b815743fd0a61b13ea6b387beb6052281b905bb256dd4241f01d4cb9ee7e798e"
+    },
+    {
+      "path": "apps/web/tests/setup.ts",
+      "sha256": "0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-focused-spc059-current-20261006.log",
+      "sha256": "320b35797f7f9abc35245c67f89cdf5ca7fd5d8740d871b12a0f27595f55c0bd"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-unit-spc059-current-20261006.log",
+      "sha256": "ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/capture-s03-spc059-refresh-20261006.mjs",
+      "sha256": "65c6918ec47e289e6ba64f28af996730950fff4468f30335036af41b510626cd"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f"
+    },
+    {
+      "path": "package.json",
+      "sha256": "729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88"
+    },
+    {
+      "path": "scripts/generate.mjs",
+      "sha256": "beae96652c33bdfa46f90a0660b670db4d9f45a69a227e10dcacd2adfc722d5f"
+    }
+  ],
+  "sourceSnapshotSha256": "e40d2e5ec74e91304809f6d269ad079f70aef8613a65722137ce8d7890da0a58",
+  "commandResults": [
+    {
+      "commandId": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE005/S03-unit-spc059-current-20261006.log",
+      "logSha256": "ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4"
+    },
+    {
+      "command": "node.exe node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/api-client.test.tsx",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE005/S03-api-focused-spc059-current-20261006.log",
+      "logSha256": "320b35797f7f9abc35245c67f89cdf5ca7fd5d8740d871b12a0f27595f55c0bd"
+    }
+  ],
+  "transportReview": {
+    "generatedOperationCount": 210,
+    "focusedApiTests": 23,
+    "fullUnitTests": 93,
+    "directFetchFiles": [
+      "apps/web/src/shared/api/client.ts"
+    ],
+    "hardcodedApiBaseInModules": false,
+    "credentials": "same-origin",
+    "mutationUnknownOutcomeReconciliation": true
+  }
+}

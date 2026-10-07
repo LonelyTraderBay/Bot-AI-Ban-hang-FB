@@ -1,0 +1,49 @@
+
+Running 2 tests using 1 worker
+
+(node:24792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\ui-procurement-layout.spec.ts:36:1 › Procurement R44-R47 preserve shared page gutter and contain responsive tables at 320-1440px (20.6s)
+  x  2 [chromium] › tests\ui-procurement-layout.spec.ts:67:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes (10.1s)
+
+
+  1) [chromium] › tests\ui-procurement-layout.spec.ts:67:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByRole('dialog', { name: 'Đơn mua mới' }).getByRole('spinbutton', { name: 'Số lượng dòng 1' })
+    Expected: "1"
+    Received: "5"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByRole('dialog', { name: 'Đơn mua mới' }).getByRole('spinbutton', { name: 'Số lượng dòng 1' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Đơn mua mới' }).getByRole('spinbutton', { name: 'Số lượng dòng 1' })
+        14 × locator resolved to <input min="5" step="5" value="5" id="«r10»" type="number" aria-invalid="false" aria-describedby="«r10»-helper-text" class="MuiInputBase-input MuiOutlinedInput-input css-1txw9lp-MuiInputBase-input-MuiOutlinedInput-input"/>
+           - unexpected value "5"
+
+
+      101 |         await chooseOption(page, 'Nhà cung cấp đã duyệt', 'Xưởng hàng mẫu', purchase);
+      102 |         await chooseOption(page, 'Báo giá dòng 1', /v-p1/, purchase);
+    > 103 |         await expect(purchase.getByRole('spinbutton', { name: 'Số lượng dòng 1' })).toHaveValue('1');
+          |                                                                                     ^
+      104 |         await expect(purchase.getByRole('button', { name: 'Lưu đơn nháp' })).toBeEnabled();
+      105 |         await page.keyboard.press('Escape');
+      106 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-procurement-layout.spec.ts:103:85
+
+    Error Context: test-results\ui-procurement-layout-Proc-3d3f3-op-viewports-without-writes-chromium\error-context.md
+
+    Error Context: test-results\ui-procurement-layout-Proc-3d3f3-op-viewports-without-writes-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui-procurement-layout-Proc-3d3f3-op-viewports-without-writes-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui-procurement-layout-Proc-3d3f3-op-viewports-without-writes-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\ui-procurement-layout.spec.ts:67:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes 
+  1 passed (31.8s)

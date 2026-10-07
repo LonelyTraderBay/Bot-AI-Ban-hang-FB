@@ -1,0 +1,94 @@
+{
+  "recordedAt": "2026-10-06T12:12:58.526Z",
+  "scope": "React Frontend only, local synthetic MSW; no backend/staging/hosted CI/owner acceptance",
+  "status": "DELIVERED_WITH_EVIDENCE_LIMITS",
+  "source": {
+    "files": 68,
+    "moduleFolders": 16,
+    "compositionUsages": 176,
+    "consumerFiles": 21,
+    "sourceFindings": 0
+  },
+  "checks": {
+    "verify": {
+      "exit": 0,
+      "unitTests": 96,
+      "fixtureTests": 9,
+      "log": "verify-handoff.log"
+    },
+    "firstFullE2E": {
+      "exit": 1,
+      "registered": 486,
+      "passed": 485,
+      "failed": 1,
+      "log": "e2e-release.log",
+      "failure": "Windows UNKNOWN while writing FE025 demo-preview metrics; exact environmental cause unconfirmed"
+    },
+    "artifactRetest": {
+      "exit": 0,
+      "passed": 6,
+      "log": "artifact-retest.log",
+      "runtimeOrSpecChanged": false,
+      "note": "Retest includes the failed case on both engines; do not add overlapping test totals or call first full run PASS"
+    },
+    "permanentCompositionGuard": {
+      "exit": 0,
+      "passed": 2,
+      "log": "composition-browser-final.log"
+    },
+    "currentRender": {
+      "observations": 216,
+      "issues": 0,
+      "browsers": [
+        "chromium",
+        "firefox"
+      ],
+      "viewportWidths": [
+        390,
+        1440
+      ]
+    },
+    "pairedComparison": {
+      "status": "PARTIAL_BASELINE",
+      "comparable": 114,
+      "notComparable": 102,
+      "note": "Original desktop collector could wait on sidebar heading with main loading. Baseline remains immutable; no backfill"
+    },
+    "nativeZoomAndTextOnly": [
+      {
+        "name": "browser-zoom-200",
+        "result": "PASS",
+        "states": 5,
+        "sourceHashesStable": true,
+        "focusHitTestPassed": true
+      },
+      {
+        "name": "text-resize-200",
+        "result": "PASS",
+        "states": 5,
+        "sourceHashesStable": true,
+        "focusHitTestPassed": true
+      }
+    ],
+    "delivery": {
+      "checkedAt": "2026-10-06T12:12:58.486Z",
+      "scope": "Current Frontend source/policy/link/whitespace only; does not replace E2E/native zoom/screen-reader/owner evidence.",
+      "sourceHashFiles": 84,
+      "sourceHashesStable": true,
+      "policyDocs": 13,
+      "checkedTaskLinks": 43,
+      "pairedComparison": "PARTIAL_BASELINE",
+      "pairedComparable": 114,
+      "baselineNotComparable": 102,
+      "gitDiffWhitespaceExit": 0,
+      "issues": [],
+      "status": "PASS"
+    }
+  },
+  "limits": [
+    "Default render capture is not all route-state coverage",
+    "Native 200% runs cover five named stress states per mechanism",
+    "Manual screen reader, hosted CI, production/backend integration and owner acceptance are not claimed",
+    "FE/UI/full-product progress ledgers are unchanged"
+  ]
+}

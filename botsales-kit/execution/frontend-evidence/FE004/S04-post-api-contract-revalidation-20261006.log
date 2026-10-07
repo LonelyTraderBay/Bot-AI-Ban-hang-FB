@@ -1,0 +1,37 @@
+FE004.S04 boundary checker and negative/allowed fixture verification
+executedAt=2026-10-06T03:14:24.164Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries
+exitCode=0
+commandLogSha256=39c5ac7be181438cacbaee83bccc71ba4d952d0efee50cc324f7fdc26e82ed5e
+files=67; imports=475; issues=0; fixtures=Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).
+checksTotal=7; failed=0
+CHECK registered boundary command: PASS
+npm run boundaries exited 0 and emitted the current graph report.
+CHECK source graph parse: PASS
+All 67 TypeScript/TSX source files parsed; no unresolved local imports or parser diagnostics.
+CHECK public-entry allow case: PASS
+App import through a module directory/index is explicitly allowed.
+CHECK public-entry bypass rejection: PASS
+App deep import to catalog/imports is explicitly rejected; the real router now uses catalog/index.tsx.
+CHECK alias/relative/type-only/dynamic rules: PASS
+Each import form is included in the negative cross-feature fixtures and is rejected.
+CHECK cycle/unresolved/parse-error rules: PASS
+Unresolved paths, cycles and parser errors are rejected rather than skipped.
+CHECK all fixture scenarios: PASS
+Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).
+sourceSnapshotSha256=3fee119cf3b3b6b913c57c20fc8391c651d8d6a962bb5f26192e87d19756d8a5
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE apps/web/tsconfig.json sha256=da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1
+SOURCE scripts/check-boundaries.mjs sha256=64e2453c1b4186bf86a6c74e3917ecb0d9d5b73e9d77195be3e401e97aec7d0f
+SOURCE tests/architecture/check-boundaries.mjs sha256=c2e90eea61c7a8e6198b89f15236726b527f1a9ad8de80e2935b34a908279849
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/contracts/route-manifest.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE apps/web/src/app/router.tsx sha256=8f46f9e2942cf54ee9edafc9268c5e630f8cb31ab5e52d22f22274ca9c27c69e
+SOURCE apps/web/src/modules/catalog/index.tsx sha256=0153359f222744fe181d659616d1268a86d453f65640d5e8e8d3ead24d818019
+SOURCE apps/web/src/modules/catalog/imports.tsx sha256=c74cc7ffdc06680a7d6350255c1bf71ccc41a7e7ea32775df8f86f881bf38433
+SOURCE botsales-kit/execution/frontend-evidence/FE004/S01-post-api-contract-revalidation-20261006.json sha256=47dab7c35093d3d9b4b935a3f8bde71d7b4bce8401dbdeac44bf0f4ea8a68d33
+SOURCE botsales-kit/execution/frontend-evidence/FE004/S03-post-api-contract-revalidation-20261006.json sha256=3b8154cb7cd5afb73619800d3986dbc4f9c677e236f070648ab43fcbeb544f6b
+SOURCE botsales-kit/execution/frontend-evidence/FE004/S04-boundaries-registered-post-api-contract-20261006.log sha256=39c5ac7be181438cacbaee83bccc71ba4d952d0efee50cc324f7fdc26e82ed5e
+SOURCE botsales-kit/execution/frontend-evidence/FE004/capture-s04-post-api-contract-revalidation-20261006.mjs sha256=3148437558578356ace1a9b58fa70165a49ab7452afe336693d121304cb44e81
+reviewer=Codex self-review; no independent peer review claimed

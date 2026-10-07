@@ -1,0 +1,622 @@
+{
+  "schemaVersion": 1,
+  "task": "FE006.S03",
+  "recordedAt": "2026-10-06T06:10:00.519Z",
+  "scope": "Isolated Chromium with local React demo and synthetic MSW; no backend or persistent app writes",
+  "sourceSha256": {
+    "botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "apps/web/src/app/Shell.tsx": "f52c5f9b676b583b1160f3bff4b7655cf43721a09009d5ce33a2f007a14d417f",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/shared/ui/theme.ts": "dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532",
+    "apps/web/src/shared/ui/layout.ts": "b8e97da448a469f21bafe7c5c5ffadacd81cbd5d022484e4cc56d1a9afb6915f",
+    "apps/web/src/shared/ui/components.tsx": "a87cf998f5dce3b234210ed08ba33f957c243b07b5bfe3eef7f6c82fc125e5f4",
+    "apps/web/src/app/bootstrap.css": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89",
+    "docs/FRONTEND_SPACING_STANDARD.md": "25d46b8456d723648064d98c6a5da11d6b1ec6b68c9a1f4252632775ac10cb0e",
+    "AGENTS.md": "5ce332e1cf4b96c61cd7546669a13577672e3cc3c01ebd78230f96aa6b027fab",
+    "AI_RULES.md": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+    "apps/web/src/modules/catalog/index.tsx": "790d840a250c401163970e503beb37b5e14c5541fb1f4233a494085be515caa9",
+    "apps/web/src/modules/inbox/index.tsx": "be9a9c5d9f22ffb7b8a048d0de375e94e1dabaf96880f225420b0d1ecb49bf50",
+    "apps/web/src/modules/reports/index.tsx": "fb7c9eaf4c66507bd83a82625cc52e5b2d29923999c8f02bdf65f611d251594f",
+    "tests/ui028-w30-stress.spec.ts": "8d20f03c652f383194aec0e368a7e71f33e73d3230edf4ee3e0cbe1a07a1fbbd",
+    "evidence/frontend-ui-improvements/UI028/W30/design-contract-pre-stress-current-20261006.md": "359fad0f5b642b39c237ce0f7bd236f7cafa4f520acee5956a0996ce7d8fa6ee"
+  },
+  "method": {
+    "browser": "Playwright-bundled Chromium, headed, fresh temporary profile",
+    "mechanism": "Temporary Manifest V3 extension calls chrome.tabs.setZoom(tabId, 2) and independently reads chrome.tabs.getZoom(tabId)",
+    "baselineViewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "targetZoomFactor": 2,
+    "note": "The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2.",
+    "browserVersion": "153.0.8010.12"
+  },
+  "scenarios": [
+    {
+      "id": "form-error-short",
+      "route": "/s/shop-demo/products/new",
+      "browserZoom": {
+        "startingZoom": 1,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:65228/s/shop-demo/products/new"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 640
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 1687,
+          "scrollY": 1327.5,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main h1",
+            "found": true,
+            "x": 16,
+            "y": -1133.5,
+            "width": 603,
+            "height": 33.59,
+            "right": 619,
+            "bottom": -1099.91,
+            "scrollWidth": 603,
+            "clientWidth": 603,
+            "scrollHeight": 35,
+            "clientHeight": 34,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 13
+          },
+          {
+            "selector": "input[name=\"name\"]",
+            "found": true,
+            "x": 33,
+            "y": -929.61,
+            "width": 569,
+            "height": 53.13,
+            "right": 602,
+            "bottom": -876.48,
+            "scrollWidth": 921,
+            "clientWidth": 569,
+            "scrollHeight": 53,
+            "clientHeight": 53,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "fontSize": "14px",
+            "textLength": 142
+          },
+          {
+            "selector": "input[name=\"variants.0.sku\"]",
+            "found": true,
+            "x": 33,
+            "y": -361.81,
+            "width": 273.22,
+            "height": 53.13,
+            "right": 306.22,
+            "bottom": -308.69,
+            "scrollWidth": 1285,
+            "clientWidth": 273,
+            "scrollHeight": 53,
+            "clientHeight": 53,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "fontSize": "14px",
+            "textLength": 172
+          },
+          {
+            "selector": "button[type=\"submit\"]",
+            "found": true,
+            "x": 494.66,
+            "y": 238.86,
+            "width": 124.34,
+            "height": 44,
+            "right": 619,
+            "bottom": 282.86,
+            "scrollWidth": 124,
+            "clientWidth": 124,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 12
+          }
+        ],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Góp ý màn hình",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 512.015625,
+            "right": 619,
+            "y": 299.859375,
+            "bottom": 343.859375
+          }
+        }
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "mobile-menu-long-label",
+      "route": "/s/shop-demo/overview",
+      "browserZoom": {
+        "startingZoom": 2,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:65228/s/shop-demo/overview"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 640,
+          "documentWidth": 640,
+          "pageOverflow": 0,
+          "scrollHeight": 3402,
+          "scrollY": 0,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-w30-long-label=\"true\"]",
+            "found": true,
+            "x": 8,
+            "y": -80.46,
+            "width": 259,
+            "height": 268,
+            "right": 267,
+            "bottom": 187.54,
+            "scrollWidth": 259,
+            "clientWidth": 259,
+            "scrollHeight": 268,
+            "clientHeight": 268,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 301
+          },
+          {
+            "selector": "main h1",
+            "found": true,
+            "x": 41,
+            "y": 258.91,
+            "width": 553,
+            "height": 63.02,
+            "right": 594,
+            "bottom": 321.93,
+            "scrollWidth": 553,
+            "clientWidth": 553,
+            "scrollHeight": 65,
+            "clientHeight": 63,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "27px",
+            "textLength": 43
+          }
+        ],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "a",
+          "role": null,
+          "label": "Danh mục",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 8,
+            "right": 267,
+            "y": 191.5390625,
+            "bottom": 236.5390625
+          }
+        }
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "report-long-id",
+      "route": "/s/shop-demo/reports/marketing",
+      "browserZoom": {
+        "startingZoom": 2,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:65228/s/shop-demo/reports/marketing"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 2203,
+          "scrollY": 0,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-w30-long-id=\"true\"]",
+            "found": true,
+            "x": 16,
+            "y": 208,
+            "width": 603,
+            "height": 84,
+            "right": 619,
+            "bottom": 292,
+            "scrollWidth": 603,
+            "clientWidth": 603,
+            "scrollHeight": 84,
+            "clientHeight": 84,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 258
+          },
+          {
+            "selector": "main h1",
+            "found": true,
+            "x": 16,
+            "y": 306,
+            "width": 603,
+            "height": 33.59,
+            "right": 619,
+            "bottom": 339.59,
+            "scrollWidth": 603,
+            "clientWidth": 603,
+            "scrollHeight": 35,
+            "clientHeight": 34,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 23
+          },
+          {
+            "selector": "button",
+            "found": true,
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "right": 0,
+            "bottom": 0,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "24px",
+            "textLength": 0
+          }
+        ],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "a",
+          "role": null,
+          "label": "Đến nội dung chính",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 12,
+            "right": 158.046875,
+            "y": 12,
+            "bottom": 57
+          }
+        }
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "inbox-long-composer",
+      "route": "/s/shop-demo/inbox/cv1",
+      "browserZoom": {
+        "startingZoom": 2,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:65228/s/shop-demo/inbox/cv1"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 2446,
+          "scrollY": 1550.5,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "textarea",
+            "found": true,
+            "x": 47,
+            "y": -708.11,
+            "width": 541,
+            "height": 140,
+            "right": 588,
+            "bottom": -568.11,
+            "scrollWidth": 536,
+            "clientWidth": 536,
+            "scrollHeight": 403,
+            "clientHeight": 140,
+            "overflowX": "auto",
+            "overflowY": "auto",
+            "fontSize": "14px",
+            "textLength": 1678
+          },
+          {
+            "selector": "button[type=\"submit\"]",
+            "found": true,
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "right": 0,
+            "bottom": 0,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          },
+          {
+            "selector": "main h1",
+            "found": true,
+            "x": 16,
+            "y": -1356.5,
+            "width": 603,
+            "height": 33.59,
+            "right": 619,
+            "bottom": -1322.91,
+            "scrollWidth": 603,
+            "clientWidth": 603,
+            "scrollHeight": 35,
+            "clientHeight": 34,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 18
+          }
+        ],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "aside",
+          "role": null,
+          "label": "Bối cảnh khách hàng",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 16,
+            "right": 619,
+            "y": -458.609375,
+            "bottom": 818.4375
+          }
+        }
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "dialog-long-reason",
+      "route": "/s/shop-demo/inbox/cv1",
+      "browserZoom": {
+        "startingZoom": 2,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:65228/s/shop-demo/inbox/cv1"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 640,
+          "documentWidth": 640,
+          "pageOverflow": 0,
+          "scrollHeight": 2346,
+          "scrollY": 0,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[role=\"dialog\"]",
+            "found": true,
+            "x": 32,
+            "y": 32,
+            "width": 576,
+            "height": 296,
+            "right": 608,
+            "bottom": 328,
+            "scrollWidth": 574,
+            "clientWidth": 574,
+            "scrollHeight": 294,
+            "clientHeight": 294,
+            "overflowX": "auto",
+            "overflowY": "auto",
+            "fontSize": "14px",
+            "textLength": 144
+          },
+          {
+            "selector": "[role=\"dialog\"] textarea",
+            "found": true,
+            "x": 63,
+            "y": 159.8,
+            "width": 509,
+            "height": 101,
+            "right": 572,
+            "bottom": 260.8,
+            "scrollWidth": 509,
+            "clientWidth": 509,
+            "scrollHeight": 101,
+            "clientHeight": 101,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "14px",
+            "textLength": 329
+          },
+          {
+            "selector": "[role=\"dialog\"] button",
+            "found": true,
+            "x": 551,
+            "y": 45,
+            "width": 44,
+            "height": 44,
+            "right": 595,
+            "bottom": 89,
+            "scrollWidth": 44,
+            "clientWidth": 44,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "24px",
+            "textLength": 0
+          }
+        ],
+        "textClips": [],
+        "dialog": {
+          "x": 32,
+          "y": 32,
+          "width": 576,
+          "height": 296,
+          "right": 608,
+          "bottom": 328,
+          "scrollWidth": 574,
+          "clientWidth": 574,
+          "scrollHeight": 294,
+          "clientHeight": 294,
+          "overflowX": "auto",
+          "overflowY": "auto",
+          "fontSize": "14px",
+          "textLength": 144
+        },
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Hủy",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 426.8046875,
+            "right": 490.8046875,
+            "y": 267,
+            "bottom": 311
+          }
+        }
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

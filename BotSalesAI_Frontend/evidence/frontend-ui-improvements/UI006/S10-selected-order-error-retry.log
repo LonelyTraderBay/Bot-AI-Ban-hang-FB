@@ -1,0 +1,50 @@
+[WebServer] (node:10848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:37752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-41968-fcdb553b-7c46-4807-a1d7-0cc479909156\deps\react-dom_client.js?v=4e4597e3 as it exceeds the max of 500KB.
+  x  1 [chromium] › tests\ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry (7.8s)
+
+
+  1) [chromium] › tests\ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByRole('dialog', { name: 'Yêu cầu trả hàng' }).getByRole('alert').filter({ hasText: 'Lỗi dịch vụ mô phỏng.' })
+    Expected: 1
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByRole('dialog', { name: 'Yêu cầu trả hàng' }).getByRole('alert').filter({ hasText: 'Lỗi dịch vụ mô phỏng.' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Yêu cầu trả hàng' }).getByRole('alert').filter({ hasText: 'Lỗi dịch vụ mô phỏng.' })
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      253 |     expect((await failedSearch).status()).toBe(503);
+      254 |     await expect(selectedOrder).toContainText(selectedOrderId);
+    > 255 |     await expect(dialog.getByRole('alert').filter({ hasText: 'Lỗi dịch vụ mô phỏng.' })).toHaveCount(1);
+          |                                                                                          ^
+      256 |     const retrySearch = page.waitForResponse(response => response.request().method() === 'GET'
+      257 |         && new URL(response.url()).pathname.endsWith('/orders')
+      258 |         && new URL(response.url()).searchParams.get('q') === query
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui006-lookups.spec.ts:255:90
+
+    Error Context: test-results\ui006-lookups-UI006-C02-se-be689-led-search-and-cursor-retry-chromium\error-context.md
+
+    Error Context: test-results\ui006-lookups-UI006-C02-se-be689-led-search-and-cursor-retry-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui006-lookups-UI006-C02-se-be689-led-search-and-cursor-retry-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui006-lookups-UI006-C02-se-be689-led-search-and-cursor-retry-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry 

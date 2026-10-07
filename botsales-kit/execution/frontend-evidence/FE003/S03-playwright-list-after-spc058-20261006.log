@@ -1,0 +1,604 @@
+✔ canonical contracts validate and generate the API base path from OpenAPI (52.5657ms)
+✔ rejects drift in OpenAPI YAML and operation index projections (88.2821ms)
+✔ generated operation registry preserves required and optional query parameter metadata (21.4674ms)
+✔ rejects unresolved schema references before generation (40.4909ms)
+✔ rejects missing API version and a server URL outside same-origin path form (32.3076ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (34.5775ms)
+✔ detects a stale generated file and accepts it after regeneration (12.3604ms)
+✖ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (20.9328ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (18.0457ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (32.8958ms)
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (17.8237ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (27.8014ms)
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.2849ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.1868ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.1764ms)
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.3704ms)
+✔ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (0.1034ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.0552ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0485ms)
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.2739ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.1038ms)
+✔ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (0.6265ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.081ms)
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (206.6411ms)
+✔ rejects a CSS spacing role without a declared shared owner (203.6194ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (202.9747ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (204.0496ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (204.6497ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (584.4702ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (604.9769ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (809.4957ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (399.2097ms)
+✔ report mode inventories migration debt without turning findings into PASS (197.7177ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (4.9496ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (162.5284ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (220.1807ms)
+✔ visual checker accepts canonical theme roles, token references, geometry and semantic responsive props (13.1234ms)
+✔ visual checker rejects raw literals across sx, JSX system props and CSS declarations (8.0663ms)
+✔ visual checker follows local style aliases and callback themes, but fails raw nested values (8.3616ms)
+✔ visual checker reports unresolved spreads and malformed style sources as UNKNOWN or parse errors (9.1258ms)
+✔ visual checker includes newly added TSX files under the source root (6.8681ms)
+Listing tests:
+  [chromium] › accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+  [chromium] › artifacts\demo-preview.spec.ts:38:1 › the built demo artifact serves the React UI and synthetic API through preview
+  [chromium] › artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+  [chromium] › artifacts\demo-preview.spec.ts:138:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime
+  [chromium] › fe009.spec.ts:35:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route
+  [chromium] › fe009.spec.ts:57:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version
+  [chromium] › fe009.spec.ts:115:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save
+  [chromium] › fe009.spec.ts:132:1 › FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified
+  [chromium] › fe009.spec.ts:145:1 › FE009.G05 marketing consent preview is interactive but never claims server opt-out
+  [chromium] › fe009.spec.ts:160:1 › FE009.H06 audit screen distinguishes available fields from missing contract detail
+  [chromium] › fe009.spec.ts:169:1 › FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment
+  [chromium] › fe009.spec.ts:201:1 › team invitation and membership revoke stay shop-scoped and protect the active owner
+  [chromium] › fe009.spec.ts:237:1 › privacy delete requests remain pending approval with no frontend step-up shortcut
+  [chromium] › fe010.spec.ts:37:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP
+  [chromium] › fe010.spec.ts:107:1 › product update sends If-Match and keeps edits visible after a 412 conflict
+  [chromium] › fe010.spec.ts:125:1 › warehouse role can read catalog products but cannot edit product fields or price cost data
+  [chromium] › fe010.spec.ts:134:1 › categories create, search, update with a version, and render cursor pagination
+  [chromium] › fe010.spec.ts:163:1 › CSV preview reports row-level errors and commits only valid product rows
+  [chromium] › fe010.spec.ts:235:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible
+  [chromium] › fe010.spec.ts:267:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview
+  [chromium] › fe010.spec.ts:280:1 › demo upload rejects files over 5 MB before making an upload request
+  [chromium] › fe010.spec.ts:291:1 › product category lookup pages the full collection and preserves the selected category while editing
+  [chromium] › fe011.spec.ts:35:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+  [chromium] › fe011.spec.ts:54:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+  [chromium] › fe011.spec.ts:92:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+  [chromium] › fe011.spec.ts:120:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+  [chromium] › fe011.spec.ts:136:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+  [chromium] › fe011.spec.ts:154:1 › FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source
+  [chromium] › fe011.spec.ts:182:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+  [chromium] › fe011.spec.ts:205:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+  [chromium] › fe012.spec.ts:35:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+  [chromium] › fe012.spec.ts:93:1 › FE012 demo address choice is labeled synthetic and completes the mock order flow
+  [chromium] › fe012.spec.ts:122:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+  [chromium] › fe012.spec.ts:182:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+  [chromium] › fe012.spec.ts:196:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+  [chromium] › fe012.spec.ts:208:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+  [chromium] › fe012.spec.ts:254:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+  [chromium] › fe012.spec.ts:274:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+  [chromium] › fe012.spec.ts:298:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+  [chromium] › fe012.spec.ts:351:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+  [chromium] › fe012.spec.ts:358:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+  [chromium] › fe013.spec.ts:40:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote
+  [chromium] › fe013.spec.ts:65:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once
+  [chromium] › fe013.spec.ts:198:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+  [chromium] › fe013.spec.ts:242:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible
+  [chromium] › fe014.spec.ts:25:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent
+  [chromium] › fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers
+  [chromium] › fe014.spec.ts:95:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+  [chromium] › fe014.spec.ts:154:1 › FE014.S03 auto-send cannot be configured without an enabled procurement budget
+  [chromium] › fe014.spec.ts:167:1 › FE014.S03 manager without procurement.receive cannot open receipt actions
+  [chromium] › fe014.spec.ts:187:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once
+  [chromium] › fe014.spec.ts:258:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals
+  [chromium] › fe015.spec.ts:49:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates
+  [chromium] › fe015.spec.ts:95:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data
+  [chromium] › fe015.spec.ts:116:1 › UI003 report timestamps follow the active shop timezone
+  [chromium] › fe015.spec.ts:173:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values
+  [chromium] › fe015.spec.ts:201:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings
+  [chromium] › fe015.spec.ts:236:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation
+  [chromium] › fe015.spec.ts:257:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions
+  [chromium] › fe015.spec.ts:280:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page
+  [chromium] › fe015.spec.ts:407:1 › FE015.AC03 COD settlement matches net remittance plus documented fee
+  [chromium] › fe015.spec.ts:441:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible
+  [chromium] › fe015.spec.ts:466:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+  [chromium] › fe016.spec.ts:67:1 › UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports
+  [chromium] › fe016.spec.ts:100:1 › FE016 conversation keeps its composer visible while long demo context scrolls independently
+  [chromium] › fe016.spec.ts:133:1 › FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details
+  [chromium] › fe016.spec.ts:161:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation
+  [chromium] › fe016.spec.ts:180:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change
+  [chromium] › fe016.spec.ts:269:1 › UI002 mobile keeps the list page while messages page and Back restores it
+  [chromium] › fe016.spec.ts:313:1 › UI002 Inbox search resets only the list cursor while a message page is open
+  [chromium] › fe016.spec.ts:370:1 › UI002 deep link, refresh and mobile Back preserve their own cursors
+  [chromium] › fe016.spec.ts:424:1 › UI002 list and message panel errors remain isolated
+  [chromium] › fe016.spec.ts:448:1 › UI002 send, invalidation and resync keep both cursors and send only once
+  [chromium] › fe016.spec.ts:508:1 › FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery
+  [chromium] › fe016.spec.ts:535:1 › FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft
+  [chromium] › fe016.spec.ts:566:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+  [chromium] › fe016.spec.ts:587:1 › FE016.AC04 role without customer/order permissions cannot open those cross-module references
+  [chromium] › fe016.spec.ts:598:1 › FE016.S03 stale takeover preserves reason and reports the version conflict
+  [chromium] › fe016.spec.ts:614:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount
+  [chromium] › fe016.spec.ts:628:1 › FE016.B08 image and voice preview is synthetic and stays local
+  [chromium] › fe016.spec.ts:643:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft
+  [chromium] › fe016.spec.ts:659:1 › FE027.B02 inbox price and available stock preview uses current canonical mock reads
+  [chromium] › fe016.spec.ts:680:1 › FE027.B03 order capture links the active customer and conversation into the manual order form
+  [chromium] › fe016.spec.ts:690:1 › FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist
+  [chromium] › fe017-validation.spec.ts:15:1 › FE017 synthetic 422 keeps the knowledge draft fields and shows field errors
+  [chromium] › fe017.spec.ts:24:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+  [chromium] › fe017.spec.ts:115:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+  [chromium] › fe017.spec.ts:154:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+  [chromium] › fe017.spec.ts:187:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+  [chromium] › fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+  [chromium] › fe017.spec.ts:242:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+  [chromium] › fe017.spec.ts:263:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+  [chromium] › fe017.spec.ts:278:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+  [chromium] › fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+  [chromium] › fe018.spec.ts:127:1 › FE018.S01 maps routes and operations to the canonical OpenAPI permissions
+  [chromium] › fe018.spec.ts:144:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict
+  [chromium] › fe018.spec.ts:175:1 › FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft
+  [chromium] › fe018.spec.ts:199:1 › FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary
+  [chromium] › fe018.spec.ts:229:1 › FE018.AC03 playground sends no external message and preserves unknown cost and token values
+  [chromium] › fe018.spec.ts:251:1 › FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer
+  [chromium] › fe018.spec.ts:277:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion
+  [chromium] › fe018.spec.ts:291:1 › FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot
+  [chromium] › fe018.spec.ts:332:1 › FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results
+  [chromium] › fe018.spec.ts:360:1 › FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions
+  [chromium] › fe018.spec.ts:392:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+  [chromium] › fe018.spec.ts:408:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+  [chromium] › fe018.spec.ts:454:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+  [chromium] › fe019.spec.ts:21:1 › FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries
+  [chromium] › fe019.spec.ts:70:1 › FE019.AC01 AI secret is write-only, cleared after submit, and absent from stored/read data
+  [chromium] › fe019.spec.ts:117:1 › FE019.AC01 invalid mock credential is rejected, cleared from the form, and not submitted
+  [chromium] › fe019.spec.ts:138:1 › FE019.AC02 channel OAuth failure stays on the page and never marks a channel connected
+  [chromium] › fe019.spec.ts:172:1 › FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not request OS permission
+  [chromium] › fe019.spec.ts:251:1 › FE019.AC05 notification policy validates canonical numeric bounds before sending and acknowledges only allowed work
+  [chromium] › fe019.spec.ts:273:1 › FE019.A03 notification order link stays within the active shop scope
+  [chromium] › fe019.spec.ts:282:1 › FE019.A05 reminder policy saves shop-local schedule and quiet hours through the synthetic API
+  [chromium] › fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states
+  [chromium] › fe019.spec.ts:334:1 › FE027.A08 notification settings disclose server-only deduplication and callback safeguards
+  [chromium] › fe020.spec.ts:41:1 › FE020.AC01 approval detail is fetched and a changed source resource rejects the stale decision
+  [chromium] › fe020.spec.ts:87:1 › FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic
+  [chromium] › fe020.spec.ts:137:1 › FE020.AC03 role pause control uses the canonical versioned mock and never claims readiness
+  [chromium] › fe020.spec.ts:154:1 › FE020.F03 operations exception filter groups overdue, blocked, and unclaimed synthetic work
+  [chromium] › fe020.spec.ts:175:1 › FE020.F05 delegation rule preview stays local and grants no API approval capability
+  [chromium] › fe020.spec.ts:192:1 › FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready
+  [chromium] › fe020.spec.ts:225:1 › FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate
+  [chromium] › fe021.spec.ts:29:1 › FE021 dashboard keeps independent panels usable and hides finance fields without finance.read
+  [chromium] › fe021.spec.ts:41:1 › FE021 marketing chart and table match the same synthetic API fixture and preserve missing actual spend
+  [chromium] › fe021.spec.ts:65:1 › FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination
+  [chromium] › fe021.spec.ts:120:1 › FE021 mock rejects an export when reports.export lacks the source permission
+  [chromium] › fe021.spec.ts:140:1 › FE021 mock rejects an invalid report timezone before creating an export job
+  [chromium] › fe021.spec.ts:160:1 › FE021 ambiguous export result preserves the selected dates and never exposes a download
+  [chromium] › fe021.spec.ts:173:1 › FE021 empty report and marketing payloads render explicit empty states
+  [chromium] › fe021.spec.ts:192:1 › FE021 stale export conflict preserves dates and never exposes a download
+  [chromium] › frontend.spec.ts:39:1 › catalog create uses the HTTP mock and successful save clears the draft guard
+  [chromium] › frontend.spec.ts:56:1 › dirty drafts block in-app navigation and preserve input until the user decides
+  [chromium] › frontend.spec.ts:74:1 › all canonical routes render inside the real React demo application
+  [chromium] › frontend.spec.ts:99:1 › switching shops cancels a delayed request and loads only the new shop scope
+  [chromium] › frontend.spec.ts:117:1 › role changes remove restricted navigation and the route guard explains denied access
+  [chromium] › frontend.spec.ts:130:1 › deep links survive browser refresh and logout clears the mock session
+  [chromium] › frontend.spec.ts:143:1 › logout asks before discarding a draft and retains the session when logout fails
+  [chromium] › frontend.spec.ts:200:1 › mobile navigation opens, routes, and closes without viewport overflow
+  [chromium] › frontend.spec.ts:214:1 › chunk loading errors use the route recovery boundary
+  [chromium] › frontend.spec.ts:253:1 › live mode reports an unavailable session API without enabling mock data
+  [chromium] › route-role-matrix.spec.ts:42:1 › route read access matches canonical permissions for every demo role
+  [chromium] › security.spec.ts:35:1 › untrusted product text renders as text without activating markup
+  [chromium] › security.spec.ts:53:1 › catalog import rejects a non-CSV file before an upload request
+  [chromium] › security.spec.ts:71:1 › catalog import rejects files above the demo size limit before upload
+  [chromium] › security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries
+  [chromium] › session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+  [chromium] › states\fe023.spec.ts:17:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard
+  [chromium] › states\fe023.spec.ts:35:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices
+  [chromium] › states\fe023.spec.ts:76:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path
+  [chromium] › states\fe023.spec.ts:103:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope
+  [chromium] › states\fe023.spec.ts:121:1 › FE023 a saved shop form resets its dirty baseline and reports success
+  [chromium] › states\route-empty-composition.spec.ts:27:1 › empty collection responses render accessible empty states on canonical list routes
+  [chromium] › states\route-error-composition.spec.ts:26:1 › every shop route composes the shared API error state with its page content
+  [chromium] › ui-bot-layout.spec.ts:42:1 › Bot routes R26/R27/R28/R51 fit the supported page-width boundaries
+  [chromium] › ui-bot-layout.spec.ts:52:1 › Bot config, evaluation, role and budget dialogs stay inside mobile and desktop viewports
+  [chromium] › ui-catalog-layout.spec.ts:15:1 › catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at mobile and desktop
+  [chromium] › ui-customers-layout.spec.ts:30:1 › Customers R07/R08/R54 layouts fit the shell at every responsive boundary
+  [chromium] › ui-customers-layout.spec.ts:59:1 › Customer create and service-case dialogs stay in the viewport without submitting
+  [chromium] › ui-dashboard-layout.spec.ts:15:1 › dashboard hierarchy, CTA targets, and page width hold across supported breakpoints
+  [chromium] › ui-finance-layout.spec.ts:30:1 › Finance R20/R21/R22/R48/R49/R50 route layouts retain shell gutter without horizontal overflow from 320–1440px
+  [chromium] › ui-finance-layout.spec.ts:62:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting
+  [chromium] › ui-fulfillment-layout.spec.ts:30:1 › Fulfillment R41/R42 preserve shell gutter and contain responsive route layouts from 320-1440px
+  [chromium] › ui-fulfillment-layout.spec.ts:59:1 › Fulfillment prep, shipment-create, detail and event dialogs fit mobile and desktop without submitting
+  [chromium] › ui-integrations-layout.spec.ts:40:1 › Integrations routes R29/R30 fit the supported page-width boundaries
+  [chromium] › ui-integrations-layout.spec.ts:50:1 › R29 disconnect and R30 create/edit credential dialogs stay inside mobile and desktop viewports
+  [chromium] › ui-inventory-layout.spec.ts:15:1 › Inventory R15/R16 preserve shared gutter and contain table overflow at 320-1440px
+  [chromium] › ui-inventory-layout.spec.ts:51:1 › Inventory filters reset cursor and preserve other URL state; adjustment validation sends no command
+  [chromium] › ui-knowledge-layout.spec.ts:56:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+  [chromium] › ui-knowledge-layout.spec.ts:76:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+  [chromium] › ui-notifications-layout.spec.ts:40:1 › R39/R40 Notifications routes fit the supported page-width boundaries
+  [chromium] › ui-notifications-layout.spec.ts:50:1 › R40 revoke-device confirmation stays inside mobile and desktop viewports
+  [chromium] › ui-operations-layout.spec.ts:41:1 › R37/R38/R52 Operations routes fit the supported page-width boundaries
+  [chromium] › ui-operations-layout.spec.ts:51:1 › R52 role-control confirmation stays inside mobile and desktop viewports
+  [chromium] › ui-orders-layout.spec.ts:15:1 › Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px
+  [chromium] › ui-orders-layout.spec.ts:46:1 › Orders draft, versioned quote, synthetic address and return dialogs keep their behavior without writes
+  [chromium] › ui-procurement-layout.spec.ts:36:1 › Procurement R44-R47 preserve shared page gutter and contain responsive tables at 320-1440px
+  [chromium] › ui-procurement-layout.spec.ts:67:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes
+  [chromium] › ui-shell-layout.spec.ts:15:1 › Shell keeps header, banner, main and footer on one responsive gutter
+  [chromium] › ui-shell-layout.spec.ts:68:1 › demo controls stay discoverable on mobile and usable on desktop
+  [chromium] › ui-shell-layout.spec.ts:86:1 › unmatched route fallback owns its page gutter without horizontal overflow
+  [chromium] › ui-workspace-layout.spec.ts:60:1 › workspace routes stay within the supported page-width boundaries
+  [chromium] › ui-workspace-layout.spec.ts:72:1 › team invite and privacy request dialogs remain usable without submitting
+  [chromium] › ui006-lookups.spec.ts:68:1 › UI006.C05 lookup and table cursors reach records after 150 synthetic suppliers, offers, and orders
+  [chromium] › ui006-lookups.spec.ts:214:1 › UI006.C04 bounded previews disclose their sample and link to full collections
+  [chromium] › ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry
+  [chromium] › ui007-query-states.spec.ts:30:1 › UI007 secondary order query loads independently while the customer profile remains available
+  [chromium] › ui007-query-states.spec.ts:60:1 › UI007 order query 503 is isolated from the primary customer query and retries only that query
+  [chromium] › ui007-query-states.spec.ts:94:1 › UI007 forbidden order query is an access state and a successful empty query is distinct
+  [chromium] › ui007-query-states.spec.ts:114:1 › UI007 supplier and offer failures keep purchase suggestions visible and have operation-specific recovery
+  [chromium] › ui007-query-states.spec.ts:150:1 › UI007 auto-send budget query is lazy, permission-aware, and blocks an unverified budget
+  [chromium] › ui008-integration-empty.spec.ts:53:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+  [chromium] › ui008-integration-empty.spec.ts:71:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+  [chromium] › ui008-integration-empty.spec.ts:86:1 › UI008 R29 pending channel query stays loading until its response arrives
+  [chromium] › ui008-integration-empty.spec.ts:104:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+  [chromium] › ui008-integration-empty.spec.ts:118:1 › UI008 R29 503 remains an error and recovers through its retry control
+  [chromium] › ui008-integration-empty.spec.ts:139:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+  [chromium] › ui008-integration-empty.spec.ts:157:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+  [chromium] › ui009-scope-regression.spec.ts:23:1 › UI009 delayed customer orders from the previous shop cannot leak into the new shop profile
+  [chromium] › ui010-dialog-draft.spec.ts:15:1 › UI010 a discarded confirmation reason is cleared before the dialog opens again
+  [chromium] › ui011-date-time.spec.ts:16:1 › UI011 report defaults use the active shop calendar month at a UTC month boundary
+  [chromium] › ui011-date-time.spec.ts:29:1 › UI011 journal effective date defaults to the active shop calendar date
+  [chromium] › ui011-date-time.spec.ts:41:1 › UI011 shipment event input and API instant use the shop timezone, not browser timezone
+  [chromium] › ui012-keyboard.spec.ts:42:1 › UI012 keyboard-only finance edit handles select, discard warning and focus return
+  [chromium] › ui012-keyboard.spec.ts:103:1 › UI012 keyboard validation focuses the field named by a synthetic 422 response
+  [chromium] › ui012-keyboard.spec.ts:160:1 › UI012 keyboard activates the CSV chooser and discards its selected file without upload
+  [chromium] › ui012-keyboard.spec.ts:200:1 › UI012 keyboard can reach and horizontally scroll the marketing chart data alternative
+  [chromium] › ui012-keyboard.spec.ts:227:1 › UI012 marketing chart keeps every category label visible beside its data table
+  [chromium] › ui012-keyboard.spec.ts:268:1 › UI012 inbox feedback actions identify their message and return focus after Escape
+  [chromium] › ui012-keyboard.spec.ts:301:1 › UI012 order draft does not announce an untouched required customer as invalid
+  [chromium] › ui012-keyboard.spec.ts:314:1 › UI012 long BotConfig policy literal wraps inside its alert at a 320 CSS-pixel viewport
+  [chromium] › ui012-keyboard.spec.ts:348:1 › UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible
+  [chromium] › ui013-url-state.spec.ts:19:1 › UI013 reconciliation tab deep links and survives refresh; malformed tab safely falls back
+  [chromium] › ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state
+  [chromium] › ui013-url-state.spec.ts:70:1 › UI013 report type and export date filters are deep-linkable, refreshable and malformed values fall back safely
+  [chromium] › ui021-permission-edge.spec.ts:4:1 › privacy page keeps the customers link when the destination permission is present
+  [chromium] › ui021-permission-edge.spec.ts:19:1 › privacy page hides the customers link when the destination permission is missing
+  [chromium] › ui028-w24-inbox-layout.spec.ts:15:1 › UI028.W24 Inbox spacing roles remain consistent across breakpoints without losing draft state
+  [chromium] › ui028-w25-reports-layout.spec.ts:15:1 › UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desktop widths
+  [chromium] › ui028-w25-reports-layout.spec.ts:113:1 › UI028.W25 authorized report download link retains its 44px hit target
+  [chromium] › ui028-w28-routes.spec.ts:46:5 › UI028.W28 54 canonical routes render with measured 390px layout geometry
+  [chromium] › ui028-w28-routes.spec.ts:46:5 › UI028.W28 54 canonical routes render with measured 1440px layout geometry
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 320px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 390px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 767px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 768px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1024px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1279px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1280px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1440px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1920px reflow retains representative actions and contains overflow
+  [chromium] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+  [chromium] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 mobile-menu-long-label: 200% text and spacing stress at 390x560
+  [chromium] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 report-long-id: 200% text and spacing stress at 640x450
+  [chromium] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 inbox-long-composer: 200% text and spacing stress at 390x560
+  [chromium] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 dialog-long-reason: 200% text and spacing stress at 320x480
+  [chromium] › vertical-slices\fe022-flows.spec.ts:36:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+  [chromium] › vertical-slices\fe022-flows.spec.ts:90:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity
+  [chromium] › vertical-slices\fe022-flows.spec.ts:166:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation
+  [chromium] › vertical-slices\fe022-flows.spec.ts:202:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+  [chromium] › vertical-slices\fe022-flows.spec.ts:244:1 › FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps
+  [firefox] › accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+  [firefox] › artifacts\demo-preview.spec.ts:38:1 › the built demo artifact serves the React UI and synthetic API through preview
+  [firefox] › artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+  [firefox] › artifacts\demo-preview.spec.ts:138:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime
+  [firefox] › fe009.spec.ts:35:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route
+  [firefox] › fe009.spec.ts:57:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version
+  [firefox] › fe009.spec.ts:115:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save
+  [firefox] › fe009.spec.ts:132:1 › FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified
+  [firefox] › fe009.spec.ts:145:1 › FE009.G05 marketing consent preview is interactive but never claims server opt-out
+  [firefox] › fe009.spec.ts:160:1 › FE009.H06 audit screen distinguishes available fields from missing contract detail
+  [firefox] › fe009.spec.ts:169:1 › FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment
+  [firefox] › fe009.spec.ts:201:1 › team invitation and membership revoke stay shop-scoped and protect the active owner
+  [firefox] › fe009.spec.ts:237:1 › privacy delete requests remain pending approval with no frontend step-up shortcut
+  [firefox] › fe010.spec.ts:37:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP
+  [firefox] › fe010.spec.ts:107:1 › product update sends If-Match and keeps edits visible after a 412 conflict
+  [firefox] › fe010.spec.ts:125:1 › warehouse role can read catalog products but cannot edit product fields or price cost data
+  [firefox] › fe010.spec.ts:134:1 › categories create, search, update with a version, and render cursor pagination
+  [firefox] › fe010.spec.ts:163:1 › CSV preview reports row-level errors and commits only valid product rows
+  [firefox] › fe010.spec.ts:235:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible
+  [firefox] › fe010.spec.ts:267:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview
+  [firefox] › fe010.spec.ts:280:1 › demo upload rejects files over 5 MB before making an upload request
+  [firefox] › fe010.spec.ts:291:1 › product category lookup pages the full collection and preserves the selected category while editing
+  [firefox] › fe011.spec.ts:35:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+  [firefox] › fe011.spec.ts:54:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+  [firefox] › fe011.spec.ts:92:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+  [firefox] › fe011.spec.ts:120:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+  [firefox] › fe011.spec.ts:136:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+  [firefox] › fe011.spec.ts:154:1 › FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source
+  [firefox] › fe011.spec.ts:182:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+  [firefox] › fe011.spec.ts:205:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+  [firefox] › fe012.spec.ts:35:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+  [firefox] › fe012.spec.ts:93:1 › FE012 demo address choice is labeled synthetic and completes the mock order flow
+  [firefox] › fe012.spec.ts:122:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+  [firefox] › fe012.spec.ts:182:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+  [firefox] › fe012.spec.ts:196:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+  [firefox] › fe012.spec.ts:208:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+  [firefox] › fe012.spec.ts:254:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+  [firefox] › fe012.spec.ts:274:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+  [firefox] › fe012.spec.ts:298:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+  [firefox] › fe012.spec.ts:351:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+  [firefox] › fe012.spec.ts:358:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+  [firefox] › fe013.spec.ts:40:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote
+  [firefox] › fe013.spec.ts:65:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once
+  [firefox] › fe013.spec.ts:198:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+  [firefox] › fe013.spec.ts:242:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible
+  [firefox] › fe014.spec.ts:25:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent
+  [firefox] › fe014.spec.ts:77:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers
+  [firefox] › fe014.spec.ts:95:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+  [firefox] › fe014.spec.ts:154:1 › FE014.S03 auto-send cannot be configured without an enabled procurement budget
+  [firefox] › fe014.spec.ts:167:1 › FE014.S03 manager without procurement.receive cannot open receipt actions
+  [firefox] › fe014.spec.ts:187:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once
+  [firefox] › fe014.spec.ts:258:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals
+  [firefox] › fe015.spec.ts:49:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates
+  [firefox] › fe015.spec.ts:95:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data
+  [firefox] › fe015.spec.ts:116:1 › UI003 report timestamps follow the active shop timezone
+  [firefox] › fe015.spec.ts:173:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values
+  [firefox] › fe015.spec.ts:201:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings
+  [firefox] › fe015.spec.ts:236:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation
+  [firefox] › fe015.spec.ts:257:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions
+  [firefox] › fe015.spec.ts:280:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page
+  [firefox] › fe015.spec.ts:407:1 › FE015.AC03 COD settlement matches net remittance plus documented fee
+  [firefox] › fe015.spec.ts:441:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible
+  [firefox] › fe015.spec.ts:466:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+  [firefox] › fe016.spec.ts:67:1 › UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports
+  [firefox] › fe016.spec.ts:100:1 › FE016 conversation keeps its composer visible while long demo context scrolls independently
+  [firefox] › fe016.spec.ts:133:1 › FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details
+  [firefox] › fe016.spec.ts:161:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation
+  [firefox] › fe016.spec.ts:180:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change
+  [firefox] › fe016.spec.ts:269:1 › UI002 mobile keeps the list page while messages page and Back restores it
+  [firefox] › fe016.spec.ts:313:1 › UI002 Inbox search resets only the list cursor while a message page is open
+  [firefox] › fe016.spec.ts:370:1 › UI002 deep link, refresh and mobile Back preserve their own cursors
+  [firefox] › fe016.spec.ts:424:1 › UI002 list and message panel errors remain isolated
+  [firefox] › fe016.spec.ts:448:1 › UI002 send, invalidation and resync keep both cursors and send only once
+  [firefox] › fe016.spec.ts:508:1 › FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery
+  [firefox] › fe016.spec.ts:535:1 › FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft
+  [firefox] › fe016.spec.ts:566:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+  [firefox] › fe016.spec.ts:587:1 › FE016.AC04 role without customer/order permissions cannot open those cross-module references
+  [firefox] › fe016.spec.ts:598:1 › FE016.S03 stale takeover preserves reason and reports the version conflict
+  [firefox] › fe016.spec.ts:614:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount
+  [firefox] › fe016.spec.ts:628:1 › FE016.B08 image and voice preview is synthetic and stays local
+  [firefox] › fe016.spec.ts:643:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft
+  [firefox] › fe016.spec.ts:659:1 › FE027.B02 inbox price and available stock preview uses current canonical mock reads
+  [firefox] › fe016.spec.ts:680:1 › FE027.B03 order capture links the active customer and conversation into the manual order form
+  [firefox] › fe016.spec.ts:690:1 › FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist
+  [firefox] › fe017-validation.spec.ts:15:1 › FE017 synthetic 422 keeps the knowledge draft fields and shows field errors
+  [firefox] › fe017.spec.ts:24:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+  [firefox] › fe017.spec.ts:115:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+  [firefox] › fe017.spec.ts:154:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+  [firefox] › fe017.spec.ts:187:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+  [firefox] › fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+  [firefox] › fe017.spec.ts:242:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+  [firefox] › fe017.spec.ts:263:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+  [firefox] › fe017.spec.ts:278:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+  [firefox] › fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+  [firefox] › fe018.spec.ts:127:1 › FE018.S01 maps routes and operations to the canonical OpenAPI permissions
+  [firefox] › fe018.spec.ts:144:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict
+  [firefox] › fe018.spec.ts:175:1 › FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft
+  [firefox] › fe018.spec.ts:199:1 › FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary
+  [firefox] › fe018.spec.ts:229:1 › FE018.AC03 playground sends no external message and preserves unknown cost and token values
+  [firefox] › fe018.spec.ts:251:1 › FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer
+  [firefox] › fe018.spec.ts:277:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion
+  [firefox] › fe018.spec.ts:291:1 › FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot
+  [firefox] › fe018.spec.ts:332:1 › FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results
+  [firefox] › fe018.spec.ts:360:1 › FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions
+  [firefox] › fe018.spec.ts:392:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+  [firefox] › fe018.spec.ts:408:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+  [firefox] › fe018.spec.ts:454:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+  [firefox] › fe019.spec.ts:21:1 › FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries
+  [firefox] › fe019.spec.ts:70:1 › FE019.AC01 AI secret is write-only, cleared after submit, and absent from stored/read data
+  [firefox] › fe019.spec.ts:117:1 › FE019.AC01 invalid mock credential is rejected, cleared from the form, and not submitted
+  [firefox] › fe019.spec.ts:138:1 › FE019.AC02 channel OAuth failure stays on the page and never marks a channel connected
+  [firefox] › fe019.spec.ts:172:1 › FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not request OS permission
+  [firefox] › fe019.spec.ts:251:1 › FE019.AC05 notification policy validates canonical numeric bounds before sending and acknowledges only allowed work
+  [firefox] › fe019.spec.ts:273:1 › FE019.A03 notification order link stays within the active shop scope
+  [firefox] › fe019.spec.ts:282:1 › FE019.A05 reminder policy saves shop-local schedule and quiet hours through the synthetic API
+  [firefox] › fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states
+  [firefox] › fe019.spec.ts:334:1 › FE027.A08 notification settings disclose server-only deduplication and callback safeguards
+  [firefox] › fe020.spec.ts:41:1 › FE020.AC01 approval detail is fetched and a changed source resource rejects the stale decision
+  [firefox] › fe020.spec.ts:87:1 › FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic
+  [firefox] › fe020.spec.ts:137:1 › FE020.AC03 role pause control uses the canonical versioned mock and never claims readiness
+  [firefox] › fe020.spec.ts:154:1 › FE020.F03 operations exception filter groups overdue, blocked, and unclaimed synthetic work
+  [firefox] › fe020.spec.ts:175:1 › FE020.F05 delegation rule preview stays local and grants no API approval capability
+  [firefox] › fe020.spec.ts:192:1 › FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready
+  [firefox] › fe020.spec.ts:225:1 › FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate
+  [firefox] › fe021.spec.ts:29:1 › FE021 dashboard keeps independent panels usable and hides finance fields without finance.read
+  [firefox] › fe021.spec.ts:41:1 › FE021 marketing chart and table match the same synthetic API fixture and preserve missing actual spend
+  [firefox] › fe021.spec.ts:65:1 › FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination
+  [firefox] › fe021.spec.ts:120:1 › FE021 mock rejects an export when reports.export lacks the source permission
+  [firefox] › fe021.spec.ts:140:1 › FE021 mock rejects an invalid report timezone before creating an export job
+  [firefox] › fe021.spec.ts:160:1 › FE021 ambiguous export result preserves the selected dates and never exposes a download
+  [firefox] › fe021.spec.ts:173:1 › FE021 empty report and marketing payloads render explicit empty states
+  [firefox] › fe021.spec.ts:192:1 › FE021 stale export conflict preserves dates and never exposes a download
+  [firefox] › frontend.spec.ts:39:1 › catalog create uses the HTTP mock and successful save clears the draft guard
+  [firefox] › frontend.spec.ts:56:1 › dirty drafts block in-app navigation and preserve input until the user decides
+  [firefox] › frontend.spec.ts:74:1 › all canonical routes render inside the real React demo application
+  [firefox] › frontend.spec.ts:99:1 › switching shops cancels a delayed request and loads only the new shop scope
+  [firefox] › frontend.spec.ts:117:1 › role changes remove restricted navigation and the route guard explains denied access
+  [firefox] › frontend.spec.ts:130:1 › deep links survive browser refresh and logout clears the mock session
+  [firefox] › frontend.spec.ts:143:1 › logout asks before discarding a draft and retains the session when logout fails
+  [firefox] › frontend.spec.ts:200:1 › mobile navigation opens, routes, and closes without viewport overflow
+  [firefox] › frontend.spec.ts:214:1 › chunk loading errors use the route recovery boundary
+  [firefox] › frontend.spec.ts:253:1 › live mode reports an unavailable session API without enabling mock data
+  [firefox] › route-role-matrix.spec.ts:42:1 › route read access matches canonical permissions for every demo role
+  [firefox] › security.spec.ts:35:1 › untrusted product text renders as text without activating markup
+  [firefox] › security.spec.ts:53:1 › catalog import rejects a non-CSV file before an upload request
+  [firefox] › security.spec.ts:71:1 › catalog import rejects files above the demo size limit before upload
+  [firefox] › security.spec.ts:89:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries
+  [firefox] › session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+  [firefox] › states\fe023.spec.ts:17:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard
+  [firefox] › states\fe023.spec.ts:35:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices
+  [firefox] › states\fe023.spec.ts:76:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path
+  [firefox] › states\fe023.spec.ts:103:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope
+  [firefox] › states\fe023.spec.ts:121:1 › FE023 a saved shop form resets its dirty baseline and reports success
+  [firefox] › states\route-empty-composition.spec.ts:27:1 › empty collection responses render accessible empty states on canonical list routes
+  [firefox] › states\route-error-composition.spec.ts:26:1 › every shop route composes the shared API error state with its page content
+  [firefox] › ui-bot-layout.spec.ts:42:1 › Bot routes R26/R27/R28/R51 fit the supported page-width boundaries
+  [firefox] › ui-bot-layout.spec.ts:52:1 › Bot config, evaluation, role and budget dialogs stay inside mobile and desktop viewports
+  [firefox] › ui-catalog-layout.spec.ts:15:1 › catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at mobile and desktop
+  [firefox] › ui-customers-layout.spec.ts:30:1 › Customers R07/R08/R54 layouts fit the shell at every responsive boundary
+  [firefox] › ui-customers-layout.spec.ts:59:1 › Customer create and service-case dialogs stay in the viewport without submitting
+  [firefox] › ui-dashboard-layout.spec.ts:15:1 › dashboard hierarchy, CTA targets, and page width hold across supported breakpoints
+  [firefox] › ui-finance-layout.spec.ts:30:1 › Finance R20/R21/R22/R48/R49/R50 route layouts retain shell gutter without horizontal overflow from 320–1440px
+  [firefox] › ui-finance-layout.spec.ts:62:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting
+  [firefox] › ui-fulfillment-layout.spec.ts:30:1 › Fulfillment R41/R42 preserve shell gutter and contain responsive route layouts from 320-1440px
+  [firefox] › ui-fulfillment-layout.spec.ts:59:1 › Fulfillment prep, shipment-create, detail and event dialogs fit mobile and desktop without submitting
+  [firefox] › ui-integrations-layout.spec.ts:40:1 › Integrations routes R29/R30 fit the supported page-width boundaries
+  [firefox] › ui-integrations-layout.spec.ts:50:1 › R29 disconnect and R30 create/edit credential dialogs stay inside mobile and desktop viewports
+  [firefox] › ui-inventory-layout.spec.ts:15:1 › Inventory R15/R16 preserve shared gutter and contain table overflow at 320-1440px
+  [firefox] › ui-inventory-layout.spec.ts:51:1 › Inventory filters reset cursor and preserve other URL state; adjustment validation sends no command
+  [firefox] › ui-knowledge-layout.spec.ts:56:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+  [firefox] › ui-knowledge-layout.spec.ts:76:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+  [firefox] › ui-notifications-layout.spec.ts:40:1 › R39/R40 Notifications routes fit the supported page-width boundaries
+  [firefox] › ui-notifications-layout.spec.ts:50:1 › R40 revoke-device confirmation stays inside mobile and desktop viewports
+  [firefox] › ui-operations-layout.spec.ts:41:1 › R37/R38/R52 Operations routes fit the supported page-width boundaries
+  [firefox] › ui-operations-layout.spec.ts:51:1 › R52 role-control confirmation stays inside mobile and desktop viewports
+  [firefox] › ui-orders-layout.spec.ts:15:1 › Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px
+  [firefox] › ui-orders-layout.spec.ts:46:1 › Orders draft, versioned quote, synthetic address and return dialogs keep their behavior without writes
+  [firefox] › ui-procurement-layout.spec.ts:36:1 › Procurement R44-R47 preserve shared page gutter and contain responsive tables at 320-1440px
+  [firefox] › ui-procurement-layout.spec.ts:67:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes
+  [firefox] › ui-shell-layout.spec.ts:15:1 › Shell keeps header, banner, main and footer on one responsive gutter
+  [firefox] › ui-shell-layout.spec.ts:68:1 › demo controls stay discoverable on mobile and usable on desktop
+  [firefox] › ui-shell-layout.spec.ts:86:1 › unmatched route fallback owns its page gutter without horizontal overflow
+  [firefox] › ui-workspace-layout.spec.ts:60:1 › workspace routes stay within the supported page-width boundaries
+  [firefox] › ui-workspace-layout.spec.ts:72:1 › team invite and privacy request dialogs remain usable without submitting
+  [firefox] › ui006-lookups.spec.ts:68:1 › UI006.C05 lookup and table cursors reach records after 150 synthetic suppliers, offers, and orders
+  [firefox] › ui006-lookups.spec.ts:214:1 › UI006.C04 bounded previews disclose their sample and link to full collections
+  [firefox] › ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry
+  [firefox] › ui007-query-states.spec.ts:30:1 › UI007 secondary order query loads independently while the customer profile remains available
+  [firefox] › ui007-query-states.spec.ts:60:1 › UI007 order query 503 is isolated from the primary customer query and retries only that query
+  [firefox] › ui007-query-states.spec.ts:94:1 › UI007 forbidden order query is an access state and a successful empty query is distinct
+  [firefox] › ui007-query-states.spec.ts:114:1 › UI007 supplier and offer failures keep purchase suggestions visible and have operation-specific recovery
+  [firefox] › ui007-query-states.spec.ts:150:1 › UI007 auto-send budget query is lazy, permission-aware, and blocks an unverified budget
+  [firefox] › ui008-integration-empty.spec.ts:53:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+  [firefox] › ui008-integration-empty.spec.ts:71:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+  [firefox] › ui008-integration-empty.spec.ts:86:1 › UI008 R29 pending channel query stays loading until its response arrives
+  [firefox] › ui008-integration-empty.spec.ts:104:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+  [firefox] › ui008-integration-empty.spec.ts:118:1 › UI008 R29 503 remains an error and recovers through its retry control
+  [firefox] › ui008-integration-empty.spec.ts:139:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+  [firefox] › ui008-integration-empty.spec.ts:157:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+  [firefox] › ui009-scope-regression.spec.ts:23:1 › UI009 delayed customer orders from the previous shop cannot leak into the new shop profile
+  [firefox] › ui010-dialog-draft.spec.ts:15:1 › UI010 a discarded confirmation reason is cleared before the dialog opens again
+  [firefox] › ui011-date-time.spec.ts:16:1 › UI011 report defaults use the active shop calendar month at a UTC month boundary
+  [firefox] › ui011-date-time.spec.ts:29:1 › UI011 journal effective date defaults to the active shop calendar date
+  [firefox] › ui011-date-time.spec.ts:41:1 › UI011 shipment event input and API instant use the shop timezone, not browser timezone
+  [firefox] › ui012-keyboard.spec.ts:42:1 › UI012 keyboard-only finance edit handles select, discard warning and focus return
+  [firefox] › ui012-keyboard.spec.ts:103:1 › UI012 keyboard validation focuses the field named by a synthetic 422 response
+  [firefox] › ui012-keyboard.spec.ts:160:1 › UI012 keyboard activates the CSV chooser and discards its selected file without upload
+  [firefox] › ui012-keyboard.spec.ts:200:1 › UI012 keyboard can reach and horizontally scroll the marketing chart data alternative
+  [firefox] › ui012-keyboard.spec.ts:227:1 › UI012 marketing chart keeps every category label visible beside its data table
+  [firefox] › ui012-keyboard.spec.ts:268:1 › UI012 inbox feedback actions identify their message and return focus after Escape
+  [firefox] › ui012-keyboard.spec.ts:301:1 › UI012 order draft does not announce an untouched required customer as invalid
+  [firefox] › ui012-keyboard.spec.ts:314:1 › UI012 long BotConfig policy literal wraps inside its alert at a 320 CSS-pixel viewport
+  [firefox] › ui012-keyboard.spec.ts:348:1 › UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible
+  [firefox] › ui013-url-state.spec.ts:19:1 › UI013 reconciliation tab deep links and survives refresh; malformed tab safely falls back
+  [firefox] › ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state
+  [firefox] › ui013-url-state.spec.ts:70:1 › UI013 report type and export date filters are deep-linkable, refreshable and malformed values fall back safely
+  [firefox] › ui021-permission-edge.spec.ts:4:1 › privacy page keeps the customers link when the destination permission is present
+  [firefox] › ui021-permission-edge.spec.ts:19:1 › privacy page hides the customers link when the destination permission is missing
+  [firefox] › ui028-w24-inbox-layout.spec.ts:15:1 › UI028.W24 Inbox spacing roles remain consistent across breakpoints without losing draft state
+  [firefox] › ui028-w25-reports-layout.spec.ts:15:1 › UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desktop widths
+  [firefox] › ui028-w25-reports-layout.spec.ts:113:1 › UI028.W25 authorized report download link retains its 44px hit target
+  [firefox] › ui028-w28-routes.spec.ts:46:5 › UI028.W28 54 canonical routes render with measured 390px layout geometry
+  [firefox] › ui028-w28-routes.spec.ts:46:5 › UI028.W28 54 canonical routes render with measured 1440px layout geometry
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 320px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 390px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 767px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 768px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1024px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1279px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1280px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1440px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:29:5 › UI028.W29 1920px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+  [firefox] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 mobile-menu-long-label: 200% text and spacing stress at 390x560
+  [firefox] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 report-long-id: 200% text and spacing stress at 640x450
+  [firefox] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 inbox-long-composer: 200% text and spacing stress at 390x560
+  [firefox] › ui028-w30-stress.spec.ts:72:5 › UI028.W30 dialog-long-reason: 200% text and spacing stress at 320x480
+  [firefox] › vertical-slices\fe022-flows.spec.ts:36:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+  [firefox] › vertical-slices\fe022-flows.spec.ts:90:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity
+  [firefox] › vertical-slices\fe022-flows.spec.ts:166:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation
+  [firefox] › vertical-slices\fe022-flows.spec.ts:202:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+  [firefox] › vertical-slices\fe022-flows.spec.ts:244:1 › FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps
+Total: 484 tests in 53 files
+exitCode=0

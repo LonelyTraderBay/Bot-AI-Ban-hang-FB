@@ -1,0 +1,119 @@
+{
+  "checkedAt": "2026-10-06T15:23:15.573Z",
+  "step": "S05",
+  "status": "IN_PROGRESS_PARTIAL_BINDING_INTEGRATION",
+  "checks": [
+    {
+      "command": "node scripts/check-layout.mjs --json",
+      "exit": 0,
+      "output": "S05-current-layout.json",
+      "outputSha256": "aead71315b876bb3ed09ca47c50490b941dbb2a87a02ca47c03a7608c8dc1a80",
+      "recordedAt": "2026-10-06T15:21:17.967Z",
+      "reusedWithoutRerun": true
+    },
+    {
+      "command": "node scripts/check-ui-composition.mjs --json",
+      "exit": 0,
+      "output": "S05-current-composition.json",
+      "outputSha256": "24c6954262522511bbab915c33b75ee0317067fd62c1ca58da993576c024d38c",
+      "recordedAt": "2026-10-06T15:21:17.967Z",
+      "reusedWithoutRerun": true
+    },
+    {
+      "command": "node scripts/check-visual-tokens.mjs --json",
+      "exit": 0,
+      "output": "S05-current-visual.json",
+      "outputSha256": "ef098bc48fa640a721feaaf0cda6c895cfc3ea8b152225ff0a672ec47e17e2ca",
+      "recordedAt": "2026-10-06T15:21:17.967Z",
+      "reusedWithoutRerun": true
+    },
+    {
+      "command": "node node_modules/typescript/lib/tsc.js -p apps/web/tsconfig.json --noEmit",
+      "exit": 0,
+      "output": "S05-typecheck.log",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "recordedAt": "2026-10-06T15:21:17.967Z",
+      "reusedWithoutRerun": true
+    }
+  ],
+  "fixtureEvidence": {
+    "log": "S05-related-fixtures-current.log",
+    "sha256": "0fb96d3c5c20732a2f04857df1333ab5a2434ec2c59708b6b2273f52805027b8",
+    "passed": 96,
+    "failed": 0,
+    "exitRecordedByCaller": 0
+  },
+  "changedOwnerHashes": [
+    {
+      "file": "scripts/ui-bindings.mjs",
+      "sha256": "0c2475c25fef08189eee7bb8d892a3762bfbb3a0cdb356a4a865a93211d5f8b1"
+    },
+    {
+      "file": "scripts/check-ui-composition.mjs",
+      "sha256": "f8149eea3448337612d667fbc75ad4da993eeea2bdc08c81f46f80b46120b484"
+    },
+    {
+      "file": "scripts/check-visual-tokens.mjs",
+      "sha256": "c7e0cb49243530982df81a8d93b61777d2696160973550f5cb246b8d404cf427"
+    },
+    {
+      "file": "tests/ui-bindings.test.mjs",
+      "sha256": "955b02622aaa92ff99e042d64466c24a8a370d8adad10cec95aca1f3cf1c48c9"
+    },
+    {
+      "file": "tests/ui-binding-gates.test.mjs",
+      "sha256": "ec8f265e56b8eca72cc91310d6b5eef72626810f7fb17d96b618e608190c12b7"
+    }
+  ],
+  "protectedFiles": [
+    {
+      "file": "botsales-kit/execution/plan.json",
+      "sha256": "c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16",
+      "currentSha256": "c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/progress.json",
+      "sha256": "23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed",
+      "currentSha256": "23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f",
+      "currentSha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/frontend-progress.json",
+      "sha256": "fa1fd588fc8a807ed334b48b0766cabfa621d45817c551f28ae3243c30330ef9",
+      "currentSha256": "fa1fd588fc8a807ed334b48b0766cabfa621d45817c551f28ae3243c30330ef9",
+      "unchanged": true
+    },
+    {
+      "file": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "currentSha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "currentSha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "unchanged": true
+    }
+  ],
+  "indexUnchanged": true,
+  "runtimeSourceChangesSinceS03": [],
+  "pending": [
+    "Layout gate binding integration",
+    "Remaining symbol-based style/geometry/callback paths and meaningful probes",
+    "Final S05 capability acceptance and S06–S20 full rollout"
+  ],
+  "limits": [
+    "Legacy virtual/syntax fixtures are not production resolver proof",
+    "Controlled MUI declarations in unit fixtures are not real MUI typecheck proof",
+    "No shared/feature UI edits or browser verification in this batch",
+    "No full conformance, owner acceptance or Enterprise certification"
+  ]
+}

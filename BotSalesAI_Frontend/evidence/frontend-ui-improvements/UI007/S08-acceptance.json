@@ -1,0 +1,84 @@
+{
+  "task": "UI007",
+  "title": "Independent loading, error, permission, empty, and retry states for secondary queries",
+  "status": "PASS",
+  "completedAt": "2026-10-02",
+  "scope": "Frontend React application with synthetic MSW API only",
+  "baseline": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "existingLocalChanges": "UI001-UI006 and tooling changes were already present; this acceptance describes UI007 changes and does not attribute all working-tree changes to UI007.",
+    "inventory": "S01-source-inventory.md"
+  },
+  "checkpoints": {
+    "C01": "PASS: source, route, contract, permissions, current state behavior and baseline fingerprints inventoried before implementation.",
+    "C02": "PASS: customer orders/shipments and procurement supplier/offer/detail/budget query ownership and state presentation updated; operation-scoped test delay added.",
+    "C03": "PASS: five targeted browser scenarios cover delay, isolated 503/retry, 403, successful empty response, independent supplier/offer faults and unverified budget submission prevention.",
+    "C04": "PASS: npm run verify completed with exit code 0.",
+    "C05": "PASS: final built-demo full E2E completed with 167/167 tests; role matrix 357/357, empty 9/9, route-error 51/51."
+  },
+  "testEvidence": {
+    "targeted": {
+      "path": "S03-targeted-acceptance.log",
+      "passed": 5,
+      "failed": 0
+    },
+    "verify": {
+      "path": "S04-verify-final.log",
+      "exitCode": 0,
+      "generation": "11 outputs, 283 schemas, 210 operations, 54 routes",
+      "sourceChecker": "62 files, 220 operation references",
+      "boundaries": "411 imports, 8/8 negative fixtures",
+      "domainAndMocks": "88/88",
+      "vitest": "72/72",
+      "lintTypecheckProductionBuild": "PASS"
+    },
+    "firstFullE2E": {
+      "path": "S05-full-e2e-initial-attempt.log",
+      "result": "166/167",
+      "cause": "FE014 still expected an empty budget combobox after the UI displayed the explicit no-budget state."
+    },
+    "regression": {
+      "path": "S06-fe014-budget-empty-regression.log",
+      "passed": 1,
+      "failed": 0
+    },
+    "finalFullE2E": {
+      "path": "S07-full-e2e-final.log",
+      "passed": 167,
+      "failed": 0,
+      "duration": "10.2m",
+      "roleMatrix": "357/357",
+      "emptyComposition": "9/9",
+      "routeErrorComposition": "51/51",
+      "productionArtifactMockIsolation": "PASS"
+    },
+    "debugHistory": "S02-test-debug-notes.md"
+  },
+  "measuredDemoMetrics": {
+    "source": "botsales-kit/execution/frontend-evidence/FE025",
+    "browser": "Chromium 153 on Windows x64, 1280x720",
+    "initialRouteGzipBytes": 447016,
+    "largestChunkGzipBytes": 185438,
+    "syntheticCustomerRows": 1004,
+    "pageLimit": 20,
+    "firstPageReadyMs": 339,
+    "scopeNote": "Local built demo with synthetic MSW data; not a multi-device SLO or real API measurement."
+  },
+  "remainingReadinessGaps": [
+    "FE-G05: manual browser zoom, screen-reader and contrast review remains open.",
+    "FE-G09: product-owner acceptance remains open."
+  ],
+  "sourceFingerprints": {
+    "apps/web/src/modules/customers/index.tsx": "E90183E27EFA6B99E29D6C85663DD8A2BB713ACF6C546C95F124245576012A52",
+    "apps/web/src/modules/procurement/index.tsx": "ACFC992EC62EDA0358CCE52D193044DD9458CD500FB154D4F8C4EE55EF8B2B43",
+    "apps/web/src/mocks/service.ts": "E9043A25B86F7AC07DEA9D609593397EA9BC2B0FAA945058C7EA4566F16CCD69",
+    "tests/ui007-query-states.spec.ts": "C37FD2F4F237112E8EA106A9AA9C23A3A92E25C65DE4FAA738EA912E8A4D7404",
+    "tests/fe014.spec.ts": "85C85A46F160212F7B0A56C334B1F0176B779C2E2B4819D65A9A9C894B03F57E",
+    "evidence/frontend-ui-improvements/UI007/S01-source-inventory.md": "5ED2C893EA1FCCC4A95BFA1DB098EEE3CAE25E054A4D59ADD7BFCF49F1747B1A"
+  },
+  "limitations": [
+    "No backend, real provider, staging, deployment or production runtime was tested.",
+    "The advisory production build chunk is 730.75 kB raw and 184.42 kB gzip; it remains below the local 200 KiB gzip chunk budget.",
+    "No FE tracker, frontend task ledger, product-wide plan/progress, OpenAPI, route manifest or design tokens were changed."
+  ]
+}

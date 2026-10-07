@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W34",
+  "recordType": "policy_sync_subtask",
+  "recordedAt": "2026-10-06T01:00:29.0368144+00:00",
+  "result": "PASS_FOR_POLICY_SYNC_ONLY",
+  "overallW34Status": "TODO_DEPENDENCY_W33_OPEN",
+  "scope": "Frontend UI policy synchronization only; no runtime UI or progress status changes",
+  "policy": {
+    "id": "SPC-054",
+    "standardVersion": "1.16",
+    "planVersion": "12.1",
+    "authorityOrder": [
+      "route manifest/OpenAPI/UX contract for behavior",
+      "design/tokens.json and generated output for primitive visual values",
+      "theme/shared layout bridge for runtime mapping",
+      "spacing standard and semantic profiles for composition",
+      "migrated routes as comparison evidence only",
+      "screenshots/prototypes/legacy UI as references only"
+    ],
+    "enforcement": "Record source conflicts in task evidence, resolve at canonical owner before JSX/style, sync generated outputs and checker fixtures, then run generate:check, verify and impact-based render/behavior regression."
+  },
+  "checks": {
+    "crossDocumentReferences": "SPC-054 present in 9 normative guidance/plan files; REPORT policy note added",
+    "generatedFreshness": "PASS: node scripts/generate.mjs --check via bundled Node; 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "npmWrapperAttempt": "NOT_PASS: npm.cmd run generate:check launched but its child shell could not resolve node.exe",
+    "diffCheck": "PASS: no whitespace errors; Git emitted line-ending normalization warnings",
+    "tracker": "No FE/UI progress ledger or full-product tracker was changed"
+  },
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "08a63a85a7f7722968c34277e8d8bb0b94c6059c66d63feef0003375d380c000"
+    },
+    {
+      "path": "DESIGN.md",
+      "sha256": "81ffe23e2945557c1ad5c59f23e6fb87d2aa813c48272b1e74efe539b2da02db"
+    },
+    {
+      "path": "UX-CONTRACT.md",
+      "sha256": "6453c6ceaa8a4d11c3dcead0358e34199139228059b575d3e43daab9562a04b2"
+    },
+    {
+      "path": "docs/FRONTEND_SPACING_STANDARD.md",
+      "sha256": "b52f52d0b91fa0f6d37b60c29a544a6a7131a53da931a119598df8aaa07594ce"
+    },
+    {
+      "path": "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md",
+      "sha256": "f9ec4ca5e11825953d3f6cb60f8a52654ac67ade3067223aa45e0e6e3c239b43"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "6b9c231c4b0baf3605065baf1057345b1ef7a5c4ecfdcc58a5b037e908a81407"
+    },
+    {
+      "path": "docs/PROJECT_CONTEXT.md",
+      "sha256": "13843bdeacad2069870407f7b80019248bacb88f6068f65bdfa9145d0010dcb9"
+    },
+    {
+      "path": "docs/CONTINUE_FRONTEND.md",
+      "sha256": "08869660acdf59ce209027cbab10b2424340fc2ac5b91c191dcbba20eb559fa2"
+    },
+    {
+      "path": "botsales-kit/docs/18_CODING_STANDARDS.md",
+      "sha256": "9ccecc1e5b0f453482ab159c8e7c5aef0a944366bc236c0c0f163565944940df"
+    },
+    {
+      "path": "evidence/REPORT.md",
+      "sha256": "10caec3a63e60e1883278a925e78efb2d092b2afccd3c6a75180e360d7852f2e"
+    }
+  ],
+  "openItems": [
+    "W30 native text resize 200% and actual browser zoom 200% remain NOT_RUN",
+    "W33 M08 FE acceptance remains stale and requires evidence-led revalidation",
+    "W34 overall cannot close before W33"
+  ]
+}

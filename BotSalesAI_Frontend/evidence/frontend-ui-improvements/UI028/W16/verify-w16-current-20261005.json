@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W16",
+  "capturedAt": "2026-10-05",
+  "scope": "Frontend-only local synthetic MSW; Customers spacing migration for R07/R08/R54",
+  "source": {
+    "path": "apps/web/src/modules/customers/index.tsx",
+    "beforeSha256": "153dd6b93f75d000096aefc2e7ad52788bef2f82255dfdff8956e364ce434493",
+    "afterSha256": "8212b948ae95110eeb705c5247d6bb817c38681987d48fb117896f4f8d7a6ac5",
+    "preExistingStagedAndUnstagedChangesAtIntake": true
+  },
+  "layout": {
+    "globalSpacingFindingsBefore": 266,
+    "globalSpacingFindingsAfter": 251,
+    "ownerSpacingFindingsBefore": 15,
+    "ownerSpacingFindingsAfter": 0,
+    "removedOccurrences": 15,
+    "removedIdentities": 9,
+    "addedOccurrences": 0,
+    "nonCustomerFindingIdentityChanges": 0,
+    "fixtures": "PASS 9/9",
+    "strictGlobalGate": "FAIL; 251 spacing findings remain in W17-W25 modules"
+  },
+  "checks": {
+    "generator": "PASS; 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "source": "PASS; 66 files, 220 operation calls, 54 routes, 0 issues; source checker 3/3",
+    "boundaries": "PASS; 447 imports, 10/10 negative fixtures, 0 issues",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "domainAndNetwork": "PASS; 75 simulator + 13 network checks, 88/88",
+    "vitest": "PASS; 88/88 across 10 files",
+    "productionBuild": "PASS; 2056 modules",
+    "targetedPlaywright": "PASS; 68/68, Chromium 34/34 and Firefox 34/34",
+    "layoutRegression": "PASS; R07/R08/R54 at 320/390/768/1280/1440 px; customer create and case dialogs at mobile and desktop; 4/4 Chromium/Firefox tests",
+    "routeStateRegression": "PASS; empty composition 11/11 and API error composition 51/51 in each engine",
+    "visualSourceReview": "PASS for this spacing-only delta; see visual-source-review-current-20261005.md",
+    "fullVerify": "Exit 1 only at the final strict layout scan after the listed checks passed; 251 source findings remain"
+  },
+  "browserEvidence": {
+    "pairedChromiumObservations": "12 baseline + 12 after across R07/R08/R54 states at 390x844 and 1280x900",
+    "pageErrors": 0,
+    "writeRequestsDuringCapture": 0,
+    "layoutDelta": "15 Customers findings removed; 0 added; no identity/count changes outside Customers",
+    "interactionWrites": "The paired capture is read-only; behavior tests use isolated synthetic fixtures and do not represent production writes."
+  },
+  "verdict": {
+    "ui": "PASS",
+    "architecture": "PASS_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "task": "DONE_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "limitations": [
+      "npm.cmd run verify exits 1 at the final strict layout scan because 251 spacing findings remain in modules assigned to W17-W25.",
+      "Automated layout enforcement currently covers spacing; other visual-token categories await the W26-W27 checker and gate.",
+      "Evidence is local React with synthetic MSW. It does not establish Backend/provider integration, hosted CI, staging, production behavior or owner acceptance."
+    ]
+  },
+  "evidence": [
+    "design-contract-pre-spacing-current-20261005.md",
+    "layout-before-spacing-current-20261005.json",
+    "layout-after-spacing-current-20261005.json",
+    "layout-delta-current-20261005.json",
+    "render-before-spacing-current-20261005.json",
+    "render-after-spacing-current-20261005.json",
+    "targeted-customers-regression-current-20261005.log",
+    "ui-customers-layout-e2e-current-20261005.log",
+    "verify-w16-current-20261005.log",
+    "visual-source-review-current-20261005.md"
+  ]
+}

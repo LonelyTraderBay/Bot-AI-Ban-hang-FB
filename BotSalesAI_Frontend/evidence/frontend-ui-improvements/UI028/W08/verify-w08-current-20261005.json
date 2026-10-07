@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "workItem": "UI028.W08",
+  "capturedAt": "2026-10-05",
+  "status": "DONE_WITH_BASELINE_GAP",
+  "scope": "Frontend shared Empty, QueryState, ErrorNotice, PartialDataNotice, CapabilityUnavailable, EditDialog, and ConfirmDialog. No backend, persistent data, or external service was used.",
+  "sourceHashes": {
+    "beforeCode": {
+      "apps/web/src/shared/ui/components.tsx": "209db1a119d2620041057b6e0f01f35838c35c5790074d3db7d87314ea922193",
+      "apps/web/src/shared/ui/layout.ts": "a8a0c2c4fd5513e6bd8b437e78374682f63654f9fa57454923676681f5848983"
+    },
+    "afterCode": {
+      "apps/web/src/shared/ui/components.tsx": "66be880a201fe2a490a21b8332fbe6be934d12a2339d48632e519ff624834301",
+      "apps/web/src/shared/ui/layout.ts": "51c8ffdf9d2b875ce9368042719cd58d359fa57426a103b299880f519791ccef"
+    }
+  },
+  "baseline": {
+    "dialog": "CAPTURED",
+    "emptyState": "BASELINE_NOT_CAPTURED",
+    "reason": "R30 did not render an Empty state under the default pre-code seed. No after-code screenshot or probe is relabeled as a before baseline.",
+    "afterEmptyStateUse": "DIAGNOSTIC_ONLY"
+  },
+  "verification": {
+    "generateCheck": { "status": "PASS", "command": "node scripts/generate.mjs --check", "outputs": 11, "schemas": 283, "operations": 210, "routes": 54 },
+    "sourceCheck": { "status": "PASS", "files": 66, "operationCalls": 220, "routes": 54, "issues": 0 },
+    "sourceCheckerTests": { "status": "PASS", "passed": 3 },
+    "boundaries": { "status": "PASS", "files": 66, "imports": 434, "negativeFixtures": 10, "issues": 0 },
+    "typecheck": { "status": "PASS", "command": "node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit" },
+    "lint": { "status": "PASS", "command": "node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0" },
+    "domain": { "status": "PASS", "simulatorChecks": 75, "networkChecks": 13, "passed": 88, "operations": 89 },
+    "vitest": { "status": "PASS", "files": 10, "passed": 88 },
+    "playwrightStateAndDialog": { "status": "PASS", "specs": ["ui007-query-states.spec.ts", "ui008-integration-empty.spec.ts", "ui010-dialog-draft.spec.ts"], "passed": 13 },
+    "playwrightRouteEmpty": { "status": "PASS", "routes": 11, "command": "node node_modules/@playwright/test/cli.js test tests/states/route-empty-composition.spec.ts --project=chromium" },
+    "layoutFixtures": { "status": "PASS", "passed": 9 },
+    "layoutStrictGlobal": { "status": "FAIL", "spacingLiterals": 448, "unknownStyleSources": 0, "sharedUiOwnedFindings": 0, "note": "Existing migration debt outside W08 remains assigned to W09-W25; strict gate was not suppressed or reclassified." },
+    "productionBuild": { "status": "PASS", "modules": 2056, "maxChunkRawKb": 328.33 }
+  },
+  "renderEvidence": {
+    "status": "PASS_AFTER_ONLY",
+    "artifact": "render-after-code-empty-visual-verified-current-20261005.json",
+    "dialogViewports": ["1280x900", "390x844"],
+    "emptyRoute": "R30 /s/shop-demo/integrations/ai",
+    "emptyFaultInjection": "empty_persistent synthetic API state set before R30 query; no persistent mutation",
+    "emptyViewports": ["1280x900", "390x844"],
+    "emptyStateMeasurements": { "desktopPadding": "48px 16px", "mobilePadding": "32px 16px", "contentGap": "16px", "documentOverflow": false },
+    "pageErrors": 0,
+    "visualInspection": "Desktop and mobile screenshots show the Empty message and one action without an open select menu, popover, or page overflow."
+  },
+  "verdict": {
+    "ui": "PASS_WITH_BASELINE_GAP",
+    "architecture": "PASS",
+    "ownerAcceptance": "NOT_RECORDED",
+    "wholeUi028": "IN_PROGRESS",
+    "wholeProjectStrictGate": "FAIL"
+  }
+}

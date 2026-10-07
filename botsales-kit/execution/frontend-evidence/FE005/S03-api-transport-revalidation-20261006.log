@@ -1,0 +1,39 @@
+FE005.S03 typed API transport lifecycle verification
+executedAt=2026-10-06T03:22:44.669Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+REGISTERED COMMAND unit: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test
+UNIT LOG botsales-kit/execution/frontend-evidence/FE005/S03-unit-registered-post-api-contract-20261006.log; sha256=f98535d0fcab463eac6b90c30accb45678cd124b86f01a159ed002e51f2165e9
+FOCUSED SUPPLEMENT node.exe node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/api-client.test.tsx
+FOCUSED LOG botsales-kit/execution/frontend-evidence/FE005/S03-api-transport-focused-supplement-20261006.log; sha256=526fa2de964ff34f6e85cd476adad96a089253668c23a27877a1bc74aac6325b
+unit=91/91; focusedApi=22/22; generatedOperations=210; directFetchFiles=apps/web/src/shared/api/client.ts
+checksTotal=6; failed=0
+CHECK registered frontend unit tests: PASS
+npm test passed 91/91 tests across 10 files.
+CHECK focused API transport tests: PASS
+The API client test file passed all 22 tests.
+CHECK credential and mutation headers: PASS
+CSRF and idempotency values are checked against generated header schemas; required If-Match versions are positive safe integers.
+CHECK request and response contract validation: PASS
+Path/query parameters, request bodies and response DTOs are validated from generated schemas before being trusted.
+CHECK cancellation and mutation uncertainty: PASS
+Caller abort and scope cancellation propagate; ambiguous mutation outcomes are stored as unknown and are not retried blindly.
+CHECK transport boundary: PASS
+The only direct fetch call is in apps/web/src/shared/api/client.ts; modules contain no hardcoded /api/v2 base path.
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; local transport tests do not prove server behavior or a live integration.
+sourceSnapshotSha256=3a6b6169a947f87f79dce38ed4fafd414e0e058ea658e8267bfe029ee4491eef
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE apps/web/src/shared/api/client.ts sha256=58c4d244187cb18ec94dbeacde3e4249ecb3d1dcadaf14bd68be4e5eaf4c5819
+SOURCE apps/web/src/shared/api/validation.ts sha256=5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1
+SOURCE apps/web/tests/api-client.test.tsx sha256=11412a93f87c846f371c2e7884fc5e6a94c74709843a1ac08c5f08514fdb39ea
+SOURCE apps/web/tests/setup.ts sha256=0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5
+SOURCE apps/web/vitest.config.ts sha256=48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e
+SOURCE botsales-kit/contracts/openapi.json sha256=d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S03-api-transport-focused-supplement-20261006.log sha256=526fa2de964ff34f6e85cd476adad96a089253668c23a27877a1bc74aac6325b
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S03-unit-registered-post-api-contract-20261006.log sha256=f98535d0fcab463eac6b90c30accb45678cd124b86f01a159ed002e51f2165e9
+SOURCE botsales-kit/execution/frontend-evidence/FE005/capture-s03-api-transport-revalidation-20261006.mjs sha256=5418cdaef5e9af0d277f303704dcab34a18bb89a7af2e86781886e70860ba776
+SOURCE botsales-kit/execution/frontend-plan.json sha256=4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE packages/contracts/src/operations.json sha256=1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88
+SOURCE scripts/generate.mjs sha256=beae96652c33bdfa46f90a0660b670db4d9f45a69a227e10dcacd2adfc722d5f
+reviewer=Codex self-review; no independent peer review claimed

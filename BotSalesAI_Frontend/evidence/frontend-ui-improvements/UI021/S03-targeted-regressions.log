@@ -1,0 +1,52 @@
+
+Running 41 tests using 1 worker
+
+
+
+(node:11020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/41] [chromium] › tests\fe009.spec.ts:35:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route
+[2/41] [chromium] › tests\fe009.spec.ts:57:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version
+[3/41] [chromium] › tests\fe009.spec.ts:115:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save
+[4/41] [chromium] › tests\fe009.spec.ts:132:1 › FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified
+[5/41] [chromium] › tests\fe009.spec.ts:145:1 › FE009.G05 marketing consent preview is interactive but never claims server opt-out
+[6/41] [chromium] › tests\fe009.spec.ts:160:1 › FE009.H06 audit screen distinguishes available fields from missing contract detail
+[7/41] [chromium] › tests\fe009.spec.ts:169:1 › FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment
+[8/41] [chromium] › tests\fe009.spec.ts:201:1 › team invitation and membership revoke stay shop-scoped and protect the active owner
+[9/41] [chromium] › tests\fe009.spec.ts:237:1 › privacy delete requests remain pending approval with no frontend step-up shortcut
+[10/41] [chromium] › tests\fe010.spec.ts:37:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP
+[11/41] [chromium] › tests\fe010.spec.ts:105:1 › product update sends If-Match and keeps edits visible after a 412 conflict
+[12/41] [chromium] › tests\fe010.spec.ts:123:1 › warehouse role can read catalog products but cannot edit product fields or price cost data
+[13/41] [chromium] › tests\fe010.spec.ts:132:1 › categories create, search, update with a version, and render cursor pagination
+[14/41] [chromium] › tests\fe010.spec.ts:161:1 › CSV preview reports row-level errors and commits only valid product rows
+[15/41] [chromium] › tests\fe010.spec.ts:233:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible
+[16/41] [chromium] › tests\fe010.spec.ts:265:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview
+[17/41] [chromium] › tests\fe010.spec.ts:278:1 › demo upload rejects files over 5 MB before making an upload request
+[18/41] [chromium] › tests\fe010.spec.ts:289:1 › product category lookup pages the full collection and preserves the selected category while editing
+[chromium] › tests\fe010.spec.ts:289:1 › product category lookup pages the full collection and preserves the selected category while editing
+UI005 acceptance: {"categoryTotal":105,"createCategoryId":"cat-2","editCategoryId":"cat-0","categoryRequests":18}
+
+[19/41] [chromium] › tests\fe017.spec.ts:24:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+[20/41] [chromium] › tests\fe017.spec.ts:115:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+[21/41] [chromium] › tests\fe017.spec.ts:154:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+[22/41] [chromium] › tests\fe017.spec.ts:187:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+[23/41] [chromium] › tests\fe017.spec.ts:209:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+[24/41] [chromium] › tests\fe017.spec.ts:242:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+[25/41] [chromium] › tests\fe017.spec.ts:263:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+[26/41] [chromium] › tests\fe017.spec.ts:278:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+[27/41] [chromium] › tests\fe017.spec.ts:296:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+[28/41] [chromium] › tests\frontend.spec.ts:39:1 › catalog create uses the HTTP mock and successful save clears the draft guard
+[29/41] [chromium] › tests\frontend.spec.ts:56:1 › dirty drafts block in-app navigation and preserve input until the user decides
+[30/41] [chromium] › tests\frontend.spec.ts:74:1 › all canonical routes render inside the real React demo application
+[31/41] [chromium] › tests\frontend.spec.ts:99:1 › switching shops cancels a delayed request and loads only the new shop scope
+[32/41] [chromium] › tests\frontend.spec.ts:117:1 › role changes remove restricted navigation and the route guard explains denied access
+[33/41] [chromium] › tests\frontend.spec.ts:130:1 › deep links survive browser refresh and logout clears the mock session
+[34/41] [chromium] › tests\frontend.spec.ts:141:1 › logout asks before discarding a draft and retains the session when logout fails
+[35/41] [chromium] › tests\frontend.spec.ts:198:1 › mobile navigation opens, routes, and closes without viewport overflow
+[36/41] [chromium] › tests\frontend.spec.ts:212:1 › chunk loading errors use the route recovery boundary
+[37/41] [chromium] › tests\frontend.spec.ts:251:1 › live mode reports an unavailable session API without enabling mock data
+[38/41] [chromium] › tests\ui012-keyboard.spec.ts:23:1 › UI012 keyboard-only finance edit handles select, discard warning and focus return
+[39/41] [chromium] › tests\ui012-keyboard.spec.ts:84:1 › UI012 keyboard validation focuses the field named by a synthetic 422 response
+[40/41] [chromium] › tests\ui012-keyboard.spec.ts:140:1 › UI012 keyboard activates the CSV chooser and discards its selected file without upload
+[41/41] [chromium] › tests\ui012-keyboard.spec.ts:180:1 › UI012 keyboard can reach and horizontally scroll the marketing chart data alternative
+  41 passed (2.4m)

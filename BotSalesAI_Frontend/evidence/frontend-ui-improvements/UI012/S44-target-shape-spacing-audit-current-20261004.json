@@ -1,0 +1,664 @@
+{
+  "title": "UI012 target-shape and WCAG spacing-exception geometry sample",
+  "recordedAt": "2026-10-04T07:04:57.948Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "source": "React demo Vite server; synthetic MSW; Chromium mobile viewport/touch emulation",
+  "command": "node evidence/frontend-ui-improvements/UI012/S12-target-shape-spacing-audit.mjs",
+  "standard": {
+    "criterion": "WCAG 2.2 SC 2.5.8 Target Size (Minimum), Level AA",
+    "squareRequirementCssPx": 24,
+    "spacingCircleDiameterCssPx": 24,
+    "officialReference": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum",
+    "methodNote": "A target meets the size limb only if an axis-aligned 24×24 CSS px square can fit inside the target shape. For an undersized target, the spacing sample checks whether a 24px-diameter circle centered on its bounding box intersects another target or another undersized target circle."
+  },
+  "method": {
+    "routeIds": [
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17",
+      "R18",
+      "R19",
+      "R20",
+      "R21",
+      "R22",
+      "R23",
+      "R24",
+      "R25",
+      "R26",
+      "R27",
+      "R28",
+      "R29",
+      "R30",
+      "R31",
+      "R32",
+      "R33",
+      "R34",
+      "R35",
+      "R36",
+      "R37",
+      "R38",
+      "R39",
+      "R40",
+      "R41",
+      "R42",
+      "R43",
+      "R44",
+      "R45",
+      "R46",
+      "R47",
+      "R48",
+      "R49",
+      "R50",
+      "R51",
+      "R52",
+      "R53",
+      "R54"
+    ],
+    "viewportWidthsCssPx": [
+      320,
+      390
+    ],
+    "targetSelector": "a[href],button,input:not([type=\"hidden\"]),select,textarea,[role=\"button\"],[role=\"link\"],[role=\"tab\"],[role=\"checkbox\"],[role=\"radio\"],[role=\"switch\"],[role=\"menuitem\"]",
+    "includedStates": "Visible default/success state on all 54 routes plus the opened bank reconciliation import dialog on R49; no menus, hover, pressed or validation-error state.",
+    "geometry": "Tests rounded-rectangle border geometry using the computed per-corner radii and a finite set of axis-aligned square placements. Clip-path, mask and non-identity transforms are reported unassessed. Spacing uses neighboring target bounding boxes conservatively.",
+    "limitations": "The finite candidate placements can prove a fitting square when one is found, but absence from this candidate set is classified only as a review candidate, not a definitive size failure. Bounding-box spacing that overlaps an irregular target is also a conservative review candidate. No inline, equivalent, user-agent, essential or interactive-state decision is inferred."
+  },
+  "routeCount": 54,
+  "pageErrors": [],
+  "groups": [
+    {
+      "viewportWidthCssPx": 320,
+      "routeCount": 54,
+      "visibleTargets": 358,
+      "squareFits": 358,
+      "inlineExceptions": 0,
+      "spacingExceptionGeometryPass": 0,
+      "spacingReviewRequired": 0,
+      "geometryUnassessed": 0,
+      "notSquareFit": 0,
+      "states": [
+        "default",
+        "dialog"
+      ],
+      "defaultTargetCount": 351,
+      "dialogTargetCount": 7,
+      "routeCounts": [
+        {
+          "routeId": "R01",
+          "default": 1,
+          "dialog": 0
+        },
+        {
+          "routeId": "R02",
+          "default": 3,
+          "dialog": 0
+        },
+        {
+          "routeId": "R03",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R04",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R05",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R06",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R07",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R08",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R09",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R10",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R11",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R12",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R13",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R14",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R15",
+          "default": 10,
+          "dialog": 0
+        },
+        {
+          "routeId": "R16",
+          "default": 11,
+          "dialog": 0
+        },
+        {
+          "routeId": "R17",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R18",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R19",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R20",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R21",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R22",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R23",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R24",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R25",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R26",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R27",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R28",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R29",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R30",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R31",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R32",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R33",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R34",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R35",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R36",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R37",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R38",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R39",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R40",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R41",
+          "default": 10,
+          "dialog": 0
+        },
+        {
+          "routeId": "R42",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R43",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R44",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R45",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R46",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R47",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R48",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R49",
+          "default": 8,
+          "dialog": 7
+        },
+        {
+          "routeId": "R50",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R51",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R52",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R53",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R54",
+          "default": 8,
+          "dialog": 0
+        }
+      ],
+      "nonSizePassTargets": []
+    },
+    {
+      "viewportWidthCssPx": 390,
+      "routeCount": 54,
+      "visibleTargets": 383,
+      "squareFits": 383,
+      "inlineExceptions": 0,
+      "spacingExceptionGeometryPass": 0,
+      "spacingReviewRequired": 0,
+      "geometryUnassessed": 0,
+      "notSquareFit": 0,
+      "states": [
+        "default",
+        "dialog"
+      ],
+      "defaultTargetCount": 376,
+      "dialogTargetCount": 7,
+      "routeCounts": [
+        {
+          "routeId": "R01",
+          "default": 1,
+          "dialog": 0
+        },
+        {
+          "routeId": "R02",
+          "default": 3,
+          "dialog": 0
+        },
+        {
+          "routeId": "R03",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R04",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R05",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R06",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R07",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R08",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R09",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R10",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R11",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R12",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R13",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R14",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R15",
+          "default": 10,
+          "dialog": 0
+        },
+        {
+          "routeId": "R16",
+          "default": 11,
+          "dialog": 0
+        },
+        {
+          "routeId": "R17",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R18",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R19",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R20",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R21",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R22",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R23",
+          "default": 10,
+          "dialog": 0
+        },
+        {
+          "routeId": "R24",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R25",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R26",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R27",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R28",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R29",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R30",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R31",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R32",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R33",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R34",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R35",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R36",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R37",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R38",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R39",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R40",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R41",
+          "default": 10,
+          "dialog": 0
+        },
+        {
+          "routeId": "R42",
+          "default": 5,
+          "dialog": 0
+        },
+        {
+          "routeId": "R43",
+          "default": 11,
+          "dialog": 0
+        },
+        {
+          "routeId": "R44",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R45",
+          "default": 8,
+          "dialog": 0
+        },
+        {
+          "routeId": "R46",
+          "default": 7,
+          "dialog": 0
+        },
+        {
+          "routeId": "R47",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R48",
+          "default": 9,
+          "dialog": 0
+        },
+        {
+          "routeId": "R49",
+          "default": 10,
+          "dialog": 7
+        },
+        {
+          "routeId": "R50",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R51",
+          "default": 6,
+          "dialog": 0
+        },
+        {
+          "routeId": "R52",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R53",
+          "default": 4,
+          "dialog": 0
+        },
+        {
+          "routeId": "R54",
+          "default": 10,
+          "dialog": 0
+        }
+      ],
+      "nonSizePassTargets": []
+    }
+  ]
+}

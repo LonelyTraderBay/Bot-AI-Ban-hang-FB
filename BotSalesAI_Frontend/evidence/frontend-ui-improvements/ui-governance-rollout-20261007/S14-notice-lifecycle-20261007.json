@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "step": "S14",
+  "capturedAt": "2026-10-06T19:28:19.557Z",
+  "scope": "Lifecycle decision for the two shared notice exports with no production JSX consumer; other API/role/route closure remains open.",
+  "inventory": {
+    "exports": [
+      "PartialDataNotice",
+      "CapabilityUnavailable"
+    ],
+    "productionConsumers": 0,
+    "unitTestFiles": [
+      "apps/web/tests/components.test.tsx",
+      "apps/web/tests/states/fe023-state.test.tsx"
+    ],
+    "routeManifestCount": 54,
+    "capabilityUnavailableStateRoutes": [
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17",
+      "R18",
+      "R19",
+      "R20",
+      "R21",
+      "R22",
+      "R23",
+      "R24",
+      "R25",
+      "R26",
+      "R27",
+      "R28",
+      "R29",
+      "R30",
+      "R31",
+      "R32",
+      "R33",
+      "R34",
+      "R35",
+      "R36",
+      "R37",
+      "R38",
+      "R39",
+      "R40",
+      "R41",
+      "R42",
+      "R43",
+      "R44",
+      "R45",
+      "R46",
+      "R47",
+      "R48",
+      "R49",
+      "R50",
+      "R51",
+      "R52",
+      "R53",
+      "R54"
+    ],
+    "partialDataRequirements": [
+      {
+        "routeId": "R04",
+        "path": "/s/:shopId/overview",
+        "requirement": "Null tiền hiển thị bị hạn chế/chưa có, không 0; partial dashboard và stale; widget lỗi không làm trắng toàn trang."
+      },
+      {
+        "routeId": "R14",
+        "path": "/s/:shopId/imports/:jobId",
+        "requirement": "File/dữ liệu đổi sau preview; partial commit; retry chỉ failed rows với intent mới có preview; không ghi lại dòng đã thành công."
+      },
+      {
+        "routeId": "R19",
+        "path": "/s/:shopId/orders/:orderId",
+        "requirement": "Double submit, last SKU race, expired quote, unknown delivery outcome, partial returns, COD outstanding and closed period. No real money movement initiated by this UI."
+      },
+      {
+        "routeId": "R28",
+        "path": "/s/:shopId/bot/evaluations",
+        "requirement": "Evaluation pending/error; critical failure blocks publish; dataset thay đổi làm kết quả cũ không đủ; partial output không coi passed."
+      },
+      {
+        "routeId": "R31",
+        "path": "/s/:shopId/reports",
+        "requirement": "Mixed currency không cộng; signed URL hết hạn; export khác tenant; formula injection; partial/error job không phát file giả."
+      },
+      {
+        "routeId": "R36",
+        "path": "/s/:shopId/jobs/:jobId",
+        "requirement": "Không thấy job người khác/tenant khác; unknown total progress; partial/failed; link expired và unauthorized data không còn cache."
+      },
+      {
+        "routeId": "R43",
+        "path": "/s/:shopId/returns",
+        "requirement": "Returned item chưa kiểm không available; không hoàn quá paid/qty; partial return không làm hoàn toàn đơn.\nKhông hủy đơn đã handed_over bằng cancel thường; reservation release đúng một lần."
+      },
+      {
+        "routeId": "R49",
+        "path": "/s/:shopId/finance/reconciliation",
+        "requirement": "Ảnh chuyển khoản chỉ evidence chờ kiểm; unmatched/partial/duplicate visible; offline không post.\nKhách trả carrier khác shop received cash; net remittance + fees cân bằng gross clearing."
+      }
+    ]
+  },
+  "decisions": [
+    {
+      "export": "PartialDataNotice",
+      "decision": "KEEP_CONDITIONAL_CANONICAL_OWNER",
+      "rationale": "R04 explicitly requires a partial-dashboard state. Keep the shared info/status boundary available, but adopt only when frontend-visible source data proves incompleteness and copy explains it; do not infer partial data from null values alone or add a dummy consumer."
+    },
+    {
+      "export": "CapabilityUnavailable",
+      "decision": "KEEP_CANONICAL_CAPABILITY_STATE_OWNER",
+      "rationale": "The route manifest enumerates capability_unavailable for all 54 routes, distinct from forbidden/403. Keep this shared presentation owner; render only when the API or environment explicitly declares that capability unavailable, never infer it from missing permission."
+    }
+  ],
+  "behavior": {
+    "sourceChanged": false,
+    "fixturesRemainTestsOnly": true,
+    "backendClaim": "No claim that an API currently emits either state; Frontend mock/route requirement only."
+  },
+  "sourceFingerprints": {
+    "apps/web/src/shared/ui/components.tsx": "0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5",
+    "apps/web/src/shared/ui/README.md": "cabca23b98df201a4ec080cdd68154b86b9963eb168c0523a8e6eab54af67560",
+    "botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "tests/ui-shared-api-contract.test.mjs": "cc0d92dd4087099f01141a9e5a67a4b82979d2e7e6d93725687e26e43fef975b",
+    "apps/web/tests/states/fe023-state.test.tsx": "15a3815aaaea1bfd726d2d7ada8d867f6695b3531d1ca90c513ad3798944661b"
+  }
+}

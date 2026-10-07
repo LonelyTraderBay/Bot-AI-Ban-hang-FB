@@ -1,0 +1,50 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "evidenceId": "UI020/S09",
+  "date": "2026-10-04",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "acceptedDecision": "Requester approved desktop-first support scope recorded in UI020/S06",
+  "checkpoints": {
+    "C01": "PASS: host/browser inventory",
+    "C02": "PASS: requester-approved minimum-version/support matrix",
+    "C03": "PASS: supported desktop browser regression",
+    "C04": "PASS: current verify and full browser regressions",
+    "C05": "PASS: scope, outcomes and fingerprints recorded"
+  },
+  "results": {
+    "chromeInstalled": {
+      "version": "154.0.8037.92",
+      "executable": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+      "headlessE2E": "194/194 PASS, exit 0; page UA HeadlessChrome/154.0.0.0",
+      "smoke": "deep link, refresh and local edit draft; zero API writes"
+    },
+    "playwrightChromium": {
+      "version": "153.0.8010.12",
+      "e2e": "194/194 PASS"
+    },
+    "playwrightFirefox": {
+      "version": "155.0",
+      "e2e": "194/194 PASS"
+    },
+    "combinedCrossEngine": "388/388 PASS, exit 0",
+    "frontendVerify": "PASS; see UI012/S39",
+    "generateCheck": "11 outputs / 283 schemas / 210 operations / 54 routes PASS"
+  },
+  "decisionLimits": [
+    "Microsoft Edge, Safari/macOS, physical Android/iOS are best effort and were not directly tested here.",
+    "PWA installation, OS notification permission and real push delivery are out of scope.",
+    "All E2E data is local synthetic MSW; this is not hosted CI, Backend, provider, staging, production or owner UAT evidence.",
+    "S07a records a diagnostic run stopped after 44 passes when Playwright Desktop Chrome preset was found to pin a stale Chrome 153 User-Agent; S08 removes that override and is the accepted full Chrome run."
+  ],
+  "evidenceSha256": {
+    "UI020/S06-requester-approved-browser-scope-20261004.md": "A4F11F911660805D38FC6040DF1101366A302ABFB87B1EA9F1EC29C039AD3A7F",
+    "UI020/S06-desktop-chrome-playwright.config.mjs": "F559C2F8DBDD19E5ADA6785230411AD968B0DADE01F837C4C996D209268725D2",
+    "UI020/S05-desktop-chrome-smoke-20261004.log": "49F758418FD1CE4A37DB8AC3C85CDBAC6466DE53C02049C79BBFBBD7E895E775",
+    "UI020/S07a-google-chrome-user-agent-preset-diagnostic-20261004.log": "D82F3D9B08453FEF23C7A8F39BEFAAFF9C9D3BC3D170E36720C91CFB7410C351",
+    "UI020/S08-google-chrome-full-e2e-20261004.log": "4D67B988F466876712731E71F33514344F1BA642915795D11575BEF6A1B00A35",
+    "UI012/S39-current-frontend-verify-20261004.log": "ED5041592D6CC0ACF34304885299EDBDF36EDD70F2B08065D28BDCAEF5122563",
+    "UI012/S40-full-e2e-20261004.log": "530D8F9D45C6D16DE0C7BB8BE43139911C6BA190C9CE19D46D1AE33DEF4646C8",
+    "UI024/S08-fingerprint-current-worktree.py": "9F785335DA0F8F9F3B8919B9E1C7CF86B956E0072683989FD20AABCF403D5561",
+    "UI024/S08-current-worktree-and-artifact-fingerprint.json": "A5C4A5B87F9D2BEB1C258F996D34A62322B8FE95FD9FC72D9867503E8AD1FFDF"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI015",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "DONE",
+  "scope": "React/TypeScript frontend with local synthetic MSW only; no backend/provider/staging claim.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "UI015 acceptance now includes a current Android Chrome emulator soft-keyboard observation and S20/S19 verification. It remains scoped to this evidence bundle; unrelated pre-existing dirty work is not attributed to UI015."
+  },
+  "checkpoints": {
+    "C01": "PASS: R05/R06, conversations.read/reply/assign, Inbox context/composer, Shell MockTools, DataTable scroll accessibility and existing mobile Back/draft tests inventoried in S01.",
+    "C02": "PASS: mobile-only demo-controls disclosure added with aria-expanded/aria-controls and 44px minimum touch target; synthetic badge/warning remain visible; desktop selectors stay expanded. Inbox/table code unchanged without a reproduced defect.",
+    "C03": "PASS: targeted browser test 1/1; Enter opens disclosure, Tab reaches role select; no horizontal document overflow at 320/390/768/1280 CSS px; composer, Back and context remain present. Full E2E covers mobile cursor/draft/Back.",
+    "C04": "PASS: S07 used Chrome 152 on the Pixel 10 Pro XL Android 17/API 37 AVD; the system soft keyboard opened, visualViewport height fell from 864.3 to 552.3 CSS px, composer/send stayed visible, document width stayed 448/448, and Android Back hid the keyboard while preserving the draft and conversation route. This is emulator evidence, not a physical-handset test.",
+    "C05": "PASS: S07 device/browser probe, screenshots, S19 current direct frontend gates, S20 full rebuilt-demo E2E, plan/context/gaps/report and refreshed SHA-256 fingerprints recorded. FE/product ledgers remain unchanged."
+  },
+  "implementation": [
+    "In demo mode only, controls for role/fault/dataset collapse by default below md and are opened with an accessible keyboard-operable disclosure. On md and wider, controls remain displayed.",
+    "The synthetic data badge and persistent explanatory alert remain outside the collapsed region. Inbox composer positioning, table/card layout, URL/cursor semantics, permissions and contract were not changed."
+  ],
+  "verification": {
+    "generateCheck": "PASS: 11 outputs, 283 schemas, 210 operations, 54 routes.",
+    "targetedBrowser": "PASS: 1/1; disclosure state, Enter/Tab focus, badge visibility, Inbox composer/back/context and no horizontal overflow at 320/390/768/1280 CSS px; S03-targeted-regressions.log.",
+    "verify": "PASS: source 62 files/220 operation calls/54 routes; boundaries 414 imports and negative fixtures 8/8; lint/typecheck; domain/MSW 88/88; Vitest 80/80; production build; S04-verify.log.",
+    "fullRebuiltDemoE2E": "PASS 187/187 Chromium in 11.0 minutes; axe 55 snapshots/0 violations; route-role 357/357; empty 11/11; route-error 51/51; production artifact has no MSW; S05-full-e2e-observed.md.",
+    "metrics": "Synthetic MSW demo on Windows/Chromium 153 at 1280x720: initial route 448421 gzip bytes; largest demo chunk 186586 gzip bytes; 1004 synthetic customers; API page size 20; first page ready 340 ms. Not a mobile device matrix or production SLO.",
+    "buildAdvisory": "Production largest chunk 734.01 kB raw / 185.46 kB gzip.",
+    "review": "Codex self-review; no independent human review or device-based UAT recorded.",
+    "nativeSoftKeyboard": "PASS: Chrome 152 on Android 17/API 37 Pixel 10 Pro XL AVD; display 1344x2992 at 480 dpi, portrait browser viewport 448x864 CSS px, DPR 3. Gboard/system IME was confirmed by dumpsys (mInputShown=true); visualViewport height reduced to 552.3 px. Focused composer remained visible at y=412..452, send button at y=480.5..524.5; no horizontal overflow. Android Back hid the IME, retained draft and route. 8/8 assertions true, 0 page errors. No reply submitted; emulator is not a physical handset.",
+    "currentFullE2E": "PASS 188/188 on current React source in UI012/S20; includes post-R26 regression, all route-role 357/357, empty 11/11, route-error 51/51, axe and production-artifact isolation. This is local Chromium + synthetic MSW, not GitHub CI or owner UAT."
+  },
+  "gates": {
+    "FE_G02": "PASS locally on current diff.",
+    "FE_G03": "PASS for frontend contract/mock tests; route manifest and generated contracts unchanged.",
+    "FE_G04": "PASS for current rebuilt-demo browser suite; server behavior is not established.",
+    "FE_G05": "Automated browser checks and Android emulator soft-keyboard behavior pass within their measured scope. FE-G05 remains partial because screen-reader speech/transcript and full human visual review of error/hover/pressed/icon states are still open.",
+    "FE_G08": "Production/demo builds and artifact isolation pass locally; remote CI not run.",
+    "FE_G09": "Automated flows pass; product-owner acceptance remains open.",
+    "readiness": "7/9 evidence gates; UI015.C04 is closed by emulator evidence. FE-G05 manual review and FE-G09 owner UAT remain open; not Production-Ready/Enterprise-Grade certification."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "7/10",
+    "totalDone": "20/26",
+    "checkpoints": "113/130",
+    "next": "Review/fill UI020/S02 owner support-matrix decision draft; UI020.C02 remains pending approval. UI012 manual accessibility and FE-G09 owner UAT remain separate open gates."
+  },
+  "evidence": [
+    "S01-mobile-inventory.md",
+    "S03-targeted-regressions.log",
+    "S04-verify.log",
+    "S05-full-e2e-observed.md",
+    "S07-android-soft-keyboard-probe-20261003.mjs",
+    "S07-android-soft-keyboard-probe-20261003.json",
+    "S07-android-soft-keyboard-probe-20261003.log",
+    "S07-android-inbox-before-keyboard-20261003.png",
+    "S07-android-inbox-keyboard-open-20261003.png",
+    "S07-android-inbox-after-back-20261003.png",
+    "S08-refresh-status.mjs",
+    "../UI020/S02-support-matrix-owner-decision-draft.md"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprints": {
+    "apps/web/src/app/Shell.tsx": "423BCB9BB2D197459058F480C511EC5836AF9EB2C6D8CB276BF079304809AF54",
+    "apps/web/src/modules/inbox/index.tsx": "B6114DFDB640A4F98995BF834DDE3A06518F743854740CE6CF8C19E1FA09CD73",
+    "apps/web/src/shared/ui/components.tsx": "9B4C62586AD7DE4C23FAB7D72A78912DE78B1883D89C9B0E3CC396151AEC3718",
+    "tests/fe016.spec.ts": "857C44696A0459901D9E2703CB95B6BC9F2A83DC6A9FF4C77B9D44890D33843D",
+    "botsales-kit/contracts/route-manifest.json": "360871C008FAC723CFC77DEC79417838D24D4FAE844452909EB347EC8893F2B2",
+    "evidence/frontend-ui-improvements/UI015/S01-mobile-inventory.md": "BD906180EA659931A3A01E94E912C7F744120A6251CC9A50BEF4EA4FDA7FB832",
+    "evidence/frontend-ui-improvements/UI015/S03-targeted-regressions.log": "235640922F37B02B4E45605C974D65E36F2E872E002F7569ED509BB805282EEC",
+    "evidence/frontend-ui-improvements/UI015/S04-verify.log": "5469EA6E620441C807CD97DCB2D0B0A2D4687164D7F15B1CDCE9DF7C7AFF268B",
+    "evidence/frontend-ui-improvements/UI015/S05-full-e2e-observed.md": "954E760A0F94DE57BF322B8167F23F0334E6677D86BF1762B3D6227F4F6B4434",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC",
+    "evidence/frontend-ui-improvements/UI012/S08-acceptance-20261003.json": "980A69B1D0F872B048D830D40674DF37CE73277B486EC7B3DC51CFD7F4A8D476",
+    "evidence/frontend-ui-improvements/UI013/S12-acceptance.json": "EF45AAF8522FE55A2599AC672B9D75443318F24FEEFAF9BCB63B6BD5FCFB32D2",
+    "evidence/frontend-ui-improvements/UI014/S06-acceptance.json": "C225EEFF4ED1C2E6F8C12E31F11B9A7D89070E2CE30ABC5678ED5F94EB906293",
+    "evidence/frontend-ui-improvements/UI015/S07-android-soft-keyboard-probe-20261003.mjs": "45508E8AA9CE30AC3CC90095F99B4E1E1565D0BB318C9148A00B4DD91AD5BC54",
+    "evidence/frontend-ui-improvements/UI015/S07-android-soft-keyboard-probe-20261003.json": "056DD70C976E8543C9D4F5E53330E216A290A5503C54B41AE13A9E3E4B4057ED",
+    "evidence/frontend-ui-improvements/UI015/S07-android-soft-keyboard-probe-20261003.log": "F71C310CAB143AA894DC5289F8387E0D3266594C342457AC0952F30E51E6F747",
+    "evidence/frontend-ui-improvements/UI015/S07-android-inbox-before-keyboard-20261003.png": "14F73F7DB31293DA2A207C52AA4AF98FFD63C7120CDF6E594D5E56E61A69897C",
+    "evidence/frontend-ui-improvements/UI015/S07-android-inbox-keyboard-open-20261003.png": "43963CC23C409C8CEE971D2CBA9D5684E17A03F9FCA1DF8AD2D04D2CEF65AD3D",
+    "evidence/frontend-ui-improvements/UI015/S07-android-inbox-after-back-20261003.png": "51B0F172FB720695CB9868A7F9FAD498E611176FD171582F8D24739B8418ADEF",
+    "evidence/frontend-ui-improvements/UI015/S08-refresh-status.mjs": "7CF62BD059BA7B859F0096895B572B3BF4B78D132059786BCD3747300ACA9C14",
+    "evidence/frontend-ui-improvements/UI020/S02-support-matrix-owner-decision-draft.md": "6787E098C99196E3E00EADC095B84D8954A249EF20246BBBB0EAC66CE809D03E"
+  },
+  "fingerprintRefreshNote": "S07 closes UI015.C04 with direct Android Chrome emulator soft-keyboard, composer/send visibility, no-overflow and Back/draft evidence. The emulator limitation is explicit; physical handset and complete FE-G05 manual accessibility remain unverified. Backlog is 20/26 and 113/130; FE readiness remains 7/9; shared docs and downstream acceptance references refreshed after UI022 Windows runner correction on 2026-10-03."
+}

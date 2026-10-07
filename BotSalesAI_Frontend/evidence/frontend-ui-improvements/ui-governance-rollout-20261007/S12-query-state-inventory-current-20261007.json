@@ -1,0 +1,2582 @@
+{
+  "schemaVersion": 1,
+  "step": "S12",
+  "capturedAt": "2026-10-06T19:10:27.728Z",
+  "sourceOfTruth": {
+    "modulesRoot": "apps/web/src/modules",
+    "routeManifest": "botsales-kit/contracts/route-manifest.json",
+    "queryStateOwner": "apps/web/src/shared/ui/components.tsx"
+  },
+  "coverage": {
+    "tsxFiles": 18,
+    "filesWithQueryState": 17,
+    "placements": 86,
+    "modules": {
+      "bot": 6,
+      "catalog": 6,
+      "customers": 6,
+      "dashboard": 4,
+      "finance": 14,
+      "fulfillment": 4,
+      "inbox": 5,
+      "integrations": 2,
+      "inventory": 2,
+      "knowledge": 6,
+      "notifications": 3,
+      "operations": 7,
+      "orders": 3,
+      "procurement": 9,
+      "reports": 3,
+      "workspace": 6
+    },
+    "exactDirectPageMappings": 77,
+    "moduleCandidateOnly": 9
+  },
+  "byModule": {
+    "bot": 6,
+    "catalog": 6,
+    "customers": 6,
+    "dashboard": 4,
+    "finance": 14,
+    "fulfillment": 4,
+    "inbox": 5,
+    "integrations": 2,
+    "inventory": 2,
+    "knowledge": 6,
+    "notifications": 3,
+    "operations": 7,
+    "orders": 3,
+    "procurement": 9,
+    "reports": 3,
+    "workspace": 6
+  },
+  "sourceHashes": {
+    "apps/web/src/modules/bot/index.tsx": "b0e52dbf3f5a3c0d4c702c1dd14f4ef797aefc307401104a827204dccf69399d",
+    "apps/web/src/modules/catalog/imports.tsx": "33be4fdb2f5012825ecbf4887819e5ddbb6962208942b95c3fb2b24963923bea",
+    "apps/web/src/modules/catalog/index.tsx": "94cff0bf493135b5ccfb847f6af4cc0d8ee6bb213ad3018426b320bf7694ef4b",
+    "apps/web/src/modules/customers/index.tsx": "c4f793673056a314d2ebcf60f786b084d52c3a9d95468a445af28052a45b4a9a",
+    "apps/web/src/modules/dashboard/index.tsx": "d5999b1394250f9b20bb81e6d09aa19ebe0216a095e784e5df5466d7e4a9c371",
+    "apps/web/src/modules/finance/index.tsx": "c979a9cd6198a04d94c62ee4da902932e09baa55f9b010e493faed43c32ce061",
+    "apps/web/src/modules/fulfillment/index.tsx": "f890ff4642778f4ccdefe799c97fa80121aed6ad5539684d2ae7de22607a8418",
+    "apps/web/src/modules/inbox/conversation-components.tsx": "9611c21db12bdac47fbead422c4fe047902a5df0e6359b73e81ea813ba26177d",
+    "apps/web/src/modules/inbox/index.tsx": "ee9de1625a2e83d3aa26cb5a5823a8b03797f6c914ee962ed6082922aa3256c0",
+    "apps/web/src/modules/integrations/index.tsx": "2fcbebff7a49e02564d297356abcd6ebe179bfc64a39c2391004770943379850",
+    "apps/web/src/modules/inventory/index.tsx": "f95cdad774e3416df3a050b5502efaf80b61bf58ed27f6dc662b4b99748311fd",
+    "apps/web/src/modules/knowledge/index.tsx": "936f79b49878e76e426a311a4a4580ac711ccf5da2fd09ee2d3cf0ab042b3932",
+    "apps/web/src/modules/notifications/index.tsx": "996df32ba8b6acd28e64d0fb4590f7ccba81b083a6fdc2843b4fc98279191b43",
+    "apps/web/src/modules/operations/index.tsx": "f8e2f5116ecaf364a46e37e02d3b67600435605ef37d38331d1d0f9685f6b118",
+    "apps/web/src/modules/orders/index.tsx": "a089d4aef6689a53c3c7c9f56f23ea0b742e70936fe170c01f53538222896d5f",
+    "apps/web/src/modules/procurement/index.tsx": "66a5d062371c8b042653ef9e00caabd97cf46c51d90438f90cccd16de58687b5",
+    "apps/web/src/modules/reports/index.tsx": "6118548c9ebd7aa3df1f72bfc8d2f0e74246c5a26ea0672a2dfa344b78112bc3",
+    "apps/web/src/modules/workspace/index.tsx": "61187396573e12f343c97dc7eb9eb39bbcd5caa85b4f07c2eea662062f9e7083",
+    "apps/web/src/shared/ui/components.tsx": "46b21165ef33ccf54f32167762d580179359dfd6af189e906b4e92ad92cf449c",
+    "apps/web/src/shared/ui/layout.ts": "2d9a0321dbdec0f5e1d3454a6f65c690dc57ccd57f682ef2c6dc32da5c6721b6",
+    "apps/web/src/shared/ui/composition.tsx": "010fb5984feeae41ccb26a95a306860a9be415612ae82f3607f50f4002e8b87d",
+    "botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "apps/web/src/app/router.tsx": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4"
+  },
+  "placements": [
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "module": "bot",
+      "line": 22,
+      "column": 227,
+      "tag": "QueryState",
+      "query": "{get}",
+      "ancestry": [
+        "function:BotConfigPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{b && <Panel title=\"Cấu hình hiện hành\" action={<Status value={b.status}/>} bodyMode=\"inset\"><Box><De}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R26",
+          "R27",
+          "R28",
+          "R51"
+        ],
+        "directPageRoutes": [
+          "R26"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "module": "bot",
+      "line": 22,
+      "column": 1917,
+      "tag": "QueryState",
+      "query": "{versions}",
+      "ancestry": [
+        "function:BotConfigPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "DataTable"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R26",
+          "R27",
+          "R28",
+          "R51"
+        ],
+        "directPageRoutes": [
+          "R26"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "module": "bot",
+      "line": 51,
+      "column": 64,
+      "tag": "QueryState",
+      "query": "{config}",
+      "ancestry": [
+        "function:PlaygroundPage",
+        "Fragment",
+        "SectionGrid",
+        "Panel",
+        "Box",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{config.data?.data && <Alert severity=\"info\">Phòng thử dùng bản nháp #{config.data.data.draftRevision}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R26",
+          "R27",
+          "R28",
+          "R51"
+        ],
+        "directPageRoutes": [
+          "R27"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "module": "bot",
+      "line": 59,
+      "column": 457,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:EvaluationsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "DataTable"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R26",
+          "R27",
+          "R28",
+          "R51"
+        ],
+        "directPageRoutes": [
+          "R28"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "module": "bot",
+      "line": 81,
+      "column": 135,
+      "tag": "QueryState",
+      "query": "{roles}",
+      "ancestry": [
+        "function:AgentTeamPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "SectionGrid"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R26",
+          "R27",
+          "R28",
+          "R51"
+        ],
+        "directPageRoutes": [
+          "R51"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "module": "bot",
+      "line": 81,
+      "column": 1366,
+      "tag": "QueryState",
+      "query": "{budgets}",
+      "ancestry": [
+        "function:AgentTeamPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "DataTable"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R26",
+          "R27",
+          "R28",
+          "R51"
+        ],
+        "directPageRoutes": [
+          "R51"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "module": "catalog",
+      "line": 90,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{jobs}",
+      "ancestry": [
+        "function:ImportsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{jobs.data && <>\n                    <DataTable label=\"Tác vụ nền gần đây\" rows={jobs.data.data} rowK}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R09",
+          "R10",
+          "R11",
+          "R12",
+          "R13",
+          "R14"
+        ],
+        "directPageRoutes": [
+          "R13"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "module": "catalog",
+      "line": 114,
+      "column": 149,
+      "tag": "QueryState",
+      "query": "{job}",
+      "ancestry": [
+        "function:ImportResultPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{j && <Panel title={j.id} action={<Status value={j.status}/>} bodyMode=\"inset\"><FormFields ><ErrorNot}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R09",
+          "R10",
+          "R11",
+          "R12",
+          "R13",
+          "R14"
+        ],
+        "directPageRoutes": [
+          "R14"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "module": "catalog",
+      "line": 48,
+      "column": 1948,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:ProductsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={p => p.id} columns={[\n        {\n            }"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R09",
+          "R10",
+          "R11",
+          "R12",
+          "R13",
+          "R14"
+        ],
+        "directPageRoutes": [
+          "R09"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "module": "catalog",
+      "line": 111,
+      "column": 279,
+      "tag": "QueryState",
+      "query": "{product}",
+      "ancestry": [
+        "function:ProductEditorPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{null}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R09",
+          "R10",
+          "R11",
+          "R12",
+          "R13",
+          "R14"
+        ],
+        "directPageRoutes": [
+          "R10",
+          "R11"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "module": "catalog",
+      "line": 111,
+      "column": 360,
+      "tag": "QueryState",
+      "query": "{product}",
+      "ancestry": [
+        "function:ProductEditorPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{null}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R09",
+          "R10",
+          "R11",
+          "R12",
+          "R13",
+          "R14"
+        ],
+        "directPageRoutes": [
+          "R10",
+          "R11"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "module": "catalog",
+      "line": 147,
+      "column": 273,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:CategoriesPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={c => c.id} columns={[\n        { key: 'name',}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R09",
+          "R10",
+          "R11",
+          "R12",
+          "R13",
+          "R14"
+        ],
+        "directPageRoutes": [
+          "R12"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "module": "customers",
+      "line": 64,
+      "column": 371,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:CustomersPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable label={t('customers.list.tableLabel')} empty={t('customers.list.empty')} r}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R07",
+          "R08",
+          "R54"
+        ],
+        "directPageRoutes": [
+          "R07"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "module": "customers",
+      "line": 103,
+      "column": 9,
+      "tag": "QueryState",
+      "query": "{customer}",
+      "ancestry": [
+        "function:CustomerPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{customer.data && <SectionGrid columns={{ xs: '1fr', lg: '1.2fr 1fr' }}>\n                <Panel title}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R07",
+          "R08",
+          "R54"
+        ],
+        "directPageRoutes": [
+          "R08"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "module": "customers",
+      "line": 117,
+      "column": 35,
+      "tag": "QueryState",
+      "query": "{orders}",
+      "ancestry": [
+        "function:CustomerPage",
+        "Fragment",
+        "QueryState",
+        "SectionGrid",
+        "PageSections",
+        "Panel",
+        "Stack",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{orders.data && <>\n                                        {orders.data.data.map(order => <DetailLine}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R07",
+          "R08",
+          "R54"
+        ],
+        "directPageRoutes": [
+          "R08"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "module": "customers",
+      "line": 130,
+      "column": 31,
+      "tag": "QueryState",
+      "query": "{shipments}",
+      "ancestry": [
+        "function:CustomerPage",
+        "Fragment",
+        "QueryState",
+        "SectionGrid",
+        "PageSections",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{shipments.data && <Stack sx={layoutSx.detail.relatedItemGap}>\n                                    {o}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R07",
+          "R08",
+          "R54"
+        ],
+        "directPageRoutes": [
+          "R08"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "module": "customers",
+      "line": 151,
+      "column": 25,
+      "tag": "QueryState",
+      "query": "{cases}",
+      "ancestry": [
+        "function:CustomerPage",
+        "Fragment",
+        "QueryState",
+        "SectionGrid",
+        "PageSections",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{cases.data && <Stack>\n                                {customerCases.map(item => <DetailLine key={it}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R07",
+          "R08",
+          "R54"
+        ],
+        "directPageRoutes": [
+          "R08"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "module": "customers",
+      "line": 181,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:ServiceCasesPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <>\n                    <DataTable rows={list.data.data} rowKey={item => item.id} column}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R07",
+          "R08",
+          "R54"
+        ],
+        "directPageRoutes": [
+          "R54"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "module": "dashboard",
+      "line": 67,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{dashboard}",
+      "ancestry": [
+        "function:DashboardPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{data && <Stats>\n                    <Stat title=\"Hội thoại đang mở\" value={<Link component={RouterLi}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R04"
+        ],
+        "directPageRoutes": [
+          "R04"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "module": "dashboard",
+      "line": 89,
+      "column": 30,
+      "tag": "QueryState",
+      "query": "{orders}",
+      "ancestry": [
+        "function:DashboardPage",
+        "Fragment",
+        "Box",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{orders.data && <DataTable rows={orders.data.data} rowKey={order => order.id} label=\"Đơn hàng gần đây}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R04"
+        ],
+        "directPageRoutes": [
+          "R04"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "module": "dashboard",
+      "line": 98,
+      "column": 17,
+      "tag": "QueryState",
+      "query": "{operations}",
+      "ancestry": [
+        "function:DashboardPage",
+        "Fragment",
+        "Box",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{operations.data?.data.roles.length ? <SectionGrid rhythm=\"content\" columns={{ xs: '1fr', sm: 'repeat}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R04"
+        ],
+        "directPageRoutes": [
+          "R04"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "module": "dashboard",
+      "line": 107,
+      "column": 17,
+      "tag": "QueryState",
+      "query": "{bot}",
+      "ancestry": [
+        "function:DashboardPage",
+        "Fragment",
+        "Box",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{botConfig && <ActionGroup direction={{ xs: 'column', sm: 'row' }} density=\"comfortable\" alignItems={}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R04"
+        ],
+        "directPageRoutes": [
+          "R04"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 105,
+      "column": 326,
+      "tag": "QueryState",
+      "query": "{data}",
+      "ancestry": [
+        "function:CashflowPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{c && <><Stats><Stat title=\"Tiền đã thu\" value={<Amount value={c.receipts}/>}/><Stat title=\"Tiền đã c}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R20"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 126,
+      "column": 305,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:EntriesPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={r => r.id} columns={[\n        { key: 'id', l}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R21"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 132,
+      "column": 213,
+      "tag": "QueryState",
+      "query": "{detail}",
+      "ancestry": [
+        "function:EntriesPage",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{selectedEntry && <Stack sx={layoutSx.query.stateGap}><Status value={selectedEntry.status}/><DetailLi}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R21"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 153,
+      "column": 360,
+      "tag": "QueryState",
+      "query": "{data}",
+      "ancestry": [
+        "function:ProfitLossPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{p && <><Stats><Stat title=\"Doanh thu thuần\" value={<Amount value={p.netSales}/>}/><Stat title=\"Giá v}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R22"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 199,
+      "column": 312,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:JournalsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={journal => journal.id} columns={[\n        { }"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R48"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 206,
+      "column": 213,
+      "tag": "QueryState",
+      "query": "{detail}",
+      "ancestry": [
+        "function:JournalsPage",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{viewedJournal && <><Status value={viewedJournal.status}/><DataTable rows={viewedJournal.lines.map((l}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R48"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 241,
+      "column": 525,
+      "tag": "QueryState",
+      "query": "{banks}",
+      "ancestry": [
+        "function:ReconciliationPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{banks.data && <><DataTable rows={banks.data.data} rowKey={row => row.id} columns={[\n        { key: '}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R49"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 248,
+      "column": 101,
+      "tag": "QueryState",
+      "query": "{cod}",
+      "ancestry": [
+        "function:ReconciliationPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{cod.data && <><DataTable rows={cod.data.data} rowKey={row => row.id} columns={[\n        { key: 'id',}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R49"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 256,
+      "column": 82,
+      "tag": "QueryState",
+      "query": "{cases}",
+      "ancestry": [
+        "function:ReconciliationPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{cases.data && <><DataTable rows={cases.data.data} rowKey={row => row.id} columns={[\n        { key: '}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R49"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 263,
+      "column": 611,
+      "tag": "QueryState",
+      "query": "{bankChoices}",
+      "ancestry": [
+        "function:ReconciliationPage",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{bankChoices.data && <FormFields ><TextField select label=\"Mã giao dịch ngân hàng\" value={transaction}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R49"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 264,
+      "column": 642,
+      "tag": "QueryState",
+      "query": "{caseBank}",
+      "ancestry": [
+        "function:ReconciliationPage",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{caseBank.data && <QueryState query={debtChoices}>{debtChoices.data && <FormFields ><TextField label=}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R49"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 264,
+      "column": 689,
+      "tag": "QueryState",
+      "query": "{debtChoices}",
+      "ancestry": [
+        "function:ReconciliationPage",
+        "Fragment",
+        "EditDialog",
+        "QueryState",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{debtChoices.data && <FormFields ><TextField label=\"Giao dịch ngoài hệ thống\" value={caseBank.data.da}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R49"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 293,
+      "column": 167,
+      "tag": "QueryState",
+      "query": "{debts}",
+      "ancestry": [
+        "function:DebtsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{debts.data && <><DataTable rows={debts.data.data} rowKey={r => r.id} columns={[\n        { key: 'id',}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R50"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "module": "finance",
+      "line": 295,
+      "column": 113,
+      "tag": "QueryState",
+      "query": "{periods}",
+      "ancestry": [
+        "function:DebtsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "DataTable"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R20",
+          "R21",
+          "R22",
+          "R48",
+          "R49",
+          "R50"
+        ],
+        "directPageRoutes": [
+          "R50"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "module": "fulfillment",
+      "line": 34,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:FulfillmentPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <>\n                    <DataTable rows={list.data.data} rowKey={prep => prep.id} column}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R41",
+          "R42"
+        ],
+        "directPageRoutes": [
+          "R41"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "module": "fulfillment",
+      "line": 76,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{get}",
+      "ancestry": [
+        "function:PrepDialog",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{prep && <FormFields >\n                    <Stack direction=\"row\" justifyContent=\"space-between\" alig}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R41",
+          "R42"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "module": "fulfillment",
+      "line": 237,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:ShipmentsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <>\n                    <DataTable rows={list.data.data} rowKey={item => item.id} column}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R41",
+          "R42"
+        ],
+        "directPageRoutes": [
+          "R42"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "module": "fulfillment",
+      "line": 307,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{detail}",
+      "ancestry": [
+        "function:ShipmentsPage",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{shipment && <Stack>\n                    <DetailLine label=\"Mã vận đơn\">{shipment.trackingCode || shi}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R41",
+          "R42"
+        ],
+        "directPageRoutes": [
+          "R42"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "module": "inbox",
+      "line": 67,
+      "column": 17,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:InboxPage",
+        "Fragment",
+        "SectionGrid",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "List",
+        "{!list.data?.data.length && <Empty text=\"Chưa có hội thoại phù hợp.\" />}",
+        "Pager"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R05",
+          "R06"
+        ],
+        "directPageRoutes": [
+          "R05",
+          "R06"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "module": "inbox",
+      "line": 125,
+      "column": 9,
+      "tag": "QueryState",
+      "query": "{c}",
+      "ancestry": [
+        "function:ConversationPanel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{conversation && (\n                <SectionGrid data-testid=\"inbox-conversation-layout\" columns={{ xs}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R05",
+          "R06"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "module": "inbox",
+      "line": 160,
+      "column": 33,
+      "tag": "QueryState",
+      "query": "{messages}",
+      "ancestry": [
+        "function:ConversationPanel",
+        "QueryState",
+        "SectionGrid",
+        "Box",
+        "Panel",
+        "Box",
+        "QueryState"
+      ],
+      "directChildren": [
+        "Stack",
+        "{!messages.data?.data.length && <Empty text=\"Chưa có tin nhắn.\" />}",
+        "Pager"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R05",
+          "R06"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "module": "inbox",
+      "line": 317,
+      "column": 23,
+      "tag": "QueryState",
+      "query": "{products}",
+      "ancestry": [
+        "function:MockSalesFlowPreview",
+        "Panel",
+        "SurfaceContent",
+        "SurfaceContent",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{products.data && <QueryState query={stock}>{stock.data && <>\n                    <DataTable label=\"N}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R05",
+          "R06"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "module": "inbox",
+      "line": 317,
+      "column": 70,
+      "tag": "QueryState",
+      "query": "{stock}",
+      "ancestry": [
+        "function:MockSalesFlowPreview",
+        "Panel",
+        "SurfaceContent",
+        "SurfaceContent",
+        "QueryState",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{stock.data && <>\n                    <DataTable label=\"Nguồn giá và tồn trong hộp thư\" rows={sourceR}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R05",
+          "R06"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "module": "integrations",
+      "line": 28,
+      "column": 382,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:ChannelsPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data?.data.length === 0 && !list.isError ? <Empty text=\"Chưa có Page kết nối. Dùng nút bên dưới}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R29",
+          "R30"
+        ],
+        "directPageRoutes": [
+          "R29"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "module": "integrations",
+      "line": 42,
+      "column": 216,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:AIProvidersPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data?.data.length === 0 && !list.isError ? <Empty text=\"Chưa có kết nối AI. Thêm một kết nối để}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R29",
+          "R30"
+        ],
+        "directPageRoutes": [
+          "R30"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "module": "inventory",
+      "line": 120,
+      "column": 125,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:InventoryPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <>\n            <DataTable label=\"Tồn kho theo vị trí\" rows={list.data.data} rowKey={row}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R15",
+          "R16"
+        ],
+        "directPageRoutes": [
+          "R15"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "module": "inventory",
+      "line": 151,
+      "column": 153,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:MovementsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <>\n            <DataTable label=\"Lịch sử biến động kho\" rows={list.data.data} rowKey={r}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R15",
+          "R16"
+        ],
+        "directPageRoutes": [
+          "R16"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "module": "knowledge",
+      "line": 43,
+      "column": 19,
+      "tag": "QueryState",
+      "query": "{products}",
+      "ancestry": [
+        "function:CurrentCatalogSources",
+        "Panel",
+        "SurfaceContent",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{products.data && <QueryState query={snapshots}>{snapshots.data && <>\n                    <DataTable }"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R23",
+          "R24",
+          "R25"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "module": "knowledge",
+      "line": 43,
+      "column": 66,
+      "tag": "QueryState",
+      "query": "{snapshots}",
+      "ancestry": [
+        "function:CurrentCatalogSources",
+        "Panel",
+        "SurfaceContent",
+        "QueryState",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{snapshots.data && <>\n                    <DataTable label=\"Nguồn giá và snapshot tồn kho\" rows={rows}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R23",
+          "R24",
+          "R25"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "module": "knowledge",
+      "line": 117,
+      "column": 548,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:KnowledgePage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={r => r.id} columns={[\n        { key: 'title'}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R23",
+          "R24",
+          "R25"
+        ],
+        "directPageRoutes": [
+          "R23"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "module": "knowledge",
+      "line": 153,
+      "column": 324,
+      "tag": "QueryState",
+      "query": "{get}",
+      "ancestry": [
+        "function:KnowledgeDetailPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{k && <><Panel title=\"Nội dung & nguồn\" action={<Status value={k.status}/>} bodyMode=\"inset\"><Box><De}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R23",
+          "R24",
+          "R25"
+        ],
+        "directPageRoutes": [
+          "R24"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "module": "knowledge",
+      "line": 153,
+      "column": 2110,
+      "tag": "QueryState",
+      "query": "{revisions}",
+      "ancestry": [
+        "function:KnowledgeDetailPage",
+        "Fragment",
+        "QueryState",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "DataTable"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R23",
+          "R24",
+          "R25"
+        ],
+        "directPageRoutes": [
+          "R24"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "module": "knowledge",
+      "line": 183,
+      "column": 175,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:FeedbackPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={r => r.id} columns={[\n        { key: 'messag}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R23",
+          "R24",
+          "R25"
+        ],
+        "directPageRoutes": [
+          "R25"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "module": "notifications",
+      "line": 20,
+      "column": 310,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:NotificationsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "SurfaceContent"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R39",
+          "R40"
+        ],
+        "directPageRoutes": [
+          "R39"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "module": "notifications",
+      "line": 115,
+      "column": 1352,
+      "tag": "QueryState",
+      "query": "{devices}",
+      "ancestry": [
+        "function:DevicesPage",
+        "Fragment",
+        "SectionGrid",
+        "PageSections",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{devices.data && <DataTable rows={devices.data.data} rowKey={d => d.id} columns={[\n        { key: 'na}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R39",
+          "R40"
+        ],
+        "directPageRoutes": [
+          "R40"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "module": "notifications",
+      "line": 124,
+      "column": 383,
+      "tag": "QueryState",
+      "query": "{policy}",
+      "ancestry": [
+        "function:DevicesPage",
+        "Fragment",
+        "SectionGrid",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "FormFields"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R39",
+          "R40"
+        ],
+        "directPageRoutes": [
+          "R40"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "module": "operations",
+      "line": 56,
+      "column": 9,
+      "tag": "QueryState",
+      "query": "{summary}",
+      "ancestry": [
+        "function:OperationsPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{summary.data && <Stats>\n                <Stat title=\"Chưa có người nhận\" value={summary.data.data.qu}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R37",
+          "R38",
+          "R52"
+        ],
+        "directPageRoutes": [
+          "R37"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "module": "operations",
+      "line": 79,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:OperationsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <>\n                    <DataTable rows={visibleItems} rowKey={task => task.id} columns=}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R37",
+          "R38",
+          "R52"
+        ],
+        "directPageRoutes": [
+          "R37"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "module": "operations",
+      "line": 181,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:ApprovalsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <>\n                    <DataTable rows={list.data.data} rowKey={entry => entry.id} colu}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R37",
+          "R38",
+          "R52"
+        ],
+        "directPageRoutes": [
+          "R38"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "module": "operations",
+      "line": 210,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{detail}",
+      "ancestry": [
+        "function:ApprovalsPage",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{approval && <FormFields >\n                    <Alert severity=\"warning\">Thay đổi giá, số lượng, đối }"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R37",
+          "R38",
+          "R52"
+        ],
+        "directPageRoutes": [
+          "R38"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "module": "operations",
+      "line": 248,
+      "column": 17,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:DigestsPage",
+        "Fragment",
+        "SectionGrid",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "SurfaceContent"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R37",
+          "R38",
+          "R52"
+        ],
+        "directPageRoutes": [
+          "R52"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "module": "operations",
+      "line": 261,
+      "column": 17,
+      "tag": "QueryState",
+      "query": "{health}",
+      "ancestry": [
+        "function:DigestsPage",
+        "Fragment",
+        "SectionGrid",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "Stack"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R37",
+          "R38",
+          "R52"
+        ],
+        "directPageRoutes": [
+          "R52"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "module": "operations",
+      "line": 289,
+      "column": 13,
+      "tag": "QueryState",
+      "query": "{health}",
+      "ancestry": [
+        "function:DigestsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "Stack"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R37",
+          "R38",
+          "R52"
+        ],
+        "directPageRoutes": [
+          "R52"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "module": "orders",
+      "line": 16,
+      "column": 506,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:OrdersPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={o => o.id} columns={[\n    {\n        key: 'id}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R17",
+          "R18",
+          "R19",
+          "R43"
+        ],
+        "directPageRoutes": [
+          "R17"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "module": "orders",
+      "line": 168,
+      "column": 205,
+      "tag": "QueryState",
+      "query": "{get}",
+      "ancestry": [
+        "function:OrderDetailPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{order && <>\n <ErrorNotice error={error || quoteOp.error || record.error || confirm.error}/>{editing }"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R17",
+          "R18",
+          "R19",
+          "R43"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "module": "orders",
+      "line": 265,
+      "column": 55,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:ReturnsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={r => r.id} columns={[\n            { key: 'id}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R17",
+          "R18",
+          "R19",
+          "R43"
+        ],
+        "directPageRoutes": [
+          "R43"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 45,
+      "column": 293,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:SuppliersPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={s => s.id} columns={[\n        {\n            }"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [
+          "R44"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 54,
+      "column": 134,
+      "tag": "QueryState",
+      "query": "{offers}",
+      "ancestry": [
+        "function:SuppliersPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{offers.data && <><DataTable rows={offers.data.data} rowKey={o => o.id} columns={[\n        { key: 'su}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [
+          "R44"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 120,
+      "column": 2454,
+      "tag": "QueryState",
+      "query": "{suggestions}",
+      "ancestry": [
+        "function:ReplenishmentPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{suggestions.data && <><DataTable rows={suggestions.data.data} rowKey={r => r.id} columns={[\n        }"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [
+          "R45"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 143,
+      "column": 112,
+      "tag": "QueryState",
+      "query": "{rules}",
+      "ancestry": [
+        "function:ReplenishmentPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{rules.data && <><DataTable rows={rules.data.data} rowKey={r => r.id} columns={[\n        { key: 'sku'}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [
+          "R45"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 217,
+      "column": 291,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:PurchasesPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={p => p.id} columns={[\n        { key: 'id', l}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [
+          "R46"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 272,
+      "column": 182,
+      "tag": "QueryState",
+      "query": "{get}",
+      "ancestry": [
+        "function:PurchaseDialog",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{p && <FormFields ><Status value={p.status}/><DetailLine label=\"Nhà cung cấp\">{p.supplierId}</DetailL}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [],
+        "method": "module only; helper/conditional call graph unresolved"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 324,
+      "column": 421,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:ReceiptsPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={r => r.id} columns={[\n        { key: 'id', l}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [
+          "R47"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 339,
+      "column": 25,
+      "tag": "QueryState",
+      "query": "{purchaseOrder}",
+      "ancestry": [
+        "function:ReceiptsPage",
+        "Fragment",
+        "EditDialog",
+        "FormFields",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{order && <FormFields >\n                {order.lines.map(line => {\n                    const input = }"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [
+          "R47"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "module": "procurement",
+      "line": 361,
+      "column": 65,
+      "tag": "QueryState",
+      "query": "{receiptDetail}",
+      "ancestry": [
+        "function:ReceiptsPage",
+        "Fragment",
+        "EditDialog",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{receipt && <FieldGroup >\n            <DetailLine label=\"Đơn mua\">{receipt.purchaseOrderId}</DetailLi}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R44",
+          "R45",
+          "R46",
+          "R47"
+        ],
+        "directPageRoutes": [
+          "R47"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "module": "reports",
+      "line": 157,
+      "column": 17,
+      "tag": "QueryState",
+      "query": "{summary}",
+      "ancestry": [
+        "function:ReportsPage",
+        "Fragment",
+        "SectionGrid",
+        "PageSections",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{summary.data && <Panel title=\"Tạo tệp báo cáo\" subtitle=\"Ngày được hiểu theo múi giờ cửa hàng và gửi}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R31",
+          "R53"
+        ],
+        "directPageRoutes": [
+          "R31"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "module": "reports",
+      "line": 193,
+      "column": 32,
+      "tag": "QueryState",
+      "query": "{jobs}",
+      "ancestry": [
+        "function:ReportsPage",
+        "Fragment",
+        "SectionGrid",
+        "PageSections",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{jobs.data && <Panel title=\"Công việc gần đây\" subtitle=\"Trạng thái và tiến độ lấy từ API; trang hiện}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R31",
+          "R53"
+        ],
+        "directPageRoutes": [
+          "R31"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "module": "reports",
+      "line": 223,
+      "column": 9,
+      "tag": "QueryState",
+      "query": "{data}",
+      "ancestry": [
+        "function:MarketingPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{m && <>\n            {__MOCK__ && <Alert severity=\"warning\" sx={layoutSx.notice.afterGap}>Số liệu min}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R31",
+          "R53"
+        ],
+        "directPageRoutes": [
+          "R53"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "module": "workspace",
+      "line": 51,
+      "column": 387,
+      "tag": "QueryState",
+      "query": "{shops}",
+      "ancestry": [
+        "function:WorkspacesPage",
+        "Box",
+        "QueryState"
+      ],
+      "directChildren": [
+        "SectionGrid"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R01",
+          "R02",
+          "R03",
+          "R32",
+          "R33",
+          "R34",
+          "R35",
+          "R36"
+        ],
+        "directPageRoutes": [
+          "R02"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "module": "workspace",
+      "line": 171,
+      "column": 318,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:TeamPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={m => m.id} columns={[\n        { key: 'user',}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R01",
+          "R02",
+          "R03",
+          "R32",
+          "R33",
+          "R34",
+          "R35",
+          "R36"
+        ],
+        "directPageRoutes": [
+          "R32"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "module": "workspace",
+      "line": 189,
+      "column": 600,
+      "tag": "QueryState",
+      "query": "{list}",
+      "ancestry": [
+        "function:AuditPage",
+        "Fragment",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{list.data && <><DataTable rows={list.data.data} rowKey={a => a.id} columns={[\n    { key: 'time', lab}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R01",
+          "R02",
+          "R03",
+          "R32",
+          "R33",
+          "R34",
+          "R35",
+          "R36"
+        ],
+        "directPageRoutes": [
+          "R34"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "module": "workspace",
+      "line": 212,
+      "column": 281,
+      "tag": "QueryState",
+      "query": "{policy}",
+      "ancestry": [
+        "function:PrivacyPage",
+        "Fragment",
+        "SectionGrid",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "FormFields"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R01",
+          "R02",
+          "R03",
+          "R32",
+          "R33",
+          "R34",
+          "R35",
+          "R36"
+        ],
+        "directPageRoutes": [
+          "R35"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "module": "workspace",
+      "line": 216,
+      "column": 412,
+      "tag": "QueryState",
+      "query": "{requests}",
+      "ancestry": [
+        "function:PrivacyPage",
+        "Fragment",
+        "SectionGrid",
+        "Panel",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{requests.data && <><DataTable rows={requests.data.data} rowKey={r => r.id} columns={[\n        { key:}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R01",
+          "R02",
+          "R03",
+          "R32",
+          "R33",
+          "R34",
+          "R35",
+          "R36"
+        ],
+        "directPageRoutes": [
+          "R35"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "module": "workspace",
+      "line": 262,
+      "column": 135,
+      "tag": "QueryState",
+      "query": "{get}",
+      "ancestry": [
+        "function:JobPage",
+        "Fragment",
+        "QueryState"
+      ],
+      "directChildren": [
+        "{job && <Panel title=\"Kết quả xử lý\" bodyMode=\"inset\"><FormFields ><Status value={job.status}/><Detai}"
+      ],
+      "routeMapping": {
+        "moduleCandidateRoutes": [
+          "R01",
+          "R02",
+          "R03",
+          "R32",
+          "R33",
+          "R34",
+          "R35",
+          "R36"
+        ],
+        "directPageRoutes": [
+          "R36"
+        ],
+        "method": "nearest named function matches router export"
+      }
+    }
+  ],
+  "scopeNotes": [
+    "86 placements are AST-derived from named imports of QueryState in apps/web/src/modules/**/*.tsx.",
+    "moduleCandidateRoutes is a broad module-level superset, not a claim that every route renders every placement.",
+    "directPageRoutes are exact only where the nearest named function matches a page export in app/router.tsx.",
+    "helper-component call graphs and conditional visibility require runtime/route acceptance in S19."
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI014",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "DONE",
+  "scope": "React/TypeScript frontend with local synthetic MSW only; no backend/provider/staging claim.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Pre-existing dirty work was preserved. Fingerprints identify UI014 source, tests, shared status docs and evidence; this acceptance does not attribute the entire dirty tree to UI014."
+  },
+  "checkpoints": {
+    "C01": "PASS: R04 dashboard, R17 orders, R18 create-order and R37 operations permissions, AgentRole schema and unresolved CommandResponse ID inventoried in S01.",
+    "C02": "PASS: hero and recent-orders CTAs follow contract permissions; unknown/empty labels are explicit; order/command codes are copyable with feedback.",
+    "C03": "PASS: targeted browser regressions 2/2 for viewer permissions and command-ID clipboard feedback; unit tests 3/3 for long/empty greeting and known/unknown/empty role labels.",
+    "C04": "PASS for applicable automated checks on the final diff: generate:check, npm run verify and full rebuilt-demo E2E. Actual FE-G05 manual accessibility and FE-G09 owner acceptance remain open independently.",
+    "C05": "PASS: plan, project context, known gaps and report synchronized; evidence and SHA-256 fingerprints saved. Frontend/product progress ledgers were not changed."
+  },
+  "implementation": [
+    "Dashboard hero shows operations only with operations.read; otherwise orders list only with orders.read; create order only with orders.write. Recent-orders panel shortcut/data require orders.read; existing finance panel remains finance.read-gated.",
+    "Recent order IDs remain detail links and are copyable. Shared CommandRecovery shows intent and command codes, with one copy control and polite success/failure status feedback.",
+    "Dashboard greeting falls back to “bạn” for blank displayName and preserves long names with wrapping. Known AgentRole.kind enums receive their established Vietnamese label; unknown kinds have an explicit unlabeled state and keep the API code copyable; an empty kind does not get a fabricated name.",
+    "The originating ErrorNotice continues to print an unknown command ID; its copy action is centralized in the recovery banner to avoid duplicate same-name buttons."
+  ],
+  "verification": {
+    "generateCheck": "PASS: 11 outputs, 283 schemas, 210 operations, 54 routes.",
+    "targetedBrowser": "PASS: 2/2; FE021 viewer dashboard permission behavior and FE012 unknown-command copy feedback; S03-targeted-regressions.log.",
+    "unitTests": "PASS: dashboard-labels.test.ts 3/3.",
+    "verify": "PASS: source 62 files/220 operation calls/54 routes; boundaries 414 imports and 8/8 negative fixtures; lint/typecheck; domain/MSW 88/88; Vitest 80/80; production build; S04-verify.log.",
+    "fullRebuiltDemoE2E": "PASS 186/186 Chromium in 10.8 minutes; axe 55 snapshots/0 violations/0 page errors; route-role 357/357; empty 11/11; route-error 51/51; UI012 keyboard 4/4; production artifact contains no MSW runtime; S05-full-e2e.log.",
+    "metrics": "Synthetic MSW demo on Windows/Chromium 153 at 1280x720: initial route 448328 gzip bytes; largest demo chunk 186487 gzip bytes; 1004 customers; first page 20 rows, ready 343 ms. Not a device matrix or production SLO.",
+    "buildAdvisory": "Production largest chunk 734.01 kB raw / 185.46 kB gzip.",
+    "review": "Codex self-review; no independent human code review recorded."
+  },
+  "gates": {
+    "FE_G02": "PASS locally on current diff.",
+    "FE_G03": "PASS for frontend contract/mock tests; canonical contract/generated files unchanged.",
+    "FE_G04": "PASS for current rebuilt-demo browser suite; server behavior is not established.",
+    "FE_G05": "Automated checks pass; actual zoom, screen-reader output and complete manual interaction/error/icon review remain open.",
+    "FE_G06": "Browser permission and scope behavior tested in demo only; backend authorization remains unverified.",
+    "FE_G07": "Current local gzip metrics are below recorded budgets; no device/SLO claim.",
+    "FE_G08": "Production/demo builds and artifact isolation pass locally; remote CI not run.",
+    "FE_G09": "Automated flows pass; product-owner acceptance remains open.",
+    "readiness": "7/9 evidence gates; not Production-Ready/Enterprise-Grade certification."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "2/10",
+    "totalDone": "15/26",
+    "checkpoints": "79/130",
+    "next": "UI015 sequentially; UI012 manual accessibility and FE-G09 owner UAT remain independent open gates."
+  },
+  "evidence": [
+    "S01-permission-label-inventory.md",
+    "S03-targeted-regressions.log",
+    "S04-verify.log",
+    "S05-full-e2e.log"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprints": {
+    "apps/web/src/app/CommandRecovery.tsx": "2356719BA6346580AC92245217F91F20B0FBF7C8471BA2368B51D12205A555A0",
+    "apps/web/src/modules/dashboard/index.tsx": "8FADD896263F4D5D9636A1FC4815A0769A9356BC69DA4D8022CD3EE47A1C37E3",
+    "apps/web/src/shared/ui/components.tsx": "9B4C62586AD7DE4C23FAB7D72A78912DE78B1883D89C9B0E3CC396151AEC3718",
+    "apps/web/tests/dashboard-labels.test.ts": "17AFCD7D1FBC42134B3A07848104E5BCA3B0744BAFF2ED1D309C5650877A700D",
+    "botsales-kit/contracts/openapi.json": "D88A70957A9DE36402FF5AC0CB757A2F1C496519C7E1FD2E28DF17E867F78C7C",
+    "botsales-kit/contracts/route-manifest.json": "360871C008FAC723CFC77DEC79417838D24D4FAE844452909EB347EC8893F2B2",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "evidence/frontend-ui-improvements/UI012/S08-acceptance-20261003.json": "C43FB7E277E8AE4EBDDEA3BB04AB43403349EFF68FD6C84DE84D350EB9C9E7BE",
+    "evidence/frontend-ui-improvements/UI013/S12-acceptance.json": "EF45AAF8522FE55A2599AC672B9D75443318F24FEEFAF9BCB63B6BD5FCFB32D2",
+    "evidence/frontend-ui-improvements/UI014/S01-permission-label-inventory.md": "892CD951252E07AD28D5C939DB9E258D773F31DDAA2CFD22F0BD58BFAAEFA129",
+    "evidence/frontend-ui-improvements/UI014/S03-targeted-regressions.log": "028A564D917C4EBF7AE7BA97CD8C3A94BB0AB6692DF3D1696AE943F0BA4B518A",
+    "evidence/frontend-ui-improvements/UI014/S04-verify.log": "7F9EA97CF8C8B5D15C8A1AD6FE323CB6CD3A9FA5E62B4D27FA7C2B5B515C5DFC",
+    "evidence/frontend-ui-improvements/UI014/S05-full-e2e.log": "0837E179C5364CA3E7EA79296E405EC57FB75BBE3CB8232D32C3E7F1519E5E1B",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC",
+    "packages/contracts/src/generated.ts": "0D27C530B1122843A6F30C1493183CD7362FFD6219D28EACBFF68C6CD0E2C709",
+    "packages/contracts/src/permissions.json": "58461BEB5D4AD1A19107CDF01361E2A649A41DEA611272D84EE79FCD376D55D1",
+    "tests/fe012.spec.ts": "CAD8D1A780C4E7A32CB2BC6F96CA8E43BD7FD514BA4E84C77C2BF85440E9C060",
+    "tests/fe021.spec.ts": "26AFEF11D6424CE8C12454BC6969CF0A78E292DC32837E8FA57863D8804D9FE7"
+  },
+  "fingerprintRefreshNote": "Shared plan/context/known-gaps/report fingerprints refreshed after UI020.C01 inventory on 2026-10-03; item-specific results remain scoped to their original acceptance evidence; shared docs and downstream acceptance references refreshed after UI022 root-workflow correction on 2026-10-03; shared docs and downstream acceptance references refreshed after UI022 Windows runner correction on 2026-10-03."
+}

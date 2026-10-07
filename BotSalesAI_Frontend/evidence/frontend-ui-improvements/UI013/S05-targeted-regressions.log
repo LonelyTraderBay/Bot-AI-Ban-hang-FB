@@ -1,0 +1,83 @@
+[WebServer] (node:19976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:39476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-43984-103c9f8b-93db-4e84-acd7-fe4c0846dc21\deps\react-dom_client.js?v=527cbe6f as it exceeds the max of 500KB.
+  ok 1 [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo (1.0m)
+  x  2 [chromium] › tests\fe015.spec.ts:280:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page (5.5s)
+(node:35116) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chromium] › tests\fe021.spec.ts:158:1 › FE021 ambiguous export result preserves the selected dates and never exposes a download (4.4s)
+  ok 4 [chromium] › tests\fe021.spec.ts:190:1 › FE021 stale export conflict preserves dates and never exposes a download (2.6s)
+  ok 5 [chromium] › tests\ui013-url-state.spec.ts:19:1 › UI013 reconciliation tab deep links and survives refresh; malformed tab safely falls back (5.0s)
+  x  6 [chromium] › tests\ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state (6.3s)
+(node:39008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 7 [chromium] › tests\ui013-url-state.spec.ts:70:1 › UI013 report type and export date filters are deep-linkable, refreshable and malformed values fall back safely (4.6s)
+
+
+  1) [chromium] › tests\fe015.spec.ts:280:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page 
+
+    Error: expect(received).toBeDefined()
+
+    Received: undefined
+
+      347 |         }
+      348 |     }
+    > 349 |     expect(caseRow).toBeDefined();
+          |                     ^
+      350 |     const bankDetailResponse = page.waitForResponse(response => response.request().method() === 'GET' && /\/bank-transactions\/[^/?]+$/.test(new URL(response.url()).pathname));
+      351 |     await caseRow!.getByRole('button', { name: 'Ghép giao dịch' }).click();
+      352 |     const bankDetail = (await bankDetailResponse).json();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:349:21
+
+    Error Context: test-results\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\error-context.md
+
+    Error Context: test-results\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests\ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "2026-08-01"
+    Received: "2026-09-01"
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      50 |     expect(new URL(page.url()).searchParams.has('cursor')).toBe(false);
+      51 |     await to.fill('2026-10-02');
+    > 52 |     await expect.poll(() => new URL(page.url()).searchParams.get('fromDate')).toBe('2026-08-01');
+         |                                                                               ^
+      53 |     expect(new URL(page.url()).searchParams.get('toDate')).toBe('2026-10-02');
+      54 |
+      55 |     await page.reload();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui013-url-state.spec.ts:52:79
+
+    Error Context: test-results\ui013-url-state-UI013-fina-b77e5-use-shop-local-filter-state-chromium\error-context.md
+
+    Error Context: test-results\ui013-url-state-UI013-fina-b77e5-use-shop-local-filter-state-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui013-url-state-UI013-fina-b77e5-use-shop-local-filter-state-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui013-url-state-UI013-fina-b77e5-use-shop-local-filter-state-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › tests\fe015.spec.ts:280:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page 
+    [chromium] › tests\ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state 
+  5 passed (1.6m)

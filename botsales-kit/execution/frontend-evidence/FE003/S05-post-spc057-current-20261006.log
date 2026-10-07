@@ -1,0 +1,296 @@
+FE003.S05 post-SPC-057 Windows handoff and evidence review
+executedAt=2026-10-06T03:48:18.402Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+command=node botsales-kit/scripts/progress.mjs validate; status; next
+exitCodes=0/0/0
+expected=Windows handoff and active scope/progress docs match current frontend tracker; local checks and unrun CI/live-service/owner limits remain distinct.
+observed=Current tracker validates at 28/140; before checkpoint it reports 14/140 verified, blocked=[], and FE003.S05 next. Windows command map and current frontend scope were source-reviewed. Dated handoff/build/browser and report snapshots stay historical; no new product tests, hosted CI, backend/provider/staging, or owner acceptance are claimed.
+checksTotal=5; failed=0
+CHECK tracker validate/status/next: PASS
+All exit 0; current 14/140 verified; blocked=[]; FE003.S05 next
+CHECK read-only ledger: PASS
+frontend-progress SHA-256 unchanged by reads: 571bf5bfd0accafde01502a4d4565df9c5a40046ffd520e0c22cec245b38ab46
+CHECK frontend scope and SPC-057: PASS
+Synthetic mock scope, new shared-consumer rule, and user-final acceptance remain explicit
+CHECK Windows command map: PASS
+generate/source/boundaries/types/lint/unit/e2e IDs match current package scripts and are VERIFIED_AVAILABLE
+CHECK handoff and evidence boundary: PASS
+Windows run instructions remain; historic test/report snapshots are dated; hosted CI/live service/owner acceptance not claimed
+VALIDATE={"valid":true,"tasks":28,"checkpoints":140,"scope":"Structure only; does not run product tests"}
+STATUS={
+  "overallPercent": 9.33,
+  "verifiedSteps": 14,
+  "totalSteps": 140,
+  "phases": [
+    {
+      "id": "F00",
+      "title": "Tiếp nhận và môi trường",
+      "weightPercent": 10,
+      "earned": 28,
+      "total": 30,
+      "percent": 93.33333333333333
+    },
+    {
+      "id": "F01",
+      "title": "Kiến trúc, contract và mock foundation",
+      "weightPercent": 25,
+      "earned": 0,
+      "total": 50,
+      "percent": 0
+    },
+    {
+      "id": "F02",
+      "title": "Luồng và module frontend",
+      "weightPercent": 40,
+      "earned": 0,
+      "total": 140,
+      "percent": 0
+    },
+    {
+      "id": "F03",
+      "title": "Chất lượng, an toàn và artifact",
+      "weightPercent": 20,
+      "earned": 0,
+      "total": 40,
+      "percent": 0
+    },
+    {
+      "id": "F04",
+      "title": "Nghiệm thu mock và bàn giao",
+      "weightPercent": 5,
+      "earned": 0,
+      "total": 20,
+      "percent": 0
+    }
+  ],
+  "next": [
+    {
+      "id": "FE003",
+      "title": "Lệnh kiểm tra và hợp đồng bằng chứng",
+      "nextStep": {
+        "id": "S05",
+        "weight": 2,
+        "action": "Đồng bộ hướng dẫn chạy lại Windows/CI; ghi revision/environment và đường dẫn log, phân biệt lịch sử với lượt mới.",
+        "requiredEvidenceKind": "artifact_review",
+        "verification": "Có handoff tái hiện checks; không ghi CI PASS khi chưa có run. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+        "required": true,
+        "status": "STALE",
+        "note": "Changed source docs/FRONTEND_SCOPE.md"
+      }
+    }
+  ],
+  "blocked": [],
+  "stale": [
+    "FE003",
+    "FE004",
+    "FE005",
+    "FE006",
+    "FE007",
+    "FE008",
+    "FE009",
+    "FE010",
+    "FE011",
+    "FE012",
+    "FE013",
+    "FE014",
+    "FE015",
+    "FE016",
+    "FE017",
+    "FE018",
+    "FE019",
+    "FE020",
+    "FE021",
+    "FE022",
+    "FE023",
+    "FE024",
+    "FE025",
+    "FE026",
+    "FE027",
+    "FE028"
+  ]
+}
+NEXT={
+  "id": "FE003",
+  "phase": "F00",
+  "priority": 3,
+  "title": "Lệnh kiểm tra và hợp đồng bằng chứng",
+  "kind": "frontend_implementation",
+  "dependsOn": [
+    "FE002"
+  ],
+  "featureIds": [
+    "H07",
+    "H08"
+  ],
+  "routeIds": [],
+  "operationIds": [],
+  "sourceTaskIds": [
+    "T005",
+    "T012"
+  ],
+  "verificationLevel": "V0–V3; V4 theo rủi ro frontend; API synthetic",
+  "readFirst": [
+    "../AGENTS.md",
+    "../AI_RULES.md",
+    "../docs/FRONTEND_SCOPE.md",
+    "../docs/PROJECT_CONTEXT.md",
+    "docs/02_ARCHITECTURE.md",
+    "docs/06_API_AND_REALTIME.md",
+    "docs/18_CODING_STANDARDS.md"
+  ],
+  "writeScope": [
+    "package.json",
+    "playwright.config.ts",
+    "apps/web/vitest.config.ts",
+    "botsales-kit/execution/frontend-command-map.json",
+    "docs/CONTINUE_FRONTEND.md",
+    "evidence/REPORT.md"
+  ],
+  "deliverables": [
+    "package.json",
+    "playwright.config.ts",
+    "apps/web/vitest.config.ts",
+    "botsales-kit/execution/frontend-command-map.json",
+    "docs/CONTINUE_FRONTEND.md",
+    "evidence/REPORT.md"
+  ],
+  "implementationSteps": [
+    {
+      "id": "S01",
+      "weight": 1,
+      "action": "Ánh xạ npm scripts hiện có: generate/source/boundaries/types/lint/domain/unit/build/demo/e2e; không dùng pnpm giả.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Tên/cwd/script khớp package.json; lệnh dự kiến vẫn DECLARED_NOT_RUN. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S02",
+      "weight": 3,
+      "action": "Chọn gate FE-G01..09, môi trường, fixture/scenario và bằng chứng cần cho từng task theo Verification Ladder.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Ma trận kiểm có phạm vi frontend; không yêu cầu DB/Meta/staging thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S03",
+      "weight": 2,
+      "action": "Kiểm cấu hình Vitest/RTL/MSW/Playwright/axe thực; thu baseline có lỗi mà không tắt suite.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Test runner và config được nạp; testfail ghi CHƯA ĐẠT, không nhận gate PASS. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S04",
+      "weight": 2,
+      "action": "Kiểm tracker frontend validate/status/next và mẫu evidence; đăng ký lệnh đã chạy đúng có log.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Evidence sai scope/thiếu log/hash bị từ chối; cấu trúc đúng không thay review coverage. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    },
+    {
+      "id": "S05",
+      "weight": 2,
+      "action": "Đồng bộ hướng dẫn chạy lại Windows/CI; ghi revision/environment và đường dẫn log, phân biệt lịch sử với lượt mới.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Có handoff tái hiện checks; không ghi CI PASS khi chưa có run. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true
+    }
+  ],
+  "acceptanceCases": [
+    "FE003.AC01 — Lệnh/checkpoint dùng nguồn hiện có và ledger frontend.",
+    "FE003.AC02 — Không no-op hoặc test chưa chạy được đăng ký PASS.",
+    "FE003.AC03 — Giữ báo cáo lịch sử có ngày/môi trường."
+  ],
+  "stopConditions": [
+    "Chặn phần thiếu contract hoặc quyết định nghiệp vụ bắt buộc; ghi gap cụ thể, không tự tạo endpoint/quyền.",
+    "Thiếu toolchain/test frontend hoặc evidence đúng diff: CHƯA XÁC MINH; tiếp tục task độc lập đủ dependency.",
+    "Backend/provider thật nằm ngoài phạm vi; không đòi credentials thật để nghiệm thu mock frontend, không đánh dấu tích hợp thật PASS."
+  ],
+  "handoff": "execution/frontend-evidence/FE003/handoff.md",
+  "commandPolicy": "Lệnh app tại root frontend, từ package.json và frontend-command-map.json; chỉ đăng ký VERIFIED_AVAILABLE sau khi chạy thành công có log. Ghi evidence và snapshot của source/test/fixture/config liên quan. Không checkpoint ledger toàn sản phẩm.",
+  "status": "STALE",
+  "owner": "Codex",
+  "blockedReason": "Refresh upstream FE001 and FE002 evidence after current approved scope/report documentation updates; resume FE003 after dependencies are current",
+  "earned": 8,
+  "total": 10,
+  "percent": 80,
+  "done": false,
+  "dependencyReady": true,
+  "steps": [
+    {
+      "id": "S01",
+      "weight": 1,
+      "action": "Ánh xạ npm scripts hiện có: generate/source/boundaries/types/lint/domain/unit/build/demo/e2e; không dùng pnpm giả.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Tên/cwd/script khớp package.json; lệnh dự kiến vẫn DECLARED_NOT_RUN. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "VERIFIED",
+      "note": ""
+    },
+    {
+      "id": "S02",
+      "weight": 3,
+      "action": "Chọn gate FE-G01..09, môi trường, fixture/scenario và bằng chứng cần cho từng task theo Verification Ladder.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Ma trận kiểm có phạm vi frontend; không yêu cầu DB/Meta/staging thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "VERIFIED",
+      "note": ""
+    },
+    {
+      "id": "S03",
+      "weight": 2,
+      "action": "Kiểm cấu hình Vitest/RTL/MSW/Playwright/axe thực; thu baseline có lỗi mà không tắt suite.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Test runner và config được nạp; testfail ghi CHƯA ĐẠT, không nhận gate PASS. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "VERIFIED",
+      "note": ""
+    },
+    {
+      "id": "S04",
+      "weight": 2,
+      "action": "Kiểm tracker frontend validate/status/next và mẫu evidence; đăng ký lệnh đã chạy đúng có log.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Evidence sai scope/thiếu log/hash bị từ chối; cấu trúc đúng không thay review coverage. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "VERIFIED",
+      "note": ""
+    },
+    {
+      "id": "S05",
+      "weight": 2,
+      "action": "Đồng bộ hướng dẫn chạy lại Windows/CI; ghi revision/environment và đường dẫn log, phân biệt lịch sử với lượt mới.",
+      "requiredEvidenceKind": "artifact_review",
+      "verification": "Có handoff tái hiện checks; không ghi CI PASS khi chưa có run. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "required": true,
+      "status": "STALE",
+      "note": "Changed source docs/FRONTEND_SCOPE.md"
+    }
+  ]
+}
+TRACKER_READ_ONLY=true; sha256Before=571bf5bfd0accafde01502a4d4565df9c5a40046ffd520e0c22cec245b38ab46; sha256After=571bf5bfd0accafde01502a4d4565df9c5a40046ffd520e0c22cec245b38ab46
+CI=NOT_RUN; backend/provider/staging=OUT_OF_SCOPE; ownerAcceptance=FINAL_ONLY
+sourceSnapshotSha256=091256cddea8eead12d473d0e5f0027fe056f219e8ec12e7e56c13d6e9c80850
+SOURCE AGENTS.md sha256=78a8bd12828d6f09bd59489637fe44d20f4dbc0d4fda9fadbaaf8247f38f94b1
+SOURCE botsales-kit/execution/FRONTEND_PLAN_GUIDE.md sha256=5b341e33dde44ff9ca7a0c456b5151adba21a4d8c3280fa59217eb3c26f8d945
+SOURCE botsales-kit/execution/frontend-plan.json sha256=4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/scripts/progress.mjs sha256=3e64ec85fe4f2266947a02fe05ec2c83b2b41afbecdb750dbeb16447a71c7418
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE apps/web/vitest.config.ts sha256=48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e
+SOURCE playwright.config.ts sha256=f15aeff9880ded3e8ebbe7e7fff5c23e9146a683453e7e107a79d8a0bffa0cac
+SOURCE docs/FRONTEND_SCOPE.md sha256=14ac1dffe33aff20704cbbc1b87ac20313822bdc64b1217dd01eed483f288c6b
+SOURCE docs/PROJECT_CONTEXT.md sha256=ac4d6817b96a58c865ccba065df7fca271054db71211bebb52f828eeb2c9b637
+SOURCE docs/CONTINUE_FRONTEND.md sha256=08e9aa38be2737771bf84dedde2f9ee252b8bf3b0d57f1655e9b202cbb989ae6
+SOURCE docs/KNOWN_GAPS.md sha256=63c353f7a2bdc7e4c28113490c6cd5be4948f123f49fa4ca9b5aeb62a0b0ffc8
+SOURCE docs/FRONTEND_UI_IMPROVEMENT_PLAN.md sha256=448a37b75beafec44d3417f603ffc80b3de6cc1743698a84d3ee96e71ee80990
+SOURCE docs/FRONTEND_PLAN_DOCUMENT_AUDIT_2026-10-04.md sha256=03c12669971f0cf468ed179792c4e3098087b107b56fdf5d02742042299a724d
+SOURCE evidence/REPORT.md sha256=b3338982907e18ba324844f53baabfc2811990fc4ce73d2ae4753d6df77e87a6
+SOURCE botsales-kit/execution/SESSION_HANDOFF.md sha256=91533dcd787b717ae3bf4c8fb72d3f96bd1e84029cdeb6cb707623a4595f08bf
+SOURCE botsales-kit/execution/frontend-evidence/FE003/handoff.md sha256=526a96350b3b7723a50c0c340389264a23b150bad2352c545f7b2bf0bfe82ec1
+SOURCE botsales-kit/execution/frontend-evidence/FE003/S01-current-command-map-20261004.json sha256=35b9aebdf085f48afcd2063d8c2c86c1b4548164df76fd2917e0e96a1c33d02e
+SOURCE botsales-kit/execution/frontend-evidence/FE003/S02-post-spc057-current-20261006.json sha256=7ed02b43e6988c53cb59b1bf706bfa3faea64ad9f6089282079752e6eef7e1f5
+SOURCE botsales-kit/execution/frontend-evidence/FE003/S03-post-fe002-current-20261006.json sha256=d05a79d1a3122d00b59f69cc7c01409ac9dfce159efb41e8619b436f497ecb56
+reviewer=Codex self-review; no independent peer review claimed.

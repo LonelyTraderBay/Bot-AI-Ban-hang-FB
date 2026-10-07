@@ -1,0 +1,5 @@
+Command: node evidence/frontend-ui-improvements/UI028/W14/capture-before-spacing.mjs
+Outcome: failed after R42 detail capture when the dialog title changed to the event-edit mode.
+Cause: the helper continued querying the old accessible dialog name after the UI changed its mode.
+Evidence retained: before-v2-* captures; source was not edited by this attempt.
+Action: wait for the event-mode dialog by its new accessible name and write the retry under unique v3 artifact names. This selector transition is not an application failure.

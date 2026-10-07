@@ -1,0 +1,82 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI016",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "DONE",
+  "scope": "React/TypeScript frontend with local synthetic MSW only; no backend/provider/staging claim.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Pre-existing dirty work was preserved. Fingerprints identify Inbox source, FE016 browser/source-map tests, canonical read-only contracts and current UI016 docs/evidence; the full dirty tree is not attributed to UI016."
+  },
+  "checkpoints": {
+    "C01": "PASS: TypeScript AST inventory measured 18 source lines over 1,500 chars and six largest components. Inbox ConversationPanel was 11,348 chars with four long lines and co-owned messages, composer/send and context/assignment; method and source sizes are in S01.",
+    "C02": "PASS: composer draft/send, message-row rendering and context metadata/assignment responsibilities split into three components inside the Inbox module. ConversationPanel remains route/cursor/URL/Back/action/feedback owner; canonical contract, permissions and visible behavior are preserved.",
+    "C03": "PASS: FE016 targeted browser suite 21/21; full rebuilt-demo E2E 187/187. Browser coverage exercises cursor/Back, message paging, send/internal note/errors, recovery, permissions, assignment, feedback and previews.",
+    "C04": "PASS on current frontend diff: generate:check, source mapping, boundaries, lint, typecheck, domain/MSW, Vitest, production build and rebuilt-demo artifact isolation. Production chunk advisory remains; manual and owner release gates are outside this checkpoint.",
+    "C05": "PASS: before/after AST measure, implementation notes, logs, synchronized plan/project context/gaps/report and SHA-256 fingerprints recorded. FE and product progress ledgers were not changed."
+  },
+  "implementation": [
+    "ConversationComposer owns reply/internal-note draft and typed send/note commands; versioned payload, send eligibility, pending/error and unknown-result draft retention remain intact.",
+    "ConversationMessageList is presentational and renders inert text, source evidence, timestamps and feedback action; rating dialog state remains with ConversationPanel.",
+    "ConversationContextPanel owns inbox metadata and assignment state, while separately guarding customer.read, orders.write and conversations.assign. It stays in the Inbox module.",
+    "ConversationPanel remains the owner for route detail, list/message cursor behavior, URL/Back, takeover/release/resolve and feedback workflow. No contract, generated source, route, token, dependency or cross-module import changed."
+  ],
+  "verification": {
+    "measurement": "PASS: AST span ConversationPanel 11,348→9,562 chars (-15.7%); >1,500-char lines across Inbox entry/component files 4→0; new components 3,199 / 2,074 / 3,204 chars; method/results in S01/S02.",
+    "targetedBrowser": "PASS: FE016 suite 21/21 in 41.6s; S03-targeted-regressions.log.",
+    "sourceMapTests": "PASS: 3/3 FE016 contract/source assertions during full E2E preflight. Assertions now inspect the Inbox entry and responsibility components without weakening route, operation, permission, message DTO or filter constraints.",
+    "verify": "PASS: generate 11 outputs/283 schemas/210 operations/54 routes; source 63 files/220 operation references/54 routes; boundaries 424 imports and negative fixtures 8/8; lint/typecheck; domain/MSW 88/88; Vitest 80/80; production build. S04-verify.log.",
+    "fullRebuiltDemoE2E": "PASS 187/187 Chromium in 10.8 minutes; axe 55 snapshots/0 violations; route-role 357/357; empty 11/11; route-error 51/51; four vertical journeys; production artifact contains no mock worker/runtime. S05-full-e2e-current.log.",
+    "metrics": "Windows Chromium 153 at 1280x720 against local built demo + synthetic MSW: initial route 448432 gzip bytes; largest chunk 186593 gzip bytes; 1004 synthetic customers; API page size 20; first page ready 340 ms. These are local frontend measurements, not a production SLO or device matrix.",
+    "buildAdvisory": "Production largest chunk 734.01 kB raw / 185.47 kB gzip and triggers the configured 500 kB warning.",
+    "review": "Codex self-review; no independent human code review, native mobile keyboard, actual browser zoom, screen-reader transcript or product-owner UAT recorded."
+  },
+  "gates": {
+    "FE_G02": "PASS locally on current frontend diff.",
+    "FE_G03": "PASS for canonical contract/source-map and synthetic mock tests; OpenAPI, routes, tokens and generated code unchanged.",
+    "FE_G04": "PASS for the current rebuilt-demo route/state/role E2E suite; this does not establish server behavior.",
+    "FE_G05": "Automated regression passed; actual browser zoom, screen-reader output, complete manual interaction/error/icon review and native mobile keyboard remain open.",
+    "FE_G08": "Production/demo builds and artifact isolation pass locally; GitHub CI was not run.",
+    "FE_G09": "Automated demo cases pass; product-owner acceptance remains open.",
+    "readiness": "Evidence remains 7/9 gates; this item does not certify Production-Ready/Enterprise-Grade."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "3/10",
+    "totalDone": "16/26",
+    "checkpoints": "88/130",
+    "next": "UI017 sequentially; UI012 manual accessibility, UI015 native keyboard evidence and FE-G09 owner UAT remain independent open gates."
+  },
+  "evidence": [
+    "S01-readability-inventory.md",
+    "S02-component-refactor.md",
+    "S03-targeted-regressions.log",
+    "S04-verify.log",
+    "S05-full-e2e-current.log"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprints": {
+    "apps/web/src/modules/inbox/index.tsx": "B6114DFDB640A4F98995BF834DDE3A06518F743854740CE6CF8C19E1FA09CD73",
+    "apps/web/src/modules/inbox/conversation-components.tsx": "280A8E63CB25537460C72264224FA510A51AAA09C34E269B705DF668E6026501",
+    "tests/fe016.spec.ts": "857C44696A0459901D9E2703CB95B6BC9F2A83DC6A9FF4C77B9D44890D33843D",
+    "tests/fe016-source-map.test.mjs": "620026718BD2694ECDD84EF8FFECADDD1DDE9C36DEE9AAF59BF33B532F3BA456",
+    "botsales-kit/contracts/openapi.json": "D88A70957A9DE36402FF5AC0CB757A2F1C496519C7E1FD2E28DF17E867F78C7C",
+    "botsales-kit/contracts/route-manifest.json": "360871C008FAC723CFC77DEC79417838D24D4FAE844452909EB347EC8893F2B2",
+    "botsales-kit/design/tokens.json": "B4083EB2032D9EBAC7F1F793F3AAE1CDA6A30E075B0DD9E19F241567651D1895",
+    "evidence/frontend-ui-improvements/UI016/S01-readability-inventory.md": "74C0764B79BBE8554EB330C8C459622F23D32609567A2BD641061CC09641A53A",
+    "evidence/frontend-ui-improvements/UI016/S02-component-refactor.md": "65AE03773ED8370F97C8C16260B1AFB1C4E20CE6CF8E13C1EC77ACCA4BBE75BF",
+    "evidence/frontend-ui-improvements/UI016/S03-targeted-regressions.log": "10D5131014E59B0511F7F1CB277061F444BF46AFD3D4981951E82AA9F5957C1E",
+    "evidence/frontend-ui-improvements/UI016/S04-verify.log": "4DD4D689413F1410EB4362D3E628A56F1340A584E9EBBB007CA59748845F2E07",
+    "evidence/frontend-ui-improvements/UI016/S05-full-e2e-current.log": "6FD649358B767148ECD396B1E1996739F8ED43CDBB6C73947CF28BF794125BF9",
+    "evidence/frontend-ui-improvements/UI012/S08-acceptance-20261003.json": "C43FB7E277E8AE4EBDDEA3BB04AB43403349EFF68FD6C84DE84D350EB9C9E7BE",
+    "evidence/frontend-ui-improvements/UI013/S12-acceptance.json": "EF45AAF8522FE55A2599AC672B9D75443318F24FEEFAF9BCB63B6BD5FCFB32D2",
+    "evidence/frontend-ui-improvements/UI014/S06-acceptance.json": "C225EEFF4ED1C2E6F8C12E31F11B9A7D89070E2CE30ABC5678ED5F94EB906293",
+    "evidence/frontend-ui-improvements/UI015/S06-acceptance.json": "C1E54FDBCDAB06E552FA2B337E8B42F351CB33B891D88FEC818D0171560C7429",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC"
+  },
+  "fingerprintRefreshNote": "Shared plan/context/known-gaps/report fingerprints refreshed after UI020.C01 inventory on 2026-10-03; item-specific results remain scoped to their original acceptance evidence; shared docs and downstream acceptance references refreshed after UI022 root-workflow correction on 2026-10-03; shared docs and downstream acceptance references refreshed after UI022 Windows runner correction on 2026-10-03."
+}

@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-03",
+  "item": "UI012 / FE-G05",
+  "scope": "bounded browser-visible review of repeated message-feedback actions and dialog focus on the Inbox detail route",
+  "environment": "Chromium 153; 1440x1000 CSS px; deviceScaleFactor 1; local React demo + synthetic MSW",
+  "route": {
+    "id": "R06",
+    "path": "/s/shop-demo/inbox/cv1",
+    "module": "inbox"
+  },
+  "observation": {
+    "messageFeedbackButtonCount": 2,
+    "uniqueAccessibleNames": [
+      "Đánh giá tin nhắn của Khách lúc 21:00 29/9/26: Shop ơi áo thun còn size L không?",
+      "Đánh giá tin nhắn của Khách lúc 21:00 29/9/26: [CONFIRM:seed-orderquote-10001] Khách mẫu xác nhận đúng bản báo…"
+    ],
+    "messageContexts": [
+      {
+        "accessibleLabel": "Đánh giá tin nhắn của Khách lúc 21:00 29/9/26: Shop ơi áo thun còn size L không?",
+        "contextText": "Khách Shop ơi áo thun còn size L không? 21:00 29/9/26 · read Đánh giá"
+      },
+      {
+        "accessibleLabel": "Đánh giá tin nhắn của Khách lúc 21:00 29/9/26: [CONFIRM:seed-orderquote-10001] Khách mẫu xác nhận đúng bản báo…",
+        "contextText": "Khách [CONFIRM:seed-orderquote-10001] Khách mẫu xác nhận đúng bản báo giá này. 21:00 29/9/26 · delivered Đánh giá"
+      }
+    ],
+    "repeatedAccessibleName": false,
+    "messageListAccessibilitySnapshot": "- text: Khách\n- paragraph: Shop ơi áo thun còn size L không?\n- text: 21:00 29/9/26 · read\n- 'button \"Đánh giá tin nhắn của Khách lúc 21:00 29/9/26: Shop ơi áo thun còn size L không?\"': Đánh giá\n- text: Khách\n- paragraph: \"[CONFIRM:seed-orderquote-10001] Khách mẫu xác nhận đúng bản báo giá này.\"\n- text: 21:00 29/9/26 · delivered\n- 'button \"Đánh giá tin nhắn của Khách lúc 21:00 29/9/26: [CONFIRM:seed-orderquote-10001] Khách mẫu xác nhận đúng bản báo…\"': Đánh giá\n- text: 2 kết quả\n- button \"Đầu danh sách\" [disabled]\n- button \"Trang tiếp\" [disabled]",
+    "ratingDialogSnapshot": "- dialog \"Đánh giá câu trả lời Đóng\":\n  - heading \"Đánh giá câu trả lời Đóng\" [level=2]:\n    - text: Đánh giá câu trả lời\n    - button \"Đóng\"\n  - paragraph: Shop ơi áo thun còn size L không?\n  - text: Đánh giá\n  - combobox \"Đánh giá Cần sửa\": Cần sửa\n  - text: Nội dung đề xuất sửa\n  - textbox \"Nội dung đề xuất sửa\"\n  - alert: Phản hồi không tự trở thành kiến thức đã xuất bản. Cần người duyệt và kiểm thử.\n  - button \"Hủy\"\n  - button \"Lưu phản hồi\"",
+    "ratingDialogVisualState": {
+      "opacity": "1",
+      "visibility": "visible"
+    },
+    "focusOnDialogOpen": "Đánh giá Cần sửa",
+    "focusReturnedAfterClose": true
+  },
+  "pageErrors": [],
+  "mutationRequests": [],
+  "screenshots": [
+    "S27-inbox-message-action-context.png",
+    "S27-inbox-rating-dialog.png"
+  ],
+  "limits": [
+    "DOM-derived names and Playwright accessibility snapshots are not screen-reader speech or transcript evidence.",
+    "This is one Inbox detail conversation with synthetic data; it does not represent all message or permission states.",
+    "No message feedback was submitted and no Backend/provider or persistent data was used."
+  ],
+  "architecture": "PRESERVED — this probe changes no React source, module boundary, contract, route, permission, token or generated output."
+}

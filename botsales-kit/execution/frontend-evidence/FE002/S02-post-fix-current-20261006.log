@@ -1,0 +1,28 @@
+FE002.S02 current toolchain evidence
+executedAt=2026-10-06T02:20:09.086Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+command=node botsales-kit/execution/frontend-evidence/FE002/capture-post-spc056-final-toolchain-20261006.mjs S02
+exitCode=0
+expected=Khảo sát setup/doctor/install scripts và quyền ghi/cache/network; ghi baseline lỗi PATH hay registry nếu xảy ra thực.
+observed=setup/doctor scripts inspect cleanly; commands are registered VERIFIED_AVAILABLE; Node/package/MSW prerequisites exist; .env.local already exists and setup will not overwrite it.
+checksTotal=5; failed=0
+CHECK setup behavior: PASS
+Requires Node 24; generates from canonical inputs; resolves the installed MSW package worker; creates .env.local only when absent
+CHECK doctor behavior: PASS
+Checks Node 24, required frontend packages, MSW browser worker and lockfile; returns non-zero when a check fails
+CHECK command map: PASS
+setup=npm.cmd --script-shell=powershell.exe run setup [VERIFIED_AVAILABLE]; doctor=npm.cmd --script-shell=powershell.exe run doctor [VERIFIED_AVAILABLE]
+CHECK workspace/cache/network baseline: PASS
+npm tree is installed and valid; .env.local=true; .env.example=true; MSW worker=true; no environment content read or changed
+CHECK side-effect policy: PASS
+Existing .env.local is protected by an existence check; setup may regenerate derived contract outputs and MSW worker, to be hash-checked after run
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no Backend, provider or hosted CI result is claimed.
+sourceSnapshotSha256=3b80e28becb4b1a79095fae6da6b822d4564cfd4553a5f3074325acf84d2eb66
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE scripts/setup.mjs sha256=fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa
+SOURCE scripts/doctor.mjs sha256=6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e
+SOURCE scripts/tools.mjs sha256=c5e8d51b9c60d48cdeadeff6422319c654fa08ae95bef2bb726926c85351aae0
+SOURCE .env.example sha256=4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE002/capture-post-spc056-final-toolchain-20261006.mjs sha256=2529e901701df82f5df7a85497f158d680d5da81819000bf4da118bce4fbd6c1
+reviewer=Codex self-review; no independent peer review claimed.

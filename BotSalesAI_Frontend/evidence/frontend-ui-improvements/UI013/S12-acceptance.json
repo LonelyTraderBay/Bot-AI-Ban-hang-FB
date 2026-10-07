@@ -1,0 +1,92 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI013",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "DONE",
+  "scope": "React/TypeScript frontend with local synthetic MSW; no backend/provider/staging claim",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Dirty working tree was preserved; fingerprints identify the accepted UI013 source, tests, documentation and evidence bytes."
+  },
+  "checkpoints": {
+    "C01": "PASS: canonical routes, source ownership and existing cursor behaviors inventoried in S01.",
+    "C02": "PASS: reconciliation tab, finance date range and report type/date filters are URL-backed; cursor, shop-timezone, API boundary and history ownership retained.",
+    "C03": "PASS: targeted regression suite 7/7, including fast consecutive dates, UI001 cursor/dialog, FE021 ambiguous/stale exports and all UI013 scenarios.",
+    "C04": "PASS for applicable automated checks on the final diff: verify and full rebuilt-demo E2E; manual FE-G05 requirements remain open outside this checkpoint.",
+    "C05": "PASS: plan, project context, gaps and report synchronized; source/test/log fingerprints recorded; failed intermediate runs retained as history."
+  },
+  "implementation": [
+    "Reconciliation serializes COD/cases tab; bank is default; unknown values fall back safely; tab selection replaces the current history entry so pager Back behavior is retained.",
+    "Finance serializes fromDate/toDate, validates real date-only values, keeps shop-local [from,to) conversion and clears stale generic cursor when the range changes.",
+    "Reports serializes reportType/fromDate/toDate; API snapshot and shop timezone define defaults; malformed state is normalized with replace; user edits retain history and jobs cursor ownership.",
+    "Latest URL writes are protected during rapid edits and React Router commits synchronously for date/report filter transitions.",
+    "Disabled contained primary buttons use theme tokens for readable disabled text/background after route axe found a low-contrast state."
+  ],
+  "verification": {
+    "targetedRegressions": "PASS 7/7; S09-targeted-final.log",
+    "generateCheck": "PASS 11 outputs, 283 schemas, 210 operations, 54 routes; included in S10 verify and E2E setup/build.",
+    "verify": "PASS; source 62 files/220 operation calls/54 routes; boundaries 412 imports and 8/8 negative fixtures; domain/MSW 88/88; Vitest 77/77; lint/typecheck and production build; S10-verify.log",
+    "fullRebuiltDemoE2E": "PASS 186/186 Chromium in 10.9 minutes; axe 55 snapshots/0 violations/0 page errors; route-role 357/357; empty 11/11; route-error 51/51; keyboard 4/4; S11-full-e2e-final.log",
+    "productionArtifactIsolation": "PASS: full suite verifies production artifact contains no mock worker/MSW runtime.",
+    "review": "Codex self-review; no independent human code review recorded."
+  },
+  "metrics": {
+    "initialDemoRouteGzipBytes": 447764,
+    "largestDemoChunkGzipBytes": 186187,
+    "syntheticCustomerCount": 1004,
+    "firstPageRows": 20,
+    "firstPageReadyMs": 355,
+    "productionLargestChunkRawKib": 732.85,
+    "productionLargestChunkGzipKib": 185.21,
+    "note": "Local Chromium 153 Windows at 1280x720 on synthetic MSW; not a device matrix, backend result or production SLO."
+  },
+  "gates": {
+    "FE_G02": "Rechecked PASS on current diff.",
+    "FE_G03": "Rechecked PASS on current diff.",
+    "FE_G04": "Rechecked PASS on current rebuilt demo.",
+    "FE_G05": "Automated axe/keyboard/contrast evidence only; actual browser zoom, screen-reader output and full manual interaction-state review remain open.",
+    "FE_G06": "Current browser security and scope cases pass only in frontend mock scope; server authorization is unverified.",
+    "FE_G07": "Local budget metrics are under the recorded gzip budgets; no device/SLO claim.",
+    "FE_G08": "Production and demo build/artifact isolation pass locally; remote CI was not run.",
+    "FE_G09": "Automated flows pass; product-owner acceptance remains open.",
+    "readiness": "7/9 evidence gates; not Production-Ready/Enterprise-Grade certification."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "1/10",
+    "totalDone": "14/26",
+    "checkpoints": "74/130",
+    "next": "UI014, sequentially; UI012 manual accessibility and FE-G09 owner UAT remain independent open gates."
+  },
+  "history": [
+    "The first full E2E run after URL-state implementation was 182/186; targeted diagnostics exposed stale date transitions, a contrast issue and a tab-render timing assumption.",
+    "Intermediate failed targeted/full logs remain in UI013 S04-S08 for provenance; S09/S10/S11 are the final passing evidence for accepted code."
+  ],
+  "evidence": [
+    "S01-url-state-inventory.md",
+    "S09-targeted-final.log",
+    "S10-verify.log",
+    "S11-full-e2e-final.log"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprints": {
+    "apps/web/src/modules/finance/index.tsx": "C0815F25DBE3954FFCDD8CFC946ED823485EBA1F78E14899F509416AC00D1498",
+    "apps/web/src/modules/reports/index.tsx": "3679AFCB983208D12ADC5F8600956BDB1049AAB0759CD96BD74EE2C073435BB6",
+    "apps/web/src/shared/model/format.ts": "9A743055D50164D7F57208294E6E3B43565CED9A36198BA6B553CB48D3370230",
+    "apps/web/src/shared/ui/theme.ts": "EF20EC162FF218146B8F0C19C7522B25840D04CAC524E7158EF6473376B889D8",
+    "apps/web/tests/timezone.test.ts": "F4A2029A41888A19279DC089E2264366CA97D69A1B330D71BE8055BC0B2D7A20",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "evidence/frontend-ui-improvements/UI013/S01-url-state-inventory.md": "DFCCB8EC0D7EFABB4BB545FF94C999C43C89F92C9E447EC822BB32B6F6292B40",
+    "evidence/frontend-ui-improvements/UI013/S09-targeted-final.log": "DEB288F788029605F7C7B7CC4B5D2274B8F6B132CC11450AA92C96C38C3992EF",
+    "evidence/frontend-ui-improvements/UI013/S10-verify.log": "6C068252C714FED4370CC322B477AF264A3559233D5AE2532CD74360C4981027",
+    "evidence/frontend-ui-improvements/UI013/S11-full-e2e-final.log": "DCD396D9E1578B1EED4674504A990282A0431CD978BE9AE8FD5503176C714F22",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC",
+    "tests/fe015.spec.ts": "AF4BC133DD079FB115FC6E365F1E482B18D3F65751E9451E85D3309B9DBED665",
+    "tests/ui013-url-state.spec.ts": "2FDE7CD4BF8CC540E6AF0B830FEE6B38323DC45BC971A30E63BC09673BFA182F"
+  },
+  "note": "UI013-specific verification and metrics remain as recorded for that item; shared summary-document fingerprints were refreshed after UI014 updated current status. This JSON is excluded from its own hash set.",
+  "fingerprintRefreshNote": "Shared plan/context/known-gaps/report fingerprints refreshed after UI020.C01 inventory on 2026-10-03; item-specific results remain scoped to their original acceptance evidence; shared docs and downstream acceptance references refreshed after UI022 root-workflow correction on 2026-10-03; shared docs and downstream acceptance references refreshed after UI022 Windows runner correction on 2026-10-03."
+}

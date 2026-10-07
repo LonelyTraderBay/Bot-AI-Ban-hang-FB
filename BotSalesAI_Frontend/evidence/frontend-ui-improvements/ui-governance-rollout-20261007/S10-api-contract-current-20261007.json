@@ -1,0 +1,60 @@
+{
+  "id": "S10-api-contract-current-20261007",
+  "date": "2026-10-07",
+  "scope": "Frontend shared UI API/type/catalog contract capability; not whole-app UI acceptance",
+  "status": "COMPLETE_DIRECT_RENDER_CONTRACTS_27_OF_27",
+  "commands": [
+    {
+      "command": "node --test tests/ui-shared-api-contract.test.mjs",
+      "result": "PASS",
+      "tests": 11,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S10-shared-api-contract-final-20261007.log",
+        "sha256": "3c34e2d431dad420434ff1d5c82f02694900b4ddd561a014708a81d846a1fc2d"
+      }
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/shared-ui-render-contract.test.tsx --reporter=verbose",
+      "result": "PASS",
+      "tests": 38,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S10-render-contract-final-20261007.log",
+        "sha256": "acdba4692e21acbbc052759f75ae050e76087debbf970e7dbe15d95864645528"
+      }
+    },
+    {
+      "command": "npm.cmd run verify",
+      "result": "PASS",
+      "tests": 1,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S10-verify-final-20261007.log",
+        "sha256": "1494b76513e2468d3e80d97bbab11af7c479747b42ef41d267147a8c996f855a"
+      }
+    }
+  ],
+  "verified": [
+    "Catalog maps all 27 exported React component/composition functions; Column<T> is included as a supporting DataTable type.",
+    "TypeScript prop allowlists and finite body modes, placement roles, responsive geometry keys, Panel geometry, and DataTable column alignment/render slots match the shared API contract.",
+    "Shared public components do not expose arbitrary sx/style/className layout overrides; source, catalog, and ownership documentation are checked together.",
+    "The binding fixtures cover finite positive inputs and reject unsupported style/geometry/slot forwarding, including native React element paths.",
+    "A dedicated Testing Library suite directly renders all 21 component exports and all 6 composition exports; 38/38 cases pass across named slots, primary conditional/state branches, and finite composition modes.",
+    "The ui-shared-api-contract gate requires every newly exported React API to have a named JSX render case, preventing an export from entering the catalog without a direct render test."
+  ],
+  "remaining": [
+    "S19 retains final changed-source/consumer impact review and evidence freshness; the inventory dispositions and 432 route-state reconciliation have current separate artifacts.",
+    "Direct shared-owner render coverage does not claim owner acceptance, screen-reader speech, hosted CI, or production integration."
+  ],
+  "sha256": {
+    "apps/web/src/shared/ui/components.tsx": "0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5",
+    "apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "apps/web/src/shared/ui/README.md": "1992d4b3c6e1476cceaa90d71b54f5842f6d50c37afb11751b8f1770dca28797",
+    "tests/ui-shared-api-contract.test.mjs": "cb7593d89f612a2b640a3cbfce83b38de2c0d1ba5028a25a09a1b045e56e9773",
+    "tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
+    "tests/ui-composition-ancestry.test.mjs": "e88166e68be875160360194f3d021ee0f8e676a2e42a28b6c599715f0b38d9f9",
+    "docs/FRONTEND_SPACING_STANDARD.md": "cbac7e83852a64bcc97c81936068a8bd0346c17f2d1faf856a284e0666862358",
+    "apps/web/tests/shared-ui-render-contract.test.tsx": "89ae5010117ed629749d03f44a796f06ac27aff0133a37e19abf007aa88b83d3",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "e5de335535e5b1a3b54f98016c82c2bea2c725459a681a3ef9a587632dfb3aba",
+    "evidence/REPORT.md": "c4a601545aafb53e3169e045d930099de1acecc96c94f26046039630f60dfe5a"
+  }
+}

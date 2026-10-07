@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "taskId": "UI006",
+  "recordedDate": "2026-10-02",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "status": "PASS",
+  "sourceInventory": {
+    "baselineLimit100CallSites": 21,
+    "remainingIntentionalLimit100Calls": 6,
+    "requiredLookupsAndTablesNoLongerLimitedToFirst100": 15,
+    "remainingClasses": [
+      "one cursor-paged message-history page",
+      "five bounded previews with explicit scope and full-list routes"
+    ],
+    "searchContract": "q is used only for categories, customers, members, orders, products, stock snapshots, and messages"
+  },
+  "acceptance": {
+    "targetedUi006": {
+      "passed": 3,
+      "total": 3,
+      "tests": [
+        "150 synthetic suppliers/offers/orders; final supplier and offer reached; exact purchase payload checked",
+        "bounded preview wording and full-list links checked",
+        "selected deep-link order survives search 403 and successful retry"
+      ]
+    },
+    "verify": {
+      "status": "PASS",
+      "generator": "11 outputs, 283 schemas, 210 operations, 54 routes",
+      "sourceChecker": "62 files, 220 operation calls, 54 routes, 0 issues",
+      "boundaries": "411 imports, 0 issues, negative fixtures 8/8",
+      "domain": "88/88",
+      "vitest": "8 files, 72/72",
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "productionBuild": "PASS with chunk-size advisory"
+    },
+    "fullE2e": {
+      "status": "PASS",
+      "passed": 162,
+      "total": 162,
+      "browser": "Chromium",
+      "artifact": "rebuilt React demo",
+      "ui006": 3,
+      "routeRoleMatrix": "357/357",
+      "emptyStateComposition": "9/9",
+      "routeErrorComposition": "51/51",
+      "productionArtifactMockIsolation": "PASS",
+      "evidence": "S14-full-e2e-final.log"
+    },
+    "demoPerformance": {
+      "initialRouteGzipBytes": 446993,
+      "largestChunkGzipBytes": 185445,
+      "datasetRecords": 1004,
+      "apiPageSize": 20,
+      "firstPageReadyMs": 334,
+      "interpretation": "local Chromium evidence, not a platform SLO"
+    },
+    "readiness": {
+      "measuredPassGates": 7,
+      "totalGates": 9,
+      "percent": 77.8,
+      "open": [
+        "FE-G05 manual zoom, screen-reader, and contrast checks",
+        "FE-G09 product-owner acceptance"
+      ]
+    },
+    "evidenceFiles": [
+      "S01-source-inventory.md",
+      "S05-source-inventory-final.md",
+      "S11-selected-order-error-retry.log",
+      "S12-targeted-acceptance.log",
+      "S13-verify-final.log",
+      "S14-full-e2e-final.log"
+    ]
+  },
+  "limits": [
+    "Synthetic MSW and local built React Frontend only; no backend, live provider, staging, or production proof.",
+    "FE-G05 manual accessibility and FE-G09 owner acceptance remain open; no Production-Ready or Enterprise-Grade claim.",
+    "Production build retains a non-blocking chunk advisory: 730.75 kB raw / 184.43 kB gzip."
+  ],
+  "sourceFingerprints": [
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "8CE267988843DC9E1F45203F3F91880EDA217E526CA7B8C46B4E9B87BAD0F5B0"
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "CF320DFFE8B6D39016DE1D8C40B1F5CBA8E598595901C91EAE4BD0B56714B72D"
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "480F36C3A9E255D4F80D6A3DD32779E7852F311F323F51F144546AF9A0096032"
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "sha256": "7D6EFB8D578B566F0B38F96D80CE811A3126751FE7F3AEA7EEB0204780DF1B87"
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "6E13C07447FB684688B8355A622949544DBE4AD86CE1C44B1B3823108271A495"
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "sha256": "B5B78947F8D0B370EC66ADEF252EE0BDD25EF1DD2967F1AAB2A661DA02774BC8"
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "sha256": "7A96883581B7B6EF4C0D0E7ABB189DA73233A483F81F470129484CE0BF0CA923"
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "BFF20EC551DCEB819BD513EC0C80683A723F05B5A2F917B3147409C61AE7D26E"
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "sha256": "EDFE2BC52141730D87CC5176C984090EE7F4CAB1C9C69E7A5E9277EA04A52A99"
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "1E057FDF609977D186567FF00D1370D96054D2A3AE9BB4A78E22BB933388E375"
+    },
+    {
+      "file": "tests/fe010.spec.ts",
+      "sha256": "9BB95FD0C5FA40049D0316543D1BC0DD50D67A6DC19F52711F7C9CBAE1C3F0DC"
+    },
+    {
+      "file": "tests/ui006-lookups.spec.ts",
+      "sha256": "11741A32EB51E5DF1436C380B6EDBFB50843F679A74DC1AAF1F018E62D4E3D02"
+    }
+  ]
+}

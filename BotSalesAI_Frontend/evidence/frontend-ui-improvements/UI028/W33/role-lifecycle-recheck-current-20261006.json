@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W33",
+  "recordedAt": "2026-10-06",
+  "scope": "Frontend-only role lifecycle and local verification; synthetic/local evidence only",
+  "headSha": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "nodeVersion": "v24.19.0",
+  "npmCommandAttempt": {
+    "command": "npm.cmd run verify",
+    "exitCode": 1,
+    "observed": "npm was not recognized in the host shell; package wrapper did not start"
+  },
+  "orderedDirectNodeVerify": {
+    "status": "PASS",
+    "exitCode": 0,
+    "steps": [
+      {
+        "name": "generate:check",
+        "exitCode": 0,
+        "result": "11 outputs, 283 schemas, 210 operations, 54 routes"
+      },
+      {
+        "name": "test:source + fixtures",
+        "exitCode": 0,
+        "result": "67 files, 220 operation calls, 54 routes, 0 issues; fixtures 3/3"
+      },
+      {
+        "name": "boundaries",
+        "exitCode": 0,
+        "result": "67 files, 475 imports, negative fixtures 10/10, 0 issues"
+      },
+      {
+        "name": "lint",
+        "exitCode": 0
+      },
+      {
+        "name": "typecheck",
+        "exitCode": 0
+      },
+      {
+        "name": "test:domain",
+        "exitCode": 0,
+        "result": "75 simulator + 13 network checks, 88/88"
+      },
+      {
+        "name": "vitest",
+        "exitCode": 0,
+        "result": "10 files, 88/88 tests"
+      },
+      {
+        "name": "production-build",
+        "exitCode": 0,
+        "result": "2057 modules; largest chunk 328.33 kB raw"
+      },
+      {
+        "name": "layout-fixtures",
+        "exitCode": 0,
+        "result": "10/10"
+      },
+      {
+        "name": "layout-gate",
+        "exitCode": 0,
+        "result": "68 files, 0 findings, 1 scoped exception used"
+      },
+      {
+        "name": "visual-token-fixtures",
+        "exitCode": 0,
+        "result": "5/5"
+      },
+      {
+        "name": "visual-token-gate",
+        "exitCode": 0,
+        "result": "68 files, 0 findings"
+      }
+    ]
+  },
+  "roleLifecycle": {
+    "typedNamespaces": 24,
+    "typedRoles": 110,
+    "typedUsedRoles": 110,
+    "exactTypeImplementationMatch": true,
+    "cssRoles": 1,
+    "cssUsedRoles": 1,
+    "unusedRoles": [],
+    "exceptionCount": 1,
+    "exceptionsUsed": 1,
+    "verifiedConsumerCount": 110
+  },
+  "canonicalFeStatus": {
+    "overallPercent": 0,
+    "verifiedSteps": 0,
+    "totalSteps": 140,
+    "staleTaskCount": 28,
+    "blocked": [],
+    "next": "FE001.S01"
+  },
+  "sourceSha256": {
+    "layout": "b8e97da448a469f21bafe7c5c5ffadacd81cbd5d022484e4cc56d1a9afb6915f",
+    "exceptionRegistry": "7428954378a6b0c978790f9714cfa29ee7981a2c15884f9fdbac3c87939d210c",
+    "standard": "4b0946c74cc02ad9836e4e16a3c7675e91a07e4407339369ac3592a1fd7fc2da"
+  },
+  "limitations": [
+    "Native text resize 200% and actual browser zoom 200% remain NOT_RUN.",
+    "FE progress was read only; no ledger was written.",
+    "Local frontend verification does not prove hosted CI, Backend, staging, production deployment, or owner acceptance."
+  ]
+}

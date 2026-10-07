@@ -1,0 +1,91 @@
+{
+  "task": "UI010",
+  "title": "Draft lifecycle, save feedback, and focus return",
+  "status": "PASS",
+  "completedAt": "2026-10-03",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "baseline": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTreeHadExistingChanges": true,
+    "inventory": "S01-dialog-draft-inventory.md",
+    "identifiedGap": "A dismissed dirty ConfirmDialog retained its reason on reopen; closing the nested draft warning and parent dialog in one render also lost focus return to the original trigger."
+  },
+  "checkpoints": {
+    "C01": "PASS: inventoried shared EditDialog/ConfirmDialog, 20 ConfirmDialog call sites across 14 modules, existing FE011/FE016/FE023 coverage, and the missing nested-discard lifecycle case.",
+    "C02": "PASS: reason resets when the controlled ConfirmDialog closes; explicit discard closes the nested warning before the parent. The regression asserts cleared reason, focus return, and zero POST /takeover requests. No API, command, or module boundary changed.",
+    "C03": "PASS: UI010 regression plus FE011 focus return, FE016 412 reason preservation, FE023 dirty-dialog discard and saved-form feedback: 5/5 in S03.",
+    "C04": "PASS: npm run verify exit 0; full built-demo Chromium E2E 176/176, role matrix 357/357, route empty 11/11, route error 51/51, production artifact mock isolation PASS.",
+    "C05": "PASS: acceptance, reproduction notes, logs, hashes, and limits recorded. Frontend/product task ledgers, contracts, route manifest, design tokens, and generated source were not edited."
+  },
+  "sourceChanges": [
+    "apps/web/src/shared/ui/components.tsx",
+    "tests/ui010-dialog-draft.spec.ts",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md",
+    "evidence/frontend-ui-improvements/UI010/S01-dialog-draft-inventory.md",
+    "evidence/frontend-ui-improvements/UI010/S02-reproduction-notes.md"
+  ],
+  "testEvidence": {
+    "targeted": {
+      "path": "S03-targeted-regression.log",
+      "passed": 5,
+      "failed": 0,
+      "sha256": "26B0839E5802A36C8E65A54A30EBF4E191BF241CB181718B7CC32E8781F660ED"
+    },
+    "verify": {
+      "path": "S04-verify-final.log",
+      "exitCode": 0,
+      "generation": "11 outputs, 283 schemas, 210 operations, 54 routes",
+      "sourceChecker": "62 files, 220 operation references, 0 issues",
+      "boundaries": "411 imports, 8/8 negative fixtures, 0 issues",
+      "domainAndMocks": "88/88",
+      "vitest": "72/72",
+      "lintTypecheckProductionBuild": "PASS",
+      "sha256": "BF58AB717B88F9218AB7ED07DD455760CF91570A7D644FACED3207C5D6D5FD47"
+    },
+    "fullE2E": {
+      "path": "S05-full-e2e-final.log",
+      "passed": 176,
+      "failed": 0,
+      "duration": "10.3m",
+      "browser": "Chromium 153 on Windows x64",
+      "roleMatrix": "357/357",
+      "emptyComposition": "11/11",
+      "routeErrorComposition": "51/51",
+      "productionArtifactMockIsolation": "PASS",
+      "sha256": "3BB27C995EA17120430BD6AE38FC3A1A8F673B356D7B22D23135AAD60CFD94ED"
+    },
+    "reproductionNotes": {
+      "path": "S02-reproduction-notes.md",
+      "sha256": "405FC51F0DE83F73CE9C5651BF6E540346E4593DB9B1725C14F3867823AA8536"
+    }
+  },
+  "inventory": {
+    "path": "S01-dialog-draft-inventory.md",
+    "confirmDialogCallSites": 20,
+    "modules": 14,
+    "sha256": "5381207D741F94460AEEB8FF611CEB1841735C5BBA2E3C9F39E12292978C245A"
+  },
+  "measuredDemoMetrics": {
+    "source": "botsales-kit/execution/frontend-evidence/FE025",
+    "browser": "Chromium 153 on Windows x64, 1280x720",
+    "initialRouteGzipBytes": 447030,
+    "largestChunkGzipBytes": 185450,
+    "syntheticCustomerRows": 1004,
+    "pageLimit": 20,
+    "firstPageReadyMs": 335,
+    "scopeNote": "Local built demo with synthetic MSW data; not a production SLO or live API measurement. The E2E harness refreshed FE025 measurements."
+  },
+  "sourceFingerprints": {
+    "tests/ui010-dialog-draft.spec.ts": "B101A56DAE428A8A8C9F1E11A8304563D829A744F39670DAF1A50D685AFA1D39",
+    "apps/web/src/shared/ui/components.tsx": "17BDE2AFDCFA019AEB815C662552F09D61F08F479207BE1A180AAC35AA54E2DF"
+  },
+  "remainingReadinessGaps": [
+    "FE-G05: manual browser zoom, screen-reader and contrast review remains open.",
+    "FE-G09: product-owner acceptance remains open."
+  ],
+  "limitations": [
+    "Evidence covers frontend source and the rebuilt React demo with synthetic MSW only; no backend, real provider, staging, or production runtime was tested.",
+    "The build reports one advisory chunk of 730.88 kB raw / 184.42 kB gzip; the demo largest chunk measurement is 185.45 kB gzip. This task did not restructure bundles.",
+    "No FE task ledger, product-wide plan/progress, OpenAPI, route manifest, design tokens, or generated source was changed."
+  ]
+}

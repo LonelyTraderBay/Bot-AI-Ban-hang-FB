@@ -1,0 +1,43 @@
+[WebServer] (node:27956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:13096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-40600-83b0f44c-13ed-4f00-bafe-c1cb6ba1d8e1\deps\react-dom_client.js?v=9de2ddde as it exceeds the max of 500KB.
+  x  1 [chromium] › tests\ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry (3.0m)
+
+
+  1) [chromium] › tests\ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: locator.click: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for getByRole('combobox', { name: 'Trạng thái thử' })
+
+
+      240 |
+      241 |     const query = 'ui006-no-matching-order';
+    > 242 |     await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
+          |                                                                  ^
+      243 |     await page.getByRole('option', { name: 'Lỗi truy vấn tiếp', exact: true }).click();
+      244 |     await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');
+      245 |     const failedSearch = page.waitForResponse(response => response.request().method() === 'GET'
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui006-lookups.spec.ts:242:66
+
+    Error Context: test-results\ui006-lookups-UI006-C02-se-be689-led-search-and-cursor-retry-chromium\error-context.md
+
+    Error Context: test-results\ui006-lookups-UI006-C02-se-be689-led-search-and-cursor-retry-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui006-lookups-UI006-C02-se-be689-led-search-and-cursor-retry-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui006-lookups-UI006-C02-se-be689-led-search-and-cursor-retry-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\ui006-lookups.spec.ts:231:1 › UI006.C02 selected order identity survives a failed search and cursor retry 

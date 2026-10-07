@@ -1,0 +1,5 @@
+Command: node evidence/frontend-ui-improvements/UI028/W14/capture-before-spacing.mjs
+Outcome: failed during the first viewport before dialog captures completed.
+Cause: Playwright strict locator `getByText('Nhập/quét SKU thực tế')` matched both the disabled field label and its helper span.
+Evidence retained: before-r41-list-390.png; source was not edited by this attempt.
+Action: narrow the wait to the textbox role and write the retry under unique v2 artifact names. This selector failure is not an application failure.

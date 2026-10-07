@@ -1,0 +1,143 @@
+{
+  "title": "UI012 mobile touch-target size measurements",
+  "recordedAt": "2026-10-04T07:02:29.483Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "source": "React demo Vite dev server; synthetic MSW; Chromium mobile viewport/touch emulation",
+  "sourceSnapshot": {
+    "repositoryHead": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "dirty; source fingerprint is computed from current file bytes, including uncommitted and untracked inputs in the declared scope",
+    "sourceFileCount": 157,
+    "sourceManifestSha256": "4DF2D2D92E827AE7DA893CE56BED55CCD84154F29789CB0480B810FEA4054B78"
+  },
+  "command": "node evidence/frontend-ui-improvements/UI012/S10-touch-target-audit.mjs",
+  "standard": {
+    "criterion": "WCAG 2.2 SC 2.5.8 Target Size (Minimum), Level AA",
+    "sizeThresholdCssPx": {
+      "width": 24,
+      "height": 24
+    },
+    "officialReference": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum",
+    "note": "Undersized targets can satisfy the criterion through spacing or other listed exceptions. This script measures bounds only; it does not decide spacing, equivalence or inline exceptions."
+  },
+  "method": {
+    "routeIds": [
+      "R04",
+      "R05",
+      "R06",
+      "R09",
+      "R15",
+      "R17",
+      "R41",
+      "R49"
+    ],
+    "viewportWidthsCssPx": [
+      320,
+      390
+    ],
+    "targetSelector": "a[href],button,input:not([type=\"hidden\"]),select,textarea,[role=\"button\"],[role=\"link\"],[role=\"tab\"],[role=\"checkbox\"],[role=\"radio\"],[role=\"switch\"],[role=\"menuitem\"]",
+    "includedStates": "Visible default/success route state only; no dialogs, open menus, hover, pressed or error states were injected.",
+    "measurement": "getBoundingClientRect() bounding-box dimensions in CSS pixels, rounded to one decimal; only semantic pointer-control selectors intersecting the viewport are sampled.",
+    "limitations": "Bounding boxes do not prove that a 24x24 square fits inside non-rectangular targets. Automated Chromium viewport/touch emulation is not a physical device or manual touch test. Below-threshold bounds are candidates for spacing/exception review, not automatic WCAG failures."
+  },
+  "summaryByViewport": [
+    {
+      "viewportWidthCssPx": 320,
+      "visibleSemanticTargets": 65,
+      "boundingBoxesAtLeast24By24": 65,
+      "below24InEitherDimension": 0,
+      "undersizedNotInlineLinks": 0,
+      "routeCounts": [
+        {
+          "routeId": "R04",
+          "targetCount": 6,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R05",
+          "targetCount": 7,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R06",
+          "targetCount": 9,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R09",
+          "targetCount": 8,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R15",
+          "targetCount": 10,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R17",
+          "targetCount": 7,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R41",
+          "targetCount": 10,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R49",
+          "targetCount": 8,
+          "below24Count": 0
+        }
+      ]
+    },
+    {
+      "viewportWidthCssPx": 390,
+      "visibleSemanticTargets": 68,
+      "boundingBoxesAtLeast24By24": 68,
+      "below24InEitherDimension": 0,
+      "undersizedNotInlineLinks": 0,
+      "routeCounts": [
+        {
+          "routeId": "R04",
+          "targetCount": 6,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R05",
+          "targetCount": 8,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R06",
+          "targetCount": 9,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R09",
+          "targetCount": 8,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R15",
+          "targetCount": 10,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R17",
+          "targetCount": 7,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R41",
+          "targetCount": 10,
+          "below24Count": 0
+        },
+        {
+          "routeId": "R49",
+          "targetCount": 10,
+          "below24Count": 0
+        }
+      ]
+    }
+  ],
+  "belowThresholdTargets": []
+}

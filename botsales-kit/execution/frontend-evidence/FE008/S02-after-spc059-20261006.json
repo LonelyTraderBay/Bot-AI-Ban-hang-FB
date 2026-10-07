@@ -1,0 +1,208 @@
+{
+  "taskId": "FE008",
+  "stepId": "S02",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-06T06:20:43.916Z",
+  "sourceRevision": "HEAD e68cb65 on main + current frontend working tree",
+  "expected": "Every canonical HTTP operation is handled through shared MSW service/transport by operation ID; query filters/cursor/version/allowedActions/command outcomes are tested; UI modules contain no inline seed/mock fixtures; mock mode cannot silently fall through to live.",
+  "observed": "Fresh registered domain run exited 0: 75/75 simulator checks, 13/13 MSW network scenarios, 210 network handlers for 210 canonical operations. Static transport review confirmed the React client uses a single contract-validated fetch boundary, all feature modules import zero mock seed/service files, demo/live Vite modes are separate, production mock activation throws, and unhandled API requests fail loudly.",
+  "commandId": "domain",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm local package runtime",
+    "details": "Current local MSW Node-network tests plus static review of the React client/demo/live boot paths; deterministic in-memory store only.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 13,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE008/S02-after-spc059-20261006.log",
+  "logSha256": "135ad596fea2d905c7bbf633b7e1fb0dbdeda7fd2a201e8b9d7274601cfbc4a3",
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "5ce332e1cf4b96c61cd7546669a13577672e3cc3c01ebd78230f96aa6b027fab"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4986739ee8ddf673d0d94a0702e7251c087e69824b88e37b5ec644ddf72fa39e"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-domain-spc059-current-20261006.log",
+      "sha256": "89464b808703a56d40fe2e3b934b4c5c735cd7a4478e51785f36258c2c3e9970"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-transport-audit-spc059-current-20261006.json",
+      "sha256": "44d2afbfe8d8a1ccea222e3eeaba2cc346c75fadca1e4e84f71462b0186dae7a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-transport-audit-spc059-current-20261006.log",
+      "sha256": "27325c950d3b7e7876bfaefb8658a0e7a899881ee7638c3d24ba02cd4b24b6b8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/audit-s02-transport-current-20261006.mjs",
+      "sha256": "dcebc39e2b128662fe06f956c2292da23e86022c8f86599040651c9a243716b2"
+    },
+    {
+      "path": "evidence/domain-tests.json",
+      "sha256": "c71340c61535f8bd43aa02b326b915249576dc674e0ec876491f6000cc233c56"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+    },
+    {
+      "path": "tests/fixtures/mock-network.mjs",
+      "sha256": "dc367b505a5cd380d40ab30619ec6f7e403cbd538f1ae87d09746b3384bca78c"
+    }
+  ],
+  "sourceSnapshotSha256": "189d732610b47847f22db2c007108d042e385c34886d71e7d725cdd1c1d52bee",
+  "commandResults": [
+    {
+      "commandId": "domain",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE008/S02-domain-spc059-current-20261006.log",
+      "logSha256": "89464b808703a56d40fe2e3b934b4c5c735cd7a4478e51785f36258c2c3e9970"
+    },
+    {
+      "command": "node botsales-kit/execution/frontend-evidence/FE008/audit-s02-transport-current-20261006.mjs",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE008/S02-transport-audit-spc059-current-20261006.log",
+      "logSha256": "27325c950d3b7e7876bfaefb8658a0e7a899881ee7638c3d24ba02cd4b24b6b8"
+    }
+  ],
+  "audit": {
+    "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+    "result": "PASS",
+    "operations": 210,
+    "networkHandlers": 210,
+    "simulatorChecks": 75,
+    "networkChecks": 13,
+    "networkScenarios": [
+      {
+        "name": "Registers every canonical HTTP operation and reports the custom SSE endpoint",
+        "status": "PASS"
+      },
+      {
+        "name": "Loads the service worker only in demo mode and guards production from mock activation",
+        "status": "PASS"
+      },
+      {
+        "name": "Covers the canonical route, feature, shop, and role catalogs",
+        "status": "PASS"
+      },
+      {
+        "name": "Returns schema-valid, paginated data and rejects stale cursors",
+        "status": "PASS"
+      },
+      {
+        "name": "Pages through a deterministic large dataset without dropping or duplicating rows",
+        "status": "PASS"
+      },
+      {
+        "name": "Scopes reads to the requested shop and role permissions",
+        "status": "PASS"
+      },
+      {
+        "name": "Maps request validation, CSRF, and missing If-Match to contract errors",
+        "status": "PASS"
+      },
+      {
+        "name": "Creates a product with schema-complete variants through HTTP",
+        "status": "PASS"
+      },
+      {
+        "name": "Preserves idempotency and exposes stale and unknown mutation outcomes over HTTP",
+        "status": "PASS"
+      },
+      {
+        "name": "Resets records, role, faults, idempotency keys, sequence, and fixed clock deterministically",
+        "status": "PASS"
+      },
+      {
+        "name": "Returns observable transient and empty states without fabricating records",
+        "status": "PASS"
+      },
+      {
+        "name": "Aborted delayed reads do not leak into the next request",
+        "status": "PASS"
+      },
+      {
+        "name": "Streams only the authorized shop and emits events matching the canonical v2 schema",
+        "status": "PASS"
+      }
+    ],
+    "transport": {
+      "operationIdsPathsAndMethodsGeneratedFromCanonicalIndex": true,
+      "frontendClientUsesContractValidatedFetchBoundary": true,
+      "featureModulesImportMocksDirectly": 0,
+      "demoEntryUsesMockMode": true,
+      "liveEntryUsesSeparateDevelopmentMode": true,
+      "workerHardGuardAndStrictUnhandledBehavior": true,
+      "productionMockActivationRejected": true,
+      "leftoverDemoWorkerUnregisteredInLiveMode": true,
+      "fixtureUnhandledRequestsFail": true
+    },
+    "observedAt": "2026-10-06T06:20:43.916Z"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-03",
+  "scope": "bounded visual review of shared MUI select and reconciliation import/discard states on the local React demo + synthetic MSW",
+  "environment": "Chromium 153; 1440x1000 CSS px; deviceScaleFactor 1; synthetic data only",
+  "routes": [
+    {
+      "id": "R21",
+      "path": "/s/:shopId/finance/entries",
+      "module": "finance"
+    },
+    {
+      "id": "R49",
+      "path": "/s/:shopId/finance/reconciliation",
+      "module": "finance"
+    }
+  ],
+  "captures": [
+    {
+      "name": "S24-finance-entry-kind-options.png",
+      "state": "visible combobox options",
+      "routeId": "R21",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 98058
+    },
+    {
+      "name": "S24-reconciliation-import-empty.png",
+      "state": "import dialog before file selection",
+      "routeId": "R49",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 92069
+    },
+    {
+      "name": "S24-reconciliation-import-selected.png",
+      "state": "synthetic file selected locally; not uploaded",
+      "routeId": "R49",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 92752
+    },
+    {
+      "name": "S24-reconciliation-import-discard.png",
+      "state": "confirm discard after file selection",
+      "routeId": "R49",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 95929
+    }
+  ],
+  "observations": {
+    "menuOptions": [
+      "Thu tiền",
+      "Chi tiền"
+    ],
+    "activeOption": [
+      "Chi tiền"
+    ],
+    "focusAfterMenuEscape": true,
+    "syntheticFileVisible": true,
+    "focusReturnedToImportTrigger": true,
+    "mutations": [],
+    "pageErrors": []
+  },
+  "limits": [
+    "The file is selected by Playwright in a local synthetic demo; the operating-system file chooser and assistive-technology speech were not observed.",
+    "This review covers only one MUI select and one reconciliation import/discard flow; it does not close the plan-required broad manual review or FE-G05.",
+    "Route IDs are resolved from the canonical route manifest to prevent metadata drift."
+  ],
+  "architecture": "PRESERVED — no app source, module boundary, route, contract, permission, token, or generated file changed."
+}

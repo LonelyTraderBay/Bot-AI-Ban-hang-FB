@@ -1,0 +1,39 @@
+FE005.S04 HTTP fixture matrix and validation-form browser regression
+executedAt=2026-10-06T03:24:14.577Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+REGISTERED COMMAND unit: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test; fullUnit=91/91
+UNIT LOG botsales-kit/execution/frontend-evidence/FE005/S03-unit-registered-post-api-contract-20261006.log; sha256=f98535d0fcab463eac6b90c30accb45678cd124b86f01a159ed002e51f2165e9
+FOCUSED TRANSPORT botsales-kit/execution/frontend-evidence/FE005/S03-api-transport-focused-supplement-20261006.log; sha256=526fa2de964ff34f6e85cd476adad96a089253668c23a27877a1bc74aac6325b
+BROWSER SUPPLEMENT node.exe node_modules/@playwright/test/cli.js test --config=playwright.config.ts tests/fe017-validation.spec.ts --project=chromium --reporter=line --timeout=45000; passed=1/1
+BROWSER LOG botsales-kit/execution/frontend-evidence/FE005/S04-fe017-validation-chromium-supplement-20261006.log; sha256=d754c910b7652178758dcb0a63a8726712870adad928f6a64ea142342f0e5da3
+fixtureMatrix=200,202,409,412,422,428,429,timeout,schema-invalid,optional-null; checksTotal=6; failed=0
+CHECK HTTP success and contract nulls: PASS
+Successful JSON response is schema-validated; required nullable/optional Customer fields preserve their canonical values.
+CHECK HTTP 202 command acceptance: PASS
+Accepted command is polled to terminal status before the mutation resolves; failed polling remains unknown/in-flight.
+CHECK HTTP 409/412/422/428/429 Problem responses: PASS
+Structured Problem fields and field-level errors are preserved; 429 retryAfterSeconds is retained and 428 missing version stays a contract error.
+CHECK timeout and invalid response: PASS
+Mutation timeout and invalid success DTO become UnknownResultError; read timeout remains a retryable REQUEST_TIMEOUT.
+CHECK unsupported enum/status: PASS
+Unsupported command status is rejected by response-schema validation, not treated as success.
+CHECK 422 form retention in browser: PASS
+Chromium synthetic fixture passed 1/1: title/content stay in the dialog and the field-specific validation alert is visible.
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; browser test intercepts a synthetic 422, no live API/backend was used.
+sourceSnapshotSha256=d760e4dec59f889f766acf04313f6449c790d4d24400b7dbe657b5eaaa6d9702
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE apps/web/src/shared/api/client.ts sha256=58c4d244187cb18ec94dbeacde3e4249ecb3d1dcadaf14bd68be4e5eaf4c5819
+SOURCE apps/web/src/shared/api/validation.ts sha256=5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1
+SOURCE apps/web/tests/api-client.test.tsx sha256=11412a93f87c846f371c2e7884fc5e6a94c74709843a1ac08c5f08514fdb39ea
+SOURCE apps/web/vitest.config.ts sha256=48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e
+SOURCE botsales-kit/contracts/openapi.json sha256=d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S03-api-transport-focused-supplement-20261006.log sha256=526fa2de964ff34f6e85cd476adad96a089253668c23a27877a1bc74aac6325b
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S03-unit-registered-post-api-contract-20261006.log sha256=f98535d0fcab463eac6b90c30accb45678cd124b86f01a159ed002e51f2165e9
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S04-fe017-validation-chromium-supplement-20261006.log sha256=d754c910b7652178758dcb0a63a8726712870adad928f6a64ea142342f0e5da3
+SOURCE botsales-kit/execution/frontend-evidence/FE005/capture-s04-transport-fixture-matrix-20261006.mjs sha256=ae20365a1a5e86048788d17a505fef9b2aa62afd9f10a2da5ca558118c669f79
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE packages/contracts/src/operations.json sha256=1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88
+SOURCE tests/fe017-validation.spec.ts sha256=44f86fc257a9dd645b0255562bff0c1177801a330a92c4dd4f7872b7d4e87e98
+SOURCE tests/session/demo-server.mjs sha256=7bb5fbd500c01a503079367fef8711a9f46d3b4f118794e38c05895fe1f06cef
+reviewer=Codex self-review; no independent peer review claimed

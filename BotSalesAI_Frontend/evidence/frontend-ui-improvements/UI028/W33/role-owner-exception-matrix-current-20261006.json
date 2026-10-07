@@ -1,0 +1,1271 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W33",
+  "recordedAt": "2026-10-06",
+  "scope": "Frontend-only semantic role ownership and exception classification matrix after W33 role lifecycle cleanup; no backend or production claim",
+  "result": "PASS",
+  "source": {
+    "layoutPath": "apps/web/src/shared/ui/layout.ts",
+    "layoutSha256": "b8e97da448a469f21bafe7c5c5ffadacd81cbd5d022484e4cc56d1a9afb6915f",
+    "exceptionRegistryPath": "scripts/layout-exceptions.json",
+    "exceptionRegistrySha256": "7428954378a6b0c978790f9714cfa29ee7981a2c15884f9fdbac3c87939d210c",
+    "standardPath": "docs/FRONTEND_SPACING_STANDARD.md",
+    "standardSha256": "4b0946c74cc02ad9836e4e16a3c7675e91a07e4407339369ac3592a1fd7fc2da"
+  },
+  "typedRoleAudit": {
+    "typescriptParseDiagnostics": 0,
+    "contractNamespaceCount": 24,
+    "contractRoleCount": 110,
+    "implementedRoleCount": 110,
+    "exactTypeImplementationMatch": true,
+    "missingImplementation": [],
+    "untypedImplementation": [],
+    "scannedConsumerSourceFiles": 66,
+    "usedRoleCount": 110,
+    "unusedRoles": [],
+    "directReferenceCount": 434,
+    "ownerGroups": [
+      {
+        "owner": "layoutSx.page",
+        "roleCount": 4,
+        "usedRoleCount": 4,
+        "roles": [
+          {
+            "name": "layoutSx.page.gutter",
+            "expression": "{ px: { xs: factor.lg, md: factor.xl } }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.page.sectionGap",
+            "expression": "{ gap: factor.xl }",
+            "referenceCount": 7,
+            "consumerFiles": [
+              "apps/web/src/modules/customers/index.tsx",
+              "apps/web/src/modules/integrations/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/modules/reports/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.page.sectionBefore",
+            "expression": "{ mt: factor.xl }",
+            "referenceCount": 7,
+            "consumerFiles": [
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/reports/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.page.sectionAfter",
+            "expression": "{ mb: factor.xl }",
+            "referenceCount": 9,
+            "consumerFiles": [
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/finance/index.tsx",
+              "apps/web/src/modules/inventory/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/modules/procurement/index.tsx",
+              "apps/web/src/modules/reports/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.pageHeader",
+        "roleCount": 4,
+        "usedRoleCount": 4,
+        "roles": [
+          {
+            "name": "layoutSx.pageHeader.titleDescriptionGap",
+            "expression": "{ mt: factor.sm }",
+            "referenceCount": 4,
+            "consumerFiles": [
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.pageHeader.columnsGap",
+            "expression": "{ gap: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.pageHeader.afterGap",
+            "expression": "{ mb: factor.xl }",
+            "referenceCount": 5,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.pageHeader.actionsGap",
+            "expression": "{ gap: factor.sm, flexWrap: 'wrap' }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.surface",
+        "roleCount": 9,
+        "usedRoleCount": 9,
+        "roles": [
+          {
+            "name": "layoutSx.surface.inset",
+            "expression": "{ p: { xs: factor.lg, md: factor.xl } }",
+            "referenceCount": 19,
+            "consumerFiles": [
+              "apps/web/src/modules/finance/index.tsx",
+              "apps/web/src/modules/fulfillment/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/modules/procurement/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.surface.compactInset",
+            "expression": "{ p: factor.md }",
+            "referenceCount": 4,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.surface.compactContentGap",
+            "expression": "{ gap: factor.sm }",
+            "referenceCount": 6,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/conversation-components.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.surface.headerInset",
+            "expression": "{ px: { xs: factor.lg, md: factor.xl }, pt: { xs: factor.lg, md: factor.xl }, pb: factor.lg }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.surface.bodyInsetAfterHeader",
+            "expression": "{ px: { xs: factor.lg, md: factor.xl }, pb: { xs: factor.lg, md: factor.xl } }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.surface.sectionBefore",
+            "expression": "{ mt: factor.lg }",
+            "referenceCount": 21,
+            "consumerFiles": [
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/finance/index.tsx",
+              "apps/web/src/modules/fulfillment/index.tsx",
+              "apps/web/src/modules/inbox/conversation-components.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/modules/integrations/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.surface.titleDescriptionGap",
+            "expression": "{ mt: factor.xs }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.surface.headerFlowGap",
+            "expression": "{ gap: factor.lg, flexWrap: 'wrap' }",
+            "referenceCount": 4,
+            "consumerFiles": [
+              "apps/web/src/modules/fulfillment/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.surface.contentGap",
+            "expression": "{ gap: factor.md }",
+            "referenceCount": 29,
+            "consumerFiles": [
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/dashboard/index.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/modules/integrations/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.form",
+        "roleCount": 3,
+        "usedRoleCount": 3,
+        "roles": [
+          {
+            "name": "layoutSx.form.fieldGap",
+            "expression": "{ gap: factor.lg }",
+            "referenceCount": 72,
+            "consumerFiles": [
+              "apps/web/src/app/feedback.tsx",
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/catalog/imports.tsx",
+              "apps/web/src/modules/catalog/index.tsx",
+              "apps/web/src/modules/customers/index.tsx",
+              "apps/web/src/modules/finance/index.tsx",
+              "apps/web/src/modules/fulfillment/index.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/modules/integrations/index.tsx",
+              "apps/web/src/modules/inventory/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/modules/procurement/index.tsx",
+              "apps/web/src/modules/reports/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.form.inlineGap",
+            "expression": "{ gap: factor.sm }",
+            "referenceCount": 28,
+            "consumerFiles": [
+              "apps/web/src/modules/catalog/imports.tsx",
+              "apps/web/src/modules/catalog/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/modules/procurement/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.form.pairedFields",
+            "expression": "{ gap: factor.sm, my: factor.md }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/finance/index.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.actions",
+        "roleCount": 4,
+        "usedRoleCount": 4,
+        "roles": [
+          {
+            "name": "layoutSx.actions.inlineGap",
+            "expression": "{ gap: factor.sm, flexWrap: 'wrap' }",
+            "referenceCount": 28,
+            "consumerFiles": [
+              "apps/web/src/app/CommandRecovery.tsx",
+              "apps/web/src/app/Shell.tsx",
+              "apps/web/src/app/router.tsx",
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/catalog/index.tsx",
+              "apps/web/src/modules/customers/index.tsx",
+              "apps/web/src/modules/dashboard/index.tsx",
+              "apps/web/src/modules/finance/index.tsx",
+              "apps/web/src/modules/fulfillment/index.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/modules/integrations/index.tsx",
+              "apps/web/src/modules/inventory/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/modules/reports/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.actions.beforeGap",
+            "expression": "{ mt: factor.xl }",
+            "referenceCount": 3,
+            "consumerFiles": [
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/catalog/index.tsx",
+              "apps/web/src/modules/orders/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.actions.relatedLinksGap",
+            "expression": "{ gap: factor.md, flexWrap: 'wrap' }",
+            "referenceCount": 4,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.actions.linkTarget",
+            "expression": "{ minHeight: tokens.layout.touchTarget, px: factor.lg, py: factor.sm, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/reports/index.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.grid",
+        "roleCount": 1,
+        "usedRoleCount": 1,
+        "roles": [
+          {
+            "name": "layoutSx.grid.gutter",
+            "expression": "{ gap: factor.xl }",
+            "referenceCount": 15,
+            "consumerFiles": [
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/customers/index.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/modules/integrations/index.tsx",
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/modules/reports/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.stats",
+        "roleCount": 5,
+        "usedRoleCount": 5,
+        "roles": [
+          {
+            "name": "layoutSx.stats.gutter",
+            "expression": "{ gap: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.stats.afterGap",
+            "expression": "{ mb: factor.xl }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.stats.titleGap",
+            "expression": "{ gap: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.stats.valueGap",
+            "expression": "{ mt: factor.md }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.stats.noteGap",
+            "expression": "{ mt: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.code",
+        "roleCount": 1,
+        "usedRoleCount": 1,
+        "roles": [
+          {
+            "name": "layoutSx.code.inlineGap",
+            "expression": "{ gap: factor.xs }",
+            "referenceCount": 4,
+            "consumerFiles": [
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/dashboard/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.table",
+        "roleCount": 1,
+        "usedRoleCount": 1,
+        "roles": [
+          {
+            "name": "layoutSx.table.mobileHintInset",
+            "expression": "{ px: factor.lg, pt: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.lookup",
+        "roleCount": 1,
+        "usedRoleCount": 1,
+        "roles": [
+          {
+            "name": "layoutSx.lookup.loadMoreRow",
+            "expression": "{ gap: factor.sm, px: factor.sm, mt: factor.xs }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.toolbar",
+        "roleCount": 2,
+        "usedRoleCount": 2,
+        "roles": [
+          {
+            "name": "layoutSx.toolbar.inset",
+            "expression": "{ p: factor.lg }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/procurement/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.toolbar.controlGap",
+            "expression": "{ gap: factor.md }",
+            "referenceCount": 4,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx",
+              "apps/web/src/modules/catalog/index.tsx",
+              "apps/web/src/modules/inbox/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.pager",
+        "roleCount": 2,
+        "usedRoleCount": 2,
+        "roles": [
+          {
+            "name": "layoutSx.pager.inset",
+            "expression": "{ p: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.pager.actionsGap",
+            "expression": "{ gap: factor.sm, flexWrap: 'wrap' }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.empty",
+        "roleCount": 3,
+        "usedRoleCount": 3,
+        "roles": [
+          {
+            "name": "layoutSx.empty.insetBlock",
+            "expression": "{ py: { xs: factor.xxl, md: factor.xxxl } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.empty.insetInline",
+            "expression": "{ px: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.empty.contentGap",
+            "expression": "{ gap: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.notice",
+        "roleCount": 2,
+        "usedRoleCount": 2,
+        "roles": [
+          {
+            "name": "layoutSx.notice.afterGap",
+            "expression": "{ mb: factor.lg }",
+            "referenceCount": 20,
+            "consumerFiles": [
+              "apps/web/src/modules/bot/index.tsx",
+              "apps/web/src/modules/finance/index.tsx",
+              "apps/web/src/modules/inbox/conversation-components.tsx",
+              "apps/web/src/modules/integrations/index.tsx",
+              "apps/web/src/modules/inventory/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/modules/reports/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.notice.contentGap",
+            "expression": "{ mt: factor.sm }",
+            "referenceCount": 9,
+            "consumerFiles": [
+              "apps/web/src/modules/finance/index.tsx",
+              "apps/web/src/modules/fulfillment/index.tsx",
+              "apps/web/src/modules/knowledge/index.tsx",
+              "apps/web/src/modules/workspace/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.dialog",
+        "roleCount": 5,
+        "usedRoleCount": 5,
+        "roles": [
+          {
+            "name": "layoutSx.dialog.inset",
+            "expression": "{ p: { xs: factor.lg, md: factor.xl } }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dialog.viewportMargin",
+            "expression": "{ mx: { xs: factor.lg, md: factor.xxl } }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dialog.descriptionAfterGap",
+            "expression": "{ mb: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dialog.actionsInset",
+            "expression": "{ p: factor.lg }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dialog.actionsGap",
+            "expression": "{ gap: factor.sm, flexWrap: 'wrap' }",
+            "referenceCount": 3,
+            "consumerFiles": [
+              "apps/web/src/modules/fulfillment/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.auth",
+        "roleCount": 3,
+        "usedRoleCount": 3,
+        "roles": [
+          {
+            "name": "layoutSx.auth.surfaceInset",
+            "expression": "{ p: { xs: factor.xl, md: factor.xxl } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.auth.brandMarkGap",
+            "expression": "{ gap: factor.md }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.auth.brandTitleGap",
+            "expression": "{ mt: factor.xxl }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.footer",
+        "roleCount": 2,
+        "usedRoleCount": 2,
+        "roles": [
+          {
+            "name": "layoutSx.footer.insetInline",
+            "expression": "{ px: { xs: factor.lg, md: factor.xl } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.footer.insetBlock",
+            "expression": "{ py: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.shell",
+        "roleCount": 12,
+        "usedRoleCount": 12,
+        "roles": [
+          {
+            "name": "layoutSx.shell.headerHeight",
+            "expression": "{ minHeight: { xs: tokens.layout.headerMobile, md: tokens.layout.headerDesktop } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.mainFill",
+            "expression": "{ flex: 1 }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.demoBanner",
+            "expression": "{ px: { xs: factor.lg, md: factor.xl }, pt: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.demoToolsBefore",
+            "expression": "{ mt: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.statusBanner",
+            "expression": "{ mx: { xs: factor.lg, md: factor.xl }, mt: factor.sm }",
+            "referenceCount": 4,
+            "consumerFiles": [
+              "apps/web/src/app/CommandRecovery.tsx",
+              "apps/web/src/app/ScopeEvents.tsx",
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.pageFallbackInset",
+            "expression": "{ px: { xs: factor.lg, md: factor.xl }, py: factor.xl }",
+            "referenceCount": 6,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx",
+              "apps/web/src/app/router.tsx",
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.centeredFallback",
+            "expression": "{ minHeight: '100vh', display: 'grid', placeItems: 'center', px: { xs: factor.lg, md: factor.xl }, py: factor.xl }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx",
+              "apps/web/src/modules/workspace/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.demoControls",
+            "expression": "{ gap: factor.sm, flexWrap: 'wrap' }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.demoControl",
+            "expression": "{ '& .MuiInputBase-root': { minHeight: tokens.layout.touchTarget } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.demoToggle",
+            "expression": "{ minHeight: tokens.layout.touchTarget, px: factor.zero }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.searchIconInset",
+            "expression": "{ mr: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.shell.footerContent",
+            "expression": "{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.navigation",
+        "roleCount": 13,
+        "usedRoleCount": 13,
+        "roles": [
+          {
+            "name": "layoutSx.navigation.brandInset",
+            "expression": "{ px: factor.lg, py: factor.xl }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.brandGap",
+            "expression": "{ gap: factor.md }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.brandMarkShape",
+            "expression": "{ borderRadius: tokens.radius.dialog / tokens.radius.control }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.shopInset",
+            "expression": "{ px: factor.lg, mb: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.listInset",
+            "expression": "{ px: factor.sm, pb: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.groupGap",
+            "expression": "{ mt: factor.xs }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.groupLabelInset",
+            "expression": "{ px: factor.md }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.groupLabelGap",
+            "expression": "{ mb: factor.xs }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.itemGap",
+            "expression": "{ mb: factor.xs }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.itemInsetBlock",
+            "expression": "{ py: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.itemShape",
+            "expression": "{ borderRadius: tokens.radius.card / tokens.radius.control }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.accountInset",
+            "expression": "{ p: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.navigation.accountGap",
+            "expression": "{ gap: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/app/Shell.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.inbox",
+        "roleCount": 13,
+        "usedRoleCount": 13,
+        "roles": [
+          {
+            "name": "layoutSx.inbox.paneInset",
+            "expression": "{ p: factor.lg }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.bubbleInset",
+            "expression": "{ p: factor.md }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/conversation-components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.messageContentGap",
+            "expression": "{ gap: factor.xs }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/conversation-components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.messageMetaGap",
+            "expression": "{ gap: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/conversation-components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.messageGroupGap",
+            "expression": "{ gap: factor.md }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.composerInset",
+            "expression": "{ p: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/conversation-components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.composerActionGap",
+            "expression": "{ gap: factor.sm }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/conversation-components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.composerControlsBeforeGap",
+            "expression": "{ mt: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/conversation-components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.listInset",
+            "expression": "{ '&.MuiListItemButton-root': { p: factor.lg } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.listContentGap",
+            "expression": "{ '&.MuiListItemButton-root': { gap: factor.md } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.unreadCountInset",
+            "expression": "{ px: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.listStatusBeforeGap",
+            "expression": "{ mt: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.inbox.contextInset",
+            "expression": "{ p: { xs: factor.lg, md: factor.xl } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/inbox/conversation-components.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.report",
+        "roleCount": 7,
+        "usedRoleCount": 7,
+        "roles": [
+          {
+            "name": "layoutSx.report.contextGap",
+            "expression": "{ gap: factor.lg }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/reports/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.report.listSurfaceInset",
+            "expression": "{ p: factor.xl }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/reports/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.report.listMarkerInset",
+            "expression": "{ pl: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/reports/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.report.listItemGap",
+            "expression": "{ gap: factor.md }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/reports/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.report.chartViewportInset",
+            "expression": "{ p: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/reports/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.report.emptyStateInset",
+            "expression": "{ p: factor.xl }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/reports/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.report.subheadingAfterGap",
+            "expression": "{ mb: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/finance/index.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.dashboard",
+        "roleCount": 7,
+        "usedRoleCount": 7,
+        "roles": [
+          {
+            "name": "layoutSx.dashboard.groupInset",
+            "expression": "{ p: { xs: factor.xl, md: factor.xxl } }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dashboard.sectionGap",
+            "expression": "{ gap: factor.xl }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dashboard.heroTitleFlow",
+            "expression": "{ mt: factor.sm, mb: factor.sm }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dashboard.heroDescriptionGap",
+            "expression": "{ mt: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dashboard.actionTarget",
+            "expression": "{ minHeight: tokens.layout.touchTarget, px: factor.md, py: factor.sm }",
+            "referenceCount": 3,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dashboard.metricValueGap",
+            "expression": "{ mt: factor.xs }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.dashboard.footerFlow",
+            "expression": "{ mt: factor.lg, gap: factor.lg }",
+            "referenceCount": 1,
+            "consumerFiles": [
+              "apps/web/src/modules/dashboard/index.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.detail",
+        "roleCount": 5,
+        "usedRoleCount": 5,
+        "roles": [
+          {
+            "name": "layoutSx.detail.rowInsetBlock",
+            "expression": "{ py: factor.md }",
+            "referenceCount": 3,
+            "consumerFiles": [
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.detail.valueGap",
+            "expression": "{ gap: factor.lg }",
+            "referenceCount": 3,
+            "consumerFiles": [
+              "apps/web/src/modules/operations/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.detail.relatedItemGap",
+            "expression": "{ gap: factor.md }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/customers/index.tsx",
+              "apps/web/src/modules/operations/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.detail.relatedItemInset",
+            "expression": "{ p: factor.md }",
+            "referenceCount": 2,
+            "consumerFiles": [
+              "apps/web/src/modules/customers/index.tsx",
+              "apps/web/src/modules/operations/index.tsx"
+            ]
+          },
+          {
+            "name": "layoutSx.detail.relatedContentGap",
+            "expression": "{ mt: factor.sm }",
+            "referenceCount": 4,
+            "consumerFiles": [
+              "apps/web/src/modules/customers/index.tsx",
+              "apps/web/src/modules/notifications/index.tsx",
+              "apps/web/src/modules/operations/index.tsx"
+            ]
+          }
+        ]
+      },
+      {
+        "owner": "layoutSx.query",
+        "roleCount": 1,
+        "usedRoleCount": 1,
+        "roles": [
+          {
+            "name": "layoutSx.query.stateGap",
+            "expression": "{ gap: factor.lg }",
+            "referenceCount": 8,
+            "consumerFiles": [
+              "apps/web/src/app/CommandRecovery.tsx",
+              "apps/web/src/app/Shell.tsx",
+              "apps/web/src/app/router.tsx",
+              "apps/web/src/modules/finance/index.tsx",
+              "apps/web/src/modules/orders/index.tsx",
+              "apps/web/src/shared/ui/components.tsx"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "cssRoleAudit": {
+    "roleCount": 1,
+    "usedRoleCount": 1,
+    "unusedRoles": [],
+    "roles": [
+      {
+        "name": "layoutCss.table.cellInset",
+        "owner": "layoutCss.table",
+        "expression": "`${cssPixel(tokens.space.md)} ${cssPixel(tokens.space.lg)}`",
+        "referenceCount": 1,
+        "consumerFiles": [
+          "apps/web/src/shared/ui/theme.ts"
+        ]
+      }
+    ]
+  },
+  "exceptionAudit": {
+    "registryVersion": 1,
+    "entryCount": 1,
+    "usedCount": 1,
+    "unusedOrMismatchCount": 0,
+    "byCategory": {
+      "A11Y_MECHANISM": 1
+    },
+    "entries": [
+      {
+        "id": "UI028-A11Y-SKIP-LINK-PADDING",
+        "path": "apps/web/src/app/bootstrap.css",
+        "selector": ".skip-link",
+        "property": "padding",
+        "value": "12px",
+        "category": "A11Y_MECHANISM",
+        "reason": "The off-canvas skip link needs a visible focus target with internal separation; retain this narrowly scoped accessibility mechanism until the shared spacing migration replaces it without reducing the target.",
+        "evidence": "tests/accessibility/routes.spec.ts (keyboard skip-link focus and activation coverage)",
+        "owner": "app shell accessibility",
+        "reviewTrigger": "Remove only after a shared skip-link spacing role replaces this padding declaration and browser evidence verifies keyboard visibility, focus activation and a rendered target at least 44px high. The W09 shell migration left this selector unchanged, so W09 completion alone is not closure evidence.",
+        "registryStatus": "USED",
+        "checkerSchemaTestEvidence": "W33 current fixtures: 10/10 pass, including exact scope, stale or mismatched exception, and unowned CSS role checks"
+      }
+    ]
+  },
+  "currentStrictLayoutGate": {
+    "command": "node scripts/check-layout.mjs",
+    "exitCode": 0,
+    "status": "PASS",
+    "fileCount": 68,
+    "findingCount": 0,
+    "exceptionsUsed": [
+      "UI028-A11Y-SKIP-LINK-PADDING"
+    ],
+    "exceptionsUnused": []
+  },
+  "openItems": [],
+  "noProgressLedgerWrite": true
+}

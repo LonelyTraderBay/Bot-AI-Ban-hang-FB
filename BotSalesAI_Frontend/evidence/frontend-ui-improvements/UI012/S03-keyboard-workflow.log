@@ -1,0 +1,10 @@
+Date: 2026-10-03
+Scope: React Frontend demo artifact with synthetic MSW; Chromium, route /s/shop-demo/finance/entries.
+Command: & 'C:\Program Files\nodejs\node.exe' node_modules/@playwright/test/cli.js test tests/ui012-keyboard.spec.ts --reporter=line
+Exit: 0
+Result: 1 passed (4.2s).
+Observed workflow: wait for the React route/main to be ready; Tab focuses the skip link; Enter moves focus to main#main-content; Tab reaches "Tạo phiếu"; Enter opens the dialog; Tab/Enter opens "Loại phiếu"; ArrowUp/Enter changes the default "Chi tiền" to "Thu tiền"; Tab/Enter opens the unsaved-change warning; Escape returns to the dialog with the selection preserved; keyboard typing enters 1250; Tab/Enter reopens the warning; Tab/Enter activates "Bỏ thay đổi"; focus returns to "Tạo phiếu". Captured POST requests: 0.
+Interpretation: this proves one representative keyboard workflow, including focus and discard recovery. It does not prove screen-reader announcements, file chooser use, chart/table alternatives, or full-app keyboard coverage. No product source changed.
+Test-debug note: the first draft used the cashflow summary route instead of the entries route, and the first select key left its default value unchanged; the harness now waits for the route heading and selects the alternate option. These were test-setup corrections, not observed product defects.
+SHA256 tests/ui012-keyboard.spec.ts: D4114E361E399705CD612DA534115E06B0F2973519E4681A698261CB50349C90
+SHA256 related S02-route-axe-rerun.log: 1AA8697986A531989625BF4C61972407723E014605536CAAA41A804776E3FE3D

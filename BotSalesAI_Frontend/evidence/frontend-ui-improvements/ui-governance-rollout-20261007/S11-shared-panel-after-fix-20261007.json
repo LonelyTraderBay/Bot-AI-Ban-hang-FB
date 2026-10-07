@@ -1,0 +1,95 @@
+{
+  "id": "S11-shared-panel-after-fix-20261007",
+  "date": "2026-10-07",
+  "scope": "Finance and Fulfillment titled Panel consumers affected by duplicate body inset; synthetic in-memory demo only",
+  "status": "DONE_OWNER_FIX_SCOPED",
+  "beforeEvidence": [
+    "S11-finance-before-fix-20261007.json",
+    "S11-fulfillment-panel-before-fix-20261007.json"
+  ],
+  "ownerChange": [
+    "Finance's two detail Panels and source-backed Q&A Panel now use Panel bodyMode=inset; child DetailLine/FormFields remain flush at the body boundary.",
+    "The mock Fulfillment quote preview now uses the shared Panel inset while FormFields stays flush; maxWidth=760 and all workflow controls remain unchanged.",
+    "The production-only Finance informational Alert no longer duplicates surface.inset after the Panel takes ownership; its Alert semantics and message remain."
+  ],
+  "finance": {
+    "command": "node node_modules/@playwright/test/cli.js test tests/ui-finance-layout.spec.ts --reporter=line",
+    "result": "PASS",
+    "passed": 6,
+    "engines": ["Chromium", "Firefox"],
+    "routeCoverage": "Existing route smoke covers Finance R20/R21/R22/R48/R49/R50 from 320–1440px; the new boundary case covers the 3 titled Panels at 390/806/1440px.",
+    "expectedGapCssPx": 16,
+    "observedGapCssPx": [16, 16, 16, 16, 16, 16, 16, 16, 16],
+    "bodyPaddingTopCssPx": [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "bodyPaddingInlineStartAndBottomCssPx": [
+      { "width": 390, "inlineStart": 16, "bottom": 16 },
+      { "width": 390, "inlineStart": 16, "bottom": 16 },
+      { "width": 390, "inlineStart": 16, "bottom": 16 },
+      { "width": 806, "inlineStart": 24, "bottom": 24 },
+      { "width": 806, "inlineStart": 24, "bottom": 24 },
+      { "width": 806, "inlineStart": 24, "bottom": 24 },
+      { "width": 1440, "inlineStart": 24, "bottom": 24 },
+      { "width": 1440, "inlineStart": 24, "bottom": 24 },
+      { "width": 1440, "inlineStart": 24, "bottom": 24 }
+    ],
+    "pAndLHeaderActionPresent": true,
+    "firstContentPaddingCssPx": { "DetailLine": 12, "FormFields": 0 },
+    "pageErrors": 0
+  },
+  "fulfillment": {
+    "command": "node node_modules/@playwright/test/cli.js test tests/ui-panel-layout.spec.ts --reporter=line",
+    "result": "PASS",
+    "passed": 2,
+    "engines": ["Chromium", "Firefox"],
+    "route": "/s/shop-demo/shipments",
+    "routeId": "R42",
+    "panelHeading": "Xem trước phí & vùng giao hàng",
+    "pageHeadingAndControls": "Exact route, page h1, Panel h2, and both quote controls remain visible.",
+    "observations": [
+      { "width": 390, "gap": 16, "bodyPaddingTop": 0, "bodyPaddingInlineStart": 16, "bodyPaddingBottom": 16, "firstContentPaddingTop": 0 },
+      { "width": 806, "gap": 16, "bodyPaddingTop": 0, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 0 },
+      { "width": 1440, "gap": 16, "bodyPaddingTop": 0, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 0 }
+    ],
+    "pageErrors": 0
+  },
+  "crossConsumerReview": {
+    "scan": "TypeScript AST inventory of apps/web/src/**/*.tsx",
+    "tsxFiles": 28,
+    "panelInvocations": 91,
+    "titledPanels": 62,
+    "candidateConsumerCases": [
+      "Three Finance titled Panels: confirmed 32/40px duplicate boundary; corrected and paired.",
+      "Fulfillment mock quote Panel: confirmed 32/40px duplicate boundary; corrected and paired.",
+      "Fulfillment production Alert: retained as a distinct Alert surface; its outer boundary is the Panel body content edge, not a neutral child inset."
+    ],
+    "sharedPanelImplementationChanged": false,
+    "remainingWholeSourceRenderedClosure": "S19; source/browser inventory and route/state acceptance remain open outside these confirmed consumers."
+  },
+  "verification": {
+    "typescript": "PASS via node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit",
+    "eslint": "PASS via node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0",
+    "vitest": "PASS 11 files / 96 tests",
+    "generator": "PASS via node scripts/generate.mjs --check: 11 outputs / 283 schemas / 210 operations / 54 routes",
+    "source": "PASS 68 files / 0 findings",
+    "boundaries": "PASS 68 files / 504 imports / 10 negative fixtures",
+    "domain": "PASS 88/88",
+    "layout": "PASS 76 files / 0 findings / 1 exact exception used",
+    "visualTokens": "PASS 75 files / 0 findings",
+    "composition": "PASS 74 files / 0 findings",
+    "productionBuild": "PASS 2058 modules",
+    "demoBuild": "PASS 2274 modules",
+    "productionMockIsolation": "PASS 1/1 on freshly built production artifact",
+    "npmWrappers": "npm.cmd run typecheck/lint/test/generate:check could not resolve child executables on PATH; direct local executable equivalents above passed. npm.cmd run verify was not run and is not claimed."
+  },
+  "limits": [
+    "No full rebuilt-demo E2E, native 200% zoom/text resize, screen-reader speech, hosted CI, Backend, staging, or production integration is claimed.",
+    "All route data in browser measurements is synthetic and held by the Frontend demo server."
+  ],
+  "sha256AfterFix": {
+    "apps/web/src/modules/finance/index.tsx": "C979A9CD6198A04D94C62EE4DA902932E09BAA55F9B010E493FAED43C32CE061",
+    "apps/web/src/modules/fulfillment/index.tsx": "F890FF4642778F4CCDEFE799C97FA80121AED6AD5539684D2AE7DE22607A8418",
+    "tests/ui-finance-layout.spec.ts": "B449E71D03934BFC5AB94AFA1B6AE5300BC6A4313409E4A6D4A55B3BFBD97D46",
+    "tests/ui-panel-layout.spec.ts": "6BC207480E1AE6AD33FCB01DC349798F5C01D0B349CAEC5FC5B81AC81457BE1B",
+    "tests/ui-catalog-layout.spec.ts": "DAD7B7C9C4FB9F4B4CCA3E41EA4AF4AE7CB3C1758DB3376901F31C31649C55A5"
+  }
+}

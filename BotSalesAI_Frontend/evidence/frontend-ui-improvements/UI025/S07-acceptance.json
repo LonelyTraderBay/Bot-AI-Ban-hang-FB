@@ -1,0 +1,55 @@
+{
+  "taskId": "UI025",
+  "checkedAt": "2026-10-02T10:37:03.621Z",
+  "scope": "Frontend source checker and Windows/POSIX module-path regression fixtures",
+  "baselineHead": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "implementation": {
+    "checker": "scripts/check-source.mjs",
+    "pathPolicy": "scripts/source-policy.mjs",
+    "fixtures": "tests/source-checker.test.mjs",
+    "rootOverride": "--root <fixture-root>",
+    "testCommandWiredInto": "npm run test:source; included by npm run verify"
+  },
+  "behavior": {
+    "windowsNativePath": "CLI fixture executed on Windows; forbidden module color returns exit 1 and exact issue",
+    "windowsStylePaths": "Backslash and slash drive paths are tested by module path classifier",
+    "posixPath": "POSIX absolute source path is tested by the path classifier",
+    "negativeFixture": {
+      "status": "PASS; expected checker result FAIL",
+      "source": "apps/web/src/modules/fixture/index.tsx contains #FF0000"
+    },
+    "positiveFixture": {
+      "status": "PASS; token-based module passes and #ABCDEF outside modules is exempt"
+    },
+    "workspaceScan": {
+      "status": "PASS",
+      "checkedAt": "2026-10-02T10:36:13.858Z",
+      "files": 62,
+      "operationCalls": 227,
+      "routes": 54,
+      "issues": []
+    }
+  },
+  "checks": {
+    "testSource": "S01-source-checker-tests.log PASS; 3/3 Node tests",
+    "verify": "S06-verify.log PASS; generator 11 outputs, source-policy fixture 3/3, boundaries 8/8, lint, typecheck, domain 88/88, unit 71/71, production build",
+    "generate": "S02-generate-check.log PASS",
+    "typecheck": "S03-typecheck.log PASS",
+    "lint": "S04-lint.log PASS",
+    "boundaries": "S05-boundaries.log PASS",
+    "productionChunkWarning": "Existing Vite warning >500 kB minified remains."
+  },
+  "lockSha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce",
+  "changedFileSha256": {
+    "scripts/check-source.mjs": "593b95de828d54edfd04e0dd847007a71d36175b7fe7b9bc1cb83bea88af6fd3",
+    "scripts/source-policy.mjs": "254e9c4a86d2a01adb27c4eada9d03306c159dda684cdc5eb7162d073a804e3f",
+    "tests/source-checker.test.mjs": "bdc53b8f7d154e9b4126d7f0b7670198c85a0686b9b616598b2583f195f9df7e",
+    "package.json": "a86dfc621d35b37196b1d66ebdaf81a4ed82da0d2cf76b1c2c0a6f8566f0a543",
+    "evidence/source-check.json": "d3099720685f492a0dcc551abfd5e564aae5524fa39edb50ae39f6e3dcb09857"
+  },
+  "retainedLimitations": [
+    "No Linux/remote CI run was performed; both path spellings were tested on this Windows host.",
+    "The previous full E2E audit remains 146/147 FAIL; UI025 does not close FE-G04.",
+    "Manual FE-G05 and owner FE-G09 evidence are still pending."
+  ]
+}

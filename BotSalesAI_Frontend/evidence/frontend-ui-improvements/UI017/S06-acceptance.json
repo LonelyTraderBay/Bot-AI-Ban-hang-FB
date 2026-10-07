@@ -1,0 +1,91 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI017",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "DONE",
+  "scope": "React/TypeScript customer UI on R07/R08 with local synthetic MSW only; no backend/provider/staging claim.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Pre-existing dirty work was preserved. Fingerprints scope this item to the customer i18n resource/registry, customer module, related UI tests, contracts read-only and UI017 evidence/docs. The whole dirty tree is not attributed to UI017."
+  },
+  "pairedAcceptance": {
+    "ui": "PASS: customer list/create/detail/edit copy, validation, empty/access/error states and 320 CSS px customer detail behavior pass targeted and full browser regressions.",
+    "architecture": "PASS: customer resource ownership is grouped under customers.*; create/detail share field definitions; validation schema receives i18n copy; module boundaries, API/payload/version and permission owners remain intact.",
+    "pairingRule": "Both axes were implemented and accepted within UI017; no separate UI-only or architecture-only completion is claimed."
+  },
+  "checkpoints": {
+    "C01": "PASS: S01 measured 32 common i18n keys, no feature resources, inline customer copy and four duplicated positional form labels. Scope is R07/R08 customer record; ServiceCasesPage and full-app localization excluded.",
+    "C02": "PASS: added apps/web/src/app/locales/vi/customers.ts, registered customer resources in app i18n, added 44 required customer key paths, reused customerFormFields for create/detail, and built validation schema from localized messages. Payload, permissions, route, contract, redaction rules and query owners were preserved.",
+    "C03": "PASS: targeted Playwright customer/FE023/UI006/UI007 suite 22/22; includes create/edit validation, stale version, redaction, query/permission/empty/error copy, dialog draft, preview wording and narrow 320 CSS px layout.",
+    "C04": "PASS: npm run verify and full rebuilt-demo E2E 187/187. Route-role 357/357; empty 11/11; route-error 51/51; axe 55 snapshots/0 violations; production artifact contains no mock worker/MSW runtime.",
+    "C05": "PASS: S01-S06, current paired UI/architecture results, copy map, limitations, synchronized plan/context/gaps/report and SHA-256 fingerprints recorded. Frontend and product ledgers unchanged."
+  },
+  "implementation": [
+    "Customer dictionary has list, form, validation and detail groups under the existing Vietnamese i18n resource; no additional runtime or locale library was introduced.",
+    "Customer field identity and label keys are declared once and shared by create and edit/detail forms; positional label mapping was removed.",
+    "Validation messages identify the field and corrective action; empty orders, missing permission, loading/error states and redacted fields have distinct explanatory copy.",
+    "ServiceCasesPage, English translation, full-app localization, API contract, route manifest, design tokens, generated outputs and mock semantics remain outside this item."
+  ],
+  "verification": {
+    "targetedPlaywright": "PASS 22/22 Chromium; evidence S03-regressions-after-copy-update.log.",
+    "verify": "PASS: generator 11 outputs/283 schemas/210 operations/54 routes; source 64 files/220 API refs/54 routes; boundaries 426 imports and negative fixtures 8/8; lint/typecheck; domain/MSW 88/88; Vitest 80/80; production build. Largest production chunk advisory 736.68 kB raw/186.36 kB gzip.",
+    "fullRebuiltDemoE2E": "PASS 187/187 Chromium in 10.8 minutes on rebuilt demo. S05-full-e2e-current.log.",
+    "firstFullE2EAttempt": "183/187 due four existing assertions using customer copy/labels predating UI017. FE023/UI006/UI007 assertions were synchronized with the current copy, targeted suite then passed 22/22, and full E2E rerun passed 187/187. Historical first-run log is retained as S05-full-e2e-before-copy-assertion-update.log.",
+    "routeAndAccessibility": "Route-role 357/357; empty 11/11; route error 51/51; axe 55 snapshots/0 violations.",
+    "artifactIsolation": "PASS: built demo preview uses synthetic MSW; production artifact excludes mock worker asset and MSW fixtures/runtime.",
+    "metrics": "Windows Chromium 153 at 1280x720: demo initial-route gzip 449309 bytes; largest demo chunk 187472 gzip bytes; 1004 synthetic customers; API page size 20; first page ready 360 ms. These are local frontend measurements, not production SLO/device coverage.",
+    "review": "Codex self-review; no independent human review or product-owner UAT recorded."
+  },
+  "gates": {
+    "FE_G02": "PASS locally on current frontend diff.",
+    "FE_G03": "PASS for key coverage, contract/source boundaries and synthetic mock behavior; OpenAPI, route manifest, tokens and generated source unchanged.",
+    "FE_G04": "PASS for targeted customer cases and full rebuilt-demo E2E; does not establish backend behavior.",
+    "FE_G05": "Automated checks pass; actual browser zoom, screen-reader output, complete manual interaction/error/icon review and UI015 native soft keyboard remain open.",
+    "FE_G08": "Production/demo build and artifact isolation pass locally; GitHub CI was not run.",
+    "FE_G09": "Automated demo cases pass; product-owner acceptance remains open.",
+    "readiness": "Evidence remains 7/9 gates; this item does not certify Production-Ready/Enterprise-Grade."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "4/10",
+    "totalDone": "17/26",
+    "checkpoints": "93/130",
+    "next": "UI018.C01 date-helper semantics; UI012 manual accessibility, UI015 native keyboard evidence and FE-G09 owner UAT remain independent open gates."
+  },
+  "evidence": [
+    "S01-copy-namespace-inventory.md",
+    "S02-copy-namespace-implementation.md",
+    "S03-targeted-regressions.log",
+    "S03-regressions-after-copy-update.log",
+    "S04-verify.log",
+    "S05-full-e2e-before-copy-assertion-update.log",
+    "S05-full-e2e-current.log"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprints": {
+    "apps/web/src/app/i18n.ts": "8BAA225A63E7E56B5DDEA3AC3196E814A8850C13CF4B766C839672A1E84253D9",
+    "apps/web/src/app/locales/vi/customers.ts": "A2A880BC7AAD48E156E0FE8D6CAFD63A453A91187AF62B398AE5C8247312E97B",
+    "apps/web/src/modules/customers/index.tsx": "153DD6B93F75D000096AEFC2E7AD52788BEF2F82255DFDFF8956E364CE434493",
+    "apps/web/tests/states/fe023-state.test.tsx": "15A3815AAAEA1BFD726D2D7ADA8D867F6695B3531D1CA90C513AD3798944661B",
+    "tests/fe009.spec.ts": "FEEC9605EDA7A726C5B4B08C1A4DA4BE455F3280935A4F817DBBD8D00A513C08",
+    "tests/states/fe023.spec.ts": "24324D01E83939A7674CA32A7030C140057A094A19C003EB3FD51E77F1E403D0",
+    "tests/ui006-lookups.spec.ts": "10232D95422DBD79F86812888C3F3E04A5F739694320B464C203C8C29534E0B4",
+    "tests/ui007-query-states.spec.ts": "FE2775F059E9595307C171CDE49C1A1D47B88C4C79B8706BD3922DBCCDA451B8",
+    "botsales-kit/contracts/openapi.json": "D88A70957A9DE36402FF5AC0CB757A2F1C496519C7E1FD2E28DF17E867F78C7C",
+    "botsales-kit/contracts/route-manifest.json": "360871C008FAC723CFC77DEC79417838D24D4FAE844452909EB347EC8893F2B2",
+    "botsales-kit/design/tokens.json": "B4083EB2032D9EBAC7F1F793F3AAE1CDA6A30E075B0DD9E19F241567651D1895",
+    "evidence/frontend-ui-improvements/UI017/S01-copy-namespace-inventory.md": "995F1BD5197877AE021D8AE45B53C9AC127C9D87263125D8BB74C6B9EF0F0211",
+    "evidence/frontend-ui-improvements/UI017/S02-copy-namespace-implementation.md": "A0312D3EAE387CE900DB74A392EAF007CC7371B135F172FC883ECF91D81427BD",
+    "evidence/frontend-ui-improvements/UI017/S03-targeted-regressions.log": "73E984ACFF9F7ECE6C7E25260A9719221D1BB61AD7F51EC1227CFAA3A01361C1",
+    "evidence/frontend-ui-improvements/UI017/S03-regressions-after-copy-update.log": "27F967997B5AFBD312C872B9EDC3742E3E78EDB19A6E3403FA684638EE86AD05",
+    "evidence/frontend-ui-improvements/UI017/S04-verify.log": "4C0031A55BE2062B650A6F3AE50714D6E6A090126DB6E6366AB7B3AF8E6CB965",
+    "evidence/frontend-ui-improvements/UI017/S05-full-e2e-before-copy-assertion-update.log": "796D7370E24A34EF8742776EA938BB63985DD897A74508CA8DD161C05C761F56",
+    "evidence/frontend-ui-improvements/UI017/S05-full-e2e-current.log": "F91ABD8D6E65EECB121EA295F3C0447A141077B170535865A20B88B39024A754",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC"
+  },
+  "fingerprintRefreshNote": "Shared plan/context/known-gaps/report fingerprints refreshed after UI020.C01 inventory on 2026-10-03; item-specific results remain scoped to their original acceptance evidence; shared docs and downstream acceptance references refreshed after UI022 root-workflow correction on 2026-10-03; shared docs and downstream acceptance references refreshed after UI022 Windows runner correction on 2026-10-03."
+}

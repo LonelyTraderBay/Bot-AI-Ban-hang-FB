@@ -1,0 +1,49 @@
+
+Running 2 tests using 1 worker
+
+(node:34012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\ui-procurement-layout.spec.ts:36:1 › Procurement R44-R47 preserve shared page gutter and contain responsive tables at 320-1440px (19.8s)
+  x  2 [chromium] › tests\ui-procurement-layout.spec.ts:67:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes (10.2s)
+
+
+  1) [chromium] › tests\ui-procurement-layout.spec.ts:67:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes 
+
+    Error: expect(locator).toBeDisabled() failed
+
+    Locator:  getByRole('dialog', { name: 'Đơn mua mới' }).getByRole('button', { name: 'Lưu đơn nháp' })
+    Expected: disabled
+    Received: enabled
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeDisabled" getByRole('dialog', { name: 'Đơn mua mới' }).getByRole('button', { name: 'Lưu đơn nháp' }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Đơn mua mới' }).getByRole('button', { name: 'Lưu đơn nháp' })
+        14 × locator resolved to <button tabindex="0" type="button" class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-disableElevation MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-disableElevation css-1kx9og7-MuiButtonBase-root-MuiButton-root">Lưu đơn nháp</button>
+           - unexpected value "enabled"
+
+
+      102 |         await chooseOption(page, 'Báo giá dòng 1', /v-p1/, purchase);
+      103 |         await expect(purchase.getByRole('spinbutton', { name: 'Số lượng dòng 1' })).toBeVisible();
+    > 104 |         await expect(purchase.getByRole('button', { name: 'Lưu đơn nháp' })).toBeDisabled();
+          |                                                                              ^
+      105 |         await page.keyboard.press('Escape');
+      106 |
+      107 |         await gotoDemo(page, '/s/shop-demo/receipts');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-procurement-layout.spec.ts:104:78
+
+    Error Context: test-results\ui-procurement-layout-Proc-3d3f3-op-viewports-without-writes-chromium\error-context.md
+
+    Error Context: test-results\ui-procurement-layout-Proc-3d3f3-op-viewports-without-writes-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui-procurement-layout-Proc-3d3f3-op-viewports-without-writes-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui-procurement-layout-Proc-3d3f3-op-viewports-without-writes-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\ui-procurement-layout.spec.ts:67:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes 
+  1 passed (31.1s)

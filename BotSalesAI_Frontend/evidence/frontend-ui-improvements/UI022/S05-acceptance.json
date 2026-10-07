@@ -1,0 +1,97 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI022",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "IN_PROGRESS",
+  "scope": "Repository-root GitHub Actions wiring for BotSalesAI_Frontend only; no Backend, staging, deployment, provider, product ledger or FE ledger scope.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Preserved pre-existing dirty Frontend work and restored six test-written artifacts byte-identically from the pre-run snapshot. The root workflow and Windows E2E runner/config updates are local and uncommitted.",
+    "githubDefaultBranchAtCheck": "e68cb65e61c5c1aab2ae169dd8033df305df8872"
+  },
+  "pairedAcceptance": {
+    "ui": "PASS for current local Frontend behavior: Windows runner targeted UI009 1/1 and current full Chromium suite 188/188; the hosted trigger has not been observed.",
+    "architecture": "PASS: repository-root workflow scope plus runner invokes locked npm CLI through npm_execpath, bounds child PATH, and starts Vite directly at apps/web; artifacts remain scoped by run, attempt and source SHA.",
+    "pairingRule": "Trigger behavior and workflow ownership/boundaries were evaluated together; local structure checks do not certify hosted runner behavior."
+  },
+  "checkpoints": {
+    "C01": "PASS — workflow location, repository API workflow/run counts, package scripts, lockfile and current revision inventoried in S01.",
+    "C02": "PASS — root workflow configured with scoped events, locked toolchain, existing Frontend gates and revision-scoped artifacts; no React/API/backend source changed.",
+    "C03": "PASS — saved PyYAML/static structural assertions pass; generate:check and npm audit pass locally; S03 stores logs and script.",
+    "C04": "PARTIAL — current local verify and full E2E pass in S22, but the new workflow is uncommitted and has no GitHub run URL/runner/install/artifact evidence.",
+    "C05": "PASS — acceptance, evidence, shared docs and SHA-256 fingerprints synchronized; limitation and next external prerequisite are explicit."
+  },
+  "verification": {
+    "workflowStaticValidation": "PASS; YAML parse, root path, trigger filters, working directory, full SHA action pins, required commands and revision-scoped artifact paths.",
+    "generateCheck": "PASS; 11 generated outputs, 283 schemas, 210 operations, 54 routes.",
+    "npmAudit": "PASS; npm audit --audit-level=low found 0 vulnerabilities locally.",
+    "fullVerify": "PASS locally in UI022/S22: generator 11/283/210/54; source 64/220/54; source-checker 3/3; boundaries 427/0 issues/8 fixtures; lint/typecheck; domain/MSW 88/88; Vitest 85/85; production build.",
+    "fullE2E": "PASS locally in UI022/S22: 188/188 Chromium tests, role 357/357, empty 11/11, route-error 51/51; not a GitHub Actions run.",
+    "remoteWorkflow": "NOT RUN; public GitHub API showed 0 registered workflows and 0 runs before the local root-level correction; gh has no authenticated session.",
+    "actionlint": "UNAVAILABLE; no actionlint result is claimed.",
+    "npmCiOnRunner": "NOT RUN.",
+    "gitDiffCheck": "PASS; exit 0 with existing LF-to-CRLF advisory messages."
+  },
+  "gates": {
+    "FE_G01": "Local workflow config and lockfile structure pass; clean hosted install not verified.",
+    "FE_G02": "Local frontend verify passes; CI equivalence awaits the actual runner.",
+    "FE_G08": "PARTIAL for CI: production/demo local evidence exists, but no remote workflow artifact/run exists for this change.",
+    "FE_G05": "Manual browser zoom, screen-reader and interaction review remain open.",
+    "FE_G09": "Product-owner acceptance remains open.",
+    "readiness": "7/9; UI022 does not close any manual or owner gate."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "7/10",
+    "totalDone": "20/26",
+    "checkpoints": "113/130",
+    "next": "UI020 owner-selected support matrix; UI021 fresh auditor provenance; UI022 remote run after authorized delivery; UI012/UI015 manual evidence and UI023 owner UAT remain open."
+  },
+  "evidence": [
+    "S01-workflow-inventory.md",
+    "S02-root-workflow-design.md",
+    "S03-static-validation.md",
+    "S03-validate-workflow.py",
+    "S03-static-validation.log",
+    "S03-generate-check.log",
+    "S03-npm-audit.log",
+    "S04-remote-run-status.md",
+    "S05-refresh-fingerprints.py",
+    "S22-current-local-runner-20261003.md",
+    "../../../../.github/workflows/frontend.yml",
+    "../../../package.json",
+    "../../../playwright.config.ts",
+    "../../../scripts/run-e2e.mjs",
+    "../UI021/S04-frontend-verify.log",
+    "../UI012/S19-current-frontend-gates-20261003.log",
+    "../UI012/S20-current-full-e2e-20261003.log"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprintRefreshNote": "Shared documentation hashes and dependent acceptance references refreshed after UI022 Windows runner correction on 2026-10-03; historical source fingerprints are preserved.",
+  "fingerprints": {
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC",
+    "../.github/workflows/frontend.yml": "B7A6D4D9860AD5B215C741B51490FE2785D140D59694C65121D9CF889277A15D",
+    "evidence/frontend-ui-improvements/UI022/S01-workflow-inventory.md": "77E987F32ACC1C0539F6DD7B81347068DA318FB93FBFA166C91435BCFA0F9258",
+    "evidence/frontend-ui-improvements/UI022/S02-root-workflow-design.md": "99D20E62C75FBB04A5F1DFDF80276CCC1E16CDB7AEE126B11A3814B43FB7EF3F",
+    "evidence/frontend-ui-improvements/UI022/S03-static-validation.md": "52BE30D50871D5B0F6DE234749F6B8511D3071CD39AEEFC11E588647D2EF4B37",
+    "evidence/frontend-ui-improvements/UI022/S03-validate-workflow.py": "2C451EFDBB15085B5B3D0A844EBEDA8557AE150EFC78691D36635D8A3408A0E4",
+    "evidence/frontend-ui-improvements/UI022/S03-static-validation.log": "058764C1D349503B4AF64C52D05A8BDE3B8A1624FD6E1FC5A3CA0CC45C666D93",
+    "evidence/frontend-ui-improvements/UI022/S03-generate-check.log": "A503033AA04D5E8F5DB3AE07960B8FC118B9ACADB7BAB2939BC746849280D5D2",
+    "evidence/frontend-ui-improvements/UI022/S03-npm-audit.log": "4B02D4A3C23D969C46BD2041360F80BFCB1FE760D9DB864009ACDD710F9DE601",
+    "evidence/frontend-ui-improvements/UI022/S04-remote-run-status.md": "8D35188F76482C34207550975FEAC2FC272ADB243E94EDEA34622ADAD7942D72",
+    "evidence/frontend-ui-improvements/UI022/S05-refresh-fingerprints.py": "EF17204CE501B60541F85FB569A5EB40BC5FA490FD1F2AEEC8338A8C28C3EFF4",
+    "evidence/frontend-ui-improvements/UI022/S22-current-local-runner-20261003.md": "F1B3C1C21F66E53BCD9A3A4EE8A1BB20C1C34449D86BF4A13C9E8488206BD240",
+    "package.json": "5048B3F946FF1E694474CC96AD2AEC10F08EB5BA354D60B512F835A1479C5139",
+    "playwright.config.ts": "CA893798E625B6C0268B883654DD156CAD3373256DBF8FFDB0CF30C6F8827E1E",
+    "scripts/run-e2e.mjs": "B8C35919CE16FC05701FF9DE544BA1E737BFA249C1A9E844FDB30E7231A09891",
+    "evidence/frontend-ui-improvements/UI021/S04-frontend-verify.log": "7E50E8E00B46FBC5A9F77D06D3341D7F1F0B5AAFF4C3E410BB15D8A99FA9FCC8",
+    "evidence/frontend-ui-improvements/UI024/S00-current-rebuilt-demo-e2e-20261003.log": "07A4AF98225873E2746C255E2E6BE5B9A4FA2C87EB4D686A11A4B82DE30572AA",
+    "evidence/frontend-ui-improvements/UI024/S01-current-full-rebuilt-demo-e2e-20261003.log": "6D932AA6A4F3D4E06FBBD671BC4DB8A611BFE7C2AAB2FA795E3705F6742BF54E",
+    "evidence/frontend-ui-improvements/UI024/S02-current-worktree-and-artifact-fingerprint.json": "1EAD38429B7D976514CE6F4B0F79846E6022D6D7FA316FBF85476C03DDB24E05",
+    "evidence/frontend-ui-improvements/UI024/S03-current-preflight-summary.md": "B37249E7F6D463580BA2681F32137DDF14BBC73209F61A21248DC9517F60E2DF"
+  }
+}

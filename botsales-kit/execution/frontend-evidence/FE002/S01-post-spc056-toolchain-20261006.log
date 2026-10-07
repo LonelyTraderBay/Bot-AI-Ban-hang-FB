@@ -1,0 +1,28 @@
+FE002.S01 current toolchain evidence
+executedAt=2026-10-06T02:15:15.807Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+command=node botsales-kit/execution/frontend-evidence/FE002/capture-post-spc056-toolchain-20261006.mjs S01
+exitCode=0
+expected=Kiểm Node24/npm và exact package versions/peer requirements; giữ stack đang được chọn, ghi patch/nguồn thực.
+observed=Node v24.19.0, npm 11.17.0, exact manifest/lock/installed versions match, lockfile v3, npm ls --depth=0 exit 0; no peer mismatch found.
+checksTotal=6; failed=0
+CHECK runtime and pinned toolchain: PASS
+Node v24.19.0; npm 11.17.0; .node-version 24.19.0; engines {"node":">=24 <25","npm":">=10"}
+CHECK manifest and lockfile: PASS
+lockfileVersion=3; root/app identity botsales-frontend/@botsales/web; dependency mismatches=0
+CHECK exact installed stack: PASS
+react@19.1.1, react-dom@19.1.1, typescript@5.9.2, vite@7.3.6, @mui/material@7.3.1, @tanstack/react-query@5.85.5, react-router-dom@7.18.4, msw@2.11.1
+CHECK peer/dependency tree: PASS
+npm.cmd ls --depth=0 exited 0; no invalid or unmet peer dependency reported in captured tree
+CHECK change budget decision: PASS
+Keep current exact versions and one React/MUI/Query/Router stack; no upgrade or lock rewrite is justified by observed compatibility
+CHECK captured command output: PASS
+botsales-kit/execution/frontend-evidence/FE002/S01-node-version-post-spc056-20261006.log; botsales-kit/execution/frontend-evidence/FE002/S01-npm-version-post-spc056-20261006.log; botsales-kit/execution/frontend-evidence/FE002/S01-npm-ls-post-spc056-20261006.log
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no Backend, provider or hosted CI result is claimed.
+sourceSnapshotSha256=68284dff618df4e94c7330f5c886639f4f33678a7be82abf0cd5748d70a4e536
+SOURCE .node-version sha256=474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE package-lock.json sha256=1b581990fb49a594ff7422d342817b45579186cc5caec5e5e6c8be166d6f4703
+SOURCE botsales-kit/execution/frontend-evidence/FE002/capture-post-spc056-toolchain-20261006.mjs sha256=6448d81a4531fa4f9489ae0d5f98e3c08d42fb19cedb7d2f49d2825a4aa65d17
+reviewer=Codex self-review; no independent peer review claimed.

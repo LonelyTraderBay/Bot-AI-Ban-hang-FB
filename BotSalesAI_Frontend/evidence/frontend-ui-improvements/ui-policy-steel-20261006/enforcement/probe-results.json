@@ -1,0 +1,979 @@
+{
+  "checkedAt": "2026-10-06T13:53:32.550Z",
+  "scope": "Adversarial, isolated synthetic fixtures against current source gates and virtual TypeScript compilation. NOT npm verify, browser render, integration, hosted CI, or production certification. A gate bypass is a policy enforcement gap, not proof of a live UI defect.",
+  "temporaryRoot": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-policy-enforcement-k2ocSi",
+  "emptyRoot": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-policy-empty-BmLtlj",
+  "hashes": [
+    {
+      "file": "scripts/check-ui-composition.mjs",
+      "sha256": "689a33b4581888385f4274a1a63243d9b22dd72ddc99795f88ddf8cf3571a301"
+    },
+    {
+      "file": "scripts/check-layout.mjs",
+      "sha256": "ddfabbedd17b560a369cd951346c83d1924ac8a26b5fdffada82c3b9ebe17101"
+    },
+    {
+      "file": "scripts/check-visual-tokens.mjs",
+      "sha256": "2c862c3406de67066a69aa02db5226035669fd3b7ebc3c072f598d3d28cbeef7"
+    },
+    {
+      "file": "tests/ui-composition-checker.test.mjs",
+      "sha256": "e1a2ff7fdce55329c73bf08401c708b2288c97a099d4ff84493074b1dd92bb7d"
+    },
+    {
+      "file": "tests/layout-checker.test.mjs",
+      "sha256": "5effc457c04a19a97bc5576e1333afd39f2ea016d6ac5519571e5189ceea7408"
+    },
+    {
+      "file": "tests/visual-token-checker.test.mjs",
+      "sha256": "018587b062aeffe22c3968cc939f27301ff51d161c81de0c86b1f3abecf37603"
+    },
+    {
+      "file": "package.json",
+      "sha256": "6cd671e80ed84427a833d82b8e85d14eb3532f3437db56507c5582e0b8ba072d"
+    },
+    {
+      "file": "apps/web/tsconfig.json",
+      "sha256": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1"
+    },
+    {
+      "file": "apps/web/src/shared/ui/layout.ts",
+      "sha256": "1a0126cb58ae7ff086070289307659e1868b3a071bc7a583b3c8d017509ccb11"
+    },
+    {
+      "file": "tests/ui-composition-layout.spec.ts",
+      "sha256": "f4935fa408273bb8523b1c1ee4a2050406baa69c02f2bc4f98ae9110636ca9e6"
+    },
+    {
+      "file": "../.github/workflows/frontend.yml",
+      "sha256": "d80c5ba0d651375b45c6775625e00f5e4c7553190c2ce7139008baf60a095ab2"
+    }
+  ],
+  "results": [
+    {
+      "id": "C01",
+      "purpose": "Negative control: raw spacing",
+      "source": "import {Box} from '@mui/material'; export function UI(){return <Box p={2}/>;}",
+      "layout": {
+        "exit": 1,
+        "status": "FAIL",
+        "files": 2,
+        "findings": [
+          {
+            "file": "apps/web/src/shared/ui/__ui_policy_probe.tsx",
+            "line": 1,
+            "column": 72,
+            "property": "p",
+            "value": "2",
+            "code": "SPACING_LITERAL",
+            "message": "Consumer spacing must reference a shared semantic layout role; scale-conforming literals are also prohibited"
+          }
+        ]
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": false,
+      "threeSourceGatesAndTypecheckPass": false,
+      "relevantSourceGatesPass": false
+    },
+    {
+      "id": "C02",
+      "purpose": "Negative control: raw palette/typography",
+      "source": "export function UI(){return <div style={{fontSize:99,color:'#abc'}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "FAIL",
+        "files": 2,
+        "findings": [
+          {
+            "code": "RAW_VISUAL_LITERAL",
+            "category": "typography",
+            "file": "apps/web/src/shared/ui/__ui_policy_probe.tsx",
+            "line": 1,
+            "column": 51,
+            "property": "typography",
+            "value": "99",
+            "message": "Raw typography value must reference a canonical token or semantic theme role"
+          },
+          {
+            "code": "RAW_VISUAL_LITERAL",
+            "category": "palette",
+            "file": "apps/web/src/shared/ui/__ui_policy_probe.tsx",
+            "line": 1,
+            "column": 60,
+            "property": "palette",
+            "value": "#abc",
+            "message": "Raw color value must reference a canonical palette token or semantic theme role"
+          }
+        ]
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": false,
+      "threeSourceGatesAndTypecheckPass": false,
+      "relevantSourceGatesPass": false
+    },
+    {
+      "id": "C03",
+      "purpose": "Negative control: raw canonical form owner",
+      "source": "import {Stack} from '@mui/material';import {layoutSx} from './layout';export function UI(){return <Stack sx={layoutSx.form.fieldGap}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "FAIL",
+        "issues": [
+          {
+            "file": "apps/web/src/shared/ui/__ui_policy_probe.tsx",
+            "line": 1,
+            "rule": "composition.shared-owner",
+            "message": "Stack using form.fieldGap must use FormFields; spacing ownership belongs to the shared component. Flex section flows use PageSections; column grids use SectionGrid."
+          }
+        ]
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": false,
+      "threeSourceGatesAndTypecheckPass": false,
+      "relevantSourceGatesPass": false
+    },
+    {
+      "id": "C04",
+      "purpose": "Negative control: direct double inset",
+      "source": "import {FormFields} from './composition';import {Panel} from './components';export function UI(){return <Panel bodyMode=\"inset\"><FormFields bodyMode=\"inset\"/></Panel>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "FAIL",
+        "issues": [
+          {
+            "file": "apps/web/src/shared/ui/__ui_policy_probe.tsx",
+            "line": 1,
+            "rule": "composition.double-inset",
+            "message": "Panel and its content cannot both own surface inset."
+          }
+        ]
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": false,
+      "threeSourceGatesAndTypecheckPass": false,
+      "relevantSourceGatesPass": false
+    },
+    {
+      "id": "P01",
+      "purpose": "Local MUI component alias bypasses system prop check",
+      "source": "import {Stack} from '@mui/material';const Row=Stack;export function UI(){return <Row p={2}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P02",
+      "purpose": "Renamed styled import bypasses spacing and visuals",
+      "source": "import {styled as makeStyled} from '@mui/material/styles';const X=makeStyled('div')({padding:99,fontSize:99,color:'#abc'});export function UI(){return <X/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P03",
+      "purpose": "Local colors identifier is pretrusted",
+      "source": "const colors={danger:'#abc'};export function UI(){return <div style={{color:colors.danger}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P04",
+      "purpose": "Local theme identifier is pretrusted",
+      "source": "const theme={palette:{primary:{main:'#abc'}}};export function UI(){return <div style={{color:theme.palette.primary.main}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P05",
+      "purpose": "Local tokens identifier is pretrusted",
+      "source": "const tokens={fontSizes:{body:99}};export function UI(){return <div style={{fontSize:tokens.fontSizes.body}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P06",
+      "purpose": "Native JSX spread escapes visual walk",
+      "source": "export function UI(){return <div {...{style:{color:'#abc',fontSize:99}}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P07",
+      "purpose": "Font and border shorthand missing from TS visual property table",
+      "source": "export function UI(){return <div style={{font:'bold 99px Comic Sans MS',border:'7px solid #abc'}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P08",
+      "purpose": "Scoped local layoutSx shadows canonical import",
+      "source": "import {Box} from '@mui/material';import {layoutSx} from './layout';void layoutSx;export function UI(){const layoutSx={stats:{gutter:{gap:99}}};return <Box sx={layoutSx.stats.gutter}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P09",
+      "purpose": "Canonical spacing object is mutable and assignments are not audited",
+      "source": "import {FormFields} from './composition';import {layoutSx} from './layout';layoutSx.form.fieldGap.gap=99;export function UI(){return <FormFields/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P10",
+      "purpose": "Local composition alias hides duplicated inset",
+      "source": "import {FormFields} from './composition';import {Panel} from './components';const Fields=FormFields;export function UI(){return <Panel bodyMode=\"inset\"><Fields bodyMode=\"inset\"/></Panel>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P11",
+      "purpose": "Static element access hides role from composition memberPath",
+      "source": "import {Stack} from '@mui/material';import {layoutSx} from './layout';export function UI(){return <Stack sx={layoutSx['form']['fieldGap']}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P12",
+      "purpose": "createElement owner bypass is outside JSX composition traversal",
+      "source": "import {createElement} from 'react';import {Stack} from '@mui/material';import {layoutSx} from './layout';export function UI(){return createElement(Stack,{sx:layoutSx.form.fieldGap});}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P13",
+      "purpose": "Paper using form role escapes Stack/Box eligibility",
+      "source": "import {Paper} from '@mui/material';import {layoutSx} from './layout';export function UI(){return <Paper sx={{display:'flex',flexDirection:'column',...layoutSx.form.fieldGap}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P14",
+      "purpose": "bodyMode via a resolvable literal alias bypasses inset check",
+      "source": "import {FormFields} from './composition';import {Panel} from './components';const mode='inset' as const;export function UI(){return <Panel bodyMode={mode}><FormFields bodyMode={mode}/></Panel>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P15",
+      "purpose": "Neutral wrapper hides ancestor-owned inset",
+      "source": "import {FormFields} from './composition';import {Panel} from './components';export function UI(){return <Panel bodyMode=\"inset\"><div><FormFields bodyMode=\"inset\"/></div></Panel>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P16",
+      "purpose": "MUI GlobalStyles styles prop is not audited",
+      "source": "import {GlobalStyles} from '@mui/material';export function UI(){return <GlobalStyles styles={{body:{fontSize:99,color:'#abc',padding:99}}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P17",
+      "purpose": "JSX style tag text is outside CSS parser scope",
+      "source": "export function UI(){return <style>{'.x{font-size:99px;color:#abc;padding:99px}'}</style>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P18",
+      "purpose": "Tagged styled CSS typography/color not parsed by visual checker",
+      "source": "import {styled} from '@mui/material/styles';const X=styled('div')`font-size:99px;color:#abc;`;export function UI(){return <X/>;}",
+      "layout": {
+        "exit": 1,
+        "status": "FAIL",
+        "files": 2,
+        "findings": [
+          {
+            "file": "apps/web/src/shared/ui/__ui_policy_probe.tsx",
+            "line": 1,
+            "column": 60,
+            "property": "styled",
+            "value": "'div'",
+            "code": "UNKNOWN_STYLE_SOURCE",
+            "message": "Style expression cannot be statically resolved to a shared role object"
+          }
+        ]
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": false,
+      "threeSourceGatesAndTypecheckPass": false,
+      "relevantSourceGatesPass": false
+    },
+    {
+      "id": "P19",
+      "purpose": "Noncanonical file named visual is trusted by suffix",
+      "source": "import {illegal} from './unrelated/visual';export function UI(){return <div style={{fontSize:illegal}}/>;}",
+      "extra": [
+        {
+          "path": "apps/web/src/shared/ui/unrelated/visual.ts",
+          "content": "export const illegal=99;"
+        }
+      ],
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 3,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 3,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P20",
+      "purpose": "Barrel import hides composition identity",
+      "source": "import {FormFields} from './policy-probe-barrel';import {Panel} from './components';export function UI(){return <Panel bodyMode=\"inset\"><FormFields bodyMode=\"inset\"/></Panel>;}",
+      "extra": [
+        {
+          "path": "apps/web/src/shared/ui/policy-probe-barrel.ts",
+          "content": "export {FormFields} from './composition';"
+        }
+      ],
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 3,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 3,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P21",
+      "purpose": "Undefined prefixed CSS variables and raw outline width are accepted",
+      "path": "apps/web/src/app/__policy_probe.css",
+      "source": ".x{color:var(--color-unknown);font-size:var(--font-madeup);outline:123px solid var(--focus-ring-fake) var(--color-fake);}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "NOT_APPLICABLE",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "NOT_APPLICABLE",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": false,
+      "threeSourceGatesAndTypecheckPass": false,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P22",
+      "purpose": "Named CSS color outside the short blacklist is accepted in TS",
+      "source": "export function UI(){return <div style={{color:'coral'}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P23",
+      "purpose": "Arithmetic consisting only of raw numbers is accepted as typography",
+      "source": "export function UI(){return <div style={{fontSize:50+49,lineHeight:1+2}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "P24",
+      "purpose": "Dynamic computed visual property is not failed closed",
+      "source": "const key='fontSize';export function UI(){return <div style={{[key]:99}}/>;}",
+      "layout": {
+        "exit": 1,
+        "status": "FAIL",
+        "files": 2,
+        "findings": [
+          {
+            "file": "apps/web/src/shared/ui/__ui_policy_probe.tsx",
+            "line": 1,
+            "column": 63,
+            "property": "style",
+            "value": "[key]",
+            "code": "UNKNOWN_STYLE_KEY",
+            "message": "Computed style property names must be statically resolvable"
+          }
+        ]
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": false,
+      "threeSourceGatesAndTypecheckPass": false,
+      "relevantSourceGatesPass": false
+    },
+    {
+      "id": "P25",
+      "purpose": "Consumer can add a local raw number to canonical typography",
+      "source": "import{tokens}from'@botsales/tokens';export function UI(){return <div style={{fontSize:tokens.fontSizes.body+99}}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "PASS",
+        "issues": []
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": true,
+      "threeSourceGatesAndTypecheckPass": true,
+      "relevantSourceGatesPass": true
+    },
+    {
+      "id": "F01",
+      "purpose": "False positive: closed geometry with as const fails composition",
+      "source": "import {FormFields} from './composition';export function UI(){return <FormFields geometry={{width:100} as const}/>;}",
+      "layout": {
+        "exit": 0,
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "composition": {
+        "status": "FAIL",
+        "issues": [
+          {
+            "file": "apps/web/src/shared/ui/__ui_policy_probe.tsx",
+            "line": 1,
+            "rule": "composition.geometry-unknown",
+            "message": "Geometry must resolve to a closed object."
+          }
+        ]
+      },
+      "visual": {
+        "status": "PASS",
+        "files": 2,
+        "findings": []
+      },
+      "typing": {
+        "status": "PASS",
+        "diagnostics": []
+      },
+      "threeSourceGatesPass": false,
+      "threeSourceGatesAndTypecheckPass": false,
+      "relevantSourceGatesPass": false
+    }
+  ],
+  "reportMode": {
+    "exit": 0,
+    "status": "FAIL",
+    "findingCount": 1
+  },
+  "emptySource": {
+    "layout": {
+      "exit": 0,
+      "status": "PASS",
+      "files": 0
+    },
+    "visual": {
+      "status": "PASS",
+      "files": 0
+    },
+    "composition": {
+      "exit": 0,
+      "status": "PASS",
+      "files": 0
+    }
+  },
+  "summary": {
+    "cases": 30,
+    "negativeControls": 4,
+    "bypassCases": 25,
+    "passAllThreeSourceGatesAndTypecheck": 22,
+    "cssRelevantGatesPass": 1,
+    "singleGateBypassesBlockedElsewhere": 2,
+    "falsePositiveCases": 1
+  }
+}

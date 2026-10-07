@@ -1,0 +1,136 @@
+{
+  "task": "UI011",
+  "title": "Shop-local date defaults and datetime-local conversion",
+  "status": "PASS",
+  "completedAt": "2026-10-03",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "baseline": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTreeHadExistingChanges": true,
+    "inventory": "S01-date-time-inventory.md",
+    "identifiedGaps": [
+      "Report previous-month defaults used UTC month fields instead of the active shop calendar.",
+      "Journal effectiveDate started from a hard-coded historical date.",
+      "Shipment datetime-local input was interpreted in browser timezone while history used shop timezone."
+    ],
+    "excludedFalsePositive": "Finance-entry create handler replaces its hidden initializer with the current ISO instant before opening; this path was left unchanged."
+  },
+  "checkpoints": {
+    "C01": "PASS: compared OpenAPI date-time instants and date-only fields with finance/fulfillment source and existing browser tests; reproduced three gaps and excluded the reset-before-open finance-entry initializer.",
+    "C02": "PASS: fixed-clock browser regressions cover a UTC/shop month boundary, journal date default and Los Angeles browser input for a Vientiane shop. The original mismatches are retained in S02 baseline logs.",
+    "C03": "PASS: report range and journal defaults now use the shop calendar; shipment datetime-local input resolves in the shop timezone, rejects nonexistent DST wall times and sends an ISO instant. Date-only values remain YYYY-MM-DD.",
+    "C04": "PASS: npm run verify exit 0; 76/76 Vitest, domain/MSW 88/88, generation 11/283/210/54, source check 62 files/220 operations/0 issues, boundaries 411 imports and 8/8 negative fixtures, lint, typecheck and production build. Full built-demo Chromium E2E 179/179; role matrix 357/357, empty composition 11/11, route-error composition 51/51 and production mock isolation PASS.",
+    "C05": "PASS: S01-S06 evidence and source/evidence SHA256 fingerprints recorded. FE task ledgers, product-wide trackers, contracts, route manifest, design tokens and generated source were not edited."
+  },
+  "sourceChanges": [
+    "apps/web/src/shared/model/format.ts",
+    "apps/web/src/modules/finance/index.tsx",
+    "apps/web/src/modules/fulfillment/index.tsx",
+    "apps/web/tests/timezone.test.ts",
+    "tests/ui011-date-time.spec.ts",
+    "tests/fe015.spec.ts",
+    "tests/fe013-source-map.test.mjs"
+  ],
+  "testEvidence": {
+    "targetedDateTime": {
+      "path": "S03-targeted-regression.log",
+      "passed": 3,
+      "failed": 0,
+      "sha256": "738B2FF67B655DF72FC7FCB583A8F9AB6F4DFA9E854EED743F5082D51B0CEA41"
+    },
+    "financeFixtureRegressions": {
+      "path": "S03-finance-fixture-regressions.log",
+      "passed": 3,
+      "failed": 0,
+      "sha256": "9C28D45B00084FA346750FD3858C5C8637C612496F200678F689E7104B366798"
+    },
+    "fulfillmentSourceMap": {
+      "path": "S03-source-map-regression.log",
+      "passed": 1,
+      "assertions": 54,
+      "sha256": "FD4D85833D537E4477D3AB37B11793A5BE58420F6DD0A391C18801E0BFDD2B71"
+    },
+    "verify": {
+      "path": "S04-verify-final.log",
+      "exitCode": 0,
+      "generation": "11 outputs, 283 schemas, 210 operations, 54 routes",
+      "sourceChecker": "62 files, 220 operation references, 0 issues",
+      "boundaries": "411 imports, 8/8 negative fixtures, 0 issues",
+      "domainAndMocks": "88/88",
+      "vitest": "76/76",
+      "lintTypecheckProductionBuild": "PASS",
+      "sha256": "C7F877CE44CA93D374A200F4CDBBDED46F285FE5FEB38CEECAADDF35000EFF36"
+    },
+    "fullE2E": {
+      "path": "S05-full-e2e-final.log",
+      "passed": 179,
+      "failed": 0,
+      "duration": "10.4m",
+      "browser": "Chromium 153 on Windows x64",
+      "roleMatrix": "357/357",
+      "emptyComposition": "11/11",
+      "routeErrorComposition": "51/51",
+      "productionArtifactMockIsolation": "PASS",
+      "sha256": "DE9DB77AABB91A26E00D37B48999572BDF47EFBCE6CD361EA217240771B4CC6C"
+    },
+    "initialFullE2E": {
+      "path": "S05-full-e2e-pre-fixture-fix.log",
+      "result": "176/179; three FE015 tests assumed the old default date instead of selecting the September fixture period explicitly.",
+      "sha256": "A281EF16BD5AC3A5E1A9EC1205D8FFC627BABC0F5106E0A9BB0A42BA34A24639"
+    }
+  },
+  "inventory": {
+    "path": "S01-date-time-inventory.md",
+    "contract": "JournalCreate.effectiveDate is date-only; FinanceEntryWrite.occurredAt and ShipmentEventWrite.occurredAt are date-time instants.",
+    "sha256": "7B923284E15CE98738619AF5E6BF24DBD9C6A86CDA67FAD7A5CD2F434040427E"
+  },
+  "baselineRegressions": [
+    {
+      "path": "S02-pre-fix-regressions.log",
+      "expected": "At 2026-09-30T17:30Z, Asia/Vientiane is in October; report defaults cover September.",
+      "observed": "The UTC-derived report default selected August.",
+      "sha256": "401283CAC53564791214BD28B05A5ADB3434A97883C7C87C9FEC611B6FE7F77B"
+    },
+    {
+      "path": "S02-journal-baseline.log",
+      "expected": "Journal effectiveDate defaults to 2026-10-01 in the active shop calendar.",
+      "observed": "The form defaulted to 2026-09-29.",
+      "sha256": "AD1054735B894D29F7F36D4D3BAD7A42628635A7A4C66D16BA26BF2672DA75A6"
+    },
+    {
+      "path": "S02-shipment-baseline.log",
+      "expected": "Shop-local 2026-10-01 00:30 in Asia/Vientiane resolves to 2026-09-30T17:30:00.000Z.",
+      "observed": "America/Los_Angeles browser parsing shifted the submitted local date/time.",
+      "sha256": "AE75C3A92A578478213482B6941E0BC750E8BD7CD7F3E51C8601550A8A23B37E"
+    }
+  ],
+  "measuredDemoMetrics": {
+    "source": "botsales-kit/execution/frontend-evidence/FE025",
+    "browser": "Chromium 153 on Windows x64, 1280x720",
+    "initialRouteGzipBytes": 447576,
+    "largestChunkGzipBytes": 186000,
+    "syntheticCustomerRows": 1004,
+    "pageLimit": 20,
+    "firstPageReadyMs": 354,
+    "buildAdvisoryChunk": "732.24 kB raw / 185.01 kB gzip",
+    "scopeNote": "Local built demo with synthetic MSW data; not a production SLO, live API measurement or backend performance result."
+  },
+  "sourceFingerprints": {
+    "tests/ui011-date-time.spec.ts": "3B0C72599267F42D22493D44F06257FE66F3F697A855792FCF0C8CA857B6358E",
+    "apps/web/tests/timezone.test.ts": "7A28ED060731C4E6A596F0F24375D877F557AD845818467994F97CD9660B951D",
+    "apps/web/src/shared/model/format.ts": "6F640AD485C3EB3743C08BE55959C0BB1A3310D9CACEF35A152A71C2E07515A0",
+    "apps/web/src/modules/finance/index.tsx": "5904E2101CAB8329F6D8CB6EA693245A83DCA93E75BFA4AD2DCD9FF09BF27D89",
+    "apps/web/src/modules/fulfillment/index.tsx": "021F2E6CE435A78517EA11C45D7399E950AF470B4415BEFEB9D3ED1CBD1F622F",
+    "tests/fe015.spec.ts": "6E1B50E3374AC7521EE9FC171CDAFF454C2FC15C2CB9258E6A00474F39EB76BB",
+    "tests/fe013-source-map.test.mjs": "4506927126C3B37EA4A4616F4400D330B8D9CCC31DB7A62D6E68CB1C2BC9F54C"
+  },
+  "remainingReadinessGaps": [
+    "FE-G05: manual browser zoom, screen-reader and contrast review remains open.",
+    "FE-G09: product-owner acceptance remains open."
+  ],
+  "limitations": [
+    "Evidence covers frontend source and the rebuilt React demo with synthetic MSW only; no backend, real provider, staging, or production runtime was tested.",
+    "The build reports one advisory chunk of 732.24 kB raw / 185.01 kB gzip; the demo largest chunk measurement is 186.00 kB gzip. This task did not restructure bundles.",
+    "No FE task ledger, product-wide plan/progress, OpenAPI, route manifest, design tokens, or generated source was changed."
+  ]
+}

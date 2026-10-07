@@ -1,0 +1,85 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI018",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "DONE",
+  "scope": "React/TypeScript date-only Finance/Reports UI with local synthetic MSW; no backend/provider/staging claim.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "Pre-existing dirty work was preserved. Fingerprints scope this item to shared date boundary, Finance/Reports adapters, targeted tests, canonical read-only contracts and current status/evidence docs."
+  },
+  "pairedAcceptance": {
+    "ui": "PASS: Finance keeps the selected half-open range; Reports keeps the selected end day inclusive; DST gap, skipped date and invalid input outcomes are explicit.",
+    "architecture": "PASS: equal date-only start-boundary ownership is shared in shared/model/format.ts; Finance and Reports retain their distinct range adapters; shipment wall-time behavior remains separate.",
+    "pairingRule": "UI and architecture were implemented and checked under UI018; no backend/API contract change is claimed."
+  },
+  "checkpoints": {
+    "C01": "PASS — S01 inventories DateTime contract limits, Finance [from,to), Reports inclusive end, existing owners/tests, and a São Paulo midnight-gap mismatch.",
+    "C02": "PASS — dateOnlyStartOfDayToISOString centralizes validation and the first local-day instant; Finance delegates both half-open edges, Reports only start; gap midnight resolves to the first valid instant; invalid dates/zones and wholly skipped dates reject.",
+    "C03": "PASS — focused timezone/report tests 15/15; full Vitest 85/85; selected FE015/FE021/UI011 Chromium tests 22/22; exact Finance/Reports range assertions 2/2 on final source.",
+    "C04": "PASS — generate:check 11/283/210/54; source 64 files/220 operation refs/54 routes; boundaries 427 imports + 8/8 negative fixtures; source checker 3/3; lint/typecheck; domain/MSW 88/88; production Vite build. Monolithic npm run verify was not run on UI018.",
+    "C05": "PASS — paired acceptance, limits, source/test/docs SHA-256 fingerprints and handoff are recorded. Contract, route manifest, tokens, generated outputs and FE/product ledgers unchanged."
+  },
+  "implementation": [
+    "Added shared date-only start-of-day UTC conversion with gap-midnight and whole-skipped-date policy.",
+    "Finance keeps both bounds in [from,to); Reports keeps inclusive end-of-selected-day at 23:59:59.999.",
+    "Kept datetime-local shipment wall-time gap/fold behavior unchanged."
+  ],
+  "verification": {
+    "focusedUnit": "PASS 15/15 timezone/report cases.",
+    "fullVitest": "PASS 85/85 across 10 files.",
+    "targetedBrowser": "PASS 22/22 on Vite demo + synthetic MSW; final exact Finance/Reports range cases 2/2.",
+    "sourceGates": "PASS from UI018 S04: generator 11/283/210/54; source 64/220/54; boundaries 427 imports and negative fixtures 8/8; source-checker 3/3; lint/typecheck; domain/MSW 88/88.",
+    "productionBuild": "PASS; Vite largest chunk advisory 737.92 kB raw / 186.81 kB gzip.",
+    "fullRebuiltDemoE2E": "NOT RUN for UI018. Latest full rebuilt-demo Chromium suite remains UI017 at 187/187.",
+    "artifactScan": "No setupWorker, WorkerChannel, msw/browser or @mswjs/interceptors in current production assets; one stale-worker cleanup reference and no mockServiceWorker.js asset.",
+    "review": "Codex self-review; no owner UAT or independent human signoff."
+  },
+  "gates": {
+    "FE_G02": "PASS locally on UI018 source gates; monolithic npm run verify not run.",
+    "FE_G03": "PASS for frontend contracts and synthetic mock scope; canonical OpenAPI, route manifest, tokens and generated source unchanged.",
+    "FE_G04": "Selected regressions pass; full current E2E was not rerun.",
+    "FE_G05": "Automated evidence only; actual browser zoom, screen-reader and full manual review remain open.",
+    "FE_G08": "Production build and current artifact scan pass locally; CI not run.",
+    "FE_G09": "Owner acceptance remains open.",
+    "readiness": "Evidence remains 7/9; no Production-Ready/Enterprise-Grade claim."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "6/10",
+    "totalDone": "19/26",
+    "checkpoints": "104/130",
+    "next": "UI020.C02 support-matrix decision; UI012/UI015 manual checkpoints and FE-G05/FE-G09 remain independent."
+  },
+  "evidence": [
+    "S01-date-helper-inventory.md",
+    "S02-shared-date-boundary.md",
+    "S03-targeted-regressions.log",
+    "S04-frontend-checks.log"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprintRefreshNote": "Shared plan/context/known-gaps/report fingerprints refreshed after UI020.C01 inventory on 2026-10-03; item-specific results remain scoped to their original acceptance evidence; shared docs and downstream acceptance references refreshed after UI022 root-workflow correction on 2026-10-03; shared docs and downstream acceptance references refreshed after UI022 Windows runner correction on 2026-10-03.",
+  "fingerprints": {
+    "apps/web/src/shared/model/format.ts": "32D13ED518870D525B857A8BE711B24B7D56B0F5C7EFF4699BA4F572E958B223",
+    "apps/web/src/modules/finance/index.tsx": "CDEEF59D373CB19DA31005D4D25FDC4FF0896116A62221EB9631BCDF2ED8971F",
+    "apps/web/src/modules/reports/report-utils.ts": "D93B2D30C8584DAEE5F52AABA6CAD7B7AE2CCDE6F5D196509AD7362431EA6ED0",
+    "apps/web/tests/timezone.test.ts": "68B23D02AF2D54AD89B7AEFF783DFFE942D1630BED38C35C1CE5BE45E07FC05D",
+    "apps/web/tests/report-utils.test.ts": "ED3A365E175BFD161AD4141F58B584DF8563392CFDB95E56748AE91CCF7E3FB8",
+    "tests/fe015.spec.ts": "AF4BC133DD079FB115FC6E365F1E482B18D3F65751E9451E85D3309B9DBED665",
+    "tests/fe021.spec.ts": "26AFEF11D6424CE8C12454BC6969CF0A78E292DC32837E8FA57863D8804D9FE7",
+    "tests/ui011-date-time.spec.ts": "3B0C72599267F42D22493D44F06257FE66F3F697A855792FCF0C8CA857B6358E",
+    "botsales-kit/contracts/openapi.json": "D88A70957A9DE36402FF5AC0CB757A2F1C496519C7E1FD2E28DF17E867F78C7C",
+    "botsales-kit/contracts/route-manifest.json": "360871C008FAC723CFC77DEC79417838D24D4FAE844452909EB347EC8893F2B2",
+    "botsales-kit/design/tokens.json": "B4083EB2032D9EBAC7F1F793F3AAE1CDA6A30E075B0DD9E19F241567651D1895",
+    "evidence/frontend-ui-improvements/UI018/S01-date-helper-inventory.md": "A1E4A40885DC79A9249C209A4917709CFED3B3DB9D0BDD4BE63927998E62F369",
+    "evidence/frontend-ui-improvements/UI018/S02-shared-date-boundary.md": "9198DA31DEFBFBB692305629525AB5A64061CC3991D0E7DBFBD17D95CD72ADC1",
+    "evidence/frontend-ui-improvements/UI018/S03-targeted-regressions.log": "88E68034E54F2A3084B952FB4F0E8D12906FBE85AF6FE21743DA70581F9BCA62",
+    "evidence/frontend-ui-improvements/UI018/S04-frontend-checks.log": "CF54F361D239848EE2D71909E6C444395C6F488F128BCBE69EF9E8E38E1D8432",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC",
+    "evidence/frontend-ui-improvements/UI017/S06-acceptance.json": "0A887D25F4BAA1BB2B5FB258BF7B56AA9425D1A34645C97D56BE86F9037158B2"
+  }
+}

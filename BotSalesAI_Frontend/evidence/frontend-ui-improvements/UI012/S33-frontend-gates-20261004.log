@@ -1,0 +1,21 @@
+UI012/S33 current frontend gate results
+Timestamp window: 2026-10-03T19:20Z–19:40Z (UTC)
+Source scope: current Frontend working tree; no backend, staging, or production service was used.
+
+PASS — `node scripts/generate.mjs --check`: 11 outputs, 283 schemas, 210 operations, 54 routes.
+PASS — `node scripts/check-source.mjs`: 65 source files, 220 API operation references, 54 routes, 0 issues.
+PASS — `node --test tests/source-checker.test.mjs`: 3/3.
+PASS — `node scripts/check-boundaries.mjs`: 429 import edges, 0 issues/cycles, 8/8 negative fixtures.
+PASS — `node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0` (exit 0).
+PASS — `node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit` (exit 0).
+PASS — `node scripts/test-domain.mjs`: 88/88 (75 simulator checks, 13 network checks, 210 handlers; Node 24.19.0 / TypeScript 5.9.2).
+PASS — `node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts`: 10 test files, 85/85 tests.
+PASS — production Vite build from current source to temporary output outside the existing `apps/web/dist`: 2,055 modules transformed, 32 output files, exit 0. Largest chunk 738.20 kB raw / 186.88 kB gzip; Vite emitted the existing >500 kB advisory.
+PASS — demo Vite build to a fresh temporary output outside `apps/web/dist-demo`: 2,271 modules transformed, 37 output files, exit 0; `mockServiceWorker.js` is present in demo output.
+PASS — current production artifact isolation scan: 32 files; no `setupWorker`, `WorkerChannel`, `msw/browser` or `@mswjs/interceptors` markers; no `mockServiceWorker.js` in production output. Demo output intentionally contains its mock worker. Artifact summary and sample SHA-256 values: `S33-artifact-audit-20261004.json`.
+PASS — focused S33 Knowledge synthetic 422 Playwright case 1/1, see `S33-targeted-browser-test-20261004.log`.
+PASS — complete `tests/ui012-keyboard.spec.ts` Chromium run 9/9, exit 0; see `S33-keyboard-suite-20261004.log`.
+
+Launcher limitation: `npm.cmd run verify` exited 1 before running gates because the nested script shell could not resolve `npm` (`'npm' is not recognized as an internal or external command`). `npm.cmd run generate:check` also exited 1 because its nested shell could not resolve `node`; the direct `node scripts/generate.mjs --check` above passed. The constituent checks were invoked directly with the locked local Node dependencies; neither npm wrapper is claimed as having passed.
+
+Not run for S33: the complete rebuilt-demo Playwright suite, hosted GitHub Actions, screen-reader speech/transcript, owner UAT, backend/provider, staging, or production runtime. S30 194/194 is historical relative to this source change. Do not use this log to close UI012.C04, FE-G05/FE-G09, or the full FE-G04 gate.

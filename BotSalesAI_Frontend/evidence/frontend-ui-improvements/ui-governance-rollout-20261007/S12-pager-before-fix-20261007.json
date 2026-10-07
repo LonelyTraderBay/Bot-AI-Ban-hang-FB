@@ -1,0 +1,36 @@
+{
+  "id": "S12-pager-before-fix-20261007",
+  "capturedAt": "2026-10-06T19:12:49.964Z",
+  "scope": "Synthetic in-memory UI unit regression; no backend request.",
+  "input": {
+    "page": {
+      "hasMore": true,
+      "nextCursor": [
+        null,
+        ""
+      ]
+    },
+    "url": "status=active&cursor=current"
+  },
+  "expected": {
+    "nextDisabled": true,
+    "urlUnchanged": true
+  },
+  "observed": {
+    "nextDisabled": false,
+    "urlUnchanged": true
+  },
+  "reproduction": {
+    "command": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/components.test.tsx --testNamePattern=disables next when",
+    "testsFailed": 2,
+    "reason": "Pager enables next from hasMore alone; its handler cannot advance when nextCursor is null/empty."
+  },
+  "sourceHashes": {
+    "apps/web/src/shared/ui/components.tsx": "46b21165ef33ccf54f32167762d580179359dfd6af189e906b4e92ad92cf449c",
+    "apps/web/tests/components.test.tsx": "5e03c0b4bbfa285446a3b1706e65114da0fe76950b2501ce5c061bf092db5fa3",
+    "docs/FRONTEND_SPACING_STANDARD.md": "207f13cd159ddc16288354feef4dc68e3ad3ea7ce2c0cda5310d59d3e3bf4ef5",
+    "packages/contracts/src/generated.ts": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709",
+    "botsales-kit/contracts/openapi.json": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c",
+    "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-pager-before-fix-20261007.log": "46327129af2c2ad4ce04ae12bbc8ac3bdb6a6987d670ac01f0baad9739005278"
+  }
+}

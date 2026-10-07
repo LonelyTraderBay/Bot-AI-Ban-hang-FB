@@ -1,0 +1,28 @@
+{
+  "id": "S11-fulfillment-panel-before-fix-20261007",
+  "date": "2026-10-07",
+  "scope": "Shared titled Panel consumer discovered during the all-module audit; synthetic demo state",
+  "command": "node node_modules/@playwright/test/cli.js test tests/ui-panel-layout.spec.ts --project=chromium --reporter=line",
+  "result": "EXPECTED_REPRODUCTION_FAIL",
+  "exitCode": 1,
+  "route": "/s/shop-demo/shipments",
+  "routeId": "R42",
+  "heading": "Xem trước phí & vùng giao hàng",
+  "pageHeading": "Vận đơn & giao hàng",
+  "viewportHeightCssPx": 900,
+  "expectedGapCssPx": 16,
+  "toleranceCssPx": 0.5,
+  "routeReadiness": "Exact URL, page heading, Panel heading, and both select controls were visible; all 3 viewport observations were collected.",
+  "pageErrors": [],
+  "observations": [
+    { "width": 390, "headerContentBottom": 530.890625, "firstContentTop": 562.890625, "gap": 32, "bodyPaddingTop": 16, "bodyPaddingInlineStart": 16, "bodyPaddingBottom": 16, "firstContentPaddingTop": 6 },
+    { "width": 806, "headerContentBottom": 402.890625, "firstContentTop": 442.890625, "gap": 40, "bodyPaddingTop": 24, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 6 },
+    { "width": 1440, "headerContentBottom": 392.890625, "firstContentTop": 432.890625, "gap": 40, "bodyPaddingTop": 24, "bodyPaddingInlineStart": 24, "bodyPaddingBottom": 24, "firstContentPaddingTop": 6 }
+  ],
+  "diagnosis": "FormFields bodyMode=inset is the direct Panel body and adds a 16/24px top inset after the titled Panel's 16px header inset. The shared Panel bodyMode=inset should own inline and bottom inset while FormFields remains flush.",
+  "sha256BeforeSourceEdit": {
+    "apps/web/src/modules/fulfillment/index.tsx": "FCBE9E94694F7AD5CD3C1233D54FFA9DCBA9501A2F30A7468D345AA852B0086A",
+    "tests/ui-panel-layout.spec.ts": "6BC207480E1AE6AD33FCB01DC349798F5C01D0B349CAEC5FC5B81AC81457BE1B",
+    "docs/FRONTEND_SPACING_STANDARD.md": "207F13CD159DDC16288354FEEF4DC68E3AD3EA7CE2C0CDA5310D59D3E3BF4EF5"
+  }
+}

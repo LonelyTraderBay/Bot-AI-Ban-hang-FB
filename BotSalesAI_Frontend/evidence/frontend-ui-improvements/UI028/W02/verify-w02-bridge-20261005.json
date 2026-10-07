@@ -1,0 +1,222 @@
+{
+  "capturedAt": "2026-10-05T08:54:27.456Z",
+  "scope": "UI028_W02_TYPED_SHARED_LAYOUT_BRIDGE",
+  "status": "PASS_W02_BRIDGE",
+  "files": [
+    {
+      "file": "apps/web/src/shared/ui/layout.ts",
+      "sha256": "bc5b0cbf9c38dcd5c0efe5af5fe8a9611ffb4553bc167dc4c48fc5e1a77f1cc7"
+    },
+    {
+      "file": "botsales-kit/design/tokens.json",
+      "sha256": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895"
+    },
+    {
+      "file": "docs/FRONTEND_SPACING_STANDARD.md",
+      "sha256": "c3510d712bf80fcf8d382053b1c291f5701b6157cc20a6eeda54b3365242e6bd"
+    }
+  ],
+  "canonicalRoleCount": 25,
+  "supplementalRoleCount": 12,
+  "layoutSxRoleCount": 76,
+  "rawCssRolePaths": [
+    "table.cellInset",
+    "table.denseCellInset"
+  ],
+  "sourceInventory": {
+    "spacingCandidates": 559,
+    "directNumeric": 488,
+    "outsideScale": 24,
+    "routes": 54,
+    "matchedRoutes": 54,
+    "parserDiagnostics": 0
+  },
+  "consumers": {
+    "importedByApplicationModules": 0,
+    "plannedUsage": "W05-W25 connect theme/shared shell and 16 route modules in dependency order."
+  },
+  "checks": [
+    {
+      "name": "all-25-normative-semantic-roles-have-typed-exported-values",
+      "status": "PASS",
+      "observed": {
+        "count": 25,
+        "missing": [],
+        "tableRawCssRoles": [
+          "table.cellInset",
+          "table.denseCellInset"
+        ]
+      }
+    },
+    {
+      "name": "inbox-navigation-auth-report-dashboard-profiles-are-present",
+      "status": "PASS",
+      "observed": {
+        "required": [
+          "navigation.brandInset",
+          "navigation.groupGap",
+          "inbox.paneInset",
+          "inbox.bubbleInset",
+          "inbox.messageContentGap",
+          "inbox.messageMetaGap",
+          "inbox.messageGroupGap",
+          "inbox.composerInset",
+          "report.listSurfaceInset",
+          "report.listMarkerInset",
+          "dashboard.groupInset",
+          "auth.surfaceInset"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "name": "semantic-contract-and-exported-role-map-match-exactly",
+      "status": "PASS",
+      "observed": {
+        "contractPaths": 76,
+        "exportedStylePaths": 76
+      }
+    },
+    {
+      "name": "bridge-imports-only-canonical-tokens-and-type-only-mui-contract",
+      "status": "PASS",
+      "observed": [
+        {
+          "module": "@mui/material/styles",
+          "isTypeOnly": true
+        },
+        {
+          "module": "@botsales/tokens",
+          "isTypeOnly": false
+        }
+      ]
+    },
+    {
+      "name": "private-mui-factors-derive-from-canonical-8px-token",
+      "status": "PASS",
+      "observed": [
+        {
+          "name": "zero",
+          "expression": "0"
+        },
+        {
+          "name": "xs",
+          "expression": "tokens.space.xs / tokens.space.sm"
+        },
+        {
+          "name": "sm",
+          "expression": "tokens.space.sm / tokens.space.sm"
+        },
+        {
+          "name": "md",
+          "expression": "tokens.space.md / tokens.space.sm"
+        },
+        {
+          "name": "lg",
+          "expression": "tokens.space.lg / tokens.space.sm"
+        },
+        {
+          "name": "xl",
+          "expression": "tokens.space.xl / tokens.space.sm"
+        },
+        {
+          "name": "xxl",
+          "expression": "tokens.space.xxl / tokens.space.sm"
+        },
+        {
+          "name": "xxxl",
+          "expression": "tokens.space.xxxl / tokens.space.sm"
+        }
+      ]
+    },
+    {
+      "name": "semantic-roles-contain-no-unowned-numeric-spacing-literals",
+      "status": "PASS",
+      "observed": {
+        "numericLiterals": 0,
+        "inventoryClassification": "All 58 new spacing expressions are unresolved helper references for W03 resolver work."
+      }
+    },
+    {
+      "name": "raw-theme-spacing-uses-semantic-css-pixel-strings",
+      "status": "PASS",
+      "observed": [
+        "table.cellInset",
+        "table.denseCellInset"
+      ]
+    },
+    {
+      "name": "collector-classifies-each-bridge-spacing-expression-for-future-resolver",
+      "status": "PASS",
+      "observed": {
+        "bridgeSpacingExpressions": 58,
+        "categories": [
+          "NON_NUMERIC_REVIEW"
+        ],
+        "routes": 54,
+        "parserDiagnostics": 0,
+        "inventoryMatchesBridge": true
+      }
+    },
+    {
+      "name": "bridge-source-format-has-no-trailing-whitespace",
+      "status": "PASS",
+      "observed": {
+        "linesWithTrailingWhitespace": 0
+      }
+    },
+    {
+      "name": "frontend-typecheck",
+      "status": "PASS",
+      "observed": {
+        "exitCode": 0,
+        "commandIndex": 0
+      }
+    },
+    {
+      "name": "module-boundaries-and-import-cycle-gate",
+      "status": "PASS",
+      "observed": {
+        "exitCode": 0,
+        "commandIndex": 1
+      }
+    },
+    {
+      "name": "verified-bridge-source-hash-recorded",
+      "status": "PASS",
+      "observed": {
+        "source": "apps/web/src/shared/ui/layout.ts",
+        "sha256": "bc5b0cbf9c38dcd5c0efe5af5fe8a9611ffb4553bc167dc4c48fc5e1a77f1cc7"
+      }
+    }
+  ],
+  "commands": [
+    {
+      "name": "frontend-typecheck",
+      "executable": "C:\\Users\\Joker-PC\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "apps/web/tsconfig.json",
+        "--noEmit"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "module-boundaries-and-import-cycle-gate",
+      "executable": "C:\\Users\\Joker-PC\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "scripts/check-boundaries.mjs"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0
+    }
+  ],
+  "commandLog": "W02/verify-w02-bridge-20261005.log",
+  "limitations": [
+    "No consumer source migration was performed in W02; the typed bridge precedes adoption in W05-W25.",
+    "The inventory collector marks semantic factor references NON_NUMERIC_REVIEW; W03 must resolve these and enforce consumer ownership.",
+    "No browser route geometry or conformance result is claimed by a source/type/boundary check."
+  ]
+}

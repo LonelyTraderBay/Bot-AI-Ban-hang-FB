@@ -1,0 +1,51 @@
+✖ public layout mapping cannot be written through a direct consumer reference (527.0948ms)
+✖ public layout nested aliases remain readonly (406.3601ms)
+✔ public visual mapping already rejects consumer writes (112.3591ms)
+✔ canonical readonly style maps remain readable by consumers (344.4252ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1565.5963
+
+✖ failing tests:
+
+test at tests\ui-canonical-readonly.test.mjs:22:1
+✖ public layout mapping cannot be written through a direct consumer reference (527.0948ms)
+  AssertionError [ERR_ASSERTION]
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-canonical-readonly.test.mjs:24:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.start (node:internal/test_runner/test:1242:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\ui-canonical-readonly.test.mjs:26:1
+✖ public layout nested aliases remain readonly (406.3601ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(errors.some(error => error.code === 2540))
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-canonical-readonly.test.mjs:28:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

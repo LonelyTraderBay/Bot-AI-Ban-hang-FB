@@ -1,0 +1,95 @@
+{
+  "task": "UI009",
+  "title": "Regression for correct data identity and shop-scope composition",
+  "status": "PASS",
+  "completedAt": "2026-10-03",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "baseline": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTreeHadExistingChanges": true,
+    "inventory": "S01-regression-inventory.md",
+    "identifiedGap": "Existing UI002 checks shop change with normal responses, UI007 checks delayed listOrders in the same shop/customer, and frontend.spec.ts checks general cancellation on shop change. None asserted that the customer secondary orders query could not leak between same-name c1 and b-c1 identities across shops while pending."
+  },
+  "checkpoints": {
+    "C01": "PASS: inventoried 26 directly tagged UI001-UI008 browser tests, fixture sizes, route/role/state matrices, vertical flows, owners and the delayed secondary-query scope gap.",
+    "C02": "PASS: added a Playwright regression that delays listOrders for shop-demo/c1, changes to shop-second/b-c1, and asserts the new request/profile retain the correct shop/customer identity. Existing source already has scope epoch cancellation, shop-change cancellation and scoped query keys; no runtime code change was needed.",
+    "C03": "PASS: UI009 focused case 1/1; related UI009/UI007/FE016/FE023/route empty+error suite 33/33. The new shop profile shows b-DH-1001 and does not show DH-DEMO-PAID-01.",
+    "C04": "PASS: npm run verify exit 0; full rebuilt-demo Chromium E2E 175/175 with route-role 357/357, empty 11/11, route-error 51/51 and production artifact mock isolation PASS.",
+    "C05": "PASS: acceptance, source/evidence fingerprints, test/debug notes, command logs and scope limitations recorded; canonical frontend/product ledgers left unchanged."
+  },
+  "sourceChanges": [
+    "tests/ui009-scope-regression.spec.ts",
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md",
+    "evidence/frontend-ui-improvements/UI009/S01-regression-inventory.md",
+    "evidence/frontend-ui-improvements/UI009/S02-test-debug-notes.md"
+  ],
+  "testEvidence": {
+    "targeted": {
+      "path": "S03-targeted-regression.log",
+      "ui009": "1/1 PASS",
+      "relatedRegressionSuite": "33/33 PASS",
+      "routeEmptyComposition": "11/11 PASS",
+      "routeErrorComposition": "51/51 PASS",
+      "sha256": "9FE640C2039A6D30E99776CE43ABD0C3A8F61B3574218C4928ECA059D5F6B126"
+    },
+    "verify": {
+      "path": "S04-verify-final.log",
+      "exitCode": 0,
+      "generation": "11 outputs, 283 schemas, 210 operations, 54 routes",
+      "sourceChecker": "62 files, 220 operation references, 0 issues",
+      "boundaries": "411 imports, 8/8 negative fixtures, 0 issues",
+      "domainAndMocks": "88/88",
+      "vitest": "72/72",
+      "lintTypecheckProductionBuild": "PASS",
+      "sha256": "AC8BA34D0E0B0BD2E5E391188FA5EA991EF7C6FC91E92E2B0A055F7445DC510E"
+    },
+    "fullE2E": {
+      "path": "S05-full-e2e-final.log",
+      "passed": 175,
+      "failed": 0,
+      "duration": "10.0m",
+      "browser": "Chromium 153 on Windows x64",
+      "roleMatrix": "357/357",
+      "emptyComposition": "11/11",
+      "routeErrorComposition": "51/51",
+      "productionArtifactMockIsolation": "PASS",
+      "sha256": "3191E169A0DF8F9BDE4117B87D939FCDD27D0C4EA7A1AE72513BE2F664509F4D"
+    },
+    "debugHistory": {
+      "path": "S02-test-debug-notes.md",
+      "sha256": "74DE1E10C75182C5306025C269D50F8E03F8D77F71CAA40C88DB22E3E9E99731"
+    }
+  },
+  "inventory": {
+    "path": "S01-regression-inventory.md",
+    "directlyTaggedUITests": 26,
+    "verticalFlows": 4,
+    "fe023StateTests": 5,
+    "routeRoleCases": 357,
+    "routeErrorCases": 51,
+    "sha256": "6EB713ACADF5248C34906EDEC952F38429806EDCE80EB06CD935A2488C61A895"
+  },
+  "measuredDemoMetrics": {
+    "source": "botsales-kit/execution/frontend-evidence/FE025",
+    "browser": "Chromium 153 on Windows x64, 1280x720",
+    "initialRouteGzipBytes": 447015,
+    "largestChunkGzipBytes": 185440,
+    "syntheticCustomerRows": 1004,
+    "pageLimit": 20,
+    "firstPageReadyMs": 342,
+    "scopeNote": "Local built demo with synthetic MSW data; not a multi-device SLO or real API measurement."
+  },
+  "sourceFingerprints": {
+    "tests/ui009-scope-regression.spec.ts": "3C36B7BF3F24A48081FE1DF2A0F19603A69C7241AD9CCEC328914032B43183F3"
+  },
+  "remainingReadinessGaps": [
+    "FE-G05: manual browser zoom, screen-reader and contrast review remains open.",
+    "FE-G09: product-owner acceptance remains open."
+  ],
+  "limitations": [
+    "Evidence covers frontend source and rebuilt React demo with synthetic MSW only; no backend, real provider, staging or production runtime was tested.",
+    "Duplicate valid query requests were observed during the dev component lifecycle; assertions validate every shop/customer parameter pair and rendered identity rather than assuming a fixed request count.",
+    "The production build retains an advisory chunk of 730.75 kB raw / 184.43 kB gzip, below the local 200 KiB gzip chunk budget.",
+    "No FE tracker, frontend task ledger, product-wide plan/progress, OpenAPI, route manifest, design tokens or generated outputs were changed."
+  ]
+}

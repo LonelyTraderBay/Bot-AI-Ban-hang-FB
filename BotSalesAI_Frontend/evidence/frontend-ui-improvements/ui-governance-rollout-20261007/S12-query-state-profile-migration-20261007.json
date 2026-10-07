@@ -1,0 +1,979 @@
+{
+  "schemaVersion": 1,
+  "step": "S12",
+  "capturedAt": "2026-10-06T19:18:36.907Z",
+  "sourceOfTruth": {
+    "policy": "docs/FRONTEND_SPACING_STANDARD.md#SPC-024",
+    "apiCatalog": "apps/web/src/shared/ui/README.md",
+    "sourceRoot": "apps/web/src/modules",
+    "componentOwner": "apps/web/src/shared/ui/components.tsx"
+  },
+  "rule": "An imported QueryState whose consumer subtree contains a primary DataTable, Stats, SectionGrid, Panel, or FormFields uses pendingProfile=section, except inside EditDialog; all other states preserve the inline default.",
+  "counts": {
+    "filesScanned": 18,
+    "filesWithQueryState": 17,
+    "placements": 86,
+    "section": 62,
+    "inline": 24
+  },
+  "fileChanges": [
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "inserted": 5,
+      "beforeSha256": "b0e52dbf3f5a3c0d4c702c1dd14f4ef797aefc307401104a827204dccf69399d",
+      "afterSha256": "cbca27471ea771f325b3577095a6ff30f66b29c711c0138b3678a8dc4c1d40af"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "inserted": 2,
+      "beforeSha256": "33be4fdb2f5012825ecbf4887819e5ddbb6962208942b95c3fb2b24963923bea",
+      "afterSha256": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "inserted": 2,
+      "beforeSha256": "94cff0bf493135b5ccfb847f6af4cc0d8ee6bb213ad3018426b320bf7694ef4b",
+      "afterSha256": "98e8ac7e9600837171d4e9a2d36a7d03978071c4dfc7d87fcc2617655c8c1639"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "inserted": 3,
+      "beforeSha256": "c4f793673056a314d2ebcf60f786b084d52c3a9d95468a445af28052a45b4a9a",
+      "afterSha256": "1f6d62a562b6ec124fb3029fdce8eeb9937d09323abb5a523aad496343a4531b"
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "inserted": 3,
+      "beforeSha256": "d5999b1394250f9b20bb81e6d09aa19ebe0216a095e784e5df5466d7e4a9c371",
+      "afterSha256": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef"
+    },
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "inserted": 9,
+      "beforeSha256": "c979a9cd6198a04d94c62ee4da902932e09baa55f9b010e493faed43c32ce061",
+      "afterSha256": "6edee787cf58f16b01a8135fe2195b83d83178aa5e5b61705e160930618b481b"
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "inserted": 2,
+      "beforeSha256": "f890ff4642778f4ccdefe799c97fa80121aed6ad5539684d2ae7de22607a8418",
+      "afterSha256": "8e292f70195d3f65c62f9a81d0cad8ec44ad677526e2fb59af59bed9e6fbfc17"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "inserted": 3,
+      "beforeSha256": "ee9de1625a2e83d3aa26cb5a5823a8b03797f6c914ee962ed6082922aa3256c0",
+      "afterSha256": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b"
+    },
+    {
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "inserted": 2,
+      "beforeSha256": "2fcbebff7a49e02564d297356abcd6ebe179bfc64a39c2391004770943379850",
+      "afterSha256": "21c786a8280031a029af35e434f7f755b6c81acbab59ca3098d87028aab7aa65"
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "inserted": 2,
+      "beforeSha256": "f95cdad774e3416df3a050b5502efaf80b61bf58ed27f6dc662b4b99748311fd",
+      "afterSha256": "7b5d0a356390cba43b8bf16c162dd499150bee37d353945d552504a1eee2bd1b"
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "inserted": 6,
+      "beforeSha256": "936f79b49878e76e426a311a4a4580ac711ccf5da2fd09ee2d3cf0ab042b3932",
+      "afterSha256": "7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b"
+    },
+    {
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "inserted": 2,
+      "beforeSha256": "996df32ba8b6acd28e64d0fb4590f7ccba81b083a6fdc2843b4fc98279191b43",
+      "afterSha256": "03bdd21513eb173f92b8e416a4f875bdac600cdb0273ea0e9d4c0237fc217dda"
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "inserted": 3,
+      "beforeSha256": "f8e2f5116ecaf364a46e37e02d3b67600435605ef37d38331d1d0f9685f6b118",
+      "afterSha256": "1710a8b4a14e75a91ce608d47567cba8297ccab4a4c6d5cc347a9dce956979e7"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "inserted": 3,
+      "beforeSha256": "a089d4aef6689a53c3c7c9f56f23ea0b742e70936fe170c01f53538222896d5f",
+      "afterSha256": "d1cad2cb0dbbfa618dc6cd5c7096711354feaecb977807037b8c6a2748ed6da7"
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "inserted": 6,
+      "beforeSha256": "66a5d062371c8b042653ef9e00caabd97cf46c51d90438f90cccd16de58687b5",
+      "afterSha256": "137c535a1c086c6e998281e3e9d4620adf9f3d6b41a0e775add49339b6f82bc1"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "inserted": 3,
+      "beforeSha256": "6118548c9ebd7aa3df1f72bfc8d2f0e74246c5a26ea0672a2dfa344b78112bc3",
+      "afterSha256": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754"
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "inserted": 6,
+      "beforeSha256": "61187396573e12f343c97dc7eb9eb39bbcd5caa85b4f07c2eea662062f9e7083",
+      "afterSha256": "2ea39976473d8dfc2a0da5f0ea8b3e7912d098e4e427487fde5b59479091c269"
+    }
+  ],
+  "placements": [
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 22,
+      "column": 227,
+      "profile": "section",
+      "reason": "Primary content owner(s): Panel",
+      "heavyOwners": [
+        "Panel"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 22,
+      "column": 1917,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 51,
+      "column": 64,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 59,
+      "column": 457,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 81,
+      "column": 135,
+      "profile": "section",
+      "reason": "Primary content owner(s): Panel, SectionGrid",
+      "heavyOwners": [
+        "Panel",
+        "SectionGrid"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 81,
+      "column": 1366,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "line": 90,
+      "column": 13,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "line": 114,
+      "column": 149,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable, FormFields, Panel",
+      "heavyOwners": [
+        "DataTable",
+        "FormFields",
+        "Panel"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 48,
+      "column": 1948,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 111,
+      "column": 279,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 111,
+      "column": 360,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 147,
+      "column": 273,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 64,
+      "column": 371,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 103,
+      "column": 9,
+      "profile": "section",
+      "reason": "Primary content owner(s): FormFields, Panel, SectionGrid",
+      "heavyOwners": [
+        "FormFields",
+        "Panel",
+        "SectionGrid"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 117,
+      "column": 35,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 130,
+      "column": 31,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 151,
+      "column": 25,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 181,
+      "column": 13,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 67,
+      "column": 13,
+      "profile": "section",
+      "reason": "Primary content owner(s): Stats",
+      "heavyOwners": [
+        "Stats"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 89,
+      "column": 30,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 98,
+      "column": 17,
+      "profile": "section",
+      "reason": "Primary content owner(s): SectionGrid",
+      "heavyOwners": [
+        "SectionGrid"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 107,
+      "column": 17,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 105,
+      "column": 326,
+      "profile": "section",
+      "reason": "Primary content owner(s): Panel, Stats",
+      "heavyOwners": [
+        "Panel",
+        "Stats"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 126,
+      "column": 305,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 132,
+      "column": 213,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 153,
+      "column": 360,
+      "profile": "section",
+      "reason": "Primary content owner(s): FormFields, Panel, Stats",
+      "heavyOwners": [
+        "FormFields",
+        "Panel",
+        "Stats"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 199,
+      "column": 312,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 206,
+      "column": 213,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 241,
+      "column": 525,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 248,
+      "column": 101,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 256,
+      "column": 82,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 263,
+      "column": 611,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 264,
+      "column": 642,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 264,
+      "column": 689,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 293,
+      "column": 167,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 295,
+      "column": 113,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 34,
+      "column": 13,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 76,
+      "column": 13,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 237,
+      "column": 13,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 307,
+      "column": 13,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 67,
+      "column": 17,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 125,
+      "column": 9,
+      "profile": "section",
+      "reason": "Primary content owner(s): FormFields, Panel, SectionGrid",
+      "heavyOwners": [
+        "FormFields",
+        "Panel",
+        "SectionGrid"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 160,
+      "column": 33,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 317,
+      "column": 23,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 317,
+      "column": 70,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "line": 28,
+      "column": 382,
+      "profile": "section",
+      "reason": "Primary content owner(s): Panel",
+      "heavyOwners": [
+        "Panel"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "line": 42,
+      "column": 216,
+      "profile": "section",
+      "reason": "Primary content owner(s): Panel, SectionGrid",
+      "heavyOwners": [
+        "Panel",
+        "SectionGrid"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 120,
+      "column": 125,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 151,
+      "column": 153,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 43,
+      "column": 19,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 43,
+      "column": 66,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 117,
+      "column": 548,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 153,
+      "column": 324,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable, Panel",
+      "heavyOwners": [
+        "DataTable",
+        "Panel"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 153,
+      "column": 2110,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 183,
+      "column": 175,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 20,
+      "column": 310,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 115,
+      "column": 1352,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 124,
+      "column": 383,
+      "profile": "section",
+      "reason": "Primary content owner(s): FormFields",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 56,
+      "column": 9,
+      "profile": "section",
+      "reason": "Primary content owner(s): Stats",
+      "heavyOwners": [
+        "Stats"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 79,
+      "column": 13,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 181,
+      "column": 13,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 210,
+      "column": 13,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 248,
+      "column": 17,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 261,
+      "column": 17,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 289,
+      "column": 13,
+      "profile": "inline",
+      "reason": "Small, conditional, or intrinsic state; preserve natural height",
+      "heavyOwners": []
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 16,
+      "column": 506,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 168,
+      "column": 205,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable, Panel, SectionGrid",
+      "heavyOwners": [
+        "DataTable",
+        "Panel",
+        "SectionGrid"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 265,
+      "column": 55,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 45,
+      "column": 293,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 54,
+      "column": 134,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 120,
+      "column": 2454,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 143,
+      "column": 112,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 217,
+      "column": 291,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 272,
+      "column": 182,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "DataTable",
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 324,
+      "column": 421,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 339,
+      "column": 25,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 361,
+      "column": 65,
+      "profile": "inline",
+      "reason": "EditDialog keeps a compact inline loading state",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 157,
+      "column": 17,
+      "profile": "section",
+      "reason": "Primary content owner(s): FormFields, Panel",
+      "heavyOwners": [
+        "FormFields",
+        "Panel"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 193,
+      "column": 32,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable, Panel",
+      "heavyOwners": [
+        "DataTable",
+        "Panel"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 223,
+      "column": 9,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable, Panel, SectionGrid, Stats",
+      "heavyOwners": [
+        "DataTable",
+        "Panel",
+        "SectionGrid",
+        "Stats"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 51,
+      "column": 387,
+      "profile": "section",
+      "reason": "Primary content owner(s): SectionGrid",
+      "heavyOwners": [
+        "SectionGrid"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 171,
+      "column": 318,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 189,
+      "column": 600,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 212,
+      "column": 281,
+      "profile": "section",
+      "reason": "Primary content owner(s): FormFields",
+      "heavyOwners": [
+        "FormFields"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 216,
+      "column": 412,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable",
+      "heavyOwners": [
+        "DataTable"
+      ]
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 262,
+      "column": 135,
+      "profile": "section",
+      "reason": "Primary content owner(s): DataTable, FormFields, Panel",
+      "heavyOwners": [
+        "DataTable",
+        "FormFields",
+        "Panel"
+      ]
+    }
+  ]
+}

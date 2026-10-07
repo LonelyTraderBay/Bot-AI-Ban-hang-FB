@@ -1,0 +1,43 @@
+{
+  "workItem": "UI028.W06",
+  "status": "PRE_CODE_CONTRACT",
+  "capturedAt": "2026-10-05",
+  "scope": "Frontend-only shared PageHeader, Panel, Stat, and Stats layout ownership. Preserve current feature behavior and user-staged edits; no backend, full-product tracker, or generated source changes.",
+  "sourceHashesBeforeCode": {
+    "apps/web/src/shared/ui/components.tsx": "1192cd407b206d1398dd45896703a493fb1bdc61",
+    "apps/web/src/shared/ui/layout.ts": "1731c01e3e822226cd26c40e04e40de0899b82e2",
+    "docs/FRONTEND_SPACING_STANDARD.md": "750fa5672e555c12bfbef9f27f0f5e0773d486df",
+    "scripts/check-layout.mjs": "795a40cf554792a99c251ebb6596bf8145ae38ba"
+  },
+  "uiDesignContract": {
+    "routesAndProfiles": [
+      { "route": "/s/shop-demo/orders", "profile": "collection/table" },
+      { "route": "/s/shop-demo/orders/new", "profile": "form/detail" },
+      { "route": "/s/shop-demo/overview", "profile": "dashboard/statistics" }
+    ],
+    "breakpoints": [320, 390, 767, 768, 1024, 1279, 1280, 1440, 1920],
+    "spacingOwners": {
+      "PageHeader content-to-actions": "PageHeader; semantic 16px responsive flow gap",
+      "PageHeader title-to-description": "PageHeader; semantic 8px",
+      "PageHeader to following section": "PageHeader; semantic 24px",
+      "Panel header inset": "Panel; horizontal/top inset 16px mobile and 24px tablet/desktop; bottom edge owns 16px header-to-body separation",
+      "Panel body inset": "Panel only when bodyMode=inset; 16px mobile and 24px tablet/desktop; bodyMode=flush remains the compatibility default for tables/toolbars/pagers",
+      "Panel caller section spacing": "Panel semantic beforeGap/afterGap presets; caller may select section 24px or surface 16px, never provide a spacing literal",
+      "Stat surface inset": "Stat; 16px mobile and 24px tablet/desktop",
+      "Stat title/value/note": "Stat; semantic 8px, 12px, and 8px respectively",
+      "Stats card-to-card and next section": "Stats; semantic 16px grid gutter and one 24px trailing section gap"
+    },
+    "geometry": "Panel caller-specific display/flexDirection/height/gridColumn stays geometry-only under a narrow typed prop; geometry does not create a new spacing scale.",
+    "typographyAndStates": "Keep theme typography, min-width/long Vietnamese text, titles/actions wrapping, responsive grid, table/form state, and all permissions/data behavior unchanged.",
+    "doubleInsetRule": "Panel body owns the inset only when bodyMode=inset. Existing flush table/content remains flush; do not combine Panel inset with child p16/p24. Header bottom owns the 16px separation when a titled inset body follows.",
+    "verification": "Run TypeScript, layout fixtures/strict debt report, full verify, and browser measurements at representative 1280x900 and 390x844 viewports. Verify header/body/gutter values, no horizontal document overflow, form/table/dashboard rendering, and preserved staged diff. Strict may remain FAIL only for assigned W07-W25 migration debt; never report it as PASS."
+  },
+  "baselineRenderedMeasurements": {
+    "ordersHeader": { "viewport": "1280x900", "columnGap": "16px", "afterMargin": "24px", "documentWidthEqualsViewport": true },
+    "orderFormHeader": { "viewport": "1280x900", "columnGap": "16px", "afterMargin": "24px", "documentWidthEqualsViewport": true },
+    "dashboardStatsDesktop": { "viewport": "1280x900", "gutter": "16px", "afterMargin": "24px", "statInset": "24px", "titleValueGap": "12px", "documentWidthEqualsViewport": true },
+    "dashboardStatsMobile": { "viewport": "390x844", "gutter": "16px", "oneColumn": true, "documentWidthEqualsViewport": true },
+    "titledPanelHeaderBaseline": { "viewport": "1280x900", "padding": "24px", "subtitleGap": "4px" }
+  },
+  "preservationNote": "At capture, components.tsx and all identified Panel caller modules already contained staged user work. Edits are constrained to the four shared owners, the typed layout bridge, and exact Panel spacing/geometry props at existing callsites; no staging or index rewrite is permitted."
+}

@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W17",
+  "capturedAt": "2026-10-06",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": ["R23", "R24", "R25"],
+  "source": {
+    "path": "apps/web/src/modules/knowledge/index.tsx",
+    "beforeSha256": "ffce0192d394f55b1f2c98336bb1502f27c8b9be0a678fca1ba9586982773785",
+    "afterSha256": "27a2135f2759c232a00b107efae8a947896ef8dee765c8186f117395bdbcd84d",
+    "preExistingStagedAndUnstagedChangesAtIntake": true
+  },
+  "layout": {
+    "globalSpacingFindingsBefore": 251,
+    "globalSpacingFindingsAfter": 232,
+    "knowledgeOwnerFindingsBefore": 19,
+    "knowledgeOwnerFindingsAfter": 0,
+    "removedOccurrences": 19,
+    "removedIdentities": 9,
+    "addedOccurrences": 0,
+    "addedIdentities": 0,
+    "nonKnowledgeIdentityChanges": 0,
+    "layoutFixtures": "PASS 9/9",
+    "strictGlobalGate": "FAIL_WITH_KNOWN_MIGRATION_DEBT; 232 findings remain, assigned to W18-W25"
+  },
+  "checks": {
+    "generator": "PASS; 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "source": "PASS; 66 files, 220 operation calls, 54 routes, 0 issues; checker fixtures 3/3",
+    "boundaries": "PASS; 66 files, 448 imports, 10/10 negative fixtures, 0 issues",
+    "lint": "PASS; eslint apps/web/src --max-warnings 0",
+    "typecheck": "PASS; tsc -p apps/web/tsconfig.json --noEmit",
+    "domainAndNetwork": "PASS; 75 simulator + 13 network checks, 88/88",
+    "vitest": "PASS; 88/88 across 10 files",
+    "productionBuild": "PASS; Vite production build, 2056 modules",
+    "fe017SourceMap": "PASS; 4/4 contract source-map tests",
+    "targetedPlaywright": "PASS; 24/24 across Chromium 12/12 and Firefox 12/12; FE017/FE027 behavior plus R23/R24/R25 responsive/dialog layout",
+    "layoutRegression": "PASS; routes at 320/390/768/1280/1440 px and dialogs at 320/390/1280 px",
+    "visualSourceReview": "PASS_FOR_W17_SPACING_DELTA; source review and paired Chromium captures; not an accessibility certification",
+    "fullVerify": "Exit 1 only at final strict layout source scan; all preceding verify stages passed and 232 known findings remain in W18-W25"
+  },
+  "browserEvidence": {
+    "engine": "Chromium for paired visual captures; Chromium and Firefox for Playwright",
+    "pairedObservations": "12 before + 12 after across R23/R24/R25 at 390x844 and 1280x900",
+    "pageErrors": 0,
+    "captureWrites": 0,
+    "syntheticFixtureSetupWrites": "2 POST /api/v2/shops/shop-demo/feedback per capture run, recorded separately; these seed R25 and are excluded from the read-only captures",
+    "horizontalOverflow": "none observed; scrollWidth equals clientWidth in all 12 after observations",
+    "dialogBounds": "all captured dialogs inside viewport; 326px at 390px viewport and 768px at 1280px viewport"
+  },
+  "runner": {
+    "firstWrapperAttempt": "npm.cmd run verify could not resolve nested npm under the host's oversized PATH and stopped before checks; log retained",
+    "verifiedRetry": "Locked npm CLI invoked with a PATH capped at 6000 characters, matching scripts/run-e2e.mjs host workaround",
+    "fullVerifyExitCode": 1,
+    "fullVerifyLog": "full-verify-retry-current-20261006.log",
+    "initialWrapperFailureLog": "full-verify-current-20261006.log"
+  },
+  "verdict": {
+    "ui": "PASS",
+    "architecture": "PASS_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "task": "DONE_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "limitations": [
+      "The strict global spacing gate remains red until W18-W25 migrate the remaining 232 findings; its threshold was not changed.",
+      "The layout checker currently enforces spacing only; visual-token source checking remains scheduled for W26-W27, so this task has a manual VISUAL_SOURCE_REVIEW, not an automated visual-token PASS.",
+      "Evidence is local React with synthetic in-memory MSW; it does not establish Backend/provider integration, hosted CI, staging, production behavior, screen-reader results, or owner acceptance."
+    ]
+  },
+  "evidence": [
+    "design-contract-pre-spacing-current-20261006.md",
+    "layout-before-spacing-current-20261006.json",
+    "layout-after-spacing-current-20261006.json",
+    "layout-delta-current-20261006.json",
+    "render-before-spacing-current-20261006.json",
+    "render-after-spacing-current-20261006.json",
+    "knowledge-targeted-e2e-current-20261006.log",
+    "layout-fixtures-current-20261006.log",
+    "domain-current-20261006.log",
+    "vitest-current-20261006.log",
+    "full-verify-current-20261006.log",
+    "full-verify-retry-current-20261006.log",
+    "visual-source-review-current-20261006.md"
+  ]
+}

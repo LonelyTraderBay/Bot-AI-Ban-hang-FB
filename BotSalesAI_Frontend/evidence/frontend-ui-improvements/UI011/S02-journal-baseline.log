@@ -1,0 +1,53 @@
+
+[WebServer] (node:40712) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:11560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\ui011-date-time.spec.ts:29:1 › UI011 journal effective date defaults to the active shop calendar date
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-38380-b2d61f39-1675-4f95-b701-507d3e9b42d0\deps\react-dom_client.js?v=5f7388d9 as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui011-date-time.spec.ts:29:1 › UI011 journal effective date defaults to the active shop calendar date 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByRole('textbox', { name: 'Ngày hiệu lực' })
+    Expected: "2026-10-01"
+    Received: "2026-09-29"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByRole('textbox', { name: 'Ngày hiệu lực' }) with timeout 5000ms
+      - waiting for getByRole('textbox', { name: 'Ngày hiệu lực' })
+        14 × locator resolved to <input id="«r18»" type="date" value="2026-09-29" aria-invalid="false" class="MuiInputBase-input MuiOutlinedInput-input css-1txw9lp-MuiInputBase-input-MuiOutlinedInput-input"/>
+           - unexpected value "2026-09-29"
+
+
+      36 |     await page.clock.runFor(500);
+      37 |
+    > 38 |     await expect(page.getByRole('textbox', { name: 'Ngày hiệu lực' })).toHaveValue('2026-10-01');
+         |                                                                        ^
+      39 | });
+      40 |
+      41 | test('UI011 shipment event input and API instant use the shop timezone, not browser timezone', async ({ browser }) => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui011-date-time.spec.ts:38:72
+
+    Error Context: test-results\ui011-date-time-UI011-jour-ffe61-e-active-shop-calendar-date-chromium\error-context.md
+
+    Error Context: test-results\ui011-date-time-UI011-jour-ffe61-e-active-shop-calendar-date-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui011-date-time-UI011-jour-ffe61-e-active-shop-calendar-date-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui011-date-time-UI011-jour-ffe61-e-active-shop-calendar-date-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\ui011-date-time.spec.ts:29:1 › UI011 journal effective date defaults to the active shop calendar date 

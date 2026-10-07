@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W30",
+  "recordedAt": "2026-10-06",
+  "scope": "Frontend-only; local React demo with synthetic MSW",
+  "results": {
+    "viewportReflow": {
+      "status": "PASS",
+      "evidence": "W29: 9 viewport widths, 7 representative profiles, Chromium and Firefox, 18 cases, 0 issue/page error",
+      "path": "../W29/reflow-approved-current-20261006.log"
+    },
+    "domTextAndSpacingStress": {
+      "status": "PASS",
+      "scenarios": 5,
+      "browsers": [
+        "Chromium",
+        "Firefox"
+      ],
+      "passed": 10,
+      "failed": 0,
+      "method": "Visible text elements receive a direct 2x computed font-size style, with synthetic letter/word spacing and line-height overrides",
+      "evidence": "stress-final-20261006-rerun.log"
+    },
+    "nativeTextResize200": {
+      "status": "PASS",
+      "scenarios": 5,
+      "passed": 5,
+      "failed": 0,
+      "browser": "Playwright-bundled Firefox 155.0, isolated fresh profile",
+      "method": "Firefox native Zoom Text Only; zoomFullPage=false and zoomFactor=2, with fixed CSS viewport and device-pixel ratio",
+      "evidence": "native-text-only-200-current-20261006.json",
+      "runner": "capture-native-text-only-200-current-20261006.mjs",
+      "visualReview": "native-text-only-200-visual-review-current-20261006.md"
+    },
+    "actualBrowserZoom200": {
+      "status": "PASS",
+      "scenarios": 5,
+      "passed": 5,
+      "failed": 0,
+      "browser": "Playwright-bundled Chromium 153.0.8010.12, headed, fresh temporary profile",
+      "method": "Temporary Manifest V3 extension applies chrome.tabs.setZoom(tabId, 2) and verifies chrome.tabs.getZoom(tabId) === 2; no CSS/device-scale/viewport emulation",
+      "effectiveCssViewport": "640x360 from a 1280x720 baseline",
+      "devicePixelRatio": 2,
+      "horizontalOverflow": 0,
+      "clippedTextTargets": 0,
+      "pageErrors": 0,
+      "writeRequests": 0,
+      "evidence": "actual-browser-zoom-200-current-20261006.json",
+      "runner": "capture-actual-browser-zoom-200-current-20261006.mjs"
+    },
+    "actualBrowserZoomCapabilityCheck": "native-browser-zoom-capability-current-20261006.json"
+  },
+  "productFixes": [
+    "Responsive short label for the demo status chip prevents toolbar overflow at 320px while preserving its accessible name",
+    "Long input labels and status chips may wrap rather than clip",
+    "Keyboard focus ring now covers navigation list items",
+    "Avatar minimum dimensions grow with the text line-height tokens to prevent clipping"
+  ],
+  "verification": {
+    "npmRunVerify": "PASS",
+    "exitCode": 0,
+    "generator": "11 outputs, 283 schemas, 210 operations, 54 routes",
+    "unit": "88/88",
+    "layout": "68 files, 0 findings, 1 used exception",
+    "visualTokens": "68 files, 0 findings",
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "productionBuildModules": 2057,
+    "verifyLog": "verify-current-20261006.log"
+  },
+  "limitations": [
+    "DOM text scaling does not prove native text resize; Firefox native text-only and Chromium browser zoom were tested separately",
+    "Visual review covers the five recorded synthetic scenarios only; it does not establish screen-reader conformance, all routes, or all browsers"
+  ],
+  "noTrackerWrites": true
+}

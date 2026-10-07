@@ -1,0 +1,92 @@
+
+[WebServer] (node:43768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+
+(node:7720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/2] [chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-40096-951994fe-7caa-440c-aaa0-4306354f8406\deps\react-dom_client.js?v=43a5184f as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 7
+    + Received  + 1
+
+    - Array [
+    -   "evaluation-10013",
+    -   "evaluation-10010",
+    -   "evaluation-10007",
+    -   "evaluation-10004",
+    -   "evaluation-10001",
+    - ]
+    + Array []
+
+      426 |     await detail.getByRole('button', { name: 'Đóng' }).last().click();
+      427 |     await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(firstPage.page.nextCursor);
+    > 428 |     expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
+          |                                              ^
+      429 |
+      430 |     await page.goBack();
+      431 |     await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBeNull();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe018.spec.ts:428:46
+
+    Error Context: test-results\fe018-UI004-25-evaluations-a5539-arch-and-browser-Back-state-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe018-UI004-25-evaluations-a5539-arch-and-browser-Back-state-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe018-UI004-25-evaluations-a5539-arch-and-browser-Back-state-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:40320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/2] [chromium] › tests\fe018.spec.ts:451:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+  2) [chromium] › tests\fe018.spec.ts:451:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('alert').filter({ hasText: 'Lỗi dịch vụ mô phỏng.' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('alert').filter({ hasText: 'Lỗi dịch vụ mô phỏng.' }) with timeout 5000ms
+      - waiting for getByRole('alert').filter({ hasText: 'Lỗi dịch vụ mô phỏng.' })
+
+
+      473 |     expect(failedResponse.status()).toBe(503);
+      474 |     await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(failedCursor);
+    > 475 |     await expect(page.getByRole('alert').filter({ hasText: 'Lỗi dịch vụ mô phỏng.' })).toBeVisible();
+          |                                                                                        ^
+      476 |     await expect(page.getByRole('row')).toHaveCount(0);
+      477 |
+      478 |     const retryResponseWait = page.waitForResponse(response => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe018.spec.ts:475:88
+
+    Error Context: test-results\fe018-UI004-105-evaluation-a8a74-he-failing-cursor-for-retry-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe018-UI004-105-evaluation-a8a74-he-failing-cursor-for-retry-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe018-UI004-105-evaluation-a8a74-he-failing-cursor-for-retry-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state 
+    [chromium] › tests\fe018.spec.ts:451:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry 
+EXIT_CODE=1

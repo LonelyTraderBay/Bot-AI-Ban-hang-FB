@@ -1,0 +1,83 @@
+{
+  "workItem": "UI028.W08",
+  "status": "PRE_CODE_CONTRACT",
+  "capturedAt": "2026-10-05",
+  "baselineHead": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "scope": "Frontend shared UI states and dialogs: Empty, QueryState, ErrorNotice, PartialDataNotice, CapabilityUnavailable, EditDialog, ConfirmDialog. Change only semantic spacing ownership and rendered geometry; preserve state semantics and mutation invariants.",
+  "sourceHashesBeforeCode": {
+    "apps/web/src/shared/ui/components.tsx": "209db1a119d2620041057b6e0f01f35838c35c5790074d3db7d87314ea922193",
+    "apps/web/src/shared/ui/layout.ts": "a8a0c2c4fd5513e6bd8b437e78374682f63654f9fa57454923676681f5848983",
+    "apps/web/tests/components.test.tsx": "de5c9c26af857f7623f136292f27d7deb097da70b7061a8ff8a0dc786ae108fc",
+    "scripts/check-layout.mjs": "a5dc5614b3f4f83e21318df23de39970cfd686427f7c63f69d55e1a4bcfcbf84",
+    "tests/layout-checker.test.mjs": "43c755f96be9bcf522f1553144f0cb7bcde1bbf6ffeb6e089918f4784759a6ac",
+    "package.json": "a83a07356614ac92119ee392813e7e374d90d0316c7d291342e0da0feeefbd5d",
+    "docs/FRONTEND_SPACING_STANDARD.md": "602f2bb366b25e807a8a83df4d78ee9a406ffdfbb8186c7a01b78e75e14249a7"
+  },
+  "uiDesignContract": {
+    "routesAndProfiles": [
+      {
+        "routeId": "R17",
+        "states": [
+          "pending",
+          "error without data",
+          "refresh error with data",
+          "background update"
+        ],
+        "route": "/s/shop-demo/orders",
+        "profile": "collection/loading/error/retry/stale-data"
+      },
+      {
+        "routeId": "R07",
+        "states": [
+          "dialog closed/open",
+          "dirty discard prompt",
+          "field error"
+        ],
+        "route": "/s/shop-demo/customers",
+        "profile": "collection/create EditDialog/422/dirty-guard"
+      },
+      {
+        "routeId": "R29",
+        "states": [
+          "confirm open",
+          "reason required",
+          "busy/error"
+        ],
+        "route": "/s/shop-demo/integrations/channels",
+        "profile": "detail/card/ConfirmDialog"
+      },
+      {
+        "routeId": "R30",
+        "states": [
+          "empty",
+          "loaded",
+          "create dialog"
+        ],
+        "route": "/s/shop-demo/integrations/ai",
+        "profile": "empty/catalog/create EditDialog"
+      }
+    ],
+    "breakpoints": [
+      320,
+      390,
+      767,
+      768,
+      1024,
+      1280,
+      1440
+    ],
+    "spacingOwners": {
+      "empty state content": "Empty; semantic gap16, inline inset16, responsive block inset32 mobile/48 desktop from the existing semantic role",
+      "loading state content": "QueryState; semantic gap16, minHeight remains geometry",
+      "notice after-content": "one semantic notice owner; block-end16 for error/partial/stale/update notices",
+      "notice internal guidance": "ErrorNotice; semantic block-start8 for guidance/unknown command details",
+      "dialog viewport": "EditDialog; responsive outer margin16 mobile/32 desktop",
+      "dialog content": "DialogContent; responsive all-side inset16 mobile/24 desktop",
+      "dialog description": "EditDialog; bottom gap16",
+      "dialog actions": "DialogActions; inset16, explicit gap8, no duplicate library margin"
+    },
+    "stateAndInteraction": "Keep role=status/alert and live announcements; preserve no-retry semantics for 403/404; retry for transient and stale-data errors; focus matching invalid field on 422; preserve unknown-result warning, guidance, copyable command id, dirty draft baseline/commit, close/Escape/busy guard, discard confirmation and focus return; preserve ConfirmDialog reason validation and async close only after successful confirm.",
+    "verification": "Before code capture existing dialog geometry at 1280x900 and 390x844, record screenshot/DOM metrics and observe the R30 Empty state when present. After code run 9 layout fixtures, shared components Vitest, full verify, and Chromium compare opened create/edit/confirm dialogs at the same viewports. Assert spacing roles, viewport bounds, accessible name/focus/error state, no document overflow or page errors; strict global count may only remove W08-owned findings. Empty state block inset follows the pre-existing bridge role: 32px mobile and 48px desktop.",
+    "preservation": "Do not alter dirty-guard, mutation request, permission, query retry, role/live-region, focus management or generated/API contracts. Keep DialogContent and action ownership explicit; no double inset or generic style prop."
+  }
+}

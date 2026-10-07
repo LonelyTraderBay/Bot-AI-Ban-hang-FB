@@ -1,0 +1,37 @@
+FE006.S03 keyboard, zoom and non-color status evidence
+executedAt=2026-10-06T06:10:17.346Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test; exitCode=0; unit=93/93
+browserCommand=node botsales-kit/execution/frontend-evidence/FE006/capture-s03-actual-browser-zoom-spc059-20261006.mjs; result=PASS; scenarios=5/5
+CHECK actual browser zoom: PASS
+Fresh headed Chromium profile used chrome.tabs.setZoom(2) and independently read getZoom(2) across five scenarios.
+CHECK reflow and clipping: PASS
+All five route/state scenarios retained a 640 CSS px viewport with no page overflow, text clipping, missing targets, page errors or synthetic write requests.
+CHECK keyboard focus: PASS
+Each scenario used keyboard Tab after focusing its primary target and measured a visible solid focus outline after zoom.
+CHECK state is not color-only: PASS
+Shared status chip renders a readable text label via label(value) in addition to its semantic color.
+CHECK unit regression: PASS
+Current registered local frontend test log passed 93/93 across 10 files.
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no backend, persistence or owner approval claimed.
+sourceSnapshotSha256=32eddde0ff922f3778c766819afec096790c09a2b044e1d6548d09ba5972c9c6
+SOURCE AGENTS.md sha256=5ce332e1cf4b96c61cd7546669a13577672e3cc3c01ebd78230f96aa6b027fab
+SOURCE AI_RULES.md sha256=1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3
+SOURCE apps/web/src/app/Shell.tsx sha256=f52c5f9b676b583b1160f3bff4b7655cf43721a09009d5ce33a2f007a14d417f
+SOURCE apps/web/src/app/bootstrap.css sha256=248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89
+SOURCE apps/web/src/app/tokens.css sha256=f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca
+SOURCE apps/web/src/modules/catalog/index.tsx sha256=790d840a250c401163970e503beb37b5e14c5541fb1f4233a494085be515caa9
+SOURCE apps/web/src/modules/inbox/index.tsx sha256=be9a9c5d9f22ffb7b8a048d0de375e94e1dabaf96880f225420b0d1ecb49bf50
+SOURCE apps/web/src/modules/reports/index.tsx sha256=fb7c9eaf4c66507bd83a82625cc52e5b2d29923999c8f02bdf65f611d251594f
+SOURCE apps/web/src/shared/ui/components.tsx sha256=a87cf998f5dce3b234210ed08ba33f957c243b07b5bfe3eef7f6c82fc125e5f4
+SOURCE apps/web/src/shared/ui/layout.ts sha256=b8e97da448a469f21bafe7c5c5ffadacd81cbd5d022484e4cc56d1a9afb6915f
+SOURCE apps/web/src/shared/ui/theme.ts sha256=dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532
+SOURCE botsales-kit/contracts/route-manifest.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S03-unit-spc059-current-20261006.log sha256=ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4
+SOURCE botsales-kit/execution/frontend-evidence/FE006/S03-after-spc059-zoom-20261006.json sha256=cdf45162e53173a7d5b5c1941d5671a6ad95bdbeb1dc6182b4571c64bc9276b1
+SOURCE botsales-kit/execution/frontend-evidence/FE006/S03-after-spc059-zoom-run.log sha256=c6d0b1129d230a94d5347afdba02731d43258d87f896d1042cb3a451ffd42084
+SOURCE botsales-kit/execution/frontend-evidence/FE006/capture-s03-spc059-refresh-20261006.mjs sha256=901cfd6ac0fc7b9df8613ef3c7602a1ec189d7bb02fd9ed7e8f920670701bba8
+SOURCE docs/FRONTEND_SPACING_STANDARD.md sha256=25d46b8456d723648064d98c6a5da11d6b1ec6b68c9a1f4252632775ac10cb0e
+SOURCE evidence/frontend-ui-improvements/UI028/W30/design-contract-pre-stress-current-20261006.md sha256=359fad0f5b642b39c237ce0f7bd236f7cafa4f520acee5956a0996ce7d8fa6ee
+SOURCE tests/ui028-w30-stress.spec.ts sha256=8d20f03c652f383194aec0e368a7e71f33e73d3230edf4ee3e0cbe1a07a1fbbd
+reviewer=Codex self-review; no independent peer review claimed

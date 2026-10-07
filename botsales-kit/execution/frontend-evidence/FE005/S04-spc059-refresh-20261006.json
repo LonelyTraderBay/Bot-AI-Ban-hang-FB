@@ -1,0 +1,128 @@
+{
+  "taskId": "FE005",
+  "stepId": "S04",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-06T06:06:44.343Z",
+  "sourceRevision": "HEAD e68cb65 on main plus current frontend working tree",
+  "expected": "Synthetic transport fixtures cover success, 202, 409, 412, 422, 428, 429, timeout, invalid schema and nullable/optional fields; errors retain user input and accepted work is not treated as complete.",
+  "observed": "Registered unit suite 93/93 and focused transport suite 22/23 passed. Chromium synthetic-422 form-retention regression passed 1/1. All required statuses and uncertainty cases are present in source fixtures.",
+  "commandId": "unit",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / local frontend test toolchain",
+    "details": "Unit tests use synthetic response fixtures. One Chromium Playwright test intercepts a synthetic 422; no backend or provider was exercised.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 6,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE005/S04-spc059-refresh-20261006.log",
+  "logSha256": "f16ab5c2219eee5259edbadbba71c37489c9fd72fca31d0192f67003b6596ff4",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "4986739ee8ddf673d0d94a0702e7251c087e69824b88e37b5ec644ddf72fa39e"
+    },
+    {
+      "path": "apps/web/src/shared/api/validation.ts",
+      "sha256": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "b815743fd0a61b13ea6b387beb6052281b905bb256dd4241f01d4cb9ee7e798e"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-focused-spc059-current-20261006.log",
+      "sha256": "320b35797f7f9abc35245c67f89cdf5ca7fd5d8740d871b12a0f27595f55c0bd"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-unit-spc059-current-20261006.log",
+      "sha256": "ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S04-browser-422-spc059-current-20261006.log",
+      "sha256": "3c65d40f96f3e74b585ba5fde2226e3dd5e1785f0687849e0f13b5d21fdde591"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/capture-s04-spc059-refresh-20261006.mjs",
+      "sha256": "0025a657af4a0321ca3f9fbe19a5d1eac793f052defd6687cfd2729d4df92f75"
+    },
+    {
+      "path": "package.json",
+      "sha256": "729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88"
+    },
+    {
+      "path": "tests/fe017-validation.spec.ts",
+      "sha256": "44f86fc257a9dd645b0255562bff0c1177801a330a92c4dd4f7872b7d4e87e98"
+    },
+    {
+      "path": "tests/session/demo-server.mjs",
+      "sha256": "7bb5fbd500c01a503079367fef8711a9f46d3b4f118794e38c05895fe1f06cef"
+    }
+  ],
+  "sourceSnapshotSha256": "05b2649a766fbb8252aefc007d7977ced6e3fecebef3222855f27386b98b991e",
+  "commandResults": [
+    {
+      "commandId": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE005/S03-unit-spc059-current-20261006.log",
+      "logSha256": "ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4"
+    },
+    {
+      "command": "node.exe node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/api-client.test.tsx",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE005/S03-api-focused-spc059-current-20261006.log",
+      "logSha256": "320b35797f7f9abc35245c67f89cdf5ca7fd5d8740d871b12a0f27595f55c0bd"
+    },
+    {
+      "command": "node.exe node_modules/@playwright/test/cli.js test --config=playwright.config.ts tests/fe017-validation.spec.ts --project=chromium --reporter=line --timeout=45000",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE005/S04-browser-422-spc059-current-20261006.log",
+      "logSha256": "3c65d40f96f3e74b585ba5fde2226e3dd5e1785f0687849e0f13b5d21fdde591"
+    }
+  ],
+  "responseMatrix": {
+    "statuses": [
+      200,
+      202,
+      409,
+      412,
+      422,
+      428,
+      429,
+      "timeout",
+      "schema-invalid",
+      "optional-null"
+    ],
+    "fullUnitTests": 91,
+    "focusedTransportTests": 23,
+    "synthetic422ChromiumTests": 1,
+    "fieldErrorsPreserveForm": true,
+    "accepted202IsNotCompletion": true,
+    "liveBackendUsed": false
+  }
+}

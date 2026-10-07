@@ -1,0 +1,95 @@
+{
+  "planId": "FE-UI-FOLLOWUP-20261002",
+  "item": "UI021",
+  "recordedAt": "2026-10-03",
+  "owner": "Codex",
+  "status": "IN_PROGRESS",
+  "checkpointCount": "4/5",
+  "scope": "Current React source at apps/web/src; frontend design audit provenance and UI/architecture crosswalk only. No backend, product/FE ledger, root premium-audit.json or production claim.",
+  "revision": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "workingTree": "S07 reran the strict React-only scanner against the current post-R26 source; the same 13 crosswalked anchors remain and the scanner still exits 1. UI015 is now complete and current full local E2E is S20 188/188. The crosswalked source regions were rechecked; unrelated dirty work remains un-attributed."
+  },
+  "pairedAcceptance": {
+    "ui": "PASS for 13/13 scanner anchors crosswalked to actual route links, handlers, file-input labels, downloads or submit behavior. A separate customers permission-composition CTA edge is unverified because current mock role presets cannot represent privacy.manage without customers.read.",
+    "architecture": "PRESERVED: fresh boundary check 64 files/427 imports/0 issues, 8/8 negative fixtures; one QueryClient, Router and theme; no source/config/contracts/generated output changes to silence the scanner.",
+    "pairingRule": "UI semantics and architecture ownership were reviewed within UI021. Scanner false positives remain visible in its exit status; no allowlist or fake handler is added."
+  },
+  "checkpoints": {
+    "C01": "PASS — historic 12-finding inventory remains in S01; current 13-finding scope and anchors are recorded in S05 crosswalk.",
+    "C02": "PASS — current handlers/routes/file inputs/downloads/submit semantics crosswalked; architecture preserved. Permission-composition CTA remains explicitly unverified.",
+    "C03": "PASS — current-source regressions: 44/44 Chromium browser cases and 17/17 shared UI tests in S03.",
+    "C04": "PARTIAL — current S07 strict run on apps/web/src has 13 affordance.actionless-button errors, 0 warnings, 0 unresolved, exit 1. S05 crosswalk maps all 13 anchors to real RouterLink/handler/file-input/download/submit semantics, but does not convert the scanner exit to PASS. No false-positive allowlist or fake action was added.",
+    "C05": "PASS — S07 report/log, original S05 runner/version/config provenance, source crosswalk, S20 current E2E, updated plan/context/report and refreshed SHA-256 fingerprints are linked. The root premium-audit.json was unchanged during S07."
+  },
+  "verification": {
+    "strictAudit": "NOT_PASS; current rerun S07 exit 1, strict mode, scope apps/web/src, 13 errors/violations, 0 warnings, 0 unresolved; all findings rule affordance.actionless-button. Report evidence/frontend-ui-improvements/UI021/S07-current-frontend-design-audit-20261003.json; raw command/exit/hash log evidence/frontend-ui-improvements/UI021/S07-current-audit-run-20261003.log. Runner v1.4.0 SHA-256 67FD35597C85A2F37DD3C566F0BD79768CBE059114EDCF28074FC5AFA3E0CE68.",
+    "boundaryCheck": "PASS; 64 TS/TSX files, 427 import edges, 0 boundary/parser/cycle issues, negative fixtures 8/8.",
+    "generator": "PASS; 11 outputs, 283 schemas, 210 operations, 54 routes.",
+    "sourceCheck": "Current verify evidence records 64 files, 220 API references, 54 route mappings; checker 3/3.",
+    "targetedTests": "PASS; 44/44 Chromium browser and 17/17 shared UI tests per UI021/S03.",
+    "fullDemoE2E": "Latest current-source full suite UI012/S20: 188/188 PASS on local Chromium + synthetic MSW after R26 text-wrap fix; it does not establish CI or owner UAT.",
+    "readiness": "7/9 = 77.8% Frontend gates; FE-G02 PASS. FE-G05 manual accessibility and FE-G09 owner acceptance remain open. This is not a universal architecture score."
+  },
+  "backlog": {
+    "mandatoryDone": "13/16",
+    "optionalDone": "7/10",
+    "totalDone": "20/26",
+    "checkpoints": "113/130",
+    "next": "UI021.C04 remains partial because strict scan exits 1; UI020 owner matrix, UI012 manual accessibility and FE-G09 owner UAT remain open."
+  },
+  "limitations": [
+    "The audit runner reports actual exit 1 despite all 13 listed controls being crosswalked to real behavior; do not record strict audit PASS.",
+    "The synthetic mock has no role preset with privacy.manage but without customers.read, so visibility of the R35-to-R07 CTA in that membership state is not reproduced.",
+    "UI015/S07 verifies Android Chrome soft-keyboard behavior on an emulator only; it is not a physical-handset or browser-support matrix result.",
+    "UI015/S07 verifies Android Chrome soft-keyboard behavior on an emulator only; it is not a physical-handset or browser-support matrix result.",
+    "UI015/S07 verifies Android Chrome soft-keyboard behavior on an emulator only; it is not a physical-handset or browser-support matrix result.",
+    "UI015/S07 verifies Android Chrome soft-keyboard behavior on an emulator only; it is not a physical-handset or browser-support matrix result.",
+    "UI015/S07 verifies Android Chrome soft-keyboard behavior on an emulator only; it is not a physical-handset or browser-support matrix result.",
+    "UI015/S07 verifies Android Chrome soft-keyboard behavior on an emulator only; it is not a physical-handset or browser-support matrix result.",
+    "UI015/S07 verifies Android Chrome soft-keyboard behavior on an emulator only; it is not a physical-handset or browser-support matrix result."
+  ],
+  "evidence": [
+    "S01-current-source-inventory.md",
+    "S02-paired-ui-architecture-decision.md",
+    "S03-test-results.md",
+    "S04-design-audit-runner-status.md",
+    "S05-current-audit-provenance.md",
+    "S05-current-source-crosswalk.md",
+    "S05-current-frontend-design-audit.json",
+    "S05-current-boundaries.json",
+    "../UI024/S01-current-full-rebuilt-demo-e2e-20261003.log",
+    "../UI024/S02-current-worktree-and-artifact-fingerprint.json",
+    "../../../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md",
+    "../../../evidence/REPORT.md",
+    "S07-current-frontend-design-audit-20261003.json",
+    "S07-current-audit-run-20261003.log",
+    "S08-refresh-current-acceptance.mjs",
+    "../UI012/S20-current-full-e2e-20261003.log",
+    "../UI015/S07-android-soft-keyboard-probe-20261003.json"
+  ],
+  "fingerprintAlgorithm": "SHA-256",
+  "fingerprints": {
+    "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "3BB7973AFA7DC4A66795EE0FA58D95ADAE3F42C16F758887F74BBD09617CA6D6",
+    "docs/PROJECT_CONTEXT.md": "EB893CF02ADFD590EEC27780A1C9FEEEA3F1E4B7417E4767FF8BF10F1B268F76",
+    "docs/KNOWN_GAPS.md": "A4CEAF6D266002156EBD0DC664463A65792A181C9A94002111B7B74904F298A1",
+    "evidence/REPORT.md": "B34F2827EC6196542099DE8321E02EA3023EBBD31738018B5D5854A082173ADC",
+    "evidence/frontend-ui-improvements/UI021/S01-current-source-inventory.md": "55944CB7B398FA75A7C23E9A528A6812FB9B36D1C58DA7757E2D40B87A02022D",
+    "evidence/frontend-ui-improvements/UI021/S02-paired-ui-architecture-decision.md": "DEF30CC72FDB7F49D30F300B3A8B0F603ECB58AF03B5959C290CF3687C0958C3",
+    "evidence/frontend-ui-improvements/UI021/S03-test-results.md": "FD44913CAF7B0753EC69855C7BB89FAB50458D96A63C1AE8B65CF4D8B6A011BF",
+    "evidence/frontend-ui-improvements/UI021/S04-design-audit-runner-status.md": "47683787FAE45FD401E4860FB471F27F960F46F746A955C07BBF5DF4E5788247",
+    "evidence/frontend-ui-improvements/UI021/S05-current-audit-provenance.md": "828C3516886466208883E744D9D7B5959E304613E06DF72801B73E5E8A3134CA",
+    "evidence/frontend-ui-improvements/UI021/S05-current-source-crosswalk.md": "6315C82B5604B44A845C74EA3F8F82FB2331972B62C7015522DDCBD32A8389FA",
+    "evidence/frontend-ui-improvements/UI021/S05-current-frontend-design-audit.json": "F7902E3B69AD4B226BB4980F7F2015B53A61A6B93D304F4D02055C121D8A56C3",
+    "evidence/frontend-ui-improvements/UI021/S05-current-boundaries.json": "B995A491452D11102CCDABB124C9A6CC8FE33B3FCAD3966AC67328DD50D71A8F",
+    "evidence/frontend-ui-improvements/UI024/S01-current-full-rebuilt-demo-e2e-20261003.log": "6D932AA6A4F3D4E06FBBD671BC4DB8A611BFE7C2AAB2FA795E3705F6742BF54E",
+    "evidence/frontend-ui-improvements/UI024/S02-current-worktree-and-artifact-fingerprint.json": "1EAD38429B7D976514CE6F4B0F79846E6022D6D7FA316FBF85476C03DDB24E05",
+    "premium-ui.json": "99723F9FD2485AC6634496AB259A8C1C0DEEB4E4B1B6B3079C1E82B799F7BCBB",
+    "premium-audit.json": "12E315CB06ABF4C2390EAC41C1C8E2C58472530ADFEC542F374CE621FB655A01",
+    "evidence/frontend-ui-improvements/UI021/S07-current-frontend-design-audit-20261003.json": "F7902E3B69AD4B226BB4980F7F2015B53A61A6B93D304F4D02055C121D8A56C3",
+    "evidence/frontend-ui-improvements/UI021/S07-current-audit-run-20261003.log": "BEBC02798CF3F2B9DAE11DD4F590C1CC716A3DF2B85C57325CB454567198B691",
+    "evidence/frontend-ui-improvements/UI021/S08-refresh-current-acceptance.mjs": "A7EDE2C6330D876FDEB6AD13C369A942F7812941F05FB794105E2490CC084DA6",
+    "evidence/frontend-ui-improvements/UI012/S20-current-full-e2e-20261003.log": "37C43718FE149BC21DA80E88E52ED46AC712693A77A81189069C253B5D87DAF8",
+    "evidence/frontend-ui-improvements/UI015/S07-android-soft-keyboard-probe-20261003.json": "056DD70C976E8543C9D4F5E53330E216A290A5503C54B41AE13A9E3E4B4057ED"
+  }
+}

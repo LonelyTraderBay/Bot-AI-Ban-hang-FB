@@ -1,0 +1,76 @@
+{
+  "taskId": "UI003",
+  "title": "Timestamp theo timezone shop/report",
+  "status": "DONE",
+  "closedOn": "2026-10-02",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "baselineRevision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "currentHead": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "workingTree": "dirty; evidence hashes identify the current post-UI003 source files",
+  "files": {
+    "apps/web/src/shared/model/format.ts": "4A7FCE6627144C73DEE638BF8A21E6FE5D0BB417BC86042F798129DD71DB1A1C",
+    "apps/web/src/modules/finance/index.tsx": "4ADA91C643D5C1C65EC52CF2C22E2781D821EDFEB83DFA4AD3AE536226A90C1B",
+    "apps/web/src/modules/bot/index.tsx": "F8AE34F4584A3FE5ADEFB28CE350CAE06968FAB2B30E31FB5A85122FDD768186",
+    "apps/web/src/modules/catalog/imports.tsx": "392FA4D18F22D4C565A49D84217420B0FBED4970F4121D1F688B1C978C685F86",
+    "apps/web/src/modules/integrations/index.tsx": "1C5ECB6961044B812ED6F189F44BAEEAC78708AA404423431C698EEC76AE2256",
+    "apps/web/src/modules/knowledge/index.tsx": "D1A6739E8C8BB70F02912E06D4C353A5E517CF0655C1221A8C816E1D013AE657",
+    "apps/web/tests/format.test.ts": "EDB0B519D06D1628EE717BDD77394FFB441EE340859506A919F58C66B2FBDDC4",
+    "apps/web/tests/report-utils.test.ts": "21EA2B1FDB60982705830150E7B2B2BDE8279EC527F6A9AA642D6E3989DAD4AA",
+    "tests/fe015.spec.ts": "36E8D489BDE9D31C58776D6FB8350686E5EAB37D0E6A1E1216489D9D0D98F625"
+  },
+  "checkpoints": {
+    "C01": {
+      "status": "PASS",
+      "expected": "Reproduce a timestamp/report mismatch on a shop whose timezone differs from Asia/Vientiane and record the API contract boundary before editing.",
+      "observed": "With shop-demo set to UTC, getCashflow and its label reported UTC while the UI rendered the date range at 07:00 and the 14:00Z snapshot at 21:00. The original helper defaulted to Asia/Vientiane. The first full-page-navigation attempt reset the in-memory MSW store and is retained as a harness finding, not a product result; the accepted baseline uses SPA navigation.",
+      "evidence": ["S01-baseline.json", "S01-baseline.log", "S01-baseline-trace.zip", "S01-baseline-error-context.md", "S00-harness-navigation-reset.log"]
+    },
+    "C02": {
+      "status": "PASS",
+      "expected": "Make display timezone explicit at the shared helper and all affected shop-scoped UI call sites; preserve API instants, date-only values, scope ownership, and canonical contracts.",
+      "observed": "Removed the helper's implicit Asia/Vientiane default and made timezone required by TypeScript. All 14 affected call sites now pass shop.timezone in bot, imports, finance, integrations, and knowledge. Cashflow/P&L date-only form values still use timezone-aware report boundaries. No OpenAPI, route manifest, token, generated package, or API request contract was changed.",
+      "evidence": ["../../../apps/web/src/shared/model/format.ts", "../../../apps/web/src/modules/finance/index.tsx", "../../../apps/web/src/modules/bot/index.tsx", "../../../apps/web/src/modules/catalog/imports.tsx", "../../../apps/web/src/modules/integrations/index.tsx", "../../../apps/web/src/modules/knowledge/index.tsx"]
+    },
+    "C03": {
+      "status": "PASS",
+      "expected": "Verify one instant in UTC, Asia/Vientiane, and an offset/DST-capable zone; keep date-only report selections on the selected local calendar day.",
+      "observed": "The same 2026-09-29T20:30:00Z instant formats as UTC 20:30 29/9/26, Asia/Vientiane 03:30 30/9/26, and America/Los_Angeles 13:30 29/9/26. Focused report/date helper suites passed 15/15, including UTC and Vientiane boundaries and America/New_York DST boundaries.",
+      "evidence": ["S03-unit-current.log", "../../../apps/web/tests/format.test.ts", "../../../apps/web/tests/report-utils.test.ts"]
+    },
+    "C04": {
+      "status": "PASS",
+      "expected": "Verify rendered cashflow From/To/asOf values, date-only request boundaries, a shop timezone change, and cross-browser-timezone behavior in the browser.",
+      "observed": "The targeted UI003 Chromium case passed 1/1 with the browser timezone pinned to America/Los_Angeles. Shop-demo UTC rendered its UTC From/To/asOf; switching to shop-second rendered Asia/Vientiane values. The same selected date-only range generated UTC boundaries 2026-09-01T00:00Z to 2026-10-01T00:00Z, then Vientiane boundaries 2026-08-31T17:00Z to 2026-09-30T17:00Z. Full rebuilt-demo Chromium E2E passed 156/156, including UI003 at case 54, route-role matrix 357/357, empty states 9/9, and route-error composition 51/51.",
+      "evidence": ["S02-browser-current.log", "S05-full-e2e-current.log", "../../../tests/fe015.spec.ts"]
+    },
+    "C05": {
+      "status": "PASS",
+      "expected": "Run current source/build gates, record measured limits, update the plan, and leave canonical progress ledgers untouched.",
+      "observed": "npm run verify passed exit 0: generation 11 outputs/283 schemas/210 operations/54 routes; source check, boundaries 410 imports and 8/8 negative fixtures, lint, typecheck, domain/MSW 88/88, Vitest 72/72, and production build passed. npm run test:e2e passed 156/156 on rebuilt React demo. Demo metrics: initial route 446,979 gzip bytes; largest chunk 185,440 gzip bytes; 1,004-row synthetic customer dataset rendered as one 20-row page in 330ms. Previous raw-chunk advisory remains: 730.75 kB raw / 184.42 kB gzip. FE ledger was read at 2/140 VERIFIED (1.33%) and 28/28 STALE; neither FE ledger nor whole-product plan/progress/tasks were edited.",
+      "evidence": ["S04-verify-current.log", "S05-full-e2e-current.log", "../../../botsales-kit/execution/frontend-evidence/FE025/demo-preview-metrics.json", "../../../botsales-kit/execution/frontend-evidence/FE025/large-dataset-metrics.json", "../../../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md"]
+    }
+  },
+  "callSiteInventory": [
+    { "module": "bot", "fields": "BotConfig.publishedAt; BotRevision.updatedAt", "timezone": "shop.timezone", "count": 2 },
+    { "module": "imports", "fields": "Job.updatedAt", "timezone": "shop.timezone", "count": 1 },
+    { "module": "finance", "fields": "Cashflow.from/to/asOf; FinanceEntry.occurredAt list/detail; ProfitLoss.asOf; DebtItem.dueAt", "timezone": "shop.timezone", "count": 7 },
+    { "module": "integrations", "fields": "Channel.lastWebhookAt/policyVerifiedAt; AIConnection.lastCheckedAt", "timezone": "shop.timezone", "count": 3 },
+    { "module": "knowledge", "fields": "Knowledge.publishedAt", "timezone": "shop.timezone", "count": 1 }
+  ],
+  "readiness": {
+    "currentEvidenceScope": "local React frontend with synthetic MSW API",
+    "gateFormula": "one point per gate; PASS / 9",
+    "passGates": ["FE-G01", "FE-G02", "FE-G03", "FE-G04", "FE-G06", "FE-G07", "FE-G08"],
+    "partialOrOpenGates": ["FE-G05 manual zoom/screen-reader/contrast", "FE-G09 product-owner acceptance"],
+    "score": "7/9 = 77.8%",
+    "productionReadyEnterpriseGrade": false,
+    "limitations": ["No backend, provider, persistence, or staging result is established.", "The score is local evidence coverage, not a universal React architecture quality percentage.", "FE-G05 manual accessibility and FE-G09 owner acceptance remain open."]
+  },
+  "contractChanges": false,
+  "trackerChanges": false,
+  "limitations": [
+    "All API results are synthetic MSW data; no backend/provider/staging was tested.",
+    "Production build still reports an advisory raw chunk above 500 kB; current local gzip budgets passed.",
+    "Manual accessibility checks and product-owner acceptance remain unverified."
+  ]
+}

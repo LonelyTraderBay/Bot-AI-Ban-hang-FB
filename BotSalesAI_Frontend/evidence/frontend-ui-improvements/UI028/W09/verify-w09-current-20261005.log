@@ -1,0 +1,254 @@
+## generate:check — PASS (exit 0; expected 0)
+$ (.) node scripts/generate.mjs --check
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+## typecheck — PASS (exit 0; expected 0)
+$ (.) node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit
+
+## lint — PASS (exit 0; expected 0)
+$ (.) node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0
+
+## boundaries — PASS (exit 0; expected 0)
+$ (.) node scripts/check-boundaries.mjs
+{
+  "checkedAt": "2026-10-05T13:36:26.562Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 66,
+  "imports": 439,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+## source-check — PASS (exit 0; expected 0)
+$ (.) node scripts/check-source.mjs
+{
+  "checkedAt": "2026-10-05T13:36:26.840Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 66,
+  "operationCalls": 220,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+
+## source-checker-fixtures — PASS (exit 0; expected 0)
+$ (.) node --test tests/source-checker.test.mjs
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (1.0418ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (156.386ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (152.8238ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 366.8623
+
+## layout-checker-fixtures — PASS (exit 0; expected 0)
+$ (.) node --test tests/layout-checker.test.mjs
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (201.5864ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (206.5793ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (211.7751ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (206.3708ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (582.5438ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (583.8283ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (786.3826ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (398.6118ms)
+✔ report mode inventories migration debt without turning findings into PASS (203.6221ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3441.9557
+
+## ui-shell-layout-playwright — PASS (exit 0; expected 0)
+$ (.) node node_modules/@playwright/test/cli.js test tests/ui-shell-layout.spec.ts --project=chromium
+
+Running 3 tests using 1 worker
+
+  ok 1 [chromium] › tests\ui-shell-layout.spec.ts:15:1 › Shell keeps header, banner, main and footer on one responsive gutter (1.6s)
+  ok 2 [chromium] › tests\ui-shell-layout.spec.ts:68:1 › demo controls stay discoverable on mobile and usable on desktop (591ms)
+  ok 3 [chromium] › tests\ui-shell-layout.spec.ts:86:1 › unmatched route fallback owns its page gutter without horizontal overflow (342ms)
+
+  3 passed (3.5s)
+(node:48848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+## route-error-composition-playwright-R13 — PASS (exit 0; expected 0)
+$ (.) node node_modules/@playwright/test/cli.js test tests/states/route-error-composition.spec.ts --project=chromium
+
+Running 1 test using 1 worker
+
+ROUTE_ERROR_COMPOSITION=1/1 RESULT=PASS
+  ok 1 [chromium] › tests\states\route-error-composition.spec.ts:26:1 › every shop route composes the shared API error state with its page content (4.1s)
+
+  1 passed (4.5s)
+(node:69844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+## production-build — PASS (exit 0; expected 0)
+$ (apps/web) node ../../node_modules/vite/bin/vite.js build --mode production
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2056 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.19 kB │ gzip:   0.59 kB
+dist/assets/index-CNveuCZ2.css               2.48 kB │ gzip:   0.99 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-BJmJubfC.js              0.31 kB │ gzip:   0.23 kB
+dist/assets/hooks-BBexbP1S.js                3.19 kB │ gzip:   1.62 kB
+dist/assets/index-DJho_qQg.js                7.79 kB │ gzip:   3.13 kB
+dist/assets/index-BdoBOxDj.js                8.48 kB │ gzip:   3.61 kB
+dist/assets/index-JOdAA3by.js                9.03 kB │ gzip:   3.50 kB
+dist/assets/index-2bAfXnj7.js               13.12 kB │ gzip:   5.41 kB
+dist/assets/index-fkqq6Hyv.js               13.33 kB │ gzip:   4.41 kB
+dist/assets/index-BdJEG2E6.js               13.43 kB │ gzip:   5.05 kB
+dist/assets/index-Dib5yWxp.js               13.88 kB │ gzip:   5.36 kB
+dist/assets/index-B8_PwQcO.js               15.87 kB │ gzip:   5.36 kB
+dist/assets/index-Dp7f2e0y.js               16.05 kB │ gzip:   5.35 kB
+dist/assets/index-DiKJh0xb.js               17.21 kB │ gzip:   6.09 kB
+dist/assets/index-D-obfSve.js               18.07 kB │ gzip:   6.03 kB
+dist/assets/index-Deh6UTHk.js               21.58 kB │ gzip:   7.35 kB
+dist/assets/index-u_AJ0WFm.js               22.39 kB │ gzip:   8.07 kB
+dist/assets/index-BZdDlKa2.js               25.67 kB │ gzip:   8.36 kB
+dist/assets/index-D-MoTO0u.js               31.03 kB │ gzip:   9.68 kB
+dist/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-CYIENgt4.js               36.85 kB │ gzip:  10.01 kB
+dist/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-Cw5iRcHs.js               75.21 kB │ gzip:  25.00 kB
+dist/assets/schemas-jpQ0XMzw.js             79.18 kB │ gzip:  24.03 kB
+dist/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/contract-data-Dmdv2cKW.js      262.00 kB │ gzip:  35.24 kB
+dist/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist/assets/charts-CQ4oecFO.js             313.03 kB │ gzip:  94.99 kB
+dist/assets/mui-Bz_aCSm2.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 2.92s
+
+## demo-build — PASS (exit 0; expected 0)
+$ (apps/web) node ../../node_modules/vite/bin/vite.js build --mode demo --outDir dist-demo
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2272 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.19 kB │ gzip:   0.60 kB
+dist-demo/assets/index-CNveuCZ2.css               2.48 kB │ gzip:   0.99 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/filters-BJmJubfC.js              0.31 kB │ gzip:   0.23 kB
+dist-demo/assets/control-B9mHuWYJ.js              0.72 kB │ gzip:   0.43 kB
+dist-demo/assets/hooks-DXB_En7q.js                3.19 kB │ gzip:   1.62 kB
+dist-demo/assets/index-Cb5Q4g-a.js                8.32 kB │ gzip:   3.32 kB
+dist-demo/assets/index-QwqmDq3g.js                8.48 kB │ gzip:   3.61 kB
+dist-demo/assets/index-CIpuAVwV.js                9.03 kB │ gzip:   3.50 kB
+dist-demo/assets/index-Dy-XM5E1.js               13.29 kB │ gzip:   5.46 kB
+dist-demo/assets/index-D1l5rYEN.js               13.33 kB │ gzip:   4.42 kB
+dist-demo/assets/index-BPsQOtck.js               13.57 kB │ gzip:   5.17 kB
+dist-demo/assets/index-CsYP38rE.js               16.20 kB │ gzip:   5.39 kB
+dist-demo/assets/index-evrGHz1f.js               17.21 kB │ gzip:   6.09 kB
+dist-demo/assets/index-N0hpHnRy.js               18.07 kB │ gzip:   6.12 kB
+dist-demo/assets/index-C7zCFMAt.js               18.07 kB │ gzip:   6.04 kB
+dist-demo/assets/index-Cl-q_ZU3.js               21.25 kB │ gzip:   7.50 kB
+dist-demo/assets/index-CJhFTAHh.js               21.99 kB │ gzip:   7.52 kB
+dist-demo/assets/index-D698HdPn.js               22.61 kB │ gzip:   8.13 kB
+dist-demo/assets/index-B2ze8zUp.js               26.14 kB │ gzip:   8.51 kB
+dist-demo/assets/index-BUIZ6Itd.js               33.04 kB │ gzip:  10.36 kB
+dist-demo/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-B4K_VRNz.js               36.85 kB │ gzip:  10.02 kB
+dist-demo/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-DBpJ5STc.js               79.03 kB │ gzip:  26.11 kB
+dist-demo/assets/schemas-jpQ0XMzw.js             79.18 kB │ gzip:  24.03 kB
+dist-demo/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-C09KbfDh.js            159.35 kB │ gzip:  34.71 kB
+dist-demo/assets/browser-DcrgKAET.js            255.20 kB │ gzip:  86.82 kB
+dist-demo/assets/contract-data-Bmlj3jVV.js      267.78 kB │ gzip:  36.38 kB
+dist-demo/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-RcpaDpmM.js             313.03 kB │ gzip:  94.99 kB
+dist-demo/assets/mui-azn9KfGV.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 3.56s
+
+## strict-layout-scan — EXPECTED_MIGRATION_DEBT (exit 1; expected 1)
+$ (.) node scripts/check-layout.mjs
+layout-check FAIL: 67 source files, 396 finding(s), 1 exception(s) used
+  SPACING_LITERAL: 396
+Migration debt by component:
+  module:inbox: 46 finding(s)
+  module:workspace: 37 finding(s)
+  module:dashboard: 36 finding(s)
+  module:procurement: 36 finding(s)
+  module:operations: 30 finding(s)
+  module:finance: 27 finding(s)
+  module:bot: 25 finding(s)
+  module:notifications: 25 finding(s)
+  module:orders: 25 finding(s)
+  module:catalog: 21 finding(s)
+  module:reports: 20 finding(s)
+  module:knowledge: 19 finding(s)
+  module:fulfillment: 17 finding(s)
+  module:customers: 15 finding(s)
+  module:integrations: 13 finding(s)
+  module:inventory: 4 finding(s)
+Most affected files:
+  apps/web/src/modules/workspace/index.tsx: 37 finding(s)
+  apps/web/src/modules/dashboard/index.tsx: 36 finding(s)
+  apps/web/src/modules/procurement/index.tsx: 36 finding(s)
+  apps/web/src/modules/inbox/index.tsx: 35 finding(s)
+  apps/web/src/modules/operations/index.tsx: 30 finding(s)
+  apps/web/src/modules/finance/index.tsx: 27 finding(s)
+  apps/web/src/modules/bot/index.tsx: 25 finding(s)
+  apps/web/src/modules/notifications/index.tsx: 25 finding(s)
+  apps/web/src/modules/orders/index.tsx: 25 finding(s)
+  apps/web/src/modules/reports/index.tsx: 20 finding(s)
+  apps/web/src/modules/knowledge/index.tsx: 19 finding(s)
+  apps/web/src/modules/fulfillment/index.tsx: 17 finding(s)
+  apps/web/src/modules/catalog/index.tsx: 15 finding(s)
+  apps/web/src/modules/customers/index.tsx: 15 finding(s)
+  apps/web/src/modules/integrations/index.tsx: 13 finding(s)
+  apps/web/src/modules/bot/index.tsx:20:341 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:20:849 SPACING_LITERAL my=3
+  apps/web/src/modules/bot/index.tsx:20:1204 SPACING_LITERAL gap=1
+  apps/web/src/modules/bot/index.tsx:20:1217 SPACING_LITERAL mt=2
+  apps/web/src/modules/bot/index.tsx:33:98 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:38:99 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:45:199 SPACING_LITERAL gap=3
+  apps/web/src/modules/bot/index.tsx:45:262 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:49:398 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:49:425 SPACING_LITERAL mt=2
+  apps/web/src/modules/bot/index.tsx:49:894 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:49:1416 SPACING_LITERAL mt=2
+  apps/web/src/modules/bot/index.tsx:49:1529 SPACING_LITERAL m=.5
+  apps/web/src/modules/bot/index.tsx:49:1609 SPACING_LITERAL mt=2
+  apps/web/src/modules/bot/index.tsx:57:304 SPACING_LITERAL mb=2
+  apps/web/src/modules/bot/index.tsx:65:97 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:79:251 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:79:377 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:79:603 SPACING_LITERAL gap=1
+  apps/web/src/modules/bot/index.tsx:79:648 SPACING_LITERAL my=2
+  apps/web/src/modules/bot/index.tsx:79:752 SPACING_LITERAL gap=1
+  apps/web/src/modules/bot/index.tsx:86:17 SPACING_LITERAL gap=1.5
+  apps/web/src/modules/bot/index.tsx:86:31 SPACING_LITERAL p=3
+  apps/web/src/modules/bot/index.tsx:97:103 SPACING_LITERAL gap=2
+  apps/web/src/modules/bot/index.tsx:105:112 SPACING_LITERAL gap=2
+  apps/web/src/modules/catalog/imports.tsx:32:27 SPACING_LITERAL p=3
+  apps/web/src/modules/catalog/imports.tsx:34:29 SPACING_LITERAL gap=2
+  apps/web/src/modules/catalog/imports.tsx:49:73 SPACING_LITERAL gap=1
+  apps/web/src/modules/catalog/imports.tsx:53:115 SPACING_LITERAL gap=1
+  apps/web/src/modules/catalog/imports.tsx:112:249 SPACING_LITERAL p=3
+  apps/web/src/modules/catalog/imports.tsx:112:742 SPACING_LITERAL my=2
+  apps/web/src/modules/catalog/index.tsx:45:378 SPACING_LITERAL gap=1
+  apps/web/src/modules/catalog/index.tsx:45:761 SPACING_LITERAL spacing=0.5
+  apps/web/src/modules/catalog/index.tsx:109:119 SPACING_LITERAL spacing=2.5
+  apps/web/src/modules/catalog/index.tsx:109:133 SPACING_LITERAL p=3
+  apps/web/src/modules/catalog/index.tsx:109:439 SPACING_LITERAL gap=2
+  apps/web/src/modules/catalog/index.tsx:109:573 SPACING_LITERAL spacing=1
+  apps/web/src/modules/catalog/index.tsx:109:3329 SPACING_LITERAL mt=4
+  apps/web/src/modules/catalog/index.tsx:110:241 SPACING_LITERAL spacing=2
+  apps/web/src/modules/catalog/index.tsx:110:253 SPACING_LITERAL p=3
+  ... 356 additional finding(s); use --json for the complete inventory

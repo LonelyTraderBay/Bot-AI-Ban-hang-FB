@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "step": "S19",
+  "scope": "Frontend-only final source, shared UI, route/state, and local verification evidence; no backend/staging/production or owner acceptance claim.",
+  "recordedAt": "2026-10-07T00:00:00.000Z",
+  "status": "COMPLETE",
+  "checks": [
+    {
+      "id": "local-verify",
+      "command": "npm.cmd run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm.cmd run verify exit 0; generator/source/boundary/lint/type/domain/unit/build/layout/visual-token/composition/evidence gates pass on the current local source snapshot.",
+      "observed": "npm.cmd run verify exit 0; generator/source/boundary/lint/type/domain/unit/build/layout/visual-token/composition/evidence gates pass on the current local source snapshot.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-verify-final-reconciled-current-20261007.log",
+        "sha256": "e3f64af92318e05053b73d802b51f14f49b94eae793004124dcfe97320653a81"
+      }
+    },
+    {
+      "id": "whole-e2e",
+      "command": "npm.cmd run test:e2e",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "504 passed (Chromium and Firefox); 0 failed",
+      "observed": "504 passed (Chromium and Firefox); 0 failed",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-full-e2e-post-fix-20261007.log",
+        "sha256": "9ccc9cee2c00ff7016431602b07fe000be1a502bffbf43f4ed817b4ff96ec25c"
+      }
+    },
+    {
+      "id": "current-inventory",
+      "command": "node evidence/frontend-ui-improvements/ui-governance-rollout-20261007/inventory-current-20261007.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "76,387 disk paths partitioned into 377 workspace-relevant and 76,010 excluded; 1 active parent workflow outside the project inventory; 379 disposition records (378 current paths plus 1 retired deleted workflow), 0 pending; 73 source files, 54 routes, 16 modules; 0 unknown files/runtime unresolved imports; 5 tooling-only dynamic imports explicitly classified and mapped.",
+      "observed": "76,387 disk paths partitioned into 377 workspace-relevant and 76,010 excluded; 1 active parent workflow outside the project inventory; 379 disposition records (378 current paths plus 1 retired deleted workflow), 0 pending; 73 source files, 54 routes, 16 modules; 0 unknown files/runtime unresolved imports; 5 tooling-only dynamic imports explicitly classified and mapped.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-inventory-final-current-20261007.log",
+        "sha256": "a09c0d0fae4d80ef1eee25dc997d5f333e0637d38bd7546d3380cffa5c15c709"
+      }
+    },
+    {
+      "id": "shared-api-catalog",
+      "command": "node --test tests/ui-composition-checker.test.mjs tests/ui-composition-ancestry.test.mjs tests/ui-shared-api-contract.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "36/36 shared catalog, resolved-consumer, composition checker and ancestry tests pass.",
+      "observed": "36/36 shared catalog, resolved-consumer, composition checker and ancestry tests pass.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-shared-catalog-final-20261007.log",
+        "sha256": "3cf380e04bd45cf158db0a9592f564d466d571e09df11dc9729414d9e1b133c2"
+      }
+    },
+    {
+      "id": "changed-source-reconciliation",
+      "command": "git diff/status inventory crosswalk for apps/web/src and apps/web/tests",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "44 tracked changes and 6 untracked paths; 50/50 changed paths have current inventory records and hashes; 40 source files, 9 test files, 1 shared catalog README; 0 missing inventory rows.",
+      "observed": "44 tracked changes and 6 untracked paths; 50/50 changed paths have current inventory records and hashes; 40 source files, 9 test files, 1 shared catalog README; 0 missing inventory rows.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-changed-source-reconciliation-20261007.log",
+        "sha256": "c0603aed39cae4fb8ca7fffbb93f68f78766a5694f53d3c19ec07808942ab46f"
+      }
+    },
+    {
+      "id": "category-lookup-isolated",
+      "command": "Playwright Firefox FE010 category lookup with fresh evidence run id",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "1/1 passes; categoryTotal 105; create/edit payloads preserved; 18 category requests",
+      "observed": "1/1 passes; categoryTotal 105; create/edit payloads preserved; 18 category requests",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-isolated-category-lookup-current-20261007.log",
+        "sha256": "6f9b988090e80802b3952df684151ddced2c317261b58de90a2b74a982f631a9"
+      }
+    },
+    {
+      "id": "real-browser-zoom",
+      "command": "capture-actual-browser-zoom-200-current-20261006.mjs with fresh evidence run id",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "5/5 pass; issues=0; pageErrors=0",
+      "observed": "5/5 pass; issues=0; pageErrors=0",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S16-actual-browser-zoom-final-current-20261007.log",
+        "sha256": "4652061488ae6346edee8f2c37ddf746998cdfaf947cf0da6ef413abafa152de"
+      }
+    },
+    {
+      "id": "native-text-zoom",
+      "command": "capture-native-text-only-200-current-20261006.mjs with fresh evidence run id",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "5/5 pass; issues=0; fixed viewport and devicePixelRatio",
+      "observed": "5/5 pass; issues=0; fixed viewport and devicePixelRatio",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S16-native-text-only-final-current-20261007.log",
+        "sha256": "465996ac6959887b95c75698bbc5a2c4eee457d7c5d1a7be1185cb2ddef9e523"
+      }
+    },
+    {
+      "id": "shared-api-direct-render",
+      "command": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/shared-ui-render-contract.test.tsx --reporter=verbose",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "27 APIs directly rendered; 38/38 cases pass",
+      "observed": "27 APIs directly rendered; 38/38 cases pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S10-render-contract-final-20261007.log",
+        "sha256": "acdba4692e21acbbc052759f75ae050e76087debbf970e7dbe15d95864645528"
+      }
+    },
+    {
+      "id": "state-route-matrix",
+      "command": "node tests/states/generate-route-state-roles.mjs --unit-log <verified-unit-log> --browser-log <verified-full-e2e-log> --role-log <verified-role-log>",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "432/432 pairs: 204 shared tested, 163 route-specific tested, 65 explicitly not applicable; 19 shared cases and 357 role-browser cases pass",
+      "observed": "432/432 pairs: 204 shared tested, 163 route-specific tested, 65 explicitly not applicable; 19 shared cases and 357 role-browser cases pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-route-state-matrix-refresh-20261007.log",
+        "sha256": "78697e9c4dc564c27e032b48237e620994a6cabf4b5acab63f15d5798806822d"
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "name": "source-files",
+      "expected": 73,
+      "observed": 73,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "shared-api-exports",
+      "expected": 27,
+      "observed": 27,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "route-mappings",
+      "expected": 54,
+      "observed": 54,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "rendered-routes",
+      "expected": 54,
+      "observed": 54,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "slots",
+      "expected": 27,
+      "observed": 27,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "states",
+      "expected": 432,
+      "observed": 432,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "The generated 54-route matrix reconciles all 432 route-state cells: 367 rendered/tested (204 shared, 163 route-specific) and 65 contractually not applicable with explicit per-cell rationale; 357/357 role cases are a separate axis."
+    },
+    {
+      "name": "baseline-records",
+      "expected": 0,
+      "observed": 0,
+      "missing": 0,
+      "result": "N/A",
+      "reason": "This S19 turn performs read-only UI source review and updates governance/evidence tooling; it makes no React runtime layout change. Existing before/after UI baselines remain linked to their own source-edit steps."
+    },
+    {
+      "name": "source-entry-gate-coverage",
+      "expected": 74,
+      "observed": 74,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "All 73 apps/web/src files pass the applicable local source/UI gates; apps/web/index.html passes strict HTML layout/import-scope gates and is exercised by build/browser entry evidence. This measures gate coverage, not complete semantic review of every production consumer."
+    },
+    {
+      "name": "direct-owner-render-cases",
+      "expected": 27,
+      "observed": 27,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "All 27 shared React APIs have named direct owner render tests (38 passing cases). This does not imply every production consumer branch is reconciled; that remains explicitly in S19."
+    },
+    {
+      "name": "full-browser-gate",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "The final full Playwright Chromium/Firefox run passed 504/504."
+    },
+    {
+      "name": "workspace-file-dispositions",
+      "expected": 379,
+      "observed": 379,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "The current inventory assigns owner/category/treatment/status/rationale to all 377 paths in this workspace plus the active parent workflow, and records the deleted nested workflow as one RETIRED_VALIDATE path with original and replacement hashes. This is disposition coverage, not a claim that documentation/tooling files are UI source or all 379 records passed UI gates."
+    },
+    {
+      "name": "retired-path-dispositions",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "The deleted nested frontend workflow retains its HEAD SHA-256, explicit RETIRED_VALIDATE rationale and current active parent-workflow SHA-256; the inventory fails closed when a deleted tracked path lacks this disposition."
+    },
+    {
+      "name": "changed-source-dispositions",
+      "expected": 50,
+      "observed": 50,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "The HEAD diff plus all untracked paths under apps/web/src and apps/web/tests resolve to 50 current inventory rows with hashes and owners: 40 source files, 9 test files and the shared UI catalog README. This reconciles the working set; local global gates and route/state/browser suites provide verification, not a proof of every possible semantic branch."
+    }
+  ],
+  "baseline": {
+    "status": "N/A",
+    "reason": "This S19 turn audits the existing React UI and updates plans/verification evidence; it does not modify React runtime layout code. Source-edit baselines from earlier rollout steps remain separate."
+  },
+  "sourceFingerprints": {
+    "BotSalesAI_Frontend/package.json": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138",
+    "BotSalesAI_Frontend/scripts/validate-ui-evidence.mjs": "48f9bc2187d4ec07eb651bf622621e476f3afddb5c26cd4c4f65f2b01a505d91",
+    "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
+    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "cb7593d89f612a2b640a3cbfce83b38de2c0d1ba5028a25a09a1b045e56e9773",
+    "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
+    "BotSalesAI_Frontend/tests/ui-composition-layout.spec.ts": "7d669de8bac6be2b3eb898a079e2d6505d99e6a860ca0a8c767d00d49832919d",
+    "BotSalesAI_Frontend/tests/fe010.spec.ts": "269b3fcdf0fbed162cf31eb6c6e33d09fe35351784088579a7161dd3d8185930",
+    "BotSalesAI_Frontend/tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
+    "BotSalesAI_Frontend/tests/ui028-w29-reflow.spec.ts": "25b0d6e9fd584103c51d6424b396327af1ab2ccbcdd7b8afdba2543ec1255090",
+    "BotSalesAI_Frontend/tests/ui028-w30-stress.spec.ts": "d6c235ad6f0f401fcd1cb147043d5af867543868d38cc60295f740b0ebbc8603",
+    "BotSalesAI_Frontend/tests/ui012-keyboard.spec.ts": "f780da7c5716ab6ec28844a880aab3168b1a74c9d3829bf40d26122abfc964c8",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "ed3178ced505683ea10f0bdb3ef4452323da0cdb0336d9ad09686b464b67f8ab",
+    "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4",
+    "BotSalesAI_Frontend/botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "b026d903c54a08444bea96206ea19b6a28f1c2b814f8b0f40e44946fcab7bc0f",
+    "BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md": "cbac7e83852a64bcc97c81936068a8bd0346c17f2d1faf856a284e0666862358",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/inventory-current-20261007.mjs": "13acdeaB2d5ee46a8f3f580fc49b87266c751e31062386daac3d33835e3693a4",
+    ".github/workflows/frontend.yml": "d80c5ba0d651375b45c6775625e00f5e4c7553190c2ce7139008baf60a095ab2",
+    "BotSalesAI_Frontend/apps/web/tests/shared-ui-render-contract.test.tsx": "89ae5010117ed629749d03f44a796f06ac27aff0133a37e19abf007aa88b83d3",
+    "BotSalesAI_Frontend/docs/route-state-role-matrix.json": "9b997b6d5f7b4216e402d8be6cacdce7f649a0a40835d60352601aa143a904b9",
+    "BotSalesAI_Frontend/DESIGN.md": "44a479ec0f93fbbbfb97f4954c897663b1c685acd3f32e428b29b272b7d14f9f",
+    "BotSalesAI_Frontend/evidence/REPORT.md": "fb0dd3949899ba1df45b218e1aab31e779214e0388dc31f4793ef7d5167e7515"
+  },
+  "knownLimits": [
+    "All 76,387 project disk paths are partitioned; 377 workspace-relevant paths plus one external parent workflow have 378 current-path dispositions, and the deleted nested workflow has one retained retired-path disposition (379 total, zero pending). Disposition is not a pass verdict for every file.",
+    "All 432 declared route-state cells are reconciled: 367 have shared or route-specific browser/unit evidence and 65 are explicitly not applicable with a per-cell reason; the separate 357 role-browser cases do not replace route-state checks.",
+    "All 27 shared React APIs have direct render tests (38 cases). The HEAD diff plus untracked UI source/test paths reconcile 50/50 to current inventory rows; route/state and consumer evidence is linked separately. Tests and source hashes do not prove every possible semantic branch or visually observed state.",
+    "Local verify and full Chromium/Firefox E2E results do not establish hosted CI/branch protection, screen-reader speech, owner acceptance, backend integration, staging, or production readiness.",
+    "Source/log hashes establish recorded artifact freshness, not the authenticity of browser evidence or semantic correctness of every observation.",
+    "The static inventory retains five non-literal dynamic imports in test/tooling as explicit bounded classifications with existing canonical/test targets and a supporting log; none is in the runtime import closure."
+  ]
+}

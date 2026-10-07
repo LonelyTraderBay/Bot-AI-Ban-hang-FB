@@ -1,0 +1,84 @@
+{
+  "id": "SPC-060-policy-check-current-20261006",
+  "createdAt": "2026-10-06T08:39:33.574Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "changeType": "documentation-policy-only",
+  "rules": [
+    "SPC-060",
+    "CODE-033"
+  ],
+  "expected": "New UI selects an existing layout profile, records semantic spacing owner per region, reuses profile rhythm, and validates all affected rendered consumers; deviations use justified shared variants.",
+  "observed": "Policy references are synchronized in AGENTS, spacing standard, coding standards, frontend scope/context/continue, design, UX contract, plan, and report. Current source gates pass: generator 11 outputs/283 schemas/210 operations/54 routes; layout checker tests 10/10 and 68 source files/0 findings; visual-token tests 5/5 and 68 source files/0 findings.",
+  "commands": [
+    {
+      "command": "npm.cmd --script-shell=cmd.exe run generate:check",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": "evidence\\frontend-spacing-audit-20261005\\policy-spc060-current-20261006\\generate-check-pass.log",
+      "sha256": "6a2f31575056139953287bf63d800c04875d7d3c562008cb0f6cccf2d4b66dbc"
+    },
+    {
+      "command": "npm.cmd --script-shell=cmd.exe run test:layout",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": "evidence\\frontend-spacing-audit-20261005\\policy-spc060-current-20261006\\test-layout-pass.log",
+      "sha256": "9a97be16a0ffa1be8f587b597dc6b034df25c3bc12af4073a37c990e329c4209"
+    },
+    {
+      "command": "npm.cmd --script-shell=cmd.exe run test:visual-tokens",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": "evidence\\frontend-spacing-audit-20261005\\policy-spc060-current-20261006\\test-visual-tokens-pass.log",
+      "sha256": "d5e2d289760cb1a57d9405910a0efe76f45e8e21990669255396306686ce9582"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "1de4eb192b263d059a3a6199449b196a9ad8c280a329c09fec0cfc33293bf134"
+    },
+    {
+      "path": "DESIGN.md",
+      "sha256": "c0a3994ebe20fb4b9629fbfa55e0c2f274ac435bcb147e4e48ed4c628b7ee452"
+    },
+    {
+      "path": "UX-CONTRACT.md",
+      "sha256": "7df23801a1d07a43d3a368f64dc890867cd73b1dd5107dd36405f78887b8ab69"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "2d0ebf8290bc993f3dc0e6cbaa259d95c0d0c15d8976f5246666cfdf4389af13"
+    },
+    {
+      "path": "docs/PROJECT_CONTEXT.md",
+      "sha256": "a473bd7741c4ae4c740677854acdc6b8fcad5b041d1b908329a48211dd0e94bb"
+    },
+    {
+      "path": "docs/CONTINUE_FRONTEND.md",
+      "sha256": "0b9c0196d7cfccc9097a5aec53ec8a7a2ed50ff546ba0f260e4e8b34f643bcbe"
+    },
+    {
+      "path": "docs/FRONTEND_SPACING_STANDARD.md",
+      "sha256": "7840e2c2b8bd6249867ef20acd44b53600feb588147ab0779dd1097fc7f6b7c9"
+    },
+    {
+      "path": "docs/FRONTEND_UI_IMPROVEMENT_PLAN.md",
+      "sha256": "600bdbcb78f0e4cef07e151e46a936f335342d1ac38b0959b99f0d70d1380d9f"
+    },
+    {
+      "path": "botsales-kit/docs/18_CODING_STANDARDS.md",
+      "sha256": "021c3cb8382f507fead86e1ee755acfb1e66f192483fcb8abb6cd813f2f9dcd9"
+    },
+    {
+      "path": "evidence/REPORT.md",
+      "sha256": "c981899f66ae3a45d8e74dacddf72759b899e2d5e21096ff54c12454dcf7303d"
+    }
+  ],
+  "sourceSnapshotSha256": "000710d68808ed9a51ca57bd18c092ad8ca8072f18718b0c59b679a78c61c426",
+  "limitations": [
+    "The rule is newly specified; policy checks do not prove every existing route matches a selected semantic profile.",
+    "No React/runtime source was changed in this policy update.",
+    "No user acceptance, screen-reader/human conformance, hosted CI, Backend, staging, or production claim."
+  ],
+  "trackerMutation": false
+}

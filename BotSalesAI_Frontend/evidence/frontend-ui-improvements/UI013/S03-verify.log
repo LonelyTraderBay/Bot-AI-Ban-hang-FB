@@ -1,0 +1,131 @@
+
+> botsales-frontend@0.1.0 verify
+> npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs
+
+{
+  "checkedAt": "2026-10-02T19:57:14.406Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 62,
+  "operationCalls": 220,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (1.157ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (155.0823ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (149.2104ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 363.1397
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-02T19:57:16.473Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 62,
+  "imports": 412,
+  "negativeFixtures": "Boundary fixtures: PASS 8/8 scenarios (allowed import, alias, relative, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> botsales-frontend@0.1.0 test:domain
+> node scripts/test-domain.mjs
+
+{"status":"PASS","simulatorChecks":75,"networkChecks":13,"networkHandlers":210,"passed":88,"operations":89,"node":"v24.19.0","typescript":"5.9.2"}
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\direct-vite\16912\deps\react-dom_client.js?v=ad437416 as it exceeds the max of 500KB.
+
+ Test Files  9 passed (9)
+      Tests  77 passed (77)
+   Start at  02:57:25
+   Duration  5.39s (tests 54%, environment 23%, import 11%, transform 6%, setup 6%)
+
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2051 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.86 kB │ gzip:   0.52 kB
+dist/assets/index-v_6AJcWh.css                  2.36 kB │ gzip:   0.95 kB
+dist/assets/download-8lJFmiSZ.js                0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-BA4iHnhs.js                 0.30 kB │ gzip:   0.23 kB
+dist/assets/import-file-Ct8hcUTT.js             0.32 kB │ gzip:   0.26 kB
+dist/assets/DeleteOutlineRounded-JzQdE_Cb.js    0.53 kB │ gzip:   0.31 kB
+dist/assets/hooks-Uub91r4E.js                   4.17 kB │ gzip:   1.94 kB
+dist/assets/imports-CAGdEAjs.js                 6.19 kB │ gzip:   2.76 kB
+dist/assets/index-BHJWKMOD.js                   7.65 kB │ gzip:   3.06 kB
+dist/assets/index-DVvVywy8.js                   7.80 kB │ gzip:   3.14 kB
+dist/assets/index-cPlGAPzG.js                   8.35 kB │ gzip:   3.54 kB
+dist/assets/index-LurypuwR.js                  13.16 kB │ gzip:   4.55 kB
+dist/assets/index-CbBaLSb9.js                  13.21 kB │ gzip:   4.97 kB
+dist/assets/index-yWc9_yB_.js                  14.41 kB │ gzip:   5.75 kB
+dist/assets/index-DJxarZMZ.js                  15.35 kB │ gzip:   5.38 kB
+dist/assets/index-DE3uU3rR.js                  15.73 kB │ gzip:   5.29 kB
+dist/assets/index-B4qaHUih.js                  15.81 kB │ gzip:   5.23 kB
+dist/assets/index-CWcUXlRs.js                  17.05 kB │ gzip:   6.01 kB
+dist/assets/index-Cfhcczko.js                  17.79 kB │ gzip:   5.87 kB
+dist/assets/index-BCRcSptQ.js                  24.85 kB │ gzip:   8.46 kB
+dist/assets/index-CLCKRvNL.js                  25.53 kB │ gzip:   8.29 kB
+dist/assets/index-DXUSi9Ks.js                  31.42 kB │ gzip:   9.89 kB
+dist/assets/index-Do9fiu-_.js                  36.70 kB │ gzip:   9.93 kB
+dist/assets/schemas-BNOgWa61.js                79.17 kB │ gzip:  24.03 kB
+dist/assets/react-NCqEdj2_.js                 104.73 kB │ gzip:  35.41 kB
+dist/assets/mui-CPcoVmWS.js                   322.09 kB │ gzip:  97.68 kB
+dist/assets/index-wsAqZTjm.js                 324.79 kB │ gzip:  99.59 kB
+dist/assets/index-D4Wa-iO4.js                 732.74 kB │ gzip: 185.16 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.75s

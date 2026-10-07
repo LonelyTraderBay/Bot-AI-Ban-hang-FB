@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W20",
+  "date": "2026-10-06",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "owner": "apps/web/src/modules/notifications/index.tsx",
+  "routes": ["R39", "R40"],
+  "source": {
+    "beforeSha256": "b5b78947f8d0b370ec66adef252ee0bdd25ef1dd2967f1aab2a661da02774bc8",
+    "afterSha256": "db902d443a9b21f2b6125b5cce52a0ba9e2f0e47fdfeabdf9fdb3cc40ff15951",
+    "pushCapabilitiesSha256": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
+    "behaviorContractChanged": false
+  },
+  "spacing": {
+    "reportBefore": "../W19/layout-after-spacing-current-20261006.json",
+    "reportAfter": "layout-after-spacing-current-20261006.json",
+    "totalBefore": 194,
+    "totalAfter": 169,
+    "ownerFindingsBefore": 25,
+    "ownerFindingsAfter": 0,
+    "removed": 25,
+    "added": 0,
+    "identityOrCountChangesOutsideOwner": 0,
+    "exceptionsAdded": 0,
+    "globalStrictGate": "FAIL_REMAINING_W21_W25_DEBT"
+  },
+  "render": {
+    "beforeObservations": 8,
+    "afterObservations": 8,
+    "viewports": ["390x844", "1280x900"],
+    "routesAndStates": ["R39 notification-list", "R39 notification-empty", "R40 devices-and-policy", "R40 revoke-device-dialog"],
+    "writes": 0,
+    "pageErrors": 0,
+    "horizontalOverflowObservations": 0,
+    "outOfViewportDialogs": 0
+  },
+  "targetedE2E": {
+    "command": "npm run test:e2e -- tests/ui-notifications-layout.spec.ts tests/fe019.spec.ts tests/states/route-empty-composition.spec.ts",
+    "result": "PASS",
+    "total": 26,
+    "chromium": 13,
+    "firefox": 13,
+    "newLayoutCoverageWidths": [320, 390, 768, 1280, 1440],
+    "dialogCoverageWidths": [320, 390, 1280]
+  },
+  "fullVerify": {
+    "command": "npm run verify",
+    "result": "EXIT_1_AT_FINAL_STRICT_LAYOUT_SCAN",
+    "generator": "PASS: 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "source": "PASS: 66 files, 220 operation references, 54 routes; fixtures 3/3",
+    "boundaries": "PASS: 451 imports, 10/10 negative fixtures",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "domainAndNetwork": "PASS: 88/88",
+    "unit": "PASS: 88/88",
+    "productionBuild": "PASS: 2056 modules",
+    "layoutFixtures": "PASS: 9/9",
+    "finalStrictLayout": "FAIL: 169 findings remain outside Notifications in W21-W25 owners"
+  },
+  "evidence": {
+    "preEditContract": "design-contract-pre-spacing-current-20261006.md",
+    "renderBefore": "render-before-spacing-current-20261006.json",
+    "renderAfter": "render-after-spacing-current-20261006.json",
+    "layoutDelta": "layout-delta-current-20261006.json",
+    "visualSourceReview": "visual-source-review-current-20261006.md",
+    "targetedE2ELog": "targeted-e2e-current-20261006.log",
+    "fullVerifyLog": "full-verify-current-20261006.log"
+  },
+  "limitations": [
+    "Local frontend evidence against synthetic MSW only.",
+    "No real OS Push permission, Telegram/provider delivery, Backend, hosted CI, staging, production runtime, screen-reader speech, or owner acceptance is established.",
+    "No FE ledger, full-product tracker, generated plan, or generated source was changed."
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "taskId": "UI004",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "status": "DONE",
+  "closedAt": "2026-10-02",
+  "baseRevision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "baseline": {
+    "route": "/s/shop-demo/bot/evaluations",
+    "fixtureRows": 25,
+    "api": {
+      "status": 200,
+      "rows": 20,
+      "total": 25,
+      "hasMore": true,
+      "nextCursor": "evaluation-10016"
+    },
+    "ui": {
+      "visibleRows": 20,
+      "pagerPresent": false,
+      "oldestExpectedId": "evaluation-10001",
+      "oldestReachable": false
+    },
+    "artifact": "S01-baseline.json"
+  },
+  "implementation": {
+    "source": "apps/web/src/modules/bot/index.tsx",
+    "approach": "Render the shared Pager from the typed listEvaluations page response. The existing URL-backed list query owns the cursor; Toolbar resets it when search changes.",
+    "addedDependency": false,
+    "contractOrGeneratedOutputChanged": false,
+    "frontendOrProductProgressLedgerChanged": false,
+    "backendOrStagingVerified": false
+  },
+  "acceptance": {
+    "dataset25": {
+      "pageSizes": [
+        20,
+        5
+      ],
+      "totalReachable": 25,
+      "uniqueIds": 25,
+      "oldestIdReachable": true,
+      "detailKeepsCursor": true,
+      "browserBackForwardWorks": true,
+      "searchResetsCursor": true,
+      "endHasMore": false
+    },
+    "dataset105": {
+      "pageSizes": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        5
+      ],
+      "pagesVisited": 6,
+      "totalReachable": 105,
+      "uniqueIds": 105,
+      "cursorRequests": [
+        "evaluation-10256",
+        "evaluation-10196",
+        "evaluation-10136",
+        "evaluation-10076",
+        "evaluation-10016"
+      ],
+      "oldestIdReachable": true,
+      "endHasMore": false
+    },
+    "failureRetry": {
+      "status": 503,
+      "cursorRetainedInUrl": true,
+      "rowsFabricated": false,
+      "sameCursorRetryStatus": 200
+    }
+  },
+  "gates": {
+    "targetedBrowserCases": "2/2 PASS",
+    "verify": "PASS: generate-check 11 outputs/283 schemas/210 operations/54 routes; source checker; boundaries 410 imports/8 negative fixtures; lint; typecheck; domain/MSW 88/88; Vitest 72/72; production build",
+    "fullBuiltDemoE2E": "158/158 PASS",
+    "routeRoleMatrix": "357/357 PASS",
+    "emptyComposition": "9/9 PASS",
+    "routeErrorComposition": "51/51 PASS",
+    "measuredFrontendReadiness": "7/9 (77.8%); FE-G05 manual checks and FE-G09 owner acceptance remain open",
+    "productionChunkAdvisory": "730.75 kB raw / 184.43 kB gzip; warning retained"
+  },
+  "evidence": [
+    "evidence/frontend-ui-improvements/UI004/S00-harness-api-not-ready.log",
+    "evidence/frontend-ui-improvements/UI004/S00-pager-placement-harness-failure.log",
+    "evidence/frontend-ui-improvements/UI004/S00-first-regression-run.log",
+    "evidence/frontend-ui-improvements/UI004/S00-error-copy-selector-run.log",
+    "evidence/frontend-ui-improvements/UI004/S01-baseline.json",
+    "evidence/frontend-ui-improvements/UI004/S01-baseline.log",
+    "evidence/frontend-ui-improvements/UI004/S01-baseline-first-page.png",
+    "evidence/frontend-ui-improvements/UI004/S02-browser-targeted.log",
+    "evidence/frontend-ui-improvements/UI004/S02-final-list-25.png",
+    "evidence/frontend-ui-improvements/UI004/S03-final-list-105.png",
+    "evidence/frontend-ui-improvements/UI004/S03-verify-current.log",
+    "evidence/frontend-ui-improvements/UI004/S04-full-e2e-current.log"
+  ],
+  "sha256": {
+    "apps/web/src/modules/bot/index.tsx": "9f34f0319f8818831d98641c78ccecf88ac69bdc15efdb83cfee3bc3766fb359",
+    "tests/fe018.spec.ts": "50cbad81907a3e0e3b3481d8781deea171cf9ab193ae9cff7db342a3e4682b3d",
+    "botsales-kit/contracts/openapi.json": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c",
+    "botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "botsales-kit/design/tokens.json": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895"
+  },
+  "limits": [
+    "Browser acceptance used the React app and local MSW synthetic data only. It does not establish backend, provider, staging or production behavior.",
+    "Current full run keeps UI readiness at 7/9; manual FE-G05 and product-owner FE-G09 evidence remain outstanding.",
+    "No standard frontend or whole-product progress ledger was edited."
+  ]
+}

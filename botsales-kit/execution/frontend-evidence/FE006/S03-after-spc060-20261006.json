@@ -1,0 +1,280 @@
+{
+  "taskId": "FE006",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-06T06:10:17.346Z",
+  "sourceRevision": "HEAD e68cb65 on main + current frontend working tree",
+  "expected": "Keyboard remains usable, actual browser zoom reflows, and status is not conveyed by color alone.",
+  "observed": "Fresh actual Chromium browser tab zoom reached 200% (getZoom=2) on five long-content UI states. All five remained at 640 CSS px without page overflow, clipping, page errors or write requests; keyboard focus remained visible. Shared status labels include text, not color alone. Synthetic UI only.",
+  "commandId": "unit",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex evidence freshness review; original execution retained; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / headed Chromium local synthetic demo",
+    "details": "An isolated Chromium extension changed and independently queried tab zoom. No CSS/device-scale emulation substituted for browser zoom.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 5,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE006/S03-after-spc060-20261006.log",
+  "logSha256": "9a1be0d1701ca7035f044f5bf292e15d0f4f3f3055f5e5ecf338fc6ba0f6f2f9",
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "1de4eb192b263d059a3a6199449b196a9ad8c280a329c09fec0cfc33293bf134"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "f52c5f9b676b583b1160f3bff4b7655cf43721a09009d5ce33a2f007a14d417f"
+    },
+    {
+      "path": "apps/web/src/app/bootstrap.css",
+      "sha256": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89"
+    },
+    {
+      "path": "apps/web/src/app/tokens.css",
+      "sha256": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "790d840a250c401163970e503beb37b5e14c5541fb1f4233a494085be515caa9"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "sha256": "be9a9c5d9f22ffb7b8a048d0de375e94e1dabaf96880f225420b0d1ecb49bf50"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "fb7c9eaf4c66507bd83a82625cc52e5b2d29923999c8f02bdf65f611d251594f"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "a87cf998f5dce3b234210ed08ba33f957c243b07b5bfe3eef7f6c82fc125e5f4"
+    },
+    {
+      "path": "apps/web/src/shared/ui/layout.ts",
+      "sha256": "b8e97da448a469f21bafe7c5c5ffadacd81cbd5d022484e4cc56d1a9afb6915f"
+    },
+    {
+      "path": "apps/web/src/shared/ui/theme.ts",
+      "sha256": "dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-unit-spc059-current-20261006.log",
+      "sha256": "ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE006/S03-after-spc059-zoom-20261006.json",
+      "sha256": "cdf45162e53173a7d5b5c1941d5671a6ad95bdbeb1dc6182b4571c64bc9276b1"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE006/S03-after-spc059-zoom-run.log",
+      "sha256": "c6d0b1129d230a94d5347afdba02731d43258d87f896d1042cb3a451ffd42084"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE006/capture-s03-spc059-refresh-20261006.mjs",
+      "sha256": "901cfd6ac0fc7b9df8613ef3c7602a1ec189d7bb02fd9ed7e8f920670701bba8"
+    },
+    {
+      "path": "docs/FRONTEND_SPACING_STANDARD.md",
+      "sha256": "7840e2c2b8bd6249867ef20acd44b53600feb588147ab0779dd1097fc7f6b7c9"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/design-contract-pre-stress-current-20261006.md",
+      "sha256": "359fad0f5b642b39c237ce0f7bd236f7cafa4f520acee5956a0996ce7d8fa6ee"
+    },
+    {
+      "path": "tests/ui028-w30-stress.spec.ts",
+      "sha256": "8d20f03c652f383194aec0e368a7e71f33e73d3230edf4ee3e0cbe1a07a1fbbd"
+    }
+  ],
+  "sourceSnapshotSha256": "0c58df6e6e8c97127341eb4e52dd7ce0f1fae8b44db926d8a3f41c7664350c11",
+  "commandResults": [
+    {
+      "commandId": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE005/S03-unit-spc059-current-20261006.log",
+      "logSha256": "ac5801c943938b689dbdc4c8d96e3c215e0aa72789910fb3713dac74cab6fde4"
+    },
+    {
+      "command": "node botsales-kit/execution/frontend-evidence/FE006/capture-s03-actual-browser-zoom-spc059-20261006.mjs",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE006/S03-after-spc059-zoom-run.log",
+      "logSha256": "c6d0b1129d230a94d5347afdba02731d43258d87f896d1042cb3a451ffd42084"
+    }
+  ],
+  "browserZoom": {
+    "factor": 2,
+    "scenarios": [
+      {
+        "id": "form-error-short",
+        "route": "/s/shop-demo/products/new",
+        "result": "PASS",
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "overflow": 0,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Góp ý màn hình",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 512.015625,
+            "right": 619,
+            "y": 299.859375,
+            "bottom": 343.859375
+          }
+        },
+        "issues": [],
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      {
+        "id": "mobile-menu-long-label",
+        "route": "/s/shop-demo/overview",
+        "result": "PASS",
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "overflow": 0,
+        "activeFocus": {
+          "tag": "a",
+          "role": null,
+          "label": "Danh mục",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 8,
+            "right": 267,
+            "y": 191.5390625,
+            "bottom": 236.5390625
+          }
+        },
+        "issues": [],
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      {
+        "id": "report-long-id",
+        "route": "/s/shop-demo/reports/marketing",
+        "result": "PASS",
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "overflow": 0,
+        "activeFocus": {
+          "tag": "a",
+          "role": null,
+          "label": "Đến nội dung chính",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 12,
+            "right": 158.046875,
+            "y": 12,
+            "bottom": 57
+          }
+        },
+        "issues": [],
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      {
+        "id": "inbox-long-composer",
+        "route": "/s/shop-demo/inbox/cv1",
+        "result": "PASS",
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "overflow": 0,
+        "activeFocus": {
+          "tag": "aside",
+          "role": null,
+          "label": "Bối cảnh khách hàng",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 16,
+            "right": 619,
+            "y": -458.609375,
+            "bottom": 818.4375
+          }
+        },
+        "issues": [],
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      {
+        "id": "dialog-long-reason",
+        "route": "/s/shop-demo/inbox/cv1",
+        "result": "PASS",
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "overflow": 0,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Hủy",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 426.8046875,
+            "right": 490.8046875,
+            "y": 267,
+            "bottom": 311
+          }
+        },
+        "issues": [],
+        "pageErrors": [],
+        "writeRequests": []
+      }
+    ]
+  },
+  "revalidation": {
+    "reviewedAt": "2026-10-06T08:41:48.137Z",
+    "kind": "policy-only source freshness review",
+    "originalEvidence": {
+      "path": "execution/frontend-evidence/FE006/S03-after-spc059-20261006.json",
+      "sha256": "1901ba746c806476b5884451cf1f50a487d94f05e3817f967d4f2c8238b4cbff",
+      "executedAt": "2026-10-06T06:10:17.346Z",
+      "logFile": "execution/frontend-evidence/FE006/S03-after-spc059-20261006.log",
+      "logSha256": "bb2f7f8b880de39c9334018b334da3c1bcf086b08c3b7c960bdcc0ef123edc77"
+    },
+    "refreshedPolicySources": [
+      "AGENTS.md",
+      "docs/FRONTEND_SPACING_STANDARD.md"
+    ],
+    "runtimeTestsRerun": false,
+    "note": "Original command result is retained without representing it as a new run. React/runtime and test inputs for this checkpoint were unchanged."
+  }
+}

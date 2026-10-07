@@ -1,0 +1,72 @@
+{
+  "taskId": "UI026",
+  "checkedAt": "2026-10-02T10:31:02.640Z",
+  "scope": "Frontend-only; React demo with synthetic MSW API",
+  "baseline": {
+    "head": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+    "node": "v24.19.0",
+    "packageManager": "npm@11.17.0",
+    "lockSha256": "15408e7cc36b748179386b0e557b0a4fbbe1af8024b881a5ec2bba77751d47ce",
+    "nodeModulesRealpath": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules",
+    "webNodeModulesRealpath": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\node_modules",
+    "mockWorkerPresent": true,
+    "envLocalPresent": false
+  },
+  "cacheIsolation": {
+    "implementation": "scripts/vite-cache.mjs",
+    "pathPattern": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-vite-cache\\<project-root-sha256-20>\\<server-role>\\<run-id>",
+    "directViteRole": "direct-vite/<pid>",
+    "playwrightWebServerRole": "playwright-webserver/<playwright-run-id>",
+    "helperRole": "test-<mode>/<playwright-run-id>",
+    "runScoped": true,
+    "checkoutScoped": true,
+    "pathsObserved": {
+      "demoServerA": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-vite-cache\\ea27c7577456f6009d55\\test-demo\\playwright-3204-b0ce948c-7206-46a0-9123-3fa176d29ae5-parallel-a",
+      "demoServerB": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-vite-cache\\ea27c7577456f6009d55\\test-demo\\playwright-3204-b0ce948c-7206-46a0-9123-3fa176d29ae5-parallel-b",
+      "otherCheckoutPathsDiffer": true
+    },
+    "pathsWereOutsideCheckout": true
+  },
+  "browserVerification": {
+    "command": "npx.cmd playwright test tests/session/demo-server-cache-isolation.spec.ts tests/states/route-empty-composition.spec.ts --reporter=line",
+    "runs": [
+      "S07-targeted-harness-repeat.log",
+      "S10-targeted-final.log"
+    ],
+    "finalExitCode": 0,
+    "finalSummary": "2 passed; parallel Vite cache isolation PASS; empty-state composition 9/9 routes PASS; no optimized-dependency 504 observed",
+    "run1Passed": true,
+    "run2Passed": true,
+    "cacheIsolationPassed": true,
+    "emptyStatePasses": true,
+    "optimizedDependency504s": 0
+  },
+  "checks": {
+    "doctor": "S01-doctor-pathfixed.log PASS",
+    "generate": "S02-generate-check-pathfixed.log PASS (11 outputs, 283 schemas, 210 operations, 54 routes)",
+    "typecheck": "S03-typecheck-pathfixed.log PASS",
+    "lint": "S04-lint-pathfixed.log PASS",
+    "boundaries": "S05-boundaries-pathfixed.log PASS (62 files, 410 imports, 8/8 negative fixtures)",
+    "productionBuild": "S08-production-build.log PASS",
+    "demoBuild": "S09-demo-build.log PASS",
+    "productionContainsMockWorker": false,
+    "demoContainsMockWorker": true
+  },
+  "priorFullE2E": {
+    "status": "FAIL; audit baseline 146/147, exit 1",
+    "note": "Not rerun for UI026; the targeted retry does not convert the earlier full run into PASS."
+  },
+  "sourceChanges": {
+    "scripts/vite-cache.mjs": "56478cc7e72edf0afe9e4fa949b2816e0a280260461b17bc1b5e04859a34458f",
+    "apps/web/vite.config.ts": "73384f107fe348c120f479138038177f0d71db511fce2a90b6f111fb6f01dca9",
+    "playwright.config.ts": "034bf2d12517a7d274386b14b670bdb9765ee0da9897435089ecf66e452d995e",
+    "tests/session/demo-server.mjs": "7bb5fbd500c01a503079367fef8711a9f46d3b4f118794e38c05895fe1f06cef",
+    "tests/session/demo-server-cache-isolation.spec.ts": "8cbbfdc37f5a32c1a228be78b0875652660b10b4ad64c41139753dcd51e7c385"
+  },
+  "limitations": [
+    "No cold npm ci was run in this checkout; node_modules already existed at its own real path.",
+    "The old full Playwright audit remains a failed run.",
+    "OS temporary cache folders created during these runs are retained; no cleanup was attempted.",
+    "No full product gate or FE ledger entry was changed."
+  ]
+}

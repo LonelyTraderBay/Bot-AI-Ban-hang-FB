@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W15",
+  "capturedAt": "2026-10-05",
+  "scope": "Frontend-only local synthetic MSW; Finance spacing migration for R20/R21/R22/R48/R49/R50",
+  "source": {
+    "path": "apps/web/src/modules/finance/index.tsx",
+    "beforeSha256": "db3120bf89a38a219e31b9377ba64e30d5444466370821e21c94ca1ded159c8f",
+    "afterSha256": "32ec755040c08f87b68afa87917f8b678742afc0fb1febf51df5319577dbd207",
+    "preExistingStagedAndUnstagedChangesAtIntake": true
+  },
+  "layout": {
+    "globalSpacingFindingsBefore": 293,
+    "globalSpacingFindingsAfter": 266,
+    "ownerSpacingFindingsBefore": 27,
+    "ownerSpacingFindingsAfter": 0,
+    "newFindings": 0,
+    "nonFinanceFindingIdentityChanges": 0,
+    "fixtures": "PASS 9/9",
+    "strictGlobalGate": "FAIL; 266 findings remain in other modules assigned to W16-W25"
+  },
+  "checks": {
+    "generator": "PASS; 11 outputs, 283 schemas, 210 operations, 54 routes",
+    "source": "PASS; 66 files, 220 operation calls, 54 routes, 0 issues; source checker 3/3",
+    "boundaries": "PASS; 446 imports, 10/10 negative fixtures, 0 issues",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "domainAndNetwork": "PASS; 88/88",
+    "vitest": "PASS; 88/88 across 10 files",
+    "productionBuild": "PASS; 2056 modules",
+    "targetedPlaywright": "PASS; 66/66, Chromium 33/33 and Firefox 33/33",
+    "layoutRegression": "PASS; six Finance routes at 320/390/768/1280/1440 px; dialog bounds at mobile and desktop",
+    "visualSourceReview": "PASS for this spacing-only delta; see visual-source-review-current-20261005.md",
+    "fullVerify": "Exit 1 at the final strict layout scan after the listed checks passed; 266 source findings remain"
+  },
+  "browserEvidence": {
+    "pairedChromiumObservations": "26 baseline + 26 after across six Finance routes and representative states at 390x844 and 1280x900",
+    "pageErrors": 0,
+    "writeRequestsDuringCapture": 0,
+    "layoutDelta": "27 Finance findings removed; 0 added; all non-Finance finding identities and counts unchanged",
+    "interactionWrites": "The paired capture is read-only; mutation scenarios in regression use isolated synthetic fixtures and are not production writes."
+  },
+  "verdict": {
+    "ui": "PASS",
+    "architecture": "PASS_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "task": "DONE_WITH_KNOWN_GLOBAL_LAYOUT_DEBT",
+    "limitations": [
+      "npm.cmd run verify exits 1 at the final strict layout scan because 266 spacing findings remain in the modules assigned to W16-W25.",
+      "Automated layout enforcement currently covers spacing; non-spacing design tokens still require source review until W26-W27 deliver and verify the visual-token gate.",
+      "The evidence is local React with synthetic MSW. It does not establish Backend/provider integration, hosted CI, staging, production behavior or owner acceptance."
+    ]
+  },
+  "evidence": [
+    "design-contract-pre-spacing-current-20261005.md",
+    "layout-before-spacing-current-20261005.json",
+    "layout-after-spacing-current-20261005.json",
+    "layout-delta-current-20261005.json",
+    "render-before-spacing-current-20261005.json",
+    "render-after-spacing-current-20261005.json",
+    "targeted-finance-e2e-current-20261005.log",
+    "verify-w15-current-20261005.log",
+    "visual-source-review-current-20261005.md"
+  ]
+}

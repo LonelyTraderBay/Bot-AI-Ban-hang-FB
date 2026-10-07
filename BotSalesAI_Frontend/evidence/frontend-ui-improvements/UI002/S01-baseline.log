@@ -1,0 +1,51 @@
+
+[WebServer] (node:1484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:39068) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\fe016.spec.ts:147:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-34656-f258d16a-79c7-47a5-8c91-52a1aded595e\deps\react-dom_client.js?v=b5067100 as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\fe016.spec.ts:147:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('listitem').filter({ hasText: 'UI002 Conversation 41' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('listitem').filter({ hasText: 'UI002 Conversation 41' }) with timeout 5000ms
+      - waiting for getByRole('listitem').filter({ hasText: 'UI002 Conversation 41' })
+
+
+      190 |     expect((await firstMessageResponse).status()).toBe(200);
+      191 |     const pageTwoConversation = page.getByRole('listitem').filter({ hasText: 'UI002 Conversation 41' });
+    > 192 |     await expect(pageTwoConversation).toBeVisible();
+          |                                       ^
+      193 |     const firstPageRequest = requests.find(request => request.shopId === 'shop-demo' && request.resource === 'conversations' && request.cursor === 'ui002-conversation-40');
+      194 |     expect(firstPageRequest).toBeDefined();
+      195 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe016.spec.ts:192:39
+
+    Error Context: test-results\fe016-UI002-inbox-list-and-cd53e-tion-switch-and-shop-change-chromium\error-context.md
+
+    Error Context: test-results\fe016-UI002-inbox-list-and-cd53e-tion-switch-and-shop-change-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe016-UI002-inbox-list-and-cd53e-tion-switch-and-shop-change-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe016-UI002-inbox-list-and-cd53e-tion-switch-and-shop-change-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\fe016.spec.ts:147:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change 

@@ -1,0 +1,21 @@
+UI018 C04 frontend checks
+Date: 2026-10-03
+Working directory: BotSalesAI_Frontend
+
+PASS — `npm.cmd --script-shell=C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe run generate:check`: 11 generated outputs, 283 schemas, 210 operations, 54 routes. Generated source was not edited.
+PASS — full Vitest via direct project CLI: 10 files, 85/85 tests.
+PASS — React TypeScript check via `node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit`.
+PASS — ESLint via `node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0`.
+PASS — source audit: 64 files, 220 operation references, 54 routes, 0 issues.
+PASS — module boundaries: 427 imports, 8/8 negative fixtures, 0 issues.
+PASS — simulator/MSW: 88/88 (75 simulator, 13 network checks, 210 handlers).
+PASS — source checker regression tests: 3/3.
+PASS — production Vite build via `node ..\..\node_modules\vite\bin\vite.js build --mode production` from `apps/web`.
+
+Current production asset scan found no `setupWorker`, `WorkerChannel`, `msw/browser` or `@mswjs/interceptors` markers. It found one `/mockServiceWorker.js` string retained by app bootstrap solely to unregister a stale service worker; no MSW runtime is bundled or started.
+
+Production build advisory: largest chunk is 737.92 kB raw / 186.81 kB gzip; Vite's existing 500 kB raw warning remains. UI018 did not change bundle strategy or warning threshold.
+
+The default `npm.cmd test` script shell did not launch the local Vitest shim in this PowerShell environment (`vitest` was not found); setting PowerShell as the npm script shell then encountered the host's execution-policy block on `vitest.ps1`. The same installed Vitest CLI was run directly with Node and all 85 tests passed. This is a command-wrapper limitation, not a test failure.
+
+Full rebuilt-demo E2E was not rerun for this focused UI018 refactor. The three affected test files passed 22/22 in demo mode, and the two exact Finance/Reports range browser cases passed again on the final source. No backend, provider, CI, staging, production runtime, or owner UAT was exercised. FE-G05 and FE-G09 readiness evidence remains unchanged.

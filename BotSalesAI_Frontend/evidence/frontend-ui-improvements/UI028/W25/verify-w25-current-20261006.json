@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W25",
+  "date": "2026-10-06",
+  "status": "DONE",
+  "scope": "Frontend-only React/TypeScript Reports UI; routes R31 and R53; synthetic MSW",
+  "verdict": {"ui": "PASS", "architecture": "PASS"},
+  "spacing": {
+    "baseline": {"files": 67, "findings": 20, "ownerFindings": 20, "status": "FAIL"},
+    "after": {"files": 67, "findings": 0, "status": "PASS"},
+    "newFindings": 0,
+    "exceptionsUsed": ["UI028-A11Y-SKIP-LINK-PADDING"],
+    "exceptionsUnused": [],
+    "deltaEvidence": "layout-delta-current-2026-10-06.json"
+  },
+  "render": {
+    "before": "render-before-current-2026-10-06.json",
+    "after": "render-after-current-2026-10-06.json",
+    "pairedCaptures": 4,
+    "viewports": ["390x844", "1280x900"],
+    "routes": ["R31", "R53"],
+    "horizontalOverflow": 0,
+    "writes": 0,
+    "apiErrors": 0,
+    "pageErrors": 0,
+    "visualReview": "visual-source-review-current-20261006.md"
+  },
+  "browserRegression": {
+    "command": "node node_modules/@playwright/test/cli.js test tests/ui028-w25-reports-layout.spec.ts tests/fe021.spec.ts tests/ui011-date-time.spec.ts tests/ui012-keyboard.spec.ts tests/ui013-url-state.spec.ts --timeout=60000",
+    "projects": ["chromium", "firefox"],
+    "passed": 50,
+    "failed": 0,
+    "result": "PASS",
+    "log": "targeted-e2e-current-20261006.log",
+    "priorAttemptNote": "A previous full-suite attempt had one Firefox timeout; the isolated retry passed, and this fresh complete run passed 50/50 in 2.8 minutes."
+  },
+  "sourceGates": {
+    "generator": {"result": "PASS", "outputs": 11, "schemas": 283, "operations": 210, "routes": 54},
+    "sourcePolicy": {"result": "PASS", "files": 66, "operationCalls": 220, "routes": 54, "unitFixtures": "3/3"},
+    "moduleBoundaries": {"result": "PASS", "imports": 457, "negativeFixtures": "10/10"},
+    "typecheck": "PASS",
+    "eslint": "PASS",
+    "layoutFixtures": "9/9 PASS",
+    "strictLayout": {"result": "PASS", "files": 67, "findings": 0}
+  },
+  "builds": {
+    "production": {"result": "PASS", "modules": 2056, "log": "production-build-current-20261006.log"},
+    "demo": {"result": "PASS", "modules": 2272, "log": "demo-build-current-20261006.log"},
+    "artifactIsolation": {"result": "PASS", "log": "artifact-isolation-current-20261006.log", "notes": "No MSW worker/interceptor runtime in production. A stale demo-worker cleanup guard remains intentionally in main.tsx; demo contains mock worker runtime chunks."}
+  },
+  "evidenceIntegrity": {
+    "preSourceContract": "design-contract-pre-spacing-current-20261006.md",
+    "immutableBaselineManifest": "baseline-manifest-current-20261006.json",
+    "policyAddendum": "policy-update-after-baseline-current-20261006.md",
+    "baselineCaptureInstrumentationCaveat": "The baseline helper's mainGrid/reportPanel selectors were invalid. Those fields are excluded from before/after claims; original baseline files remain unchanged.",
+    "frontendOnlyLimit": "Local source, synthetic mock, browser and build evidence does not prove Backend integration, hosted CI, staging/deployment, screen-reader approval or owner acceptance."
+  }
+}

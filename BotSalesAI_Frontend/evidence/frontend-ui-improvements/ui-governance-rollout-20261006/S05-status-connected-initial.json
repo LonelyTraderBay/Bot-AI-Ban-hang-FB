@@ -1,0 +1,135 @@
+{
+  "checkedAt": "2026-10-06T15:32:29.363Z",
+  "step": "S05",
+  "status": "IN_PROGRESS_BINDING_GATES_CONNECTED",
+  "checks": [
+    {
+      "command": "node scripts/check-layout.mjs --json",
+      "exit": 0,
+      "output": "S05-current-layout.json",
+      "outputSha256": "aead71315b876bb3ed09ca47c50490b941dbb2a87a02ca47c03a7608c8dc1a80"
+    },
+    {
+      "command": "node scripts/check-ui-composition.mjs --json",
+      "exit": 0,
+      "output": "S05-current-composition.json",
+      "outputSha256": "4c71c1630d1bdeb518a9a6839102acb57e66451d56430ae56c5f8479bf86996f"
+    },
+    {
+      "command": "node scripts/check-visual-tokens.mjs --json",
+      "exit": 0,
+      "output": "S05-current-visual.json",
+      "outputSha256": "ef098bc48fa640a721feaaf0cda6c895cfc3ea8b152225ff0a672ec47e17e2ca"
+    },
+    {
+      "command": "node node_modules/typescript/lib/tsc.js -p apps/web/tsconfig.json --noEmit",
+      "exit": 0,
+      "output": "S05-typecheck.log",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "node scripts/check-boundaries.mjs",
+      "exit": 0,
+      "output": "S05-boundaries.log",
+      "outputSha256": "885b7efa82826195f285948e1ac77ceab46662615649ee86b77b92fc68b19db1"
+    },
+    {
+      "command": "node scripts/generate.mjs --check",
+      "exit": 0,
+      "output": "S05-generator.log",
+      "outputSha256": "9cefafdc5cc383f856c99fb5aa32c42cd866a8f9d28115c87c9c96695f162544"
+    }
+  ],
+  "fixtureEvidence": {
+    "log": "S05-bindings-complete-fixtures.log",
+    "sha256": "7b77091f4f92087be14ff7b456f00d59e890f70f974f1c35652c8f613346593a",
+    "passed": 111,
+    "failed": 0,
+    "exitRecordedByCaller": 0
+  },
+  "changedOwnerHashes": [
+    {
+      "file": "scripts/ui-bindings.mjs",
+      "sha256": "2dbe7505bf6a13d5b68092fcd15bf78ff4f711bb1ab63c338ca31f0130d83588"
+    },
+    {
+      "file": "scripts/check-layout.mjs",
+      "sha256": "660974c1b8d354d4dde7e1aa4e7199b1dee4ff3572670144e196e4e97a140890"
+    },
+    {
+      "file": "scripts/check-ui-composition.mjs",
+      "sha256": "fc93096d6c3da11d0787ee6c465385ba31b137a3e13d84f3e1601d9d619d0dc4"
+    },
+    {
+      "file": "scripts/check-visual-tokens.mjs",
+      "sha256": "e30c4f1ac8f407277cdd73ae127a0f4596de55dedc7952261b7da38ddf19088c"
+    },
+    {
+      "file": "tests/ui-bindings.test.mjs",
+      "sha256": "aa543b1d315d1ede8b72341310a9cc9b8c482fb2e09f1366bfa03b310eabd41f"
+    },
+    {
+      "file": "tests/ui-binding-gates.test.mjs",
+      "sha256": "a1c5cce96e57a214b94a5fcb75b415face70d16a948a0892f9a22d84da2d9d00"
+    },
+    {
+      "file": "tests/ui-layout-binding-gates.test.mjs",
+      "sha256": "48fec292023e8d52aa7e32234e84925da6f791e75cb83eed926b1a8d01ad16a7"
+    },
+    {
+      "file": "tests/layout-checker.test.mjs",
+      "sha256": "db1917d9f18a62cfefc6091ac73be6be6816850cc7d4edbe057ceaf1422d4896"
+    }
+  ],
+  "protectedFiles": [
+    {
+      "file": "botsales-kit/execution/plan.json",
+      "sha256": "c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16",
+      "currentSha256": "c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/progress.json",
+      "sha256": "23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed",
+      "currentSha256": "23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f",
+      "currentSha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/execution/frontend-progress.json",
+      "sha256": "fa1fd588fc8a807ed334b48b0766cabfa621d45817c551f28ae3243c30330ef9",
+      "currentSha256": "fa1fd588fc8a807ed334b48b0766cabfa621d45817c551f28ae3243c30330ef9",
+      "unchanged": true
+    },
+    {
+      "file": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "currentSha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "unchanged": true
+    },
+    {
+      "file": "botsales-kit/AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "currentSha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+      "unchanged": true
+    }
+  ],
+  "indexUnchanged": true,
+  "runtimeSourceChangesSinceS03": [],
+  "pending": [
+    "Final S05 provenance/capability review including remaining register spread and producer paths",
+    "Readonly/mutation/style/value/slot/ancestry hardening S06–S10",
+    "UI owner/consumer migration and full acceptance S11–S20"
+  ],
+  "limits": [
+    "Legacy virtual/syntax fixtures are not production resolver proof",
+    "Controlled MUI declarations in unit fixtures are not real MUI typecheck proof",
+    "No shared/feature UI edits or browser verification in this batch",
+    "No full conformance, owner acceptance or Enterprise certification"
+  ]
+}

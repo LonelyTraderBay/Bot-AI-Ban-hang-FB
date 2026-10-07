@@ -1,0 +1,14 @@
+UI019 C04 — build and regression checks
+Date: 2026-10-03
+Scope: current React/TypeScript source and local synthetic-MSW demo; no source changes in UI019.
+
+PASS — production Vite build: 2,054 modules transformed; largest entry 737.92 kB raw / 186.81 kB gzip. Existing 500 kB raw advisory remains.
+PASS — demo Vite build: 2,270 modules transformed; largest chunk 741.57 kB raw / 187.95 kB gzip. Existing 500 kB raw advisory remains.
+PASS — repeatable profile on the rebuilt demo: 1 warm-up + 5 samples; all five session/list responses 200 and 21 rows (header included); gzip response header confirmed. See S02-performance-repeat.log and S02-repeat-profile.mjs.
+PASS — current production artifact isolation scan: no setupWorker(, WorkerChannel, msw/browser or @mswjs/interceptors marker; no mockServiceWorker.js asset; one prior-worker cleanup string remains in bootstrap.
+PASS — source/regression gates reused from UI018 S04 because the React source and test fingerprints are unchanged: generator 11/283/210/54, source 64 files/220 refs/54 routes, boundaries 427 imports and negative fixtures 8/8, source-checker 3/3, lint/typecheck, domain/MSW 88/88 and Vitest 85/85.
+PASS — git diff --check; output contains only Git's LF-to-CRLF advisory for existing dirty files, no whitespace error.
+
+Limit: npm run verify was not executed as one command and no full rebuilt-demo E2E was run on UI019. Current individual source gates are evidenced by UI018 S04 on the unchanged source. The perf run is an emulated Chromium desktop profile, not a physical mobile device, deployment CDN, real API/backend, staging or production SLO. Owner UAT remains open.
+
+PASS — [S04-artifact-sha256.json](S04-artifact-sha256.json) inventories current production and demo output bytes + SHA-256 per file. Artifacts are generated/ignored outputs, not source changes.

@@ -1,0 +1,45 @@
+
+Running 1 test using 1 worker
+
+(node:43956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[w30-stress] {"browser":"chromium","scenario":"form-error-short","viewport":{"width":320,"height":480},"scaledTextElements":54,"issues":2,"pageErrors":0,"evidence":"evidence\\frontend-ui-improvements\\UI028\\W30\\stress-chromium-form-error-short-current-20261006.json"}
+  x  1 [chromium] › tests\ui028-w30-stress.spec.ts:71:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480 (2.2s)
+
+
+  1) [chromium] › tests\ui028-w30-stress.spec.ts:71:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 4
+
+    - Array []
+    + Array [
+    +   "Document horizontal overflow: 112px",
+    +   "Potential clipped text elements: 7",
+    + ]
+
+      207 |         fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+      208 |         console.log(`[w30-stress] ${JSON.stringify({ browser: browserName, scenario: scenario.id, viewport: scenario.viewport, scaledTextElements: scale.scaledTextElements, issues: issues.length, pageErrors: pageErrors.length, evidence: path.relative(root, output) })}`);
+    > 209 |         expect(issues).toEqual([]);
+          |                        ^
+      210 |     });
+      211 | }
+      212 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui028-w30-stress.spec.ts:209:24
+
+    Error Context: test-results\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-chromium\error-context.md
+
+    Error Context: test-results\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\ui028-w30-stress.spec.ts:71:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480 

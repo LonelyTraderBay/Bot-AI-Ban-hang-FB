@@ -1,0 +1,32 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
+import { uiSourceFiles, isScriptSource } from '../../../scripts/ui-source-files.mjs';
+import { auditUiImportScope } from '../../../scripts/ui-import-scope.mjs';
+
+const directory = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(directory, '../../..');
+const relative = file => path.relative(root, file).split(path.sep).join('/');
+const read = file => JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
+const inventory = read(path.join(directory, 'inventory.json'));
+const scope = auditUiImportScope(root, uiSourceFiles(root));
+const generatedCss = 'apps/web/src/app/tokens.css';
+const styleExpected = scope.files.map(relative).filter(file => file !== generatedCss).sort();
+const compositionExpected = scope.files.filter(isScriptSource).map(relative).sort();
+const gateResults = ['check-layout', 'check-visual-tokens', 'check-ui-composition'].map(gate => {
+    const result = read(path.join(directory, `S04-coverage-${gate}.json`));
+    const actual = (result.scannedFiles || result.sourceHashes.map(row => row.file)).sort();
+    const expected = gate === 'check-ui-composition' ? compositionExpected : styleExpected;
+    return { gate, expected: expected.length, actual: actual.length, missing: expected.filter(file => !actual.includes(file)), extra: actual.filter(file => !expected.includes(file)), findings: (result.findings || result.issues).length, status: result.status };
+});
+const observed = new Set([...scope.files, ...scope.assets].map(relative));
+for (const file of ['apps/web/index.html', 'apps/web/tsconfig.json', 'apps/web/vite.config.ts']) observed.add(file);
+const runtimeRows = inventory.files.filter(row => row.runtimeImportClosureOrEntrypoint);
+const missingRuntime = runtimeRows.filter(row => !observed.has(row.path)).map(row => row.path);
+const inputHashes = [...observed].sort().map(file => ({ file, sha256: createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex'), treatment: file === generatedCss || file === 'apps/web/public/app-icon.svg' || file === 'apps/web/public/manifest.webmanifest' || file.startsWith('packages/') ? 'GENERATE_VERIFY; generator proof recorded separately' : file === 'apps/web/public/mockServiceWorker.js' ? 'THIRD_PARTY_VERIFY; compared with installed MSW bytes' : scope.assets.map(relative).includes(file) ? 'ASSET_VERIFY; source-path discovery only, behavior/content checks remain impact-specific' : 'SOURCE_OR_CONFIG_GUARD; semantics belong to S05–S10/S19' }));
+const report = { checkedAt: new Date().toISOString(), scope: 'S04 discovery/coverage reconciliation, not visual/behavior/unit provenance certification.', gateResults, scopeIssues: scope.issues, runtimeInventoryRows: runtimeRows.length, missingRuntime, inputHashes, libraries: scope.libraries, unsupportedPaths: ['Inline HTML styles/scripts/events and HTML srcset fail closed until source mapping exists', 'Custom HTML-transforming Vite hooks fail closed until generated source mapping exists', 'Opaque/nonliteral imports and stylesheet URL syntax fail closed'], notProven: ['S05 binding correctness', 'S06–S10 mutation/style/value/owner/API conformance', 'S11–S20 browser and final source acceptance', 'All inventory tooling/tests/docs are not all runtime source-gate targets'] };
+report.status = !missingRuntime.length && !scope.issues.length && gateResults.every(row => row.status === 'PASS' && !row.findings && !row.missing.length && !row.extra.length) ? 'PASS_DISCOVERY_SCOPED' : 'FAIL';
+fs.writeFileSync(path.join(directory, 'S04-coverage.json'), JSON.stringify(report, null, 2) + '\n');
+console.log(JSON.stringify({ status: report.status, gates: gateResults, runtimeInventoryRows: runtimeRows.length, missingRuntime, inputs: inputHashes.length }));
+if (report.status === 'FAIL') process.exitCode = 1;

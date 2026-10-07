@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "step": "UI028.W05",
+  "capturedOn": "2026-10-05",
+  "status": "DONE",
+  "scope": "Theme overrides, generated CSS spacing variables, and app global fallback CSS; Frontend-only",
+  "designContract": "design-contract-pre-code-20261005.json",
+  "implementation": [
+    {
+      "file": "scripts/generate.mjs",
+      "change": "Emit --space-* CSS variables from canonical tokens.space"
+    },
+    {
+      "file": "apps/web/src/app/tokens.css",
+      "change": "Regenerated output now contains --space-xs through --space-xxxl"
+    },
+    {
+      "file": "apps/web/src/shared/ui/theme.ts",
+      "change": "MuiTableCell uses layoutCss.table.cellInset; helper text remains zero-left-inset"
+    },
+    {
+      "file": "apps/web/src/app/bootstrap.css",
+      "change": "#root fallback margin uses var(--space-xl); keyboard skip-link remains under exact W09 exception"
+    }
+  ],
+  "expectedObserved": {
+    "tableCellPadding": {
+      "expected": "12px 16px",
+      "observed": "12px 16px"
+    },
+    "spaceXl": {
+      "expected": "24px",
+      "observed": "24px"
+    },
+    "mobileViewport": {
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390
+    },
+    "helperText": {
+      "expected": "0px left inset; 12px meta type",
+      "observed": {
+        "text": "Số lượng nguyên theo hợp đồng.",
+        "marginLeft": "0px",
+        "fontSize": "12px"
+      }
+    },
+    "focusedOutline": {
+      "expected": "2px accent outline",
+      "observed": {
+        "activeInput": true,
+        "outlinedBorderWidth": "2px",
+        "outlinedBorderColor": "rgb(246, 200, 95)"
+      }
+    },
+    "skipLinkPadding": {
+      "preserved": "12px exact exception pending W09",
+      "observed": "12px"
+    },
+    "pageErrors": []
+  },
+  "checks": {
+    "generateCheck": "PASS (11 outputs, 283 schemas, 210 operations, 54 routes)",
+    "source": "PASS (66 files, 220 operation calls, 54 routes)",
+    "boundaries": "PASS (433 imports, 0 issue, 10/10 negative fixtures)",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "domainMSW": "PASS (88/88)",
+    "vitest": "PASS (85/85)",
+    "productionBuild": "PASS",
+    "layoutFixtures": "PASS (8/8)",
+    "browser": "PASS (3 render states at 1280x900 desktop, 390x844 mobile; table/helper/focus values and no horizontal document overflow)"
+  },
+  "strictGate": {
+    "command": "npm.cmd run verify",
+    "exitCode": 1,
+    "expected": true,
+    "status": "FAIL",
+    "findings": 503,
+    "counts": {
+      "SPACING_LITERAL": 501,
+      "UNKNOWN_STYLE_SOURCE": 2
+    },
+    "components": 18,
+    "files": 24,
+    "w05OwnedFiles": [
+      "apps/web/src/shared/ui/theme.ts",
+      "apps/web/src/app/bootstrap.css",
+      "apps/web/src/app/tokens.css"
+    ],
+    "w05OwnedFindings": [],
+    "exceptionUsed": [
+      "UI028-A11Y-SKIP-LINK-PADDING"
+    ],
+    "meaning": "W05-owned sources are clean. Verify remains FAIL until assigned W06-W25 source debt is migrated; no suppressions."
+  },
+  "debtMovement": {
+    "baselineFindings": 505,
+    "currentFindings": 503,
+    "resolved": 2,
+    "scopeFilesClean": 3
+  },
+  "renderArtifacts": [
+    "ui-w05-orders-desktop-1280x900.png",
+    "ui-w05-orders-mobile-390x844.png",
+    "ui-w05-order-form-1280x900.png"
+  ],
+  "fingerprints": {
+    "sourceAlgorithm": "SHA-256 over sorted apps/web/src TS/TSX/CSS relative paths and bytes with NUL separators",
+    "sourceFiles": 68,
+    "sourceTreeSha256": "2357062cc13fcff2a986b4b28fe3158fb1891a427db740b1277d9a6db822b0b0",
+    "generateScript": "e3f39d9d56ac2da5347f366824b849abde72cbfcd74b5ee8885b85551f636cb1",
+    "theme": "b90964e1d555573eb15ccf66a51e6cbc06c5078fb7b9072f2be17688d360a735",
+    "bootstrapCss": "ca7ac3f6d92c7e0c26d9a84e776e6bc60b1295fcf4120c4db479550c27d671d5",
+    "generatedTokensCss": "16421305d6b4c7b918d931b87ffc8adc4f04a4ef66a0d55b79cccff9e11bd429",
+    "layoutBridge": "bc5b0cbf9c38dcd5c0efe5af5fe8a9611ffb4553bc167dc4c48fc5e1a77f1cc7",
+    "checker": "861616e956c06de8c56020c3b3d6d716bf966c86984d61e1ad348eecc4fa3193",
+    "packageJson": "a83a07356614ac92119ee392813e7e374d90d0316c7d291342e0da0feeefbd5d",
+    "verifyLog": "59c0a9ebb1d3e0ce3541947f0ebf8d023bdfed8dc4efa4167ebc391a25d5098e",
+    "renderReport": "50f3e92dd8f277bef2eb2f957816615c8b15fec6fd60033925d829b5c7bbcedd"
+  },
+  "verdicts": {
+    "ui": "PASS for W05 scope: table, form-helper, focus and responsive render checks match the pre-code contract.",
+    "architecture": "PASS for W05 scope: theme references the shared semantic CSS role, CSS variables derive from canonical tokens, generated output is fresh, and boundary gate passes."
+  },
+  "remainingLimit": "Global strict verify remains FAIL with 503 findings owned by later UI028 steps; this W05 result closes only the W05 scope and does not certify all UI028 or Frontend readiness."
+}

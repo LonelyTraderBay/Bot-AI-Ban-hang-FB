@@ -1,0 +1,8 @@
+UI005 C01 baseline probe
+Command: npm run test:e2e -- --grep "product category lookup pages the full collection"
+Result: intentionally failing probe reproduced the current gap before source edits.
+Dataset: 105 categories returned by synthetic MSW; GET listCategories?limit=100 returned 100 rows, total=105, hasMore=true.
+Selected target: cat-2 / Phụ kiện at position 105; absent from first page.
+Observed editor: create form loaded, but no Load More action and no server search field were rendered.
+Browser assertion failed as expected at hasLoadMoreControl=true (observed false). Persistent baseline evidence is the JSON and screenshot in this folder; the temporary Playwright failure trace was not retained here.
+Limitation: synthetic frontend mock only; no backend or staging request was made.

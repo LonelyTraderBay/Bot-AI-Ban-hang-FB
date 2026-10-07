@@ -1,0 +1,85 @@
+{
+  "taskId": "FE004",
+  "stepId": "S04",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-06T06:03:20.548Z",
+  "sourceRevision": "HEAD e68cb65 on main + current frontend working tree",
+  "expected": "The AST checker detects app deep-entry bypasses and all prohibited alias/relative/type-only/dynamic relationships, unresolved imports, cycles and parser errors while permitting public entries.",
+  "observed": "Boundary checker passed 67 files/479 edges with zero issues, and all 10/10 fixtures passed, including the new permitted public-entry and rejected app deep-import cases.",
+  "commandId": "boundaries",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0",
+    "details": "Registered npm run boundaries executed from the frontend root; checker and embedded fixtures ran locally.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 7,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE004/S04-spc059-refresh-20261006.log",
+  "logSha256": "0ad48669674136a1e829af4baebff2dd75fad9f3b5fda25d7da36e3b04008147",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9"
+    },
+    {
+      "path": "apps/web/tsconfig.json",
+      "sha256": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1"
+    },
+    {
+      "path": "scripts/check-boundaries.mjs",
+      "sha256": "64e2453c1b4186bf86a6c74e3917ecb0d9d5b73e9d77195be3e401e97aec7d0f"
+    },
+    {
+      "path": "tests/architecture/check-boundaries.mjs",
+      "sha256": "c2e90eea61c7a8e6198b89f15236726b527f1a9ad8de80e2935b34a908279849"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "8f46f9e2942cf54ee9edafc9268c5e630f8cb31ab5e52d22f22274ca9c27c69e"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "790d840a250c401163970e503beb37b5e14c5541fb1f4233a494085be515caa9"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "c74cc7ffdc06680a7d6350255c1bf71ccc41a7e7ea32775df8f86f881bf38433"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE004/S01-spc059-refresh-20261006.json",
+      "sha256": "628456ade89db2f6511679151d0b94eeeed66a5e9462266f45491397e0a2599e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE004/S03-spc059-refresh-20261006.json",
+      "sha256": "a9c6f574197a1b72864fea167340bc8768b959a786febf6f2b39dfbac0fe1e12"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE004/S04-boundaries-spc059-current-20261006.log",
+      "sha256": "1307397fdfd03b666e9a57874b90fa6900bcf8bcd4a7ed26cbb0f8ac9fc16e20"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE004/capture-s04-spc059-refresh-20261006.mjs",
+      "sha256": "7d762f88ef824da4ba3fc09aaa95d103f302d159bf74df7faab2f75f270994d3"
+    }
+  ],
+  "sourceSnapshotSha256": "a8ccffbeae89e1327da0b2cc282723794184613df388050dffcffe87c77df22a",
+  "graph": {
+    "files": 67,
+    "imports": 479,
+    "issues": [],
+    "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error)."
+  }
+}

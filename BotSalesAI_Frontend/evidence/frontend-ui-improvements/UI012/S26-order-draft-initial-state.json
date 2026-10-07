@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-03",
+  "item": "UI012 / FE-G05",
+  "scope": "initial state of the canonical new-order draft, React demo + synthetic MSW",
+  "route": {
+    "id": "R18",
+    "path": "/s/shop-demo/orders/new",
+    "module": "orders"
+  },
+  "environment": "Chromium 153; 1440x1000 CSS px; deviceScaleFactor 1",
+  "observation": {
+    "role": "combobox",
+    "ariaRequired": "true",
+    "ariaInvalid": null,
+    "hasMuiError": false,
+    "label": "Khách hàng *",
+    "requiredMarkerVisible": true,
+    "helperText": "Chọn khách hàng để lưu đơn nháp.",
+    "helperAssociated": true
+  },
+  "saveDisabled": true,
+  "pageErrors": [],
+  "mutationRequests": [],
+  "screenshot": {
+    "name": "S26-order-draft-initial-customer-required.png",
+    "width": 1440,
+    "height": 1000,
+    "bytes": 89598
+  },
+  "pairedAssessment": {
+    "ui": "PASS — an untouched required customer is exposed as required with helpful text and is not marked invalid.",
+    "architecture": "PRESERVED — validation and field ownership remain within the Orders feature; no shared module, API, route, permission, contract, token, or generated output changed."
+  },
+  "limits": [
+    "The probe covers only the initial create-order form state and does not provide screen-reader speech/transcript evidence.",
+    "This local demo observation is not owner UAT, Backend validation, or evidence about persistent writes."
+  ]
+}

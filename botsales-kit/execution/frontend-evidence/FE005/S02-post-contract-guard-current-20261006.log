@@ -1,0 +1,56 @@
+FE005.S02 generator projection guard and generated-output freshness
+executedAt=2026-10-06T02:56:17.195Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+REGISTERED COMMAND generate: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run generate:check
+COMMAND LOG botsales-kit/execution/frontend-evidence/FE005/S02-generate-check-post-contract-guard-20261006.log; sha256=898f6697dbdcac80c54c5f7a8b5a4df82b7075a565b4a4be97f5c3f5ff638135
+REGISTERED REGRESSION COMMAND contract-tests: & 'C:\Program Files\nodejs\node.exe' --test tests/contracts/generator.test.mjs
+TEST LOG botsales-kit/execution/frontend-evidence/FE005/S02-contract-tests-post-guard-20261006.log; sha256=2d4739c471c6795926411940c546dbe456c03d6f068947ce9a405b2f1df0cdf8
+SCOPED DIFF LOG botsales-kit/execution/frontend-evidence/FE005/S02-diff-check-post-guard-20261006.log; sha256=a493f5a655f72963c847958b4cf02ecfab7e92e2beda16dce1efb9c71df8ffa5
+canonical=openapi.json/routes/permission-catalog/tokens/events; yaml and operation-index validated as projections before generation.
+generator=PASS outputs=11/schemas=283/operations=210/routes=54; contractTests=7/7
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no backend/provider/staging/hosted-CI claim.
+checksTotal=6; failed=0
+CHECK canonical generator check: PASS
+Registered npm run generate:check exited 0: 11 outputs, 283 schemas, 210 operations and 54 routes.
+CHECK YAML is a projection of OpenAPI JSON: PASS
+Generator parses openapi.yaml and rejects structural drift from canonical openapi.json.
+CHECK operation index is a projection of OpenAPI JSON: PASS
+Generator verifies version, operation count, unique IDs, method, path, permission and module against canonical OpenAPI operations.
+CHECK generated frontend package and design outputs: PASS
+All 11 generated DTO/operation/schema/route/permission/token/CSS/manifest/icon outputs are present and matched by generate:check.
+CHECK negative drift and schema fixtures: PASS
+Direct registered Node contract suite passed 7/7, including YAML drift, operation-index drift, unresolved schema, version/server, route and generated-output drift cases.
+CHECK preserved working tree and whitespace: PASS
+No generated file was written by --check; staged and unstaged checks over the edited generator/test files exited 0.
+sourceSnapshotSha256=da626178c14208a5f6cb7534a91c1e8c3450821cc7ab8eb489dc5ab127fd5eb8
+SOURCE apps/web/public/app-icon.svg sha256=d0ed30dd4410fde97ebac0d7be8f2a6329cde38effdd109dd219036b85fdab27
+SOURCE apps/web/public/manifest.webmanifest sha256=ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53
+SOURCE apps/web/src/app/tokens.css sha256=f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca
+SOURCE botsales-kit/contracts/events.schema.json sha256=7f2071f90cc925b4c32cb6d6de0ef99f8cc14b618c0e04224f024f3aa83c21ee
+SOURCE botsales-kit/contracts/openapi.json sha256=d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c
+SOURCE botsales-kit/contracts/openapi.yaml sha256=c3afa8ea1a2022581955fc62348f2264ab25fa3db0ffb2c46f04572e6741256f
+SOURCE botsales-kit/contracts/operation-index.json sha256=6927578fa9cad2799d1e4ab8c27b2ed010c4e83227c8576f5fb0802a37c37d99
+SOURCE botsales-kit/contracts/permission-catalog.json sha256=58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1
+SOURCE botsales-kit/contracts/route-manifest.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE botsales-kit/design/tokens.json sha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0
+SOURCE botsales-kit/docs/06_API_AND_REALTIME.md sha256=0ea1fddc67a9e1aa5de1865efa937a1d1e12a680236482a992ae1ec830997da5
+SOURCE botsales-kit/docs/18_CODING_STANDARDS.md sha256=8b77789de007919234fdb8c27446c3e5aaa020401e39f4c73dbf6c411e99e653
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S02-contract-tests-post-guard-20261006.log sha256=2d4739c471c6795926411940c546dbe456c03d6f068947ce9a405b2f1df0cdf8
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S02-diff-check-post-guard-20261006.log sha256=a493f5a655f72963c847958b4cf02ecfab7e92e2beda16dce1efb9c71df8ffa5
+SOURCE botsales-kit/execution/frontend-evidence/FE005/S02-generate-check-post-contract-guard-20261006.log sha256=898f6697dbdcac80c54c5f7a8b5a4df82b7075a565b4a4be97f5c3f5ff638135
+SOURCE botsales-kit/execution/frontend-evidence/FE005/capture-s02-post-contract-guard-current-20261006.mjs sha256=f05006bfe9d2f967e4fdf189a3956f9babfe201a2b4b374f6e31214da3443e75
+SOURCE botsales-kit/execution/frontend-plan.json sha256=4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f
+SOURCE package-lock.json sha256=a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a
+SOURCE package.json sha256=729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9
+SOURCE packages/contracts/src/generated.ts sha256=0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709
+SOURCE packages/contracts/src/index.ts sha256=bcc7e843b4ad0f8e5609e262fb9d0d1e9f1845bd88b6153e3a9ef63cf7fde2c7
+SOURCE packages/contracts/src/operations.json sha256=e630656e8c168f7e4f204670a4ce1267603265ff485f868f8ca52c1ce9104b81
+SOURCE packages/contracts/src/permissions.json sha256=58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1
+SOURCE packages/contracts/src/routes.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE packages/contracts/src/schemas.json sha256=9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1
+SOURCE packages/design-tokens/src/index.ts sha256=527d92791c58163352bbb84031c303b47b9eff0999f0698ec12eed35c9f5b49a
+SOURCE packages/design-tokens/src/tokens.json sha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0
+SOURCE scripts/generate.mjs sha256=6c29210d4c49913363eb188e53b5b9f47dc312b827c84812892d9c820a20eea6
+SOURCE tests/contracts/generator.test.mjs sha256=0127df090a08cb6bb405234d40e66e5bd78ee0b6fe416ae5f63b1f33a459240b
+reviewer=Codex self-review; no independent peer review claimed

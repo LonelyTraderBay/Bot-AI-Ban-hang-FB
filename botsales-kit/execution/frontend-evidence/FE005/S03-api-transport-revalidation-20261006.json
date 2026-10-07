@@ -1,0 +1,113 @@
+{
+  "taskId": "FE005",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-06T03:22:44.669Z",
+  "sourceRevision": "HEAD e68cb65 on main plus current frontend working tree",
+  "expected": "The typed client uses generated contract metadata for credentials, CSRF/version/idempotency, cancellation, Problem parsing, and request/response validation; no module bypasses transport.",
+  "observed": "Registered unit command passed 91/91; focused API client tests passed 22/22. Contract metadata covers 210 operations and the sole fetch call is in the shared API client.",
+  "commandId": "unit",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / local frontend test toolchain",
+    "details": "Registered full frontend unit suite passed. A focused Vitest invocation was recorded as supplemental transport evidence; all API responses were synthetic test fixtures.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 6,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE005/S03-api-transport-revalidation-20261006.log",
+  "logSha256": "93c2f19b26a54d68438afe35510d2688311e8585adf96fe0ab0eaeb5c991803d",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "58c4d244187cb18ec94dbeacde3e4249ecb3d1dcadaf14bd68be4e5eaf4c5819"
+    },
+    {
+      "path": "apps/web/src/shared/api/validation.ts",
+      "sha256": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "11412a93f87c846f371c2e7884fc5e6a94c74709843a1ac08c5f08514fdb39ea"
+    },
+    {
+      "path": "apps/web/tests/setup.ts",
+      "sha256": "0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-transport-focused-supplement-20261006.log",
+      "sha256": "526fa2de964ff34f6e85cd476adad96a089253668c23a27877a1bc74aac6325b"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-unit-registered-post-api-contract-20261006.log",
+      "sha256": "f98535d0fcab463eac6b90c30accb45678cd124b86f01a159ed002e51f2165e9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/capture-s03-api-transport-revalidation-20261006.mjs",
+      "sha256": "5418cdaef5e9af0d277f303704dcab34a18bb89a7af2e86781886e70860ba776"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f"
+    },
+    {
+      "path": "package.json",
+      "sha256": "729b9a0cff11da4e1272b06ae972b721def85c8ce2759219a6ff4677f54033c9"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88"
+    },
+    {
+      "path": "scripts/generate.mjs",
+      "sha256": "beae96652c33bdfa46f90a0660b670db4d9f45a69a227e10dcacd2adfc722d5f"
+    }
+  ],
+  "sourceSnapshotSha256": "3a6b6169a947f87f79dce38ed4fafd414e0e058ea658e8267bfe029ee4491eef",
+  "commandResults": [
+    {
+      "commandId": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE005/S03-unit-registered-post-api-contract-20261006.log",
+      "logSha256": "f98535d0fcab463eac6b90c30accb45678cd124b86f01a159ed002e51f2165e9"
+    },
+    {
+      "command": "node.exe node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/api-client.test.tsx",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE005/S03-api-transport-focused-supplement-20261006.log",
+      "logSha256": "526fa2de964ff34f6e85cd476adad96a089253668c23a27877a1bc74aac6325b"
+    }
+  ],
+  "transportReview": {
+    "generatedOperationCount": 210,
+    "focusedApiTests": 22,
+    "fullUnitTests": 91,
+    "directFetchFiles": [
+      "apps/web/src/shared/api/client.ts"
+    ],
+    "hardcodedApiBaseInModules": false,
+    "credentials": "same-origin",
+    "mutationUnknownOutcomeReconciliation": true
+  }
+}

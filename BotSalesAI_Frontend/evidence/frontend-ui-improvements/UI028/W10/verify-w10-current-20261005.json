@@ -1,0 +1,159 @@
+{
+  "capturedAt": "2026-10-05T13:51:20.649Z",
+  "task": "UI028.W10",
+  "scope": "Frontend-only catalog modules and responsive UI verification for R09-R14",
+  "revision": "e68cb65e61c5c1aab2ae169dd8033df305df8872",
+  "verdict": "PASS_WITH_KNOWN_GLOBAL_MIGRATION_DEBT",
+  "ui": "PASS",
+  "architecture": "PASS_WITH_KNOWN_GLOBAL_MIGRATION_DEBT",
+  "routeCoverage": {
+    "ids": [
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14"
+    ],
+    "widths": [
+      390,
+      1280
+    ],
+    "baselineObservations": 12,
+    "afterObservations": 12,
+    "afterPageErrors": 0,
+    "dryRunOnly": true
+  },
+  "layoutDebt": {
+    "before": 396,
+    "after": 375,
+    "resolved": 21,
+    "newFindings": 0,
+    "touchedFileFindings": 0,
+    "unknownStyleSources": 0
+  },
+  "checks": [
+    {
+      "name": "generate:check",
+      "command": "node scripts/generate.mjs --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "typecheck",
+      "command": "node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "lint",
+      "command": "node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "boundaries",
+      "command": "node scripts/check-boundaries.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "source-check",
+      "command": "node scripts/check-source.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "source-checker-fixtures",
+      "command": "node --test tests/source-checker.test.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "layout-checker-fixtures",
+      "command": "node --test tests/layout-checker.test.mjs",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "vitest-full",
+      "command": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "catalog-CRUD-import-security-playwright",
+      "command": "node node_modules/@playwright/test/cli.js test tests/fe010.spec.ts tests/security.spec.ts --project=chromium",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "catalog-responsive-layout-playwright",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui-catalog-layout.spec.ts --project=chromium",
+      "cwd": ".",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "production-build",
+      "command": "node ../../node_modules/vite/bin/vite.js build --mode production",
+      "cwd": "apps/web",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "demo-build",
+      "command": "node ../../node_modules/vite/bin/vite.js build --mode demo --outDir dist-demo",
+      "cwd": "apps/web",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "status": "PASS"
+    },
+    {
+      "name": "strict-layout-scan",
+      "command": "node scripts/check-layout.mjs",
+      "cwd": ".",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "status": "EXPECTED_MIGRATION_DEBT"
+    }
+  ],
+  "sourceSha256": {
+    "apps/web/src/modules/catalog/index.tsx": "372b893aaf1d1cd1dfda77d2a43b4184dc9f99cd91afd0ed43a5796da1074f3d",
+    "apps/web/src/modules/catalog/imports.tsx": "c74cc7ffdc06680a7d6350255c1bf71ccc41a7e7ea32775df8f86f881bf38433",
+    "tests/ui-catalog-layout.spec.ts": "0219557293d4cf0554c6fa3971ea45acd70a82a033911f670e978ef73f38d7dd"
+  },
+  "limitations": [
+    "The whole-app strict layout scan remains nonzero because 375 SPACING_LITERAL findings are owned by later UI028 work; this task did not suppress or relabel that debt.",
+    "Browser/build evidence is local Chromium and synthetic in-memory API only; it does not claim Backend, hosted CI, staging, production runtime or owner acceptance."
+  ],
+  "artifacts": [
+    "design-contract-pre-code-current-20261005.md",
+    "baseline-before-source-edit-current-20261005.json",
+    "layout-report-before-source-edit-current-20261005.json",
+    "layout-report-after-source-edit-current-20261005.json",
+    "layout-report-delta-current-20261005.json",
+    "render-after-source-edit-current-20261005.json",
+    "verify-w10-current-20261005.log"
+  ]
+}

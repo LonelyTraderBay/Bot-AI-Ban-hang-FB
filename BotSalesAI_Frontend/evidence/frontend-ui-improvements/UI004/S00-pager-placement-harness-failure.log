@@ -1,0 +1,92 @@
+
+[WebServer] (node:23776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:24964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-21232-a7e78bc7-4365-402a-8a54-96254390ebc7\deps\react-dom_client.js?v=28199f0a as it exceeds the max of 500KB.
+  1) [chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Điều khiển Admin AI' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Điều khiển Admin AI' }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Điều khiển Admin AI' })
+
+
+       98 | async function openEvaluationList(page: import('@playwright/test').Page, count: number) {
+       99 |     await gotoDemo(page, '/s/shop-demo/bot');
+    > 100 |     await expect(page.getByRole('heading', { name: 'Điều khiển Admin AI' })).toBeVisible();
+          |                                                                              ^
+      101 |     const createdIds = await seedEvaluationRows(page, count);
+      102 |     const listResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/bot/evaluations'));
+      103 |     await page.getByRole('link', { name: 'Chất lượng AI' }).click();
+        at openEvaluationList (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe018.spec.ts:100:78)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe018.spec.ts:407:39
+
+    Error Context: test-results\fe018-UI004-25-evaluations-a5539-arch-and-browser-Back-state-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe018-UI004-25-evaluations-a5539-arch-and-browser-Back-state-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe018-UI004-25-evaluations-a5539-arch-and-browser-Back-state-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:4116) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/2] [chromium] › tests\fe018.spec.ts:451:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+  2) [chromium] › tests\fe018.spec.ts:451:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Điều khiển Admin AI' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Điều khiển Admin AI' }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Điều khiển Admin AI' })
+
+
+       98 | async function openEvaluationList(page: import('@playwright/test').Page, count: number) {
+       99 |     await gotoDemo(page, '/s/shop-demo/bot');
+    > 100 |     await expect(page.getByRole('heading', { name: 'Điều khiển Admin AI' })).toBeVisible();
+          |                                                                              ^
+      101 |     const createdIds = await seedEvaluationRows(page, count);
+      102 |     const listResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/bot/evaluations'));
+      103 |     await page.getByRole('link', { name: 'Chất lượng AI' }).click();
+        at openEvaluationList (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe018.spec.ts:100:78)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe018.spec.ts:452:39
+
+    Error Context: test-results\fe018-UI004-105-evaluation-a8a74-he-failing-cursor-for-retry-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe018-UI004-105-evaluation-a8a74-he-failing-cursor-for-retry-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe018-UI004-105-evaluation-a8a74-he-failing-cursor-for-retry-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\fe018.spec.ts:406:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state 
+    [chromium] › tests\fe018.spec.ts:451:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry 
+EXIT_CODE=1

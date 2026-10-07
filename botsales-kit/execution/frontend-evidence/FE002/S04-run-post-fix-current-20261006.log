@@ -1,0 +1,44 @@
+command=& 'C:\Program Files\nodejs\npm.cmd' --script-shell=powershell.exe run setup 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-setup-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & 'C:\Program Files\nodejs\npm.cmd' --script-shell=powershell.exe run doctor 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+exitCode=0
+envLocalUnchanged=true
+workerUnchanged=true
+envLocalHashBefore=4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149
+workerHashBefore=3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc
+--- registered command output ---
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> botsales-frontend@0.1.0 doctor
+> node scripts/doctor.mjs
+
+┌─────────┬─────────────────────────┬────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ (index) │ name                    │ status │ detail                                                                                                                                              │
+├─────────┼─────────────────────────┼────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 0       │ 'Node.js 24'            │ 'PASS' │ 'v24.19.0'                                                                                                                                          │
+│ 1       │ 'typescript'            │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\typescript\\lib\\typescript.js'                   │
+│ 2       │ 'vite'                  │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\vite\\dist\\node\\index.js'                       │
+│ 3       │ 'react'                 │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\react\\index.js'                                  │
+│ 4       │ '@mui/material'         │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\@mui\\material\\index.js'                         │
+│ 5       │ '@tanstack/react-query' │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\@tanstack\\react-query\\build\\modern\\index.cjs' │
+│ 6       │ 'msw'                   │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\msw\\lib\\core\\index.mjs'                        │
+│ 7       │ 'MSW browser worker'    │ 'PASS' │ 'Chạy npm run setup sau khi cài thư viện.'                                                                                                          │
+│ 8       │ 'Lockfile'              │ 'PASS' │ 'Tạo bằng npm install; không có lockfile giả trong bản nguồn.'                                                                                      │
+└─────────┴─────────────────────────┴────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+setupOutput=botsales-kit/execution/frontend-evidence/FE002/S04-setup-output-post-fix-current-20261006.log sha256=03f855fbd9bfd99f47cc05fe3471e144e03489b292631d977e61ed535a9dbb7d
+doctorOutput=botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output-post-fix-current-20261006.log sha256=bf228dec45ea3c5e76f3b5dc2c2624620e59d3d596f1df67f814a025104c2388
+envLocalHashAfter=4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149
+workerHashAfter=3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc

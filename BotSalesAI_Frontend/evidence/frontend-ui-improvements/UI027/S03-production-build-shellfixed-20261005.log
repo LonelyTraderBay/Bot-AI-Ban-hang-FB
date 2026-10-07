@@ -1,0 +1,53 @@
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2055 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.19 kB │ gzip:   0.60 kB
+dist/assets/index-v_6AJcWh.css               2.36 kB │ gzip:   0.95 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-BJmJubfC.js              0.31 kB │ gzip:   0.23 kB
+dist/assets/hooks-6c3d6vKr.js                3.19 kB │ gzip:   1.62 kB
+dist/assets/index-DEFLoV2B.js                7.79 kB │ gzip:   3.13 kB
+dist/assets/index-B6F_GGAe.js                8.48 kB │ gzip:   3.61 kB
+dist/assets/index-yQ5aA4p3.js                9.00 kB │ gzip:   3.48 kB
+dist/assets/index-BBNSN205.js               13.12 kB │ gzip:   5.41 kB
+dist/assets/index-BwimRYZg.js               13.33 kB │ gzip:   4.42 kB
+dist/assets/index-CNR_dvuM.js               13.42 kB │ gzip:   5.04 kB
+dist/assets/index-DdPgrMOr.js               13.88 kB │ gzip:   5.36 kB
+dist/assets/index-CsP7Z4-J.js               15.87 kB │ gzip:   5.37 kB
+dist/assets/index-BjBPmAuT.js               16.02 kB │ gzip:   5.34 kB
+dist/assets/index-MwxLHBb_.js               17.19 kB │ gzip:   6.08 kB
+dist/assets/index-ud072nqa.js               18.06 kB │ gzip:   6.02 kB
+dist/assets/index-Cf6i_hZp.js               21.55 kB │ gzip:   7.34 kB
+dist/assets/index-BxNKBlXc.js               22.38 kB │ gzip:   8.06 kB
+dist/assets/index-DxmA1DJw.js               25.65 kB │ gzip:   8.35 kB
+dist/assets/index-BhlVagTb.js               31.02 kB │ gzip:   9.67 kB
+dist/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-vFbgn9Ml.js               36.84 kB │ gzip:  10.01 kB
+dist/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-Dr4GE2gu.js               70.83 kB │ gzip:  23.87 kB
+dist/assets/schemas-jpQ0XMzw.js             79.18 kB │ gzip:  24.03 kB
+dist/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/contract-data-Dmdv2cKW.js      262.00 kB │ gzip:  35.24 kB
+dist/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist/assets/charts-CQ4oecFO.js             313.03 kB │ gzip:  94.99 kB
+dist/assets/mui-Bz_aCSm2.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 2.94s

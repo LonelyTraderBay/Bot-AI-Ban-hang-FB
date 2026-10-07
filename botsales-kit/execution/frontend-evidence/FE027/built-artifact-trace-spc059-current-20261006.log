@@ -1,0 +1,313 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs --grep built demo artifact|production artifact --trace on
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2057 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.19 kB │ gzip:   0.60 kB
+dist/assets/index-BQPx7lJM.css               3.56 kB │ gzip:   1.33 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-CVitQAxr.js              0.32 kB │ gzip:   0.25 kB
+dist/assets/hooks-a1ho3yI8.js                3.18 kB │ gzip:   1.62 kB
+dist/assets/index-BlS6gH2K.js                7.97 kB │ gzip:   3.19 kB
+dist/assets/index-D134-3mZ.js                8.31 kB │ gzip:   3.51 kB
+dist/assets/index-Lh7Rvr5_.js                9.89 kB │ gzip:   3.66 kB
+dist/assets/index-C5QAHopm.js               13.71 kB │ gzip:   4.50 kB
+dist/assets/index-Cr1mfWLM.js               13.83 kB │ gzip:   5.64 kB
+dist/assets/index-CIbpxZib.js               14.31 kB │ gzip:   5.47 kB
+dist/assets/index-CqrLPWJD.js               14.44 kB │ gzip:   5.32 kB
+dist/assets/index-D9KoEoQD.js               16.24 kB │ gzip:   5.47 kB
+dist/assets/index-BOokrJyT.js               16.50 kB │ gzip:   5.44 kB
+dist/assets/index-BQlUImYe.js               17.86 kB │ gzip:   6.24 kB
+dist/assets/index-BCu1k527.js               18.47 kB │ gzip:   6.14 kB
+dist/assets/index-Bz3Dg-z_.js               21.97 kB │ gzip:   7.40 kB
+dist/assets/index-C4mo-X-s.js               23.08 kB │ gzip:   8.21 kB
+dist/assets/index-9YLusg5_.js               26.07 kB │ gzip:   8.46 kB
+dist/assets/index-D-UlnnMr.js               31.49 kB │ gzip:   9.80 kB
+dist/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-Bmbg_hpv.js               37.60 kB │ gzip:  10.12 kB
+dist/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/schemas-jpQ0XMzw.js             79.18 kB │ gzip:  24.03 kB
+dist/assets/index-D5M43oB_.js               81.86 kB │ gzip:  26.64 kB
+dist/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist/assets/contract-data-BIzYYkc1.js      303.99 kB │ gzip:  36.17 kB
+dist/assets/charts-CQ4oecFO.js             313.03 kB │ gzip:  94.99 kB
+dist/assets/mui-Bz_aCSm2.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 2.79s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2273 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.19 kB │ gzip:   0.60 kB
+dist-demo/assets/index-BQPx7lJM.css               3.56 kB │ gzip:   1.33 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/filters-Bi-qlnQp.js              0.32 kB │ gzip:   0.24 kB
+dist-demo/assets/control-6gq2NE8L.js              0.72 kB │ gzip:   0.43 kB
+dist-demo/assets/hooks-u2-uZjXS.js                3.19 kB │ gzip:   1.62 kB
+dist-demo/assets/index-BiO1AKLl.js                8.31 kB │ gzip:   3.51 kB
+dist-demo/assets/index-CntOa-fh.js                8.51 kB │ gzip:   3.38 kB
+dist-demo/assets/index-BfPdMG6r.js                9.89 kB │ gzip:   3.66 kB
+dist-demo/assets/index-AHze4xba.js               13.71 kB │ gzip:   4.50 kB
+dist-demo/assets/index-BldGWFpP.js               14.01 kB │ gzip:   5.27 kB
+dist-demo/assets/index-CZHcdd82.js               14.02 kB │ gzip:   5.69 kB
+dist-demo/assets/index-BWDi55gB.js               16.66 kB │ gzip:   5.48 kB
+dist-demo/assets/index-Cea6tNsg.js               17.86 kB │ gzip:   6.24 kB
+dist-demo/assets/index-CK6mit58.js               18.45 kB │ gzip:   6.22 kB
+dist-demo/assets/index-DEoYpWpN.js               18.47 kB │ gzip:   6.14 kB
+dist-demo/assets/index-DMd2a-bV.js               22.38 kB │ gzip:   7.56 kB
+dist-demo/assets/index-BTGLOMFc.js               22.58 kB │ gzip:   7.78 kB
+dist-demo/assets/index-7EGCmOAj.js               23.32 kB │ gzip:   8.28 kB
+dist-demo/assets/index-C-6xMCHw.js               26.54 kB │ gzip:   8.59 kB
+dist-demo/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-CejpvI8O.js               33.61 kB │ gzip:  10.50 kB
+dist-demo/assets/index-D1R_TeVU.js               37.60 kB │ gzip:  10.12 kB
+dist-demo/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/schemas-jpQ0XMzw.js             79.18 kB │ gzip:  24.03 kB
+dist-demo/assets/index-CR1TVNyq.js               85.74 kB │ gzip:  27.79 kB
+dist-demo/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-BepI4YXI.js            159.35 kB │ gzip:  34.71 kB
+dist-demo/assets/browser-C8CaQoIc.js            255.20 kB │ gzip:  86.82 kB
+dist-demo/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist-demo/assets/contract-data-D-QqiNa-.js      309.77 kB │ gzip:  37.31 kB
+dist-demo/assets/charts-RcpaDpmM.js             313.03 kB │ gzip:  94.99 kB
+dist-demo/assets/mui-azn9KfGV.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 5.41s
+
+> node node_modules\@playwright\test\cli.js test --grep built demo artifact|production artifact --trace on
+✔ canonical contracts validate and generate the API base path from OpenAPI (70.4827ms)
+✔ rejects drift in OpenAPI YAML and operation index projections (113.4978ms)
+✔ generated operation registry preserves required and optional query parameter metadata (27.5035ms)
+✔ rejects unresolved schema references before generation (60.7265ms)
+✔ rejects missing API version and a server URL outside same-origin path form (55.1971ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (50.4986ms)
+✔ detects a stale generated file and accepts it after regeneration (4.6281ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (55.3279ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (83.25ms)
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (65.5713ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (54.8902ms)
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (82.502ms)
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.3543ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.2135ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.2084ms)
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.3892ms)
+✔ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (0.112ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.0603ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.054ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.8212ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.2294ms)
+✔ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (1.0208ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.1396ms)
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (322.3492ms)
+✔ rejects a CSS spacing role without a declared shared owner (285.1691ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (287.565ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (268.6467ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (254.7791ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (965.8633ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (1081.2343ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (1457.6552ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (650.6896ms)
+✔ report mode inventories migration debt without turning findings into PASS (316.4416ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (7.2834ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (302.884ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (392.4015ms)
+✔ visual checker accepts canonical theme roles, token references, geometry and semantic responsive props (49.7364ms)
+✔ visual checker rejects raw literals across sx, JSX system props and CSS declarations (18.0848ms)
+✔ visual checker follows local style aliases and callback themes, but fails raw nested values (17.9151ms)
+✔ visual checker reports unresolved spreads and malformed style sources as UNKNOWN or parse errors (14.7669ms)
+✔ visual checker includes newly added TSX files under the source root (22.5369ms)
+
+Running 6 tests using 1 worker
+
+(node:34820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[artifact-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","browserMetrics":{"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36","viewport":{"width":1280,"height":720},"route":"/s/shop-demo/overview","domContentLoadedMs":126,"loadEventMs":126,"scriptCount":11,"scriptTransferBytes":449782,"scriptAssets":[{"file":"index-CR1TVNyq.js","transferBytes":28090,"decodedBytes":85737,"durationMs":11},{"file":"query-5vm9EU1C.js","transferBytes":10220,"decodedBytes":33154,"durationMs":11},{"file":"react-runtime-D0NtfbPC.js","transferBytes":90580,"decodedBytes":279779,"durationMs":18},{"file":"contract-data-D-QqiNa-.js","transferBytes":37614,"decodedBytes":309769,"durationMs":15},{"file":"i18n-xB0mQYCC.js","transferBytes":15416,"decodedBytes":46142,"durationMs":15},{"file":"schema-validation-Bhr7oAQE.js","transferBytes":45419,"decodedBytes":149800,"durationMs":17},{"file":"mui-azn9KfGV.js","transferBytes":100319,"decodedBytes":328326,"durationMs":18},{"file":"browser-C8CaQoIc.js","transferBytes":87118,"decodedBytes":255200,"durationMs":12},{"file":"service-BepI4YXI.js","transferBytes":35006,"decodedBytes":159351,"durationMs":7},{"file":"index-BfPdMG6r.js","transferBytes":0,"decodedBytes":9892,"durationMs":60},{"file":"hooks-u2-uZjXS.js","transferBytes":0,"decodedBytes":3186,"durationMs":63}]},"bundles":{"javascriptFiles":31,"totalBytes":2349836,"totalGzipBytes":671486,"initialRouteGzipBytes":452360,"proposedBudgets":{"initialRouteGzipKiB":500,"largestChunkGzipKiB":200,"basis":"Local demo preview limits for the measured Chromium artifact; not a backend or platform SLO."},"largest":[{"file":"apps/web/dist-demo/assets/mui-azn9KfGV.js","bytes":328326,"gzipBytes":100019},{"file":"apps/web/dist-demo/assets/charts-RcpaDpmM.js","bytes":313031,"gzipBytes":94993},{"file":"apps/web/dist-demo/assets/contract-data-D-QqiNa-.js","bytes":309769,"gzipBytes":37314},{"file":"apps/web/dist-demo/assets/react-runtime-D0NtfbPC.js","bytes":279779,"gzipBytes":90280},{"file":"apps/web/dist-demo/assets/browser-C8CaQoIc.js","bytes":255200,"gzipBytes":86818}]},"observedApi":{"path":"/api/v2/session","status":200,"servedBy":"MSW in the built demo artifact"},"dataSource":"synthetic-msw"}
+  ok 1 [chromium] › tests\artifacts\demo-preview.spec.ts:38:1 › the built demo artifact serves the React UI and synthetic API through preview (1.0s)
+[large-dataset-api] {"url":"http://127.0.0.1:51660/api/v2/shops/shop-demo/customers?limit=20","count":20,"page":{"limit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"firstIds":["c1","c2","c3"]}
+[large-dataset-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","datasetId":"FE025-LARGE-CUSTOMERS-1000-V1","generatedRows":1000,"firstPageIds":["c1","c2","c3","c4","perf-customer-0001","perf-customer-0002","perf-customer-0003","perf-customer-0004","perf-customer-0005","perf-customer-0006","perf-customer-0007","perf-customer-0008","perf-customer-0009","perf-customer-0010","perf-customer-0011","perf-customer-0012","perf-customer-0013","perf-customer-0014","perf-customer-0015","perf-customer-0016"],"api":{"status":200,"pageLimit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"domRowsIncludingHeader":21,"firstPageReadyMs":399,"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36","viewport":{"width":1280,"height":720},"note":"Synthetic customer identities only; the React screen renders one API page and exposes the next cursor instead of mounting the full collection."}
+  ok 2 [chromium] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact (1.5s)
+  ok 3 [chromium] › tests\artifacts\demo-preview.spec.ts:138:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime (25ms)
+(node:51044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[artifact-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","browserMetrics":{"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0","viewport":{"width":1280,"height":720},"route":"/s/shop-demo/overview","domContentLoadedMs":218,"loadEventMs":218,"scriptCount":11,"scriptTransferBytes":449782,"scriptAssets":[{"file":"query-5vm9EU1C.js","transferBytes":10220,"decodedBytes":33154,"durationMs":38},{"file":"index-CR1TVNyq.js","transferBytes":28090,"decodedBytes":85737,"durationMs":39},{"file":"contract-data-D-QqiNa-.js","transferBytes":37614,"decodedBytes":309769,"durationMs":42},{"file":"schema-validation-Bhr7oAQE.js","transferBytes":45419,"decodedBytes":149800,"durationMs":42},{"file":"i18n-xB0mQYCC.js","transferBytes":15416,"decodedBytes":46142,"durationMs":41},{"file":"mui-azn9KfGV.js","transferBytes":100319,"decodedBytes":328326,"durationMs":46},{"file":"react-runtime-D0NtfbPC.js","transferBytes":90580,"decodedBytes":279779,"durationMs":45},{"file":"browser-C8CaQoIc.js","transferBytes":87118,"decodedBytes":255200,"durationMs":16},{"file":"service-BepI4YXI.js","transferBytes":35006,"decodedBytes":159351,"durationMs":12},{"file":"index-BfPdMG6r.js","transferBytes":0,"decodedBytes":0,"durationMs":0},{"file":"hooks-u2-uZjXS.js","transferBytes":0,"decodedBytes":0,"durationMs":0}]},"bundles":{"javascriptFiles":31,"totalBytes":2349836,"totalGzipBytes":671486,"initialRouteGzipBytes":452360,"proposedBudgets":{"initialRouteGzipKiB":500,"largestChunkGzipKiB":200,"basis":"Local demo preview limits for the measured Chromium artifact; not a backend or platform SLO."},"largest":[{"file":"apps/web/dist-demo/assets/mui-azn9KfGV.js","bytes":328326,"gzipBytes":100019},{"file":"apps/web/dist-demo/assets/charts-RcpaDpmM.js","bytes":313031,"gzipBytes":94993},{"file":"apps/web/dist-demo/assets/contract-data-D-QqiNa-.js","bytes":309769,"gzipBytes":37314},{"file":"apps/web/dist-demo/assets/react-runtime-D0NtfbPC.js","bytes":279779,"gzipBytes":90280},{"file":"apps/web/dist-demo/assets/browser-C8CaQoIc.js","bytes":255200,"gzipBytes":86818}]},"observedApi":{"path":"/api/v2/session","status":200,"servedBy":"MSW in the built demo artifact"},"dataSource":"synthetic-msw"}
+  ok 4 [firefox] › tests\artifacts\demo-preview.spec.ts:38:1 › the built demo artifact serves the React UI and synthetic API through preview (5.4s)
+[large-dataset-api] {"url":"http://127.0.0.1:64152/api/v2/shops/shop-demo/customers?limit=20","count":20,"page":{"limit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"firstIds":["c1","c2","c3"]}
+[large-dataset-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","datasetId":"FE025-LARGE-CUSTOMERS-1000-V1","generatedRows":1000,"firstPageIds":["c1","c2","c3","c4","perf-customer-0001","perf-customer-0002","perf-customer-0003","perf-customer-0004","perf-customer-0005","perf-customer-0006","perf-customer-0007","perf-customer-0008","perf-customer-0009","perf-customer-0010","perf-customer-0011","perf-customer-0012","perf-customer-0013","perf-customer-0014","perf-customer-0015","perf-customer-0016"],"api":{"status":200,"pageLimit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"domRowsIncludingHeader":21,"firstPageReadyMs":541,"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0","viewport":{"width":1280,"height":720},"note":"Synthetic customer identities only; the React screen renders one API page and exposes the next cursor instead of mounting the full collection."}
+  ok 5 [firefox] › tests\artifacts\demo-preview.spec.ts:100:1 › a thousand synthetic customers remain API-paginated in the built demo artifact (3.4s)
+  ok 6 [firefox] › tests\artifacts\demo-preview.spec.ts:138:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime (16ms)
+
+  6 passed (37.0s)
+exitCode=0

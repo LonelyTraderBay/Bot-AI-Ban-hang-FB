@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W30",
+  "capturedAt": "2026-10-06",
+  "scope": "Read-only local React demo in the existing Chrome acceptance tab",
+  "route": "http://127.0.0.1:5173/s/shop-demo/imports",
+  "method": "Record browser rendering metrics, send one Control+plus key through the browser-tab API, then record metrics again. No CSS, DOM, viewport override, or device-scale emulation was applied.",
+  "before": {
+    "devicePixelRatio": 1,
+    "innerWidth": 1280,
+    "innerHeight": 720,
+    "visualViewportScale": 1,
+    "documentScrollWidth": 1270
+  },
+  "action": "Control+plus once through the tab input API",
+  "after": {
+    "devicePixelRatio": 1,
+    "innerWidth": 1280,
+    "innerHeight": 720,
+    "visualViewportScale": 1,
+    "documentScrollWidth": 1270
+  },
+  "actualBrowserZoom200": "NOT_RUN",
+  "reason": "The key action produced no browser-zoom metric change. The connected browser API exposes page input and a viewport override, but no browser-chrome zoom control; therefore 200% zoom was not measured or inferred.",
+  "nativeTextResize200": "NOT_RUN",
+  "noAppDataChanged": true
+}

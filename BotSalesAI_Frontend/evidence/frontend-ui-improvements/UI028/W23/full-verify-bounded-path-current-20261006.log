@@ -1,0 +1,199 @@
+
+> botsales-frontend@0.1.0 verify
+> npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build && npm run test:layout
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs
+
+{
+  "checkedAt": "2026-10-05T19:56:47.276Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 66,
+  "operationCalls": 220,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (1.0281ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (151.1389ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (144.0631ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 350.0481
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-05T19:56:49.614Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 66,
+  "imports": 454,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> botsales-frontend@0.1.0 test:domain
+> node scripts/test-domain.mjs
+
+{"status":"PASS","simulatorChecks":75,"networkChecks":13,"networkHandlers":210,"passed":88,"operations":89,"node":"v24.19.0","typescript":"5.9.2"}
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\direct-vite\70300\deps\react-dom_client.js?v=81a91c95 as it exceeds the max of 500KB.
+
+ Test Files  10 passed (10)
+      Tests  88 passed (88)
+   Start at  02:56:59
+   Duration  5.56s (tests 50%, environment 21%, import 16%, transform 7%, setup 6%)
+
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2056 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.19 kB │ gzip:   0.60 kB
+dist/assets/index-CNveuCZ2.css               2.48 kB │ gzip:   0.99 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-BJmJubfC.js              0.31 kB │ gzip:   0.23 kB
+dist/assets/hooks-BNmnAvte.js                3.19 kB │ gzip:   1.62 kB
+dist/assets/index-C31PUzdA.js                7.97 kB │ gzip:   3.18 kB
+dist/assets/index-BZ-9DAtn.js                8.68 kB │ gzip:   3.64 kB
+dist/assets/index-BJkllrIZ.js                9.48 kB │ gzip:   3.59 kB
+dist/assets/index-DIiQqdbl.js               13.12 kB │ gzip:   5.41 kB
+dist/assets/index-6e6yURmh.js               13.43 kB │ gzip:   5.05 kB
+dist/assets/index-D2WgBZ4J.js               13.52 kB │ gzip:   4.46 kB
+dist/assets/index-BvREC-hq.js               14.21 kB │ gzip:   5.43 kB
+dist/assets/index-fJjDHlv4.js               16.07 kB │ gzip:   5.42 kB
+dist/assets/index-DqaqNq4-.js               16.46 kB │ gzip:   5.43 kB
+dist/assets/index-C65FgtVm.js               17.65 kB │ gzip:   6.20 kB
+dist/assets/index-C_I0CSzh.js               18.34 kB │ gzip:   6.09 kB
+dist/assets/index-DHbSmcVC.js               21.85 kB │ gzip:   7.37 kB
+dist/assets/index-Z7JIf4kK.js               22.88 kB │ gzip:   8.16 kB
+dist/assets/index-NyaSrBBF.js               25.94 kB │ gzip:   8.42 kB
+dist/assets/index-Hxx-N2d2.js               31.29 kB │ gzip:   9.76 kB
+dist/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-BakpRqSW.js               37.31 kB │ gzip:  10.04 kB
+dist/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-DB_OiuYl.js               75.86 kB │ gzip:  25.18 kB
+dist/assets/schemas-jpQ0XMzw.js             79.18 kB │ gzip:  24.03 kB
+dist/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/contract-data-Dmdv2cKW.js      262.00 kB │ gzip:  35.24 kB
+dist/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist/assets/charts-CQ4oecFO.js             313.03 kB │ gzip:  94.99 kB
+dist/assets/mui-Bz_aCSm2.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 2.71s
+
+> botsales-frontend@0.1.0 test:layout
+> node --test tests/layout-checker.test.mjs && node scripts/check-layout.mjs
+
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (193.6811ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (197.624ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (199.9255ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (195.3632ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (566.288ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (569.7749ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (771.4085ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (392.2311ms)
+✔ report mode inventories migration debt without turning findings into PASS (196.3674ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3350.8347
+layout-check FAIL: 67 source files, 66 finding(s), 1 exception(s) used
+  SPACING_LITERAL: 66
+Migration debt by component:
+  module:inbox: 46 finding(s)
+  module:reports: 20 finding(s)
+Most affected files:
+  apps/web/src/modules/inbox/index.tsx: 35 finding(s)
+  apps/web/src/modules/reports/index.tsx: 20 finding(s)
+  apps/web/src/modules/inbox/conversation-components.tsx: 11 finding(s)
+  apps/web/src/modules/inbox/conversation-components.tsx:56:22 SPACING_LITERAL p=2
+  apps/web/src/modules/inbox/conversation-components.tsx:74:97 SPACING_LITERAL mt=1.5
+  apps/web/src/modules/inbox/conversation-components.tsx:105:20 SPACING_LITERAL p=1.8
+  apps/web/src/modules/inbox/conversation-components.tsx:114:89 SPACING_LITERAL mt=.6
+  apps/web/src/modules/inbox/conversation-components.tsx:116:49 SPACING_LITERAL gap=.75
+  apps/web/src/modules/inbox/conversation-components.tsx:116:110 SPACING_LITERAL mt=1
+  apps/web/src/modules/inbox/conversation-components.tsx:122:45 SPACING_LITERAL gap=1
+  apps/web/src/modules/inbox/conversation-components.tsx:122:78 SPACING_LITERAL mt=.8
+  apps/web/src/modules/inbox/conversation-components.tsx:157:31 SPACING_LITERAL p=2
+  apps/web/src/modules/inbox/conversation-components.tsx:170:40 SPACING_LITERAL my=2
+  apps/web/src/modules/inbox/conversation-components.tsx:189:54 SPACING_LITERAL mt=2
+  apps/web/src/modules/inbox/index.tsx:45:234 SPACING_LITERAL gap=2
+  apps/web/src/modules/inbox/index.tsx:45:462 SPACING_LITERAL gap=1
+  apps/web/src/modules/inbox/index.tsx:45:475 SPACING_LITERAL px=2
+  apps/web/src/modules/inbox/index.tsx:45:482 SPACING_LITERAL pb=2
+  apps/web/src/modules/inbox/index.tsx:50:227 SPACING_LITERAL py=2
+  apps/web/src/modules/inbox/index.tsx:50:234 SPACING_LITERAL px=2
+  apps/web/src/modules/inbox/index.tsx:50:242 SPACING_LITERAL gap=1.5
+  apps/web/src/modules/inbox/index.tsx:50:527 SPACING_LITERAL gap=1
+  apps/web/src/modules/inbox/index.tsx:50:697 SPACING_LITERAL px=1
+  apps/web/src/modules/inbox/index.tsx:50:814 SPACING_LITERAL mt=.6
+  apps/web/src/modules/inbox/index.tsx:50:892 SPACING_LITERAL mt=1
+  apps/web/src/modules/inbox/index.tsx:88:153 SPACING_LITERAL gap=2
+  apps/web/src/modules/inbox/index.tsx:91:108 SPACING_LITERAL gap=1
+  apps/web/src/modules/inbox/index.tsx:91:120 SPACING_LITERAL p=2
+  apps/web/src/modules/inbox/index.tsx:92:81 SPACING_LITERAL gap=1
+  apps/web/src/modules/inbox/index.tsx:104:61 SPACING_LITERAL gap=1
+  apps/web/src/modules/inbox/index.tsx:114:68 SPACING_LITERAL m=2
+  apps/web/src/modules/inbox/index.tsx:118:136 SPACING_LITERAL p=2.5
+  apps/web/src/modules/inbox/index.tsx:120:49 SPACING_LITERAL gap=2
+  apps/web/src/modules/inbox/index.tsx:184:37 SPACING_LITERAL gap=2
+  apps/web/src/modules/inbox/index.tsx:201:24 SPACING_LITERAL gap=1.5
+  apps/web/src/modules/inbox/index.tsx:201:39 SPACING_LITERAL mt=2
+  apps/web/src/modules/inbox/index.tsx:205:30 SPACING_LITERAL gap=1
+  apps/web/src/modules/inbox/index.tsx:205:89 SPACING_LITERAL p=1.5
+  apps/web/src/modules/inbox/index.tsx:255:21 SPACING_LITERAL gap=2
+  apps/web/src/modules/inbox/index.tsx:255:33 SPACING_LITERAL p=2
+  apps/web/src/modules/inbox/index.tsx:263:46 SPACING_LITERAL gap=1.5
+  apps/web/src/modules/inbox/index.tsx:272:47 SPACING_LITERAL gap=1.5
+  apps/web/src/modules/inbox/index.tsx:285:49 SPACING_LITERAL gap=2
+  ... 26 additional finding(s); use --json for the complete inventory

@@ -1,0 +1,39 @@
+
+Running 1 test using 1 worker
+
+
+
+(node:41452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] [chromium] › tests\fe015.spec.ts:116:1 › UI003 report timestamps follow the active shop timezone
+  1) [chromium] › tests\fe015.spec.ts:116:1 › UI003 report timestamps follow the active shop timezone 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "UTC"
+    Received: "Asia/Vientiane"
+
+      131 |         expect(utcReportResponse.status()).toBe(200);
+      132 |         const utcReport = (await utcReportResponse.json()).data;
+    > 133 |         expect(utcReport.timezone).toBe('UTC');
+          |                                    ^
+      134 |         await expect(page.locator('body')).toContainText(dateTime(utcReport.from, 'UTC'));
+      135 |         await expect(page.locator('body')).toContainText(dateTime(utcReport.to, 'UTC'));
+      136 |         await expect(page.locator('body')).toContainText(dateTime(utcReport.asOf, 'UTC'));
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:133:36
+
+    Error Context: test-results\fe015-UI003-report-timesta-696d0-ow-the-active-shop-timezone-chromium\error-context.md
+
+    Error Context: test-results\fe015-UI003-report-timesta-696d0-ow-the-active-shop-timezone-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\fe015-UI003-report-timesta-696d0-ow-the-active-shop-timezone-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\fe015-UI003-report-timesta-696d0-ow-the-active-shop-timezone-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\fe015.spec.ts:116:1 › UI003 report timestamps follow the active shop timezone 

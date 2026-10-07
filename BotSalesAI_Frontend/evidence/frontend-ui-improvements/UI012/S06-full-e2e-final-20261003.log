@@ -1,0 +1,13 @@
+Date: 2026-10-03
+Scope: rebuilt React production + demo artifacts; synthetic MSW only in demo; Windows Node 24.19.0/npm 11.17.0; Chromium 153.0.8010.12.
+Command: npm.cmd run test:e2e with Node added to PATH and npm_config_script_shell set to the installed bundled PowerShell 7 executable.
+Result: PASS; 183/183 Chromium tests in 10.6 minutes.
+
+Suite evidence:
+- Setup, production build and demo build passed; demo preview served React plus synthetic MSW. Production artifact isolation passed: no worker asset or MSW runtime/fixtures.
+- All canonical-route axe test passed; route-role matrix 357/357; route empty-state composition 11/11; route error composition 51/51.
+- FE009–FE021 browser suites and four vertical journeys passed. FE017 synthetic 422 validation test passed.
+- UI012 keyboard regressions passed 4/4, including focus mapping after 422, keyboard CSV chooser/discard, and keyboard horizontal scroll of the chart data alternative.
+- Demo artifact sample: initial route 447,663 gzip bytes; largest chunk 186,084 gzip bytes; 1,004 synthetic customers returned as a 20-row first page. Local Chromium measurement only; not a production SLO.
+
+The full run covers this frontend checkout with local mock data. It does not verify real backend/provider behavior, staging, CI, actual browser zoom, screen-reader output, broader manual contrast or product-owner UAT.

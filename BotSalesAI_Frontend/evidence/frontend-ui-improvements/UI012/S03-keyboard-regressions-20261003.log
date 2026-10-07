@@ -1,0 +1,14 @@
+Date: 2026-10-03
+Scope: React Frontend with synthetic MSW; Chromium 153.0.8010.12; no backend/provider writes.
+Command: & 'C:\Program Files\nodejs\node.exe' node_modules/@playwright/test/cli.js test tests/ui012-keyboard.spec.ts
+Final result: 4 passed (10.1s).
+
+Verified keyboard cases:
+1. Finance edit: skip-link, select option, Escape recovery, cancel/discard, focus return; captured POST count 0.
+2. Knowledge synthetic 422: keyboard submits a draft request intercepted by a test-only fetch stub; the shared error summary lists `content`, focuses the matching textarea and sets aria-invalid=true. Production source now gives the title/content fields contract-path `name` attributes.
+3. Reconciliation CSV chooser: Space activates a native MUI button which opens the hidden file input; selected filename appears; cancel/discard returns focus; captured POST count 0. The earlier label-rendered pseudo-button did not emit `filechooser` for Enter or Space.
+4. Marketing chart alternative at 320 CSS px: keyboard reaches the named scroll region and ArrowRight scrolls its wide data table while document-level horizontal scroll remains 0. Before the fix, ArrowRight left region.scrollLeft at 0.
+
+Test-debug evidence: the first 422 repro showed the content textarea remained aria-invalid=false and did not receive focus because ErrorNotice maps API field paths to input `name` attributes. The CSV repro showed the label-rendered button had no keyboard activation. The table repro showed a focusable overflow region did not respond to ArrowRight. Each defect was reproduced before its source correction, then all four cases passed together. No contract, generated DTO, MSW fixture or backend code was changed.
+
+Architecture paired with UI corrections: file selection stays owned by StatementDialog; reusable DataTable handles only keyboard scrolling when horizontal overflow exists; knowledge form fields map canonical 422 paths to shared ErrorNotice without changing API shape or module boundaries.

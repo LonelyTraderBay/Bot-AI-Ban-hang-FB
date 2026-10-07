@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "step": "S17",
+  "scope": "Evidence-manifest validator implementation and regression gates: validate current repo-contained file hashes, captured logs, declared expected/observed coverage, baseline disposition, and strict failure conditions. This does not claim whole-app S19 coverage.",
+  "recordedAt": "2026-10-07T01:11:31.798Z",
+  "status": "COMPLETE",
+  "checks": [
+    {
+      "id": "validator-fixtures",
+      "command": "node --test tests/ui-evidence-validator.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "11 of 11 pass, 0 fail",
+      "observed": "11 of 11 pass, 0 fail",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-validator-fixtures-reverify-20261007.log",
+        "sha256": "de1f02c8401b41c91940bccc709e1381f7bf85e5a6a287576a1397aab4297ede"
+      }
+    },
+    {
+      "id": "api-consumer-contract",
+      "command": "node --test tests/ui-composition-checker.test.mjs tests/ui-composition-ancestry.test.mjs tests/ui-shared-api-contract.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "36 of 36 tests pass; strict composition check reports 74 source files and 0 findings",
+      "observed": "36 of 36 tests pass; strict composition check reports 74 source files and 0 findings",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-api-consumer-contract-reverify-20261007.log",
+        "sha256": "f593daff356fbe6e0061a5cc26e84843a6c685813587b49d18f0f856c73ebf8b"
+      }
+    },
+    {
+      "id": "layout-binding-regressions",
+      "command": "node --test tests/layout-checker.test.mjs tests/ui-layout-binding-gates.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "82 of 82 tests pass",
+      "observed": "82 of 82 tests pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-layout-binding-regressions-reverify-20261007.log",
+        "sha256": "063290b555a5700ad2e837dfc06ab4128eb30e46b3643cd29b129ac28e67d17c"
+      }
+    },
+    {
+      "id": "strict-layout-source-gate",
+      "command": "node scripts/check-layout.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "76 source files, 0 findings, 1 declared exception used",
+      "observed": "76 source files, 0 findings, 1 declared exception used",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-layout-source-gate-reverify-20261007.log",
+        "sha256": "d847df532a9b82c51dc3d9ee8f2e8d3c50a7d421e767119c25e40e460e205e67"
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "name": "validator-fixtures",
+      "expected": 11,
+      "observed": 11,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "shared-contract-gate-fixtures",
+      "expected": 36,
+      "observed": 36,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "layout-binding-gate-fixtures",
+      "expected": 82,
+      "observed": 82,
+      "missing": 0,
+      "result": "COMPLETE"
+    }
+  ],
+  "baseline": {
+    "status": "N/A",
+    "reason": "S17 validates governance evidence and does not change rendered UI. UI comparison baselines are recorded in S11, S12, S15 and S16 artifacts."
+  },
+  "sourceFingerprints": {
+    "BotSalesAI_Frontend/package.json": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138",
+    "BotSalesAI_Frontend/scripts/validate-ui-evidence.mjs": "48f9bc2187d4ec07eb651bf622621e476f3afddb5c26cd4c4f65f2b01a505d91",
+    "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
+    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "7dacb8bee71f0e7296cf8b3773926592f0c7c192af9f4d3066e42db2f425f8ef",
+    "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
+    "BotSalesAI_Frontend/scripts/check-layout.mjs": "d1fb4346896bcce7d22395d8c128ad946005f5e3baadea250ce9b4cc3bcbf3fb",
+    "BotSalesAI_Frontend/scripts/check-ui-composition.mjs": "2a483e55188f9409624ea5893a1444583e6099c7a46a828e7ee3f98186dd4404",
+    "BotSalesAI_Frontend/tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
+    "BotSalesAI_Frontend/playwright.config.ts": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e",
+    "BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md": "3e717844348860dc7bc440ba6abdf50ee9e10ebb1d67b5bb6beb982fcb2c0e4a",
+    "BotSalesAI_Frontend/AGENTS.md": "cdc5c4973341ca4b9a21ad16207959f2899f45de664bacad5db0c4fb19e626d9",
+    ".github/workflows/frontend.yml": "238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5",
+    "BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "f3612c47b51fbcdc3827c38f3616ed4cc9b75c79841f36e728086368a686bc96",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "34d3fd5a7dc66a067660451c0ae043109e5224c524cc7972d193607e20850284",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/inventory-current-20261007.mjs": "13acdeab2d5ee46a8f3f580fc49b87266c751e31062386daac3d33835e3693a4",
+    "BotSalesAI_Frontend/docs/route-state-role-matrix.json": "48e03c4b4fa07e9cf0baa9fda459f2d750969d276d63d156d6e6cc071f42fe27",
+    "BotSalesAI_Frontend/DESIGN.md": "af2becd9bbdd5eca4a502ae63b911ca7028417068faa5ae6025e10faa4b03f4e",
+    "BotSalesAI_Frontend/evidence/REPORT.md": "fb0dd3949899ba1df45b218e1aab31e779214e0388dc31f4793ef7d5167e7515"
+  },
+  "knownLimits": [
+    "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
+    "This scoped S17 record does not close whole-app S19 route, component-slot, state, or branch coverage.",
+    "Hosted CI and branch protection are not certified by local runs."
+  ]
+}

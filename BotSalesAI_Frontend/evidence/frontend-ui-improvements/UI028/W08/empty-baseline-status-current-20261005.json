@@ -1,0 +1,18 @@
+{
+  "workItem": "UI028.W08",
+  "status": "BASELINE_NOT_CAPTURED",
+  "capturedAt": "2026-10-05",
+  "routeId": "R30",
+  "route": "/s/shop-demo/integrations/ai",
+  "reason": "The pre-code browser run with the canonical in-memory seed did not render the Empty state. A deterministic empty-list control was also unavailable in the standalone baseline capture process, so there is no honest before screenshot or computed-style baseline for this state.",
+  "evidence": {
+    "preCodeProbe": "render-before-code-current-20261005.json",
+    "preCodeProbeResult": "emptyStates.available=false at 1280px and 390px",
+    "captureAttempt": "render-empty-before-code-attempt-current-20261005.json",
+    "captureAttemptResult": "FAIL: demo state picker was not visible in that standalone capture run",
+    "afterCodeProbe": "render-after-code-verified-current-20261005.json",
+    "afterCodeProbeResult": "NOT_OBSERVED at 1280px and 390px"
+  },
+  "handling": "Do not compare or label an after-code capture as a before baseline. Empty geometry is covered by the shared component test; the synthetic route-empty composition test is the browser behavior check. Preserve this limitation until a valid pre-code browser rendering is available.",
+  "scope": "Local React frontend with synthetic in-memory API only; no backend or live provider claim."
+}
