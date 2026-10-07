@@ -6,8 +6,8 @@ type Route = { id: string; path: string; readPermission: string | null };
 type RouteManifest = { routes: Route[] };
 type PermissionCatalog = { rolePresets: Record<string, string[]> };
 
-const routeManifest = JSON.parse(readFileSync(new URL('../botsales-kit/contracts/route-manifest.json', import.meta.url), 'utf8')) as RouteManifest;
-const permissionCatalog = JSON.parse(readFileSync(new URL('../botsales-kit/contracts/permission-catalog.json', import.meta.url), 'utf8')) as PermissionCatalog;
+const routeManifest = JSON.parse(readFileSync(new URL('../../botsales-kit/contracts/route-manifest.json', import.meta.url), 'utf8')) as RouteManifest;
+const permissionCatalog = JSON.parse(readFileSync(new URL('../../botsales-kit/contracts/permission-catalog.json', import.meta.url), 'utf8')) as PermissionCatalog;
 const privateRoutes = routeManifest.routes.filter(route => route.path.startsWith('/s/'));
 const roles = Object.keys(permissionCatalog.rolePresets);
 const detailIds: Record<string, string> = {

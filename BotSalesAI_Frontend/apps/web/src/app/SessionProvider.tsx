@@ -50,11 +50,13 @@ export function SessionProvider({ children }: {
         };
     }, [refresh]);
     const logout = useCallback(async () => {
+        if (query.data)
+            setCsrfToken(query.data.data.csrfToken);
         await request('logout');
         setForcedAnonymous(true);
         cancelScopeRequests();
         setCsrfToken('');
         cache.clear();
-    }, [cache]);
+    }, [cache, query.data]);
     return <SessionContext.Provider value={{ session: forcedAnonymous ? null : query.data?.data || null, loading: query.isPending, error: query.error, refresh, logout, online }}>{children}</SessionContext.Provider>;
 }

@@ -17,20 +17,39 @@ test('canonical contracts validate and generate the API base path from OpenAPI',
     assert.deepEqual(findGeneratedDrift(outputs, root), []);
 });
 
+test('rejects drift in OpenAPI YAML and operation index projections', () => {
+    const yamlDrift = structuredClone(loadContractBundle(root));
+    yamlDrift.openapiYaml.info.version = '9.9.9';
+    assert(validateContractBundle(yamlDrift).some(issue => issue.includes('openapi.yaml drifted')));
+
+    const indexDrift = structuredClone(loadContractBundle(root));
+    indexDrift.operationIndex.operations[0].path = '/stale-contract-path';
+    assert(validateContractBundle(indexDrift).some(issue => issue.includes('operation-index.json drifted')));
+});
+
 test('generated operation registry preserves required and optional query parameter metadata', () => {
     const bundle = loadContractBundle(root);
     const outputs = renderGenerated(bundle);
     const operations = JSON.parse(outputs['packages/contracts/src/operations.json']);
 
     assert.deepEqual(operations.getCashflow.queryParameters, [
-        { name: 'from', required: true },
-        { name: 'to', required: true },
-        { name: 'timezone', required: true },
+        { name: 'from', required: true, schema: { $ref: '#/components/schemas/DateTime' } },
+        { name: 'to', required: true, schema: { $ref: '#/components/schemas/DateTime' } },
+        { name: 'timezone', required: true, schema: { type: 'string' } },
     ]);
     assert.deepEqual(operations.listOrders.queryParameters.find(parameter => parameter.name === 'customerId'), {
-        name: 'customerId', required: false,
+        name: 'customerId', required: false, schema: { $ref: '#/components/schemas/Id' },
     });
     assert.equal(operations.listServiceCases.queryParameters.some(parameter => parameter.name === 'customerId'), false);
+    assert.deepEqual(operations.listProducts.pathParameters, [
+        { name: 'shopId', required: true, schema: { $ref: '#/components/schemas/Id' } },
+    ]);
+    assert.deepEqual(operations.createCustomer.headers.find(parameter => parameter.name === 'Idempotency-Key'), {
+        name: 'Idempotency-Key', required: true, schema: { type: 'string', minLength: 16, maxLength: 200 },
+    });
+    assert.deepEqual(operations.updateCustomer.headers.find(parameter => parameter.name === 'If-Match'), {
+        name: 'If-Match', required: true, schema: { type: 'string', minLength: 1 },
+    });
 });
 
 test('rejects unresolved schema references before generation', () => {

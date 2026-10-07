@@ -7,8 +7,8 @@ const readText = async path => readFile(new URL(path, import.meta.url), 'utf8');
 
 test('FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source', async () => {
     const [manifest, openapi, operations, orders, shell, fulfillment, commandRecovery, mockFulfillment, seed, router, knownGaps] = await Promise.all([
-        readJson('../botsales-kit/contracts/route-manifest.json'),
-        readJson('../botsales-kit/contracts/openapi.json'),
+        readJson('../../botsales-kit/contracts/route-manifest.json'),
+        readJson('../../botsales-kit/contracts/openapi.json'),
         readJson('../packages/contracts/src/operations.json'),
         readText('../apps/web/src/modules/orders/index.tsx'),
         readText('../apps/web/src/app/Shell.tsx'),

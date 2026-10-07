@@ -1,9 +1,13 @@
+import { ActionGroup } from '../shared/ui/composition';
 import { useEffect, useState, useSyncExternalStore } from 'react';
+import { visualSx } from '@/shared/ui/visual';
 import { Alert, Box, Button, Stack, Typography } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { request } from '@/shared/api/client';
 import { intentSnapshot, subscribeIntents, resolveObservedIntent } from '@/shared/api/intents';
 import { useScope } from '@/shared/model/scope';
+import { CopyableCode } from '@/shared/ui/components';
+import { layoutSx } from '@/shared/ui/layout';
 export function CommandRecovery() {
     const { shop, session, membership } = useScope();
     const cache = useQueryClient();
@@ -33,5 +37,5 @@ export function CommandRecovery() {
     finally {
         setBusy(false);
     } }
-    return <Box sx={{ mx: { xs: 2, md: 4 }, mt: 2 }}><Alert severity="warning"><Typography fontWeight={700}>Có {intents.length} thao tác chưa xác minh kết quả</Typography><Typography variant="body2">Không gửi lại hoặc đóng trang để bỏ qua cảnh báo. Lệnh chỉ được mở khóa sau khi backend trả trạng thái đã kết thúc.</Typography><Stack spacing={.5} sx={{ my: 1 }}>{intents.map(x => <Typography key={x.intentId} variant="caption" sx={{ overflowWrap: 'anywhere' }}>{x.operation} · intent {x.intentId} · {x.commandId ? `lệnh ${x.commandId}` : 'chưa nhận được mã lệnh; cần người vận hành đối chiếu intent trên backend'}</Typography>)}</Stack><Button disabled={busy || intents.every(x => !x.commandId)} onClick={() => void check()}>Kiểm tra trạng thái lệnh</Button>{message && <Typography variant="body2">{message}</Typography>}</Alert></Box>;
+    return <Box sx={layoutSx.shell.statusBanner}><Alert severity="warning"><Typography fontWeight={visualSx.typography.fontWeight.bold}>Có {intents.length} thao tác chưa xác minh kết quả</Typography><Typography variant="body2">Không gửi lại hoặc đóng trang để bỏ qua cảnh báo. Lệnh chỉ được mở khóa sau khi backend trả trạng thái đã kết thúc.</Typography><Stack sx={layoutSx.query.stateGap}>{intents.map(x => <ActionGroup key={x.intentId} direction="row" alignItems="center" flexWrap="wrap" ><Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>{x.operation} · mã đối chiếu {x.intentId} ·</Typography>{x.commandId ? <CopyableCode value={x.commandId} label="mã lệnh" /> : <Typography variant="caption">chưa nhận được mã lệnh; cần người vận hành đối chiếu mã intent với backend</Typography>}</ActionGroup>)}</Stack><Button disabled={busy || intents.every(x => !x.commandId)} onClick={() => void check()}>Kiểm tra trạng thái lệnh</Button>{message && <Typography variant="body2">{message}</Typography>}</Alert></Box>;
 }

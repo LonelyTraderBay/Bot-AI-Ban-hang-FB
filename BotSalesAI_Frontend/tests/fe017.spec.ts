@@ -208,7 +208,7 @@ test('FE017.AC03 missing content, unsupported and oversized files keep creation 
 
 test('FE017.AC04 feedback approval creates inert draft content and its first revision only', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
-    await page.getByRole('button', { name: 'Đánh giá', exact: true }).first().click();
+    await page.getByRole('button', { name: /^Đánh giá tin nhắn/ }).first().click();
     const feedbackDialog = page.getByRole('dialog', { name: 'Đánh giá câu trả lời' });
     await feedbackDialog.getByRole('textbox', { name: 'Nội dung đề xuất sửa' }).fill('Nên kiểm tra điều kiện đổi hàng trước khi tư vấn.');
     const feedbackResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/feedback'));

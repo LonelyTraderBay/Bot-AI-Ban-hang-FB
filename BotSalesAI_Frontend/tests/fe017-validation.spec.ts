@@ -49,5 +49,6 @@ test('FE017 synthetic 422 keeps the knowledge draft fields and shows field error
     expect(await page.evaluate(() => (window as Window & { __fe017Synthetic422: boolean }).__fe017Synthetic422)).toBe(true);
     await expect(dialog.getByRole('textbox', { name: 'Tiêu đề' })).toHaveValue(title);
     await expect(dialog.getByRole('textbox', { name: 'Nội dung' })).toHaveValue(content);
-    await expect(validationAlert).toContainText('content: Hãy rà soát nội dung nguồn.');
+    await expect(validationAlert).toContainText('Trường Nội dung: Hãy rà soát nội dung nguồn.');
+    await expect(validationAlert).not.toContainText('content:');
 });

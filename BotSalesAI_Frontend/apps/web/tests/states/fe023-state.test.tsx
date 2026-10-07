@@ -98,7 +98,7 @@ describe('FE023 shared state and form behavior', () => {
         expect(screen.getAllByRole('status')[1]).toHaveTextContent(viMessages.state.capabilityUnavailable);
     });
 
-    it('has a complete Vietnamese translation for every registered common UI key', () => {
+    it('has a complete Vietnamese translation for every registered common and feature UI key', () => {
         const flatten = (value: unknown, prefix = ''): string[] => Object.entries(value as Record<string, unknown>).flatMap(([key, child]) => {
             const next = prefix ? `${prefix}.${key}` : key;
             return typeof child === 'string' ? [next] : flatten(child, next);

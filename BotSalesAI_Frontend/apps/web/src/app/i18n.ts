@@ -1,5 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { customersMessages } from './locales/vi/customers';
+import { knowledgeMessages } from './locales/vi/knowledge';
 
 export const viMessages = {
     app: {
@@ -40,6 +42,8 @@ export const viMessages = {
         continueEditing: 'Tiếp tục sửa',
         discard: 'Bỏ thay đổi',
     },
+    customers: customersMessages,
+    knowledge: knowledgeMessages,
 } as const;
 
 export const requiredVietnameseKeys = [
@@ -48,6 +52,18 @@ export const requiredVietnameseKeys = [
     'state.forbiddenTitle', 'state.notFoundTitle', 'state.conflictTitle', 'state.validationTitle', 'state.versionRequiredTitle',
     'state.requestErrorTitle', 'state.unknownTitle', 'state.conflictHelp', 'state.versionRequiredHelp', 'state.validationHelp', 'state.field', 'state.command',
     'draft.closeTitle', 'draft.closeDescription', 'draft.continueEditing', 'draft.discard',
+    'customers.list.title', 'customers.list.subtitle', 'customers.list.addAction', 'customers.list.searchPlaceholder', 'customers.list.tableLabel',
+    'customers.list.customerColumn', 'customers.list.contactColumn', 'customers.list.emailColumn', 'customers.list.notesColumn', 'customers.list.profileAction',
+    'customers.list.contactUnavailable', 'customers.list.empty',
+    'customers.form.customerName', 'customers.form.phone', 'customers.form.email', 'customers.form.notes', 'customers.form.createTitle',
+    'customers.form.createAction', 'customers.form.saveAction',
+    'customers.validation.nameRequired', 'customers.validation.nameMax', 'customers.validation.phoneMax', 'customers.validation.emailFormat', 'customers.validation.notesMax',
+    'customers.detail.fallbackTitle', 'customers.detail.subtitle', 'customers.detail.listAction', 'customers.detail.information', 'customers.detail.redactedNotice',
+    'customers.detail.recentOrders', 'customers.detail.noOrders', 'customers.detail.orderPreviewLimit', 'customers.detail.openOrders',
+    'customers.detail.relatedShipments', 'customers.detail.ordersLoading', 'customers.detail.ordersUnavailable', 'customers.detail.noShipments',
+    'customers.detail.shipmentPreviewLimit', 'customers.detail.openShipments', 'customers.detail.shipmentPermission', 'customers.detail.supportCases',
+    'customers.detail.noSupportCases', 'customers.detail.supportCasesLimit', 'customers.detail.openSupportCases',
+    'knowledge.form.title', 'knowledge.form.content',
 ] as const;
 
 void i18n.use(initReactI18next).init({

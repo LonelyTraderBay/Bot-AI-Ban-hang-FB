@@ -7,8 +7,8 @@ const readText = async path => readFile(new URL(path, import.meta.url), 'utf8');
 
 test('FE011 routes, permissions, operations and DTOs map to canonical contracts and current source', async () => {
     const [manifest, openapi, operations, inventory, shell] = await Promise.all([
-        readJson('../botsales-kit/contracts/route-manifest.json'),
-        readJson('../botsales-kit/contracts/openapi.json'),
+        readJson('../../botsales-kit/contracts/route-manifest.json'),
+        readJson('../../botsales-kit/contracts/openapi.json'),
         readJson('../packages/contracts/src/operations.json'),
         readText('../apps/web/src/modules/inventory/index.tsx'),
         readText('../apps/web/src/app/Shell.tsx'),
@@ -33,7 +33,7 @@ test('FE011 routes, permissions, operations and DTOs map to canonical contracts 
     assert.deepEqual(openapi.components.schemas.InventoryAdjustment.required, ['variantId', 'warehouseId', 'quantityDelta', 'reason', 'expectedVersion', 'unitCost']);
     assert.deepEqual(
         { method: operations.createInventoryAdjustment.method, path: operations.createInventoryAdjustment.path, permission: operations.createInventoryAdjustment.permission, requestSchema: operations.createInventoryAdjustment.requestSchema, responseSchema: operations.createInventoryAdjustment.responseSchema, status: operations.createInventoryAdjustment.status, headers: operations.createInventoryAdjustment.headers },
-        { method: 'POST', path: '/shops/{shopId}/inventory/adjustments', permission: 'inventory.adjust', requestSchema: 'InventoryAdjustment', responseSchema: 'CommandResponse', status: 202, headers: [{ name: 'X-CSRF-Token', required: true }, { name: 'Idempotency-Key', required: true }] },
+        { method: 'POST', path: '/shops/{shopId}/inventory/adjustments', permission: 'inventory.adjust', requestSchema: 'InventoryAdjustment', responseSchema: 'CommandResponse', status: 202, headers: [{ name: 'X-CSRF-Token', required: true, schema: { type: 'string', minLength: 16 } }, { name: 'Idempotency-Key', required: true, schema: { type: 'string', minLength: 16, maxLength: 200 } }] },
     );
 
     assert.match(inventory, /useApi\('listStockSnapshots'/);

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
+import { evidenceRunId } from './evidence-run-id.mjs';
 
 let demoUrl = '';
 let closeDemo: (() => Promise<void>) | undefined;
@@ -70,12 +71,66 @@ async function readApi<T>(page: import('@playwright/test').Page, path: string): 
     }, path);
 }
 
+async function seedEvaluationRows(page: import('@playwright/test').Page, count: number) {
+    return page.evaluate(async (total) => {
+        const csrfResponse = await fetch('/api/v2/auth/csrf');
+        const csrf = (await csrfResponse.json()).data.csrfToken as string;
+        const ids: string[] = [];
+        for (let index = 0; index < total; index++) {
+            const response = await fetch('/api/v2/shops/shop-demo/bot/evaluations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf, 'Idempotency-Key': `ui004-evaluation-${total}-${index}` },
+                body: JSON.stringify({ configRevision: 1, datasetVersion: `ui004-synthetic-${total}-${String(index).padStart(3, '0')}`, knowledgeRevisionId: null }),
+            });
+            const envelope = await response.json();
+            if (response.status !== 202)
+                throw new Error(`Synthetic evaluation ${index} failed with ${response.status}: ${JSON.stringify(envelope)}`);
+            ids.push(envelope.data.id as string);
+        }
+        return ids;
+    }, count);
+}
+
+type EvaluationListEnvelope = {
+    data: Array<{ id: string }>;
+    page: { limit: number; total: number; hasMore: boolean; nextCursor: string | null };
+};
+
+async function openEvaluationList(page: import('@playwright/test').Page, count: number) {
+    await gotoDemo(page, '/s/shop-demo/bot');
+    await expect(page.getByRole('heading', { name: 'Điều khiển Admin AI' })).toBeVisible();
+    const createdIds = await seedEvaluationRows(page, count);
+    const listResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/bot/evaluations'));
+    await page.getByRole('link', { name: 'Chất lượng AI' }).click();
+    await expect(page.getByRole('heading', { name: 'Đánh giá AI' })).toBeVisible();
+    const response = await listResponse;
+    expect(response.status()).toBe(200);
+    return { createdIds, firstPage: await response.json() as EvaluationListEnvelope };
+}
+
+async function visibleEvaluationIds(page: import('@playwright/test').Page) {
+    return page.getByRole('row').evaluateAll(rows => rows.slice(1).map(row => row.querySelector('button')?.textContent?.trim() || ''));
+}
+
+async function requestEvaluationPage(page: import('@playwright/test').Page, cursor: string) {
+    const responseWait = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/bot/evaluations') && url.searchParams.get('cursor') === cursor;
+    });
+    await page.getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    const response = await responseWait;
+    await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(cursor);
+    const envelope = await response.json() as EvaluationListEnvelope;
+    await expect.poll(() => visibleEvaluationIds(page)).toEqual(envelope.data.map(row => row.id));
+    return { response, envelope };
+}
+
 test('FE018.S01 maps routes and operations to the canonical OpenAPI permissions', () => {
     const root = process.cwd();
-    const manifest = JSON.parse(readFileSync(join(root, 'botsales-kit/contracts/route-manifest.json'), 'utf8')) as {
+    const manifest = JSON.parse(readFileSync(join(root, '../botsales-kit/contracts/route-manifest.json'), 'utf8')) as {
         routes: Array<{ id: string; module: string; readPermission: string; actions: Array<{ operationId: string; permission: string }> }>;
     };
-    const openapi = JSON.parse(readFileSync(join(root, 'botsales-kit/contracts/openapi.json'), 'utf8')) as {
+    const openapi = JSON.parse(readFileSync(join(root, '../botsales-kit/contracts/openapi.json'), 'utf8')) as {
         paths: Record<string, Record<string, { operationId?: string; 'x-permission'?: string }>>;
     };
     const byId = new Map(Object.values(openapi.paths).flatMap(methods => Object.values(methods)).filter(op => op.operationId).map(op => [op.operationId, op]));
@@ -349,4 +404,118 @@ test('FE018.AC05 unknown role command stays unresolved and does not claim succes
     await expect(dialog.getByRole('alert')).toContainText('Chưa xác minh được kết quả');
     await expect(dialog).toBeVisible();
     expect(await readApi<Array<{ id: string; status: string }>>(page, '/api/v2/shops/shop-demo/agent-roles')).toContainEqual(expect.objectContaining({ id: 'agent-0', status: 'not_configured' }));
+});
+
+test('UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state', async ({ page }) => {
+    const { createdIds, firstPage } = await openEvaluationList(page, 25);
+    expect(firstPage).toMatchObject({ page: { limit: 20, total: 25, hasMore: true } });
+    expect(firstPage.data).toHaveLength(20);
+    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(0, 20));
+    await expect(page.getByText('25 kết quả', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeEnabled();
+
+    const second = await requestEvaluationPage(page, firstPage.page.nextCursor!);
+    expect(second.response.status()).toBe(200);
+    expect(second.envelope).toMatchObject({ page: { total: 25, hasMore: false, nextCursor: null } });
+    expect(second.envelope.data.map(row => row.id)).toEqual([...createdIds].reverse().slice(20));
+    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
+    await expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Đầu danh sách', exact: true })).toBeEnabled();
+    await page.screenshot({ path: `evidence/frontend-ui-improvements/UI004/S02-final-list-25-${test.info().project.name}-${evidenceRunId}.png`, fullPage: true });
+
+    await page.getByRole('button', { name: createdIds[0], exact: true }).click();
+    const detail = page.getByRole('dialog', { name: 'Chi tiết đánh giá' });
+    await expect(detail).toBeVisible();
+    await detail.getByRole('button', { name: 'Đóng' }).last().click();
+    await expect(detail).toBeHidden();
+    await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(firstPage.page.nextCursor);
+    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
+
+    await page.goBack();
+    await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBeNull();
+    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(0, 20));
+    await page.goForward();
+    await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(firstPage.page.nextCursor);
+    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
+
+    await page.getByLabel('Tìm kiếm').fill(createdIds[0]);
+    const searchResponseWait = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/bot/evaluations') && url.searchParams.get('q') === createdIds[0];
+    });
+    await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+    const searchResponse = await searchResponseWait;
+    const searchEnvelope = await searchResponse.json() as EvaluationListEnvelope;
+    expect(new URL(page.url()).searchParams.get('cursor')).toBeNull();
+    expect(searchEnvelope).toMatchObject({ page: { total: 1, hasMore: false } });
+    expect(await visibleEvaluationIds(page)).toEqual([createdIds[0]]);
+    console.log(`UI004_25_ACCEPTANCE=${JSON.stringify({ total: firstPage.page.total, pageSizes: [firstPage.data.length, second.envelope.data.length], cursor: firstPage.page.nextCursor, oldestRecord: createdIds[0], oldestReachable: true, detailPreservedCursor: true, browserBackRestoredFirstPage: true, searchResetCursor: true })}`);
+});
+
+test('UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry', async ({ page }) => {
+    const { createdIds, firstPage } = await openEvaluationList(page, 105);
+    expect(firstPage).toMatchObject({ page: { limit: 20, total: 105, hasMore: true } });
+    expect(firstPage.data).toHaveLength(20);
+    const orderedExpected = [...createdIds].reverse();
+    const allVisible = firstPage.data.map(row => row.id);
+    const cursorRequests: string[] = [];
+
+    let current = (await requestEvaluationPage(page, firstPage.page.nextCursor!)).envelope;
+    expect(await visibleEvaluationIds(page)).toEqual(current.data.map(row => row.id));
+    cursorRequests.push(firstPage.page.nextCursor!);
+    allVisible.push(...current.data.map(row => row.id));
+
+    await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');
+    await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');
+    const failedCursor = current.page.nextCursor!;
+    const failedResponseWait = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/bot/evaluations') && url.searchParams.get('cursor') === failedCursor;
+    });
+    await page.getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    const failedResponse = await failedResponseWait;
+    expect(failedResponse.status()).toBe(503);
+    await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(failedCursor);
+    await expect(page.getByRole('alert').filter({ hasText: 'API mô phỏng đang lỗi liên tục.' })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('row')).toHaveCount(0);
+    await chooseMockOption(page, 'Trạng thái thử', 'Bình thường');
+    await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');
+
+    const retryResponseWait = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/bot/evaluations') && url.searchParams.get('cursor') === failedCursor && response.status() === 200;
+    });
+    await page.getByRole('button', { name: 'Thử lại', exact: true }).click();
+    const retryResponse = await retryResponseWait;
+    expect(retryResponse.status()).toBe(200);
+    current = await retryResponse.json() as EvaluationListEnvelope;
+    cursorRequests.push(failedCursor);
+    expect(current.data).toHaveLength(20);
+    await expect.poll(() => visibleEvaluationIds(page)).toEqual(current.data.map(row => row.id));
+    allVisible.push(...current.data.map(row => row.id));
+
+    while (current.page.hasMore) {
+        const cursor = current.page.nextCursor;
+        expect(cursor).toBeTruthy();
+        const next = await requestEvaluationPage(page, cursor!);
+        expect(next.response.status()).toBe(200);
+        expect(next.envelope.page.total).toBe(105);
+        expect(next.envelope.data.map(row => row.id)).toEqual(await visibleEvaluationIds(page));
+        cursorRequests.push(cursor!);
+        allVisible.push(...next.envelope.data.map(row => row.id));
+        current = next.envelope;
+    }
+
+    expect(allVisible).toEqual(orderedExpected);
+    expect(new Set(allVisible).size).toBe(105);
+    expect(current.data).toHaveLength(5);
+    expect(current.page).toMatchObject({ total: 105, hasMore: false, nextCursor: null });
+    await expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeDisabled();
+    await expect(page.getByRole('button', { name: createdIds[0], exact: true })).toBeVisible();
+    await page.getByRole('button', { name: createdIds[0], exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Chi tiết đánh giá' })).toBeVisible();
+    await page.getByRole('dialog', { name: 'Chi tiết đánh giá' }).getByRole('button', { name: 'Đóng' }).last().click();
+    await expect(page.getByRole('button', { name: createdIds[0], exact: true })).toBeVisible();
+    await page.screenshot({ path: `evidence/frontend-ui-improvements/UI004/S03-final-list-105-${test.info().project.name}-${evidenceRunId}.png`, fullPage: true });
+    console.log(`UI004_105_ACCEPTANCE=${JSON.stringify({ total: 105, pageSizes: [20, 20, 20, 20, 20, 5], pagesVisited: 6, cursorRequests, uniqueRecords: new Set(allVisible).size, oldestRecord: createdIds[0], oldestReachable: true, failedCursorRetainedForRetry: failedCursor, errorShowsNoFabricatedRows: true, retrySucceeded: retryResponse.status() === 200 })}`);
 });

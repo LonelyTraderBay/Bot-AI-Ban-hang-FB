@@ -11,8 +11,8 @@ const roleLogPath = args.get('--role-log');
 if (!unitLogPath || !browserLogPath)
     throw new Error('Usage: node tests/states/generate-route-state-roles.mjs --unit-log <path> --browser-log <path> [--role-log <path>]');
 
-const routeManifest = JSON.parse(fs.readFileSync(path.join(root, 'botsales-kit/contracts/route-manifest.json'), 'utf8'));
-const permissionCatalog = JSON.parse(fs.readFileSync(path.join(root, 'botsales-kit/contracts/permission-catalog.json'), 'utf8'));
+const routeManifest = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/route-manifest.json'), 'utf8'));
+const permissionCatalog = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/permission-catalog.json'), 'utf8'));
 const operationIndex = JSON.parse(fs.readFileSync(path.join(root, 'packages/contracts/src/operations.json'), 'utf8'));
 const unitLog = fs.readFileSync(path.resolve(root, unitLogPath), 'utf8');
 const browserLog = fs.readFileSync(path.resolve(root, browserLogPath), 'utf8');
@@ -38,7 +38,7 @@ const testCases = [
     { id: 'conflict-412', source: 'apps/web/tests/states/fe023-state.test.tsx', title: 'presents HTTP 412 with an actionable Vietnamese state', states: ['conflict_412'] },
     { id: 'missing-version-428', source: 'apps/web/tests/states/fe023-state.test.tsx', title: 'presents HTTP 428 with an actionable Vietnamese state', states: ['missing_version_428'] },
     { id: 'not-found-404', source: 'apps/web/tests/states/fe023-state.test.tsx', title: 'presents HTTP 404 with an actionable Vietnamese state', states: ['not_found'] },
-    { id: 'translation-keys', source: 'apps/web/tests/states/fe023-state.test.tsx', title: 'has a complete Vietnamese translation for every registered common UI key', states: ['translation_keys'] },
+    { id: 'translation-keys', source: 'apps/web/tests/states/fe023-state.test.tsx', title: 'has a complete Vietnamese translation for every registered common and feature UI key', states: ['translation_keys'] },
     { id: 'dialog-draft-guard', source: 'tests/states/fe023.spec.ts', title: 'a dirty dialog keeps the form value until the user confirms discard', states: ['dialog_dirty_draft'] },
     { id: 'delayed-and-retry', source: 'tests/states/fe023.spec.ts', title: 'delayed requests show loading and failed refresh keeps a retry path', states: ['loading', 'error'], routeSpecific: true, routeIds: ['R09', 'R40'], routeStates: { loading: ['R09'], error: ['R40'] } },
     { id: 'all-route-smoke', source: 'tests/frontend.spec.ts', title: 'all canonical routes render inside the real React demo application', states: ['success'], routeSpecific: true },
@@ -105,7 +105,7 @@ const output = {
     version: '1.0',
     generatedAt: new Date().toISOString(),
     scope: 'FRONTEND_WITH_SYNTHETIC_MOCK_API',
-    sourceOfTruth: ['botsales-kit/contracts/route-manifest.json', 'botsales-kit/contracts/permission-catalog.json'],
+    sourceOfTruth: ['../botsales-kit/contracts/route-manifest.json', '../botsales-kit/contracts/permission-catalog.json'],
     inputs: [
         { path: relative(path.resolve(root, unitLogPath)), sha256: hash(unitLog) },
         { path: relative(path.resolve(root, browserLogPath)), sha256: hash(browserLog) },

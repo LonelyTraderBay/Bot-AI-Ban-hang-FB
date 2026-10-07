@@ -8,9 +8,9 @@ const kit = path.join(root, 'botsales-kit');
 const evidenceDir = path.join(kit, 'execution/frontend-evidence/FE023');
 const hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
-const unitLogFile = 'botsales-kit/execution/frontend-evidence/FE023/unit-verbose-current-20261001.log';
-const browserLogFile = 'botsales-kit/execution/frontend-evidence/FE003/S03-e2e-current-20261001.log';
-const matrixLogFile = 'botsales-kit/execution/frontend-evidence/FE023/route-state-role-matrix-current-20261001.log';
+const unitLogFile = '../botsales-kit/execution/frontend-evidence/FE023/unit-verbose-current-20261001.log';
+const browserLogFile = '../botsales-kit/execution/frontend-evidence/FE003/S03-e2e-current-20261001.log';
+const matrixLogFile = '../botsales-kit/execution/frontend-evidence/FE023/route-state-role-matrix-current-20261001.log';
 const unitLog = read(unitLogFile);
 const browserLog = read(browserLogFile);
 const matrixLog = read(matrixLogFile);
@@ -18,8 +18,8 @@ const matrix = JSON.parse(read('docs/route-state-role-matrix.json'));
 const i18nSource = read('apps/web/src/app/i18n.ts');
 const translationSection = i18nSource.match(/export const requiredVietnameseKeys = \[([\s\S]*?)\] as const/)?.[1] ?? '';
 const requiredTranslationKeys = translationSection.match(/'[^']+'/g)?.length ?? 0;
-const plan = JSON.parse(read('botsales-kit/execution/frontend-plan.json'));
-const commandMap = JSON.parse(read('botsales-kit/execution/frontend-command-map.json'));
+const plan = JSON.parse(read('../botsales-kit/execution/frontend-plan.json'));
+const commandMap = JSON.parse(read('../botsales-kit/execution/frontend-command-map.json'));
 const unitCommand = commandMap.commands.find((command) => command.id === 'unit');
 const e2eCommand = commandMap.commands.find((command) => command.id === 'e2e');
 if (unitCommand?.status !== 'VERIFIED_AVAILABLE' || e2eCommand?.status !== 'VERIFIED_AVAILABLE')
@@ -66,10 +66,10 @@ const sourceFiles = [
   'apps/web/src/shared/model/dirty-drafts.ts', 'apps/web/src/shared/ui/components.tsx',
   'apps/web/tests/components.test.tsx', 'apps/web/tests/states/fe023-state.test.tsx',
   'tests/states/fe023.spec.ts', 'tests/states/generate-route-state-roles.mjs', 'tests/states/generate-fe023-evidence.mjs',
-  'tests/frontend.spec.ts', 'botsales-kit/contracts/route-manifest.json',
-  'botsales-kit/contracts/permission-catalog.json', 'botsales-kit/execution/frontend-command-map.json',
-  'botsales-kit/execution/frontend-plan.json', 'docs/route-state-role-matrix.json',
-  unitLogFile, browserLogFile, matrixLogFile, 'botsales-kit/execution/frontend-evidence/FE023/handoff.md',
+  'tests/frontend.spec.ts', '../botsales-kit/contracts/route-manifest.json',
+  '../botsales-kit/contracts/permission-catalog.json', '../botsales-kit/execution/frontend-command-map.json',
+  '../botsales-kit/execution/frontend-plan.json', 'docs/route-state-role-matrix.json',
+  unitLogFile, browserLogFile, matrixLogFile, '../botsales-kit/execution/frontend-evidence/FE023/handoff.md',
 ];
 const sourcePaths = [...new Set(sourceFiles)].sort();
 const sources = sourcePaths.map((file) => ({ path: file, sha256: hash(fs.readFileSync(path.join(root, file))) }));
@@ -120,10 +120,10 @@ for (const [stepId, value] of Object.entries(details)) {
     reviewer: 'Codex self-review; no independent peer review',
     environment: { name: `Windows / Node ${process.version} / npm 11.17.0 / Chromium`, details: 'Vitest/Chromium against the React app and synthetic MSW fixtures.', dataSource: 'synthetic-msw' },
     checksTotal: value.checks, failed: 0, exitCode: 0,
-    logFile: logFile.replace('botsales-kit/', ''),
+    logFile: logFile.replace('../botsales-kit/', ''),
     logSha256: hash(fs.readFileSync(path.join(root, logFile))),
     sourceFiles: sources, sourceSnapshotSha256: snapshot,
-    supportingLogs: value.support.map((file) => ({ file: file.replace('botsales-kit/', ''), sha256: hash(fs.readFileSync(path.join(root, file))) })),
+    supportingLogs: value.support.map((file) => ({ file: file.replace('../botsales-kit/', ''), sha256: hash(fs.readFileSync(path.join(root, file))) })),
     actualInvocation: stepId === 'S01' ? 'npm.cmd --script-shell=cmd.exe test -- --reporter=verbose; node tests/states/generate-route-state-roles.mjs' : 'npm.cmd --script-shell=cmd.exe run test:e2e',
   };
   fs.writeFileSync(path.join(evidenceDir, `${stepId}-current-20261001.json`), `${JSON.stringify(evidence, null, 2)}\n`, 'utf8');

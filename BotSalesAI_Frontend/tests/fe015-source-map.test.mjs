@@ -7,14 +7,14 @@ const readText = async path => readFile(new URL(path, import.meta.url), 'utf8');
 
 test('FE015 finance routes, capabilities, operations and DTOs follow canonical contracts', async () => {
     const [manifest, openapi, operations, plan, ui, mock, hooks, routeMap] = await Promise.all([
-        readJson('../botsales-kit/contracts/route-manifest.json'),
-        readJson('../botsales-kit/contracts/openapi.json'),
+        readJson('../../botsales-kit/contracts/route-manifest.json'),
+        readJson('../../botsales-kit/contracts/openapi.json'),
         readJson('../packages/contracts/src/operations.json'),
-        readJson('../botsales-kit/execution/frontend-plan.json'),
+        readJson('../../botsales-kit/execution/frontend-plan.json'),
         readText('../apps/web/src/modules/finance/index.tsx'),
         readText('../apps/web/src/mocks/finance.ts'),
         readText('../apps/web/src/shared/api/hooks.ts'),
-        readText('../botsales-kit/execution/frontend-evidence/FE015/S01-route-operation-map.md'),
+        readText('../../botsales-kit/execution/frontend-evidence/FE015/S01-route-operation-map.md'),
     ]);
     const checks = [];
     const eq = (actual, expected, label) => { assert.deepEqual(actual, expected, label); checks.push(label); };

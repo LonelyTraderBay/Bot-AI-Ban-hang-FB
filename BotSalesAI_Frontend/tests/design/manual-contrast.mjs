@@ -5,7 +5,9 @@ import {chromium} from 'playwright-core';
 import {startDemoServer} from '../session/demo-server.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const OUTPUT = path.join(ROOT, 'botsales-kit/execution/frontend-evidence/FE006/S04-contrast-manual.json');
+const OUTPUT = process.env.BOTSALES_CONTRAST_OUTPUT
+    ? path.resolve(ROOT, process.env.BOTSALES_CONTRAST_OUTPUT)
+    : path.join(ROOT, '../botsales-kit/execution/frontend-evidence/FE006/S04-contrast-manual.json');
 
 const server = await startDemoServer();
 let browser;

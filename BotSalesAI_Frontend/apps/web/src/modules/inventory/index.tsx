@@ -1,15 +1,18 @@
+import { ActionGroup, FormFields } from '../../shared/ui/composition';
 import { useEffect, useState } from 'react';
+import { visualSx } from '@/shared/ui/visual';
 import { useSearchParams } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Alert, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Button, Stack, TextField, Typography } from '@mui/material';
 import type { StockMovement, StockSnapshot } from '@botsales/contracts';
 import { useApi, useCommand } from '@/shared/api/hooks';
 import { useCan, useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, RouteLink } from '@/shared/ui/components';
+import { layoutSx } from '@/shared/ui/layout';
 
 const adjustmentSchema = z.object({
     quantityDelta: z.string().trim().min(1, 'Nhập số lượng cần điều chỉnh').regex(/^-?\d+$/, 'Số lượng phải là số nguyên'),
@@ -23,30 +26,19 @@ const adjustmentSchema = z.object({
 type AdjustmentFields = z.infer<typeof adjustmentSchema>;
 const emptyAdjustment: AdjustmentFields = { quantityDelta: '', reason: '', unitCost: '' };
 
-const movementKinds = [
-    ['receipt', 'Nhập hàng'],
-    ['adjustment', 'Điều chỉnh'],
-    ['reserve', 'Giữ cho đơn'],
-    ['release', 'Giải phóng hàng giữ'],
-    ['fulfillment', 'Xuất hoàn tất'],
-    ['return', 'Hàng trả lại'],
-] as const;
-
-function InventoryFilters({ includeKind = false }: { includeKind?: boolean }) {
+function InventoryFilters({ includeVariant = false }: { includeVariant?: boolean }) {
     const [params, setParams] = useSearchParams();
     const [warehouseId, setWarehouseId] = useState(params.get('warehouseId') || '');
     const [variantId, setVariantId] = useState(params.get('variantId') || '');
-    const [kind, setKind] = useState(params.get('kind') || '');
 
     useEffect(() => {
         setWarehouseId(params.get('warehouseId') || '');
         setVariantId(params.get('variantId') || '');
-        setKind(params.get('kind') || '');
     }, [params]);
 
     const apply = () => {
         const next = new URLSearchParams(params);
-        const filters: Array<[string, string]> = [['warehouseId', warehouseId], ['variantId', variantId], ['kind', includeKind ? kind : '']];
+        const filters: Array<[string, string]> = [['warehouseId', warehouseId], ['variantId', includeVariant ? variantId : '']];
         for (const [key, value] of filters) {
             const normalized = value.trim();
             if (normalized) next.set(key, normalized);
@@ -59,34 +51,32 @@ function InventoryFilters({ includeKind = false }: { includeKind?: boolean }) {
     const clear = () => {
         setWarehouseId('');
         setVariantId('');
-        setKind('');
         const next = new URLSearchParams(params);
         next.delete('warehouseId');
         next.delete('variantId');
-        next.delete('kind');
         next.delete('cursor');
         setParams(next);
     };
 
-    return <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems={{ sm: 'center' }} flexWrap="wrap">
-        <TextField size="small" label="Mã kho" value={warehouseId} onChange={event => setWarehouseId(event.target.value)} inputProps={{ maxLength: 120 }} sx={{ minWidth: { sm: 150 } }}/>
-        {includeKind && <>
-            <TextField size="small" label="Mã biến thể" value={variantId} onChange={event => setVariantId(event.target.value)} inputProps={{ maxLength: 120 }} sx={{ minWidth: { sm: 160 } }}/>
-            <TextField size="small" select label="Loại biến động" value={kind} onChange={event => setKind(event.target.value)} sx={{ minWidth: { sm: 180 } }}>
-                <MenuItem value="">Tất cả loại</MenuItem>
-                {movementKinds.map(([value, label]) => <MenuItem key={value} value={value}>{label}</MenuItem>)}
-            </TextField>
-        </>}
-        <Button type="button" size="small" variant="outlined" onClick={apply}>Áp dụng bộ lọc</Button>
-        <Button type="button" size="small" onClick={clear}>Xóa bộ lọc</Button>
-    </Stack>;
+    return <FormFields direction={{ xs: 'column', sm: 'row' }}  alignItems={{ sm: 'center' }} flexWrap="wrap">
+        <FormFields direction={{ xs: 'column', sm: 'row' }} >
+            <TextField size="small" label="Mã kho" value={warehouseId} onChange={event => setWarehouseId(event.target.value)} inputProps={{ maxLength: 120 }} sx={{ minWidth: { sm: 150 } }}/>
+            {includeVariant && <>
+                <TextField size="small" label="Mã biến thể" value={variantId} onChange={event => setVariantId(event.target.value)} inputProps={{ maxLength: 120 }} sx={{ minWidth: { sm: 160 } }}/>
+            </>}
+        </FormFields>
+        <ActionGroup direction="row" >
+            <Button type="button" size="small" variant="outlined" onClick={apply}>Áp dụng bộ lọc</Button>
+            <Button type="button" size="small" onClick={clear}>Xóa bộ lọc</Button>
+        </ActionGroup>
+    </FormFields>;
 }
 
 export function InventoryPage() {
     const { shop } = useScope();
     const canFinance = useCan('finance.read');
     const canCatalog = useCan('catalog.read');
-    const list = useApi('listStockSnapshots', { query: useListQuery() });
+    const list = useApi('listStockSnapshots', { query: useListQuery('listStockSnapshots') });
     const adjust = useCommand('createInventoryAdjustment', ['listStockSnapshots', 'listStockMovements', 'getDashboard']);
     const [item, setItem] = useState<StockSnapshot | null>(null);
     const [completedCommandId, setCompletedCommandId] = useState('');
@@ -125,14 +115,14 @@ export function InventoryPage() {
 
     return <>
         <PageHeader title="Tồn kho" subtitle="Tồn thực tế, đã giữ cho đơn và số còn có thể bán." actions={<RouteLink to={`/s/${shop.id}/inventory/movements`}>Lịch sử biến động</RouteLink>}/>
-        <Alert severity="info" sx={{ mb: 3 }}>Snapshot kho do API cung cấp; không cộng hàng đang về hoặc hàng cách ly vào số có thể bán. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
-        {completedCommandId && <Alert severity="success" role="status" sx={{ mb: 2 }}>Điều chỉnh đã được xác nhận. Mã lệnh: {completedCommandId}. Tồn kho và lịch sử đã được tải lại.</Alert>}
-        <Panel><Toolbar placeholder="Tìm SKU hoặc mã biến thể…" extra={<InventoryFilters/>}/><QueryState query={list}>{list.data && <>
+        <Alert severity="info" sx={layoutSx.page.sectionAfter}>Snapshot kho do API cung cấp; không cộng hàng đang về hoặc hàng cách ly vào số có thể bán. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
+        {completedCommandId && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>Điều chỉnh đã được xác nhận. Mã lệnh: {completedCommandId}. Tồn kho và lịch sử đã được tải lại.</Alert>}
+        <Panel><Toolbar operation="listStockSnapshots" placeholder="Tìm SKU hoặc mã biến thể…" extra={<InventoryFilters/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
             <DataTable label="Tồn kho theo vị trí" rows={list.data.data} rowKey={row => row.id} columns={[
-                { key: 'sku', label: 'SKU / Kho', render: row => <Stack><Typography fontWeight={650}>{row.sku}</Typography><Typography variant="caption" color="text.secondary">{row.warehouseId} · snapshot {dateTime(row.asOf, shop.timezone)}</Typography>{canCatalog && <RouteLink to={`/s/${shop.id}/products?q=${encodeURIComponent(row.sku)}`}>Mở sản phẩm</RouteLink>}</Stack> },
+                { key: 'sku', label: 'SKU / Kho', render: row => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{row.sku}</Typography><Typography variant="caption" color="text.secondary">{row.warehouseId} · snapshot {dateTime(row.asOf, shop.timezone)}</Typography>{canCatalog && <RouteLink to={`/s/${shop.id}/products?q=${encodeURIComponent(row.sku)}`}>Mở sản phẩm</RouteLink>}</Stack> },
                 { key: 'onHand', label: 'Thực tế', align: 'right', render: row => row.onHand },
                 { key: 'reserved', label: 'Đã giữ', align: 'right', render: row => row.reserved },
-                { key: 'available', label: 'Có thể bán', align: 'right', render: row => <Typography fontWeight={750} color={row.available <= row.lowStockThreshold ? 'warning.main' : 'text.primary'}>{row.available}</Typography> },
+                { key: 'available', label: 'Có thể bán', align: 'right', render: row => <Typography fontWeight={visualSx.typography.fontWeight.display} color={row.available <= row.lowStockThreshold ? 'warning.main' : 'text.primary'}>{row.available}</Typography> },
                 { key: 'threshold', label: 'Ngưỡng cảnh báo', align: 'right', render: row => row.lowStockThreshold },
                 ...(canFinance ? [{ key: 'cost', label: 'Giá vốn/đơn vị', render: (row: StockSnapshot) => <Amount value={row.unitCost}/> }] : []),
                 { key: 'state', label: 'Tình trạng', render: row => <Status value={row.available <= row.lowStockThreshold ? 'blocked' : 'active'}/> },
@@ -142,12 +132,12 @@ export function InventoryPage() {
         </>}</QueryState></Panel>
         <EditDialog open={!!item} title={`Điều chỉnh ${item?.sku || ''}`} description="Nhập phần tăng hoặc giảm của vị trí này. Số tồn chỉ đổi sau khi lệnh được xác nhận." onClose={close} busy={submitting} actions={<MutationButton permission="inventory.adjust" variant="contained" busy={submitting} type="button" onClick={() => void handleSubmit(submitAdjustment)()}>Xác nhận điều chỉnh</MutationButton>}>
             <ErrorNotice error={adjust.error}/>
-            <Stack component="form" id="inventory-adjustment-form" noValidate gap={2} onSubmit={event => { event.preventDefault(); void handleSubmit(submitAdjustment)(event); }}>
+            <FormFields component="form" id="inventory-adjustment-form" noValidate  onSubmit={event => { event.preventDefault(); void handleSubmit(submitAdjustment)(event); }}>
                 <Alert severity="warning">API kiểm tra lại phiên bản và lượng đang giữ. Không nhập tổng tồn; không thể giảm thấp hơn lượng đã giữ.</Alert>
                 <TextField label="Thay đổi số lượng" inputProps={{ inputMode: 'numeric' }} {...register('quantityDelta')} error={!!errors.quantityDelta} helperText={errors.quantityDelta?.message}/>
                 <TextField label="Lý do điều chỉnh" multiline minRows={2} {...register('reason')} error={!!errors.reason} helperText={errors.reason?.message}/>
                 {canFinance && <Controller name="unitCost" control={control} render={({ field }) => <TextField {...field} label={`Giá vốn đơn vị (${shop.currency})`} inputProps={{ inputMode: 'decimal' }} error={!!errors.unitCost} helperText={errors.unitCost?.message || 'Để trống nếu không cập nhật giá vốn.'}/>}/>}
-            </Stack>
+            </FormFields>
         </EditDialog>
     </>;
 }
@@ -155,10 +145,10 @@ export function InventoryPage() {
 export function MovementsPage() {
     const { shop } = useScope();
     const canReadOrders = useCan('orders.read');
-    const list = useApi('listStockMovements', { query: useListQuery() });
+    const list = useApi('listStockMovements', { query: useListQuery('listStockMovements') });
     return <>
         <PageHeader title="Lịch sử kho" subtitle="Truy nguyên mỗi thay đổi đến chứng từ và người thực hiện." actions={<RouteLink to={`/s/${shop.id}/inventory`}>Về tồn kho</RouteLink>}/>
-        <Panel><Toolbar placeholder="Tìm SKU, mã biến thể hoặc mã chứng từ…" extra={<InventoryFilters includeKind/>}/><QueryState query={list}>{list.data && <>
+        <Panel><Toolbar operation="listStockMovements" placeholder="Tìm SKU, mã biến thể hoặc mã chứng từ…" extra={<InventoryFilters includeVariant/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
             <DataTable label="Lịch sử biến động kho" rows={list.data.data} rowKey={row => row.id} columns={[
                 { key: 'date', label: 'Thời gian', render: row => dateTime(row.createdAt, shop.timezone) },
                 { key: 'kind', label: 'Loại', render: row => <Status value={row.kind}/> },

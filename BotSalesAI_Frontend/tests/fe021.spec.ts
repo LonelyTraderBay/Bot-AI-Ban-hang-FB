@@ -32,7 +32,9 @@ test('FE021 dashboard keeps independent panels usable and hides finance fields w
     await expect(page.getByText('Chỉ hiển thị khi vai trò có finance.read.', { exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Xem lợi nhuận' })).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Tình hình hiện tại' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Tạo đơn hàng' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Xem việc cần làm', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Tạo đơn hàng', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Tất cả đơn', exact: true })).toBeVisible();
     await expect(page.getByText('Dữ liệu cập nhật', { exact: false })).toBeVisible();
 });
 

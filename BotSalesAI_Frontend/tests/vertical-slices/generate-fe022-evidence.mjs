@@ -7,24 +7,24 @@ const root = process.cwd();
 const kit = path.join(root, 'botsales-kit');
 const evidenceDir = path.join(kit, 'execution/frontend-evidence/FE022');
 const hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
-const run = spawnSync(process.execPath, ['tests/vertical-slices/generate-route-implementation.mjs'], { cwd: root, encoding: 'utf8' });
+const fullLogFile = '../botsales-kit/execution/frontend-evidence/FE008/S05-e2e-rerun-current-20261004.log';
+const focusedLogFile = '../botsales-kit/execution/frontend-evidence/FE022/S04-focused-vertical-slices-current-20261004.log';
+const run = spawnSync(process.execPath, ['tests/vertical-slices/generate-route-implementation.mjs', fullLogFile], { cwd: root, encoding: 'utf8' });
 if (run.status !== 0) throw new Error(`Route/feature matrix generation failed (${run.status}):\n${run.stdout}\n${run.stderr}`);
 const matrixRun = JSON.parse(run.stdout);
 if (matrixRun.status !== 'PASS' || matrixRun.routes !== 54 || matrixRun.uniqueFeatures !== 64)
   throw new Error(`Unexpected matrix result: ${run.stdout}`);
 
-const fullLogFile = 'botsales-kit/execution/frontend-evidence/FE027/e2e-current-final-20261002-frontend-coverage.log';
-const focusedLogFile = 'botsales-kit/execution/frontend-evidence/FE022/current-vertical-slices-final-rerun-20261002.log';
 const fullLog = fs.readFileSync(path.join(root, fullLogFile), 'utf8');
 const focusedLog = fs.readFileSync(path.join(root, focusedLogFile), 'utf8');
 const fullPassCount = Number(fullLog.match(/^\s*(\d+) passed \([^)]+\)\s*$/m)?.[1] || 0);
-if (fullPassCount < 142 || !fullLog.includes('all canonical routes render inside the real React demo application'))
-  throw new Error('Current full Chromium run must prove at least 142 passing tests and canonical route smoke.');
+if (fullPassCount !== 388 || !fullLog.includes('all canonical routes render inside the real React demo application'))
+  throw new Error('Current two-browser run must prove 388 passing tests and canonical route smoke.');
 if (!/^\s*5 passed \([^)]+\)\s*$/m.test(focusedLog) || !focusedLog.includes('EXIT_CODE=0'))
   throw new Error('Current FE022 run must prove five passing browser tests and exit code 0.');
 
-const routeManifest = JSON.parse(fs.readFileSync(path.join(root, 'botsales-kit/contracts/route-manifest.json'), 'utf8'));
-const featureCatalog = JSON.parse(fs.readFileSync(path.join(root, 'botsales-kit/contracts/feature-catalog.json'), 'utf8'));
+const routeManifest = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/route-manifest.json'), 'utf8'));
+const featureCatalog = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/feature-catalog.json'), 'utf8'));
 const matrix = JSON.parse(fs.readFileSync(path.join(root, 'docs/route-implementation.json'), 'utf8'));
 const routeById = new Map(routeManifest.routes.map((route) => [route.id, route.path]));
 const routeIds = new Set();
@@ -44,7 +44,7 @@ const validCoverage = new Set(['FRONTEND_INTERACTION_VERIFIED_SYNTHETIC', 'PARTI
 if (features.some((feature) => !validCoverage.has(feature.coverage) || !feature.evidenceCases?.length))
   throw new Error('A feature row is missing a supported coverage level or an evidence case.');
 
-const matrixLogFile = 'execution/frontend-evidence/FE022/current-route-matrix-final-rerun-20261002.log';
+const matrixLogFile = 'execution/frontend-evidence/FE022/S01-route-matrix-current-20261004.log';
 const matrixLog = [
   'FE022 current route and feature matrix generator',
   `cwd=${root}`,
@@ -53,7 +53,7 @@ const matrixLog = [
   `observed=54 canonical routes; 64 canonical feature IDs across 65 feature-route entries; each entry has a named, passing synthetic UI interaction and an explicit frontend/backend boundary.`,
   'EXIT_CODE=0',
 ].join('\n');
-fs.writeFileSync(path.join(evidenceDir, 'current-route-matrix-final-rerun-20261002.log'), `${matrixLog}\n`, 'utf8');
+fs.writeFileSync(path.join(kit, matrixLogFile), `${matrixLog}\n`, 'utf8');
 
 const plan = JSON.parse(fs.readFileSync(path.join(kit, 'execution/frontend-plan.json'), 'utf8'));
 const commandMap = JSON.parse(fs.readFileSync(path.join(kit, 'execution/frontend-command-map.json'), 'utf8'));
@@ -65,13 +65,13 @@ const sourceFiles = [
   'apps/web/package.json', 'apps/web/src/app/Shell.tsx', 'apps/web/src/mocks/database.ts',
   'apps/web/src/mocks/handlers.ts', 'apps/web/src/mocks/service.ts', 'apps/web/src/mocks/auxiliary.ts',
   'apps/web/src/shared/api/client.ts', 'apps/web/src/shared/api/hooks.ts', 'apps/web/src/shared/ui/components.tsx',
-  'botsales-kit/contracts/openapi.json', 'botsales-kit/contracts/route-manifest.json',
-  'botsales-kit/contracts/feature-catalog.json', 'botsales-kit/contracts/permission-catalog.json',
-  'botsales-kit/execution/frontend-command-map.json', 'botsales-kit/execution/frontend-plan.json',
+  '../botsales-kit/contracts/openapi.json', '../botsales-kit/contracts/route-manifest.json',
+  '../botsales-kit/contracts/feature-catalog.json', '../botsales-kit/contracts/permission-catalog.json',
+  '../botsales-kit/execution/frontend-command-map.json', '../botsales-kit/execution/frontend-plan.json',
   'docs/route-implementation.json', 'tests/frontend.spec.ts', 'tests/vertical-slices/fe022-flows.spec.ts',
   'tests/vertical-slices/generate-route-implementation.mjs', 'tests/vertical-slices/generate-fe022-evidence.mjs',
   ...new Set(matrix.map((route) => route.source)),
-  fullLogFile, focusedLogFile, `botsales-kit/${matrixLogFile}`,
+  fullLogFile, focusedLogFile, `../botsales-kit/${matrixLogFile}`,
 ];
 const uniqueFiles = [...new Set(sourceFiles)].sort();
 const hashedSources = uniqueFiles.map((file) => ({ path: file, sha256: hash(fs.readFileSync(path.join(root, file))) }));
@@ -82,14 +82,14 @@ const routeMountOnly = features.filter((feature) => feature.coverage === 'ROUTE_
 const steps = {
   S01: {
     expected: 'The canonical route and feature matrix covers 54 routes and 64 feature IDs, using the current React browser suite as route evidence and preserving explicit evidence levels.',
-    observed: `The current generator passed and rebuilt the route matrix from canonical contracts and the ${fullPassCount}-test Chromium log. All 54 route IDs/paths and 64 feature IDs match canonical manifests across 65 feature-route entries; coverage is ${routeDirect} direct synthetic UI interactions, ${routePartial} partial journeys, and ${routeMountOnly} route-mount-only entries. Each entry retains its frontend and server-side boundary.`,
+    observed: `The current generator passed and rebuilt the route matrix from canonical contracts and the ${fullPassCount}-test Chromium/Firefox log. All 54 route IDs/paths and 64 feature IDs match canonical manifests across 65 feature-route entries; coverage is ${routeDirect} direct synthetic UI interactions, ${routePartial} partial journeys, and ${routeMountOnly} route-mount-only entries. Each entry retains its frontend and server-side boundary.`,
     checks: 3,
     logFile: fullLogFile,
     supportingLogs: [matrixLogFile],
   },
   S02: {
     expected: 'Four synthetic cross-module journeys preserve related entity identities through catalog/stock/order/prep, procurement/receipt/stock/payable, finance/reconciliation, and inbox/knowledge/evaluation.',
-    observed: 'The focused Chromium run passed all four named vertical journeys. Assertions inspect product/reservation/order links, purchase/receipt/stock/payable identity, partial debt allocations to bank transactions, and feedback-to-knowledge-revision-to-evaluation references.',
+    observed: 'The focused Chromium run passed 5/5 browser cases: four named vertical journeys plus the route/feature matrix test. Assertions inspect product/reservation/order links, purchase/receipt/stock/payable identity, partial debt allocations to bank transactions, and feedback-to-knowledge-revision-to-evaluation references.',
     checks: 4,
     logFile: focusedLogFile,
     supportingLogs: [fullLogFile],
@@ -103,7 +103,7 @@ const steps = {
   },
   S04: {
     expected: 'Browser tests execute the defined cross-module happy-path journeys and expose route/feature gaps separately from direct interaction evidence.',
-    observed: `The current focused Chromium command passed five FE022 cases: four cross-module journeys and the generated route/feature matrix test. The complete ${fullPassCount}-test React suite also passed. All 65 route-feature entries have named synthetic UI-interaction evidence; real backend/provider behavior remains outside scope.`,
+    observed: `The current focused Chromium command passed five FE022 cases: four cross-module journeys and the generated route/feature matrix test. The complete two-browser ${fullPassCount}-test React suite also passed. All 65 route-feature entries have named synthetic UI-interaction evidence; real backend/provider behavior remains outside scope.`,
     checks: 5,
     logFile: focusedLogFile,
     supportingLogs: [fullLogFile],
@@ -128,12 +128,12 @@ for (const [stepId, values] of Object.entries(steps)) {
     reviewer: 'Codex self-review; no independent peer review',
     environment: { name: `Windows / Node ${process.version} / npm 11.17.0 / Chromium`, details: 'Real React app in browser with deterministic MSW synthetic API fixtures; no live services.', dataSource: 'synthetic-msw' },
     checksTotal: values.checks, failed: 0, exitCode: 0,
-    logFile: values.logFile.replace('botsales-kit/', ''),
+    logFile: values.logFile.replace('../botsales-kit/', ''),
     logSha256: hash(fs.readFileSync(logPath)),
     sourceFiles: hashedSources, sourceSnapshotSha256: snapshot,
-    supportingLogs: values.supportingLogs.map((file) => ({ file: file.replace('botsales-kit/', ''), sha256: hash(fs.readFileSync(path.join(root, file.startsWith('botsales-kit/') ? file : `botsales-kit/${file}`))) })),
+    supportingLogs: values.supportingLogs.map((file) => ({ file: file.replace('../botsales-kit/', ''), sha256: hash(fs.readFileSync(path.join(root, file.startsWith('../botsales-kit/') ? file : `../botsales-kit/${file}`))) })),
   };
-  fs.writeFileSync(path.join(evidenceDir, `${stepId}-current-20261002.json`), `${JSON.stringify(evidence, null, 2)}\n`, 'utf8');
+  fs.writeFileSync(path.join(evidenceDir, `${stepId}-current-20261004.json`), `${JSON.stringify(evidence, null, 2)}\n`, 'utf8');
 }
 
 const handoff = [
@@ -141,7 +141,7 @@ const handoff = [
   '',
   'Phạm vi đã xác minh: 54 route, 64 feature ID và 65 feature-route entries; mỗi entry gắn với browser case có tương tác UI cụ thể trên React/Chromium và synthetic MSW. Bốn hành trình xuyên module cũng giữ nguyên identity của dữ liệu mẫu.',
   '',
-  `Kiểm tra hiện tại: full E2E ${browserRunCount(fullLog)}; focused FE022 5/5; ma trận ${routeDirect} feature-route interactions / ${routePartial} partial / ${routeMountOnly} route-mount-only.`,
+  `Kiểm tra hiện tại: full E2E Chromium/Firefox ${browserRunCount(fullLog)}; focused FE022 5/5 Chromium; ma trận ${routeDirect} feature-route interactions / ${routePartial} partial / ${routeMountOnly} route-mount-only.`,
   '',
   'Giới hạn: không xác nhận API/provider thật, lưu trữ server, SSE, server RBAC hay staging. FE017 publish dùng session permission và lifecycle state làm thay thế cho nghiệm thu mock; canonical Knowledge.allowedActions chưa có trong contract nên không được thêm DTO/endpoint.',
   '',

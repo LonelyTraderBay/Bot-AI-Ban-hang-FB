@@ -20,7 +20,7 @@ const user: User = { id: 'user-1', displayName: 'Người thử', email: 'demo@e
 const membership: Membership = {
     id: 'membership-1', userId: user.id, shopId: 'shop-1', roles: ['owner'], permissions: [], permissionVersion: 4, status: 'active',
 };
-const session: Session = { user, memberships: [membership], csrfToken: 'csrf-fixture', expiresAt: '2026-10-01T00:00:00.000Z' };
+const session: Session = { user, memberships: [membership], csrfToken: 'csrf-fixture-123456', expiresAt: '2026-10-01T00:00:00.000Z' };
 const shop: Shop = {
     id: 'shop-1', name: 'Shop thử', currency: 'VND', timezone: 'Asia/Vientiane', locale: 'vi-VN',
     defaultWarehouseId: 'warehouse-1', version: 3, policyVersion: 'policy-1',
@@ -64,8 +64,8 @@ function commandResponse(status: CommandResponse['data']['status']): CommandResp
 beforeEach(() => {
     fetchMock.mockReset();
     vi.stubGlobal('fetch', fetchMock);
-    vi.stubGlobal('crypto', { randomUUID: () => `fixture-${++uuid}` });
-    setCsrfToken('csrf-fixture');
+    vi.stubGlobal('crypto', { randomUUID: () => `fixture-random-id-${String(++uuid).padStart(16, '0')}` });
+    setCsrfToken('csrf-fixture-123456');
 });
 
 afterEach(() => {
@@ -98,7 +98,7 @@ describe('typed HTTP boundary', () => {
         fetchMock.mockResolvedValueOnce(jsonResponse(201, customerResponse()));
 
         const result = await request('createCustomer', {
-            path: { shopId: shop.id }, body: customerBody, idempotencyKey: 'intent-create-1',
+            path: { shopId: shop.id }, body: customerBody, idempotencyKey: 'intent-create-123',
         });
 
         expect(result.data.phone).toBeNull();
@@ -110,10 +110,20 @@ describe('typed HTTP boundary', () => {
         expect(init?.headers).toMatchObject({
             Accept: 'application/json',
             'Content-Type': 'application/json',
-            'X-CSRF-Token': 'csrf-fixture',
-            'Idempotency-Key': 'intent-create-1',
+            'X-CSRF-Token': 'csrf-fixture-123456',
+            'Idempotency-Key': 'intent-create-123',
         });
         expect(JSON.parse(String(init?.body))).toEqual(customerBody);
+    });
+
+    it('sends only the headers declared by an operation contract', async () => {
+        fetchMock.mockResolvedValueOnce({ status: 204, ok: true } as Response);
+
+        await request('logout');
+
+        const [, init] = fetchMock.mock.calls[0] || [];
+        expect(init?.headers).toMatchObject({ 'X-CSRF-Token': 'csrf-fixture-123456' });
+        expect(init?.headers).not.toHaveProperty('Idempotency-Key');
     });
 
     it('sets If-Match from the required typed version option', async () => {
@@ -132,10 +142,33 @@ describe('typed HTTP boundary', () => {
             'updateCustomer', { path: { shopId: shop.id, customerId: 'customer-1' }, body: { displayName: 'Tên mới' } },
         ]) as Promise<unknown>;
         await expect(missingVersion).rejects.toMatchObject({ status: 428, code: 'VERSION_REQUIRED' });
+
+        const invalidVersion = Reflect.apply(request, undefined, [
+            'updateCustomer', { path: { shopId: shop.id, customerId: 'customer-1' }, version: 0, body: { displayName: 'Tên mới' } },
+        ]) as Promise<unknown>;
+        await expect(invalidVersion).rejects.toMatchObject({ status: 400, code: 'VERSION_INVALID' });
         expect(fetchMock).not.toHaveBeenCalled();
 
         setCsrfToken('');
         await expect(request('createCustomer', { path: { shopId: shop.id }, body: customerBody })).rejects.toMatchObject({ code: 'CSRF_TOKEN_MISSING' });
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects invalid CSRF and idempotency values using generated header schemas', async () => {
+        expect(() => setCsrfToken('short')).toThrow('Mã bảo vệ phiên');
+        setCsrfToken('csrf-fixture-123456');
+        await expect(request('createCustomer', { path: { shopId: shop.id }, body: customerBody, idempotencyKey: 'short' }))
+            .rejects.toMatchObject({ status: 400, code: 'IDEMPOTENCY_KEY_INVALID' });
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('validates path and query values against generated operation parameter schemas', async () => {
+        expect(() => operationUrl('getProduct', { shopId: shop.id, productId: '../b' }))
+            .toThrow('Tham số productId không đúng hợp đồng API');
+        expect(() => operationUrl('listProducts', { shopId: shop.id }, { limit: 101 }))
+            .toThrow('Tham số limit không đúng hợp đồng API');
+        expect(() => operationUrl('listProducts', { shopId: shop.id, strayId: 'id-1' }))
+            .toThrow('Tham số strayId không được hỗ trợ');
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
@@ -187,6 +220,20 @@ describe('typed HTTP boundary', () => {
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
+    it('aborts an in-flight read when the caller AbortSignal fires', async () => {
+        const caller = new AbortController();
+        let activeSignal: AbortSignal | undefined;
+        fetchMock.mockImplementation((_input, init) => new Promise<Response>((_resolve, reject) => {
+            activeSignal = init?.signal || undefined;
+            activeSignal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')), { once: true });
+        }));
+        const pending = request('getCsrfToken', { signal: caller.signal });
+        expect(fetchMock).toHaveBeenCalledOnce();
+        caller.abort();
+        await expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+        expect(activeSignal?.aborted).toBe(true);
+    });
+
     it('classifies a mutation timeout as an unknown result and a read timeout as retryable transport failure', async () => {
         vi.useFakeTimers();
         const fetchUntilAbort = (_input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {
@@ -194,11 +241,11 @@ describe('typed HTTP boundary', () => {
         });
         fetchMock.mockImplementation(fetchUntilAbort);
 
-        const mutation = request('createCustomer', { path: { shopId: shop.id }, body: customerBody, idempotencyKey: 'intent-timeout-1' });
+        const mutation = request('createCustomer', { path: { shopId: shop.id }, body: customerBody, idempotencyKey: 'intent-timeout-123' });
         const mutationFailure = expect(mutation).rejects.toBeInstanceOf(UnknownResultError);
         await vi.advanceTimersByTimeAsync(25_000);
         await mutationFailure;
-        resolveObservedIntent('intent-timeout-1');
+        resolveObservedIntent('intent-timeout-123');
 
         const read = request('getCsrfToken');
         const readFailure = expect(read).rejects.toMatchObject({ status: 0, code: 'REQUEST_TIMEOUT' });
@@ -209,9 +256,9 @@ describe('typed HTTP boundary', () => {
     it('marks a successful HTTP response with an invalid DTO as unknown for mutations', async () => {
         fetchMock.mockResolvedValueOnce(jsonResponse(201, { data: { id: 'incomplete' }, meta }));
 
-        await expect(request('createCustomer', { path: { shopId: shop.id }, body: customerBody, idempotencyKey: 'intent-invalid-1' }))
+        await expect(request('createCustomer', { path: { shopId: shop.id }, body: customerBody, idempotencyKey: 'intent-invalid-123' }))
             .rejects.toBeInstanceOf(UnknownResultError);
-        resolveObservedIntent('intent-invalid-1');
+        resolveObservedIntent('intent-invalid-123');
     });
 
     it('rejects an unsupported command status instead of treating it as successful', async () => {

@@ -3,8 +3,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
-const routes = JSON.parse(read('botsales-kit/contracts/route-manifest.json')).routes as Array<{ id: string; path: string; module: string; readPermission: string; readOperations: string[]; actions: Array<{ operationId: string; permission: string }> }>;
-const openapi = JSON.parse(read('botsales-kit/contracts/openapi.json')) as { paths: Record<string, Record<string, { operationId?: string; 'x-permission'?: string; parameters?: Array<{ name?: string; 'in'?: string }> }>>; components: { schemas: Record<string, { properties?: Record<string, unknown> }> } };
+const routes = JSON.parse(read('../botsales-kit/contracts/route-manifest.json')).routes as Array<{ id: string; path: string; module: string; readPermission: string; readOperations: string[]; actions: Array<{ operationId: string; permission: string }> }>;
+const openapi = JSON.parse(read('../botsales-kit/contracts/openapi.json')) as { paths: Record<string, Record<string, { operationId?: string; 'x-permission'?: string; parameters?: Array<{ name?: string; 'in'?: string }> }>>; components: { schemas: Record<string, { properties?: Record<string, unknown> }> } };
 const generatedOperations = JSON.parse(read('packages/contracts/src/operations.json')) as Record<string, { permission?: string }>;
 const operationById = new Map(Object.values(openapi.paths).flatMap(path => Object.values(path)).filter(operation => operation.operationId).map(operation => [operation.operationId!, operation]));
 

@@ -7,6 +7,7 @@
     "requestSchema": null,
     "responseSchema": "CsrfResponse",
     "status": 200,
+    "pathParameters": [],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -19,10 +20,15 @@
     "requestSchema": null,
     "responseSchema": null,
     "status": 204,
+    "pathParameters": [],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       }
     ],
     "queryParameters": [],
@@ -36,10 +42,15 @@
     "requestSchema": "StepUpRequest",
     "responseSchema": "StepUpResultResponse",
     "status": 200,
+    "pathParameters": [],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       }
     ],
     "queryParameters": [],
@@ -53,6 +64,7 @@
     "requestSchema": null,
     "responseSchema": "SessionResponse",
     "status": 200,
+    "pathParameters": [],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -65,27 +77,49 @@
     "requestSchema": null,
     "responseSchema": "ShopListResponse",
     "status": 200,
+    "pathParameters": [],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -98,14 +132,24 @@
     "requestSchema": "ShopWrite",
     "responseSchema": "ShopResponse",
     "status": 201,
+    "pathParameters": [],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -119,6 +163,15 @@
     "requestSchema": null,
     "responseSchema": "ShopResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -131,18 +184,40 @@
     "requestSchema": "ShopPatch",
     "responseSchema": "ShopResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -156,27 +231,57 @@
     "requestSchema": null,
     "responseSchema": "MembershipListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -189,14 +294,32 @@
     "requestSchema": "MemberInvite",
     "responseSchema": "MembershipResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -210,18 +333,47 @@
     "requestSchema": "MemberRolePatch",
     "responseSchema": "MembershipResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "memberId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -235,18 +387,47 @@
     "requestSchema": null,
     "responseSchema": null,
     "status": 204,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "memberId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -260,6 +441,22 @@
     "requestSchema": null,
     "responseSchema": "MembershipResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "memberId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -272,6 +469,15 @@
     "requestSchema": null,
     "responseSchema": "DashboardResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -284,31 +490,64 @@
     "requestSchema": null,
     "responseSchema": "ProductListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       },
       {
         "name": "categoryId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       }
     ],
     "bodyType": "json"
@@ -321,14 +560,32 @@
     "requestSchema": "ProductWrite",
     "responseSchema": "ProductResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -342,6 +599,22 @@
     "requestSchema": null,
     "responseSchema": "ProductResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "productId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -354,18 +627,47 @@
     "requestSchema": "ProductWritePatch",
     "responseSchema": "ProductResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "productId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -379,14 +681,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "productId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -400,27 +727,57 @@
     "requestSchema": null,
     "responseSchema": "CategoryListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -433,14 +790,32 @@
     "requestSchema": "CategoryWrite",
     "responseSchema": "CategoryResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -454,6 +829,22 @@
     "requestSchema": null,
     "responseSchema": "CategoryResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "categoryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -466,18 +857,47 @@
     "requestSchema": "CategoryWritePatch",
     "responseSchema": "CategoryResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "categoryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -491,14 +911,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "categoryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -512,27 +957,57 @@
     "requestSchema": null,
     "responseSchema": "CustomerListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -545,14 +1020,32 @@
     "requestSchema": "CustomerWrite",
     "responseSchema": "CustomerResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -566,6 +1059,22 @@
     "requestSchema": null,
     "responseSchema": "CustomerResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "customerId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -578,18 +1087,47 @@
     "requestSchema": "CustomerWritePatch",
     "responseSchema": "CustomerResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "customerId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -603,35 +1141,71 @@
     "requestSchema": null,
     "responseSchema": "StockSnapshotListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       },
       {
         "name": "warehouseId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       },
       {
         "name": "variantId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       }
     ],
     "bodyType": "json"
@@ -644,35 +1218,71 @@
     "requestSchema": null,
     "responseSchema": "StockMovementListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       },
       {
         "name": "warehouseId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       },
       {
         "name": "variantId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       }
     ],
     "bodyType": "json"
@@ -685,14 +1295,32 @@
     "requestSchema": "InventoryAdjustment",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -706,31 +1334,64 @@
     "requestSchema": null,
     "responseSchema": "OrderListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       },
       {
         "name": "customerId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       }
     ],
     "bodyType": "json"
@@ -743,14 +1404,32 @@
     "requestSchema": "OrderDraft",
     "responseSchema": "OrderResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -764,6 +1443,22 @@
     "requestSchema": null,
     "responseSchema": "OrderResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -776,18 +1471,47 @@
     "requestSchema": "OrderDraftPatch",
     "responseSchema": "OrderResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -801,14 +1525,39 @@
     "requestSchema": null,
     "responseSchema": "OrderQuoteResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -822,14 +1571,39 @@
     "requestSchema": "ConfirmOrder",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -843,14 +1617,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -864,14 +1663,39 @@
     "requestSchema": "PaymentRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -885,14 +1709,39 @@
     "requestSchema": "RefundRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -906,27 +1755,57 @@
     "requestSchema": null,
     "responseSchema": "FinanceEntryListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -939,14 +1818,32 @@
     "requestSchema": "FinanceEntryWrite",
     "responseSchema": "FinanceEntryResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -960,6 +1857,22 @@
     "requestSchema": null,
     "responseSchema": "FinanceEntryResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "entryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -972,18 +1885,47 @@
     "requestSchema": "FinanceEntryWritePatch",
     "responseSchema": "FinanceEntryResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "entryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -997,14 +1939,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "entryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1018,14 +1985,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "entryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1039,19 +2031,37 @@
     "requestSchema": null,
     "responseSchema": "CashflowResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "from",
-        "required": true
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/DateTime"
+        }
       },
       {
         "name": "to",
-        "required": true
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/DateTime"
+        }
       },
       {
         "name": "timezone",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -1064,19 +2074,37 @@
     "requestSchema": null,
     "responseSchema": "ProfitLossResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "from",
-        "required": true
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/DateTime"
+        }
       },
       {
         "name": "to",
-        "required": true
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/DateTime"
+        }
       },
       {
         "name": "timezone",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -1089,43 +2117,90 @@
     "requestSchema": null,
     "responseSchema": "ConversationListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       },
       {
         "name": "customerId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       },
       {
         "name": "channelId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       },
       {
         "name": "assignedUserId",
-        "required": false
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
       },
       {
         "name": "mode",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "bot",
+            "human",
+            "paused"
+          ]
+        }
       }
     ],
     "bodyType": "json"
@@ -1138,6 +2213,22 @@
     "requestSchema": null,
     "responseSchema": "ConversationResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -1150,27 +2241,64 @@
     "requestSchema": null,
     "responseSchema": "MessageListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -1183,14 +2311,39 @@
     "requestSchema": "MessageWrite",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1204,14 +2357,39 @@
     "requestSchema": "NoteWrite",
     "responseSchema": "MessageResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1225,14 +2403,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1246,14 +2449,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1267,14 +2495,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1288,14 +2541,39 @@
     "requestSchema": "Assignment",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1309,27 +2587,57 @@
     "requestSchema": null,
     "responseSchema": "KnowledgeListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -1342,14 +2650,32 @@
     "requestSchema": "KnowledgeWrite",
     "responseSchema": "KnowledgeResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1363,6 +2689,22 @@
     "requestSchema": null,
     "responseSchema": "KnowledgeResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -1375,18 +2717,47 @@
     "requestSchema": "KnowledgeWritePatch",
     "responseSchema": "KnowledgeResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -1400,14 +2771,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "JobResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1421,14 +2817,39 @@
     "requestSchema": "KnowledgePublishRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1442,14 +2863,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1463,27 +2909,57 @@
     "requestSchema": null,
     "responseSchema": "FeedbackListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -1496,14 +2972,32 @@
     "requestSchema": "FeedbackWrite",
     "responseSchema": "FeedbackResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1517,14 +3011,39 @@
     "requestSchema": "FeedbackReview",
     "responseSchema": "FeedbackResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "feedbackId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1538,6 +3057,15 @@
     "requestSchema": null,
     "responseSchema": "BotConfigResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -1550,18 +3078,40 @@
     "requestSchema": "BotConfigWritePatch",
     "responseSchema": "BotConfigResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -1575,14 +3125,32 @@
     "requestSchema": "PlaygroundRequest",
     "responseSchema": "PlaygroundResultResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1596,27 +3164,57 @@
     "requestSchema": null,
     "responseSchema": "EvaluationListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -1629,14 +3227,32 @@
     "requestSchema": "EvaluationRequest",
     "responseSchema": "EvaluationResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1650,6 +3266,22 @@
     "requestSchema": null,
     "responseSchema": "EvaluationResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "evaluationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -1662,14 +3294,32 @@
     "requestSchema": "BotPublishRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1683,14 +3333,32 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1704,27 +3372,57 @@
     "requestSchema": null,
     "responseSchema": "ProviderDescriptorListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -1737,27 +3435,57 @@
     "requestSchema": null,
     "responseSchema": "AIConnectionListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -1770,14 +3498,32 @@
     "requestSchema": "AIConnectionWrite",
     "responseSchema": "AIConnectionResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1791,6 +3537,22 @@
     "requestSchema": null,
     "responseSchema": "AIConnectionResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "connectionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -1803,18 +3565,47 @@
     "requestSchema": "AIConnectionPatch",
     "responseSchema": "AIConnectionResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "connectionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -1828,18 +3619,47 @@
     "requestSchema": null,
     "responseSchema": null,
     "status": 204,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "connectionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -1853,14 +3673,39 @@
     "requestSchema": null,
     "responseSchema": "JobResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "connectionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1874,27 +3719,57 @@
     "requestSchema": null,
     "responseSchema": "ChannelListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -1907,14 +3782,32 @@
     "requestSchema": "ConnectRequest",
     "responseSchema": "ConnectStartResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1928,6 +3821,22 @@
     "requestSchema": null,
     "responseSchema": "ChannelResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -1940,14 +3849,39 @@
     "requestSchema": "ConnectRequest",
     "responseSchema": "ConnectStartResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1961,14 +3895,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -1982,14 +3941,39 @@
     "requestSchema": null,
     "responseSchema": "JobResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2003,14 +3987,32 @@
     "requestSchema": null,
     "responseSchema": "FileObjectResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2024,6 +4026,22 @@
     "requestSchema": null,
     "responseSchema": "FileObjectResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "fileId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2036,14 +4054,32 @@
     "requestSchema": "ImportRequest",
     "responseSchema": "JobResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2057,14 +4093,39 @@
     "requestSchema": "ImportCommit",
     "responseSchema": "JobResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "jobId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2078,6 +4139,15 @@
     "requestSchema": null,
     "responseSchema": "ReportSummaryResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2090,14 +4160,32 @@
     "requestSchema": "ExportRequest",
     "responseSchema": "JobResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2111,27 +4199,57 @@
     "requestSchema": null,
     "responseSchema": "JobListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -2144,6 +4262,22 @@
     "requestSchema": null,
     "responseSchema": "JobResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "jobId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2156,27 +4290,57 @@
     "requestSchema": null,
     "responseSchema": "CommandListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -2189,6 +4353,22 @@
     "requestSchema": null,
     "responseSchema": "CommandResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "commandId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2201,27 +4381,57 @@
     "requestSchema": null,
     "responseSchema": "AuditEventListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -2234,6 +4444,15 @@
     "requestSchema": null,
     "responseSchema": "PrivacyPolicyResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2246,18 +4465,40 @@
     "requestSchema": "PrivacyPolicyWritePatch",
     "responseSchema": "PrivacyPolicyResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       },
       {
         "name": "If-Match",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     ],
     "queryParameters": [],
@@ -2271,27 +4512,57 @@
     "requestSchema": null,
     "responseSchema": "PrivacyRequestListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -2304,14 +4575,32 @@
     "requestSchema": "PrivacyRequestWrite",
     "responseSchema": "PrivacyRequestResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2325,14 +4614,39 @@
     "requestSchema": "ReauthApproval",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "privacyRequestId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2346,10 +4660,22 @@
     "requestSchema": null,
     "responseSchema": null,
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "Last-Event-ID",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "queryParameters": [],
@@ -2363,27 +4689,64 @@
     "requestSchema": null,
     "responseSchema": "KnowledgeRevisionListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -2396,14 +4759,39 @@
     "requestSchema": "KnowledgeWrite",
     "responseSchema": "KnowledgeRevisionResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2417,6 +4805,29 @@
     "requestSchema": null,
     "responseSchema": "KnowledgeRevisionResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2429,14 +4840,46 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "KnowledgeRevisionResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2450,27 +4893,57 @@
     "requestSchema": null,
     "responseSchema": "BotRevisionListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       },
       {
         "name": "q",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
       },
       {
         "name": "status",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
       },
       {
         "name": "sort",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
       }
     ],
     "bodyType": "json"
@@ -2483,6 +4956,22 @@
     "requestSchema": null,
     "responseSchema": "BotRevisionResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2495,14 +4984,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "BotRevisionResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2516,6 +5030,15 @@
     "requestSchema": null,
     "responseSchema": "InboxMetadataResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2528,15 +5051,33 @@
     "requestSchema": null,
     "responseSchema": "WorkItemListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2549,6 +5090,22 @@
     "requestSchema": null,
     "responseSchema": "WorkItemResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2561,15 +5118,33 @@
     "requestSchema": null,
     "responseSchema": "ApprovalListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2582,14 +5157,32 @@
     "requestSchema": "ApprovalCreate",
     "responseSchema": "ApprovalResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2603,6 +5196,22 @@
     "requestSchema": null,
     "responseSchema": "ApprovalResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2615,15 +5224,33 @@
     "requestSchema": null,
     "responseSchema": "DeviceSubscriptionListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2636,14 +5263,32 @@
     "requestSchema": "DeviceRegister",
     "responseSchema": "DeviceSubscriptionResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2657,6 +5302,22 @@
     "requestSchema": null,
     "responseSchema": "DeviceSubscriptionResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2669,15 +5330,33 @@
     "requestSchema": null,
     "responseSchema": "NotificationListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2690,6 +5369,22 @@
     "requestSchema": null,
     "responseSchema": "NotificationResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2702,15 +5397,33 @@
     "requestSchema": null,
     "responseSchema": "PrepJobListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2723,6 +5436,22 @@
     "requestSchema": null,
     "responseSchema": "PrepJobResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2735,15 +5464,33 @@
     "requestSchema": null,
     "responseSchema": "ShipmentListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2756,14 +5503,32 @@
     "requestSchema": "ShipmentCreate",
     "responseSchema": "ShipmentResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2777,6 +5542,22 @@
     "requestSchema": null,
     "responseSchema": "ShipmentResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2789,15 +5570,33 @@
     "requestSchema": null,
     "responseSchema": "ReturnCaseListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2810,14 +5609,32 @@
     "requestSchema": "ReturnCaseCreate",
     "responseSchema": "ReturnCaseResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2831,6 +5648,22 @@
     "requestSchema": null,
     "responseSchema": "ReturnCaseResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2843,15 +5676,33 @@
     "requestSchema": null,
     "responseSchema": "SupplierListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2864,14 +5715,32 @@
     "requestSchema": "SupplierWrite",
     "responseSchema": "SupplierResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2885,6 +5754,22 @@
     "requestSchema": null,
     "responseSchema": "SupplierResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2897,14 +5782,39 @@
     "requestSchema": "SupplierPatch",
     "responseSchema": "SupplierResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2918,15 +5828,33 @@
     "requestSchema": null,
     "responseSchema": "SupplierOfferListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2939,14 +5867,32 @@
     "requestSchema": "SupplierOfferWrite",
     "responseSchema": "SupplierOfferResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -2960,6 +5906,22 @@
     "requestSchema": null,
     "responseSchema": "SupplierOfferResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -2972,15 +5934,33 @@
     "requestSchema": null,
     "responseSchema": "ReorderRuleListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -2993,14 +5973,32 @@
     "requestSchema": "ReorderRuleCreate",
     "responseSchema": "ReorderRuleResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3014,6 +6012,22 @@
     "requestSchema": null,
     "responseSchema": "ReorderRuleResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3026,14 +6040,39 @@
     "requestSchema": "ReorderRuleWrite",
     "responseSchema": "ReorderRuleResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3047,15 +6086,33 @@
     "requestSchema": null,
     "responseSchema": "PurchaseSuggestionListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3068,6 +6125,22 @@
     "requestSchema": null,
     "responseSchema": "PurchaseSuggestionResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3080,15 +6153,33 @@
     "requestSchema": null,
     "responseSchema": "PurchaseOrderListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3101,14 +6192,32 @@
     "requestSchema": "PurchaseCreate",
     "responseSchema": "PurchaseOrderResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3122,6 +6231,22 @@
     "requestSchema": null,
     "responseSchema": "PurchaseOrderResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3134,15 +6259,33 @@
     "requestSchema": null,
     "responseSchema": "GoodsReceiptListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3155,14 +6298,32 @@
     "requestSchema": "GoodsReceiptCreate",
     "responseSchema": "GoodsReceiptResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3176,6 +6337,22 @@
     "requestSchema": null,
     "responseSchema": "GoodsReceiptResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3188,15 +6365,33 @@
     "requestSchema": null,
     "responseSchema": "JournalListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3209,14 +6404,32 @@
     "requestSchema": "JournalCreate",
     "responseSchema": "JournalResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3230,6 +6443,22 @@
     "requestSchema": null,
     "responseSchema": "JournalResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3242,15 +6471,33 @@
     "requestSchema": null,
     "responseSchema": "BankTransactionListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3263,6 +6510,22 @@
     "requestSchema": null,
     "responseSchema": "BankTransactionResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3275,15 +6538,33 @@
     "requestSchema": null,
     "responseSchema": "ReconciliationCaseListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3296,6 +6577,22 @@
     "requestSchema": null,
     "responseSchema": "ReconciliationCaseResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3308,15 +6605,33 @@
     "requestSchema": null,
     "responseSchema": "CODSettlementListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3329,6 +6644,22 @@
     "requestSchema": null,
     "responseSchema": "CODSettlementResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3341,15 +6672,33 @@
     "requestSchema": null,
     "responseSchema": "DebtItemListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3362,6 +6711,22 @@
     "requestSchema": null,
     "responseSchema": "DebtItemResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3374,15 +6739,33 @@
     "requestSchema": null,
     "responseSchema": "AccountingPeriodListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3395,6 +6778,22 @@
     "requestSchema": null,
     "responseSchema": "AccountingPeriodResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3407,15 +6806,33 @@
     "requestSchema": null,
     "responseSchema": "AgentRoleListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3428,6 +6845,22 @@
     "requestSchema": null,
     "responseSchema": "AgentRoleResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3440,14 +6873,39 @@
     "requestSchema": "AgentRoleWrite",
     "responseSchema": "AgentRoleResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3461,15 +6919,33 @@
     "requestSchema": null,
     "responseSchema": "BudgetPolicyListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3482,6 +6958,22 @@
     "requestSchema": null,
     "responseSchema": "BudgetPolicyResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3494,14 +6986,39 @@
     "requestSchema": "BudgetPolicyWrite",
     "responseSchema": "BudgetPolicyResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3515,15 +7032,33 @@
     "requestSchema": null,
     "responseSchema": "DigestListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3536,6 +7071,22 @@
     "requestSchema": null,
     "responseSchema": "DigestResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3548,15 +7099,33 @@
     "requestSchema": null,
     "responseSchema": "ServiceCaseListResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [
       {
         "name": "limit",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
       },
       {
         "name": "cursor",
-        "required": false
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
       }
     ],
     "bodyType": "json"
@@ -3569,14 +7138,32 @@
     "requestSchema": "ServiceCaseWrite",
     "responseSchema": "ServiceCaseResponse",
     "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3590,6 +7177,22 @@
     "requestSchema": null,
     "responseSchema": "ServiceCaseResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3602,14 +7205,39 @@
     "requestSchema": "CustomerConfirmationRequest",
     "responseSchema": "CustomerConfirmationResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3623,14 +7251,39 @@
     "requestSchema": "ClaimWorkRequest",
     "responseSchema": "WorkItemResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3644,14 +7297,39 @@
     "requestSchema": "UpdateWorkRequest",
     "responseSchema": "WorkItemResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3665,14 +7343,39 @@
     "requestSchema": "ApprovalDecision",
     "responseSchema": "ApprovalResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3686,14 +7389,39 @@
     "requestSchema": "VersionRequest",
     "responseSchema": "DeviceSubscriptionResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3707,14 +7435,39 @@
     "requestSchema": "VersionRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3728,14 +7481,39 @@
     "requestSchema": "ClaimWorkRequest",
     "responseSchema": "WorkItemResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3749,6 +7527,15 @@
     "requestSchema": null,
     "responseSchema": "NotificationPolicyResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -3761,14 +7548,32 @@
     "requestSchema": "NotificationPolicyWrite",
     "responseSchema": "NotificationPolicyResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3782,14 +7587,32 @@
     "requestSchema": null,
     "responseSchema": "TelegramPairingResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3803,14 +7626,39 @@
     "requestSchema": "PickLineRequest",
     "responseSchema": "PrepJobResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3824,14 +7672,39 @@
     "requestSchema": "VersionRequest",
     "responseSchema": "PrepJobResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3845,14 +7718,39 @@
     "requestSchema": "VersionRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3866,14 +7764,39 @@
     "requestSchema": "ShipmentEventWrite",
     "responseSchema": "ShipmentResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3887,14 +7810,39 @@
     "requestSchema": "ReturnInspection",
     "responseSchema": "ReturnCaseResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3908,14 +7856,32 @@
     "requestSchema": null,
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3929,14 +7895,39 @@
     "requestSchema": "VersionRequest",
     "responseSchema": "ApprovalResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3950,14 +7941,39 @@
     "requestSchema": "PurchaseSend",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3971,14 +7987,39 @@
     "requestSchema": "PurchaseConfirm",
     "responseSchema": "PurchaseOrderResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -3992,14 +8033,39 @@
     "requestSchema": "VersionRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4013,14 +8079,39 @@
     "requestSchema": "VersionRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4034,14 +8125,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4055,14 +8171,39 @@
     "requestSchema": "MatchSettlement",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4076,14 +8217,39 @@
     "requestSchema": "CODMatch",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4097,14 +8263,39 @@
     "requestSchema": "VersionRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4118,14 +8309,32 @@
     "requestSchema": "ControlRequest",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4139,6 +8348,15 @@
     "requestSchema": null,
     "responseSchema": "OperationsSummaryResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -4151,6 +8369,15 @@
     "requestSchema": null,
     "responseSchema": "MarketingSummaryResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [],
     "queryParameters": [],
     "bodyType": "json"
@@ -4163,14 +8390,24 @@
     "requestSchema": "AuthStart",
     "responseSchema": "AuthRedirectResponse",
     "status": 200,
+    "pathParameters": [],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4184,14 +8421,39 @@
     "requestSchema": "SupplierStatusRequest",
     "responseSchema": "SupplierResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4205,14 +8467,39 @@
     "requestSchema": "VersionedReason",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4226,14 +8513,32 @@
     "requestSchema": "StatementImport",
     "responseSchema": "JobResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4247,14 +8552,32 @@
     "requestSchema": "StatementImport",
     "responseSchema": "JobResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4268,14 +8591,39 @@
     "requestSchema": "PeriodReopen",
     "responseSchema": "CommandResponse",
     "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4289,14 +8637,39 @@
     "requestSchema": "CaseStatusWrite",
     "responseSchema": "ServiceCaseResponse",
     "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
     "headers": [
       {
         "name": "X-CSRF-Token",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
       },
       {
         "name": "Idempotency-Key",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
       }
     ],
     "queryParameters": [],
@@ -4310,15 +8683,24 @@
     "requestSchema": null,
     "responseSchema": null,
     "status": 204,
+    "pathParameters": [],
     "headers": [],
     "queryParameters": [
       {
         "name": "code",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "maxLength": 4000
+        }
       },
       {
         "name": "state",
-        "required": true
+        "required": true,
+        "schema": {
+          "type": "string",
+          "maxLength": 4000
+        }
       }
     ],
     "bodyType": "json"

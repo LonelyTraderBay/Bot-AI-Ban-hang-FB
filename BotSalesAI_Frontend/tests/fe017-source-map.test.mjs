@@ -6,8 +6,8 @@ import test from 'node:test';
 const root = process.cwd();
 const readJson = relative => JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8'));
 const readText = relative => fs.readFileSync(path.join(root, relative), 'utf8');
-const routes = readJson('botsales-kit/contracts/route-manifest.json').routes;
-const openapi = readJson('botsales-kit/contracts/openapi.json');
+const routes = readJson('../botsales-kit/contracts/route-manifest.json').routes;
+const openapi = readJson('../botsales-kit/contracts/openapi.json');
 const operations = Object.fromEntries(Object.values(openapi.paths).flatMap(methods => Object.values(methods))
     .filter(operation => operation.operationId)
     .map(operation => [operation.operationId, operation]));

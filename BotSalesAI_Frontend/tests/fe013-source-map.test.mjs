@@ -7,8 +7,8 @@ const readText = async path => readFile(new URL(path, import.meta.url), 'utf8');
 
 test('FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source', async () => {
     const [manifest, openapi, operations, fulfillment, mockFulfillment, orders, shell, router] = await Promise.all([
-        readJson('../botsales-kit/contracts/route-manifest.json'),
-        readJson('../botsales-kit/contracts/openapi.json'),
+        readJson('../../botsales-kit/contracts/route-manifest.json'),
+        readJson('../../botsales-kit/contracts/openapi.json'),
         readJson('../packages/contracts/src/operations.json'),
         readText('../apps/web/src/modules/fulfillment/index.tsx'),
         readText('../apps/web/src/mocks/fulfillment.ts'),
@@ -57,7 +57,7 @@ test('FE013 routes, permissions, DTOs and state transitions map to canonical con
     match(fulfillment, /membership\.permissions\.includes\('operations\.claim'\)/, 'claim is hidden without operations.claim');
     match(fulfillment, /workItem\.allowedActions\.includes\('claim'\)/, 'claim follows current WorkItem allowedActions');
     match(fulfillment, /expectedVersion: shipment\.version/, 'shipment mutations use detail resource version');
-    match(fulfillment, /externalEventId: externalEventId\.trim\(\)[\s\S]*occurredAt: new Date\(occurredAt\)\.toISOString\(\)[\s\S]*evidenceRef: evidenceRef\.trim\(\)/, 'shipment event sends normalized time and human evidence');
+    match(fulfillment, /externalEventId: externalEventId\.trim\(\)[\s\S]*occurredAt: occurredAtInstant[\s\S]*evidenceRef: evidenceRef\.trim\(\)/, 'shipment event sends shop-timezone-resolved instant and human evidence');
     match(mockFulfillment, /ensure\(rows\(prep\.lines\)\.every\(l => l\.requiredQuantity === l\.pickedQuantity && !l\.hasIssue\)/, 'mock pack rejects partial or unresolved picks');
     match(mockFulfillment, /ensure\(!rows\(shipment\.events\)\.some\(e => e\.externalEventId === body\.externalEventId\)/, 'mock rejects duplicate carrier event IDs');
     match(mockFulfillment, /shipment\.state = 'handed_over'[\s\S]*order\.fulfillmentState = 'dispatched'/, 'handover is separate from delivery state');

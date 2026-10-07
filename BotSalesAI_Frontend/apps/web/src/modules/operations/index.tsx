@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { PageSections } from '../../shared/ui/composition';
+import { ActionGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
+import { useEffect, useState } from 'react';
+import { visualSx } from '@/shared/ui/visual';
 import { Alert, Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { layoutSx } from '../../shared/ui/layout';
 import type { AgentRole, WorkItem } from '@botsales/contracts';
-import { useApi, useCommand } from '@/shared/api/hooks';
+import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { dateTime } from '@/shared/model/format';
-import { PageHeader, Panel, Stats, Stat, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, Amount, DetailLine, ConfirmDialog } from '@/shared/ui/components';
+import { PageHeader, Panel, Stats, Stat, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, Amount, DetailLine, ConfirmDialog, LookupLoadMore } from '@/shared/ui/components';
 
 const workItemActions = ['begin', 'complete', 'block', 'reassign'] as const;
 type WorkItemAction = typeof workItemActions[number];
@@ -18,7 +22,7 @@ const roleNames: Record<AgentRole['kind'], string> = {
 
 export function OperationsPage() {
     const { shop, session } = useScope();
-    const list = useApi('listWorkItems', { query: useListQuery() });
+    const list = useApi('listWorkItems', { query: useListQuery('listWorkItems') });
     const summary = useApi('getOperationsSummary');
     const claim = useCommand('claimWorkItem', ['listWorkItems', 'listPrepJobs', 'getOperationsSummary']);
     const update = useCommand('updateWorkItem', ['listWorkItems', 'getOperationsSummary']);
@@ -27,8 +31,14 @@ export function OperationsPage() {
     const [reason, setReason] = useState('');
     const [assignee, setAssignee] = useState('');
     const [exceptionsOnly, setExceptionsOnly] = useState(false);
-    const members = useApi('listMembers', { query: { limit: 100 } }, useCan('members.manage'));
-    const availableActions = item?.allowedActions.filter((candidate): candidate is WorkItemAction => workItemActions.includes(candidate as WorkItemAction) && (candidate !== 'reassign' || Boolean(members.data?.data.some(member => member.status === 'active')))) || [];
+    const canManageMembers = useCan('members.manage');
+    const [memberSearchInput, setMemberSearchInput] = useState(''), [memberSearch, setMemberSearch] = useState('');
+    useEffect(() => {
+        const timer = window.setTimeout(() => setMemberSearch(memberSearchInput.trim()), 250);
+        return () => window.clearTimeout(timer);
+    }, [memberSearchInput]);
+    const members = usePagedApi('listMembers', { query: { status: 'active', q: memberSearch || undefined } }, canManageMembers);
+    const availableActions = item?.allowedActions.filter((candidate): candidate is WorkItemAction => workItemActions.includes(candidate as WorkItemAction) && (candidate !== 'reassign' || Boolean(members.data?.data.length || members.hasMore))) || [];
     const workItems = list.data?.data || [];
     const asOf = list.data?.meta.asOf;
     const isException = (task: WorkItem) => {
@@ -42,8 +52,8 @@ export function OperationsPage() {
 
     return <>
         <PageHeader title="Công việc hôm nay" subtitle="Giao việc → nhận việc → hoàn thành → kiểm tra kết quả." />
-        <Alert severity="info" sx={{ mb: 2 }}>Dữ liệu vận hành và trạng thái dịch vụ đang được mô phỏng; chưa xác minh worker hoặc backend thật.</Alert>
-        <QueryState query={summary}>
+        <Alert severity="info" sx={layoutSx.notice.afterGap}>Dữ liệu vận hành và trạng thái dịch vụ đang được mô phỏng; chưa xác minh worker hoặc backend thật.</Alert>
+        <QueryState query={summary} pendingProfile="section">
             {summary.data && <Stats>
                 <Stat title="Chưa có người nhận" value={summary.data.data.queuedTasks} accent />
                 <Stat title="Quá hạn" value={summary.data.data.overdueTasks} />
@@ -53,10 +63,10 @@ export function OperationsPage() {
         </QueryState>
         <ErrorNotice error={claim.error} />
         <Panel>
-            <Stack gap={1.5} sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }} data-testid="operation-exceptions">
-                <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} gap={1.5}>
+            <SurfaceContent bodyMode="insetDivider" data-testid="operation-exceptions">
+                <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={layoutSx.surface.headerFlowGap}>
                     <Box>
-                        <Typography fontWeight={650}>Giám sát ngoại lệ</Typography>
+                        <Typography fontWeight={visualSx.typography.fontWeight.strong}>Giám sát ngoại lệ</Typography>
                         <Typography variant="body2" color="text.secondary">Quá hạn theo thời điểm API; gồm việc bị chặn, chưa nhận, đến hạn hoặc sai lệch thanh toán. Chỉ lọc trang dữ liệu hiện đang tải.</Typography>
                     </Box>
                     <Button variant={exceptionsOnly ? 'contained' : 'outlined'} aria-pressed={exceptionsOnly} onClick={() => setExceptionsOnly(value => !value)}>
@@ -64,14 +74,14 @@ export function OperationsPage() {
                     </Button>
                 </Stack>
                 {exceptionsOnly && exceptionItems.length === 0 && <Alert severity="success">Không có ngoại lệ trong trang dữ liệu hiện tại.</Alert>}
-            </Stack>
-            <Toolbar />
-            <QueryState query={list}>
+            </SurfaceContent>
+            <Toolbar operation="listWorkItems" />
+            <QueryState query={list} pendingProfile="section">
                 {list.data && <>
                     <DataTable rows={visibleItems} rowKey={task => task.id} columns={[
                         {
                             key: 'task', label: 'Công việc', render: task => <Stack>
-                                <Typography fontWeight={650}>{task.kind === 'prepare_order' ? 'Chuẩn bị đơn hàng' : task.kind === 'customer_handoff' ? 'Tiếp quản khách hàng' : task.kind === 'payment_mismatch' ? 'Sai lệch thanh toán' : task.kind === 'late_shipment' ? 'Vận đơn quá hạn' : task.kind}</Typography>
+                                <Typography fontWeight={visualSx.typography.fontWeight.strong}>{task.kind === 'prepare_order' ? 'Chuẩn bị đơn hàng' : task.kind === 'customer_handoff' ? 'Tiếp quản khách hàng' : task.kind === 'payment_mismatch' ? 'Sai lệch thanh toán' : task.kind === 'late_shipment' ? 'Vận đơn quá hạn' : task.kind}</Typography>
                                 <Typography variant="caption" color="text.secondary">{task.source.type} · {task.source.id}</Typography>
                             </Stack>,
                         },
@@ -82,9 +92,9 @@ export function OperationsPage() {
                         {
                             key: 'actions', label: '', render: task => {
                                 const updateActions = task.allowedActions.filter(candidate => workItemActions.includes(candidate as WorkItemAction));
-                                return <Stack direction="row" flexWrap="wrap">
+                                return <ActionGroup direction="row" >
                                     <MutationButton permission="operations.claim" allowedActions={task.allowedActions} action="claim" busy={claim.pending} onClick={() => void claim.execute({ path: { resourceId: task.id }, body: { expectedVersion: task.version } }).catch(() => undefined)}>Tôi nhận việc</MutationButton>
-                                    {task.kind === 'prepare_order' && <RouteLink to={`/s/${shop.id}/fulfillment?orderId=${task.source.id}`}>Chuẩn bị hàng</RouteLink>}
+                                    {task.kind === 'prepare_order' && <RouteLink to={`/s/${shop.id}/fulfillment`}>Chuẩn bị hàng</RouteLink>}
                                     {task.kind !== 'prepare_order' && updateActions.length > 0 && <MutationButton permission="operations.manage" onClick={() => {
                                         setItem(task);
                                         setReason('');
@@ -92,8 +102,8 @@ export function OperationsPage() {
                                         setAction(updateActions[0] as WorkItemAction);
                                         update.clearError();
                                     }}>Cập nhật</MutationButton>}
-                                    <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center', ml: 1 }}>Được phép: {task.allowedActions.length ? task.allowedActions.join(' · ') : 'Không có hành động'}</Typography>
-                                </Stack>;
+                                    <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center' }}>Được phép: {task.allowedActions.length ? task.allowedActions.join(' · ') : 'Không có hành động'}</Typography>
+                                </ActionGroup>;
                             },
                         },
                     ]} />
@@ -110,23 +120,29 @@ export function OperationsPage() {
             catch { /* error stays visible */ }
         }}>Lưu kết quả</Button>}>
             <ErrorNotice error={update.error} />
-            <Stack gap={2}>
+            <FormFields >
                 <Typography>{item?.source.id}</Typography>
                 {availableActions.length > 0 && <TextField label="Hành động được phép" select value={availableActions.includes(action) ? action : availableActions[0]} onChange={event => setAction(event.target.value as WorkItemAction)}>
                     {availableActions.map(value => <MenuItem key={value} value={value}>{value === 'begin' ? 'Bắt đầu xử lý' : value === 'complete' ? 'Hoàn thành' : value === 'block' ? 'Báo đang bị chặn' : 'Chuyển người phụ trách'}</MenuItem>)}
                 </TextField>}
-                {action === 'reassign' && <TextField select label="Người phụ trách" value={assignee} onChange={event => setAssignee(event.target.value)}>
-                    {members.data?.data.filter(member => member.status === 'active').map(member => <MenuItem key={member.id} value={member.userId}>{member.userId}</MenuItem>)}
-                </TextField>}
+                {action === 'reassign' && <>
+                    <TextField label="Tìm thành viên đang hoạt động" value={memberSearchInput} onChange={event => setMemberSearchInput(event.target.value)} disabled={!canManageMembers} helperText="Tìm kiếm dùng q của listMembers; trang tiếp dùng cursor." />
+                    <TextField select label="Người phụ trách" value={assignee} onChange={event => setAssignee(event.target.value)} disabled={!canManageMembers || (members.isPending && !members.data)}>
+                        {assignee && !members.data?.data.some(member => member.userId === assignee) && <MenuItem value={assignee}>{assignee}</MenuItem>}
+                        {members.data?.data.filter(member => member.status === 'active').map(member => <MenuItem key={member.id} value={member.userId}>{member.userId}</MenuItem>)}
+                    </TextField>
+                    <LookupLoadMore label="thành viên" loadedCount={members.loadedCount} hasMore={members.hasMore} busy={members.isLoadingMore} onLoadMore={members.loadMore}/>
+                    {members.isError && <SurfaceContent ><ErrorNotice error={members.error}/><Button size="small" onClick={() => { void (members.isFetchNextPageError ? members.loadMore() : members.refetch()); }}>Thử lại danh sách thành viên</Button></SurfaceContent>}
+                </>}
                 <TextField label="Kết quả / lý do" multiline minRows={3} value={reason} onChange={event => setReason(event.target.value)} />
-            </Stack>
+            </FormFields>
         </EditDialog>
     </>;
 }
 
 export function ApprovalsPage() {
     const { shop } = useScope();
-    const list = useApi('listApprovals', { query: useListQuery() });
+    const list = useApi('listApprovals', { query: useListQuery('listApprovals') });
     const [delegateRole, setDelegateRole] = useState('warehouse_buyer');
     const [delegateLimit, setDelegateLimit] = useState('300000');
     const [delegationPreview, setDelegationPreview] = useState(false);
@@ -142,30 +158,30 @@ export function ApprovalsPage() {
 
     return <>
         <PageHeader title="Cần phê duyệt" subtitle="Quyết định gắn với đúng nội dung, phiên bản và hạn hiệu lực — không phải một nút đồng ý chung." />
-        <Panel title="Xem thử ủy quyền" subtitle="Bản xem trước cục bộ để nghiệm thu giao diện; không cấp quyền hiệu lực.">
-            <Stack gap={2} sx={{ p: 3 }}>
+        <Panel title="Xem thử ủy quyền" subtitle="Bản xem trước cục bộ để nghiệm thu giao diện; không cấp quyền hiệu lực." bodyMode="inset">
+            <SurfaceContent >
                 <Alert severity="info">Contract hiện chưa có thao tác tạo quy tắc ủy quyền. Hạn mức và phạm vi bên dưới chỉ là dữ liệu mẫu, không thay đổi người duyệt hoặc quyền quyết định.</Alert>
-                <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
+                <PageSections direction={{ xs: 'column', sm: 'row' }} >
                     <TextField select label="Vai trò được ủy quyền" value={delegateRole} onChange={event => { setDelegateRole(event.target.value); setDelegationPreview(false); }} fullWidth>
                         <MenuItem value="warehouse_buyer">Kho & mua hàng</MenuItem>
                         <MenuItem value="accountant">Kế toán</MenuItem>
                         <MenuItem value="supervisor">Trưởng nhóm</MenuItem>
                     </TextField>
                     <TextField label="Hạn mức mẫu (VND)" type="number" value={delegateLimit} onChange={event => { setDelegateLimit(event.target.value); setDelegationPreview(false); }} inputProps={{ min: 1 }} fullWidth />
-                </Stack>
+                </PageSections>
                 <Button variant="outlined" disabled={!delegateLimit || Number(delegateLimit) < 1} onClick={() => setDelegationPreview(true)}>Tạo bản xem thử</Button>
                 {delegationPreview && <Box role="status" data-testid="delegation-preview">
                     <Typography variant="body2">Ủy quyền mô phỏng: {roleNames[delegateRole as AgentRole['kind']] || delegateRole} · tối đa {Number(delegateLimit).toLocaleString('vi-VN')} VND.</Typography>
                     <Typography variant="caption" color="text.secondary">Không ghi API, không nâng scope và không cho phép người nhận tự duyệt quyết định của mình.</Typography>
                 </Box>}
-            </Stack>
+            </SurfaceContent>
         </Panel>
         <Panel>
-            <Toolbar />
-            <QueryState query={list}>
+            <Toolbar operation="listApprovals" />
+            <QueryState query={list} pendingProfile="section">
                 {list.data && <>
                     <DataTable rows={list.data.data} rowKey={entry => entry.id} columns={[
-                        { key: 'action', label: 'Nội dung', render: entry => <Stack><Typography fontWeight={650}>{entry.action}</Typography><Typography variant="caption">{entry.resource.type} · {entry.resource.id}</Typography></Stack> },
+                        { key: 'action', label: 'Nội dung', render: entry => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{entry.action}</Typography><Typography variant="caption">{entry.resource.type} · {entry.resource.id}</Typography></Stack> },
                         { key: 'amount', label: 'Số tiền', render: entry => <Amount value={entry.amount} /> },
                         { key: 'state', label: 'Trạng thái', render: entry => <Status value={entry.status} /> },
                         { key: 'due', label: 'Hết hạn', render: entry => dateTime(entry.expiresAt, shop.timezone) },
@@ -192,7 +208,7 @@ export function ApprovalsPage() {
         }}>{decision === 'approve' ? 'Duyệt đúng nội dung này' : 'Từ chối'}</MutationButton>}>
             <ErrorNotice error={decide.error} />
             <QueryState query={detail}>
-                {approval && <Stack gap={2}>
+                {approval && <FormFields >
                     <Alert severity="warning">Thay đổi giá, số lượng, đối tượng hoặc quyền có thể làm phê duyệt hết hiệu lực. Im lặng không được coi là đồng ý.</Alert>
                     {!expiryVerified && <Alert severity="error">Không xác minh được thời điểm hiện tại từ API; không thể gửi quyết định an toàn.</Alert>}
                     {expired && <Alert severity="error">Phê duyệt đã hết hạn; cần xin phê duyệt mới trước khi tiếp tục.</Alert>}
@@ -211,7 +227,7 @@ export function ApprovalsPage() {
                         <MenuItem value="reject">Từ chối</MenuItem>
                     </TextField>
                     <TextField label="Lý do quyết định" multiline minRows={3} value={reason} onChange={event => setReason(event.target.value)} disabled={approval.status !== 'pending' || expired} />
-                </Stack>}
+                </FormFields>}
             </QueryState>
         </EditDialog>
     </>;
@@ -219,61 +235,61 @@ export function ApprovalsPage() {
 
 export function DigestsPage() {
     const { shop } = useScope();
-    const list = useApi('listDigests', { query: useListQuery() });
+    const list = useApi('listDigests', { query: useListQuery('listDigests') });
     const health = useApi('getOperationsSummary');
     const control = useCommand('controlAutomation', ['listAgentRoles', 'getBotConfig', 'getOperationsSummary']);
     const [stop, setStop] = useState<{ role: AgentRole; action: 'pause' | 'resume' } | null>(null);
 
     return <>
         <PageHeader title="Bản tin & sức khỏe hệ thống" subtitle="Những việc quan trọng cần chủ shop quyết định; không thay thế người trực thực tế." />
-        <Alert severity="info" sx={{ mb: 2 }}>Đây là dữ liệu mô phỏng. Trạng thái “chưa xác minh” không chứng minh backend, provider hoặc worker đã sẵn sàng.</Alert>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1.5fr 1fr' }, gap: 3 }}>
-            <Panel title="Bản tin điều hành">
+        <Alert severity="info" sx={layoutSx.notice.afterGap}>Đây là dữ liệu mô phỏng. Trạng thái “chưa xác minh” không chứng minh backend, provider hoặc worker đã sẵn sàng.</Alert>
+        <SectionGrid columns={{ xs: '1fr', lg: '1.5fr 1fr' }}>
+            <Panel title="Bản tin điều hành" bodyMode="inset">
                 <QueryState query={list}>
-                    <Stack gap={2} sx={{ p: 3 }}>
-                        {list.data?.data.map(digest => <Box key={digest.id} sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 2 }}>
-                            <Stack direction="row" justifyContent="space-between" gap={2}><Stack><Typography variant="subtitle2">{dateTime(digest.periodStart, shop.timezone)} → {dateTime(digest.periodEnd, shop.timezone)}</Typography><Typography variant="caption" color="text.secondary">{digest.id} · phiên bản {digest.version}</Typography></Stack><Status value={digest.status} /></Stack>
-                            <Typography sx={{ whiteSpace: 'pre-wrap', mt: 2 }}>{digest.text}</Typography>
+                    <SurfaceContent >
+                        {list.data?.data.map(digest => <Box key={digest.id} sx={[layoutSx.detail.relatedItemInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.dialog }]}>
+                            <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}><Stack><Typography variant="subtitle2">{dateTime(digest.periodStart, shop.timezone)} → {dateTime(digest.periodEnd, shop.timezone)}</Typography><Typography variant="caption" color="text.secondary">{digest.id} · phiên bản {digest.version}</Typography></Stack><Status value={digest.status} /></Stack>
+                            <Typography sx={[layoutSx.surface.sectionBefore, { whiteSpace: 'pre-wrap' }]}>{digest.text}</Typography>
                             <DetailLine label="Thời điểm tạo / cập nhật">{dateTime(digest.createdAt, shop.timezone)} / {dateTime(digest.updatedAt, shop.timezone)}</DetailLine>
                             <DetailLine label="Nguồn công việc">{digest.workItemIds.length ? digest.workItemIds.join(' · ') : 'Không có mục công việc được tham chiếu'}</DetailLine>
                         </Box>)}
                         <Pager page={list.data?.page} />
-                    </Stack>
+                    </SurfaceContent>
                 </QueryState>
             </Panel>
-            <Panel title="Trạng thái phụ thuộc">
+            <Panel title="Trạng thái phụ thuộc" bodyMode="inset">
                 <QueryState query={health}>
-                    <Stack sx={{ p: 3 }}>
-                        {health.data?.data.health.map(check => <Box key={check.component} sx={{ mb: 3 }}>
+                    <Stack>
+                        {health.data?.data.health.map(check => <Box key={check.component} sx={layoutSx.page.sectionAfter}>
                             <Stack direction="row" justifyContent="space-between"><Typography>{check.component}</Typography><Status value={check.status} /></Stack>
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{check.reason || 'Không có ghi chú'}</Typography>
+                            <Typography variant="body2" color="text.secondary" sx={layoutSx.detail.relatedContentGap}>{check.reason || 'Không có ghi chú'}</Typography>
                             <Typography variant="caption">{check.checkedAt ? dateTime(check.checkedAt, shop.timezone) : 'Chưa kiểm tra thực tế'}</Typography>
                         </Box>)}
                     </Stack>
                 </QueryState>
-                <Alert severity="info" sx={{ m: 2 }}>Chỉ hiển thị lịch sử bản tin theo hợp đồng hiện hành. Chưa có API tạo/sửa lịch bản tin; không dựng nút lưu lịch giả.</Alert>
+                <Alert severity="info" sx={layoutSx.surface.sectionBefore}>Chỉ hiển thị lịch sử bản tin theo hợp đồng hiện hành. Chưa có API tạo/sửa lịch bản tin; không dựng nút lưu lịch giả.</Alert>
             </Panel>
-        </Box>
-        <Panel title="Phục hồi & sẵn sàng triển khai" subtitle="Bảng kiểm hiển thị rõ những điều chưa được xác minh trong bản frontend demo." sx={{ mt: 3 }}>
-            <Stack gap={2} sx={{ p: 3 }} data-testid="readiness-preview">
+        </SectionGrid>
+        <Panel title="Phục hồi & sẵn sàng triển khai" subtitle="Bảng kiểm hiển thị rõ những điều chưa được xác minh trong bản frontend demo." beforeGap={"section"} bodyMode="inset">
+            <SurfaceContent  data-testid="readiness-preview">
                 <Alert severity="warning">Chưa có nguồn readiness/restore trong API hiện hành. Các mục bên dưới giữ trạng thái chưa xác minh và không thể cấp tín hiệu cho phép phát hành.</Alert>
                 {[
                     ['Diễn tập khôi phục bản sao lưu', 'Chưa xác minh'],
                     ['Kiểm tra freshness của artifact và revision', 'Chưa xác minh'],
                     ['Gates triển khai và kết quả CI', 'Chưa xác minh'],
                     ['Môi trường/provider sau khi khôi phục', 'Chưa xác minh'],
-                ].map(([criterion, status]) => <Box key={criterion} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap', py: 1, borderBottom: 1, borderColor: 'divider' }}>
+                ].map(([criterion, status]) => <Box key={criterion} sx={[layoutSx.detail.valueGap, layoutSx.detail.rowInsetBlock, { display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', borderBottom: 1, borderColor: 'divider' }]}>
                     <Typography>{criterion}</Typography>
                     <Typography color="warning.main">{status}</Typography>
                 </Box>)}
                 <Typography variant="caption" color="text.secondary">Có bản sao lưu không chứng minh đã khôi phục thành công. Không có nút “sẵn sàng” trong chế độ mô phỏng.</Typography>
-            </Stack>
+            </SurfaceContent>
         </Panel>
-        <Panel title="Quyền dừng vai trò AI" subtitle="Lệnh được mô phỏng theo version của từng vai trò; tiếp tục không đồng nghĩa hệ thống đã sẵn sàng." sx={{ mt: 3 }}>
+        <Panel title="Quyền dừng vai trò AI" subtitle="Lệnh được mô phỏng theo version của từng vai trò; tiếp tục không đồng nghĩa hệ thống đã sẵn sàng." beforeGap={"section"} bodyMode="inset">
             <QueryState query={health}>
-                <Stack gap={1} sx={{ p: 2 }}>
-                    {health.data?.data.roles.map(role => <Box key={role.id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap', py: 1, borderBottom: 1, borderColor: 'divider' }}>
-                        <Stack><Typography fontWeight={600}>{roleNames[role.kind]}</Typography><Typography variant="caption" color="text.secondary">Thế hệ {role.generation} · {role.status === 'paused' ? 'Đang tạm dừng' : role.status === 'not_configured' ? 'Chưa cấu hình' : role.status}</Typography></Stack>
+                <Stack sx={layoutSx.detail.relatedItemGap}>
+                    {health.data?.data.roles.map(role => <Box key={role.id} sx={[layoutSx.detail.valueGap, layoutSx.detail.rowInsetBlock, { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', borderBottom: 1, borderColor: 'divider' }]}>
+                        <Stack><Typography fontWeight={visualSx.typography.fontWeight.semibold}>{roleNames[role.kind]}</Typography><Typography variant="caption" color="text.secondary">Thế hệ {role.generation} · {role.status === 'paused' ? 'Đang tạm dừng' : role.status === 'not_configured' ? 'Chưa cấu hình' : role.status}</Typography></Stack>
                         <MutationButton permission="bot.pause" color={role.status === 'paused' ? 'primary' : 'error'} onClick={() => setStop({ role, action: role.status === 'paused' ? 'resume' : 'pause' })}>{role.status === 'paused' ? 'Kiểm tra điều kiện tiếp tục' : 'Tạm dừng vai trò'}</MutationButton>
                     </Box>)}
                 </Stack>

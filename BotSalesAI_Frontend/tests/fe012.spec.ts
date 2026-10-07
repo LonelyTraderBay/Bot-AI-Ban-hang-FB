@@ -157,10 +157,12 @@ test('FE012.AC01 editing lines invalidates quote and customer consent; a new quo
     const confirmRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/orders/DH-1001/confirm'));
     const confirmResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/confirm'));
     await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();
-    await confirmRequest;
     await expect(page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' })).toBeDisabled();
     await expect(page.getByText('Bản nháp', { exact: true })).toBeVisible();
     await expect(page.getByText('Đã xác nhận', { exact: true })).toHaveCount(0);
+    // Firefox surfaces service-worker requests after the mock's 1.5s delay; assert
+    // the pending UI before waiting for that event so this checks no optimistic success.
+    await confirmRequest;
     const accepted = await confirmResponse;
     expect(accepted.status()).toBe(202);
     expect(JSON.parse(accepted.request().postData() || 'null')).toMatchObject({ expectedVersion: secondQuote.orderVersion, quoteId: secondQuote.id, customerConfirmationId: confirmation.id });
@@ -203,8 +205,22 @@ test('FE012.AC03 offline state blocks quote mutation while retaining the loaded 
     await page.context().setOffline(false);
 });
 
-test('FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available', async ({ page }) => {
+test('FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available', async ({ page, browserName }) => {
     const calls = observeShopRequests(page);
+    if (browserName === 'firefox') {
+        // Playwright Firefox does not implement Chromium's clipboard permission grant.
+        // Keep this engine's test focused on the copy control calling the browser API.
+        await page.addInitScript(() => {
+            let clipboardText = '';
+            Object.defineProperty(navigator, 'clipboard', {
+                configurable: true,
+                value: {
+                    writeText: async (value: string) => { clipboardText = value; },
+                    readText: async () => clipboardText,
+                },
+            });
+        });
+    }
     await gotoDemo(page, '/s/shop-demo/orders/DH-1001');
     await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
     await expect(page.getByRole('button', { name: 'Mô phỏng khách đồng ý báo giá' })).toBeVisible();
@@ -221,6 +237,11 @@ test('FE012.AC03 unknown confirm outcome blocks duplicate writes until shared co
     await expect(page.getByRole('alert').filter({ hasText: 'Chưa xác minh được kết quả' })).toBeVisible({ timeout: 15000 });
     await expect(page.getByText(/Mã lệnh cần kiểm tra/)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Kiểm tra trạng thái lệnh' })).toBeVisible();
+    if (browserName !== 'firefox')
+        await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.getByRole('button', { name: 'Sao chép mã lệnh' }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Đã sao chép mã lệnh.' })).toBeVisible();
+    await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(unknownCommand.id);
     expect(calls.find(call => call.method === 'POST' && call.path.endsWith('/orders/DH-1001/confirm'))?.headers['idempotency-key']).toBeTruthy();
     const recoveryResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/commands/${unknownCommand.id}`));
     await page.getByRole('button', { name: 'Kiểm tra trạng thái lệnh' }).click();

@@ -18,7 +18,7 @@ test('FE023.S04 a dirty dialog keeps the form value until the user confirms disc
     await page.goto(new URL('/s/shop-demo/customers', demoUrl).toString());
     await page.getByRole('button', { name: 'Thêm khách hàng', exact: true }).click();
     const editor = page.getByRole('dialog', { name: 'Thêm khách hàng' });
-    const name = editor.getByRole('textbox', { name: 'Tên hiển thị' });
+    const name = editor.getByRole('textbox', { name: 'Tên khách hàng' });
     await name.fill('Khách hàng đang soạn');
     await editor.getByRole('button', { name: 'Hủy', exact: true }).click();
 

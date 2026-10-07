@@ -58,31 +58,36 @@ test('customer create validates fields, submits through mock HTTP, and preserves
     const calls=observeShopRequests(page);
     await gotoDemo(page,'/s/shop-demo/customers');
     await expect(page.getByRole('heading',{name:'Khách hàng',exact:true})).toBeVisible();
+    await expect(page.getByRole('table',{name:'Danh sách khách hàng'})).toBeVisible();
+    await expect(page.getByRole('columnheader',{name:'Liên hệ'})).toBeVisible();
     await page.getByRole('button',{name:'Thêm khách hàng',exact:true}).click();
     const dialog=page.getByRole('dialog',{name:'Thêm khách hàng'});
-    const name=dialog.getByLabel('Tên hiển thị');
+    const name=dialog.getByLabel('Tên khách hàng');
     await name.fill('Khách FE009 mới');
-    await dialog.getByLabel('Email').fill('sai-email');
+    await dialog.getByLabel('Email (không bắt buộc)').fill('sai-email');
     await dialog.getByRole('button',{name:'Lưu khách hàng',exact:true}).click();
-    await expect(dialog.getByText('Email không hợp lệ',{exact:true})).toBeVisible();
+    await expect(dialog.getByText('Nhập email đúng định dạng.',{exact:true})).toBeVisible();
     await expect(name).toHaveValue('Khách FE009 mới');
     expect(calls.filter(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/customers'))).toHaveLength(0);
 
-    await dialog.getByLabel('Email').fill('fe009@example.test');
-    await dialog.getByLabel('Số liên hệ').fill('02012345678');
+    await expect(dialog.getByLabel('Số điện thoại (không bắt buộc)')).toBeVisible();
+    await expect(dialog.getByLabel('Ghi chú (không bắt buộc)')).toBeVisible();
+    await dialog.getByLabel('Email (không bắt buộc)').fill('fe009@example.test');
+    await dialog.getByLabel('Số điện thoại (không bắt buộc)').fill('02012345678');
     await dialog.getByRole('button',{name:'Lưu khách hàng',exact:true}).click();
     await expect(page).toHaveURL(/\/customers\/customer-/);
     await expect(page.getByRole('heading',{name:'Khách FE009 mới',exact:true})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Thông tin khách hàng'})).toBeVisible();
     const createCall=calls.find(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/customers'));
     expect(JSON.parse(createCall?.body||'null')).toMatchObject({displayName:'Khách FE009 mới',phone:'02012345678',email:'fe009@example.test'});
-    await expect(page.getByLabel('Số liên hệ')).toHaveValue('02012345678');
+    await expect(page.getByLabel('Số điện thoại (không bắt buộc)')).toHaveValue('02012345678');
 
     const updatedName='Khách FE009 đổi tên';
-    await page.getByLabel('Tên hiển thị').fill(updatedName);
+    await page.getByLabel('Tên khách hàng').fill(updatedName);
     await chooseMockOption(page,'Trạng thái thử','Xung đột lần ghi tiếp');
     await page.getByRole('button',{name:'Lưu thay đổi',exact:true}).click();
     await expect(page.getByRole('alert').filter({hasText:'dữ liệu bị thay đổi bởi người khác'})).toBeVisible();
-    await expect(page.getByLabel('Tên hiển thị')).toHaveValue(updatedName);
+    await expect(page.getByLabel('Tên khách hàng')).toHaveValue(updatedName);
 
     await page.getByRole('button',{name:'Lưu thay đổi',exact:true}).click();
     await expect(page.getByRole('heading',{name:updatedName,exact:true})).toBeVisible();
@@ -108,13 +113,16 @@ test('customer create validates fields, submits through mock HTTP, and preserves
 });
 
 test('customer detail keeps redacted contact fields read-only and does not overwrite them on save',async({page})=>{
+    await page.setViewportSize({width:320,height:800});
     await gotoDemo(page,'/s/shop-demo/customers/c1');
     await expect(page.getByRole('heading',{name:'Linh (khách mẫu)',exact:true})).toBeVisible();
-    const phone=page.getByLabel('Số liên hệ');
+    const phone=page.getByLabel('Số điện thoại (không bắt buộc)');
     await expect(phone).toBeDisabled();
-    await expect(page.getByText(/Một số trường bị hạn chế theo quyền/)).toBeVisible();
+    await expect(page.getByText(/Một số trường bị ẩn theo quyền/)).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Yêu cầu hỗ trợ'})).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 
-    await page.getByLabel('Tên hiển thị').fill('Linh đã cập nhật');
+    await page.getByLabel('Tên khách hàng').fill('Linh đã cập nhật');
     await page.getByRole('button',{name:'Lưu thay đổi',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Linh đã cập nhật',exact:true})).toBeVisible();
     await expect(phone).toBeDisabled();

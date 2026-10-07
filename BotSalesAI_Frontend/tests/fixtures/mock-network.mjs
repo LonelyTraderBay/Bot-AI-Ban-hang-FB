@@ -32,10 +32,10 @@ function validateEvent(event, schema) {
 
 export async function runMockNetworkScenarios({ root = process.cwd() } = {}) {
     const operations = JSON.parse(fs.readFileSync(path.join(root, 'packages/contracts/src/operations.json'), 'utf8'));
-    const eventSchema = JSON.parse(fs.readFileSync(path.join(root, 'botsales-kit/contracts/events.schema.json'), 'utf8'));
-    const routeManifest = JSON.parse(fs.readFileSync(path.join(root, 'botsales-kit/contracts/route-manifest.json'), 'utf8'));
-    const featureCatalog = JSON.parse(fs.readFileSync(path.join(root, 'botsales-kit/contracts/feature-catalog.json'), 'utf8'));
-    const permissionCatalog = JSON.parse(fs.readFileSync(path.join(root, 'botsales-kit/contracts/permission-catalog.json'), 'utf8'));
+    const eventSchema = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/events.schema.json'), 'utf8'));
+    const routeManifest = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/route-manifest.json'), 'utf8'));
+    const featureCatalog = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/feature-catalog.json'), 'utf8'));
+    const permissionCatalog = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/permission-catalog.json'), 'utf8'));
     const vite = await createServer({
         configFile: path.join(root, 'apps/web/vite.config.ts'),
         mode: 'demo',

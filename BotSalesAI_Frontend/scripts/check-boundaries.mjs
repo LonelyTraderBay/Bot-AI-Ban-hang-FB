@@ -66,8 +66,10 @@ for (const file of walk(sourceRoot)) {
                 const to = path.relative(sourceRoot, target).replaceAll('\\', '/');
                 const fromModule = from.match(/^modules\/([^/]+)/);
                 const toModule = to.match(/^modules\/([^/]+)/);
+                const fromApp = from.startsWith('app/');
                 if (fromModule && toModule && fromModule[1] !== toModule[1]) issues.push(`Cross-feature import ${from} → ${to}`);
                 if (fromModule && (to.startsWith('app/') || to.startsWith('mocks/'))) issues.push(`Feature imports application/mock ${from} → ${to}`);
+                if (fromApp && toModule && !new RegExp(`^modules/${toModule[1]}/index\\.(?:ts|tsx)$`).test(to)) issues.push(`App deep import ${from} → ${to}; import the module public entry instead`);
                 if (from.startsWith('shared/') && /^(app|modules|mocks)\//.test(to)) issues.push(`Shared dependency violation ${from} → ${to}`);
             }
         }

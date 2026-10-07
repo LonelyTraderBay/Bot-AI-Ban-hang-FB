@@ -1,7 +1,8 @@
 import {test,expect} from '@playwright/test';
-import {readFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {startDemoServer} from './session/demo-server.mjs';
+import {evidenceRunId} from './evidence-run-id.mjs';
 
 let demoUrl='';
 let closeDemo: (()=>Promise<void>)|undefined;
@@ -87,17 +88,19 @@ test('product editor validates positive prices, protects image-only drafts, and 
     await page.getByLabel('Tìm kiếm').fill('FE010-PRODUCT-L');
     await page.getByRole('button',{name:'Tìm kiếm',exact:true}).click();
     await expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible();
-    await chooseMockOption(page,'Danh mục','Quần');
-    await page.waitForRequest(request=>{
+    const clothingProducts=page.waitForRequest(request=>{
         const url=new URL(request.url());
         return request.method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/products')&&url.searchParams.get('categoryId')==='cat-1';
     });
+    await chooseMockOption(page,'Danh mục','Quần');
+    await clothingProducts;
     await expect(page.getByText('Sản phẩm FE010',{exact:true})).toHaveCount(0);
-    await chooseMockOption(page,'Danh mục','Áo');
-    await page.waitForRequest(request=>{
+    const clothingRestore=page.waitForRequest(request=>{
         const url=new URL(request.url());
         return request.method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/products')&&url.searchParams.get('categoryId')==='cat-0';
     });
+    await chooseMockOption(page,'Danh mục','Áo');
+    await clothingRestore;
     await expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible();
     await expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled();
 });
@@ -284,4 +287,188 @@ test('demo upload rejects files over 5 MB before making an upload request',async
     await expect(page.locator('#product-import-file-error')).toContainText('vượt giới hạn 5 MB');
     await expect(page.getByRole('button',{name:'Kiểm tra trước khi nhập',exact:true})).toBeDisabled();
     expect(uploadRequests).toBe(0);
+});
+
+test('product category lookup pages the full collection and preserves the selected category while editing',async({page})=>{
+    await gotoDemo(page,'/s/shop-demo/inbox');
+    await expect(page.getByRole('navigation',{name:'Điều hướng chính'})).toBeVisible();
+
+    const seedCategories=async()=>page.evaluate(async(count:number)=>{
+        for(let index=0;index<count;index++){
+            const response=await fetch('/api/v2/shops/shop-demo/categories',{
+                method:'POST',
+                headers:{'content-type':'application/json','x-csrf-token':'botsales-demo-csrf-not-a-real-secret','idempotency-key':`ui005-category-${index}`},
+                body:JSON.stringify({name:`Danh mục UI005 ${String(index).padStart(3,'0')}`,parentId:null})
+            });
+            const result=await response.json();
+            if(!response.ok) throw new Error(`Category fixture ${index} failed: ${response.status} ${JSON.stringify(result)}`);
+        }
+        const first=await fetch('/api/v2/shops/shop-demo/categories?limit=100');
+        const firstPage=await first.json();
+        const lastPage=await fetch(`/api/v2/shops/shop-demo/categories?limit=100&cursor=${encodeURIComponent(firstPage.page.nextCursor)}`);
+        const last=await lastPage.json();
+        return {total:firstPage.page.total,firstPageCount:firstPage.data.length,hasMore:firstPage.page.hasMore,target:last.data.at(-1),targetCount:last.data.length};
+    },102);
+
+    const apiRequests:Array<{method:string;url:string;body:string|null}> = [];
+    const apiResponses:Array<{method:string;url:string;status:number}> = [];
+    page.on('request',request=>{
+        const url=new URL(request.url());
+        const relevant=url.pathname.endsWith('/categories')||url.pathname.endsWith('/products')||/\/products\/[^/]+$/.test(url.pathname);
+        if(relevant&&!(url.pathname.endsWith('/categories')&&request.method()==='POST'))
+            apiRequests.push({method:request.method(),url:url.pathname+url.search,body:request.postData()});
+    });
+    page.on('response',response=>{
+        const url=new URL(response.url());
+        if((url.pathname.endsWith('/categories')&&response.request().method()==='GET')||url.pathname.endsWith('/products')||/\/products\/[^/]+$/.test(url.pathname))
+            apiResponses.push({method:response.request().method(),url:url.pathname+url.search,status:response.status()});
+    });
+
+    const firstDataset=await seedCategories();
+    expect(firstDataset).toMatchObject({total:105,firstPageCount:100,hasMore:true,target:{id:'cat-2',name:'Phụ kiện'},targetCount:5});
+
+    const listPage=page.waitForResponse(response=>{
+        const url=new URL(response.url());
+        return response.request().method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/categories')&&url.searchParams.get('limit')==='20'&&!url.searchParams.has('cursor')&&!url.searchParams.has('q');
+    });
+    await page.getByRole('navigation',{name:'Điều hướng chính'}).getByRole('link',{name:'Sản phẩm',exact:true}).click();
+    await expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible();
+    await page.getByRole('button',{name:'Thêm sản phẩm',exact:true}).click();
+    await expect(page.getByRole('heading',{name:'Thêm sản phẩm',exact:true})).toBeVisible();
+    const firstListResponse=await listPage;
+    const firstListBody=await firstListResponse.json();
+    expect(firstListResponse.status()).toBe(200);
+    expect(firstListBody.page).toMatchObject({total:105,limit:20,hasMore:true});
+    expect(firstListBody.data).toHaveLength(20);
+    await expect(page.getByLabel('Tìm danh mục')).toBeVisible();
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled();
+
+    const categoryCount=(count:number)=>page.getByText(`Đã tải ${count} lựa chọn`,{exact:true});
+    for(const count of [40,60,80,100,105]){
+        await page.getByRole('button',{name:'Tải thêm danh mục'}).click();
+        await expect(categoryCount(count)).toBeVisible();
+    }
+    await expect(page.getByRole('button',{name:'Tải thêm danh mục'})).toHaveCount(0);
+    await page.getByRole('combobox',{name:'Danh mục'}).click();
+    const targetOption=page.getByRole('option',{name:'Phụ kiện',exact:true});
+    await expect(targetOption).toHaveCount(1);
+    await targetOption.click();
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+
+    await page.getByLabel('Tìm danh mục').fill('Danh mục UI005 050');
+    const searchedPage=page.waitForResponse(response=>{
+        const url=new URL(response.url());
+        return response.request().method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/categories')&&url.searchParams.get('q')==='Danh mục UI005 050';
+    });
+    await expect(categoryCount(1)).toBeVisible();
+    await searchedPage;
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện');
+    await page.screenshot({path:resolve(process.cwd(),`evidence/frontend-ui-improvements/UI005/S02-create-selected-last-category-${test.info().project.name}-${evidenceRunId}.png`),fullPage:true});
+    await page.getByLabel('Tên sản phẩm').fill('Sản phẩm UI005 cuối danh mục');
+    await page.getByLabel('SKU').fill('UI005-LAST-CATEGORY');
+    await page.getByLabel('Giá bán (VND)').fill('12000');
+    await page.getByRole('button',{name:'Lưu sản phẩm',exact:true}).click();
+    await expect(page).toHaveURL(/\/products\/product-/);
+    const createCall=apiRequests.find(request=>request.method==='POST'&&request.url.endsWith('/shops/shop-demo/products'));
+    const createPayload=JSON.parse(createCall?.body||'null');
+    expect(createPayload).toMatchObject({name:'Sản phẩm UI005 cuối danh mục',categoryId:'cat-2'});
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện');
+
+    // A new page gives the edit check a fresh query cache while the mock is reset to its canonical seed.
+    await gotoDemo(page,'/s/shop-demo/inbox');
+    await expect(page.getByRole('navigation',{name:'Điều hướng chính'})).toBeVisible();
+    const freshSeed=await page.evaluate(async()=>{
+        const response=await fetch('/api/v2/shops/shop-demo/categories?limit=100');
+        const result=await response.json();
+        return {total:result.page.total,p1:await (await fetch('/api/v2/shops/shop-demo/products/p1')).json()};
+    });
+    expect(freshSeed.total).toBe(3);
+    expect(freshSeed.p1.data.categoryId).toBe('cat-0');
+    const editDataset=await seedCategories();
+    expect(editDataset.total).toBe(105);
+    await page.getByRole('navigation',{name:'Điều hướng chính'}).getByRole('link',{name:'Sản phẩm',exact:true}).click();
+    await expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible();
+    const p1Row=page.getByRole('row').filter({hasText:'Áo mẫu A'});
+    await expect(p1Row).toBeVisible();
+    await p1Row.getByRole('link',{name:'Chi tiết',exact:true}).click();
+    await expect(page.getByRole('heading',{name:'Thông tin sản phẩm',exact:true})).toBeVisible();
+    await expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A');
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo');
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled();
+    const desktopCategoryBox=await page.getByRole('combobox',{name:'Danh mục'}).boundingBox();
+    const desktopStatusBox=await page.getByRole('combobox',{name:'Trạng thái Đang bán',exact:true}).boundingBox();
+    expect(desktopCategoryBox?.width||0).toBeGreaterThan(350);
+    expect(desktopStatusBox?.width||0).toBeGreaterThan(350);
+    expect(Math.abs((desktopCategoryBox?.width||0)-(desktopStatusBox?.width||0))).toBeLessThan(100);
+    await page.screenshot({path:resolve(process.cwd(),`evidence/frontend-ui-improvements/UI005/S03-edit-selected-outside-first-page-${test.info().project.name}-${evidenceRunId}.png`),fullPage:true});
+
+    await page.setViewportSize({width:390,height:844});
+    const mobileCategoryBox=await page.getByRole('combobox',{name:'Danh mục'}).boundingBox();
+    const mobileStatusBox=await page.getByRole('combobox',{name:'Trạng thái Đang bán',exact:true}).boundingBox();
+    expect(mobileCategoryBox?.width||0).toBeGreaterThan(300);
+    expect(mobileStatusBox?.width||0).toBeGreaterThan(300);
+    expect((mobileStatusBox?.y||0)).toBeGreaterThan((mobileCategoryBox?.y||0));
+    await page.screenshot({path:resolve(process.cwd(),`evidence/frontend-ui-improvements/UI005/S03-edit-mobile-${test.info().project.name}-${evidenceRunId}.png`),fullPage:true});
+    await page.setViewportSize({width:1280,height:720});
+
+    await page.getByLabel('Tìm danh mục').fill('Danh mục UI005 050');
+    const p1Search=page.waitForResponse(response=>{
+        const url=new URL(response.url());
+        return response.request().method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/categories')&&url.searchParams.get('q')==='Danh mục UI005 050';
+    });
+    await expect(categoryCount(1)).toBeVisible();
+    expect((await p1Search).status()).toBe(200);
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo');
+    await page.getByLabel('Tìm danh mục').fill('');
+    await expect(categoryCount(20)).toBeVisible();
+
+    await chooseMockOption(page,'Trạng thái thử','Tải chậm');
+    await page.getByRole('button',{name:'Tải thêm danh mục'}).click();
+    await expect(page.getByRole('button',{name:'Tải thêm danh mục'})).toHaveText('Đang tải…');
+    await expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A');
+    await expect(categoryCount(40)).toBeVisible();
+
+    await chooseMockOption(page,'Trạng thái thử','Mất quyền truy vấn tiếp');
+    const forbiddenPage=page.waitForResponse(response=>{
+        const url=new URL(response.url());
+        return response.request().method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/categories')&&url.searchParams.has('cursor');
+    });
+    await page.getByRole('button',{name:'Tải thêm danh mục'}).click();
+    const forbiddenResponse=await forbiddenPage;
+    expect(forbiddenResponse.status()).toBe(403);
+    const forbiddenCursor=new URL(forbiddenResponse.url()).searchParams.get('cursor');
+    const lookupError=page.getByRole('alert').filter({hasText:'Không tải thêm được danh mục'});
+    await expect(lookupError).toContainText('HTTP 403');
+    await expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A');
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo');
+    await expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled();
+    await page.screenshot({path:resolve(process.cwd(),`evidence/frontend-ui-improvements/UI005/S04-edit-lookup-403-preserves-product-${test.info().project.name}-${evidenceRunId}.png`),fullPage:true});
+
+    await chooseMockOption(page,'Trạng thái thử','Bình thường');
+    const retryPage=page.waitForResponse(response=>{
+        const url=new URL(response.url());
+        return response.request().method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/categories')&&url.searchParams.has('cursor');
+    });
+    await lookupError.getByRole('button',{name:'Thử lại danh mục'}).click();
+    const retryResponse=await retryPage;
+    expect(retryResponse.status()).toBe(200);
+    expect(new URL(retryResponse.url()).searchParams.get('cursor')).toBe(forbiddenCursor);
+    await expect(categoryCount(60)).toBeVisible();
+    await expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A');
+
+    await page.getByLabel('Tên sản phẩm').fill('Áo mẫu A UI005');
+    const updateResponse=page.waitForResponse(response=>response.request().method()==='PATCH'&&new URL(response.url()).pathname.endsWith('/shops/shop-demo/products/p1'));
+    await page.getByRole('button',{name:'Lưu sản phẩm',exact:true}).click();
+    expect((await updateResponse).status()).toBe(200);
+    const editCall=apiRequests.find(request=>request.method==='PATCH'&&request.url.endsWith('/shops/shop-demo/products/p1'));
+    expect(JSON.parse(editCall?.body||'null')).toMatchObject({name:'Áo mẫu A UI005',categoryId:'cat-0'});
+
+    const evidenceDir=resolve(process.cwd(),'evidence/frontend-ui-improvements/UI005');
+    await mkdir(evidenceDir,{recursive:true});
+    const evidence={scope:'frontend with synthetic MSW data',totalCategories:105,selectedLastCategory:{id:'cat-2',name:'Phụ kiện'},createPayload:createPayload,editPayload:JSON.parse(editCall?.body||'null'),productQueryStayedVisibleAfterLookup403:true,loadMore403WasRetried:true,apiRequests,apiResponses};
+    await writeFile(resolve(evidenceDir,`S03-request-trace-${test.info().project.name}-${evidenceRunId}.json`),JSON.stringify(evidence,null,2)+'\n',{flag:'wx'});
+    await writeFile(resolve(evidenceDir,`S03-acceptance-${test.info().project.name}-${evidenceRunId}.json`),JSON.stringify({synthetic:true,categoryTotal:105,firstPageCount:20,lastCategorySelectableOnCreate:true,createPayloadCategoryId:'cat-2',selectedLabelRetainedAfterSearch:true,editSelectedCategoryOutsideFirstPage:true,editPayloadCategoryId:'cat-0',loadMoreDelayVisible:true,loadMore403Visible:true,retrySucceeded:true,primaryProductQueryPreserved:true},null,2)+'\n',{flag:'wx'});
+    console.log(`UI005 acceptance: ${JSON.stringify({categoryTotal:105,createCategoryId:createPayload.categoryId,editCategoryId:JSON.parse(editCall?.body||'null').categoryId,categoryRequests:apiResponses.filter(response=>response.url.includes('/categories')).length})}`);
 });

@@ -20,10 +20,10 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 
 test('FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries', () => {
     const root = process.cwd();
-    const manifest = JSON.parse(readFileSync(join(root, 'botsales-kit/contracts/route-manifest.json'), 'utf8')) as {
+    const manifest = JSON.parse(readFileSync(join(root, '../botsales-kit/contracts/route-manifest.json'), 'utf8')) as {
         routes: Array<{ id: string; path: string; module: string; readPermission: string; actions: Array<{ operationId: string; permission: string }> }>;
     };
-    const openapi = JSON.parse(readFileSync(join(root, 'botsales-kit/contracts/openapi.json'), 'utf8')) as {
+    const openapi = JSON.parse(readFileSync(join(root, '../botsales-kit/contracts/openapi.json'), 'utf8')) as {
         paths: Record<string, Record<string, { operationId?: string; 'x-permission'?: string }>>;
         components: { schemas: Record<string, { properties?: Record<string, { writeOnly?: boolean; minimum?: number; enum?: string[]; anyOf?: Array<{ minimum?: number }> }> }> };
     };

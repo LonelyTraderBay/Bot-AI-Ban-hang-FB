@@ -16,10 +16,86 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
     await page.goto(new URL(route, demoUrl).toString());
 }
 
+async function seedInboxCursorFixture(page: import('@playwright/test').Page) {
+    await gotoDemo(page, '/s/shop-demo/inbox');
+    await expect(page.getByRole('heading', { name: 'Hộp thư khách hàng', exact: true })).toBeVisible();
+    return page.evaluate(async () => {
+        const { db } = await import('/src/mocks/database.ts');
+        const conversation = db.conversations.find(item => item.shopId === 'shop-demo');
+        const message = db.messages.find(item => item.shopId === 'shop-demo');
+        if (!conversation || !message) throw new Error('Inbox seed templates are missing.');
+        const conversationCount = 45;
+        const messageCount = 105;
+        const targetConversationId = 'ui002-conversation-41';
+        const conversations = Array.from({ length: conversationCount }, (_, index) => {
+            const number = String(index + 1).padStart(2, '0');
+            return {
+                ...structuredClone(conversation),
+                id: `ui002-conversation-${number}`,
+                shopId: 'shop-demo',
+                displayName: `UI002 Conversation ${number}`,
+                mode: 'human',
+                assignedUserId: 'user-demo',
+                lastMessagePreview: `UI002 message ${messageCount}`,
+                unreadCount: 0,
+            };
+        });
+        const messages = Array.from({ length: messageCount }, (_, index) => ({
+            ...structuredClone(message),
+            id: `ui002-message-${String(index + 1).padStart(3, '0')}`,
+            shopId: 'shop-demo',
+            conversationId: targetConversationId,
+            text: `UI002 message ${index + 1}`,
+            createdAt: new Date(Date.parse('2026-09-29T10:00:00Z') + index * 1000).toISOString(),
+        }));
+        db.conversations = db.conversations.filter(item => item.shopId !== 'shop-demo').concat(conversations);
+        db.messages = db.messages.filter(item => item.shopId !== 'shop-demo').concat(messages);
+        return {
+            conversationCount,
+            messageCount,
+            targetConversationId,
+            seededConversationCount: db.conversations.filter(item => item.shopId === 'shop-demo').length,
+        };
+    });
+}
+
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: typeof value === 'string' }).click();
 }
+
+test('UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+
+    await expect(page.getByText('Demo', { exact: true })).toBeVisible();
+    await expect(page.locator('[aria-label="Dữ liệu mô phỏng"]')).toBeVisible();
+    const disclosure = page.getByRole('button', { name: 'Công cụ demo', exact: true });
+    await expect(disclosure).toBeVisible();
+    await expect(disclosure).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toBeHidden();
+
+    await disclosure.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('button', { name: 'Ẩn công cụ demo', exact: true })).toHaveAttribute('aria-expanded', 'true');
+    const roleControl = page.getByRole('combobox', { name: 'Vai trò mô phỏng' });
+    await expect(roleControl).toBeVisible();
+    await page.keyboard.press('Tab');
+    await expect(roleControl).toBeFocused();
+    await page.getByRole('button', { name: 'Ẩn công cụ demo', exact: true }).click();
+    await expect(roleControl).toBeHidden();
+
+    const composer = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
+    await expect(composer).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Danh sách hội thoại' })).toBeVisible();
+    await expect(page.getByTestId('inbox-context-panel')).toBeAttached();
+    for (const width of [320, 390, 768, 1280]) {
+        await page.setViewportSize({ width, height: 844 });
+        const documentWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+        expect(documentWidth, `document overflow at ${width}px`).toBeLessThanOrEqual(width);
+        await expect(composer).toBeVisible();
+    }
+});
 
 test('FE016 conversation keeps its composer visible while long demo context scrolls independently', async ({ page }) => {
     await page.setViewportSize({ width: 1600, height: 900 });
@@ -101,6 +177,334 @@ test('FE016.AC01 list cursor is isolated from message cursor and restored on bac
     await expect(page).toHaveURL(/cursor=cv1/);
 });
 
+test('UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    const requests: Array<{ shopId: string; resource: string; conversationId: string | null; cursor: string | null }> = [];
+    const invalidCursorResponses: string[] = [];
+    page.on('request', request => {
+        if (request.method() !== 'GET') return;
+        const url = new URL(request.url());
+        const match = url.pathname.match(/\/shops\/([^/]+)\/(conversations(?:\/([^/]+)\/messages)?)/);
+        if (match) requests.push({ shopId: match[1] || '', resource: match[2] || '', conversationId: match[3] || null, cursor: url.searchParams.get('cursor') });
+    });
+    page.on('response', response => {
+        if (response.status() === 422 && /\/(conversations|messages)(\/|\?|$)/.test(new URL(response.url()).pathname)) {
+            invalidCursorResponses.push(`${response.status()} ${response.url()}`);
+        }
+    });
+
+    const fixture = await seedInboxCursorFixture(page);
+    expect(fixture.seededConversationCount).toBe(fixture.conversationCount);
+    await expect(page.getByRole('textbox', { name: 'Tìm kiếm' })).toBeVisible();
+    await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('UI002');
+    const firstListResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('q') === 'UI002' && !url.searchParams.has('cursor');
+    });
+    await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+    const firstList = await firstListResponse;
+    expect(firstList.status()).toBe(200);
+    expect((await firstList.json()).page.total).toBe(fixture.conversationCount);
+    await expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeEnabled();
+
+    const secondListResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'ui002-conversation-40';
+    });
+    await page.getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    expect((await secondListResponse).status()).toBe(200);
+    await expect(page.getByRole('link', { name: /UI002 Conversation 41/ })).toBeVisible();
+    await test.info().attach('ui002-conversation-page-2.png', { body: await page.screenshot(), contentType: 'image/png' });
+
+    const firstMessageResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/${fixture.targetConversationId}/messages`));
+    await page.getByRole('link', { name: /UI002 Conversation 41/ }).click();
+    await expect(page).toHaveURL(/listCursor=ui002-conversation-40/);
+    expect(new URL(page.url()).searchParams.has('cursor')).toBe(false);
+    expect((await firstMessageResponse).status()).toBe(200);
+    const pageTwoConversation = page.getByRole('listitem').filter({ hasText: 'UI002 Conversation 41' });
+    await expect(pageTwoConversation).toBeVisible();
+    const firstPageRequest = requests.find(request => request.shopId === 'shop-demo' && request.resource === 'conversations' && request.cursor === 'ui002-conversation-40');
+    expect(firstPageRequest).toBeDefined();
+
+    const requestCountBeforeMessagePaging = requests.length;
+    const messagePageTwoResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/${fixture.targetConversationId}/messages`) && new URL(response.url()).searchParams.get('cursor') === 'ui002-message-100');
+    await page.getByTestId('inbox-message-list').getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    expect((await messagePageTwoResponse).status()).toBe(200);
+    await expect(page).toHaveURL(/listCursor=ui002-conversation-40.*cursor=ui002-message-100|cursor=ui002-message-100.*listCursor=ui002-conversation-40/);
+    expect(requests.slice(requestCountBeforeMessagePaging).filter(request => request.shopId === 'shop-demo' && request.resource === 'conversations')).toEqual([]);
+    await expect(page.getByTestId('inbox-message-list')).toContainText('UI002 message 105');
+    expect(invalidCursorResponses).toEqual([]);
+    await test.info().attach('ui002-message-page-2.png', { body: await page.screenshot(), contentType: 'image/png' });
+
+    const nextConversationMessageResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/ui002-conversation-42/messages'));
+    await page.getByRole('link', { name: /UI002 Conversation 42/ }).click();
+    await expect(page).toHaveURL(/listCursor=ui002-conversation-40/);
+    expect(new URL(page.url()).searchParams.has('cursor')).toBe(false);
+    expect((await nextConversationMessageResponse).status()).toBe(200);
+    await expect(page.getByRole('heading', { name: 'UI002 Conversation 42', exact: true })).toBeVisible();
+    expect(invalidCursorResponses).toEqual([]);
+
+    await page.getByRole('link', { name: /Joker Studio/ }).click();
+    await expect(page.getByRole('heading', { name: 'Chọn cửa hàng', exact: true })).toBeVisible();
+    await page.locator('a[href="/s/shop-second/overview"]').click();
+    await page.getByRole('link', { name: 'Hộp thư khách hàng', exact: true }).click();
+    await expect(page.getByRole('link', { name: /Linh \(khách mẫu\)/ })).toBeVisible();
+    const beforeOtherShopDetail = requests.length;
+    const secondShopMessages = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/shop-second/conversations/b-cv1/messages');
+    });
+    await page.getByRole('link', { name: /Linh \(khách mẫu\)/ }).click();
+    expect((await secondShopMessages).status()).toBe(200);
+    await expect(page.getByTestId('inbox-thread')).toContainText('b-cv1');
+    expect(requests.slice(beforeOtherShopDetail).filter(request => request.shopId === 'shop-second').every(request => request.cursor === null)).toBe(true);
+    await expect(page.getByText(/UI002 message/)).toHaveCount(0);
+    expect(invalidCursorResponses).toEqual([]);
+    await test.info().attach('ui002-shop-scope-requests.json', {
+        body: JSON.stringify({ fixture, requests, invalidCursorResponses, assertions: ['45 conversations paged independently from 105 messages', 'list cursor retained through message page and conversation change', 'shop-second Inbox has no shop-demo cursor or data'] }, null, 2),
+        contentType: 'application/json',
+    });
+});
+
+test('UI002 mobile keeps the list page while messages page and Back restores it', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await seedInboxCursorFixture(page);
+    await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('UI002');
+    const firstList = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('q') === 'UI002' && !url.searchParams.has('cursor');
+    });
+    await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+    expect((await firstList).status()).toBe(200);
+
+    const pageTwoList = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'ui002-conversation-40';
+    });
+    await page.getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    expect((await pageTwoList).status()).toBe(200);
+    await page.getByRole('link', { name: /UI002 Conversation 41/ }).click();
+    await expect(page).toHaveURL(/listCursor=ui002-conversation-40/);
+    await expect(page.getByRole('heading', { name: 'UI002 Conversation 41', exact: true })).toBeVisible();
+
+    const draft = 'Bản nháp giữ nguyên khi chuyển trang tin nhắn.';
+    const composer = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
+    await composer.fill(draft);
+    const pageTwoMessages = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/ui002-conversation-41/messages') && url.searchParams.get('cursor') === 'ui002-message-100';
+    });
+    await page.getByTestId('inbox-message-list').getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    expect((await pageTwoMessages).status()).toBe(200);
+    await expect(page).toHaveURL(/listCursor=ui002-conversation-40.*cursor=ui002-message-100|cursor=ui002-message-100.*listCursor=ui002-conversation-40/);
+    await expect(composer).toHaveValue(draft);
+
+    await page.getByRole('link', { name: 'Danh sách hội thoại' }).click();
+    const leaveDraft = page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' });
+    await expect(leaveDraft).toBeVisible();
+    await leaveDraft.getByRole('button', { name: 'Rời màn hình', exact: true }).click();
+    await expect(page).toHaveURL(/cursor=ui002-conversation-40/);
+    const url = new URL(page.url());
+    expect(url.searchParams.get('cursor')).toBe('ui002-conversation-40');
+    expect(url.searchParams.has('listCursor')).toBe(false);
+    await expect(page.getByRole('link', { name: /UI002 Conversation 41/ })).toBeVisible();
+});
+
+test('UI002 Inbox search resets only the list cursor while a message page is open', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    const invalidCursorResponses: string[] = [];
+    const requests: Array<{ path: string; cursor: string | null; q: string | null }> = [];
+    page.on('request', request => {
+        if (request.method() !== 'GET') return;
+        const url = new URL(request.url());
+        if (/\/shops\/shop-demo\/conversations(?:\/[^/]+\/messages)?$/.test(url.pathname)) {
+            requests.push({ path: url.pathname, cursor: url.searchParams.get('cursor'), q: url.searchParams.get('q') });
+        }
+    });
+    page.on('response', response => {
+        if (response.status() === 422 && /\/conversations(?:\/[^/]+\/messages)?$/.test(new URL(response.url()).pathname)) invalidCursorResponses.push(response.url());
+    });
+
+    await seedInboxCursorFixture(page);
+    await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('UI002');
+    const firstList = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('q') === 'UI002';
+    });
+    await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+    expect((await firstList).status()).toBe(200);
+    const pageTwoList = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'ui002-conversation-40';
+    });
+    await page.getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    expect((await pageTwoList).status()).toBe(200);
+    await page.getByRole('link', { name: /UI002 Conversation 41/ }).click();
+
+    const pageTwoMessages = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/ui002-conversation-41/messages') && url.searchParams.get('cursor') === 'ui002-message-100';
+    });
+    await page.getByTestId('inbox-message-list').getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    expect((await pageTwoMessages).status()).toBe(200);
+    await expect(page.getByTestId('inbox-message-list')).toContainText('UI002 message 105');
+
+    const requestsBeforeFilter = requests.length;
+    await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('UI002 Conversation');
+    const filteredList = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('q') === 'UI002 Conversation';
+    });
+    await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+    expect((await filteredList).status()).toBe(200);
+    const url = new URL(page.url());
+    expect(url.searchParams.has('listCursor')).toBe(false);
+    expect(url.searchParams.get('cursor')).toBe('ui002-message-100');
+    expect(requests.find(request => request.path.endsWith('/conversations') && request.q === 'UI002 Conversation')?.cursor).toBeNull();
+    expect(requests.slice(requestsBeforeFilter).filter(request => request.path.endsWith('/ui002-conversation-41/messages')).every(request => request.cursor === 'ui002-message-100')).toBe(true);
+    expect(invalidCursorResponses).toEqual([]);
+    await expect(page.getByTestId('inbox-message-list')).toContainText('UI002 message 105');
+    await test.info().attach('ui002-filter-ownership-requests.json', { body: JSON.stringify({ requests, invalidCursorResponses, finalUrl: page.url() }, null, 2), contentType: 'application/json' });
+});
+
+test('UI002 deep link, refresh and mobile Back preserve their own cursors', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const observed: Array<{ path: string; cursor: string | null }> = [];
+    const invalid: string[] = [];
+    page.on('request', request => {
+        if (request.method() !== 'GET') return;
+        const url = new URL(request.url());
+        if (/\/shops\/shop-demo\/conversations(?:\/[^/]+\/messages)?$/.test(url.pathname)) {
+            observed.push({ path: url.pathname, cursor: url.searchParams.get('cursor') });
+        }
+    });
+    page.on('response', response => {
+        if (response.status() === 422 && /\/conversations(?:\/[^/]+\/messages)?$/.test(new URL(response.url()).pathname)) invalid.push(response.url());
+    });
+
+    const deepLink = '/s/shop-demo/inbox/cv2?listCursor=cv1&cursor=m2';
+    const list = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'cv1';
+    });
+    const messages = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/cv2/messages') && url.searchParams.get('cursor') === 'm2';
+    });
+    await gotoDemo(page, deepLink);
+    expect((await list).status()).toBe(200);
+    expect((await messages).status()).toBe(200);
+    await expect(page.getByRole('heading', { name: 'Minh (khách mẫu)', exact: true })).toBeVisible();
+
+    const priorRequests = observed.length;
+    const refreshList = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'cv1';
+    });
+    const refreshMessages = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/cv2/messages') && url.searchParams.get('cursor') === 'm2';
+    });
+    await page.reload();
+    expect((await refreshList).status()).toBe(200);
+    expect((await refreshMessages).status()).toBe(200);
+    expect(observed.length).toBeGreaterThan(priorRequests);
+    await expect(page).toHaveURL(/listCursor=cv1.*cursor=m2|cursor=m2.*listCursor=cv1/);
+
+    await page.getByRole('link', { name: 'Danh sách hội thoại' }).click();
+    await expect(page).toHaveURL(/\/inbox\?cursor=cv1/);
+    await expect(page.getByRole('link', { name: 'Minh (khách mẫu)' })).toBeVisible();
+    const listUrl = new URL(page.url());
+    expect(listUrl.searchParams.get('cursor')).toBe('cv1');
+    expect(listUrl.searchParams.has('listCursor')).toBe(false);
+    expect(invalid).toEqual([]);
+    await test.info().attach('ui002-deeplink-refresh-mobile.json', { body: JSON.stringify({ deepLink, requests: observed, invalid }, null, 2), contentType: 'application/json' });
+});
+
+test('UI002 list and message panel errors remain isolated', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await gotoDemo(page, '/s/shop-demo/inbox/cv2');
+    await page.evaluate(async () => {
+        const { setOperationFailure } = await import('/src/mocks/service.ts');
+        setOperationFailure('listConversations', { status: 503, code: 'UI002_LIST_FAILURE', message: 'UI002_LIST_FAILURE' });
+    });
+    await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('force-list-error');
+    await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+    await expect(page.getByRole('alert').filter({ hasText: 'UI002_LIST_FAILURE' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Minh (khách mẫu)', exact: true })).toBeVisible();
+    await expect(page.getByTestId('inbox-message-list')).toContainText('Mình muốn đổi size của đơn hàng.');
+
+    await gotoDemo(page, '/s/shop-demo/inbox/cv2');
+    await page.evaluate(async () => {
+        const { setOperationFailure } = await import('/src/mocks/service.ts');
+        setOperationFailure('listMessages', { status: 503, code: 'UI002_MESSAGE_FAILURE', message: 'UI002_MESSAGE_FAILURE' });
+    });
+    await page.getByRole('link', { name: /Linh \(khách mẫu\)/ }).click();
+    await expect(page.getByRole('alert').filter({ hasText: 'UI002_MESSAGE_FAILURE' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible();
+    await expect(page.getByRole('listitem').filter({ hasText: 'Minh (khách mẫu)' })).toBeVisible();
+});
+
+test('UI002 send, invalidation and resync keep both cursors and send only once', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    const calls: Array<{ method: string; path: string; cursor: string | null; body: string | null }> = [];
+    const invalidCursorResponses: string[] = [];
+    let sendCount = 0;
+    page.on('request', request => {
+        const url = new URL(request.url());
+        if (!url.pathname.includes('/conversations')) return;
+        if (request.method() === 'POST' && url.pathname.endsWith('/ui002-conversation-41/messages')) sendCount++;
+        calls.push({ method: request.method(), path: url.pathname, cursor: url.searchParams.get('cursor'), body: request.postData() });
+    });
+    page.on('response', response => {
+        if (response.status() === 422 && /\/(conversations|messages)(\/|\?|$)/.test(new URL(response.url()).pathname)) invalidCursorResponses.push(response.url());
+    });
+
+    await seedInboxCursorFixture(page);
+    await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('UI002');
+    const firstList = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('q') === 'UI002';
+    });
+    await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+    expect((await firstList).status()).toBe(200);
+    const pageTwoList = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'ui002-conversation-40';
+    });
+    await page.getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    expect((await pageTwoList).status()).toBe(200);
+    await page.getByRole('link', { name: /UI002 Conversation 41/ }).click();
+    await expect(page).toHaveURL(/listCursor=ui002-conversation-40/);
+
+    const draft = 'Phản hồi thử sau khi xác nhận đúng cửa hàng.';
+    const composer = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
+    await composer.fill(draft);
+    const pageTwoMessages = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname.endsWith('/ui002-conversation-41/messages') && url.searchParams.get('cursor') === 'ui002-message-100';
+    });
+    await page.getByTestId('inbox-message-list').getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+    expect((await pageTwoMessages).status()).toBe(200);
+    await expect(composer).toHaveValue(draft);
+
+    const requestStart = calls.length;
+    const sendRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/ui002-conversation-41/messages'));
+    const sendResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/ui002-conversation-41/messages'));
+    await page.getByRole('button', { name: 'Gửi trả lời', exact: true }).dblclick({ delay: 30 });
+    const posted = await sendRequest;
+    expect(JSON.parse(posted.postData() || 'null')).toMatchObject({ text: draft, expectedConversationVersion: 1 });
+    expect((await sendResponse).status()).toBe(202);
+    expect(sendCount).toBe(1);
+    await expect(composer).toHaveValue('');
+    await expect(page).toHaveURL(/listCursor=ui002-conversation-40.*cursor=ui002-message-100|cursor=ui002-message-100.*listCursor=ui002-conversation-40/);
+    await expect.poll(() => calls.slice(requestStart).some(call => call.method === 'GET' && call.path.endsWith('/conversations') && call.cursor === 'ui002-conversation-40')).toBe(true);
+    await expect.poll(() => calls.slice(requestStart).some(call => call.method === 'GET' && call.path.endsWith('/ui002-conversation-41/messages') && call.cursor === 'ui002-message-100')).toBe(true);
+    expect(calls.filter(call => call.method === 'POST').length).toBe(1);
+    expect(invalidCursorResponses).toEqual([]);
+    await test.info().attach('ui002-send-resync-requests.json', { body: JSON.stringify({ calls, sendCount, invalidCursorResponses }, null, 2), contentType: 'application/json' });
+});
+
 test('FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
     await page.getByRole('button', { name: 'Tiếp quản', exact: true }).click();
@@ -148,7 +552,7 @@ test('FE016.AC02 internal notes render HTML-like text inert and feedback creates
     page.on('request', request => {
         if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/knowledge')) publishedWrites.push(request.url());
     });
-    await page.getByRole('button', { name: 'Đánh giá', exact: true }).first().click();
+    await page.getByRole('button', { name: /^Đánh giá tin nhắn/ }).first().click();
     const feedbackDialog = page.getByRole('dialog', { name: 'Đánh giá câu trả lời' });
     await feedbackDialog.getByRole('textbox', { name: 'Nội dung đề xuất sửa' }).fill('Cần nhân viên xác minh nội dung trước khi duyệt.');
     const feedbackResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/feedback'));

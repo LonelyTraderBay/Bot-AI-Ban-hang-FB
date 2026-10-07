@@ -10,8 +10,10 @@ import {Alert,Button,CssBaseline,TextField,ThemeProvider} from '@mui/material';
 import {MemoryRouter,useSearchParams} from 'react-router-dom';
 import {colors,tokens} from '@botsales/tokens';
 import {theme} from '../src/shared/ui/theme';
-import {DataTable,EditDialog,Empty,ErrorNotice,Pager,Panel,QueryState,Status,Toolbar} from '../src/shared/ui/components';
+import {CopyableCode,DataTable,EditDialog,Empty,ErrorNotice,Pager,Panel,PartialDataNotice,QueryState,Status,Toolbar} from '../src/shared/ui/components';
 import {UnknownResultError} from '../src/shared/api/errors';
+import {useListQuery} from '../src/shared/model/filters';
+import type {QueryOperationId} from '../src/shared/api/client';
 import {auditAppDesignSource,readProjectFile} from '../../../tests/design/palette-guard.mjs';
 
 function renderWithTheme(ui: ReactNode) {
@@ -23,6 +25,11 @@ afterEach(cleanup);
 function QueryProbe() {
     const [params] = useSearchParams();
     return <output aria-label="Bộ lọc">{params.toString()}</output>;
+}
+
+function ApiQueryProbe({operation}: {operation: QueryOperationId}) {
+    const query=useListQuery(operation);
+    return <output aria-label={operation}>{JSON.stringify(query)}</output>;
 }
 
 function contrastRatio(foreground: string, background: string) {
@@ -42,6 +49,11 @@ function DialogHarness({ onClose }: { onClose: () => void }) {
             <TextField label="Tên khách hàng" error helperText="Tên là bắt buộc"/>
         </EditDialog>
     </>;
+}
+
+function LayoutDialogHarness() {
+    const [open,setOpen]=useState(false);
+    return <><Button onClick={()=>setOpen(true)}>Mở dialog layout</Button><EditDialog open={open} title="Dialog bố cục" description="Khoảng cách mô tả được giữ theo semantic role." onClose={()=>setOpen(false)} actions={<><Button>Hủy bản nháp</Button><Button>Lưu thay đổi</Button></>}><TextField label="Tên đối tượng"/></EditDialog></>;
 }
 
 describe('Graphite Gold theme contract',()=>{
@@ -91,6 +103,7 @@ describe('Graphite Gold theme contract',()=>{
     it('loads canonical dark tokens and bootstrap before application JavaScript',()=>{
         const html=readProjectFile('apps/web/index.html');
         const bootstrap=readProjectFile('apps/web/src/app/bootstrap.css');
+        const generatedTokens=readProjectFile('apps/web/src/app/tokens.css');
         expect(html).toContain('<html lang="vi">');
         expect(html).toContain('<meta name="color-scheme" content="dark"/>');
         expect(html.indexOf('/src/app/tokens.css')).toBeLessThan(html.indexOf('/src/app/bootstrap.css'));
@@ -99,8 +112,9 @@ describe('Graphite Gold theme contract',()=>{
         expect(bootstrap).toContain('body,#root{min-height:100%;background-color:var(--color-canvas)');
         expect(bootstrap).toContain('scrollbar-color:var(--color-raised) var(--color-canvas)');
         expect(bootstrap).toContain(`animation-duration:${tokens.motion.reducedMotionMs}ms!important;transition-duration:${tokens.motion.reducedMotionMs}ms!important`);
-        const bootstrapFont=bootstrap.match(/font-family:([^;}]+)/)?.[1].split(',').map(font=>font.trim()).join(',');
-        expect(bootstrapFont).toBe(tokens.fontFamily.split(',').map(font=>font.trim()).join(','));
+        expect(bootstrap).toContain('font-family:var(--font-family)');
+        const generatedFont=generatedTokens.match(/--font-family:([^;]+);/)?.[1].split(',').map(font=>font.trim()).join(',');
+        expect(generatedFont).toBe(tokens.fontFamily.split(',').map(font=>font.trim()).join(','));
         expect(bootstrap).toContain('@media(forced-colors:active)');
     });
 
@@ -121,6 +135,22 @@ describe('Graphite Gold theme contract',()=>{
 });
 
 describe('Accessible shared presentation',()=>{
+    it('keeps copyable identifiers wrapped, spaced by the semantic role, and announces clipboard feedback',async()=>{
+        const user=userEvent.setup();
+        const writeText=vi.fn().mockResolvedValue(undefined);
+        Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText}});
+        const longCode='ORDER-2026-VERY-LONG-IDENTIFIER-THAT-MUST-WRAP';
+        renderWithTheme(<CopyableCode value={longCode} label="mã đơn"/>);
+        const code=screen.getByText(longCode);
+        const row=code.parentElement;
+        expect(row).not.toBeNull();
+        expect(getComputedStyle(row!).gap).toBe(`${tokens.space.xs}px`);
+        expect(getComputedStyle(code).overflowWrap).toBe('anywhere');
+        await user.click(screen.getByRole('button',{name:'Sao chép mã đơn'}));
+        await waitFor(()=>expect(screen.getByRole('status')).toHaveTextContent('Đã sao chép mã đơn.'));
+        expect(writeText).toHaveBeenCalledWith(longCode);
+    });
+
     it('uses the canonical touch target for primary controls',()=>{
         renderWithTheme(<Button>Thao tác</Button>);
         expect(getComputedStyle(screen.getByRole('button')).minHeight).toBe(`${tokens.layout.touchTarget}px`);
@@ -160,9 +190,48 @@ describe('Accessible shared presentation',()=>{
         expect(refetch).toHaveBeenCalledOnce();
     });
 
+    it('uses semantic layout roles for empty, loading, and notice states',()=>{
+        const loading=renderWithTheme(<QueryState query={{isPending:true,isError:false,error:null,refetch:vi.fn()}}>Nội dung</QueryState>);
+        const loader=screen.getByRole('progressbar',{name:'Đang tải dữ liệu'}).closest('.MuiStack-root');
+        expect(loader).not.toBeNull();
+        expect(getComputedStyle(loader!).gap).toBe(`${tokens.space.lg}px`);
+        expect(getComputedStyle(loader!).minHeight).not.toBe('240px');
+        loading.unmount();
+        renderWithTheme(<QueryState pendingProfile="section" query={{isPending:true,isError:false,error:null,refetch:vi.fn()}}>Nội dung</QueryState>);
+        const sectionLoader=screen.getByRole('progressbar',{name:'Đang tải dữ liệu'}).closest('.MuiStack-root');
+        expect(sectionLoader).not.toBeNull();
+        expect(getComputedStyle(sectionLoader!).minHeight).toBe('240px');
+        cleanup();
+        renderWithTheme(<><Empty text="Chưa có dòng dữ liệu."/><PartialDataNotice>Chưa tải đủ dữ liệu.</PartialDataNotice><ErrorNotice error={new Error('Không thể tải')}/></>);
+        const empty=screen.getByText('Chưa có dòng dữ liệu.').parentElement;
+        expect(empty).not.toBeNull();
+        expect(getComputedStyle(empty!).gap).toBe(`${tokens.space.lg}px`);
+        expect(getComputedStyle(empty!).paddingLeft).toBe(`${tokens.space.lg}px`);
+        expect(getComputedStyle(screen.getByText('Chưa tải đủ dữ liệu.').closest('[role="status"]')!).marginBottom).toBe(`${tokens.space.lg}px`);
+        expect(getComputedStyle(screen.getByRole('alert')).marginBottom).toBe(`${tokens.space.lg}px`);
+    });
+
+    it('sets dialog insets and action gap explicitly instead of inheriting button margins',async()=>{
+        const user=userEvent.setup();
+        renderWithTheme(<LayoutDialogHarness/>);
+        await user.click(screen.getByRole('button',{name:'Mở dialog layout'}));
+        const dialog=screen.getByRole('dialog',{name:'Dialog bố cục'});
+        const content=dialog.querySelector('.MuiDialogContent-root');
+        const actions=dialog.querySelector('.MuiDialogActions-root');
+        const description=dialog.querySelector('[id$="-description"]');
+        expect(content).not.toBeNull();
+        expect(actions).not.toBeNull();
+        expect(['16px','24px']).toContain(getComputedStyle(content!).paddingLeft);
+        expect(['16px','32px']).toContain(getComputedStyle(dialog).marginLeft);
+        expect(getComputedStyle(description!).marginBottom).toBe(`${tokens.space.lg}px`);
+        expect(getComputedStyle(actions!).padding).toBe(`${tokens.space.lg}px`);
+        expect(getComputedStyle(actions!).gap).toBe(`${tokens.space.sm}px`);
+        expect(getComputedStyle(actions!.querySelectorAll('button')[1]).marginLeft).toBe('0px');
+    });
+
     it('clears search, cursor, and returns focus while preserving other filters',async()=>{
         const user=userEvent.setup();
-        renderWithTheme(<MemoryRouter initialEntries={['/s/shop/orders?status=open&cursor=next&q=old']}><Toolbar placeholder="Tìm mã đơn"/><QueryProbe/></MemoryRouter>);
+        renderWithTheme(<MemoryRouter initialEntries={['/s/shop/orders?status=open&cursor=next&q=old']}><Toolbar operation="listOrders" placeholder="Tìm mã đơn"/><QueryProbe/></MemoryRouter>);
         const input=screen.getByRole('textbox',{name:'Tìm kiếm'});
         await user.click(screen.getByRole('button',{name:'Xóa tìm kiếm'}));
         expect(input).toHaveFocus();
@@ -170,6 +239,17 @@ describe('Accessible shared presentation',()=>{
         await user.type(input,'  don-123  ');
         await user.click(screen.getByRole('button',{name:'Tìm kiếm'}));
         expect(screen.getByLabelText('Bộ lọc')).toHaveTextContent('status=open&q=don-123');
+    });
+
+    it('binds list query fields and search controls to each OpenAPI operation',()=>{
+        renderWithTheme(<MemoryRouter initialEntries={['/s/shop-demo/fulfillment?orderId=DH-1001&kind=adjustment&q=sku&warehouseId=warehouse-01&variantId=v-p1&cursor=next']}>
+            <ApiQueryProbe operation="listPrepJobs"/><ApiQueryProbe operation="listStockMovements"/>
+            <Toolbar operation="listPrepJobs"/><Toolbar operation="listStockMovements"/>
+        </MemoryRouter>);
+
+        expect(JSON.parse(screen.getByLabelText('listPrepJobs').textContent || 'null')).toEqual({limit:20,cursor:'next'});
+        expect(JSON.parse(screen.getByLabelText('listStockMovements').textContent || 'null')).toEqual({limit:20,cursor:'next',q:'sku',warehouseId:'warehouse-01',variantId:'v-p1'});
+        expect(screen.getAllByRole('textbox',{name:'Tìm kiếm'})).toHaveLength(1);
     });
 
     it('moves between cursor pages without dropping unrelated query filters',async()=>{
@@ -181,8 +261,16 @@ describe('Accessible shared presentation',()=>{
         expect(screen.getByLabelText('Bộ lọc')).toHaveTextContent('status=active');
     });
 
+    it.each([null, ''] as const)('disables next when the page claims more results but has no usable cursor (%s)',async nextCursor=>{
+        renderWithTheme(<MemoryRouter initialEntries={['/s/shop/categories?status=active&cursor=current']}><Pager page={{limit:20,total:25,hasMore:true,nextCursor}}/><QueryProbe/></MemoryRouter>);
+        const next=screen.getByRole('button',{name:'Trang tiếp'});
+        const initiallyDisabled=(next as HTMLButtonElement).disabled;
+        expect(initiallyDisabled).toBe(true);
+        expect(screen.getByLabelText('Bộ lọc')).toHaveTextContent('status=active&cursor=current');
+    });
+
     it('does not submit an unfinished IME composition',()=>{
-        renderWithTheme(<MemoryRouter><Toolbar/><QueryProbe/></MemoryRouter>);
+        renderWithTheme(<MemoryRouter><Toolbar operation="listProducts"/><QueryProbe/></MemoryRouter>);
         const input=screen.getByRole('textbox',{name:'Tìm kiếm'});
         const event=new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true,isComposing:true});
         fireEvent(input,event);
@@ -209,7 +297,7 @@ describe('Accessible shared presentation',()=>{
     });
 
     it('has no axe violations in the shared table, status, and search states',async()=>{
-        const {container}=renderWithTheme(<MemoryRouter><Toolbar/><Status value="active"/><DataTable rows={[{id:'1',name:'Sản phẩm mẫu'}]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách sản phẩm"/></MemoryRouter>);
+        const {container}=renderWithTheme(<MemoryRouter><Toolbar operation="listProducts"/><Status value="active"/><DataTable rows={[{id:'1',name:'Sản phẩm mẫu'}]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách sản phẩm"/></MemoryRouter>);
         const results=await axe.run(container,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']},rules:{'color-contrast':{enabled:false}}});
         expect(results.violations.map(issue=>issue.id)).toEqual([]);
     });

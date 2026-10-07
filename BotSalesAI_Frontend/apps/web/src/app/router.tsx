@@ -1,3 +1,4 @@
+import { ActionGroup } from '../shared/ui/composition';
 import { lazy, Suspense } from 'react';
 import type { ComponentType, ReactNode } from 'react';
 import { createBrowserRouter, Navigate, useLocation, useRouteError, Link as RouterLink } from 'react-router-dom';
@@ -8,6 +9,7 @@ import { useScope } from '@/shared/model/scope';
 import { useSession } from '@/shared/model/auth';
 import { assertSchema } from '@/shared/api/validation';
 import Shell from './Shell';
+import { layoutSx } from '@/shared/ui/layout';
 const LoginPage = lazy(() => import('../modules/workspace').then(m => ({ default: m.LoginPage })));
 const WorkspacesPage = lazy(() => import('../modules/workspace').then(m => ({ default: m.WorkspacesPage })));
 const OnboardingPage = lazy(() => import('../modules/workspace').then(m => ({ default: m.OnboardingPage })));
@@ -18,8 +20,8 @@ const CustomerPage = lazy(() => import('../modules/customers').then(m => ({ defa
 const ProductsPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ProductsPage })));
 const ProductEditorPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ProductEditorPage })));
 const CategoriesPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.CategoriesPage })));
-const ImportsPage = lazy(() => import('../modules/catalog/imports').then(m => ({ default: m.ImportsPage })));
-const ImportResultPage = lazy(() => import('../modules/catalog/imports').then(m => ({ default: m.ImportResultPage })));
+const ImportsPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ImportsPage })));
+const ImportResultPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ImportResultPage })));
 const InventoryPage = lazy(() => import('../modules/inventory').then(m => ({ default: m.InventoryPage })));
 const MovementsPage = lazy(() => import('../modules/inventory').then(m => ({ default: m.MovementsPage })));
 const OrdersPage = lazy(() => import('../modules/orders').then(m => ({ default: m.OrdersPage })));
@@ -125,7 +127,12 @@ export const pages: Record<string, ComponentType> = {
     R53: MarketingPage,
     R54: ServiceCasesPage,
 };
-function Loading() { return <Box sx={{ p: 3 }} role="status"><LinearProgress aria-label="Đang tải màn hình" /></Box>; }
+function Loading({ inset = false }: { inset?: boolean }) {
+    const progress = <LinearProgress aria-label="Đang tải màn hình" />;
+    return inset
+        ? <Box sx={layoutSx.shell.pageFallbackInset} role="status">{progress}</Box>
+        : <Box role="status">{progress}</Box>;
+}
 function PermissionGate({ permission, children }: {
     permission: string | null;
     children: ReactNode;
@@ -140,12 +147,26 @@ function GlobalGate({ children }: {
 }) { const auth = useSession(); if (auth.loading)
     return <Loading />; if (!auth.session)
     return <Navigate to="/login" replace/>; return <>{children}</>; }
-function RouteError() { const error = useRouteError(); const location = useLocation(); const shopScoped = location.pathname.startsWith('/s/'); return <Box component={shopScoped ? 'div' : 'main'} id={shopScoped ? undefined : 'main-content'} tabIndex={-1} sx={{ p: 4, outline: 'none' }}><Typography component="h1" variant="h5">Không thể mở màn hình</Typography><Alert severity="error" sx={{ my: 2 }}>Có lỗi tải hoặc hiển thị. Bản nháp chưa gửi không được coi là đã lưu. {error instanceof Error ? 'Mở nhật ký đã khử dữ liệu nhạy cảm để chẩn đoán.' : ''}</Alert><Stack direction="row" gap={1}><Button onClick={() => window.location.reload()}>Tải lại</Button><Button component={RouterLink} to="/workspaces">Chọn cửa hàng</Button></Stack></Box>; }
-function NotFound() { return <Box component="main" id="main-content" tabIndex={-1} sx={{ p: 4, outline: 'none' }}><Typography variant="h4" component="h1">Không tìm thấy trang</Typography><Button component={RouterLink} to="/workspaces">Về cửa hàng</Button></Box>; }
+function RouteError() {
+    const error = useRouteError();
+    const shopScoped = useLocation().pathname.startsWith('/s/');
+    const content = <Stack sx={layoutSx.query.stateGap}>
+        <Typography component="h1" variant="h5">Không thể mở màn hình</Typography>
+        <Alert severity="error">Có lỗi tải hoặc hiển thị. Bản nháp chưa gửi không được coi là đã lưu. {error instanceof Error ? 'Mở nhật ký đã khử dữ liệu nhạy cảm để chẩn đoán.' : ''}</Alert>
+        <ActionGroup direction="row" >
+            <Button onClick={() => window.location.reload()}>Tải lại</Button>
+            <Button component={RouterLink} to="/workspaces">Chọn cửa hàng</Button>
+        </ActionGroup>
+    </Stack>;
+    return shopScoped
+        ? <Box component="div" tabIndex={-1} sx={{ outline: 'none' }}>{content}</Box>
+        : <Box component="main" id="main-content" tabIndex={-1} sx={[layoutSx.shell.pageFallbackInset, { outline: 'none' }]}>{content}</Box>;
+}
+function NotFound() { return <Box component="main" id="main-content" tabIndex={-1} sx={[layoutSx.shell.pageFallbackInset, { outline: 'none' }]}><Typography variant="h4" component="h1">Không tìm thấy trang</Typography><Button component={RouterLink} to="/workspaces">Về cửa hàng</Button></Box>; }
 export const router = createBrowserRouter([
     { path: '/', element: <Navigate to="/workspaces" replace/> },
     ...routeManifest.routes.filter(r => !r.path.startsWith('/s/')).map(r => { const Page = pages[r.id]; if (!Page)
-        throw new Error('Thiếu màn hình ' + r.id); const page = <Suspense fallback={<Loading />}><Page /></Suspense>; return { path: r.path, element: r.id === 'R01' ? page : <GlobalGate>{page}</GlobalGate>, errorElement: <RouteError /> }; }),
+        throw new Error('Thiếu màn hình ' + r.id); const page = <Suspense fallback={<Loading inset />}><Page /></Suspense>; return { path: r.path, element: r.id === 'R01' ? page : <GlobalGate>{page}</GlobalGate>, errorElement: <RouteError /> }; }),
     {
         path: '/s/:shopId', element: <Shell />, errorElement: <RouteError />, children: [
             { index: true, element: <Navigate to="overview" replace/> },

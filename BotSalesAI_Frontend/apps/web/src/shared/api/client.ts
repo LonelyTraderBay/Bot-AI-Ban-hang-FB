@@ -1,12 +1,25 @@
 import { API_BASE_PATH, operations } from '@botsales/contracts';
-import type { OperationId, Operations, RequestOf, ResponseOf, Problem } from '@botsales/contracts';
+import type { Csrf, OperationId, Operations, RequestOf, ResponseOf, Problem } from '@botsales/contracts';
 import { ApiError, UnknownResultError } from './errors';
-import { assertSchema } from './validation';
+import { assertParameterSchema, assertSchema } from './validation';
 import { rememberUnknown } from './intents';
 let csrfToken = '';
 let scopeEpoch = 0;
 const activeRequests = new Set<AbortController>();
-export function setCsrfToken(token: string) { csrfToken = token; }
+export function setCsrfToken(token: string) {
+    if (token === '') {
+        csrfToken = '';
+        return;
+    }
+    try {
+        assertSchema<Csrf>('Csrf', { csrfToken: token });
+        csrfToken = token;
+    }
+    catch {
+        csrfToken = '';
+        throw new ApiError(400, 'CSRF_TOKEN_INVALID', 'Mã bảo vệ phiên không đúng hợp đồng; hãy tải lại phiên.');
+    }
+}
 export function cancelScopeRequests() {
     scopeEpoch += 1;
     for (const controller of activeRequests)
@@ -54,14 +67,47 @@ export type ApiArguments<K extends MutationOperationId> = Operations[K]['version
         ? [options?: ApiOptions<K>]
         : [options: ApiOptions<K>];
 export function operationUrl(op: OperationId, path: object = {}, query: object = {}) {
+    const spec = operations[op];
     const pathValues = path as Record<string, string>;
     const queryValues = query as Record<string, string | number | boolean | null | undefined>;
-    const resolved = operations[op].path.replace(/\{([^}]+)\}/g, (_, key: string) => {
+    for (const parameter of spec.pathParameters) {
+        const value = pathValues[parameter.name];
+        if (parameter.required && (typeof value !== 'string' || value === ''))
+            throw new ApiError(400, 'PATH_PARAMETER_REQUIRED', `Thiếu tham số ${parameter.name} cho ${op}.`);
+        if (value !== undefined) {
+            try {
+                assertParameterSchema(parameter.schema, value, parameter.name);
+            }
+            catch {
+                throw new ApiError(400, 'PATH_PARAMETER_INVALID', `Tham số ${parameter.name} không đúng hợp đồng API.`);
+            }
+        }
+    }
+    for (const name of Object.keys(pathValues))
+        if (!spec.pathParameters.some(parameter => parameter.name === name))
+            throw new ApiError(400, 'PATH_PARAMETER_UNKNOWN', `Tham số ${name} không được hỗ trợ cho ${op}.`);
+    const resolved = spec.path.replace(/\{([^}]+)\}/g, (_, key: string) => {
         if (!pathValues[key])
             throw new Error(`Thiếu tham số ${key} cho ${op}`);
         return encodeURIComponent(pathValues[key]);
     });
     const qs = new URLSearchParams();
+    for (const name of Object.keys(queryValues))
+        if (!spec.queryParameters.some(parameter => parameter.name === name))
+            throw new ApiError(400, 'QUERY_PARAMETER_UNKNOWN', `Tham số ${name} không được hỗ trợ cho ${op}.`);
+    for (const parameter of spec.queryParameters) {
+        const value = queryValues[parameter.name];
+        if (parameter.required && (value === undefined || value === null || value === ''))
+            throw new ApiError(400, 'QUERY_PARAMETER_REQUIRED', `Thiếu tham số ${parameter.name} cho ${op}.`);
+        if (value !== undefined && value !== null && value !== '') {
+            try {
+                assertParameterSchema(parameter.schema, value, parameter.name);
+            }
+            catch {
+                throw new ApiError(400, 'QUERY_PARAMETER_INVALID', `Tham số ${parameter.name} không đúng hợp đồng API.`);
+            }
+        }
+    }
     for (const [k, v] of Object.entries(queryValues))
         if (v !== undefined && v !== null && v !== '')
             qs.set(k, String(v));
@@ -88,8 +134,36 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
         throw new ApiError(400, 'REQUEST_BODY_INVALID', 'Biểu mẫu multipart không được hỗ trợ cho thao tác này.');
     if (spec.headers.some(header => header.name === 'If-Match' && header.required) && options.version === undefined)
         throw new ApiError(428, 'VERSION_REQUIRED', 'Thao tác này cần phiên bản hiện tại của dữ liệu.');
+    if (spec.headers.some(header => header.name === 'If-Match' && header.required) && (!Number.isSafeInteger(options.version) || (options.version || 0) < 1))
+        throw new ApiError(400, 'VERSION_INVALID', 'Phiên bản dữ liệu phải là số nguyên dương an toàn.');
     if (mutation && !csrfToken)
         throw new ApiError(0, 'CSRF_TOKEN_MISSING', 'Phiên chưa sẵn sàng để gửi thay đổi. Hãy tải lại phiên rồi thử lại.');
+    const idempotencyParameter = spec.headers.find(header => header.name === 'Idempotency-Key');
+    if (options.idempotencyKey && !idempotencyParameter)
+        throw new ApiError(400, 'IDEMPOTENCY_KEY_UNSUPPORTED', `Thao tác ${op} không khai báo Idempotency-Key trong hợp đồng.`);
+    const intent = options.idempotencyKey || (idempotencyParameter ? crypto.randomUUID() : undefined);
+    if (mutation) {
+        const csrfParameter = spec.headers.find(header => header.name === 'X-CSRF-Token');
+        if (!csrfParameter?.required || !csrfParameter.schema)
+            throw new ApiError(0, 'REQUEST_CONTRACT_INVALID', 'Thiếu schema bắt buộc cho header X-CSRF-Token trong hợp đồng API.');
+        try {
+            assertParameterSchema(csrfParameter.schema, csrfToken, 'X-CSRF-Token');
+        }
+        catch {
+            throw new ApiError(400, 'CSRF_TOKEN_INVALID', 'Header X-CSRF-Token không đúng hợp đồng API.');
+        }
+        if (idempotencyParameter?.required) {
+            if (!idempotencyParameter.schema || !intent)
+                throw new ApiError(0, 'REQUEST_CONTRACT_INVALID', 'Thiếu schema bắt buộc cho header Idempotency-Key trong hợp đồng API.');
+            try {
+                assertParameterSchema(idempotencyParameter.schema, intent, 'Idempotency-Key');
+            }
+            catch {
+                throw new ApiError(400, 'IDEMPOTENCY_KEY_INVALID', 'Header Idempotency-Key không đúng hợp đồng API.');
+            }
+        }
+    }
+    const url = operationUrl(op, options.path, options.query);
     const epoch = scopeEpoch;
     const controller = new AbortController();
     activeRequests.add(controller);
@@ -99,11 +173,11 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
         controller.abort();
     let timedOut = false;
     const timeout = setTimeout(() => { timedOut = true; controller.abort('timeout'); }, 25000);
-    const intent = options.idempotencyKey || crypto.randomUUID();
     const headers: Record<string, string> = { Accept: 'application/json', 'X-Request-ID': crypto.randomUUID() };
     if (mutation) {
         headers['X-CSRF-Token'] = csrfToken;
-        headers['Idempotency-Key'] = intent;
+        if (idempotencyParameter && intent)
+            headers['Idempotency-Key'] = intent;
     }
     if (options.version !== undefined)
         headers['If-Match'] = '"' + options.version + '"';
@@ -120,7 +194,6 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
             headers['Content-Type'] = 'application/json';
             body = JSON.stringify(options.body);
         }
-        const url = operationUrl(op, options.path, options.query);
         if (controller.signal.aborted)
             throw new DOMException('Yêu cầu đã bị hủy trước khi gửi.', 'AbortError');
         sent = true;
@@ -157,7 +230,7 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
         return raw as ResponseOf<K>; // sole decoded boundary; runtime schema validated immediately above
     }
     catch (error) {
-        if (mutation && sent && (!(error instanceof ApiError) || error.status >= 500 || error.status < 300)) {
+        if (mutation && sent && idempotencyParameter?.required && intent && (!(error instanceof ApiError) || error.status >= 500 || error.status < 300)) {
             const commandId = error instanceof ApiError ? error.problem?.commandId : undefined;
             rememberUnknown({ intentId: intent, shopId: options.path?.shopId || '', operation: op, commandId: commandId || null });
             throw new UnknownResultError(intent, commandId);

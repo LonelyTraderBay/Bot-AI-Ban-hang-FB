@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { ActionGroup, FormFields } from '../../shared/ui/composition';
+import { useEffect, useState } from 'react';
+import { visualSx } from '@/shared/ui/visual';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, Checkbox, FormControlLabel, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import type { ShipmentEventWrite } from '@botsales/contracts';
-import { useApi, useCommand } from '@/shared/api/hooks';
+import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
 import { useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
-import { dateTime } from '@/shared/model/format';
-import { Amount, PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine } from '@/shared/ui/components';
+import { dateTime, dateTimeLocalInput, dateTimeLocalToISOString } from '@/shared/model/format';
+import { layoutSx } from '@/shared/ui/layout';
+import { Amount, PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
 
 type ShipmentDialogMode = 'view' | 'handover' | 'event';
 
@@ -18,21 +21,17 @@ const shipmentEventOptions: Array<{ value: ShipmentEventWrite['eventType']; labe
     { value: 'returned', label: 'Đã hoàn về' },
 ];
 
-function localDateTimeValue(value: Date) {
-    return new Date(value.getTime() - value.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
-}
-
 export function FulfillmentPage() {
     const { shop } = useScope();
-    const query = useListQuery();
+    const query = useListQuery('listPrepJobs');
     const list = useApi('listPrepJobs', { query });
     const [selected, setSelected] = useState<string | null>(null);
 
     return <>
         <PageHeader title="Chuẩn bị hàng" subtitle="Nhận việc, lấy đúng SKU, kiểm đủ số lượng rồi đóng gói." actions={<RouteLink to={`/s/${shop.id}/shipments`}>Vận đơn & bàn giao</RouteLink>} />
         <Panel>
-            <Toolbar />
-            <QueryState query={list}>
+            <Toolbar operation="listPrepJobs" />
+            <QueryState query={list} pendingProfile="section">
                 {list.data && <>
                     <DataTable rows={list.data.data} rowKey={prep => prep.id} columns={[
                         { key: 'order', label: 'Đơn hàng', render: prep => <RouteLink to={`/s/${shop.id}/orders/${prep.orderId}`}>{prep.orderId}</RouteLink> },
@@ -75,7 +74,7 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
         <EditDialog open title={`Phiếu chuẩn bị ${prep?.orderId || ''}`} onClose={onClose} busy={pick.pending || claim.pending} draftCommit={draftCommit} actions={<Button onClick={onClose}>Đóng</Button>}>
             <ErrorNotice error={claim.error || pick.error || task.error} />
             <QueryState query={get}>
-                {prep && <Stack gap={2}>
+                {prep && <FormFields >
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Status value={prep.state} />
                         <RouteLink to={`/s/${shop.id}/orders/${prep.orderId}`}>Chi tiết đơn</RouteLink>
@@ -107,13 +106,13 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
                         const issue = issues[line.orderLineId] || '';
                         const canEdit = assigned && ['claimed', 'picking'].includes(prep.state);
 
-                        return <Box key={line.orderLineId} data-draft-scope={line.orderLineId} sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 2 }}>
-                            <Stack direction="row" justifyContent="space-between" gap={2}>
-                                <Typography fontWeight={650}>{line.sku}</Typography>
+                        return <Box key={line.orderLineId} data-draft-scope={line.orderLineId} sx={{ ...layoutSx.surface.inset, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.dialog }}>
+                            <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}>
+                                <Typography fontWeight={visualSx.typography.fontWeight.strong}>{line.sku}</Typography>
                                 <Typography>{line.pickedQuantity}/{line.requiredQuantity}</Typography>
                             </Stack>
-                            {line.hasIssue && <Alert severity="warning" sx={{ mt: 1 }}>Dòng hàng còn vấn đề cần xử lý.</Alert>}
-                            <Stack gap={1.5} sx={{ mt: 2 }}>
+                            {line.hasIssue && <Alert severity="warning" sx={layoutSx.notice.contentGap}>Dòng hàng còn vấn đề cần xử lý.</Alert>}
+                            <FormFields beforeGap="surface">
                                 <TextField label="Nhập/quét SKU thực tế" value={scan} onChange={event => setScans(current => ({ ...current, [line.orderLineId]: event.target.value }))} disabled={!canEdit} inputProps={{ maxLength: 100 }} />
                                 <TextField
                                     label="Số lượng đã lấy"
@@ -138,7 +137,7 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
                                         issueReason: issue.trim() || null,
                                     } }).then(() => setDraftCommit(current => ({ scope: line.orderLineId, sequence: (current?.sequence || 0) + 1 }))).catch(() => undefined)}
                                 >Xác nhận dòng đã kiểm</MutationButton>
-                            </Stack>
+                            </FormFields>
                         </Box>;
                     })}
                     <MutationButton
@@ -150,7 +149,7 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
                     {prep.state === 'picking' && !prep.lines.every(line => line.pickedQuantity === line.requiredQuantity && !line.hasIssue) && <Alert severity="info">Chưa thể đóng gói: cần lấy đủ từng dòng và xử lý mọi vấn đề trước.</Alert>}
                     {prep.state === 'packed' && <RouteLink to={`/s/${shop.id}/shipments?orderId=${prep.orderId}`}>Tạo vận đơn để bàn giao</RouteLink>}
                     <Alert severity="info">Các nút lấy/đóng gói là xác nhận của người thật. Hệ thống không tự nhận công việc vật lý đã hoàn tất.</Alert>
-                </Stack>}
+                </FormFields>}
             </QueryState>
         </EditDialog>
         <ConfirmDialog
@@ -168,20 +167,28 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
 export function ShipmentsPage() {
     const { shop } = useScope();
     const [searchParams] = useSearchParams();
-    const list = useApi('listShipments', { query: useListQuery() });
-    const orders = useApi('listOrders', { query: { limit: 100 } });
+    const list = useApi('listShipments', { query: useListQuery('listShipments') });
+    const [orderSearchInput, setOrderSearchInput] = useState('');
+    const [orderSearch, setOrderSearch] = useState('');
+    useEffect(() => {
+        const timer = window.setTimeout(() => setOrderSearch(orderSearchInput.trim()), 250);
+        return () => window.clearTimeout(timer);
+    }, [orderSearchInput]);
+    const orders = usePagedApi('listOrders', { query: { q: orderSearch || undefined } });
     const create = useCommand('createShipment', ['listShipments', 'listOrders']);
     const handover = useCommand('handoverShipment', ['getShipment', 'listShipments', 'listOrders', 'listStockSnapshots', 'listStockMovements', 'listPrepJobs', 'listWorkItems']);
     const event = useCommand('recordShipmentEvent', ['getShipment', 'listShipments', 'listOrders', 'listDebtItems', 'getProfitLoss', 'getDashboard']);
     const [open, setOpen] = useState(false);
     const [orderId, setOrderId] = useState(() => searchParams.get('orderId') || '');
+    const selectedOrderDetail = useApi('getOrder', { path: { orderId } }, !!orderId);
+    const selectedOrder = orders.data?.data.find(order => order.id === orderId) || selectedOrderDetail.data?.data;
     const [carrierId, setCarrierId] = useState('');
     const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
     const [dialogMode, setDialogMode] = useState<ShipmentDialogMode>('view');
     const [eventType, setEventType] = useState<ShipmentEventWrite['eventType']>('in_transit');
     const [externalEventId, setExternalEventId] = useState('');
     const [evidenceRef, setEvidenceRef] = useState('');
-    const [occurredAt, setOccurredAt] = useState(() => localDateTimeValue(new Date()));
+    const [occurredAt, setOccurredAt] = useState(() => dateTimeLocalInput(new Date(), shop.timezone));
     const detail = useApi('getShipment', { path: { resourceId: selectedShipmentId || 'pending' } }, !!selectedShipmentId);
     const shipment = detail.data?.data;
 
@@ -191,7 +198,7 @@ export function ShipmentsPage() {
         setEventType('in_transit');
         setExternalEventId('');
         setEvidenceRef('');
-        setOccurredAt(localDateTimeValue(new Date()));
+        setOccurredAt(dateTimeLocalInput(new Date(), shop.timezone));
     }
 
     function closeShipment() {
@@ -199,7 +206,8 @@ export function ShipmentsPage() {
         setDialogMode('view');
     }
 
-    const validOccurrence = Number.isFinite(Date.parse(occurredAt));
+    const occurredAtInstant = dateTimeLocalToISOString(occurredAt, shop.timezone);
+    const validOccurrence = occurredAtInstant !== null;
     const duplicateEventId = !!shipment?.events.some(item => item.externalEventId === externalEventId.trim());
     const canRecordEvent = !!shipment
         && !['planned', 'cancelled', 'returned'].includes(shipment.state)
@@ -210,12 +218,12 @@ export function ShipmentsPage() {
         && !duplicateEventId;
 
     async function submitEvent() {
-        if (!shipment || !canRecordEvent) return;
+        if (!shipment || !canRecordEvent || !occurredAtInstant) return;
         await event.execute({ path: { resourceId: shipment.id }, body: {
             expectedVersion: shipment.version,
             externalEventId: externalEventId.trim(),
             eventType,
-            occurredAt: new Date(occurredAt).toISOString(),
+            occurredAt: occurredAtInstant,
             evidenceRef: evidenceRef.trim(),
         } });
         closeShipment();
@@ -223,22 +231,22 @@ export function ShipmentsPage() {
 
     return <>
         <PageHeader title="Vận đơn & giao hàng" subtitle="Bàn giao hàng, khách nhận hàng và tiền về là ba sự kiện khác nhau." actions={<MutationButton permission="fulfillment.write" variant="contained" onClick={() => setOpen(true)}>Tạo vận đơn</MutationButton>} />
-        {__MOCK__ ? <ShippingQuotePreview /> : <Panel title="Phí & vùng giao hàng"><Alert severity="info" sx={{ m: 2 }}>API hiện chỉ trả phí báo giá/thực tế nếu đã có trên vận đơn; chưa có operation để kiểm tra vùng giao hoặc xin báo giá mới.</Alert></Panel>}
+        {__MOCK__ ? <ShippingQuotePreview /> : <Panel title="Phí & vùng giao hàng"><Alert severity="info" sx={layoutSx.surface.inset}>API hiện chỉ trả phí báo giá/thực tế nếu đã có trên vận đơn; chưa có operation để kiểm tra vùng giao hoặc xin báo giá mới.</Alert></Panel>}
         <Panel>
-            <Toolbar />
-            <QueryState query={list}>
+            <Toolbar operation="listShipments" />
+            <QueryState query={list} pendingProfile="section">
                 {list.data && <>
                     <DataTable rows={list.data.data} rowKey={item => item.id} columns={[
-                        { key: 'id', label: 'Vận đơn', render: item => <Stack><Typography fontWeight={650}>{item.trackingCode || item.id}</Typography><Typography variant="caption">{item.carrierId || 'Giao thủ công'}</Typography></Stack> },
+                        { key: 'id', label: 'Vận đơn', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.trackingCode || item.id}</Typography><Typography variant="caption">{item.carrierId || 'Giao thủ công'}</Typography></Stack> },
                         { key: 'order', label: 'Đơn', render: item => <RouteLink to={`/s/${shop.id}/orders/${item.orderId}`}>{item.orderId}</RouteLink> },
                         { key: 'state', label: 'Trạng thái', render: item => <Status value={item.state} /> },
                         { key: 'quote', label: 'Phí báo giá', render: item => <Amount value={item.shippingFeeQuote}/> },
                         { key: 'actual', label: 'Phí thực tế', render: item => <Amount value={item.shippingFeeActual}/> },
-                        { key: 'actions', label: '', render: item => <Stack direction="row" flexWrap="wrap" gap={1}>
+                        { key: 'actions', label: '', render: item => <ActionGroup direction="row" >
                             <Button size="small" onClick={() => openShipment(item.id, 'view')}>Chi tiết</Button>
                             <MutationButton permission="fulfillment.handover" disabled={!['planned', 'label_ready'].includes(item.state)} onClick={() => openShipment(item.id, 'handover')}>Bàn giao</MutationButton>
                             <MutationButton permission="fulfillment.write" disabled={['planned', 'cancelled', 'returned'].includes(item.state)} onClick={() => openShipment(item.id, 'event')}>Cập nhật hành trình</MutationButton>
-                        </Stack> },
+                        </ActionGroup> },
                     ]} />
                     <Pager page={list.data.page} />
                 </>}
@@ -250,8 +258,8 @@ export function ShipmentsPage() {
             title="Tạo vận đơn"
             onClose={() => setOpen(false)}
             busy={create.pending}
-            actions={<Button variant="contained" disabled={!orderId || create.pending || !orders.data?.data.some(order => order.id === orderId && order.fulfillmentState === 'packed')} onClick={async () => {
-                const order = orders.data?.data.find(item => item.id === orderId && item.fulfillmentState === 'packed');
+            actions={<Button variant="contained" disabled={!orderId || create.pending || selectedOrder?.fulfillmentState !== 'packed'} onClick={async () => {
+                const order = selectedOrder?.fulfillmentState === 'packed' ? selectedOrder : undefined;
                 if (!order) return;
                 try {
                     await create.execute({ body: { orderId: order.id, warehouseId: order.warehouseId, carrierId: carrierId.trim() || null, orderLineIds: order.lines.map(line => line.id) } });
@@ -261,13 +269,19 @@ export function ShipmentsPage() {
             }}>Tạo bản vận chuyển</Button>}
         >
             <ErrorNotice error={create.error} />
-            <Stack gap={2}>
-                <TextField select label="Đơn đã đóng gói" value={orderId} onChange={event => setOrderId(event.target.value)}>
+            <FormFields >
+                <TextField label="Tìm đơn hàng" value={orderSearchInput} onChange={event => setOrderSearchInput(event.target.value)} helperText="Tìm theo mã đơn; kết quả tải theo cursor từ API." />
+                <TextField select label="Đơn đã đóng gói" value={orderId} onChange={event => setOrderId(event.target.value)} disabled={orders.isPending && !orders.data}>
+                    {orderId && !orders.data?.data.some(order => order.id === orderId) && <MenuItem value={orderId}>{selectedOrder?.id || (selectedOrderDetail.isPending ? 'Đang tải đơn đã chọn…' : orderId)}</MenuItem>}
                     {orders.data?.data.filter(order => order.fulfillmentState === 'packed').map(order => <MenuItem key={order.id} value={order.id}>{order.id}</MenuItem>)}
                 </TextField>
+                <LookupLoadMore label="đơn hàng" loadedCount={orders.loadedCount} hasMore={orders.hasMore} busy={orders.isLoadingMore} onLoadMore={orders.loadMore}/>
+                {orders.isError && <ActionGroup direction="column"><ErrorNotice error={orders.error}/><Button size="small" onClick={() => { void (orders.isFetchNextPageError ? orders.loadMore() : orders.refetch()); }}>Thử lại danh sách đơn</Button></ActionGroup>}
+                {selectedOrderDetail.isError && <ErrorNotice error={selectedOrderDetail.error}/>}
+                {selectedOrder && selectedOrder.fulfillmentState !== 'packed' && <Alert severity="warning">Đơn đã chọn chưa ở trạng thái đã đóng gói nên chưa thể tạo vận đơn.</Alert>}
                 <TextField label="Mã đơn vị vận chuyển (trống = thủ công)" value={carrierId} onChange={event => setCarrierId(event.target.value)} inputProps={{ maxLength: 160 }} />
                 <Alert severity="info">Vận đơn/nhãn in của nhà vận chuyển chỉ xuất hiện khi backend có adapter đã được cấp quyền. Không tự tạo mã giao hàng thật.</Alert>
-            </Stack>
+            </FormFields>
         </EditDialog>
 
         <EditDialog
@@ -276,7 +290,7 @@ export function ShipmentsPage() {
             description={dialogMode === 'handover' ? 'Xác nhận đã bàn giao cho người vận chuyển. Việc này xuất lượng hàng đang giữ; không đồng nghĩa khách đã nhận hoặc đã thanh toán.' : undefined}
             onClose={closeShipment}
             busy={handover.pending || event.pending}
-            actions={<Stack direction="row" gap={1}>
+            actions={<Stack direction="row" sx={layoutSx.dialog.actionsGap}>
                 <Button onClick={dialogMode === 'view' ? closeShipment : () => setDialogMode('view')}>{dialogMode === 'view' ? 'Đóng' : 'Quay lại'}</Button>
                 {dialogMode === 'view' && shipment && ['planned', 'label_ready'].includes(shipment.state) && <MutationButton permission="fulfillment.handover" variant="contained" disabled={detail.isLoading} onClick={() => setDialogMode('handover')}>Bàn giao</MutationButton>}
                 {dialogMode === 'view' && shipment && !['planned', 'cancelled', 'returned'].includes(shipment.state) && <MutationButton permission="fulfillment.write" onClick={() => setDialogMode('event')}>Cập nhật hành trình</MutationButton>}
@@ -291,27 +305,27 @@ export function ShipmentsPage() {
         >
             <ErrorNotice error={detail.error || handover.error || event.error} />
             <QueryState query={detail}>
-                {shipment && <Stack gap={1}>
+                {shipment && <Stack>
                     <DetailLine label="Mã vận đơn">{shipment.trackingCode || shipment.id}</DetailLine>
                     <DetailLine label="Đơn hàng"><RouteLink to={`/s/${shop.id}/orders/${shipment.orderId}`}>{shipment.orderId}</RouteLink></DetailLine>
                     <DetailLine label="Đơn vị vận chuyển">{shipment.carrierId || 'Giao thủ công'}</DetailLine>
                     <DetailLine label="Trạng thái"><Status value={shipment.state} /></DetailLine>
                     <DetailLine label="Phí báo giá">{shipment.shippingFeeQuote ? `${shipment.shippingFeeQuote.amount} ${shipment.shippingFeeQuote.currency}` : 'Chưa có'}</DetailLine>
                     <DetailLine label="Phí thực tế">{shipment.shippingFeeActual ? `${shipment.shippingFeeActual.amount} ${shipment.shippingFeeActual.currency}` : 'Chưa có'}</DetailLine>
-                    <Typography variant="subtitle2" sx={{ mt: 1 }}>Sự kiện vận chuyển</Typography>
+                    <Typography variant="subtitle2" sx={layoutSx.surface.sectionBefore}>Sự kiện vận chuyển</Typography>
                     {shipment.events.length ? shipment.events.map(item => <DetailLine key={item.externalEventId} label={`${item.type} · ${item.externalEventId}`}>
                         <Stack alignItems="flex-end"><Typography>{dateTime(item.occurredAt, shop.timezone)}</Typography><Typography variant="caption">Bằng chứng: {item.evidenceRef || 'Chưa có'}</Typography></Stack>
                     </DetailLine>) : <Typography color="text.secondary">Chưa có sự kiện.</Typography>}
                     {dialogMode === 'handover' && <Alert severity="warning">Hệ thống ghi nhận bàn giao và xuất hàng đang giữ một lần. Trạng thái giao hàng sẽ chỉ đổi khi có sự kiện vận chuyển riêng.</Alert>}
-                    {dialogMode === 'event' && <Stack gap={2} sx={{ mt: 1 }}>
+                    {dialogMode === 'event' && <FormFields beforeGap="surface">
                         <TextField select label="Sự kiện" value={eventType} onChange={change => setEventType(change.target.value as ShipmentEventWrite['eventType'])}>
                             {shipmentEventOptions.map(option => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
                         </TextField>
                         <TextField label="Mã sự kiện bên vận chuyển" value={externalEventId} onChange={change => setExternalEventId(change.target.value)} inputProps={{ maxLength: 160 }} error={externalEventId.length > 160 || duplicateEventId} helperText={duplicateEventId ? 'Mã sự kiện này đã được ghi nhận.' : externalEventId.length > 160 ? 'Tối đa 160 ký tự.' : undefined} />
-                        <TextField label="Thời gian sự kiện" type="datetime-local" value={occurredAt} onChange={change => setOccurredAt(change.target.value)} error={!!occurredAt && !validOccurrence} helperText={!!occurredAt && !validOccurrence ? 'Nhập thời gian hợp lệ.' : 'Thời gian địa phương sẽ được chuyển sang ISO khi gửi.'} />
+                        <TextField label="Thời gian sự kiện" type="datetime-local" value={occurredAt} onChange={change => setOccurredAt(change.target.value)} error={!!occurredAt && !validOccurrence} helperText={!!occurredAt && !validOccurrence ? 'Nhập giờ tồn tại trong múi giờ cửa hàng.' : `Giờ địa phương theo ${shop.timezone}; sẽ chuyển thành instant ISO khi gửi.`} />
                         <TextField label="Mã bằng chứng" value={evidenceRef} onChange={change => setEvidenceRef(change.target.value)} inputProps={{ maxLength: 160 }} />
                         <Alert severity="info">Giao thành công, thất bại, hoàn về và thu tiền là các trạng thái riêng. Mỗi sự kiện cần mã chống trùng và bằng chứng do người xác minh cung cấp.</Alert>
-                    </Stack>}
+                    </FormFields>}
                 </Stack>}
             </QueryState>
         </EditDialog>
@@ -338,8 +352,8 @@ function ShippingQuotePreview() {
     const zone = shippingZones.find(item => item.id === zoneId)!;
     const amount = zone.baseFees?.[sizeId];
 
-    return <Panel title="Xem trước phí & vùng giao hàng" subtitle="Bản xem trước UI trong demo; không cập nhật đơn và không gửi yêu cầu tới hãng vận chuyển.">
-        <Stack gap={2} sx={{ p: 3, maxWidth: 760 }}>
+    return <Panel title="Xem trước phí & vùng giao hàng" subtitle="Bản xem trước UI trong demo; không cập nhật đơn và không gửi yêu cầu tới hãng vận chuyển." bodyMode="inset">
+        <FormFields geometry={{maxWidth: 760}}>
             <Alert severity="info">DỮ LIỆU MÔ PHỎNG · Phí dưới đây chỉ minh họa trạng thái giao diện, không phải báo giá cho địa chỉ hoặc hãng vận chuyển thật.</Alert>
             <TextField select label="Vùng giao thử" value={zoneId} onChange={event => setZoneId(event.target.value as typeof zoneId)}>
                 {shippingZones.map(item => <MenuItem key={item.id} value={item.id}>{item.label}</MenuItem>)}
@@ -357,6 +371,6 @@ function ShippingQuotePreview() {
                         ? <Alert severity="warning">Báo giá mẫu đã hết hiệu lực; cần lấy báo giá mới trước khi xác nhận.</Alert>
                         : <Alert severity="success">Ước tính mẫu: {amount?.toLocaleString('vi-VN')} VND · {zone.label} · {packageSizes.find(item => item.id === sizeId)?.label}</Alert>}
             <Typography variant="caption" color="text.secondary">Trong dữ liệu vận đơn, phí báo giá và phí thực tế được trình bày riêng. Bản xem trước này không lưu cấu hình vùng, không xác nhận khả năng giao và không tạo vận đơn.</Typography>
-        </Stack>
+        </FormFields>
     </Panel>;
 }

@@ -19,6 +19,14 @@ const scenarios = [
         pass: true,
     },
     {
+        name: 'app import through feature public entry',
+        files: {
+            'app/router.ts': "import { CatalogPage } from '../modules/catalog';\nexport const page = CatalogPage;\n",
+            'modules/catalog/index.ts': 'export function CatalogPage() { return null; }\n',
+        },
+        pass: true,
+    },
+    {
         name: 'alias cross-feature import',
         files: {
             'modules/catalog/index.ts': "import { order } from '@/modules/orders';\nexport const catalog = order;\n",
@@ -33,6 +41,15 @@ const scenarios = [
             'modules/orders/index.ts': 'export const order = 1;\n',
         },
         issue: /Cross-feature import/,
+    },
+    {
+        name: 'app deep import bypassing feature public entry',
+        files: {
+            'app/router.ts': "import { ImportsPage } from '../modules/catalog/imports';\nexport const page = ImportsPage;\n",
+            'modules/catalog/index.ts': "export { ImportsPage } from './imports';\n",
+            'modules/catalog/imports.ts': 'export function ImportsPage() { return null; }\n',
+        },
+        issue: /App deep import/,
     },
     {
         name: 'type-only cross-feature import',
@@ -92,7 +109,7 @@ try {
             assert(report.issues.some(issue => scenario.issue.test(issue)), `${scenario.name}: ${report.issues.join('; ')}`);
         }
     }
-    console.log(`Boundary fixtures: PASS ${scenarios.length}/${scenarios.length} scenarios (allowed import, alias, relative, type-only, dynamic, unresolved, cycle, parser error).`);
+    console.log(`Boundary fixtures: PASS ${scenarios.length}/${scenarios.length} scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).`);
 } finally {
     const resolvedWork = fs.realpathSync(work);
     assert(resolvedWork.startsWith(`${tempRoot}${path.sep}`), 'Refusing to remove fixture path outside OS temp directory');

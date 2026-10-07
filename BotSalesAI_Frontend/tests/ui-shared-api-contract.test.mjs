@@ -1,0 +1,468 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import test from 'node:test';
+import ts from 'typescript';
+import { createUiBindings } from '../scripts/ui-bindings.mjs';
+import { isScriptSource, uiSourceFiles } from '../scripts/ui-source-files.mjs';
+import { bodyModes, finiteProps, flowKeys, geometryKeys, independentSurfaceModes, insetModes, publicProps } from '../scripts/check-ui-composition.mjs';
+
+const root = process.cwd();
+const configPath = path.join(root, 'apps/web/tsconfig.json');
+const config = ts.readConfigFile(configPath, ts.sys.readFile);
+assert.equal(config.error, undefined, 'apps/web/tsconfig.json must be readable');
+const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, path.dirname(configPath));
+const program = ts.createProgram(parsed.fileNames, parsed.options);
+const checker = program.getTypeChecker();
+
+function moduleExports(file) {
+    const source = program.getSourceFile(path.join(root, file));
+    assert.ok(source?.symbol, `expected TypeScript module ${file}`);
+    return checker.getExportsOfModule(source.symbol);
+}
+
+function publicFunctionContracts(file) {
+    return moduleExports(file).flatMap(symbol => {
+        const declaration = symbol.valueDeclaration;
+        if (!declaration || !ts.isFunctionDeclaration(declaration) || !declaration.parameters[0]) return [];
+        const parameter = declaration.parameters[0];
+        const type = checker.getTypeOfSymbolAtLocation(parameter.symbol, declaration);
+        const names = type => type.isUnionOrIntersection()
+            ? [...new Set(type.types.flatMap(names))]
+            : checker.getPropertiesOfType(type).map(property => property.getName());
+        return [{ name: symbol.getName(), declaration, type, props: names(type) }];
+    });
+}
+
+const forbiddenStyleProps = new Set([
+    'sx', 'style', 'className', 'spacing', 'gap', 'rowGap', 'columnGap',
+    'm', 'mt', 'mr', 'mb', 'ml', 'mx', 'my', 'margin', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight',
+    'p', 'pt', 'pr', 'pb', 'pl', 'px', 'py', 'padding', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight',
+]);
+
+test('the shared catalog covers every public React component and supporting Column type', () => {
+    const componentFile = 'apps/web/src/shared/ui/components.tsx';
+    const compositionFile = 'apps/web/src/shared/ui/composition.tsx';
+    const components = publicFunctionContracts(componentFile).map(api => api.name);
+    const compositions = publicFunctionContracts(compositionFile).map(api => api.name);
+    const catalog = fs.readFileSync(path.join(root, 'apps/web/src/shared/ui/README.md'), 'utf8');
+    const actual = [...components, ...compositions].sort();
+    const catalogRows = [...catalog.matchAll(/^\| ([A-Z][A-Za-z0-9]*) \//gm)].map(match => match[1]);
+    const documented = catalogRows.filter(name => actual.includes(name));
+    const unrecognized = catalogRows.filter(name => !actual.includes(name));
+
+    assert.equal(components.length, 21, `component exports changed: ${components.join(', ')}`);
+    assert.equal(compositions.length, 6, `composition exports changed: ${compositions.join(', ')}`);
+    assert.deepEqual(documented.sort(), actual, 'every public component must have exactly one CURRENT/TARGET catalog row');
+    assert.ok(unrecognized.every(name => name === 'Component' || name === 'Composition'), `catalog table has unmapped API rows: ${unrecognized.join(', ')}`);
+    assert.match(catalog, /`Column<T>`/, 'DataTable supporting type must remain documented');
+    assert.ok(moduleExports(componentFile).some(symbol => symbol.getName() === 'Column'), 'Column<T> must remain part of the shared API inventory');
+
+    const rowByName = new Map([...catalog.matchAll(/^\| ([A-Z][A-Za-z0-9]*) \/[^\n]*$/gm)]
+        .filter(match => actual.includes(match[1]))
+        .map(match => [match[1], match[0]]));
+    const compositionSection = catalog.split('## 3. CURRENT/TARGET — sáu compositions')[1]?.split('## 4. Owner UI ngoài catalog')[0] || '';
+    for (const prop of flowKeys.filter(name => name !== 'key')) assert.ok(compositionSection.includes(prop), `shared flow prop ${prop} is missing from the catalog contract`);
+    const compositionNames = new Set(compositions);
+    for (const api of [...publicFunctionContracts(componentFile), ...publicFunctionContracts(compositionFile)]) {
+        const row = rowByName.get(api.name);
+        assert.ok(row, `missing catalog row for ${api.name}`);
+        const undocumented = api.props.filter(prop => !(compositionNames.has(api.name) && flowKeys.includes(prop) && prop !== 'key') && !row.includes(prop));
+        assert.deepEqual(undocumented, [], `${api.name} props are missing from its CURRENT/TARGET row`);
+    }
+});
+
+test('every public React API has a direct rendered contract test', () => {
+    const exports = [
+        ...publicFunctionContracts('apps/web/src/shared/ui/components.tsx'),
+        ...publicFunctionContracts('apps/web/src/shared/ui/composition.tsx'),
+    ];
+    const renderTestPath = path.join(root, 'apps/web/tests/shared-ui-render-contract.test.tsx');
+    assert.ok(fs.existsSync(renderTestPath), 'the shared rendered-contract suite must exist');
+    const renderSource = fs.readFileSync(renderTestPath, 'utf8');
+    const testTitles = renderSource.split(/\r?\n/)
+        .filter(line => /^\s*it(?:\.each\()/.test(line) || /^\s*it\(/.test(line))
+        .map(line => line.match(/\('([^']+)'/)?.[1])
+        .filter(Boolean);
+    for (const api of exports) {
+        assert.match(renderSource, new RegExp('<' + api.name + '(?:\\s|>)'), api.name + ' must be rendered by the contract suite');
+        assert.ok(testTitles.some(title => new RegExp('\\b' + api.name + '\\b').test(title)), api.name + ' must have a named rendered-contract case');
+    }
+    assert.match(renderSource, /\bColumn\s*</, 'DataTable Column<T> must participate in a rendered contract case');
+});
+
+test('every shared React export has a resolved production consumer or an explicit zero-use lifecycle decision', () => {
+    const sharedFiles = [
+        'apps/web/src/shared/ui/components.tsx',
+        'apps/web/src/shared/ui/composition.tsx',
+    ];
+    const owners = new Map(sharedFiles.flatMap(file => publicFunctionContracts(file).map(api => [moduleExports(file).find(symbol => symbol.getName() === api.name), api.name])));
+    const consumers = new Map([...owners].map(([symbol]) => [symbol, new Set()]));
+    const normalized = file => path.resolve(file).replaceAll('\\', '/').toLowerCase();
+    const sourceRoot = `${normalized(path.join(root, 'apps/web/src'))}/`;
+    const ownerRoot = `${sourceRoot}shared/ui/`;
+    const productionFiles = program.getSourceFiles().filter(source => {
+        const file = normalized(source.fileName);
+        return file.startsWith(sourceRoot) && file.endsWith('.tsx') && !file.startsWith(ownerRoot) && !source.isDeclarationFile;
+    });
+
+    function tagName(node) {
+        return ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node) ? node.tagName : undefined;
+    }
+
+    for (const source of productionFiles) {
+        function visit(node) {
+            const tag = tagName(node);
+            if (tag) {
+                const local = checker.getSymbolAtLocation(tag);
+                const resolved = local && (local.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(local) : local);
+                const files = resolved ? consumers.get(resolved) : undefined;
+                if (files) files.add(path.relative(root, source.fileName).replaceAll('\\', '/'));
+            }
+            ts.forEachChild(node, visit);
+        }
+        visit(source);
+    }
+
+    const zeroUseOwners = new Set(['PartialDataNotice', 'CapabilityUnavailable']);
+    const catalog = fs.readFileSync(path.join(root, 'apps/web/src/shared/ui/README.md'), 'utf8');
+    for (const [symbol, name] of owners) {
+        const files = consumers.get(symbol);
+        assert.ok(files, `${name} must remain in the consumer inventory`);
+        if (files.size === 0) {
+            assert.ok(zeroUseOwners.has(name), `${name} has no production JSX consumer; add a lifecycle decision before accepting the API`);
+            assert.match(catalog, new RegExp(`${name}[\\s\\S]{0,500}0 production uses`), `${name} zero-use decision must be explicit in the shared catalog`);
+            assert.match(catalog, new RegExp(`${name}[\\s\\S]{0,700}No artificial consumer`), `${name} must not acquire a fake consumer`);
+        } else {
+            assert.ok(!zeroUseOwners.has(name), `${name} gained a production consumer; refresh its S14 lifecycle evidence and catalog`);
+        }
+    }
+    assert.equal(owners.size, 27, 'public consumer inventory must include all 27 component/composition exports');
+});
+
+test('required UI evidence and regression gates remain wired to root verify and the active parent workflow', () => {
+    const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+    const verify = manifest.scripts.verify;
+    const evidence = manifest.scripts['test:evidence'];
+    assert.match(verify, /npm run test:layout/);
+    assert.match(verify, /npm run test:visual-tokens/);
+    assert.match(verify, /npm run test:ui-composition/);
+    assert.match(verify, /npm run test:evidence/);
+    assert.match(evidence, /tests\/ui-evidence-validator\.test\.mjs/);
+    assert.match(evidence, /scripts\/validate-ui-evidence\.mjs/);
+
+    const parentWorkflow = path.resolve(root, '../.github/workflows/frontend.yml');
+    assert.ok(fs.existsSync(parentWorkflow), 'the active frontend workflow must remain in the repository root');
+    assert.equal(fs.existsSync(path.join(root, '.github/workflows/frontend.yml')), false, 'the retired nested workflow must not shadow the parent workflow');
+    const workflow = fs.readFileSync(parentWorkflow, 'utf8');
+    assert.match(workflow, /BotSalesAI_Frontend\/\*\*/);
+    assert.match(workflow, /npm run verify/);
+    assert.match(workflow, /npm run test:e2e/);
+    assert.match(workflow, /timeout-minutes: 45/);
+    assert.match(workflow, /if: \$\{\{ always\(\) \}\}/);
+    assert.match(workflow, /upload-artifact/);
+});
+
+test('composition prop allowlists match the TypeScript owners exactly', () => {
+    const contracts = publicFunctionContracts('apps/web/src/shared/ui/composition.tsx');
+    assert.deepEqual(Object.keys(publicProps).sort(), contracts.map(api => api.name).sort());
+
+    for (const api of contracts) {
+        const actualProps = [...new Set([...api.props, 'key'])].sort();
+        assert.deepEqual([...publicProps[api.name]].sort(), actualProps, `${api.name} checker allowlist drifted from its TypeScript contract`);
+    }
+});
+
+test('QueryState uses only the approved inline and section pending profiles', () => {
+    const api = publicFunctionContracts('apps/web/src/shared/ui/components.tsx').find(item => item.name === 'QueryState');
+    assert.ok(api, 'QueryState must remain part of the shared API');
+    const prop = checker.getPropertyOfType(api.type, 'pendingProfile');
+    assert.ok(prop, 'QueryState must expose its documented pending profile');
+    const type = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(prop, api.declaration));
+    const allowed = type.isUnion() ? type.types : [type];
+    assert.ok(allowed.every(item => item.isStringLiteral()), 'pendingProfile must be a finite string-literal union');
+    assert.deepEqual(allowed.map(item => item.value).sort(), ['inline', 'section']);
+});
+
+test('QueryState consumers reserve section loading for primary content and keep every other state inline by default', () => {
+    const componentFile = 'apps/web/src/shared/ui/components.tsx';
+    const compositionFile = 'apps/web/src/shared/ui/composition.tsx';
+    const components = new Map(moduleExports(componentFile).map(symbol => [symbol.getName(), symbol]));
+    const compositions = new Map(moduleExports(compositionFile).map(symbol => [symbol.getName(), symbol]));
+    const queryState = components.get('QueryState');
+    const editDialog = components.get('EditDialog');
+    assert.ok(queryState && editDialog, 'QueryState and EditDialog must remain canonical shared owners');
+
+    const primaryOwners = new Set(['DataTable', 'Stats', 'SectionGrid', 'Panel', 'FormFields']);
+    const ownerSymbols = new Map([...components, ...compositions].filter(([name]) => primaryOwners.has(name)));
+    const moduleRoot = path.join(root, 'apps/web/src/modules');
+    const sourceFiles = uiSourceFiles(root).filter(file => path.resolve(file).startsWith(moduleRoot + path.sep) && file.endsWith('.tsx'));
+    let placementCount = 0;
+    let sectionCount = 0;
+
+    function resolvesTo(tagName, exportedSymbol) {
+        const localSymbol = checker.getSymbolAtLocation(tagName);
+        if (!localSymbol) return false;
+        return localSymbol.flags & ts.SymbolFlags.Alias
+            ? checker.getAliasedSymbol(localSymbol) === exportedSymbol
+            : localSymbol === exportedSymbol;
+    }
+
+    function tagNameOf(node) {
+        return ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node) ? node.tagName : undefined;
+    }
+
+    for (const file of sourceFiles) {
+        const source = program.getSourceFile(file);
+        assert.ok(source, `missing TypeScript program source for ${file}`);
+        function visit(node) {
+            const queryTag = tagNameOf(node);
+            if (queryTag && resolvesTo(queryTag, queryState)) {
+                const queryElement = ts.isJsxElement(node.parent) ? node.parent : undefined;
+                const contentOwners = new Set();
+                function inspectChildren(child) {
+                    const childTag = tagNameOf(child);
+                    if (childTag && resolvesTo(childTag, queryState)) return;
+                    if (childTag) {
+                        for (const [owner, symbol] of ownerSymbols) if (resolvesTo(childTag, symbol)) contentOwners.add(owner);
+                    }
+                    ts.forEachChild(child, inspectChildren);
+                }
+                for (const child of queryElement?.children || []) inspectChildren(child);
+
+                let insideDialog = false;
+                for (let parent = node.parent; parent; parent = parent.parent) {
+                    if (ts.isJsxElement(parent) && resolvesTo(parent.openingElement.tagName, editDialog)) insideDialog = true;
+                }
+                const shouldUseSection = !insideDialog && contentOwners.size > 0;
+                const profileAttribute = node.attributes.properties.find(property => ts.isJsxAttribute(property) && property.name.text === 'pendingProfile');
+                const profile = !profileAttribute ? undefined
+                    : profileAttribute.initializer && ts.isStringLiteral(profileAttribute.initializer) ? profileAttribute.initializer.text
+                        : '<non-literal>';
+                const location = source.getLineAndCharacterOfPosition(node.getStart(source));
+                const where = `${path.relative(root, file)}:${location.line + 1}`;
+                assert.equal(profile, shouldUseSection ? 'section' : undefined,
+                    `${where}: only a primary data/form region outside EditDialog may opt into QueryState section loading; other consumers must use the inline default`);
+                placementCount++;
+                if (shouldUseSection) sectionCount++;
+            }
+            ts.forEachChild(node, visit);
+        }
+        visit(source);
+    }
+
+    assert.ok(placementCount > 0, 'the route modules must contain shared QueryState consumers');
+    assert.ok(sectionCount > 0, 'large primary QueryState regions must use their reserved section profile');
+});
+
+test('body modes, placement roles and geometry keys match the TypeScript contracts', () => {
+    const contracts = publicFunctionContracts('apps/web/src/shared/ui/composition.tsx');
+    const components = publicFunctionContracts('apps/web/src/shared/ui/components.tsx');
+    const byName = new Map(contracts.map(api => [api.name, api]));
+    const ownerContract = owner => owner === 'Panel' ? components.find(api => api.name === owner) : byName.get(owner);
+
+    for (const [owner, values] of Object.entries(bodyModes)) {
+        const api = ownerContract(owner);
+        assert.ok(api, `missing TypeScript owner ${owner}`);
+        const prop = checker.getPropertyOfType(api.type, 'bodyMode');
+        assert.ok(prop, `${owner} must declare bodyMode`);
+        const valueType = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(prop, api.declaration));
+        const allowed = valueType.isUnion() ? valueType.types : [valueType];
+        assert.ok(allowed.every(type => type.isStringLiteral()), `${owner}.bodyMode must remain a finite string-literal union`);
+        assert.deepEqual(allowed.map(type => type.value).sort(), [...values].sort(), `${owner}.bodyMode checker map drifted`);
+    }
+
+    for (const [owner, values] of Object.entries(insetModes)) {
+        assert.ok(bodyModes[owner], `inset owner ${owner} has no public bodyMode contract`);
+        assert.ok([...values].every(value => bodyModes[owner].has(value)), `${owner} inset modes must be supported bodyMode values`);
+    }
+    for (const [owner, values] of Object.entries(independentSurfaceModes)) {
+        assert.ok(insetModes[owner], `independent surface ${owner} is not an inset owner`);
+        assert.ok([...values].every(value => insetModes[owner].has(value)), `${owner} independent surfaces must own an inset`);
+    }
+
+    for (const [owner, props] of Object.entries(finiteProps)) {
+        const api = ownerContract(owner);
+        assert.ok(api, `missing composition owner ${owner}`);
+        for (const [name, values] of Object.entries(props)) {
+            const prop = checker.getPropertyOfType(api.type, name);
+            assert.ok(prop, `${owner}.${name} must be declared`);
+            const valueType = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(prop, api.declaration));
+            const allowed = valueType.isUnion() ? valueType.types : [valueType];
+            assert.ok(allowed.every(type => type.isStringLiteral()), `${owner}.${name} must remain a finite string-literal union`);
+            assert.deepEqual(allowed.map(type => type.value).sort(), [...values].sort(), `${owner}.${name} checker map drifted`);
+        }
+    }
+
+    for (const api of contracts) {
+        const prop = checker.getPropertyOfType(api.type, 'geometry');
+        assert.ok(prop, `${api.name} must expose the documented geometry object`);
+        const geometry = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(prop, api.declaration));
+        const actual = checker.getPropertiesOfType(geometry).map(property => property.getName()).sort();
+        assert.deepEqual([...geometryKeys].sort(), actual, `${api.name}.geometry checker keys drifted`);
+    }
+});
+
+test('Panel geometry and DataTable columns remain closed public contracts', () => {
+    const components = publicFunctionContracts('apps/web/src/shared/ui/components.tsx');
+    const panel = components.find(api => api.name === 'Panel');
+    assert.ok(panel, 'Panel must remain part of the public shared API');
+    const panelGeometry = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(
+        checker.getPropertyOfType(panel.type, 'geometry'), panel.declaration,
+    ));
+    assert.deepEqual(
+        checker.getPropertiesOfType(panelGeometry).map(property => property.getName()).sort(),
+        ['display', 'flexDirection', 'gridColumn', 'height'],
+        'Panel geometry must stay limited to its documented layout keys',
+    );
+    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl'];
+    const responsiveObjectMembers = type => (type.isUnion() ? type.types : [type])
+        .filter(member => (member.flags & ts.TypeFlags.Object) !== 0);
+    for (const name of ['display', 'flexDirection', 'gridColumn']) {
+        const property = checker.getPropertyOfType(panelGeometry, name);
+        const valueType = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(property, property.valueDeclaration));
+        const responsiveObjects = responsiveObjectMembers(valueType);
+        assert.equal(responsiveObjects.length, 1, `Panel.geometry.${name} must have one responsive object branch`);
+        assert.deepEqual(checker.getPropertiesOfType(responsiveObjects[0]).map(item => item.getName()).sort(), [...breakpoints].sort());
+        assert.equal(checker.getIndexTypeOfType(responsiveObjects[0], ts.IndexKind.String), undefined, `Panel.geometry.${name} must reject arbitrary breakpoint keys`);
+    }
+    const height = checker.getPropertyOfType(panelGeometry, 'height');
+    const heightType = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(height, height.valueDeclaration));
+    assert.equal(responsiveObjectMembers(heightType).length, 0, 'Panel.geometry.height is intentionally non-responsive');
+
+    const column = moduleExports('apps/web/src/shared/ui/components.tsx').find(symbol => symbol.getName() === 'Column');
+    assert.ok(column, 'Column<T> must remain exported for typed DataTable columns');
+    const columnType = checker.getDeclaredTypeOfSymbol(column);
+    const properties = new Map(checker.getPropertiesOfType(columnType).map(property => [property.getName(), property]));
+    assert.deepEqual([...properties.keys()].sort(), ['align', 'key', 'label', 'render']);
+    const alignProperty = properties.get('align');
+    const align = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(alignProperty, alignProperty.valueDeclaration));
+    const alignValues = align.isUnion() ? align.types : [align];
+    assert.ok(alignValues.every(type => type.isStringLiteral()), `Column.align must remain a finite variant; resolved ${checker.typeToString(align)}`);
+    assert.deepEqual(alignValues.map(type => type.value).sort(), ['center', 'left', 'right']);
+    const renderProperty = properties.get('render');
+    const render = checker.getTypeOfSymbolAtLocation(renderProperty, renderProperty.valueDeclaration);
+    assert.equal(render.getCallSignatures().length, 1, 'Column.render must remain one typed content slot');
+    const renderSignature = render.getCallSignatures()[0];
+    assert.equal(renderSignature.getParameters().length, 1, 'Column.render receives exactly one row');
+    const rowType = checker.getTypeOfSymbolAtLocation(renderSignature.getParameters()[0], renderProperty.valueDeclaration);
+    assert.equal(checker.typeToString(rowType), 'T', 'Column.render must receive its DataTable row type');
+    assert.equal(checker.typeToString(renderSignature.getReturnType()), 'ReactNode', 'Column.render must remain a ReactNode slot');
+
+    const sectionGrid = publicFunctionContracts('apps/web/src/shared/ui/composition.tsx').find(api => api.name === 'SectionGrid');
+    const columns = checker.getPropertyOfType(sectionGrid.type, 'columns');
+    const columnTypes = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(columns, columns.valueDeclaration));
+    const responsiveColumns = responsiveObjectMembers(columnTypes);
+    assert.equal(responsiveColumns.length, 1, 'SectionGrid.columns must retain one responsive object branch');
+    assert.deepEqual(checker.getPropertiesOfType(responsiveColumns[0]).map(item => item.getName()).sort(), [...breakpoints].sort());
+    assert.equal(checker.getIndexTypeOfType(responsiveColumns[0], ts.IndexKind.String), undefined, 'SectionGrid.columns must reject arbitrary breakpoint keys');
+});
+
+test('shared component and composition props expose no arbitrary layout/style escape hatch', () => {
+    const contracts = [
+        ...publicFunctionContracts('apps/web/src/shared/ui/components.tsx'),
+        ...publicFunctionContracts('apps/web/src/shared/ui/composition.tsx'),
+    ];
+
+    for (const api of contracts) {
+        const escaped = api.props.filter(prop => forbiddenStyleProps.has(prop));
+        assert.deepEqual(escaped, [], `${api.name} exposes forbidden style props: ${escaped.join(', ')}`);
+    }
+});
+
+test('layout role types, runtime values, consumers and ownership documentation stay closed', () => {
+    const layoutFile = 'apps/web/src/shared/ui/layout.ts';
+    const source = program.getSourceFile(path.join(root, layoutFile));
+    assert.ok(source, `expected ${layoutFile}`);
+    const contract = source.statements.find(statement => ts.isTypeAliasDeclaration(statement) && statement.name.text === 'LayoutSxContract');
+    const layoutDeclaration = source.statements.flatMap(statement => ts.isVariableStatement(statement) ? statement.declarationList.declarations : [])
+        .find(declaration => declaration.name.getText(source) === 'layoutSx');
+    assert.ok(contract?.type && layoutDeclaration?.initializer, 'LayoutSxContract and runtime layoutSx must both exist');
+
+    const contractPaths = [];
+    function collectContract(type, prefix = []) {
+        for (const member of type.members) {
+            if (!ts.isPropertySignature(member) || !member.name || !member.type) continue;
+            const key = member.name.getText(source).replace(/["']/g, '');
+            if (ts.isTypeLiteralNode(member.type)) collectContract(member.type, [...prefix, key]);
+            else contractPaths.push([...prefix, key].join('.'));
+        }
+    }
+    collectContract(contract.type);
+
+    const unwrap = node => {
+        while (ts.isAsExpression(node) || ts.isSatisfiesExpression(node) || ts.isParenthesizedExpression(node)) node = node.expression;
+        return node;
+    };
+    const runtimePaths = [];
+    function collectRuntime(node, prefix = []) {
+        node = unwrap(node);
+        assert.ok(ts.isObjectLiteralExpression(node), `layoutSx.${prefix.join('.')} must be an explicit object`);
+        for (const property of node.properties) {
+            assert.ok(ts.isPropertyAssignment(property), 'layoutSx roles must not hide behind spread or computed properties');
+            const key = property.name.getText(source).replace(/["']/g, '');
+            if (prefix.length === 0) collectRuntime(property.initializer, [...prefix, key]);
+            else runtimePaths.push([...prefix, key].join('.'));
+        }
+    }
+    collectRuntime(layoutDeclaration.initializer);
+    assert.deepEqual(runtimePaths.sort(), contractPaths.sort(), 'runtime layout roles and their TypeScript contract must have identical paths');
+
+    const standard = fs.readFileSync(path.join(root, 'docs/FRONTEND_SPACING_STANDARD.md'), 'utf8');
+    const catalog = fs.readFileSync(path.join(root, 'apps/web/src/shared/ui/README.md'), 'utf8');
+    const design = fs.readFileSync(path.join(root, 'DESIGN.md'), 'utf8');
+    const designFrontmatter = design.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    assert.ok(designFrontmatter, 'DESIGN.md keeps a small machine-readable metadata header');
+    assert.match(designFrontmatter[1], /tokens:\s*["']?\.\.\/botsales-kit\/design\/tokens\.json/);
+    assert.match(designFrontmatter[1], /uiRules:\s*["']?docs\/FRONTEND_SPACING_STANDARD\.md/);
+    assert.match(designFrontmatter[1], /sharedUiCatalog:\s*["']?apps\/web\/src\/shared\/ui\/README\.md/);
+    assert.doesNotMatch(designFrontmatter[1], /^(?:colors|typography|rounded|spacing|components):/m, 'DESIGN metadata must not duplicate canonical token values or component/layout rules');
+    assert.match(design, /does not duplicate token values or layout rules/);
+    assert.match(standard, /leaf paths trong `LayoutSxContract` phải khớp chính xác với object runtime `layoutSx`/);
+    assert.match(standard, /phân loại\/rationale `SPACING`, `GEOMETRY` hoặc `INTERNAL`/);
+    const registry = catalog.split('## 8. Layout owner crosswalk')[1] || '';
+    const registryTable = registry.slice(Math.max(0, registry.indexOf('| Path |')));
+    const policyMissing = contractPaths.filter(role => !standard.includes(`\`${role}\``));
+    const registryRows = registryTable.split(/\r?\n/).filter(line => line.startsWith('| `'));
+    const crosswalk = new Map();
+    for (const line of registryRows) {
+        const cells = line.split('|').slice(1, 5).map(cell => cell.trim());
+        assert.equal(cells.length, 4, `crosswalk row has Path/Class/Owner/Consumer columns: ${line}`);
+        const role = cells[0].match(/^`([a-z][A-Za-z0-9]*\.[a-z][A-Za-z0-9]*)`$/)?.[1];
+        assert.ok(role, `crosswalk row names exactly one layout path: ${line}`);
+        assert.ok(!crosswalk.has(role), `crosswalk has one owner row per path: ${role}`);
+        assert.ok(['SPACING', 'GEOMETRY', 'INTERNAL'].includes(cells[1]), `${role} has one explicit class`);
+        assert.ok(cells[2].length > 0, `${role} has a named owner`);
+        const consumers = [...cells[3].matchAll(/`(apps\/web\/src\/[^`]+)`/g)].map(match => match[1]);
+        assert.ok(consumers.length > 0, `${role} has at least one real source consumer`);
+        for (const consumer of consumers) assert.ok(fs.existsSync(path.join(root, consumer)), `${role} consumer exists: ${consumer}`);
+        crosswalk.set(role, { class: cells[1], consumers: [...new Set(consumers)].sort() });
+    }
+    assert.deepEqual([...crosswalk.keys()].sort(), policyMissing.sort(), 'every role absent from normative policy needs exactly one catalog owner/rationale row');
+
+    const files = uiSourceFiles(root).filter(isScriptSource);
+    const bindings = createUiBindings(root, files);
+    const usageCounts = new Map(contractPaths.map(role => [role, 0]));
+    const observedConsumers = new Map(policyMissing.map(role => [role, new Set()]));
+    for (const file of files) {
+        const fileSource = bindings.source(file);
+        if (!fileSource) continue;
+        function visit(node) {
+            if (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node)) {
+                const reference = bindings.reference(node);
+                if (reference?.owner === 'layout' && reference.exportName === 'layoutSx' && reference.path.length === 2) {
+                    const role = reference.path.join('.');
+                    if (usageCounts.has(role)) usageCounts.set(role, usageCounts.get(role) + 1);
+                    if (observedConsumers.has(role)) observedConsumers.get(role).add(path.relative(root, file).split(path.sep).join('/'));
+                }
+            }
+            ts.forEachChild(node, visit);
+        }
+        visit(fileSource);
+    }
+    const unused = [...usageCounts].filter(([, count]) => count === 0).map(([role]) => role);
+    assert.deepEqual(unused, [], 'remove or explain layout roles without a real consumer');
+    for (const role of policyMissing) {
+        assert.deepEqual(crosswalk.get(role).consumers, [...observedConsumers.get(role)].sort(), `${role} crosswalk consumers match resolved source references`);
+    }
+});

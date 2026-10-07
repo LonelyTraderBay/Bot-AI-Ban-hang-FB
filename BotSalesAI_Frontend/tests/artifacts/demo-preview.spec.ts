@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { preview } from 'vite';
 import type { PreviewServer } from 'vite';
+import { evidenceRunId } from '../evidence-run-id.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
@@ -35,7 +36,7 @@ test.afterAll(async () => {
     await server?.close();
 });
 
-test('the built demo artifact serves the React UI and synthetic API through preview', async ({ page }) => {
+test('the built demo artifact serves the React UI and synthetic API through preview', async ({ page, browserName }) => {
     const sessionResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/v2/session', { timeout: 15_000 });
     await page.goto(`${baseUrl}/s/shop-demo/overview`);
     const response = await sessionResponse;
@@ -88,16 +89,18 @@ test('the built demo artifact serves the React UI and synthetic API through prev
         observedApi: { path: '/api/v2/session', status: response.status(), servedBy: 'MSW in the built demo artifact' },
         dataSource: 'synthetic-msw',
     };
-    const output = path.join(root, 'botsales-kit/execution/frontend-evidence/FE025/demo-preview-metrics.json');
+    const evidenceDir = path.join(root, 'evidence/frontend-ui-improvements/ui-governance-rollout-20261007');
+    const output = path.join(evidenceDir, `S19-demo-preview-metrics-${browserName}-${evidenceRunId}.json`);
     fs.mkdirSync(path.dirname(output), { recursive: true });
-    fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-    const screenshot = path.join(root, 'botsales-kit/execution/frontend-evidence/FE026/demo-preview-overview.png');
+    fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+    const screenshot = path.join(evidenceDir, `S19-demo-preview-overview-${browserName}-${evidenceRunId}.png`);
     fs.mkdirSync(path.dirname(screenshot), { recursive: true });
+    if (fs.existsSync(screenshot)) throw new Error(`Refusing to overwrite existing evidence ${screenshot}`);
     await page.screenshot({ path: screenshot, fullPage: true });
     console.log(`[artifact-preview] ${JSON.stringify(report)}`);
 });
 
-test('a thousand synthetic customers remain API-paginated in the built demo artifact', async ({ page }) => {
+test('a thousand synthetic customers remain API-paginated in the built demo artifact', async ({ page, browserName }) => {
     await page.goto(`${baseUrl}/s/shop-demo/overview`);
     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
     await page.getByRole('combobox', { name: 'Dataset mô phỏng' }).click();
@@ -129,9 +132,9 @@ test('a thousand synthetic customers remain API-paginated in the built demo arti
         note: 'Synthetic customer identities only; the React screen renders one API page and exposes the next cursor instead of mounting the full collection.',
     };
     expect(envelope.page).toMatchObject({ limit: 20, total: 1004, hasMore: true });
-    const output = path.join(root, 'botsales-kit/execution/frontend-evidence/FE025/large-dataset-metrics.json');
+    const output = path.join(root, 'evidence/frontend-ui-improvements/ui-governance-rollout-20261007', `S19-demo-large-dataset-${browserName}-${evidenceRunId}.json`);
     fs.mkdirSync(path.dirname(output), { recursive: true });
-    fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+    fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
     console.log(`[large-dataset-preview] ${JSON.stringify(report)}`);
 });
 

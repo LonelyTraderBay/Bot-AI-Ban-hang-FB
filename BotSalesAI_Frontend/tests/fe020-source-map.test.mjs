@@ -3,8 +3,8 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 const read = path => readFileSync(path, 'utf8');
-const routeManifest = JSON.parse(read('botsales-kit/contracts/route-manifest.json'));
-const openapi = JSON.parse(read('botsales-kit/contracts/openapi.json'));
+const routeManifest = JSON.parse(read('../botsales-kit/contracts/route-manifest.json'));
+const openapi = JSON.parse(read('../botsales-kit/contracts/openapi.json'));
 const operations = JSON.parse(read('packages/contracts/src/operations.json'));
 const moduleSource = read('apps/web/src/modules/operations/index.tsx');
 const mockSource = read('apps/web/src/mocks/fulfillment.ts');

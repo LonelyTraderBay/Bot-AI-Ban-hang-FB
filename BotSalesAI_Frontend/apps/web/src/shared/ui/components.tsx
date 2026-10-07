@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import type { KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
+import { visualSx } from './visual';
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertTitle, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, InputAdornment, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import SearchRounded from '@mui/icons-material/SearchRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import ArrowForwardRounded from '@mui/icons-material/ArrowForwardRounded';
+import ContentCopyRounded from '@mui/icons-material/ContentCopyRounded';
+import { operations } from '@botsales/contracts';
 import type { Page, Money } from '@botsales/contracts';
+import type { QueryOperationId } from '../api/client';
 import { colors, tokens } from '@botsales/tokens';
+import { layoutSx } from './layout';
 import { ApiError, UnknownResultError, errorMessage } from '../api/errors';
 import { formatMoney } from '../model/format';
 import { label } from '../model/labels';
@@ -18,19 +23,47 @@ export function PageHeader({ title, subtitle, actions, eyebrow }: {
     actions?: ReactNode;
     eyebrow?: string;
 }) {
-    return <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', md: 'center' }} gap={2} sx={{ mb: 3 }}>
-  <Box>{eyebrow && <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: 1.3 }}>{eyebrow}</Typography>}<Typography component="h1" variant="h4">{title}</Typography>{subtitle && <Typography color="text.secondary" sx={{ mt: 1, maxWidth: 760 }}>{subtitle}</Typography>}</Box>
-  <Stack direction="row" gap={1} flexWrap="wrap">{actions}</Stack>
- </Stack>;
+    return <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', md: 'center' }} sx={[layoutSx.pageHeader.columnsGap, layoutSx.pageHeader.afterGap]}>
+        <Box sx={{ minWidth: 0 }}>{eyebrow && <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: visualSx.typography.letterSpacing.overline }}>{eyebrow}</Typography>}<Typography component="h1" variant="h4">{title}</Typography>{subtitle && <Typography color="text.secondary" sx={[layoutSx.pageHeader.titleDescriptionGap, { maxWidth: 760 }]}>{subtitle}</Typography>}</Box>
+        <Stack direction="row" sx={layoutSx.pageHeader.actionsGap}>{actions}</Stack>
+    </Stack>;
 }
-export function Panel({ title, subtitle, children, action, sx }: {
+type LayoutBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type ResponsiveGeometry<T> = T | Partial<Record<LayoutBreakpoint, T>>;
+type PanelGeometry = {
+    display?: ResponsiveGeometry<CSSProperties['display']>;
+    flexDirection?: ResponsiveGeometry<CSSProperties['flexDirection']>;
+    height?: CSSProperties['height'];
+    gridColumn?: ResponsiveGeometry<CSSProperties['gridColumn']>;
+};
+export function Panel({ title, subtitle, children, action, bodyMode = 'flush', beforeGap, afterGap, geometry }: {
     title?: string;
     subtitle?: string;
     children: ReactNode;
     action?: ReactNode;
-    sx?: object;
+    bodyMode?: 'inset' | 'flush';
+    beforeGap?: 'section' | 'surface';
+    afterGap?: 'section';
+    geometry?: PanelGeometry;
 }) {
-    return <Paper variant="outlined" sx={{ borderRadius: `${tokens.radius.card}px`, overflow: 'hidden', ...sx }}>{title && <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 3 }}><Box><Typography variant="h6">{title}</Typography>{subtitle && <Typography variant="body2" color="text.secondary" sx={{ mt: .5 }}>{subtitle}</Typography>}</Box>{action}</Stack>}{children}</Paper>;
+    const body = bodyMode === 'inset'
+        ? <Box sx={title ? layoutSx.surface.bodyInsetAfterHeader : layoutSx.surface.inset}>{children}</Box>
+        : children;
+    return <Paper variant="outlined" sx={[
+        { borderRadius: `${tokens.radius.card}px`, overflow: 'hidden' },
+        beforeGap === 'section' && layoutSx.page.sectionBefore,
+        beforeGap === 'surface' && layoutSx.surface.sectionBefore,
+        afterGap === 'section' && layoutSx.page.sectionAfter,
+        {
+            display: geometry?.display,
+            flexDirection: geometry?.flexDirection,
+            height: geometry?.height,
+            gridColumn: geometry?.gridColumn,
+        },
+    ]}>
+        {title && <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={[layoutSx.surface.headerInset, layoutSx.surface.headerFlowGap]}><Box sx={{ minWidth: 0 }}><Typography component="h2" variant="h6">{title}</Typography>{subtitle && <Typography variant="body2" color="text.secondary" sx={layoutSx.surface.titleDescriptionGap}>{subtitle}</Typography>}</Box>{action}</Stack>}
+        {body}
+    </Paper>;
 }
 export function Stat({ title, value, note, accent = false, icon }: {
     title: string;
@@ -39,14 +72,36 @@ export function Stat({ title, value, note, accent = false, icon }: {
     accent?: boolean;
     icon?: ReactNode;
 }) {
-    return <Paper variant="outlined" sx={{ p: 3, borderRadius: `${tokens.radius.card}px`, minWidth: 0 }}><Stack direction="row" justifyContent="space-between" gap={1}><Typography color="text.secondary" variant="body2">{title}</Typography><Box sx={{ color: accent ? 'primary.main' : 'text.secondary' }}>{icon}</Box></Stack><Typography variant="h4" sx={{ mt: 1.5, fontVariantNumeric: 'tabular-nums', color: accent ? 'primary.main' : undefined, overflowWrap: 'anywhere' }}>{value}</Typography>{note && <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{note}</Typography>}</Paper>;
+    return <Paper variant="outlined" sx={[layoutSx.surface.inset, { borderRadius: `${tokens.radius.card}px`, minWidth: 0 }]}><Stack direction="row" justifyContent="space-between" sx={layoutSx.stats.titleGap}><Typography color="text.secondary" variant="body2">{title}</Typography><Box sx={{ color: accent ? 'primary.main' : 'text.secondary' }}>{icon}</Box></Stack><Typography component="div" variant="h4" sx={[layoutSx.stats.valueGap, { fontVariantNumeric: 'tabular-nums', color: accent ? 'primary.main' : undefined, overflowWrap: 'anywhere' }]}>{value}</Typography>{note && <Typography variant="caption" color="text.secondary" sx={[layoutSx.stats.noteGap, { display: 'block' }]}>{note}</Typography>}</Paper>;
 }
 export function Stats({ children }: {
     children: ReactNode;
-}) { return <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' }, gap: 2, mb: 3 }}>{children}</Box>; }
+}) { return <Box sx={[layoutSx.stats.gutter, layoutSx.stats.afterGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' } }]}>{children}</Box>; }
 export function Amount({ value }: {
     value: Money | null | undefined;
 }) { return <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{formatMoney(value)}</Box>; }
+export function CopyableCode({ value, label: codeLabel = 'mã' }: {
+    value: string;
+    label?: string;
+}) {
+    const [feedback, setFeedback] = useState<'copied' | 'failed' | null>(null);
+    const copy = async () => {
+        try {
+            await navigator.clipboard.writeText(value);
+            setFeedback('copied');
+        }
+        catch {
+            setFeedback('failed');
+        }
+    };
+    return <Stack direction="row" alignItems="center" flexWrap="wrap" sx={[layoutSx.code.inlineGap, { minWidth: 0 }]}>
+        <Typography component="code" variant="caption" sx={{ overflowWrap: 'anywhere' }}>{value}</Typography>
+        <IconButton size="small" aria-label={`Sao chép ${codeLabel}`} onClick={() => { void copy(); }}><ContentCopyRounded fontSize="small" /></IconButton>
+        {feedback && <Typography role="status" aria-live="polite" variant="caption" color={feedback === 'copied' ? 'success.main' : 'text.secondary'}>
+            {feedback === 'copied' ? `Đã sao chép ${codeLabel}.` : `Không thể sao chép ${codeLabel}; hãy chọn mã để sao chép.`}
+        </Typography>}
+    </Stack>;
+}
 const positive = new Set(['active', 'completed', 'succeeded', 'connected', 'published', 'approved', 'received', 'settled', 'verified', 'posted', 'delivered', 'passed', 'healthy']);
 const danger = new Set(['failed', 'rejected', 'cancelled', 'revoked', 'denied', 'error']);
 const warn = new Set(['unknown', 'blocked', 'degraded', 'pending_approval', 'partial', 'part_received', 'unconfigured', 'provisional', 'incomplete', 'paused', 'expired']);
@@ -54,7 +109,7 @@ export function Status({ value }: {
     value: string;
 }) {
     const palette = positive.has(value) ? [colors.success, colors.successSurface] : danger.has(value) ? [colors.danger, colors.dangerSurface] : warn.has(value) ? [colors.warning, colors.warningSurface] : [colors.info, colors.infoSurface];
-    return <Chip label={label(value)} sx={{ color: palette[0], background: palette[1], maxWidth: '100%' }}/>;
+    return <Chip label={label(value)} sx={{ color: palette[0], background: palette[1], maxWidth: '100%', height: 'auto', minHeight: 32, '& .MuiChip-label': { whiteSpace: 'normal', overflowWrap: 'anywhere' } }}/>;
 }
 export interface Column<T> {
     key: string;
@@ -70,15 +125,20 @@ export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ li
     label?: string;
 }) {
     return <>
-        <Typography variant="caption" color="text.secondary" sx={{ display: { xs: 'block', md: 'none' }, px: 2, pt: 1 }}>Cuộn ngang để xem đủ cột.</Typography>
-        <TableContainer sx={{ maxWidth: '100%' }} tabIndex={0} role="region" aria-label={tableLabel}><Table size="small" aria-label={tableLabel} sx={{ minWidth: { xs: 600, md: 'auto' } }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}{rows.length === 0 && <TableRow><TableCell colSpan={columns.length}><Empty text={empty}/></TableCell></TableRow>}</TableBody></Table></TableContainer>
+        <Typography variant="caption" color="text.secondary" sx={[layoutSx.table.mobileHintInset, { display: { xs: 'block', md: 'none' } }]}>Cuộn ngang để xem đủ cột.</Typography>
+        <TableContainer sx={{ maxWidth: '100%' }} tabIndex={0} role="region" aria-label={tableLabel} onKeyDown={event => {
+            if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && event.currentTarget.scrollWidth > event.currentTarget.clientWidth) {
+                event.preventDefault();
+                event.currentTarget.scrollBy({ left: event.key === 'ArrowRight' ? 40 : -40 });
+            }
+        }}><Table size="small" aria-label={tableLabel} sx={{ minWidth: { xs: 600, md: 'auto' } }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}{rows.length === 0 && <TableRow><TableCell colSpan={columns.length}><Empty text={empty}/></TableCell></TableRow>}</TableBody></Table></TableContainer>
     </>;
 }
 export function Empty({ text, action }: {
     text: string;
     action?: ReactNode;
-}) { return <Stack role="status" aria-live="polite" alignItems="center" gap={2} sx={{ py: 6, px: 2 }}><Box aria-hidden="true" sx={{ width: tokens.layout.touchTarget, height: tokens.layout.touchTarget, borderRadius: `${tokens.radius.control}px`, bgcolor: colors.raised, display: 'grid', placeItems: 'center', color: 'text.secondary' }}>—</Box><Typography color="text.secondary" textAlign="center">{text}</Typography>{action}</Stack>; }
-export function QueryState({ query, children }: {
+}) { return <Stack role="status" aria-live="polite" alignItems="center" sx={[layoutSx.empty.contentGap, layoutSx.empty.insetBlock, layoutSx.empty.insetInline]}><Box aria-hidden="true" sx={{ width: tokens.layout.touchTarget, height: tokens.layout.touchTarget, borderRadius: `${tokens.radius.control}px`, bgcolor: colors.raised, display: 'grid', placeItems: 'center', color: 'text.secondary' }}>—</Box><Typography color="text.secondary" textAlign="center">{text}</Typography>{action}</Stack>; }
+export function QueryState({ query, children, pendingProfile = 'inline' }: {
     query: {
         isPending: boolean;
         isError: boolean;
@@ -88,24 +148,26 @@ export function QueryState({ query, children }: {
         isFetching?: boolean;
     };
     children: ReactNode;
+    pendingProfile?: 'inline' | 'section';
 }) {
     const { t } = useTranslation();
     const hasData = query.data !== undefined && query.data !== null;
     if (query.isPending)
-        return <Stack role="status" aria-live="polite" alignItems="center" justifyContent="center" gap={2} sx={{ minHeight: 240, color: 'text.secondary' }}><CircularProgress size={28} aria-label={t('app.loading')}/><Typography>{t('app.loading')}</Typography></Stack>;
+        return <Stack role="status" aria-live="polite" alignItems="center" justifyContent="center" sx={[layoutSx.query.stateGap, pendingProfile === 'section' ? layoutSx.query.sectionPending : {}, { color: 'text.secondary' }]}><CircularProgress size={28} aria-label={t('app.loading')}/><Typography>{t('app.loading')}</Typography></Stack>;
     if (query.isError && !hasData) {
         const status = query.error instanceof ApiError ? query.error.status : 0;
         const title = status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : t('state.requestErrorTitle');
         return <Alert severity={status === 403 ? 'warning' : 'error'} role="alert" action={status === 403 || status === 404 ? undefined : <Button onClick={() => { void query.refetch(); }} color="inherit">{t('app.retry')}</Button>}><AlertTitle>{title}</AlertTitle>{errorMessage(query.error)}</Alert>;
     }
     return <>
-        {query.isError && hasData && <Alert severity="warning" role="status" action={<Button onClick={() => { void query.refetch(); }} color="inherit">{t('app.retry')}</Button>} sx={{ mb: 2 }}><AlertTitle>{t('state.stale')}</AlertTitle>{errorMessage(query.error)}</Alert>}
-        {!query.isError && query.isFetching && hasData && <Alert severity="info" role="status" sx={{ mb: 2 }}><LinearProgress aria-label={t('app.loading')} sx={{ mb: 1 }}/>{t('state.updating')}</Alert>}
+        {query.isError && hasData && <Alert severity="warning" role="status" action={<Button onClick={() => { void query.refetch(); }} color="inherit">{t('app.retry')}</Button>} sx={layoutSx.notice.afterGap}><AlertTitle>{t('state.stale')}</AlertTitle>{errorMessage(query.error)}</Alert>}
+        {!query.isError && query.isFetching && hasData && <Alert severity="info" role="status" sx={layoutSx.notice.afterGap}><LinearProgress aria-label={t('app.loading')} sx={layoutSx.notice.contentGap}/>{t('state.updating')}</Alert>}
         {children}
     </>;
 }
-export function ErrorNotice({ error }: {
+export function ErrorNotice({ error, fieldLabels }: {
     error: unknown;
+    fieldLabels?: Readonly<Record<string, string>>;
 }) {
     const { t } = useTranslation();
     const alertRef = useRef<HTMLDivElement>(null);
@@ -131,11 +193,18 @@ export function ErrorNotice({ error }: {
     const status = error instanceof ApiError ? error.status : 0;
     const title = error instanceof UnknownResultError ? t('state.unknownTitle') : status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : status === 409 || status === 412 ? t('state.conflictTitle') : status === 422 ? t('state.validationTitle') : status === 428 ? t('state.versionRequiredTitle') : t('state.requestErrorTitle');
     const guidance = status === 409 || status === 412 ? t('state.conflictHelp') : status === 422 ? t('state.validationHelp') : status === 428 ? t('state.versionRequiredHelp') : undefined;
-    return <Alert ref={alertRef} severity={error instanceof UnknownResultError || status === 403 || status === 409 || status === 412 || status === 428 ? 'warning' : 'error'} sx={{ mb: 2 }} role="alert"><AlertTitle>{title}</AlertTitle>{errorMessage(error)}{guidance && <Typography component="div" variant="body2" sx={{ mt: 1 }}>{guidance}</Typography>}{validationFields?.map(field => <div key={field.path}><strong>{t('state.field')} {field.path}:</strong> {field.message}</div>)}{error instanceof UnknownResultError && error.commandId && <div>{t('state.command')}: {error.commandId}</div>}</Alert>;
+    return <Alert ref={alertRef} severity={error instanceof UnknownResultError || status === 403 || status === 409 || status === 412 || status === 428 ? 'warning' : 'error'} sx={layoutSx.notice.afterGap} role="alert"><AlertTitle>{title}</AlertTitle>{errorMessage(error)}{guidance && <Typography component="div" variant="body2" sx={layoutSx.notice.contentGap}>{guidance}</Typography>}{validationFields?.map(field => {
+        const normalized = field.path.replace(/^\//, '').replace(/~1/g, '/').replace(/~0/g, '~');
+        const lastSegment = normalized.split(/[./]/).flatMap(segment => segment.split('[').flatMap(part => part.split(']'))).filter(Boolean).at(-1) || normalized;
+        const label = fieldLabels?.[normalized] || fieldLabels?.[lastSegment] || field.path;
+        return <div key={field.path}><strong>{t('state.field')} {label}:</strong> {field.message}</div>;
+    })}{error instanceof UnknownResultError && error.commandId && <Typography component="div" variant="body2" sx={layoutSx.notice.contentGap}>{t('state.command')}: <Box component="code" sx={{ overflowWrap: 'anywhere' }}>{error.commandId}</Box></Typography>}</Alert>;
 }
-export function Toolbar({ placeholder = 'Tìm kiếm...', extra }: {
+export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, cursorParam = 'cursor' }: {
+    operation: QueryOperationId;
     placeholder?: string;
     extra?: ReactNode;
+    cursorParam?: string;
 }) {
     const [params, setParams] = useSearchParams();
     const [draft, setDraft] = useState(params.get('q') || '');
@@ -148,7 +217,7 @@ export function Toolbar({ placeholder = 'Tìm kiếm...', extra }: {
             next.set('q', query);
         else
             next.delete('q');
-        next.delete('cursor');
+        next.delete(cursorParam);
         setParams(next);
     };
     const clearSearch = () => {
@@ -156,20 +225,24 @@ export function Toolbar({ placeholder = 'Tìm kiếm...', extra }: {
         updateSearch('');
         inputRef.current?.focus();
     };
-    return <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }} direction={{ xs: 'column', md: 'row' }} gap={1.5} sx={{ p: 2 }}>
+    const supportsSearch = operations[operation].queryParameters.some(parameter => parameter.name === 'q');
+    if (!supportsSearch)
+        return extra ? <>{extra}</> : null;
+    return <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }} direction={{ xs: 'column', md: 'row' }} sx={[layoutSx.toolbar.inset, layoutSx.toolbar.controlGap]}>
  <TextField inputRef={inputRef} label="Tìm kiếm" placeholder={placeholder} size="small" value={draft} onChange={e => setDraft(e.target.value)} slotProps={{
      htmlInput: { onKeyDown: (event: ReactKeyboardEvent<HTMLInputElement>) => { if (event.key === 'Enter' && event.nativeEvent.isComposing) event.preventDefault(); } },
      input: { startAdornment: <InputAdornment position="start"><SearchRounded fontSize="small"/></InputAdornment>, endAdornment: draft ? <InputAdornment position="end"><IconButton aria-label="Xóa tìm kiếm" edge="end" onMouseDown={event => event.preventDefault()} onClick={clearSearch}><CloseRounded fontSize="small"/></IconButton></InputAdornment> : undefined }
  }} sx={{ width: '100%', minWidth: 0, flex: 1 }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>;
 }
-export function Pager({ page }: {
+export function Pager({ page, cursorParam = 'cursor' }: {
     page?: Page;
+    cursorParam?: string;
 }) {
     const [params, setParams] = useSearchParams();
     if (!page)
         return null;
-    return <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}><Typography variant="caption" color="text.secondary">{typeof page.total === 'number' ? `${page.total} kết quả` : `Tối đa ${page.limit} dòng / trang`}</Typography><Stack direction="row" gap={1}><Button size="small" disabled={!params.has('cursor')} onClick={() => { const next = new URLSearchParams(params); next.delete('cursor'); setParams(next); }}>Đầu danh sách</Button><Button size="small" disabled={!page.hasMore} onClick={() => { const next = new URLSearchParams(params); if (page.nextCursor)
-        next.set('cursor', page.nextCursor); setParams(next); }}>Trang tiếp</Button></Stack></Stack>;
+    return <Stack direction="row" justifyContent="space-between" alignItems="center" sx={layoutSx.pager.inset}><Typography variant="caption" color="text.secondary">{typeof page.total === 'number' ? `${page.total} kết quả` : `Tối đa ${page.limit} dòng / trang`}</Typography><Stack direction="row" sx={layoutSx.pager.actionsGap}><Button size="small" disabled={!params.has(cursorParam)} onClick={() => { const next = new URLSearchParams(params); next.delete(cursorParam); setParams(next); }}>Đầu danh sách</Button><Button size="small" disabled={!page.hasMore || !page.nextCursor} onClick={() => { const next = new URLSearchParams(params); if (page.nextCursor)
+        next.set(cursorParam, page.nextCursor); setParams(next); }}>Trang tiếp</Button></Stack></Stack>;
 }
 export function LookupLoadMore({ label, loadedCount, hasMore, busy = false, onLoadMore }: {
     label: string;
@@ -180,7 +253,7 @@ export function LookupLoadMore({ label, loadedCount, hasMore, busy = false, onLo
 }) {
     if (loadedCount === 0 && !hasMore)
         return null;
-    return <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1} sx={{ px: 1, mt: .5 }}>
+    return <Stack direction="row" alignItems="center" justifyContent="space-between" sx={layoutSx.lookup.loadMoreRow}>
         <Typography variant="caption" color="text.secondary">Đã tải {loadedCount} lựa chọn</Typography>
         {hasMore && <Button size="small" disabled={busy} onClick={() => { void onLoadMore(); }} aria-label={`Tải thêm ${label}`}>{busy ? 'Đang tải…' : 'Tải thêm'}</Button>}
     </Stack>;
@@ -205,7 +278,7 @@ export function MutationButton({ permission, allowedActions, action, busy, child
     const { online } = useScope();
     if (!can)
         return null;
-    return <Button {...props} disabled={props.disabled || busy || !online} startIcon={busy ? <CircularProgress size={16}/> : undefined}>{children}</Button>;
+    return <Button onClick={props.onClick} variant={props.variant} color={props.color} type={props.type} disabled={props.disabled || busy || !online} startIcon={busy ? <CircularProgress size={16}/> : undefined}>{children}</Button>;
 }
 function draftControlValue(control: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
     if (control instanceof HTMLInputElement && (control.type === 'checkbox' || control.type === 'radio'))
@@ -236,6 +309,7 @@ export function EditDialog({ open, title, description, onClose, children, action
     const baselineReadyRef = useRef(false);
     const interactionRef = useRef(false);
     const [discardOpen, setDiscardOpen] = useState(false);
+    const discardConfirmedRef = useRef(false);
     const [dialogDirty, setDialogDirty] = useState(false);
     const establishBaseline = useCallback(() => {
         if (baselineReadyRef.current || !contentRef.current)
@@ -297,19 +371,24 @@ export function EditDialog({ open, title, description, onClose, children, action
         const dialog = root.closest<HTMLElement>('[role="dialog"]');
         establishBaseline();
         const observer = new MutationObserver(establishBaseline);
+        const handleFieldFocus = (event: FocusEvent) => {
+            establishBaseline();
+            if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]'))
+                interactionRef.current = true;
+        };
         const baselineFrame = window.requestAnimationFrame(() => {
             if (!interactionRef.current)
                 refreshBaseline();
         });
         observer.observe(root, { childList: true, subtree: true });
-        root.addEventListener('focusin', establishBaseline, true);
+        root.addEventListener('focusin', handleFieldFocus, true);
         root.addEventListener('beforeinput', establishBaseline, true);
         root.addEventListener('input', updateAfterInteraction, true);
         root.addEventListener('change', updateAfterInteraction, true);
         return () => {
             window.cancelAnimationFrame(baselineFrame);
             observer.disconnect();
-            root.removeEventListener('focusin', establishBaseline, true);
+            root.removeEventListener('focusin', handleFieldFocus, true);
             root.removeEventListener('beforeinput', establishBaseline, true);
             root.removeEventListener('input', updateAfterInteraction, true);
             root.removeEventListener('change', updateAfterInteraction, true);
@@ -338,21 +417,26 @@ export function EditDialog({ open, title, description, onClose, children, action
         onClose();
     };
     const discardChanges = () => {
+        discardConfirmedRef.current = true;
         setDiscardOpen(false);
-        onClose();
     };
     return <>
-        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={titleId}>{title}<IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ position: 'absolute', right: 12, top: 12 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} dividers onFocusCapture={establishBaseline} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={{ mb: 2 }}>{description}</Typography>}{children}</DialogContent><DialogActions sx={{ p: 2 }}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{actions}</DialogActions></Dialog>
-        <Dialog open={open && discardOpen} onClose={() => setDiscardOpen(false)} aria-labelledby={`${titleId}-draft-warning`} aria-describedby={`${titleId}-draft-description`}>
+        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={titleId}>{title}<IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ position: 'absolute', right: 12, top: 12 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} dividers sx={layoutSx.dialog.inset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{actions}</DialogActions></Dialog>
+        <Dialog open={open && discardOpen} onClose={() => setDiscardOpen(false)} aria-labelledby={`${titleId}-draft-warning`} aria-describedby={`${titleId}-draft-description`} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onExited: () => {
+            if (!discardConfirmedRef.current)
+                return;
+            discardConfirmedRef.current = false;
+            onClose();
+        } } }}>
             <DialogTitle id={`${titleId}-draft-warning`}>{t('draft.closeTitle')}</DialogTitle>
-            <DialogContent><DialogContentText id={`${titleId}-draft-description`}>{t('draft.closeDescription')}</DialogContentText></DialogContent>
-            <DialogActions><Button onClick={() => setDiscardOpen(false)}>{t('draft.continueEditing')}</Button><Button color="warning" variant="contained" onClick={discardChanges}>{t('draft.discard')}</Button></DialogActions>
+            <DialogContent sx={layoutSx.dialog.inset}><DialogContentText id={`${titleId}-draft-description`}>{t('draft.closeDescription')}</DialogContentText></DialogContent>
+            <DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={() => setDiscardOpen(false)}>{t('draft.continueEditing')}</Button><Button color="warning" variant="contained" onClick={discardChanges}>{t('draft.discard')}</Button></DialogActions>
         </Dialog>
     </>;
 }
 
 export function PartialDataNotice({ children = 'Một số phần của màn hình chưa có dữ liệu đầy đủ.' }: { children?: ReactNode }) {
-    return <Alert severity="info" role="status" sx={{ mb: 2 }}>{children}</Alert>;
+    return <Alert severity="info" role="status" sx={layoutSx.notice.afterGap}>{children}</Alert>;
 }
 
 export function CapabilityUnavailable({ children }: { children?: ReactNode }) {
@@ -370,9 +454,13 @@ export function ConfirmDialog({ open, title, description, onClose, onConfirm, bu
     requireReason?: boolean;
 }) {
     const [reason, setReason] = useState('');
+    useEffect(() => {
+        if (!open)
+            setReason('');
+    }, [open]);
     return <EditDialog open={open} title={title} description={description} onClose={onClose} busy={busy} actions={<Button variant="contained" disabled={busy || (requireReason && reason.trim().length < 5)} onClick={() => { void onConfirm(reason).then(() => { setReason(''); onClose(); }).catch(() => undefined); }}>Xác nhận</Button>}><ErrorNotice error={error}/>{requireReason && <TextField label="Lý do (ít nhất 5 ký tự)" value={reason} onChange={e => setReason(e.target.value)} fullWidth multiline minRows={2}/>}</EditDialog>;
 }
 export function DetailLine({ label: caption, children }: {
     label: string;
     children: ReactNode;
-}) { return <><Stack direction="row" justifyContent="space-between" gap={2} sx={{ py: 1.5 }}><Typography color="text.secondary">{caption}</Typography><Box sx={{ textAlign: 'right', overflowWrap: 'anywhere' }}>{children}</Box></Stack><Divider /></>; }
+}) { return <><Stack direction="row" justifyContent="space-between" sx={[layoutSx.detail.valueGap, layoutSx.detail.rowInsetBlock]}><Typography color="text.secondary">{caption}</Typography><Box sx={{ textAlign: 'right', overflowWrap: 'anywhere', minWidth: 0 }}>{children}</Box></Stack><Divider /></>; }

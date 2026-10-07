@@ -21,6 +21,9 @@ const seen = new Map<string, {
 }>();
 export type Fault = 'none' | 'slow' | 'error' | 'error_persistent' | 'error_persistent_all' | 'empty' | 'empty_persistent' | 'stale' | 'unknown' | 'forbidden' | 'budget_exceeded' | 'tool_denied';
 let fault: Fault = 'none';
+type OperationFailure = { status: number; code: string; message: string };
+const operationFailures = new Map<string, OperationFailure>();
+const operationDelays = new Map<string, number>();
 type ChangeEvent = {
     eventId: string;
     type: 'resync.required';
@@ -41,7 +44,21 @@ function notify(shopId: string) { const sequence = ++eventSequence; const event:
     listener(event); }
 export function setFault(value: Fault) { fault = value; }
 export function setRole(value: string) { ensure(grantedPermissions(value).length > 0, 'Vai trò không có trong catalog.', 422); role = value; permissionVersion++; seen.clear(); }
-export function resetService() { resetDb(); clearFileState(); seen.clear(); role = 'owner'; permissionVersion++; fault = 'none'; loggedIn = true; }
+export function resetService() { resetDb(); clearFileState(); seen.clear(); operationFailures.clear(); operationDelays.clear(); role = 'owner'; permissionVersion++; fault = 'none'; loggedIn = true; }
+/** DEV/TEST ONLY. Injects a deterministic failure for one mock API operation. */
+export function setOperationFailure(op: string, failure: OperationFailure | null) {
+    if (failure)
+        operationFailures.set(op, failure);
+    else
+        operationFailures.delete(op);
+}
+/** DEV/TEST ONLY. Delays only the response for one mock API operation. */
+export function setOperationDelay(op: string, delayMs: number | null) {
+    if (delayMs && delayMs > 0)
+        operationDelays.set(op, delayMs);
+    else
+        operationDelays.delete(op);
+}
 export function currentSession(): Row {
     ensure(loggedIn, 'Phiên đăng nhập đã kết thúc.', 401, 'UNAUTHENTICATED');
     return {
@@ -146,7 +163,10 @@ let serial: Promise<unknown> = Promise.resolve();
 export function handle(request: MockRequest): Promise<MockResult> {
     const run = serial.then(() => execute(request));
     serial = run.catch(() => undefined);
-    return run;
+    const delayMs = operationDelays.get(request.op) || 0;
+    if (!delayMs)
+        return run;
+    return run.then(result => new Promise<MockResult>(resolve => setTimeout(() => resolve(result), delayMs)));
 }
 async function execute(request: MockRequest): Promise<MockResult> {
     const meta = opMap[request.op];
@@ -201,6 +221,9 @@ async function execute(request: MockRequest): Promise<MockResult> {
     }
     if (meta.permission)
         ensure(grantedPermissions(role).includes(meta.permission), 'Bạn không có quyền thực hiện thao tác này.', 403, 'FORBIDDEN');
+    const operationFailure = operationFailures.get(request.op);
+    if (operationFailure)
+        throw new MockFailure(operationFailure.status, operationFailure.code, operationFailure.message);
     if (request.op === 'createExport') {
         const sourcePermission = ({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[str(body.reportType)];
         ensure(sourcePermission && grantedPermissions(role).includes(sourcePermission), 'Bạn không có quyền đọc nguồn dữ liệu của báo cáo này.', 403, 'SOURCE_PERMISSION_REQUIRED');

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
-import { formatMoney } from '../apps/web/src/shared/model/format';
+import { dateTime, formatMoney } from '../apps/web/src/shared/model/format';
 
 let demoUrl = '';
 let closeDemo: (() => Promise<void>) | undefined;
@@ -37,6 +37,13 @@ async function importCsv(page: import('@playwright/test').Page, kind: 'bank' | '
     await expect(dialog.getByRole('link', { name: /Xem kết quả nhập/ })).toBeVisible();
     await dialog.getByRole('button', { name: 'Hủy' }).click();
     return { response, payload };
+}
+
+async function discardDialogChanges(page: import('@playwright/test').Page, dialog: import('@playwright/test').Locator) {
+    await dialog.getByRole('button', { name: 'Đóng' }).click();
+    const confirmation = page.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' });
+    await confirmation.getByRole('button', { name: 'Bỏ thay đổi' }).click();
+    await expect(dialog).toBeHidden();
 }
 
 test('FE015.AC01 report filters use exact timezone boundaries and mock API aggregates', async ({ page }) => {
@@ -106,6 +113,63 @@ test('FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot
     expect(writes).toEqual([]);
 });
 
+test('UI003 report timestamps follow the active shop timezone', async ({ browser }) => {
+    const isolated = await startDemoServer({ cacheIsolationKey: 'fe015-ui003-timezone' });
+    const context = await browser.newContext({ timezoneId: 'America/Los_Angeles' });
+    const page = await context.newPage();
+    try {
+        await page.goto(new URL('/s/shop-demo/settings/shop', isolated.url).toString());
+        const timezone = page.getByRole('textbox', { name: 'Múi giờ' });
+        await expect(timezone).toHaveValue('Asia/Vientiane');
+        await timezone.fill('UTC');
+        const updateWait = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo');
+        await page.getByRole('button', { name: 'Lưu cấu hình' }).click();
+        const updateResponse = await updateWait;
+        expect(updateResponse.status()).toBe(200);
+        expect((await updateResponse.json()).data.timezone).toBe('UTC');
+        await expect(page.getByRole('status')).toContainText('Đã lưu cấu hình cửa hàng.');
+
+        const utcReportWait = page.waitForResponse(response => {
+            const url = new URL(response.url());
+            return response.request().method() === 'GET' && url.pathname.endsWith('/finance/cashflow') && url.searchParams.get('from') === '2026-09-01T00:00:00.000Z' && url.searchParams.get('to') === '2026-10-01T00:00:00.000Z' && url.searchParams.get('timezone') === 'UTC';
+        });
+        await page.evaluate(() => {
+            window.history.pushState({}, '', '/s/shop-demo/finance');
+            window.dispatchEvent(new PopStateEvent('popstate'));
+        });
+        await page.getByRole('textbox', { name: 'Từ ngày' }).fill('2026-09-01');
+        await page.getByRole('textbox', { name: 'Đến trước ngày' }).fill('2026-10-01');
+        const utcReportResponse = await utcReportWait;
+        expect(utcReportResponse.status()).toBe(200);
+        const utcReport = (await utcReportResponse.json()).data;
+        expect(utcReport).toMatchObject({ from: '2026-09-01T00:00:00.000Z', to: '2026-10-01T00:00:00.000Z', timezone: 'UTC' });
+        expect(Date.parse(utcReport.asOf)).toBeGreaterThan(0);
+        await expect(page.locator('body')).toContainText(dateTime(utcReport.from, 'UTC'));
+        await expect(page.locator('body')).toContainText(dateTime(utcReport.to, 'UTC'));
+        await expect(page.locator('body')).toContainText(dateTime(utcReport.asOf, 'UTC'));
+
+        const vientianeReportWait = page.waitForResponse(response => {
+            const url = new URL(response.url());
+            return response.request().method() === 'GET' && url.pathname.endsWith('/finance/cashflow') && url.searchParams.get('from') === '2026-08-31T17:00:00.000Z' && url.searchParams.get('to') === '2026-09-30T17:00:00.000Z' && url.searchParams.get('timezone') === 'Asia/Vientiane';
+        });
+        await page.evaluate(() => {
+            window.history.pushState({}, '', '/s/shop-second/finance');
+            window.dispatchEvent(new PopStateEvent('popstate'));
+        });
+        const vientianeReportResponse = await vientianeReportWait;
+        expect(vientianeReportResponse.status()).toBe(200);
+        const vientianeReport = (await vientianeReportResponse.json()).data;
+        expect(vientianeReport).toMatchObject({ from: '2026-08-31T17:00:00.000Z', to: '2026-09-30T17:00:00.000Z', timezone: 'Asia/Vientiane' });
+        expect(Date.parse(vientianeReport.asOf)).toBeGreaterThan(0);
+        await expect(page.locator('body')).toContainText(dateTime(vientianeReport.from, 'Asia/Vientiane'));
+        await expect(page.locator('body')).toContainText(dateTime(vientianeReport.asOf, 'Asia/Vientiane'));
+    }
+    finally {
+        await context.close();
+        await isolated.close();
+    }
+});
+
 test('FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values', async ({ page }) => {
     const writes: string[] = [];
     page.on('request', request => {
@@ -138,10 +202,10 @@ test('FE015.AC02 journal rejects unbalanced decimal lines before POST and sends 
     await gotoDemo(page, '/s/shop-demo/finance/journals');
     await page.getByRole('button', { name: 'Tạo bút toán nháp', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Bút toán nháp' });
+    await dialog.getByRole('textbox', { name: 'Ngày hiệu lực' }).fill('2026-09-29');
     await expect(dialog.getByRole('alert').filter({ hasText: 'đang mở' })).toBeVisible();
     await dialog.getByRole('textbox', { name: 'Loại chứng từ nguồn' }).fill('manual');
     await dialog.getByRole('textbox', { name: 'Mã chứng từ nguồn' }).fill('FE015-JOURNAL-01');
-    await dialog.getByRole('textbox', { name: 'Ngày hiệu lực' }).fill('2026-09-29');
     await chooseOption(page, 'Tài khoản dòng 1', 'Tiền mặt · cash (mẫu demo)', dialog);
     await chooseOption(page, 'Tài khoản dòng 2', 'Doanh thu · sales (mẫu demo)', dialog);
     await dialog.getByRole('textbox', { name: 'Nợ' }).nth(0).fill('100.25');
@@ -185,6 +249,7 @@ test('FE015.AC02 closed accounting period is visible and disables journal draft 
     await page.getByRole('link', { name: 'Chứng từ & sổ kép', exact: true }).click();
     await page.getByRole('button', { name: 'Tạo bút toán nháp', exact: true }).click();
     const journal = page.getByRole('dialog', { name: 'Bút toán nháp' });
+    await journal.getByRole('textbox', { name: 'Ngày hiệu lực' }).fill('2026-09-29');
     await expect(journal.getByRole('alert').filter({ hasText: 'đã khóa; không thể tạo' })).toBeVisible();
     await expect(journal.getByRole('button', { name: 'Lưu nháp' })).toBeDisabled();
 });
@@ -210,6 +275,133 @@ test('FE015.AC03 CSV import keeps partial row failures visible and deduplicates 
     const reimport = await importCsv(page, 'bank', 'bank-fixture-01', 'FE015-BANK-REIMPORT', duplicate);
     expect(reimport.payload.data).toMatchObject({ status: 'failed', completed: 0, errorCount: 1 });
     await expect(page.getByRole('row').filter({ hasText: 'FE015-IMPORT-OK' })).toHaveCount(1);
+});
+
+test('UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page', async ({ page }) => {
+    const invalidListResponses: string[] = [];
+    const listRequests: Array<{ collection: string; cursor: string | null }> = [];
+    page.on('request', request => {
+        if (request.method() !== 'GET') return;
+        const url = new URL(request.url());
+        const collection = ['bank-transactions', 'cod-settlements', 'reconciliation-cases', 'debts'].find(name => url.pathname.endsWith(`/${name}`));
+        if (collection) listRequests.push({ collection, cursor: url.searchParams.get('cursor') });
+    });
+    page.on('response', response => {
+        if (response.status() === 422 && /\/(bank-transactions|cod-settlements|reconciliation-cases|debts)(\?|$)/.test(new URL(response.url()).pathname)) {
+            invalidListResponses.push(`${response.status()} ${response.url()}`);
+        }
+    });
+    const bankRows = Array.from({ length: 25 }, (_, index) => {
+        const sequence = String(index + 1).padStart(2, '0');
+        const amount = index === 4 ? '249000' : '1000';
+        return `FE015-UI001-BANK-${sequence},${amount},VND,credit,2026-09-29T13:${String(index).padStart(2, '0')}:00Z,UI001 cursor fixture ${sequence}`;
+    });
+    await gotoDemo(page, '/s/shop-demo/finance/reconciliation');
+    const bankImport = await importCsv(page, 'bank', 'bank-fixture-ui001', 'FE015-UI001-BANK-BATCH', [
+        'externalTransactionId,amount,currency,direction,occurredAt,referenceText',
+        ...bankRows,
+    ].join('\n'));
+    expect(bankImport.payload.data).toMatchObject({ status: 'succeeded', completed: 25, errorCount: 0 });
+    const codImport = await importCsv(page, 'cod', 'carrier-fixture-ui001', 'FE015-UI001-COD-BATCH', [
+        'externalBatchId,orderIds',
+        'FE015-UI001-COD,DH-DEMO-PAID-01',
+    ].join('\n'));
+    expect(codImport.payload.data).toMatchObject({ status: 'succeeded', completed: 1, errorCount: 0 });
+
+    await page.getByRole('button', { name: 'Trang tiếp' }).click();
+    await expect(page.getByRole('row').filter({ hasText: 'FE015-UI001-BANK-05' })).toBeVisible();
+    await expect(page.getByRole('row').filter({ hasText: 'FE015-UI001-BANK-25' })).toHaveCount(0);
+    const bankCursor = new URL(page.url()).searchParams.get('bankCursor');
+    expect(bankCursor).toBeTruthy();
+    expect(new URL(page.url()).searchParams.has('codCursor')).toBe(false);
+    expect(new URL(page.url()).searchParams.has('caseCursor')).toBe(false);
+    expect(listRequests.some(request => request.collection === 'bank-transactions' && request.cursor === bankCursor)).toBe(true);
+    expect(listRequests.filter(request => ['cod-settlements', 'reconciliation-cases'].includes(request.collection)).every(request => request.cursor === null)).toBe(true);
+    await test.info().attach('ui001-bank-page-2.png', { body: await page.screenshot(), contentType: 'image/png' });
+
+    await page.getByRole('tab', { name: 'COD' }).click();
+    const codRow = page.getByRole('row').filter({ hasText: 'FE015-UI001-COD' });
+    await expect(codRow).toBeVisible();
+    await codRow.getByRole('button', { name: 'Đối chiếu' }).click();
+    const codDialog = page.getByRole('dialog', { name: 'Ghép tiền COD' });
+    await expect(codDialog.getByRole('button', { name: 'Tải thêm giao dịch ngân hàng' })).toBeVisible();
+    await codDialog.getByRole('button', { name: 'Tải thêm giao dịch ngân hàng' }).click();
+    await chooseOption(page, 'Mã giao dịch ngân hàng', /FE015-UI001-BANK-05/, codDialog);
+    await codDialog.getByRole('textbox', { name: 'Phí thực tế (VND)' }).fill('0');
+    await codDialog.getByRole('textbox', { name: 'Mã chứng từ phí' }).fill('FEE-UI001-CHECK');
+    await expect(codDialog.getByRole('button', { name: 'Xác nhận khớp' })).toBeEnabled();
+    await test.info().attach('ui001-cod-lookup.png', { body: await page.screenshot(), contentType: 'image/png' });
+    await discardDialogChanges(page, codDialog);
+
+    await page.getByRole('tab', { name: 'Chênh lệch cần xử lý' }).click();
+    await expect(page.getByRole('tab', { name: 'Chênh lệch cần xử lý' })).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('alert').filter({ hasText: /Cursor không còn phù hợp|INVALID_CURSOR/ })).toHaveCount(0);
+    const rows = page.getByRole('row');
+    await expect(rows.nth(1)).toBeVisible();
+    let caseRow: import('@playwright/test').Locator | undefined;
+    for (let index = 1; index < await rows.count(); index++) {
+        const candidate = rows.nth(index);
+        const action = candidate.getByRole('button', { name: 'Ghép giao dịch' });
+        if (await action.count() && await action.isEnabled()) {
+            caseRow = candidate;
+            break;
+        }
+    }
+    expect(caseRow).toBeDefined();
+    const bankDetailResponse = page.waitForResponse(response => response.request().method() === 'GET' && /\/bank-transactions\/[^/?]+$/.test(new URL(response.url()).pathname));
+    await caseRow!.getByRole('button', { name: 'Ghép giao dịch' }).click();
+    const bankDetail = (await bankDetailResponse).json();
+    const caseDialog = page.getByRole('dialog', { name: 'Ghép giao dịch với công nợ' });
+    await expect(caseDialog.getByRole('textbox', { name: 'Giao dịch ngoài hệ thống' })).toHaveValue((await bankDetail).data.externalTransactionId);
+    await chooseOption(page, 'Khoản công nợ', /seed-debtitem-10028/, caseDialog);
+    await expect(caseDialog.getByRole('combobox', { name: 'Khoản công nợ' })).toContainText('seed-debtitem-10028');
+    expect(listRequests.some(request => request.collection === 'debts' && request.cursor === null)).toBe(true);
+    await caseDialog.getByRole('textbox', { name: 'Số tiền phân bổ (VND)' }).fill('1000');
+    await caseDialog.getByRole('textbox', { name: 'Lý do' }).fill('Đối soát UI001 kiểm tra lựa chọn ngoài trang.');
+    await expect(caseDialog.getByRole('button', { name: 'Ghi kết quả đối soát' })).toBeEnabled();
+    await test.info().attach('ui001-case-lookup.png', { body: await page.screenshot(), contentType: 'image/png' });
+    await discardDialogChanges(page, caseDialog);
+
+    await page.getByRole('tab', { name: 'COD' }).click();
+    await codRow.getByRole('button', { name: 'Đối chiếu' }).click();
+    const codMatchDialog = page.getByRole('dialog', { name: 'Ghép tiền COD' });
+    await chooseOption(page, 'Mã giao dịch ngân hàng', /FE015-UI001-BANK-05/, codMatchDialog);
+    await codMatchDialog.getByRole('textbox', { name: 'Phí thực tế (VND)' }).fill('0');
+    await codMatchDialog.getByRole('textbox', { name: 'Mã chứng từ phí' }).fill('FEE-UI001-CHECK');
+    const codMatchResponse = page.waitForResponse(response => response.request().method() === 'POST' && /\/cod-settlements\/[^/]+\/match$/.test(new URL(response.url()).pathname));
+    await codMatchDialog.getByRole('button', { name: 'Xác nhận khớp' }).click();
+    expect((await codMatchResponse).status()).toBe(202);
+
+    const afterMatchBank = await importCsv(page, 'bank', 'bank-fixture-ui001', 'FE015-UI001-POSTMATCH-BATCH', [
+        'externalTransactionId,amount,currency,direction,occurredAt,referenceText',
+        'FE015-UI001-POSTMATCH-BANK,1000,VND,credit,2026-09-29T13:30:00Z,UI001 closed debt filter fixture',
+    ].join('\n'));
+    expect(afterMatchBank.payload.data).toMatchObject({ status: 'succeeded', completed: 1, errorCount: 0 });
+    await page.getByRole('tab', { name: 'Chênh lệch cần xử lý' }).click();
+    // The bank table remains on its own second page, so the case table may
+    // render an off-page transaction's internal ID. Inspect the newest case
+    // through its transaction-detail request instead of relying on that cell.
+    const postMatchCase = page.getByRole('row').nth(1);
+    await expect(postMatchCase).toBeVisible();
+    const postMatchBankDetailResponse = page.waitForResponse(response => response.request().method() === 'GET' && /\/bank-transactions\/[^/?]+$/.test(new URL(response.url()).pathname));
+    await postMatchCase.getByRole('button', { name: 'Ghép giao dịch' }).click();
+    const postMatchDialog = page.getByRole('dialog', { name: 'Ghép giao dịch với công nợ' });
+    const postMatchBankDetail = await postMatchBankDetailResponse;
+    expect((await postMatchBankDetail.json()).data.externalTransactionId).toBe('FE015-UI001-POSTMATCH-BANK');
+    await expect(postMatchDialog.getByRole('textbox', { name: 'Giao dịch ngoài hệ thống' })).toHaveValue('FE015-UI001-POSTMATCH-BANK');
+    await postMatchDialog.getByRole('combobox', { name: 'Khoản công nợ' }).click();
+    await expect(page.getByRole('option', { name: /seed-debtitem-10028/ })).toHaveCount(0);
+    await page.keyboard.press('Escape');
+
+    await page.goBack();
+    expect(new URL(page.url()).searchParams.has('bankCursor')).toBe(false);
+    await expect(page.getByRole('alert').filter({ hasText: /Cursor không còn phù hợp|INVALID_CURSOR/ })).toHaveCount(0);
+    expect(invalidListResponses).toEqual([]);
+    await test.info().attach('ui001-network-evidence.json', {
+        body: JSON.stringify({ route: '/s/shop-demo/finance/reconciliation', bankCursor, listRequests, invalidListResponses, lookupResults: ['off-page COD bank choice loaded independently and was match-valid', 'case transaction detail resolved by ID while bank page cursor was active', 'positive debt choice remained match-valid', 'zero-outstanding debt was excluded after COD settlement'], backNavigation: { bankCursorCleared: !new URL(page.url()).searchParams.has('bankCursor'), invalidCursorResponses: 0 } }, null, 2),
+        contentType: 'application/json',
+    });
+    await test.info().attach('ui001-after-back.png', { body: await page.screenshot(), contentType: 'image/png' });
 });
 
 test('FE015.AC03 COD settlement matches net remittance plus documented fee', async ({ page }) => {
@@ -279,6 +471,7 @@ test('FE015.AC03 unknown journal posting is not resent from the same draft', asy
     await gotoDemo(page, '/s/shop-demo/finance/journals');
     await page.getByRole('button', { name: 'Tạo bút toán nháp', exact: true }).click();
     const draft = page.getByRole('dialog', { name: 'Bút toán nháp' });
+    await draft.getByRole('textbox', { name: 'Ngày hiệu lực' }).fill('2026-09-29');
     await draft.getByRole('textbox', { name: 'Mã chứng từ nguồn' }).fill('FE015-UNKNOWN-POST');
     await chooseOption(page, 'Tài khoản dòng 1', 'Tiền mặt · cash (mẫu demo)', draft);
     await chooseOption(page, 'Tài khoản dòng 2', 'Thu khác · income (mẫu demo)', draft);

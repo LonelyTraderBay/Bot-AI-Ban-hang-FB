@@ -157,10 +157,8 @@ test('FE014.S03 auto-send cannot be configured without an enabled procurement bu
     const rule = page.getByRole('dialog', { name: 'Quy tắc nhập lại' });
     await chooseOption(page, 'Báo giá / SKU', /v-p1 · supplier-01/);
     await chooseOption(page, 'Mức tự động', '3 · Tự gửi trong hạn mức');
-    const budget = rule.getByRole('combobox', { name: 'Ngân sách mua hàng đã duyệt' });
-    await budget.click();
-    await expect(page.getByRole('option')).toHaveCount(0);
-    await page.keyboard.press('Escape');
+    await expect(rule.getByText('Không có chính sách ngân sách mua hàng đang bật và có hạn mức.', { exact: true })).toBeVisible();
+    await expect(rule.getByRole('combobox', { name: 'Ngân sách mua hàng đã duyệt' })).toHaveCount(0);
     await rule.getByRole('checkbox', { name: 'Tôi hiểu phạm vi tự gửi và đã kiểm chính sách' }).check();
     await expect(rule.getByRole('button', { name: 'Lưu quy tắc' })).toBeDisabled();
     await expect(rule.getByText(/Backend phải kiểm nhà cung cấp, giá, lượng, ngân sách/)).toBeVisible();

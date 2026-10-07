@@ -5,11 +5,18 @@ describe('report date and download boundaries', () => {
   it('converts inclusive date-only filters using the shop timezone', () => {
     expect(reportDateBoundary('2026-09-30', 'start', 'Asia/Vientiane')).toBe('2026-09-29T17:00:00.000Z');
     expect(reportDateBoundary('2026-09-30', 'end', 'Asia/Vientiane')).toBe('2026-09-30T16:59:59.999Z');
+    expect(reportDateBoundary('2026-09-30', 'start', 'UTC')).toBe('2026-09-30T00:00:00.000Z');
+    expect(reportDateBoundary('2026-09-30', 'end', 'UTC')).toBe('2026-09-30T23:59:59.999Z');
   });
 
   it('preserves daylight-saving offsets across the selected local day', () => {
     expect(reportDateBoundary('2026-03-08', 'start', 'America/New_York')).toBe('2026-03-08T05:00:00.000Z');
     expect(reportDateBoundary('2026-03-08', 'end', 'America/New_York')).toBe('2026-03-09T03:59:59.999Z');
+  });
+
+  it('uses the shared first local-day instant when midnight is skipped', () => {
+    expect(reportDateBoundary('2018-11-04', 'start', 'America/Sao_Paulo')).toBe('2018-11-04T03:00:00.000Z');
+    expect(reportDateBoundary('2018-11-04', 'end', 'America/Sao_Paulo')).toBe('2018-11-05T01:59:59.999Z');
   });
 
   it('derives defaults from the API snapshot in the shop timezone', () => {

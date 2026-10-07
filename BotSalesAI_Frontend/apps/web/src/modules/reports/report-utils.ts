@@ -1,4 +1,5 @@
 import type { ExportRequest } from '@botsales/contracts';
+import { dateOnlyStartOfDayToISOString } from '../../shared/model/format';
 export { authorizedDownloadHref } from '../../shared/model/download';
 
 export type ReportType = ExportRequest['reportType'];
@@ -36,10 +37,10 @@ function zonedDateTimeToUtc(date: { year: number; month: number; day: number }, 
 
 /** Convert a date-only report filter to an inclusive local calendar-day boundary. */
 export function reportDateBoundary(value: string, edge: 'start' | 'end', timezone: string) {
+  if (edge === 'start') return dateOnlyStartOfDayToISOString(value, timezone);
   const date = parseDateOnly(value);
-  const lastSecond = edge === 'end';
-  const epoch = zonedDateTimeToUtc(date, lastSecond ? 23 : 0, lastSecond ? 59 : 0, lastSecond ? 59 : 0, timezone);
-  return new Date(epoch + (lastSecond ? 999 : 0)).toISOString();
+  const epoch = zonedDateTimeToUtc(date, 23, 59, 59, timezone);
+  return new Date(epoch + 999).toISOString();
 }
 
 export function dateInTimezone(value: string, timezone: string) {

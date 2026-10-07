@@ -151,26 +151,32 @@ test('FE011.AC03 unknown command blocks duplicate submission until shared recove
     await expect(page.getByRole('status').filter({ hasText: 'Điều chỉnh đã được xác nhận' })).toHaveCount(0);
 });
 
-test('FE011.AC04 movement filters are URL-backed and history exposes actor and permission-gated source', async ({ page }) => {
+test('FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source', async ({ page }) => {
     const calls = observeShopRequests(page);
-    await gotoDemo(page, '/s/shop-demo/inventory/movements');
+    await gotoDemo(page, '/s/shop-demo/inventory/movements?cursor=stale-movement&preserve=keep');
     await expect(page.getByRole('heading', { name: 'Lịch sử kho', exact: true })).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: 'user-demo' }).first()).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Cursor không còn phù hợp' })).toBeVisible();
+    await expect(page.getByLabel('Loại biến động')).toHaveCount(0);
     await page.getByLabel('Mã kho').fill('warehouse-01');
     await page.getByLabel('Mã biến thể').fill('v-p1');
-    await chooseOption(page, 'Loại biến động', 'Điều chỉnh');
     const filteredRequest = page.waitForRequest(request => {
         const url = new URL(request.url());
-        return request.method() === 'GET' && url.pathname.endsWith('/inventory/movements') && url.searchParams.get('kind') === 'adjustment';
+        return request.method() === 'GET' && url.pathname.endsWith('/inventory/movements') && url.searchParams.get('warehouseId') === 'warehouse-01' && url.searchParams.get('variantId') === 'v-p1';
     });
     await page.getByRole('button', { name: 'Áp dụng bộ lọc' }).click();
     await expect(page).toHaveURL(/warehouseId=warehouse-01/);
     await expect(page).toHaveURL(/variantId=v-p1/);
-    await expect(page).toHaveURL(/kind=adjustment/);
+    await expect(page).toHaveURL(/preserve=keep/);
+    await expect(page).not.toHaveURL(/cursor=/);
+    await expect(page).not.toHaveURL(/kind=/);
+    await expect(page.getByRole('row').filter({ hasText: 'user-demo' }).first()).toBeVisible();
     const filtered = new URL((await filteredRequest).url());
     expect(filtered.searchParams.get('warehouseId')).toBe('warehouse-01');
     expect(filtered.searchParams.get('variantId')).toBe('v-p1');
+    expect(filtered.searchParams.has('kind')).toBe(false);
+    expect(filtered.searchParams.has('cursor')).toBe(false);
     await expect(page.getByRole('button', { name: 'Xóa bộ lọc' })).toBeVisible();
+    expect(calls.some(call => call.method === 'GET' && call.path.includes('/inventory/movements') && new URLSearchParams(call.path.split('?')[1]).has('kind'))).toBe(false);
 });
 
 test('FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog', async ({ page }) => {

@@ -5,6 +5,7 @@ import type { EventEnvelope } from '@botsales/contracts';
 import { useScope } from '@/shared/model/scope';
 import { operationUrl } from '@/shared/api/client';
 import { assertSchema } from '@/shared/api/validation';
+import { layoutSx } from '@/shared/ui/layout';
 export function ScopeEvents() {
     const scope = useScope();
     const cache = useQueryClient();
@@ -49,5 +50,5 @@ export function ScopeEvents() {
         };
         return () => { live = false; stream.close(); };
     }, [cache, shop.id, membership.permissionVersion, session.user.id, refreshSession]);
-    return disconnected ? <Alert severity="warning" sx={{ mx: 2, mt: 1 }}>Mất cập nhật trực tiếp. Dữ liệu có thể cũ; tải lại để đối chiếu trước thao tác.</Alert> : null;
+    return disconnected ? <Alert severity="warning" sx={layoutSx.shell.statusBanner}>Mất cập nhật trực tiếp. Dữ liệu có thể cũ; tải lại để đối chiếu trước thao tác.</Alert> : null;
 }

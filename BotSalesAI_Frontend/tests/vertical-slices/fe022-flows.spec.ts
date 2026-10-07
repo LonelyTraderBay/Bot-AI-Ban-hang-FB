@@ -201,7 +201,7 @@ test('FE022.VS03 finance → reconciliation retains bank transaction and partial
 
 test('FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
-    await page.getByRole('button', { name: 'Đánh giá', exact: true }).first().click();
+    await page.getByRole('button', { name: /^Đánh giá tin nhắn/ }).first().click();
     const feedbackDialog = page.getByRole('dialog', { name: 'Đánh giá câu trả lời' });
     await feedbackDialog.getByRole('textbox', { name: 'Nội dung đề xuất sửa' }).fill('Xác minh điều kiện đổi hàng trước khi tư vấn.');
     const feedbackResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/feedback'));
@@ -243,8 +243,8 @@ test('FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback
 
 test('FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps', async () => {
     const readJson = <T,>(relative: string): T => JSON.parse(fs.readFileSync(path.resolve(process.cwd(), relative), 'utf8')) as T;
-    const routeManifest = readJson<{ routes: Array<{ id: string; path: string; acceptanceScenarioIds: string[] }> }>('botsales-kit/contracts/route-manifest.json');
-    const featureCatalog = readJson<{ features: Array<{ id: string; title: string; scenarioId: string; routeIds: string[] }> }>('botsales-kit/contracts/feature-catalog.json');
+    const routeManifest = readJson<{ routes: Array<{ id: string; path: string; acceptanceScenarioIds: string[] }> }>('../botsales-kit/contracts/route-manifest.json');
+    const featureCatalog = readJson<{ features: Array<{ id: string; title: string; scenarioId: string; routeIds: string[] }> }>('../botsales-kit/contracts/feature-catalog.json');
     const matrix = readJson<Array<{
         routeId: string;
         route: string;

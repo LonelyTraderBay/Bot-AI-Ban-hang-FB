@@ -7,12 +7,12 @@ const readText = async path => readFile(new URL(path, import.meta.url), 'utf8');
 
 test('FE014 procurement routes, permissions, DTOs and current source follow canonical contracts', async () => {
     const [manifest, openapi, operations, procurement, mock, routeMap] = await Promise.all([
-        readJson('../botsales-kit/contracts/route-manifest.json'),
-        readJson('../botsales-kit/contracts/openapi.json'),
+        readJson('../../botsales-kit/contracts/route-manifest.json'),
+        readJson('../../botsales-kit/contracts/openapi.json'),
         readJson('../packages/contracts/src/operations.json'),
         readText('../apps/web/src/modules/procurement/index.tsx'),
         readText('../apps/web/src/mocks/procurement.ts'),
-        readText('../botsales-kit/execution/frontend-evidence/FE014/S01-route-operation-map.md'),
+        readText('../../botsales-kit/execution/frontend-evidence/FE014/S01-route-operation-map.md'),
     ]);
     const checks = [];
     const eq = (actual, expected, label) => { assert.deepEqual(actual, expected, label); checks.push(label); };

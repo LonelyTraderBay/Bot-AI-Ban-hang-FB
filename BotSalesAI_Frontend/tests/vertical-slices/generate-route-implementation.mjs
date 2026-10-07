@@ -10,7 +10,7 @@ const requireFile = relative => {
     return fs.readFileSync(absolute, 'utf8');
 };
 
-const routeEvidenceFile = process.argv[2] || 'botsales-kit/execution/frontend-evidence/FE027/e2e-current-final-20261002-frontend-coverage.log';
+const routeEvidenceFile = process.argv[2] || '../botsales-kit/execution/frontend-evidence/FE027/e2e-current-final-20261002-frontend-coverage.log';
 const journeyEvidenceFile = routeEvidenceFile;
 const routeEvidence = requireFile(routeEvidenceFile);
 const journeyEvidence = requireFile(journeyEvidenceFile);
@@ -20,8 +20,8 @@ if (routeRunPassCount < 128 || !routeEvidence.includes('all canonical routes ren
 }
 if (routeRunPassCount < 128) throw new Error('Current full browser run must pass before generating the matrix.');
 
-const routeManifest = read('botsales-kit/contracts/route-manifest.json');
-const featureCatalog = read('botsales-kit/contracts/feature-catalog.json');
+const routeManifest = read('../botsales-kit/contracts/route-manifest.json');
+const featureCatalog = read('../botsales-kit/contracts/feature-catalog.json');
 const existing = read('docs/route-implementation.json');
 const oldRoutes = new Map(existing.map(route => [route.routeId, route]));
 const routeJourneys = [

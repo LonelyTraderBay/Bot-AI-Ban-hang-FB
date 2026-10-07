@@ -1,9 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
+import { isDeepStrictEqual } from 'node:util';
 import { fileURLToPath } from 'node:url';
 
 const generatorFile = fileURLToPath(import.meta.url);
 const defaultRoot = path.resolve(path.dirname(generatorFile), '..');
+const require = createRequire(import.meta.url);
+const yaml = require('js-yaml');
 const json = value => JSON.stringify(value);
 
 function isRecord(value) {
@@ -30,11 +34,12 @@ function getServerBasePath(api) {
 
 export function validateContractBundle(bundle) {
     const issues = [];
-    const { api, routes, tokens, permissions, events } = bundle;
+    const { api, routes, tokens, permissions, events, openapiYaml, operationIndex } = bundle;
     const issue = message => issues.push(message);
 
     if (!isRecord(api) || typeof api.openapi !== 'string' || !api.openapi.startsWith('3.1.')) issue('OpenAPI must declare version 3.1.x.');
     if (!isRecord(api?.info) || typeof api.info.version !== 'string' || !api.info.version.trim()) issue('OpenAPI info.version is required.');
+    if (openapiYaml !== undefined && !isDeepStrictEqual(openapiYaml, api)) issue('openapi.yaml drifted from canonical openapi.json.');
     if (!getServerBasePath(api)) issue('OpenAPI needs a same-origin absolute-path server URL without query, hash or variables.');
     if (!isRecord(api?.paths) || !isRecord(api?.components?.schemas) || Object.keys(api.components.schemas).length === 0) issue('OpenAPI paths and component schemas are required.');
 
@@ -104,6 +109,41 @@ export function validateContractBundle(bundle) {
                 if (operation.requestBody?.required && !isRecord(requestContent)) issue(`${operationId} requires a request body but declares no content.`);
                 if (requestContent && !requestContent['application/json'] && !requestContent['multipart/form-data']) issue(`${operationId} has unsupported request content; generator supports JSON and multipart form data.`);
                 if (requestContent?.['application/json'] && !requestContent['application/json'].schema) issue(`${operationId} JSON request is missing a schema.`);
+            }
+        }
+    }
+
+    if (isRecord(operationIndex)) {
+        const [major, minor] = String(api?.info?.version || '').split('.');
+        if (operationIndex.version !== `${major}.${minor}`) issue('operation-index version must match the major/minor version of canonical openapi.json.');
+        if (!Array.isArray(operationIndex.operations)) issue('operation-index.json needs an operations array.');
+        else {
+            const indexedIds = new Set();
+            const expected = [];
+            for (const [routePath, pathItem] of Object.entries(api.paths || {})) {
+                for (const [method, operation] of Object.entries(pathItem || {})) {
+                    if (!['get', 'post', 'put', 'patch', 'delete'].includes(method.toLowerCase()) || !operation?.operationId) continue;
+                    expected.push({
+                        operationId: operation.operationId,
+                        method: method.toUpperCase(),
+                        path: routePath,
+                        permission: operation['x-permission'] || null,
+                        module: operation.tags?.[0] || null,
+                    });
+                }
+            }
+            if (expected.length !== operationIndex.operations.length) issue('operation-index.json operation count differs from canonical openapi.json.');
+            for (const indexed of operationIndex.operations) {
+                if (!isRecord(indexed) || typeof indexed.operationId !== 'string') {
+                    issue('operation-index.json contains an invalid operation entry.');
+                    continue;
+                }
+                if (indexedIds.has(indexed.operationId)) issue(`operation-index.json contains duplicate operation ${indexed.operationId}.`);
+                indexedIds.add(indexed.operationId);
+                const source = expected.find(item => item.operationId === indexed.operationId);
+                if (!source || ['method', 'path', 'permission', 'module'].some(key => indexed[key] !== source[key])) {
+                    issue(`operation-index.json drifted from canonical OpenAPI operation ${indexed.operationId}.`);
+                }
             }
         }
     }
@@ -182,8 +222,9 @@ export function renderGenerated({ api, routes, tokens, permissions }) {
                 requestSchema: request?.$ref?.split('/').at(-1) || null,
                 responseSchema: responseSchema?.$ref?.split('/').at(-1) || null,
                 status: Number(response?.[0] || 204),
-                headers: parameters.filter(parameter => parameter.in === 'header').map(parameter => ({ name: parameter.name, required: !!parameter.required })),
-                queryParameters: queryParameters.map(parameter => ({ name: parameter.name, required: !!parameter.required })),
+                pathParameters: pathParameters.map(parameter => ({ name: parameter.name, required: !!parameter.required, schema: parameter.schema })),
+                headers: parameters.filter(parameter => parameter.in === 'header').map(parameter => ({ name: parameter.name, required: !!parameter.required, schema: parameter.schema })),
+                queryParameters: queryParameters.map(parameter => ({ name: parameter.name, required: !!parameter.required, schema: parameter.schema })),
                 bodyType: operation.requestBody?.content?.['multipart/form-data'] ? 'multipart' : 'json',
             };
             operationTypes.push(`${q(operation.operationId)}: { method: ${q(method.toUpperCase())}; versionRequired: ${versionRequired}; request: ${request ? ts(request) : operation.requestBody?.content?.['multipart/form-data'] ? 'FormData' : 'undefined'}; response: ${responseSchema ? ts(responseSchema) : 'undefined'}; path: { ${pathParameters.map(parameter => `${q(parameter.name)}: ${ts(parameter.schema)}`).join('; ')} }; query: { ${queryParameters.map(parameter => `${q(parameter.name)}${parameter.required ? '' : '?'}: ${ts(parameter.schema)}`).join('; ')} } }`);
@@ -198,8 +239,25 @@ export function renderGenerated({ api, routes, tokens, permissions }) {
     add('packages/contracts/src/permissions.json', `${JSON.stringify(permissions, null, 2)}\n`);
     add('packages/contracts/src/index.ts', `${preamble}export type * from './generated';\nexport { API_BASE_PATH } from './generated';\nexport { default as operations } from './operations.json';\nexport { default as routeManifest } from './routes.json';\nexport { default as permissionCatalog } from './permissions.json';\nexport { default as schemaCatalog } from './schemas.json';\n`);
     add('packages/design-tokens/src/tokens.json', `${JSON.stringify(tokens, null, 2)}\n`);
-    add('packages/design-tokens/src/index.ts', `${preamble}import tokens from './tokens.json';\nexport { tokens };\nexport const colors = tokens.colors;\n`);
-    const css = `/* GENERATED from approved design/tokens.json. */\n:root{color-scheme:dark;\n${Object.entries(tokens.colors).map(([key, value]) => `--color-${key.replace(/[A-Z]/g, character => '-' + character.toLowerCase())}:${value};`).join('\n')}\n}\n`;
+    add('packages/design-tokens/src/index.ts', `${preamble}import tokenData from './tokens.json';\ntype DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K] };\nexport const tokens: DeepReadonly<typeof tokenData> = tokenData;\nexport const colors = tokens.colors;\n`);
+    const colorVariables = Object.entries(tokens.colors).map(([key, value]) => `--color-${key.replace(/[A-Z]/g, character => '-' + character.toLowerCase())}:${value};`).join('\n');
+    const spaceVariables = Object.entries(tokens.space).map(([key, value]) => `--space-${key}:${value}px;`).join('\n');
+    const kebab = key => key.replace(/[A-Z]/g, character => '-' + character.toLowerCase());
+    const pxVariables = (namespace, values) => Object.entries(values || {}).map(([key, value]) => `--${namespace}-${kebab(key)}:${value}px;`).join('\n');
+    const unitlessVariables = (namespace, values) => Object.entries(values || {}).map(([key, value]) => `--${namespace}-${kebab(key)}:${value};`).join('\n');
+    const designVariables = [
+        `--font-family:${tokens.fontFamily};`,
+        pxVariables('font-size', tokens.fontSizes),
+        unitlessVariables('font-weight', tokens.fontWeights),
+        unitlessVariables('line-height', tokens.lineHeights),
+        pxVariables('letter-spacing', tokens.letterSpacing),
+        pxVariables('icon-size', tokens.iconSizes),
+        pxVariables('radius', tokens.radius),
+        pxVariables('focus-ring', { width: tokens.focusRing.width, globalOffset: tokens.focusRing.globalOffset, controlOffset: tokens.focusRing.controlOffset }),
+        pxVariables('breakpoint', tokens.breakpoints),
+        unitlessVariables('elevation', tokens.elevation),
+    ].filter(Boolean).join('\n');
+    const css = `/* GENERATED from approved design/tokens.json. */\n:root{color-scheme:dark;\n${colorVariables}\n${spaceVariables}\n${designVariables}\n}\n`;
     add('apps/web/src/app/tokens.css', css);
     add('apps/web/public/manifest.webmanifest', `${JSON.stringify({ name: 'BotSales AI', short_name: 'BotSales', lang: 'vi', start_url: '/', scope: '/', display: 'standalone', background_color: tokens.colors.canvas, theme_color: tokens.colors.canvas, icons: [{ src: '/app-icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }] }, null, 2)}\n`);
     add('apps/web/public/app-icon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="44" fill="${tokens.colors.canvas}"/><rect x="38" y="56" width="116" height="88" rx="24" fill="${tokens.colors.accent}"/><circle cx="72" cy="94" r="9" fill="${tokens.colors.onAccent}"/><circle cx="120" cy="94" r="9" fill="${tokens.colors.onAccent}"/><path d="M72 123h48M96 36v20" stroke="${tokens.colors.onAccent}" stroke-width="9" stroke-linecap="round"/></svg>\n`);
@@ -215,12 +273,15 @@ export function findGeneratedDrift(outputs, root, fileSystem = fs) {
 
 export function loadContractBundle(root = defaultRoot) {
     const read = file => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
+    const openapiYaml = yaml.load(fs.readFileSync(path.join(root, '../botsales-kit/contracts/openapi.yaml'), 'utf8'));
     return {
-        api: read('botsales-kit/contracts/openapi.json'),
-        routes: read('botsales-kit/contracts/route-manifest.json'),
-        tokens: read('botsales-kit/design/tokens.json'),
-        permissions: read('botsales-kit/contracts/permission-catalog.json'),
-        events: read('botsales-kit/contracts/events.schema.json'),
+        api: read('../botsales-kit/contracts/openapi.json'),
+        openapiYaml,
+        operationIndex: read('../botsales-kit/contracts/operation-index.json'),
+        routes: read('../botsales-kit/contracts/route-manifest.json'),
+        tokens: read('../botsales-kit/design/tokens.json'),
+        permissions: read('../botsales-kit/contracts/permission-catalog.json'),
+        events: read('../botsales-kit/contracts/events.schema.json'),
     };
 }
 

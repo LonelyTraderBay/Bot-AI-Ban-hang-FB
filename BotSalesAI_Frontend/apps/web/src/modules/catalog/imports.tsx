@@ -1,9 +1,11 @@
+import { FieldGroup, FormFields } from '../../shared/ui/composition';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, MenuItem, TextField, Typography } from '@mui/material';
 import type { ColumnMapping } from '@botsales/contracts';
 import { useApi, useCommand } from '../../shared/api/hooks';
 import { useScope } from '../../shared/model/scope';
+
 import { PRODUCT_IMPORT_MAX_BYTES, productImportFileError } from './import-file';
 import { dateTime } from '../../shared/model/format';
 import { label } from '../../shared/model/labels';
@@ -28,10 +30,10 @@ export function ImportsPage() {
 
     return <>
         <PageHeader title="Nhập dữ liệu sản phẩm" subtitle="Tải tệp → ánh xạ cột → kiểm tra trước → xác nhận các dòng hợp lệ." />
-        <Panel title="Tệp & ánh xạ">
-            <Box sx={{ p: 3, maxWidth: 850 }}>
+        <Panel title="Tệp & ánh xạ" bodyMode="inset">
+            <Box sx={{ width: '100%', maxWidth: 850, minWidth: 0 }}>
                 <ErrorNotice error={upload.error || dry.error} />
-                <Stack gap={2}>
+                <FormFields >
                     {__MOCK__ && <Alert severity="info">Trong demo mô phỏng: CSV UTF-8 tối đa 5 MB và 1.000 dòng dữ liệu. Khi nối backend thật, giới hạn được lấy từ API.</Alert>}
                     <Button variant="outlined" component="label">
                         {file ? file.name : 'Chọn CSV UTF-8'}
@@ -46,11 +48,11 @@ export function ImportsPage() {
                         }} />
                     </Button>
                     {fileError && <Alert id="product-import-file-error" severity="error" role="alert">{fileError}</Alert>}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} gap={1} alignItems={{ xs: 'stretch', sm: 'center' }}>
+                    <FieldGroup direction={{ xs: 'column', sm: 'row' }}  alignItems={{ xs: 'stretch', sm: 'center' }}>
                         <Typography variant="body2" color="text.secondary">Mẫu CSV tổng hợp để kiểm tra import. XLSX chưa có parser được chốt; chuyển sang CSV, không đổi đuôi tệp.</Typography>
                         <Button component="a" href={import.meta.env.BASE_URL + 'samples/products.csv'} download="botsales-products.csv" size="small">Tải CSV mẫu</Button>
-                    </Stack>
-                    {mapping.map((item, index) => <Stack key={index} direction={{ xs: 'column', sm: 'row' }} gap={1}>
+                    </FieldGroup>
+                    {mapping.map((item, index) => <FieldGroup key={index} direction={{ xs: 'column', sm: 'row' }} >
                         <TextField label="Tên cột trong tệp" value={item.sourceColumn} onChange={event => setMapping(mapping.map((value, itemIndex) => itemIndex === index ? { ...value, sourceColumn: event.target.value } : value))} sx={{ flex: 1 }} />
                         <TextField select label="Trường sản phẩm" value={item.targetField} onChange={event => {
                             const value = targets.find(target => target === event.target.value);
@@ -60,7 +62,7 @@ export function ImportsPage() {
                             {targets.map(target => <MenuItem value={target} key={target}>{target}</MenuItem>)}
                         </TextField>
                         <Button color="error" onClick={() => setMapping(mapping.filter((_, itemIndex) => itemIndex !== index))}>Bỏ</Button>
-                    </Stack>)}
+                    </FieldGroup>)}
                     <Button onClick={() => setMapping([...mapping, { sourceColumn: '', targetField: 'variantName' }])}>Thêm cột</Button>
                     <TextField select label="Khi trùng SKU" value={strategy} onChange={event => setStrategy(event.target.value === 'update_existing' ? 'update_existing' : 'reject')}>
                         <MenuItem value="reject">Từ chối dòng trùng</MenuItem>
@@ -81,11 +83,11 @@ export function ImportsPage() {
                             // ErrorNotice keeps the upload and validation failure visible.
                         }
                     }}>Kiểm tra trước khi nhập</MutationButton>
-                </Stack>
+                </FormFields>
             </Box>
         </Panel>
-        <Panel title="Tác vụ gần đây" subtitle="Tình trạng xử lý do API trả về; dữ liệu mẫu chỉ chạy trong bộ nhớ." sx={{ mt: 3 }}>
-            <QueryState query={jobs}>
+        <Panel title="Tác vụ gần đây" subtitle="Tình trạng xử lý do API trả về; dữ liệu mẫu chỉ chạy trong bộ nhớ." beforeGap={"section"}>
+            <QueryState query={jobs} pendingProfile="section">
                 {jobs.data && <>
                     <DataTable label="Tác vụ nền gần đây" rows={jobs.data.data} rowKey={job => job.id} empty="Chưa có tác vụ nào trong cửa hàng." columns={[
                         { key: 'kind', label: 'Loại tác vụ', render: job => label(job.kind) },
@@ -93,7 +95,7 @@ export function ImportsPage() {
                         { key: 'status', label: 'Trạng thái', render: job => <Status value={job.status} /> },
                         { key: 'progress', label: 'Đã xử lý', render: job => String(job.completed) + ' / ' + (job.total ?? 'Chưa rõ') },
                         { key: 'errors', label: 'Dòng lỗi', render: job => job.errorCount },
-                        { key: 'updatedAt', label: 'Cập nhật', render: job => dateTime(job.updatedAt) },
+                        { key: 'updatedAt', label: 'Cập nhật', render: job => dateTime(job.updatedAt, shop.timezone) },
                         { key: 'action', label: '', render: job => <RouteLink to={job.kind === 'import' ? '/s/' + shop.id + '/imports/' + job.id : '/s/' + shop.id + '/jobs/' + job.id}>Xem kết quả</RouteLink> },
                     ]} />
                     <Pager page={jobs.data.page} />
@@ -109,5 +111,5 @@ export function ImportResultPage() {
     const commit = useCommand('commitProductImport', ['getJob', 'listJobs', 'listProducts', 'listStockSnapshots']);
     const [confirm, setConfirm] = useState(false);
     const j = job.data?.data;
-    return <><PageHeader title="Kết quả kiểm tra tệp" subtitle="Không nhập dữ liệu âm thầm khi còn lỗi; token kiểm tra gắn với phiên bản dữ liệu."/><QueryState query={job}>{j && <Panel title={j.id} action={<Status value={j.status}/>}><Box sx={{ p: 3 }}><ErrorNotice error={commit.error}/><DetailLine label="Đã xử lý">{j.completed} / {j.total ?? 'Chưa rõ'}</DetailLine><DetailLine label="Lỗi">{j.errorCount}</DetailLine><DataTable rows={j.rowErrors.map((e, i) => ({ ...e, key: String(i) }))} rowKey={e => e.key} columns={[{ key: 'row', label: 'Dòng', render: e => e.row }, { key: 'field', label: 'Cột', render: e => e.field }, { key: 'message', label: 'Lỗi', render: e => e.message }]}/>{j.validationToken && <Alert severity="info" sx={{ my: 2 }}>Xác nhận chỉ nhập những dòng đã hợp lệ. Dòng lỗi được giữ trong báo cáo, không coi là nhập thành công.</Alert>}<MutationButton permission="catalog.import" variant="contained" disabled={!j.validationToken || j.status !== 'awaiting_confirmation'} onClick={() => setConfirm(true)}>Xác nhận nhập các dòng hợp lệ</MutationButton><RouteLink to={`/s/${shop.id}/imports`}>Chọn tệp khác</RouteLink></Box></Panel>}</QueryState><ConfirmDialog open={confirm} title="Ghi dữ liệu đã kiểm tra" description="API kiểm lại token, quyền và phiên bản catalog. Nếu dữ liệu đã thay đổi cần chạy kiểm tra tệp lại." onClose={() => setConfirm(false)} error={commit.error} busy={commit.pending} onConfirm={() => commit.execute({ path: { jobId }, body: { validationToken: j?.validationToken || '', confirmValidRowsOnly: true } })}/></>;
+    return <><PageHeader title="Kết quả kiểm tra tệp" subtitle="Không nhập dữ liệu âm thầm khi còn lỗi; token kiểm tra gắn với phiên bản dữ liệu."/><QueryState query={job} pendingProfile="section">{j && <Panel title={j.id} action={<Status value={j.status}/>} bodyMode="inset"><FormFields ><ErrorNotice error={commit.error}/><DetailLine label="Đã xử lý">{j.completed} / {j.total ?? 'Chưa rõ'}</DetailLine><DetailLine label="Lỗi">{j.errorCount}</DetailLine><DataTable rows={j.rowErrors.map((e, i) => ({ ...e, key: String(i) }))} rowKey={e => e.key} columns={[{ key: 'row', label: 'Dòng', render: e => e.row }, { key: 'field', label: 'Cột', render: e => e.field }, { key: 'message', label: 'Lỗi', render: e => e.message }]}/>{j.validationToken && <Alert severity="info">Xác nhận chỉ nhập những dòng đã hợp lệ. Dòng lỗi được giữ trong báo cáo, không coi là nhập thành công.</Alert>}<MutationButton permission="catalog.import" variant="contained" disabled={!j.validationToken || j.status !== 'awaiting_confirmation'} onClick={() => setConfirm(true)}>Xác nhận nhập các dòng hợp lệ</MutationButton><RouteLink to={`/s/${shop.id}/imports`}>Chọn tệp khác</RouteLink></FormFields></Panel>}</QueryState><ConfirmDialog open={confirm} title="Ghi dữ liệu đã kiểm tra" description="API kiểm lại token, quyền và phiên bản catalog. Nếu dữ liệu đã thay đổi cần chạy kiểm tra tệp lại." onClose={() => setConfirm(false)} error={commit.error} busy={commit.pending} onConfirm={() => commit.execute({ path: { jobId }, body: { validationToken: j?.validationToken || '', confirmValidRowsOnly: true } })}/></>;
 }

@@ -5,7 +5,7 @@ import { startDemoServer } from '../session/demo-server.mjs';
 type Route = { id: string; path: string };
 type RouteManifest = { routes: Route[] };
 const routeManifest = JSON.parse(
-    readFileSync(new URL('../../botsales-kit/contracts/route-manifest.json', import.meta.url), 'utf8'),
+    readFileSync(new URL('../../../botsales-kit/contracts/route-manifest.json', import.meta.url), 'utf8'),
 ) as RouteManifest;
 const detailIds: Record<string, string> = {
     conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001',
@@ -26,7 +26,6 @@ async function chooseMockOption(page: import('@playwright/test').Page, label: st
 test('every shop route composes the shared API error state with its page content', async ({ browser }) => {
     test.setTimeout(300_000);
     const server = await startDemoServer();
-    const context = await browser.newContext();
     const checkedRouteIds: string[] = [];
 
     try {
@@ -36,11 +35,14 @@ test('every shop route composes the shared API error state with its page content
         expect(shopRoutes).toHaveLength(selectedRouteId ? 1 : 51);
 
         for (const route of shopRoutes) {
+            // Isolate each page's MSW service-worker client. Reusing a context after
+            // closing dozens of pages can leave Firefox with stale service-worker clients.
+            const context = await browser.newContext();
             const page = await context.newPage();
             try {
                 const startingRoute = route.id === 'R39' || route.id === 'R33' ? '/s/shop-demo/overview' : '/s/shop-demo/notifications';
                 await page.goto(new URL(startingRoute, server.url).toString());
-                await expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible();
+                await expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible({ timeout: 15_000 });
                 await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');
                 await page.evaluate(nextPath => {
                     window.history.pushState({}, '', nextPath);
@@ -70,14 +72,13 @@ test('every shop route composes the shared API error state with its page content
                 if (checkedRouteIds.length % 10 === 0)
                     console.log(`ROUTE_ERROR_COMPOSITION_PROGRESS=${checkedRouteIds.length}/51`);
             } finally {
-                await page.close();
+                await context.close();
             }
         }
 
         console.log(`ROUTE_ERROR_COMPOSITION=${checkedRouteIds.length}/${shopRoutes.length} RESULT=PASS`);
         expect(new Set(checkedRouteIds).size).toBe(shopRoutes.length);
     } finally {
-        await context.close();
         await server.close();
     }
 });

@@ -5,13 +5,13 @@ import { startDemoServer } from '../session/demo-server.mjs';
 type Route = { id: string; path: string };
 type RouteManifest = { routes: Route[] };
 const routeManifest = JSON.parse(
-    readFileSync(new URL('../../botsales-kit/contracts/route-manifest.json', import.meta.url), 'utf8'),
+    readFileSync(new URL('../../../botsales-kit/contracts/route-manifest.json', import.meta.url), 'utf8'),
 ) as RouteManifest;
 const detailIds: Record<string, string> = {
     conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001',
     knowledgeId: 'k1', jobId: 'missing-job',
 };
-const emptyStateRoutes = new Set(['R07', 'R09', 'R12', 'R17', 'R21', 'R39', 'R44', 'R48', 'R50']);
+const emptyStateRoutes = new Set(['R07', 'R09', 'R12', 'R17', 'R21', 'R29', 'R30', 'R39', 'R44', 'R48', 'R50']);
 
 function routePath(path: string) {
     return path
@@ -41,7 +41,12 @@ test('empty collection responses render accessible empty states on canonical lis
 
             const main = page.locator('main#main-content');
             await expect(main, `${route.id} should keep its page visible with empty API results`).toBeVisible();
-            if (route.id === 'R39') {
+            if (route.id === 'R29' || route.id === 'R30') {
+                const emptyCopy = route.id === 'R29' ? 'Chưa có Page kết nối.' : 'Chưa có kết nối AI.';
+                const actionName = route.id === 'R29' ? 'Kết nối Page' : 'Thêm kết nối AI';
+                await expect(main.getByRole('status').filter({ hasText: emptyCopy }), `${route.id} should expose an accessible empty card state`).toBeVisible();
+                await expect(main.getByRole('button', { name: actionName, exact: true }), `${route.id} should keep the action inside the empty state and avoid a duplicate header action`).toHaveCount(1);
+            } else if (route.id === 'R39') {
                 await expect(main.getByRole('status').filter({ hasText: 'Chưa có thông báo.' }), `${route.id} should expose a polite empty-state announcement for the card list`).toBeVisible();
             } else {
                 const emptyCell = main.locator('tbody td[colspan]').first();
