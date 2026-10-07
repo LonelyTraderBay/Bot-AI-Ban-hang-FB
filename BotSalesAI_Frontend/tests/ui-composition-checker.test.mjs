@@ -56,6 +56,36 @@ test('distinguishes content grids from flex flows when reporting the shared owne
     assert.match(result.issues[0]?.message, /SectionGrid rhythm="content"/);
 });
 
+test('rejects page spacing for paired fields and peer Panels without a section gap owner', () => {
+    const pairedFields = inspectComposition(`import {PageSections} from '../../shared/ui/composition'; import {TextField} from '@mui/material';
+        const Page=()=> <PageSections direction={{xs:'column',sm:'row'}}><TextField label="From"/><TextField label="To"/></PageSections>;`);
+    assert.deepEqual(pairedFields.issues.map(issue => issue.rule), ['composition.semantic-role']);
+
+    const joinedPanels = inspectComposition(`import {Panel} from '../../shared/ui/components'; const Page=()=> <><Panel/><Panel/></>;`);
+    assert.deepEqual(joinedPanels.issues.map(issue => issue.rule), ['composition.missing-sibling-gap']);
+
+    const ownedPanels = inspectComposition(`import {PageSections} from '../../shared/ui/composition'; import {Panel} from '../../shared/ui/components';
+        const Page=()=> <PageSections><Panel/><Panel/></PageSections>;`);
+    assert.deepEqual(ownedPanels.issues, []);
+
+    const explicitBoundary = inspectComposition(`import {Panel} from '../../shared/ui/components'; const Page=()=> <><Panel/><Panel beforeGap="section"/></>;`);
+    assert.deepEqual(explicitBoundary.issues, []);
+
+    const wrappedPanel = inspectComposition(`import {PageSections} from '../../shared/ui/composition'; import {Panel} from '../../shared/ui/components'; declare const showPreview: boolean;
+        function Preview() { return <Panel/>; }
+        const Page=()=> <>{showPreview ? <Preview/> : <Panel/>}<Panel/></>;`);
+    assert.deepEqual(wrappedPanel.issues.map(issue => issue.rule), ['composition.missing-sibling-gap']);
+
+    const wrappedOwnedPanels = inspectComposition(`import {PageSections} from '../../shared/ui/composition'; import {Panel} from '../../shared/ui/components'; declare const showPreview: boolean;
+        function Preview() { return <Panel/>; }
+        const Page=()=> <PageSections>{showPreview ? <Preview/> : <Panel/>}<Panel/></PageSections>;`);
+    assert.deepEqual(wrappedOwnedPanels.issues, []);
+
+    const alternativePanels = inspectComposition(`import {Panel} from '../../shared/ui/components'; declare const showRules: boolean;
+        const Page=()=> <>{showRules ? <Panel/> : <Panel/>}<div/></>;`);
+    assert.deepEqual(alternativePanels.issues, []);
+});
+
 test('related sibling gaps belong to ActionGroup comfortable density, not consumer Stack styles', () => {
     const invalid = inspectComposition(`import {Stack} from '@mui/material'; import {layoutSx} from '../../shared/ui/layout';
         const UI=()=> <Stack sx={layoutSx.actions.relatedLinksGap}/>;`);

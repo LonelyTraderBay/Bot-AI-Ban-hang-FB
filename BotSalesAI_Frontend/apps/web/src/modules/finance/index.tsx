@@ -1,4 +1,4 @@
-import { ActionGroup, FormFields } from '../../shared/ui/composition';
+import { ActionGroup, FormFields, PageSections, SurfaceContent } from '../../shared/ui/composition';
 import { useEffect, useRef, useState, type SyntheticEvent } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { useSearchParams } from 'react-router-dom';
@@ -150,24 +150,52 @@ export function ProfitLossPage() {
     const [generatedKey, setGeneratedKey] = useState('');
     const currentKey = p ? `${report.range.from}|${report.range.to}|${p.asOf}|${question}` : '';
     const explanation = p && generatedKey === currentKey ? explainProfitLoss(p, question) : null;
-    return <><PageHeader title="Lợi nhuận quản trị" subtitle="Số liệu do API tổng hợp từ nguồn giao dịch, không tính từ trang danh sách đang mở."/><ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={value => { setGeneratedKey(''); report.setFrom(value); }} setTo={value => { setGeneratedKey(''); report.setTo(value); }}/>{report.valid ? <QueryState query={data} pendingProfile="section">{p && <><Stats><Stat title="Doanh thu thuần" value={<Amount value={p.netSales}/>}/><Stat title="Giá vốn" value={<Amount value={p.cogs}/>}/><Stat title="Lãi gộp" value={<Amount value={p.grossProfit}/>} accent/><Stat title="Lợi nhuận vận hành" value={<Amount value={p.operatingProfit}/>} note="Chưa có chứng nhận kế toán pháp định"/></Stats><Panel title="Chi tiết kết quả kinh doanh" action={<Status value={p.completeness}/>} bodyMode="inset">{[
-        ['Doanh thu gộp', p.grossSales], ['Giảm giá', p.discounts], ['Hàng bán trả lại', p.salesReturns], ['Doanh thu thuần', p.netSales], ['Giá vốn', p.cogs], ['Thu phí giao', p.shippingIncome], ['Chi phí giao', p.shippingExpense], ['Phí nền tảng', p.platformFees], ['Phí thanh toán', p.paymentFees], ['Chi phí AI', p.aiExpense], ['Chi phí khác', p.otherOperatingExpenses]
-    ].map(([t, v]) => <DetailLine key={String(t)} label={String(t)}><Amount value={typeof v === 'object' ? v : null}/></DetailLine>)}<DetailLine label="Chính sách">{p.policyVersion}</DetailLine><DetailLine label="Dữ liệu tại">{dateTime(p.asOf, shop.timezone)}</DetailLine>{p.warnings.map(w => <Alert key={w} severity="warning" sx={layoutSx.surface.sectionBefore}>{w}</Alert>)}</Panel><Panel title="Hỏi đáp có nguồn" subtitle="Giải thích giới hạn theo đúng snapshot đang hiển thị." bodyMode="inset">
-        {__MOCK__ ? <FormFields>
-            <Alert severity="info">Chế độ mô phỏng: câu trả lời theo mẫu cố định, chỉ đọc dữ liệu P&L API tổng hợp này; không gọi AI và không ghi sổ.</Alert>
-            <TextField select label="Câu hỏi về báo cáo" value={question} onChange={event => { setQuestion(event.target.value as ProfitLossQuestionId); setGeneratedKey(''); }}>
-                {profitLossQuestions.map(item => <MenuItem key={item.id} value={item.id}>{item.label}</MenuItem>)}
-            </TextField>
-            <Button variant="contained" onClick={() => setGeneratedKey(currentKey)} disabled={!currentKey}>Tạo giải thích mô phỏng</Button>
-            {explanation && <Box role="region" aria-label="Giải thích báo cáo mô phỏng" data-testid="profit-loss-explanation" sx={{ ...layoutSx.surface.inset, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }}>
-                <Typography sx={layoutSx.notice.afterGap}>{explanation.answer}</Typography>
-                <Typography variant="subtitle2" sx={layoutSx.report.subheadingAfterGap}>Dữ liệu nguồn trong snapshot</Typography>
-                {explanation.sources.map(source => <DetailLine key={source.label} label={source.label}>{source.value}</DetailLine>)}
-                {explanation.warnings.map((warning, index) => <Alert key={`${index}-${warning}`} severity="warning" sx={layoutSx.notice.contentGap}>{warning}</Alert>)}
-                <Alert severity="info" sx={layoutSx.surface.sectionBefore}>Hợp đồng getProfitLoss chưa trả về journal ID để drill-down; giao diện không tạo liên kết nguồn giả.</Alert>
-            </Box>}
-        </FormFields> : <Alert severity="info">Chức năng giải thích chỉ có bản xem trước mô phỏng. API hiện chưa có operation hỏi đáp báo cáo.</Alert>}
-    </Panel></>}</QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}</>;
+    return <>
+        <PageHeader title="Lợi nhuận quản trị" subtitle="Số liệu do API tổng hợp từ nguồn giao dịch, không tính từ trang danh sách đang mở." />
+        <ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={value => { setGeneratedKey(''); report.setFrom(value); }} setTo={value => { setGeneratedKey(''); report.setTo(value); }} />
+        {report.valid ? <QueryState query={data} pendingProfile="section">
+            {p && <>
+                <Stats>
+                    <Stat title="Doanh thu thuần" value={<Amount value={p.netSales} />} />
+                    <Stat title="Giá vốn" value={<Amount value={p.cogs} />} />
+                    <Stat title="Lãi gộp" value={<Amount value={p.grossProfit} />} accent />
+                    <Stat title="Lợi nhuận vận hành" value={<Amount value={p.operatingProfit} />} note="Chưa có chứng nhận kế toán pháp định" />
+                </Stats>
+                <PageSections>
+                    <Panel title="Chi tiết kết quả kinh doanh" action={<Status value={p.completeness} />} bodyMode="inset">
+                        {[
+                            ['Doanh thu gộp', p.grossSales], ['Giảm giá', p.discounts], ['Hàng bán trả lại', p.salesReturns], ['Doanh thu thuần', p.netSales], ['Giá vốn', p.cogs], ['Thu phí giao', p.shippingIncome], ['Chi phí giao', p.shippingExpense], ['Phí nền tảng', p.platformFees], ['Phí thanh toán', p.paymentFees], ['Chi phí AI', p.aiExpense], ['Chi phí khác', p.otherOperatingExpenses],
+                        ].map(([title, value]) => <DetailLine key={String(title)} label={String(title)}><Amount value={typeof value === 'object' ? value : null} /></DetailLine>)}
+                        <DetailLine label="Chính sách">{p.policyVersion}</DetailLine>
+                        <DetailLine label="Dữ liệu tại">{dateTime(p.asOf, shop.timezone)}</DetailLine>
+                        {p.warnings.map(warning => <Alert key={warning} severity="warning" sx={layoutSx.surface.sectionBefore}>{warning}</Alert>)}
+                    </Panel>
+                    <Panel title="Hỏi đáp có nguồn" subtitle="Giải thích giới hạn theo đúng snapshot đang hiển thị." bodyMode="inset">
+                        {__MOCK__ ? <>
+                            <Alert severity="info" sx={layoutSx.notice.afterGap}>Chế độ mô phỏng: câu trả lời theo mẫu cố định, chỉ đọc dữ liệu P&L API tổng hợp này; không gọi AI và không ghi sổ.</Alert>
+                            <FormFields>
+                                <TextField select label="Câu hỏi về báo cáo" value={question} onChange={event => { setQuestion(event.target.value as ProfitLossQuestionId); setGeneratedKey(''); }}>
+                                    {profitLossQuestions.map(item => <MenuItem key={item.id} value={item.id}>{item.label}</MenuItem>)}
+                                </TextField>
+                            </FormFields>
+                            <ActionGroup direction="column" beforeGap="form">
+                                <Button variant="contained" onClick={() => setGeneratedKey(currentKey)} disabled={!currentKey}>Tạo giải thích mô phỏng</Button>
+                            </ActionGroup>
+                            {explanation && <SurfaceContent beforeGap="surface">
+                                <Box role="region" aria-label="Giải thích báo cáo mô phỏng" data-testid="profit-loss-explanation" sx={{ ...layoutSx.surface.inset, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }}>
+                                    <Typography sx={layoutSx.notice.afterGap}>{explanation.answer}</Typography>
+                                    <Typography variant="subtitle2" sx={layoutSx.report.subheadingAfterGap}>Dữ liệu nguồn trong snapshot</Typography>
+                                    {explanation.sources.map(source => <DetailLine key={source.label} label={source.label}>{source.value}</DetailLine>)}
+                                    {explanation.warnings.map((warning, index) => <Alert key={`${index}-${warning}`} severity="warning" sx={layoutSx.notice.contentGap}>{warning}</Alert>)}
+                                    <Alert severity="info" sx={layoutSx.surface.sectionBefore}>Hợp đồng getProfitLoss chưa trả về journal ID để drill-down; giao diện không tạo liên kết nguồn giả.</Alert>
+                                </Box>
+                            </SurfaceContent>}
+                        </> : <Alert severity="info">Chức năng giải thích chỉ có bản xem trước mô phỏng. API hiện chưa có operation hỏi đáp báo cáo.</Alert>}
+                    </Panel>
+                </PageSections>
+            </>}
+        </QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}
+    </>;
 }
 function JournalAccountField({ index, value, onChange }: { index: number; value: string; onChange: (accountId: string) => void }) {
     if (__MOCK__) return <TextField select label={`Tài khoản dòng ${index}`} fullWidth value={value} error={!value.trim()} helperText={value ? 'Tài khoản tổng hợp chỉ dùng nghiệm thu UI; không xác thực với sơ đồ kế toán thật.' : 'Chọn tài khoản mẫu để hoàn tất luồng demo.'} onChange={event => onChange(event.target.value)}>

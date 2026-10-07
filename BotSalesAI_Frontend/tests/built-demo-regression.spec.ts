@@ -78,7 +78,6 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 
         const observations: Array<Record<string, unknown>> = [];
         page.on('pageerror', error => pageErrors.push(error.message));
         await page.setViewportSize(viewport);
-        expect(new URL(page.url()).port).toBe('4174');
 
         for (const route of manifest.routes) {
             const pathName = routePath(route);
@@ -86,6 +85,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 
             let geometry: Record<string, number | null> = {};
             try {
                 const response = await page.goto(pathName, { waitUntil: 'domcontentloaded' });
+                expect(new URL(page.url()).port, `${route.id} must use the isolated built preview`).toBe('4174');
                 if (!response || response.status() !== 200) issues.push(`${route.id} ${pathName}: document HTTP ${response?.status() ?? 'missing'}`);
                 const heading = page.getByRole('heading').first();
                 await heading.waitFor({ state: 'visible', timeout: 15_000 });
@@ -148,7 +148,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 
             issues,
             observations,
         };
-        const output = path.join(root, 'evidence/frontend-ui-improvements/UI028/W32', `built-demo-routes-${browserName}-${viewport.width}-current-20261006.json`);
+        const output = path.join(root, 'evidence/frontend-ui-improvements/UI028/W32', `built-demo-routes-${browserName}-${viewport.width}-current-20261007.json`);
         fs.mkdirSync(path.dirname(output), { recursive: true });
         fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
         console.log(`[built-demo-routes] ${JSON.stringify({ browser: browserName, width: viewport.width, routes: report.renderedRoutes, issues: issues.length, pageErrors: pageErrors.length, artifactSha256: fingerprint.sha256, evidence: path.relative(root, output) })}`);

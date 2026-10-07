@@ -158,25 +158,26 @@ export function ApprovalsPage() {
 
     return <>
         <PageHeader title="Cần phê duyệt" subtitle="Quyết định gắn với đúng nội dung, phiên bản và hạn hiệu lực — không phải một nút đồng ý chung." />
-        <Panel title="Xem thử ủy quyền" subtitle="Bản xem trước cục bộ để nghiệm thu giao diện; không cấp quyền hiệu lực." bodyMode="inset">
-            <SurfaceContent >
-                <Alert severity="info">Contract hiện chưa có thao tác tạo quy tắc ủy quyền. Hạn mức và phạm vi bên dưới chỉ là dữ liệu mẫu, không thay đổi người duyệt hoặc quyền quyết định.</Alert>
-                <PageSections direction={{ xs: 'column', sm: 'row' }} >
+        <PageSections>
+            <Panel title="Xem thử ủy quyền" subtitle="Bản xem trước cục bộ để nghiệm thu giao diện; không cấp quyền hiệu lực." bodyMode="inset">
+                <Alert severity="info" sx={layoutSx.notice.afterGap}>Contract hiện chưa có thao tác tạo quy tắc ủy quyền. Hạn mức và phạm vi bên dưới chỉ là dữ liệu mẫu, không thay đổi người duyệt hoặc quyền quyết định.</Alert>
+                <FormFields direction={{ xs: 'column', sm: 'row' }}>
                     <TextField select label="Vai trò được ủy quyền" value={delegateRole} onChange={event => { setDelegateRole(event.target.value); setDelegationPreview(false); }} fullWidth>
                         <MenuItem value="warehouse_buyer">Kho & mua hàng</MenuItem>
                         <MenuItem value="accountant">Kế toán</MenuItem>
                         <MenuItem value="supervisor">Trưởng nhóm</MenuItem>
                     </TextField>
                     <TextField label="Hạn mức mẫu (VND)" type="number" value={delegateLimit} onChange={event => { setDelegateLimit(event.target.value); setDelegationPreview(false); }} inputProps={{ min: 1 }} fullWidth />
-                </PageSections>
-                <Button variant="outlined" disabled={!delegateLimit || Number(delegateLimit) < 1} onClick={() => setDelegationPreview(true)}>Tạo bản xem thử</Button>
-                {delegationPreview && <Box role="status" data-testid="delegation-preview">
+                </FormFields>
+                <ActionGroup direction="column" beforeGap="form">
+                    <Button variant="outlined" disabled={!delegateLimit || Number(delegateLimit) < 1} onClick={() => setDelegationPreview(true)}>Tạo bản xem thử</Button>
+                </ActionGroup>
+                {delegationPreview && <SurfaceContent role="status" data-testid="delegation-preview" beforeGap="surface">
                     <Typography variant="body2">Ủy quyền mô phỏng: {roleNames[delegateRole as AgentRole['kind']] || delegateRole} · tối đa {Number(delegateLimit).toLocaleString('vi-VN')} VND.</Typography>
                     <Typography variant="caption" color="text.secondary">Không ghi API, không nâng scope và không cho phép người nhận tự duyệt quyết định của mình.</Typography>
-                </Box>}
-            </SurfaceContent>
-        </Panel>
-        <Panel>
+                </SurfaceContent>}
+            </Panel>
+            <Panel>
             <Toolbar operation="listApprovals" />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
@@ -197,7 +198,8 @@ export function ApprovalsPage() {
                     <Pager page={list.data.page} />
                 </>}
             </QueryState>
-        </Panel>
+            </Panel>
+        </PageSections>
         <EditDialog open={Boolean(approvalId)} title="Xem xét phê duyệt" onClose={() => setApprovalId(null)} busy={decide.pending} actions={<MutationButton permission="approvals.decide" variant="contained" busy={decide.pending} disabled={!approval || detail.isPending || approval.status !== 'pending' || expired || reason.trim().length < 5} onClick={async () => {
             if (!approval || approval.status !== 'pending' || expired) return;
             try {

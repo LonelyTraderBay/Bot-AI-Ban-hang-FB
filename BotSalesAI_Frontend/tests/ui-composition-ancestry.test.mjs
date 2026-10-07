@@ -98,11 +98,11 @@ test('keeps independent nested surfaces and portaled dialogs as separate owners'
 
 test('accepts finite bodyMode branches and every mode in the public component contracts', t => {
     const valid = inspect(t, `import {Panel} from '../shared/ui/components';
-        import {FormFields, ActionGroup} from '../shared/ui/composition';
+        import {FormFields, ActionGroup, PageSections} from '../shared/ui/composition';
         declare const showOrders: boolean;
-        export function UI() { return <><Panel bodyMode={showOrders ? 'flush' : 'inset'}><FormFields/></Panel>
+        export function UI() { return <PageSections><Panel bodyMode={showOrders ? 'flush' : 'inset'}><FormFields/></Panel>
             <Panel><ActionGroup bodyMode="header"/></Panel>
-            <Panel bodyMode="inset"><FormFields bodyMode="outlined"/></Panel></>; }`);
+            <Panel bodyMode="inset"><FormFields bodyMode="outlined"/></Panel></PageSections>; }`);
     assert.deepEqual(valid.issues, [], JSON.stringify(valid));
 
     const invalid = inspect(t, `import {Panel} from '../shared/ui/components'; import {FormFields} from '../shared/ui/composition';

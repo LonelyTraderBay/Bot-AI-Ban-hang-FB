@@ -63,9 +63,10 @@ test('titled Finance Panels keep one 16px header-to-first-content boundary', asy
     const pageErrors: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.message));
     const cases = [
-        { path: '/s/shop-demo/finance', heading: 'Kỳ báo cáo', hasAction: false, firstContentPaddingTop: 12 },
-        { path: '/s/shop-demo/finance/profit-loss', heading: 'Chi tiết kết quả kinh doanh', hasAction: true, firstContentPaddingTop: 12 },
-        { path: '/s/shop-demo/finance/profit-loss', heading: 'Hỏi đáp có nguồn', hasAction: false, firstContentPaddingTop: 0 },
+        { path: '/s/shop-demo/finance', heading: 'Kỳ báo cáo', hasAction: false, firstContentSelector: '.MuiStack-root', firstContentPaddingTop: 12 },
+        { path: '/s/shop-demo/finance/profit-loss', heading: 'Chi tiết kết quả kinh doanh', hasAction: true, firstContentSelector: '.MuiStack-root', firstContentPaddingTop: 12 },
+        // The mock notice is now first; its MUI inset is separate from the Panel header boundary.
+        { path: '/s/shop-demo/finance/profit-loss', heading: 'Hỏi đáp có nguồn', hasAction: false, firstContentSelector: '.MuiAlert-root[role="alert"]', firstContentPaddingTop: 6 },
     ];
     const observations: Array<{ path: string; heading: string; width: number; headerContentBottom: number; firstContentTop: number; gap: number; bodyPaddingTop: number; bodyPaddingInlineStart: number; bodyPaddingBottom: number; firstContentPaddingTop: number; hasAction: boolean }> = [];
 
@@ -77,6 +78,7 @@ test('titled Finance Panels keep one 16px header-to-first-content boundary', asy
             const heading = page.getByRole('heading', { name: item.heading, exact: true });
             await expect(heading).toBeVisible();
             const panel = heading.locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');
+            await expect(panel.locator(`:scope > :last-child > ${item.firstContentSelector}:first-child`)).toBeVisible();
             const geometry = await panel.evaluate(element => {
                 const header = [...element.children].find(child => child.querySelector('h2'));
                 const body = [...element.children].find(child => child !== header);

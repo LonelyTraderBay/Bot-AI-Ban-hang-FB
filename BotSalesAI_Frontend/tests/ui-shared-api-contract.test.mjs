@@ -91,6 +91,42 @@ test('every public React API has a direct rendered contract test', () => {
     assert.match(renderSource, /\bColumn\s*</, 'DataTable Column<T> must participate in a rendered contract case');
 });
 
+test('catalog declaration lines and stated JSX counts match resolved source symbols', () => {
+    const catalog = fs.readFileSync(path.join(root, 'apps/web/src/shared/ui/README.md'), 'utf8');
+    const owners = new Map([
+        'apps/web/src/shared/ui/components.tsx',
+        'apps/web/src/shared/ui/composition.tsx',
+    ].flatMap(file => publicFunctionContracts(file).map(api => [
+        moduleExports(file).find(symbol => symbol.getName() === api.name),
+        { ...api, uses: 0 },
+    ])));
+    for (const source of program.getSourceFiles()) {
+        const file = source.fileName.replaceAll('\\', '/');
+        if (!file.includes('/apps/web/src/') || source.isDeclarationFile) continue;
+        function visit(node) {
+            if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+                const local = checker.getSymbolAtLocation(node.tagName);
+                const symbol = local && (local.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(local) : local);
+                const api = owners.get(symbol);
+                if (api && api.declaration.getSourceFile() !== source) api.uses++;
+            }
+            ts.forEachChild(node, visit);
+        }
+        visit(source);
+    }
+    for (const api of owners.values()) {
+        const source = api.declaration.getSourceFile();
+        const actualLine = source.getLineAndCharacterOfPosition(api.declaration.name.getStart(source)).line + 1;
+        const row = catalog.match(new RegExp('^\\| ' + api.name + ' /[^\\n]+$', 'm'))?.[0];
+        assert.ok(row, `${api.name} catalog row is required`);
+        const documentedLine = Number(row.match(/\/(\d+) \|/)?.[1]);
+        assert.equal(documentedLine, actualLine, `${api.name} catalog source line is stale`);
+        for (const count of row.matchAll(/\b(\d+) uses\b/g))
+            assert.equal(Number(count[1]), api.uses, `${api.name} catalog JSX count is stale`);
+    }
+    assert.match(catalog, /<a id="8-layout-owner-crosswalk"><\/a>/, 'the canonical crosswalk anchor must be stable');
+});
+
 test('every shared React export has a resolved production consumer or an explicit zero-use lifecycle decision', () => {
     const sharedFiles = [
         'apps/web/src/shared/ui/components.tsx',

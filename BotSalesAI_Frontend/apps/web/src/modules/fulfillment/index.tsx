@@ -1,4 +1,4 @@
-import { ActionGroup, FormFields } from '../../shared/ui/composition';
+import { ActionGroup, FormFields, PageSections } from '../../shared/ui/composition';
 import { useEffect, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { useSearchParams } from 'react-router-dom';
@@ -231,12 +231,13 @@ export function ShipmentsPage() {
 
     return <>
         <PageHeader title="Vận đơn & giao hàng" subtitle="Bàn giao hàng, khách nhận hàng và tiền về là ba sự kiện khác nhau." actions={<MutationButton permission="fulfillment.write" variant="contained" onClick={() => setOpen(true)}>Tạo vận đơn</MutationButton>} />
-        {__MOCK__ ? <ShippingQuotePreview /> : <Panel title="Phí & vùng giao hàng"><Alert severity="info" sx={layoutSx.surface.inset}>API hiện chỉ trả phí báo giá/thực tế nếu đã có trên vận đơn; chưa có operation để kiểm tra vùng giao hoặc xin báo giá mới.</Alert></Panel>}
-        <Panel>
-            <Toolbar operation="listShipments" />
-            <QueryState query={list} pendingProfile="section">
-                {list.data && <>
-                    <DataTable rows={list.data.data} rowKey={item => item.id} columns={[
+        <PageSections>
+            {__MOCK__ ? <ShippingQuotePreview /> : <Panel title="Phí & vùng giao hàng"><Alert severity="info" sx={layoutSx.surface.inset}>API hiện chỉ trả phí báo giá/thực tế nếu đã có trên vận đơn; chưa có operation để kiểm tra vùng giao hoặc xin báo giá mới.</Alert></Panel>}
+            <Panel>
+                <Toolbar operation="listShipments" />
+                <QueryState query={list} pendingProfile="section">
+                    {list.data && <>
+                        <DataTable rows={list.data.data} rowKey={item => item.id} columns={[
                         { key: 'id', label: 'Vận đơn', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.trackingCode || item.id}</Typography><Typography variant="caption">{item.carrierId || 'Giao thủ công'}</Typography></Stack> },
                         { key: 'order', label: 'Đơn', render: item => <RouteLink to={`/s/${shop.id}/orders/${item.orderId}`}>{item.orderId}</RouteLink> },
                         { key: 'state', label: 'Trạng thái', render: item => <Status value={item.state} /> },
@@ -247,11 +248,12 @@ export function ShipmentsPage() {
                             <MutationButton permission="fulfillment.handover" disabled={!['planned', 'label_ready'].includes(item.state)} onClick={() => openShipment(item.id, 'handover')}>Bàn giao</MutationButton>
                             <MutationButton permission="fulfillment.write" disabled={['planned', 'cancelled', 'returned'].includes(item.state)} onClick={() => openShipment(item.id, 'event')}>Cập nhật hành trình</MutationButton>
                         </ActionGroup> },
-                    ]} />
-                    <Pager page={list.data.page} />
-                </>}
-            </QueryState>
-        </Panel>
+                        ]} />
+                        <Pager page={list.data.page} />
+                    </>}
+                </QueryState>
+            </Panel>
+        </PageSections>
 
         <EditDialog
             open={open}

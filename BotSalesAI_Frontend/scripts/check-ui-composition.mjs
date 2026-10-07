@@ -59,7 +59,7 @@ const posix = value => value.split(path.sep).join('/');
 export function inspectComposition(source, file = 'apps/web/src/modules/example/index.tsx', bindings, sourcePath) {
     const sf = bindings ? bindings.source(sourcePath) : ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
     if (!sf) throw new Error(`Missing TypeScript Program source: ${file}`);
-    const mui = new Map(), layouts = new Set(), namespaces = new Set(), composed = new Map(), compositionNamespaces = new Set(), shared = new Map(), variables = new Map();
+    const mui = new Map(), layouts = new Set(), namespaces = new Set(), composed = new Map(), compositionNamespaces = new Set(), shared = new Map(), variables = new Map(), localComponents = new Map();
     const issues = [], usages = [], tags = [];
     const location = node => ({ file: posix(file), line: sf.getLineAndCharacterOfPosition(node.getStart(sf)).line + 1 });
     const addIssue = (node, rule, message) => issues.push({ ...location(node), rule, message });
@@ -83,7 +83,11 @@ export function inspectComposition(source, file = 'apps/web/src/modules/example/
                 if (module === '@mui/material') mui.set(bindings.name.text, '*');
             }
         }
-        if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) variables.set(node.name.text, node.initializer);
+        if (ts.isFunctionDeclaration(node) && node.name) localComponents.set(node.name.text, node);
+        if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) {
+            variables.set(node.name.text, node.initializer);
+            if (ts.isArrowFunction(node.initializer) || ts.isFunctionExpression(node.initializer)) localComponents.set(node.name.text, node.initializer);
+        }
         ts.forEachChild(node, declarations);
     }
     declarations(sf);
@@ -198,7 +202,190 @@ export function inspectComposition(source, file = 'apps/web/src/modules/example/
         const opaqueBoundary = !domBoundary && !transparent && !portalBoundary && !isPanel && !composition && (!reference || !['react'].includes(reference.owner));
         return { owner: reference?.owner, exportName: tag, composition, isPanel, portalBoundary, transparent, domBoundary, opaqueBoundary, modes, modeUnknown, surfaceBoundary: isPanel || paperSurface || borderedInset || independentModeSurface, ownsInset };
     };
+    const directJsxChildren = container => {
+        if (!container || !(ts.isJsxElement(container) || ts.isJsxFragment(container))) return [];
+        return container.children.flatMap(child => ts.isJsxElement(child) ? [child.openingElement] : ts.isJsxSelfClosingElement(child) ? [child] : []);
+    };
+    const isMuiElement = (opening, name) => {
+        const reference = bindings?.reference(opening.tagName);
+        if (bindings) return reference?.owner === 'mui' && reference.exportName === name;
+        const local = opening.tagName.getText(sf);
+        const names = memberPath(opening.tagName);
+        return mui.get(local) === name || names.length === 2 && mui.get(names[0]) === '*' && names[1] === name;
+    };
+    const hasPanelBoundary = opening => opening.attributes.properties.some(item => ts.isJsxAttribute(item) && ['beforeGap', 'afterGap'].includes(item.name.getText(sf)));
+    const panelGapReported = new Set();
+    const sectionOwnerCache = new WeakMap();
+    const panelRootCache = new WeakMap();
+    const jsxOpening = element => ts.isJsxElement(element) ? element.openingElement : ts.isJsxSelfClosingElement(element) ? element : undefined;
+    const jsxTag = opening => opening?.tagName.getText(sf);
+    function functionReturns(component) {
+        if (ts.isArrowFunction(component) || ts.isFunctionExpression(component)) {
+            if (!ts.isBlock(component.body)) return [component.body];
+        }
+        const body = component.body;
+        if (!body) return [];
+        const returns = [];
+        function visit(node) {
+            if (node !== body && (ts.isFunctionDeclaration(node) || ts.isArrowFunction(node) || ts.isFunctionExpression(node))) return;
+            if (ts.isReturnStatement(node) && node.expression) returns.push(node.expression);
+            ts.forEachChild(node, visit);
+        }
+        visit(body);
+        return returns;
+    }
+    const summaryUnion = (...summaries) => ({
+        first: summaries.flatMap(summary => summary.first),
+        last: summaries.flatMap(summary => summary.last),
+        empty: summaries.some(summary => summary.empty),
+    });
+    const uniqueTokens = tokens => [...new Map(tokens.map(token => [`${token.kind}:${token.node?.getStart(sf) ?? -1}:${token.boundary ? 1 : 0}`, token])).values()];
+    const isSectionGridSection = opening => {
+        const rhythm = attribute(opening, 'rhythm');
+        const values = rhythm ? literalValues(attributeExpression(rhythm)) : new Set(['section']);
+        return Boolean(values?.size === 1 && values.has('section'));
+    };
+    function summarizeChildren(children, seen, depth) {
+        const summaries = children.map(child => summarizeFlow(child, seen, depth + 1));
+        let prefixMayBeEmpty = true;
+        const first = [];
+        for (const summary of summaries) {
+            if (prefixMayBeEmpty) first.push(...summary.first);
+            prefixMayBeEmpty &&= summary.empty;
+        }
+        let suffixMayBeEmpty = true;
+        const last = [];
+        for (const summary of [...summaries].reverse()) {
+            if (suffixMayBeEmpty) last.push(...summary.last);
+            suffixMayBeEmpty &&= summary.empty;
+        }
+        return { first: uniqueTokens(first), last: uniqueTokens(last), empty: prefixMayBeEmpty };
+    }
+    function summarizeFlow(node, seen = new Set(), depth = 0) {
+        const empty = { first: [], last: [], empty: true };
+        const other = { first: [{ kind: 'other', node }], last: [{ kind: 'other', node }], empty: false };
+        if (!node || depth > 24) return other;
+        while (ts.isParenthesizedExpression(node) || ts.isAsExpression(node) || ts.isTypeAssertionExpression(node) || ts.isSatisfiesExpression(node) || ts.isNonNullExpression(node)) node = node.expression;
+        if (ts.isJsxText(node)) return node.text.trim() ? other : empty;
+        if (ts.isJsxExpression(node)) return node.expression ? summarizeFlow(node.expression, seen, depth + 1) : empty;
+        if (ts.isJsxFragment(node)) return summarizeChildren([...node.children], seen, depth);
+        if (ts.isConditionalExpression(node)) return summaryUnion(summarizeFlow(node.whenTrue, seen, depth + 1), summarizeFlow(node.whenFalse, seen, depth + 1));
+        if (ts.isBinaryExpression(node) && [ts.SyntaxKind.AmpersandAmpersandToken, ts.SyntaxKind.BarBarToken, ts.SyntaxKind.QuestionQuestionToken].includes(node.operatorToken.kind)) {
+            return summaryUnion(empty, summarizeFlow(node.right, seen, depth + 1));
+        }
+        if (ts.isArrayLiteralExpression(node)) return summarizeChildren([...node.elements], seen, depth);
+        if (node.kind === ts.SyntaxKind.NullKeyword || node.kind === ts.SyntaxKind.FalseKeyword || node.kind === ts.SyntaxKind.TrueKeyword) return empty;
+        const opening = jsxOpening(node);
+        if (!opening) return other;
+        const description = describeJsx(opening);
+        const tag = description.exportName || jsxTag(opening);
+        if (description.isPanel) {
+            const token = { kind: 'panel', node: opening, boundary: hasPanelBoundary(opening) };
+            return { first: [token], last: [token], empty: false };
+        }
+        if (isSectionGapOwner(opening)) {
+            const token = { kind: 'owner', node: opening, boundary: true };
+            return { first: [token], last: [token], empty: false };
+        }
+        if (description.owner === 'components' && tag === 'QueryState' && ts.isJsxElement(node)) return summarizeChildren([...node.children], seen, depth);
+        if (description.owner === 'react' && tag === 'Fragment' && ts.isJsxElement(node)) return summarizeChildren([...node.children], seen, depth);
+        const localName = jsxTag(opening);
+        const local = memberPath(opening.tagName).length === 1 ? localComponents.get(localName) : undefined;
+        if (local && !seen.has(local) && depth < 24) {
+            const next = new Set(seen); next.add(local);
+            return summaryUnion(...functionReturns(local).map(expression => summarizeFlow(expression, next, depth + 1)));
+        }
+        return other;
+    }
+    function mayProducePanelRoot(node, seen = new Set(), depth = 0) {
+        if (!node || depth > 24) return false;
+        const cached = panelRootCache.get(node);
+        if (cached !== undefined) return cached;
+        let result = false;
+        while (ts.isParenthesizedExpression(node) || ts.isAsExpression(node) || ts.isTypeAssertionExpression(node) || ts.isSatisfiesExpression(node) || ts.isNonNullExpression(node)) node = node.expression;
+        if (ts.isJsxExpression(node)) result = Boolean(node.expression && mayProducePanelRoot(node.expression, seen, depth + 1));
+        else if (ts.isJsxText(node)) result = false;
+        else if (ts.isJsxFragment(node)) result = [...node.children].some(child => mayProducePanelRoot(child, seen, depth + 1));
+        else if (ts.isConditionalExpression(node)) result = mayProducePanelRoot(node.whenTrue, seen, depth + 1) || mayProducePanelRoot(node.whenFalse, seen, depth + 1);
+        else if (ts.isBinaryExpression(node) && [ts.SyntaxKind.AmpersandAmpersandToken, ts.SyntaxKind.BarBarToken, ts.SyntaxKind.QuestionQuestionToken].includes(node.operatorToken.kind)) result = mayProducePanelRoot(node.right, seen, depth + 1);
+        else if (ts.isArrayLiteralExpression(node)) result = [...node.elements].some(child => mayProducePanelRoot(child, seen, depth + 1));
+        else {
+            const opening = jsxOpening(node);
+            if (opening) {
+                const description = describeJsx(opening);
+                if (description.isPanel) result = true;
+                else if (!isSectionGapOwner(opening)) {
+                    const tag = description.exportName || jsxTag(opening);
+                    if (description.owner === 'components' && tag === 'QueryState' && ts.isJsxElement(node)) result = [...node.children].some(child => mayProducePanelRoot(child, seen, depth + 1));
+                    else if (description.owner === 'react' && tag === 'Fragment' && ts.isJsxElement(node)) result = [...node.children].some(child => mayProducePanelRoot(child, seen, depth + 1));
+                    else {
+                        const localName = jsxTag(opening);
+                        const local = memberPath(opening.tagName).length === 1 ? localComponents.get(localName) : undefined;
+                        if (local && !seen.has(local)) {
+                            const next = new Set(seen); next.add(local);
+                            result = functionReturns(local).some(expression => mayProducePanelRoot(expression, next, depth + 1));
+                        }
+                    }
+                }
+            }
+        }
+        panelRootCache.set(node, result);
+        return result;
+    }
+    function isSectionOwner(element) {
+        if (sectionOwnerCache.has(element)) return sectionOwnerCache.get(element);
+        const opening = jsxOpening(element);
+        if (!opening) return false;
+        const result = isSectionGapOwner(opening);
+        sectionOwnerCache.set(element, result);
+        return result;
+    }
+    function isSectionGapOwner(opening) {
+        const description = describeJsx(opening);
+        if (description.composition === 'PageSections' || description.composition === 'SectionGrid' && isSectionGridSection(opening)) return true;
+        if (description.owner !== 'mui' || description.exportName !== 'Box') return false;
+        const sx = attributeExpression(attribute(opening, 'sx'));
+        return rolesIn(sx).includes('dashboard.sectionGap') && gridStyle(sx);
+    }
+    function isInsideSectionOwner(container) {
+        if (isSectionOwner(container)) return true;
+        let parent = container.parent;
+        while (parent) {
+            if (ts.isJsxElement(parent) || ts.isJsxSelfClosingElement(parent)) {
+                if (isSectionOwner(parent)) return true;
+                const description = describeJsx(jsxOpening(parent));
+                if (description.domBoundary || description.surfaceBoundary || description.opaqueBoundary) return false;
+            }
+            parent = parent.parent;
+        }
+        return false;
+    }
+    function checkSiblingPanelGaps(container) {
+        if (!(ts.isJsxElement(container) || ts.isJsxFragment(container))) return;
+        const children = [...container.children];
+        const visibleChildren = children.filter(child => !ts.isJsxText(child) || child.text.trim());
+        if (visibleChildren.length < 2 || !visibleChildren.some(child => mayProducePanelRoot(child))) return;
+        if (isInsideSectionOwner(container)) return;
+        let previous = [null];
+        for (const child of children) {
+            const summary = summarizeFlow(child);
+            for (const prior of previous) for (const first of summary.first) {
+                if (prior?.kind === 'panel' && first.kind === 'panel' && !prior.boundary && !first.boundary) {
+                    const key = first.node.getStart(sf);
+                    if (!panelGapReported.has(key)) {
+                        panelGapReported.add(key);
+                        addIssue(first.node, 'composition.missing-sibling-gap', 'Peer Panels in the rendered sibling flow need one section-gap owner: wrap them in PageSections or declare one supported Panel boundary.');
+                    }
+                }
+            }
+            const next = [];
+            if (summary.empty) next.push(...previous);
+            if (summary.last.length) next.push(...summary.last);
+            previous = [...new Map(next.map(token => [token ? `${token.kind}:${token.node?.getStart(sf) ?? -1}:${token.boundary ? 1 : 0}` : 'empty', token])).values()];
+        }
+    }
     function jsx(node) {
+        if (ts.isJsxElement(node) || ts.isJsxFragment(node)) checkSiblingPanelGaps(node);
         if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
             const localName = node.tagName.getText(sf);
             const names = memberPath(node.tagName);
@@ -224,6 +411,10 @@ export function inspectComposition(source, file = 'apps/web/src/modules/example/
             const sx = attributes.find(item => ts.isJsxAttribute(item) && item.name.getText(sf) === 'sx');
             const roles = rolesIn(sx?.initializer && ts.isJsxExpression(sx.initializer) ? sx.initializer.expression : undefined);
             for (const role of roles) usages.push({ ...location(node), tag, role });
+            if (composition === 'PageSections' && ts.isJsxOpeningElement(node)) {
+                const fields = directJsxChildren(node.parent).filter(child => isMuiElement(child, 'TextField'));
+                if (fields.length >= 2) addIssue(node, 'composition.semantic-role', 'PageSections owns peer page sections; paired form controls must use FormFields or FieldGroup.');
+            }
             if (posix(file) !== 'apps/web/src/shared/ui/composition.tsx') for (const role of roles) {
                 const owner = compositionOwners[role];
                 const eligible = !bindings || resolved?.owner === 'mui';
