@@ -11,6 +11,8 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 
 `design/tokens.json` là nguồn chuẩn. Màu dùng semantic role, không trỏ hex trong module. `tokens.css` là bản sinh; theme MUI phải map từ token, không tạo palette riêng. Bản PDF tài liệu có nền sáng để đọc/in, không thay đổi yêu cầu dark của sản phẩm.
 
+Trong Frontend hiện hành, quy định runtime/layout duy nhất là [FRONTEND_SPACING_STANDARD](../../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md), còn API/owner ở [shared catalog](../../BotSalesAI_Frontend/apps/web/src/shared/ui/README.md). Các giá trị baseline trong đặc tả full-product này không tạo spacing workflow hoặc consumer override thứ hai. Hash tại ADR-VIS-021 là snapshot palette 2.1; [extension record](../execution/frontend-token-extension-record.json) đối chiếu 24 leaf non-palette đã có trong source, giữ nguyên mọi leaf được duyệt và toàn bộ màu.
+
 ## 2. Tokens cơ sở
 
 <!-- BEGIN GENERATED CORE PALETTE -->

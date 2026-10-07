@@ -1,6 +1,6 @@
 # Phạm vi và thực hiện tự động của dự án Frontend
 
-**Phạm vi hiện hành:** React/TypeScript Frontend trong `apps/web`, với API mock tổng hợp cho demo/test. Trạng thái, thứ tự và bằng chứng triển khai chỉ lấy từ [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan); tài liệu scope này không giữ bản sao trạng thái S-step. Giữ Frontend-only và không cập nhật FE/full-product ledger nếu thiếu evidence nguyên task.
+**Phạm vi hiện hành:** React/TypeScript Frontend trong `apps/web`, với API mock tổng hợp cho demo/test. Trạng thái, thứ tự và bằng chứng triển khai chỉ lấy từ [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); tài liệu scope này không giữ bản sao trạng thái S-step. Giữ Frontend-only và không cập nhật FE/full-product ledger nếu thiếu evidence nguyên task.
 
 Chính sách phạm vi: mọi công việc sản phẩm trong `BotSalesAI_Frontend` là React/TypeScript Frontend với API mock tổng hợp; AI tự triển khai, kiểm thử và chuẩn bị hồ sơ để người dùng nghiệm thu cuối theo quyết định 04/10/2026. UI dùng [workflow duy nhất v1.28](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075, và [shared catalog CURRENT/TARGET](../apps/web/src/shared/ui/README.md). File này giữ thẩm quyền phạm vi/tự thực hiện; không một checklist UI hoặc nguồn token thứ hai; mandatory verify/evidence gates không được skip hoặc waiver để giả PASS.
 
@@ -46,7 +46,7 @@ Không có dependency bắt buộc vào Backend, tài khoản provider, remote p
 
 Tại lượt chốt 04/10, tracker FE có **140/140 checkpoint VERIFIED, 28/28 task DONE, `blocked=[]`, `stale=[]` và không còn task tiếp theo**. Backlog UI riêng có **26/26 item, 130/130 checkpoint**; hai tracker giữ mẫu số riêng. Scope là Frontend React/TypeScript với API mock tổng hợp, không phải Backend hoặc toàn sản phẩm.
 
-**HISTORICAL_SNAPSHOT:** số FE 04/10 ở đoạn trước chỉ mô tả thời điểm đó. Các lượt source/shared UI/policy sau đó có evidence riêng và có thể làm FE dependency stale; không suy backlog/FE hiện tại hoàn tất từ snapshot. UI rollout theo dõi tại §16.6: S03–S08 đã đóng scoped, S09 đang chạy, S10–S20 còn mở. Đọc canonical FE tracker để lấy FE status/next; không dùng UI plan để cộng điểm FE. Người dùng nghiệm thu cuối, AI không ghi acceptance thay.
+**HISTORICAL_SNAPSHOT:** số FE 04/10 ở đoạn trước chỉ mô tả thời điểm đó. Các lượt source/shared UI/policy sau đó có evidence riêng và có thể làm FE dependency stale; không suy backlog/FE hiện tại hoàn tất từ snapshot. Trạng thái UI rollout hiện hành chỉ đọc tại [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); không dùng trạng thái trong snapshot này để chọn bước tiếp theo. Đọc canonical FE tracker để lấy FE status/next; không dùng UI plan để cộng điểm FE. Người dùng nghiệm thu cuối, AI không ghi acceptance thay.
 
 Không tạo trạng thái BLOCKED để chờ owner, Backend hoặc hosted CI. Lỗi kỹ thuật thực phải được ghi, sửa và kiểm lại; nếu bất khả thi trong quyền/công cụ hiện có thì báo đúng phần thiếu, tiếp tục phần độc lập. Không thể đảm bảo mọi lần chạy tương lai không lỗi, không giả PASS hay tắt gate để đáp ứng một con số.
 

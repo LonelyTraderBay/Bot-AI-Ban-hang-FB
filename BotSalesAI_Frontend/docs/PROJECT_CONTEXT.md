@@ -1,12 +1,12 @@
 # Hồ sơ dự án Frontend — 07/10/2026
 
-**CURRENT PHASE:** Frontend-only work follows the dependency and evidence recorded in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). This context file records scope and canonical pointers; it does not duplicate S-step statuses. Do not change FE/full-product ledgers without task-level evidence.
+**CURRENT PHASE:** Frontend-only work follows the dependency and evidence recorded in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). This context file records scope and canonical pointers; it does not duplicate S-step statuses. Do not change FE/full-product ledgers without task-level evidence.
 
 Phạm vi hiện hành: React/TypeScript Frontend trong apps/web, API synthetic MSW chỉ demo/test. AI tự triển khai/kiểm thử/tái xác minh/bàn giao trong scope; người dùng nghiệm thu cuối. [FRONTEND_SCOPE](FRONTEND_SCOPE.md) là nguồn phạm vi. Không Backend/provider/persistence/staging/deploy proof; không tự commit/push hoặc ghi owner acceptance.
 
 ## Trạng thái source
 
-The source rollout review and its scope are recorded in [§16.17](FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007); current implementation status and remaining dependencies are recorded only in [§16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). Scoped checks do not prove full enforcement or full UI acceptance.
+The source rollout review and its scope are recorded in [§16.17](FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007); current implementation status and remaining dependencies are recorded only in [§16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). Scoped checks do not prove full enforcement or full UI acceptance.
 
 ## Quy định và nguồn chuẩn
 
@@ -26,4 +26,4 @@ Lượt triển khai trước ở [§15](FRONTEND_UI_IMPROVEMENT_PLAN.md#15-audi
 
 ## Tiếp tục
 
-[CONTINUE_FRONTEND](CONTINUE_FRONTEND.md), [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) và [REPORT](../evidence/REPORT.md) là đường vào hiện hành; §16.17 giữ lý do thiết kế. Tiếp tục theo dependency; không chạy lại S03–S08 nếu input/evidence còn đúng. Mọi bước theo [workflow canonical](FRONTEND_SPACING_STANDARD.md#unified-workflow), không nhận FE003.S05/W33 từ journal cũ. Strict FAIL/UNKNOWN hoặc mandatory NOT_RUN không đóng UI; hosted CI/owner/speech chưa quan sát được giữ giới hạn đúng scope, không tạo dependency chờ giữa chừng.
+[CONTINUE_FRONTEND](CONTINUE_FRONTEND.md), [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) và [REPORT](../evidence/REPORT.md) là đường vào hiện hành; §16.17 giữ lý do thiết kế. Tiếp tục theo dependency; không chạy lại S03–S08 nếu input/evidence còn đúng. Mọi bước theo [workflow canonical](FRONTEND_SPACING_STANDARD.md#unified-workflow), không nhận FE003.S05/W33 từ journal cũ. Strict FAIL/UNKNOWN hoặc mandatory NOT_RUN không đóng UI; hosted CI/owner/speech chưa quan sát được giữ giới hạn đúng scope, không tạo dependency chờ giữa chừng.

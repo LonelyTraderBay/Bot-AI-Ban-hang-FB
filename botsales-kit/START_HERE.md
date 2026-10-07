@@ -2,7 +2,7 @@
 
 Phạm vi người dùng xác nhận ngày 30/09/2026: frontend React/TypeScript hiện có, mock data đủ để nghiệm thu UI và các luồng. Production-Ready/Enterprise-Grade Frontend Architecture là mục tiêu kiểm chứng theo AI_RULES.md, chưa phải kết quả đã đạt. Kit đặc tả 2.1.1, API2.0.0 và Graphite Gold token2.1 giữ làm nguồn chuẩn.
 
-Đọc root AGENTS.md/AI_RULES.md nguyên bản, docs/FRONTEND_SCOPE.md, PROJECT_CONTEXT.md, CONTINUE_FRONTEND.md, KNOWN_GAPS.md, evidence/REPORT.md; rồi IMPLEMENTATION_PLAN.md và docs/02,06,18 của kit. Khi được giao implement, dùng PROJECT_BUILD_PROMPT_VI.txt và nhận task FE. Giữ source đã có; không port prototype HTML hoặc dựng lại stack.
+Ở root repository, đọc AGENTS.md. Trong `../BotSalesAI_Frontend/`, đọc AI_RULES.md nguyên bản, docs/FRONTEND_SCOPE.md, docs/PROJECT_CONTEXT.md, docs/CONTINUE_FRONTEND.md, docs/KNOWN_GAPS.md và evidence/REPORT.md. Tại kit, đọc IMPLEMENTATION_PLAN.md và docs/02,06,18. Khi được giao implement, dùng PROJECT_BUILD_PROMPT_VI.txt và nhận task FE. Giữ source đã có; không port prototype HTML hoặc dựng lại stack.
 
 | Vai trò | Nguồn |
 |---|---|

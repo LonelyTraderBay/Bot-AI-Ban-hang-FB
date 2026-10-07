@@ -1,6 +1,6 @@
 # Quy định khoảng cách và bố cục Frontend
 
-**Normative policy:** workflow §0 and SPC-001–075 in this file are the single UI rules source. This document does not store rollout status; current step status and evidence live only in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). A scoped gate pass is not whole-app UI acceptance.
+**Normative policy:** workflow §0 and SPC-001–075 in this file are the single UI rules source. This document does not store rollout status; current step status and evidence live only in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). A scoped gate pass is not whole-app UI acceptance.
 
 **Nguồn chuẩn:** workflow §0 và SPC-001–075 là normative UI policy duy nhất. `REPORT`/evidence giữ kết quả có hash; plan §16.6 giữ tiến độ. Gate PASS không tự chứng minh toàn bộ giao diện đạt chuẩn.
 
@@ -73,7 +73,7 @@ Category/owner hoặc treatment chưa xác định là UNKNOWN, AI phải xử l
 
 Karpathy áp dụng tại mọi bước: hiểu trước, root cause trước symptom, tái dùng trước abstraction mới, thay đúng vùng, kiểm đúng invariant. Không generic engine, wrapper cho mọi primitive hoặc số dòng/KPI component. Các quy tắc chi tiết dưới đây giữ ID để traceability; mọi checklist phụ phải trỏ quy trình §0 này.
 
-**Bằng chứng enforcement hiện hành:** S03–S08 có closeout theo từng capability trong §16.6. [S08 closeout](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S08-final.md) ghi 82/82 checker regressions, layout 76/0, visual 75/0, composition 74/0 và generator 11/283/210/54; đây là ba scope gate khác nhau, không phải final UI conformance. S09 owner/ancestry, S10 API closure, S14–S19 coverage/browser/evidence/pipeline/final reconciliation và S20 handoff vẫn còn mở. Không gọi kết quả này là 100% enforcement, full E2E PASS, hosted CI PASS hoặc Enterprise certification.
+**Bằng chứng enforcement:** trạng thái và dependency chỉ lấy từ [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); kết quả trên source cụ thể ở [evidence report](../evidence/REPORT.md). Các số đo S08/Wxx bên dưới là snapshot theo log/fingerprint của lượt đó, không phải trạng thái hiện hành hoặc chứng nhận toàn bộ UI. Source gates, browser checks, native resize/zoom, hosted CI và human acceptance có phạm vi bằng chứng riêng.
 
 **HISTORICAL_SNAPSHOT — lượt shared composition trước audit:** 6 component mới đã có 176 occurrences trên 21 file/16 module; source có 68 TS/TSX. Verify-handoff PASS:96 unit/component tests,9 composition fixtures; spacing/visual scans69 files 0 finding và composition68 files 0 finding. Collector ở lượt đó đo đủ216/216 current renders,0 issues theo assertions khi đó. Paired comparison114 comparable;102 baseline desktop ghi0 groups lúc route còn tải được giữ nguyên, PARTIAL_BASELINE. Permanent browser guard2/2; native Chromium zoom200%5/5 và Firefox text-only200%5/5. Full E2E lượt đầu485/486 (exit1, Windows metrics write UNKNOWN); artifact retest6/6 giữ nguyên assertions, không gọi lượt đầu full-suite PASS. Kết quả cuối tại [report mới](../evidence/frontend-ui-improvements/shared-composition-20261006/REPORT.md); snapshot Wxx/FE và runner readiness lỗi không chứng minh source hiện hành.
 
@@ -591,4 +591,4 @@ Triển khai đo được và kiểm chứng của lượt này được ghi t�
 | Evidence closure | Per-step closeout/provenance; S08 final logs | S17 validator cho hash, commands, coverage, missing/stale | Evidence khớp source cuối; validator không tự phán visual correctness |
 | CI | Parent workflow gọi `npm run verify` và built-demo E2E; package `verify` gọi layout, visual-token và composition suites | S18 nối S08 binding regression vào `verify`, kiểm workflow trigger/failure/artifacts; hosted run/branch protection cần evidence riêng | Local exit hoặc hosted run đúng revision; cấu hình không là run PASS |
 
-Các lớp có chỗ thiếu ở cột ba đang `PLANNED`, không phải `ENFORCED_COMPLETE`. Toàn bộ findings và thứ tự xử lý nằm trong kế hoạch hiện hành, không tạo ledger quy định thứ hai.
+Bảng này mô tả capability và tiêu chí cần chứng minh, không lưu trạng thái rollout. Trạng thái từng capability nằm tại plan §16.6; thiếu hoặc stale evidence không được suy thành ENFORCED_COMPLETE.

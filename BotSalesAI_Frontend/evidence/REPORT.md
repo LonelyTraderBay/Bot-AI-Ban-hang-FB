@@ -1,6 +1,24 @@
-# Báo cáo Frontend — snapshot trước FE revalidation, UI028/W33, 06/10/2026
+# Báo cáo Frontend — nguồn kết quả hiện hành
 
-## Current addendum — 07/10/2026 shared UI ownership rollout
+Kết quả đối chiếu tài liệu/code/runtime trên checkout 07/10/2026 được ghi tại [báo cáo đồng bộ và kiểm thực tế](frontend-ui-document-sync-20261007/REPORT.md). Trạng thái UI rollout chỉ lấy từ [plan §16.6](../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); FE effective status chỉ lấy từ CLI canonical. Các addendum phía dưới giữ nguyên kết quả theo ngày/source snapshot và không thay kết quả mới.
+
+## HISTORICAL_SNAPSHOT — hồ sơ trước đợt đồng bộ hiện hành
+
+## Historical post-handoff addendum — 07/10/2026 spacing-role correction
+
+A user review of `/s/shop-demo/approvals` found the preview and approval-list Panels touching. The source review confirmed two related spacing-role errors on that route and matching defects on `/s/shop-demo/notifications/devices` and `/s/shop-demo/finance/profit-loss`. The consumers now assign peer sections to `PageSections`, form fields to `FormFields`/`FieldGroup`, and separated actions to `ActionGroup`; the existing shared spacing values and business behaviors remain intact. The composition checker now rejects the paired-field misuse and adjacent fragment Panels without a section-gap owner. Regression coverage is 37/37.
+
+Final local `npm.cmd run verify` exits 0; see [captured run](frontend-ui-improvements/ui-governance-rollout-20261007/spacing-role-fix-20261007/verify-final-20261007.log) and the [scoped follow-up report](frontend-ui-improvements/ui-governance-rollout-20261007/spacing-role-fix-20261007/REPORT.md). Loaded CUA review at 825×878 covered the three routes and local-only preview branches. The user's before screenshot is preserved in the follow-up folder; after views were visually inspected in the active browser session and not persisted as image files. This correction does not reopen S20 or certify whole-app visual conformance; full E2E, hosted CI, Backend, production, and owner acceptance were not established by this follow-up. The app is still a local in-memory mock.
+
+## Historical follow-up — 07/10/2026 whole-route spacing-role audit
+
+A further user report showed the fee-preview and shipment-list Panels touching on `/s/shop-demo/shipments`. The source audit covered all 54 canonical routes and 52 distinct exported page components across 16 feature modules. It found the local `ShippingQuotePreview` wrapper hid a root `Panel` from the existing sibling-gap scanner. The shipment preview/fallback and list are now owned by `PageSections` for the existing 24px section rhythm. The composition gate was extended to inspect finite local component roots and conditional branches, and regression fixtures cover wrapped Panels and mutually exclusive alternatives. The audit confirmed the existing Dashboard section grid already owns its documented gap and that the two Replenishment tab panels cannot render together.
+
+Across the two follow-ups, four route families now have spacing-role corrections: Approvals, Notification devices, Profit & loss, and Shipments. The updated strict gate reports 74 source files and 0 findings. Current local `npm.cmd run verify` passed (generator 11 outputs/283 schemas/210 operations/54 routes; source check 68 files/220 API references/54 routes; boundaries 504 imports/10 negative fixtures; domain 88/88; Vitest 136/136; layout 82/82 and 76 files/0 findings; visual-token 5/5 and 75 files/0 findings; composition 37/37 and 74 files/0 findings; evidence validator 11/11 and S17 PASS). Full log and route audit are in [spacing-role audit evidence](frontend-ui-improvements/ui-governance-rollout-20261007/spacing-role-audit-20261007/REPORT.md) and [verify log](frontend-ui-improvements/ui-governance-rollout-20261007/spacing-role-audit-20261007/verify-current-20261007.log).
+
+The live shipment route was visually checked again in the local mock browser; the two panels now have the intended visible section gap. This was a visual spot check, not a manual browser review of all 54 routes, and the full browser E2E suite was not run for this follow-up. Synthetic mock only; Backend, production, hosted CI, and owner acceptance remain unverified.
+
+## Historical addendum — 07/10/2026 shared UI ownership rollout
 
 The user authorized implementation of the reviewed Frontend UI policy by dependency. S09 has a **scoped ownership/action-group closeout**. S10 now has 11/11 API/catalog contract tests and 38/38 direct-render cases covering all 27 public APIs (49/49 combined); whole-app production-consumer branch review remains in S19 [S10 evidence](frontend-ui-improvements/ui-governance-rollout-20261007/S10-api-contract-current-20261007.json). S11 is **DONE_OWNER_FIX_SCOPED**: three titled Finance Panels plus a duplicate-inset case discovered in Fulfillment R42 were corrected at the existing shared `Panel bodyMode="inset"` owner. Twelve before/after measurements show 32/40px reduced to exactly 16px, with zero top inset and retained 16/24px inline/bottom inset. The P&L header action and Fulfillment quote controls remain present. A TypeScript AST review covered 28 source TSX files, 91 Panel invocations and 62 titled Panels; the remaining production-only Fulfillment Alert is a separate bordered surface and was retained.
 
@@ -10,7 +28,7 @@ Current local verification: `npm.cmd run verify` exits 0 after the layout-bindin
 
 Older addenda below retain their original dates and results; references to a “current” phase inside those snapshots are historical and do not supersede the current §16.6 plan or this addendum.
 
-## Current addendum — S04 discovery closure
+## Historical addendum — S04 discovery closure
 
 [Rollout REPORT](frontend-ui-improvements/ui-governance-rollout-20261006/REPORT.md), status.json và S04-coverage.json ghi S03 DONE_INTAKE/S04 DONE_DISCOVERY_SCOPED.77/77relevant fixtures; source gates75/75/74files,0findings; expected/actual không thiếu/thừa,83runtime inventory rows đã discovery;89inputs cóhash/classification; generator đồng bộ. Source/build/native/style semantic acceptance S05–S20 còn mở; chưa UI edit/build/fullE2E/native/hosted/owner proof mới. Các addendum initial S03/S04 bên dưới là historical snapshots, không current source certification.
 
@@ -42,7 +60,7 @@ Verdict UI `PASS`; architecture `PASS_WITH_SCOPE_LIMITS`. Frontend tracker scope
 
 **Quy định tại snapshot cũ:** SPC-056 trong FRONTEND_SPACING_STANDARD v1.18 yêu cầu browser-rendered keyboard focus và hit-testing cho target trọng yếu khi sticky/fixed/overlay có thể che khuất nội dung; ảnh tĩnh hoặc overflow scan đơn lẻ không đủ. Chuẩn đang có hiệu lực là SPC-001–060 trong [FRONTEND_SPACING_STANDARD v1.22](../docs/FRONTEND_SPACING_STANDARD.md).
 
-## Current addendum — 06/10/2026, trước FE003.S05
+## Historical addendum — 06/10/2026, trước FE003.S05
 
 SPC-059 yêu cầu mọi control hiển thị có mục đích, trigger, trạng thái, keyboard behavior, owner hành vi và kết quả/feedback trung thực; cấm enabled no-op hoặc báo lưu/thành công khi chỉ đổi state cục bộ. Thiếu contract được ghi `FRONTEND_ONLY_GAP`; mock phải được gắn nhãn synthetic và không ngụ ý persistence. Quy định đã được đồng bộ vào AGENTS, Design, UX Contract, Frontend Scope/Context/Continue và Coding Standards. Thay đổi lượt này chỉ là tài liệu/chính sách; không sửa runtime UI hay test source.
 

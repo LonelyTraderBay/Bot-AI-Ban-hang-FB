@@ -1,6 +1,6 @@
 """Positive and negative release-validator checks on isolated copies, not product tests."""
 from pathlib import Path
-import tempfile, shutil, json, importlib.util, hashlib
+import tempfile, shutil, json, importlib.util, hashlib, re
 R=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('release_validator',R/'scripts/validate-release.py')
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
@@ -8,12 +8,26 @@ checks=[]
 with tempfile.TemporaryDirectory(prefix='botsales-release-test-') as temp:
     root=Path(temp)/'kit'
     shutil.copytree(R,root,ignore=shutil.ignore_patterns('__pycache__'))
+    # The checkout entrypoints also reference adjacent Frontend documentation.
+    # Copy their actual inputs into the isolated workspace; missing inputs remain failures.
+    for name in ['DOCUMENT_INDEX.md','README.md','START_HERE.md','UPGRADE.md']:
+        for link in re.findall(r'\]\(([^\s)]+)\)',(R/name).read_text(encoding='utf-8')):
+            relative=link.split('#',1)[0]
+            if not relative.startswith('../BotSalesAI_Frontend/'):
+                continue
+            source=(R/relative).resolve();target=(root/relative).resolve()
+            assert source.is_relative_to(R.parent) and target.is_relative_to(Path(temp).resolve())
+            assert source.is_file(),f'Missing checkout input: {relative}'
+            target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,target)
     def file_change(name, transform):
         p=root/name;old=p.read_bytes();p.write_bytes(transform(old));return lambda:p.write_bytes(old)
     def json_change(name, mutate):
         def transform(raw):
             value=json.loads(raw);mutate(value);return (json.dumps(value,ensure_ascii=False,indent=2)+'\n').encode()
         return file_change(name,transform)
+    def file_remove(name):
+        p=(root/name).resolve();assert p.is_relative_to(Path(temp).resolve())
+        original=p.read_bytes();p.unlink();return lambda:p.write_bytes(original)
     def case(name,change=None,expected=None,distribution=True):
         undo=None
         try:
@@ -25,7 +39,8 @@ with tempfile.TemporaryDirectory(prefix='botsales-release-test-') as temp:
         finally:
             if undo:undo()
     case('Valid distribution accepted')
-    case('Token change without new authority detected',lambda:json_change('design/tokens.json',lambda d:d['colors'].update(accent='#FFFFFF')),'Approved source digest matches canonical tokens')
+    case('Missing adjacent Frontend document detected',lambda:file_remove('../BotSalesAI_Frontend/docs/FRONTEND_SCOPE.md'),'Relative link exists README.md -> ../BotSalesAI_Frontend/docs/FRONTEND_SCOPE.md')
+    case('Token change without new authority detected',lambda:json_change('design/tokens.json',lambda d:d['colors'].update(accent='#FFFFFF')),'Every approved token leaf and palette remains unchanged')
     case('Generated CSS mutation detected',lambda:file_change('design/tokens.css',lambda b:b+b'\n/* altered */\n'),'CSS copies match exactly')
     case('Unapproved decision detected',lambda:json_change('design/decision.json',lambda d:d.update(status='PROPOSED')),'Approved Graphite Gold policy is bound to a direct user request')
     case('App light palette detected',lambda:json_change('design/tokens.json',lambda d:d.update(theme='light')),'Only one app palette and no system/theme selection')

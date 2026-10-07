@@ -1,8 +1,11 @@
 # Giới hạn còn lại sau UI027 Frontend update — 05/10/2026
 
+**Current navigation:** trạng thái UI ở [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status), evidence tại [REPORT](../evidence/REPORT.md). Nội dung bên dưới là **HISTORICAL_SNAPSHOT** tại ngày ghi trong heading; không thay tracker/status hiện hành.
+
+
 Phạm vi/thời điểm nghiệm thu theo [FRONTEND_SCOPE](FRONTEND_SCOPE.md); task chi tiết và audit toàn tài liệu ở [kế hoạch](FRONTEND_UI_IMPROVEMENT_PLAN.md). AI tự thực hiện đến hồ sơ bàn giao; không chờ owner/manual/hosted CI giữa chừng.
 
-## Hiện hành
+## HISTORICAL_SNAPSHOT — giới hạn tại 05/10/2026
 
 Backlog UI đạt **27/27 item, 135/135 checkpoint** sau UI027. FE tracker có 28 task/140 checkpoint; trạng thái hiện hành lấy từ `node ../botsales-kit/scripts/progress.mjs status` và không được thay bằng snapshot trong tài liệu. Bằng chứng UI027: [verify/build](../evidence/frontend-ui-improvements/UI027/S04-verify-20261005.log), [browser suite](../evidence/frontend-ui-improvements/UI027/S04-e2e-full-20261005.log) 388/388, [performance comparison](../evidence/frontend-ui-improvements/UI027/S05-paired-performance-20261005.md). Kết quả local là React + synthetic MSW, không phải hosted CI, Backend hoặc owner acceptance.
 
@@ -17,7 +20,7 @@ Backlog UI đạt **27/27 item, 135/135 checkpoint** sau UI027. FE tracker có 2
 | UI021 scanner | Strict scanner exit 1/13; source crosswalk cho 13 semantics và accepted-review exception được giữ | Không gọi scanner xanh và không suppression để ép pass |
 | Live integration | Backend/provider/server auth/persistence/staging/production chưa xác minh | Ngoài scope folder Frontend; không đòi credentials hoặc bịa kết quả |
 
-UI plan hiện hành: 27/27 item, 135/135 checkpoint. UI020 support matrix desktop đã được duyệt; Android soft-keyboard probe là AVD, không phải handset. Actual zoom S42 đo 400% trên 17 route; S46 ghi rõ bảng cần scroll ngang ở viewport hẹp. Các giới hạn này mô tả phạm vi bằng chứng, không phải task chờ Backend.
+Tại snapshot 05/10/2026: UI backlog 27/27 item, 135/135 checkpoint. UI020 support matrix desktop đã được duyệt; Android soft-keyboard probe là AVD, không phải handset. Actual zoom S42 đo 400% trên 17 route; S46 ghi rõ bảng cần scroll ngang ở viewport hẹp. Các giới hạn này mô tả phạm vi bằng chứng, không phải task chờ Backend.
 
 FE017 mock dùng knowledge.publish + lifecycle theo quyết định đã có; không thêm Knowledge.allowedActions. Missing live credentials không chặn frontend mock. Readiness rubric còn **7/9 gate đạt**; đây không phải % code/architecture. Các snapshot dưới đây giữ để truy vết, không giao việc hoặc thay trạng thái hiện hành.
 

@@ -1,5 +1,8 @@
 # Kiểm toán kế hoạch và tài liệu Frontend — 05/10/2026
 
+**HISTORICAL_AUDIT:** giữ nguyên kết luận/số đo bên dưới theo ngày audit. Nguồn current ở [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) và [evidence report](../evidence/REPORT.md); không lấy status/đường dẫn cũ để tiếp tục triển khai.
+
+
 **Mục đích:** chốt phạm vi Frontend-only, trạng thái BLOCKED hiện hành và mức tự động hóa theo yêu cầu của người dùng. Đây là báo cáo kiểm toán tài liệu/kế hoạch trên checkout hiện tại, không phải chứng nhận Backend, production, release hoặc nghiệm thu thay người dùng.
 
 ## Kết luận chốt theo hai yêu cầu

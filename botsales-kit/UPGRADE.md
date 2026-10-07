@@ -1,7 +1,7 @@
 # Tiếp nhận bộ chuẩn 2.1.1 mà không mất tiến độ
 
 ## Dự án mới hoặc chưa có code/tiến độ
-Giải nén cả folder, đặt tên `botsales-kit` cạnh source dự án. Chỉ định folder này là nguồn hiện hành qua hướng dẫn gốc phù hợp. Không chép đè root AGENTS.md/AI_RULES.md. Gửi PROJECT_BUILD_PROMPT_VI.txt cho AI có quyền làm việc; bắt đầu T001. Dùng prototype/index.html để xem lại, không lấy làm source sản phẩm.
+Giải nén cả folder, đặt tên `botsales-kit` cạnh workspace `BotSalesAI_Frontend` trong repository root. Chỉ định folder này là nguồn hiện hành qua hướng dẫn gốc phù hợp. Không chép đè root AGENTS.md/AI_RULES.md. Gửi PROJECT_BUILD_PROMPT_VI.txt cho AI có quyền làm việc; trong phạm vi frontend bắt đầu FE001 hoặc bước đủ dependency từ `node scripts/progress.mjs next` tại kit. Nguồn là `execution/frontend-plan.json` và `frontend-progress.json`; T001–T084 chỉ tham chiếu full-product ngoài scope. Dùng prototype/index.html để xem lại, không lấy làm source sản phẩm.
 
 ## Repo đã dùng 2.0/2.1 và có thay đổi riêng
 1. Xác minh revision/diff và người đang ghi; sao lưu nguồn kit hiện hành, progress, evidence, handoff, owner-inputs, command-map và các thay đổi riêng. Không reset/clean/stash hoặc chép ZIP chồng tùy tiện.

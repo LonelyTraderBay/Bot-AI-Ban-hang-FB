@@ -16,6 +16,8 @@ forced-colors. `primary.light` là sắc độ được thư viện sử dụng,
 
 ## Graphite Gold: ánh xạ hiện hành đã duyệt
 
+Trong checkout frontend, source MUI bridge hiện có tại `../../BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts`; scope/task là FE005 và runtime ownership theo `../../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md`. T010/T011 trong hướng dẫn full-product là tham chiếu ngoài scope, không phải việc frontend kế tiếp. Kết quả thực thi lấy từ `../../BotSalesAI_Frontend/evidence/REPORT.md`.
+
 - primary.main/contrastText = accent/onAccent; hover/pressed dùng accentHover/accentPressed; không `filter: brightness` phụ thuộc màu ngoài ý muốn.
 - background.default/paper = canvas/surface; input, raised, elevated, hover và selected dùng custom semantic tokens, không dùng màu MUI mặc định không kiểm.
 - info.main = info; success/warning/error = success/warning/danger. Label dùng màu tương ứng trên successSurface/warningSurface/dangerSurface/infoSurface; không cần alpha ghép khác nhau ở mỗi module.

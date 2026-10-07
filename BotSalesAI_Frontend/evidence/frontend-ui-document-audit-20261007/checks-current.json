@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-10-07T05:35:15.135Z",
+  "checks": [
+    {
+      "name": "fe-status",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/progress.mjs",
+        "status"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\botsales-kit",
+      "startedAt": "2026-10-07T05:35:14.649Z",
+      "finishedAt": "2026-10-07T05:35:14.830Z",
+      "exitCode": 0,
+      "stdout": "{\n  \"overallPercent\": 0,\n  \"verifiedSteps\": 0,\n  \"totalSteps\": 140,\n  \"phases\": [\n    {\n      \"id\": \"F00\",\n      \"title\": \"Tiếp nhận và môi trường\",\n      \"weightPercent\": 10,\n      \"earned\": 0,\n      \"total\": 30,\n      \"percent\": 0\n    },\n    {\n      \"id\": \"F01\",\n      \"title\": \"Kiến trúc, contract và mock foundation\",\n      \"weightPercent\": 25,\n      \"earned\": 0,\n      \"total\": 50,\n      \"percent\": 0\n    },\n    {\n      \"id\": \"F02\",\n      \"title\": \"Luồng và module frontend\",\n      \"weightPercent\": 40,\n      \"earned\": 0,\n      \"total\": 140,\n      \"percent\": 0\n    },\n    {\n      \"id\": \"F03\",\n      \"title\": \"Chất lượng, an toàn và artifact\",\n      \"weightPercent\": 20,\n      \"earned\": 0,\n      \"total\": 40,\n      \"percent\": 0\n    },\n    {\n      \"id\": \"F04\",\n      \"title\": \"Nghiệm thu mock và bàn giao\",\n      \"weightPercent\": 5,\n      \"earned\": 0,\n      \"total\": 20,\n      \"percent\": 0\n    }\n  ],\n  \"next\": [\n    {\n      \"id\": \"FE001\",\n      \"title\": \"Tiếp nhận source và khóa phạm vi frontend\",\n      \"nextStep\": {\n        \"id\": \"S01\",\n        \"weight\": 1,\n        \"action\": \"Đọc hướng dẫn có hiệu lực, xác minh cwd/Git root/revision/diff và quyền docs/implement của lượt hiện tại.\",\n        \"requiredEvidenceKind\": \"artifact_review\",\n        \"verification\": \"Có baseline thực và thay đổi sẵn có; không nhận việc code chỉ vì mở kế hoạch. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.\",\n        \"required\": true,\n        \"status\": \"STALE\",\n        \"note\": \"Changed source AGENTS.md\"\n      }\n    }\n  ],\n  \"blocked\": [],\n  \"stale\": [\n    \"FE001\",\n    \"FE002\",\n    \"FE003\",\n    \"FE004\",\n    \"FE005\",\n    \"FE006\",\n    \"FE007\",\n    \"FE008\",\n    \"FE009\",\n    \"FE010\",\n    \"FE011\",\n    \"FE012\",\n    \"FE013\",\n    \"FE014\",\n    \"FE015\",\n    \"FE016\",\n    \"FE017\",\n    \"FE018\",\n    \"FE019\",\n    \"FE020\",\n    \"FE021\",\n    \"FE022\",\n    \"FE023\",\n    \"FE024\",\n    \"FE025\",\n    \"FE026\",\n    \"FE027\",\n    \"FE028\"\n  ]\n}\n",
+      "stderr": "",
+      "error": null
+    },
+    {
+      "name": "s17-validator",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/validate-ui-evidence.mjs",
+        "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-07T05:35:14.830Z",
+      "finishedAt": "2026-10-07T05:35:14.928Z",
+      "exitCode": 0,
+      "stdout": "ui-evidence PASS: S17; 4 command/log record(s), 3 coverage row(s), 21 current fingerprint(s); status=COMPLETE\n",
+      "stderr": "",
+      "error": null
+    },
+    {
+      "name": "s19-validator",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "scripts/validate-ui-evidence.mjs",
+        "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-current-evidence.json"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-07T05:35:14.928Z",
+      "finishedAt": "2026-10-07T05:35:15.023Z",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "UI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs] is stale\nUI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/tests/ui-composition-layout.spec.ts] is stale\nUI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/apps/web/src/shared/ui/README.md] is stale\nUI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/botsales-kit/contracts/route-manifest.json] does not identify a current file\nUI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md] is stale\nUI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md] is stale\nUI_EVIDENCE_INVALID: sourceFingerprints[.github/workflows/frontend.yml] is stale\nUI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/docs/route-state-role-matrix.json] is stale\nUI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/DESIGN.md] is stale\nUI_EVIDENCE_INVALID: sourceFingerprints[BotSalesAI_Frontend/evidence/REPORT.md] is stale\n",
+      "error": null
+    },
+    {
+      "name": "release-doc-generator-check",
+      "executable": "python",
+      "args": [
+        "scripts/sync-release.py",
+        "--check"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\botsales-kit",
+      "startedAt": "2026-10-07T05:35:15.023Z",
+      "finishedAt": "2026-10-07T05:35:15.107Z",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "RELEASE_DOC_DRIFT: DOCUMENT_INDEX.md, ARCHITECTURE_BLUEPRINT.md\r\n",
+      "error": null
+    }
+  ],
+  "baselineDrift": [],
+  "previousVerify": {
+    "path": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/spacing-role-audit-20261007/verify-current-20261007.log",
+    "sha256": "8b6e84f46b904149a0c8c45b6b1365224088fe667315d05a1455c23d0971e699",
+    "rerunInThisAudit": false
+  }
+}

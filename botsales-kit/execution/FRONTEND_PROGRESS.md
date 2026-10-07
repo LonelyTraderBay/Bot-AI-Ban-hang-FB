@@ -4,6 +4,8 @@ Kế hoạch BOTSALES-FRONTEND-MOCK-20260930: **0%**, 0/140 bước được xá
 
 Scope: FRONTEND_WITH_SYNTHETIC_MOCK_API. Không chứng nhận backend/staging/production hệ thống hoặc quyền phát hành.
 
+Phần trăm này đo evidence còn hiệu lực, không phải lượng code đã viết. STALE có thể trả 0% dù implementation vẫn có; chỉ tái xác minh checkpoint đúng task/dependency mới nhận điểm.
+
 | Task | Tên | Phụ thuộc | Trạng thái | Đã xác minh |
 |---|---|---|---|---:|
 | FE001 | Tiếp nhận source và khóa phạm vi frontend | — | STALE | 0% |

@@ -11,7 +11,7 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 
 **Bản đọc tổng hợp được sinh.** Nguồn triển khai là từng file docs/ và contracts/ trong cùng kit. Không sửa bản này thay nguồn.
 
-Kế hoạch 84 task/420 bước nằm ở IMPLEMENTATION_PLAN.md; nguồn màu duy nhất ở design/tokens.json; đọc DOCUMENT_INDEX.md để tìm đúng file.
+Kế hoạch frontend FE001–FE028/140 bước nằm ở IMPLEMENTATION_PLAN.md. Kế hoạch full-product 84 task/420 bước là tham chiếu read-only tại execution/plan.json và execution/tasks/T*.md. Nguồn màu duy nhất ở design/tokens.json; đọc DOCUMENT_INDEX.md để tìm đúng file.
 
 
 
@@ -286,6 +286,8 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 Ứng dụng vận hành hằng ngày, không landing page. Ưu tiên nội dung, trạng thái và thao tác rõ ràng. Graphite Gold: nền than trung tính, card sáng hơn nền, chữ trắng ngà và điểm nhấn vàng champagne. Không nhuộm xanh toàn trang, không neon hoặc kính mờ. Gradient trung tính chỉ dùng ở khối giới thiệu, không phủ trang hay chứa số liệu quan trọng trên ảnh. Dark-only là yêu cầu; không thêm switch light/dark. Logo/tên thương hiệu tạm phải thay được qua cấu hình, không đẩy vào logic.
 
 `design/tokens.json` là nguồn chuẩn. Màu dùng semantic role, không trỏ hex trong module. `tokens.css` là bản sinh; theme MUI phải map từ token, không tạo palette riêng. Bản PDF tài liệu có nền sáng để đọc/in, không thay đổi yêu cầu dark của sản phẩm.
+
+Trong Frontend hiện hành, quy định runtime/layout duy nhất là [FRONTEND_SPACING_STANDARD](../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md), còn API/owner ở [shared catalog](../BotSalesAI_Frontend/apps/web/src/shared/ui/README.md). Các giá trị baseline trong đặc tả full-product này không tạo spacing workflow hoặc consumer override thứ hai. Hash tại ADR-VIS-021 là snapshot palette 2.1; [extension record](execution/frontend-token-extension-record.json) đối chiếu 24 leaf non-palette đã có trong source, giữ nguyên mọi leaf được duyệt và toàn bộ màu.
 
 ## 2. Tokens cơ sở
 
@@ -2013,7 +2015,7 @@ V1 demo's fulfill combined dispatch and delivered; v2 splits commercial/preparat
 
 64 feature IDs remain A01–H08; R01–R36 keep navigation meaning, R37–R54 extend. Operation names for obsolete password login/fulfill routes mapped in contracts/migration-map.json. Legacy schemas unused by new operations may remain for DTO archaeology only if explicitly deprecated; do not expose unsafe old behavior in new app. Source archive is not a second execution plan.
 
-Brownfield intake must inspect actual code/data/consumers; preserve instructions, uncommitted work and existing customizations. Work in slices and tests; no blind overwrite by extracting full kit into active source paths. Greenfield copy kit into `botsales-kit/`; AI creates app outside prototype folder. If user has universal AI files at root, compare hash and reference original instead of altering it.
+Brownfield intake must inspect actual code/data/consumers; preserve instructions, uncommitted work and existing customizations. Work in slices and tests; no blind overwrite by extracting full kit into active source paths. Greenfield copy kit into `../botsales-kit/`; AI creates app outside prototype folder. If user has universal AI files at root, compare hash and reference original instead of altering it.
 
 New feature process: approved requirement → ownership → typed contract/permission → invariants/events → UI/API/worker implementation → tests/evidence → rollout/migration. New plan tasks require approved scope/version/weight migration; do not silently reduce denominator or delete failed tasks to improve percentage. Existing evidence affected by source change marked stale. Growth by adding bounded modules, not sprinkling cross-module state or generic custom rule language.
 
@@ -2036,7 +2038,7 @@ Xem `UPGRADE.md` cho repo mới và repo đang chạy. Palette giữ nguyên 2.1
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
-Nguồn đầy đủ: `../IMPLEMENTATION_PLAN.md` (generated from execution/plan.json + progress.json) và `../execution/tasks/T001.md`…`T084.md`. Tổng 14 giai đoạn, 84 task, 420 checkpoint. Mỗi task có dependency rõ, feature IDs, readFirst, vùng sửa, outputs, 5 bước cụ thể và ca từ chối/lỗi. Không dùng lại backlog 23 task của v1.1.
+Nguồn full-product: `execution/plan.json`, `execution/progress.json` và `execution/tasks/T001.md`…`T084.md`, chỉ đọc trong phạm vi frontend. Tổng 14 giai đoạn, 84 task, 420 checkpoint. Mỗi task có dependency rõ, feature IDs, readFirst, vùng sửa, outputs, 5 bước cụ thể và ca từ chối/lỗi. `IMPLEMENTATION_PLAN.md` hiện là đầu ra của frontend-plan/frontend-progress/FRONTEND_PLAN_GUIDE, gồm FE001–FE028/140 bước; không dùng nó làm bản kế hoạch full-product. Không dùng lại backlog 23 task của v1.1.
 
 ## Loop bắt buộc
 1. Xác minh source/worktree/tool quyền. Đọc START_HERE, Universal, AI_RULES_PROJECT và task hiện tại.
@@ -2427,6 +2429,9 @@ không tạo theme riêng trong module. Các token, breakpoint, typography, spac
 z-index dùng nguồn chuẩn. MUI sx/styled được phép khi tham chiếu token/theme;
 không trộn AntD/shadcn/Tailwind/Chakra chỉ vì làm một màn hình nhanh hơn. CSS cục bộ
 hợp lệ cho bố cục đặc thù; màu biểu đồ cũng lấy token, không palette hardcode riêng.
+Với checkout Frontend, CODE-016 phải được áp dụng cùng SPC-001–075 trong
+[workflow canonical](../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md#unified-workflow);
+`test:layout` không thay audit theme/token hoặc kiểm tra UI đã render.
 
 CODE-017 — Không bọc mọi primitive. Shared component chỉ tập trung hành vi/design
 thật dùng chung; cột, quyền, action và filter nghiệp vụ thuộc module. Props tránh
@@ -2479,6 +2484,32 @@ DỤNG với lý do. Evidence gồm command/cwd/exit code/revision/environment v
 thật. Tách tài liệu, mock, staging, production. Không gọi compliance/enterprise chỉ
 vì checklist dài. Không tự merge/deploy; Universal 19.6 là cổng tuyên bố cuối.
 
+Các CODE-025–036 dưới đây là chỉ mục truy vết tới UI policy, không một workflow/checklist hoặc bảng giá trị thứ hai. Mọi task UI đọc [workflow duy nhất](../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md#unified-workflow), v1.28 SPC-001–075, và [catalog CURRENT/TARGET](../BotSalesAI_Frontend/apps/web/src/shared/ui/README.md).
+
+CODE-025 — Cổng bắt đầu/đóng UI lấy từ workflow canonical; allowance debt Wxx là HISTORICAL_SNAPSHOT, không áp dụng task hiện hành. Strict FAIL/UNKNOWN hoặc mandatory NOT_RUN không DONE. Nguồn: SPC-033, SPC-041, SPC-044, SPC-049, SPC-052, SPC-054, SPC-070, SPC-075 trong standard.
+
+CODE-026 — Đối chiếu cùng profile, rationale của sai khác và rendered consumer evidence. Nguồn: SPC-048, SPC-060, SPC-069 trong standard.
+
+CODE-027 — Thẩm quyền và giải quyết conflict nguồn UI; prototype/ảnh/UI cũ chỉ tham khảo. Nguồn: SPC-001, SPC-047, SPC-054, SPC-065 trong standard.
+
+CODE-028 — Regression cho trigger/nguyên nhân/invariant tái hiện; không suppress hoặc nới test. Nguồn: SPC-055 trong standard.
+
+CODE-029 — Kiểm lớp nổi/fixed bằng browser focus/hit-testing và phương pháp resize/zoom riêng. Nguồn: SPC-026, SPC-051, SPC-056, SPC-071 trong standard.
+
+CODE-030 — Consumer/import/route impact và verdict trên mọi affected route. Nguồn: SPC-038, SPC-057, SPC-071 trong standard.
+
+CODE-031 — Query/control allowlist theo đúng OpenAPI operation và deep-link regression. Nguồn: SPC-047, SPC-058 trong standard.
+
+CODE-032 — Action có hành vi/feedback trung thực và rendered regression; thiếu contract ghi FRONTEND_ONLY_GAP. Nguồn: SPC-052, SPC-059 trong standard.
+
+CODE-033 — Semantic spacing rhythm/profile và shared named variant có consumer thật. Nguồn: SPC-005, SPC-048, SPC-053, SPC-060, SPC-069 trong standard.
+
+CODE-034 — Dùng đúng shared invariant/API; primitive MUI và nghiệp vụ giữ đúng owner, không engine/wrapper đổi tên. Nguồn: SPC-034, SPC-042, SPC-053, SPC-061, SPC-067, SPC-073 trong standard.
+
+CODE-035 — Một owner trên mỗi gap/inset/render boundary. Nguồn: SPC-005, SPC-014, SPC-015, SPC-062, SPC-068 trong standard.
+
+CODE-036 — Strict source/composition gates và current consumer/render evidence; source count không là production proof. Nguồn: SPC-029, SPC-030, SPC-039, SPC-063, SPC-066, SPC-070, SPC-071, SPC-072 trong standard.
+
 ## 8. Definition of Ready cho một task
 
 Đã có mục tiêu/acceptance, scope và owner; module/contract hiệu lực xác định; tác
@@ -2520,6 +2551,9 @@ Phạm vi hiện hành gồm 64 bổ sung A01–H08 ở contracts/feature-catalo
 Trước T010 và mọi thay đổi UI, đọc docs/03_DESIGN_SYSTEM.md, docs/19_DARK_ONLY_POLICY.md và design/IMPLEMENTATION_NOTES.md. Canonical palette: design/tokens.json, Graphite Gold dark-only. Sinh bằng scripts/generate-theme.py; không tiếp tục dùng HEX v1.1/2.0 từ reference. Không sửa palette riêng theo module. Kế hoạch nghiệp vụ và trạng thái task không thay vì bản recolor.
 
 CODE-016 và DARK-004 áp dụng với quyết định `design/decision.json` đã duyệt. Mọi task có UI phải đọc nguồn này và docs/03,19 trước sửa; cấm chọn lại màu theo sở thích của agent. Bảng màu/nguồn sinh và chữ ký nội dung phải được kiểm, không chỉ nhìn screenshot. Các ca QA-025..030 bổ sung kiểm quyết định, drift, phân biệt màu hành động/trạng thái, phạm vi và giữ tiến độ.
+
+
+CODE-037 — Chỉ mục tới SPC-064–075 về provenance/scope/API/ownership/readiness/coverage/gate/evidence/Karpathy; không phải rule set thứ hai. Tuân [workflow canonical](../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); tiến độ/dependency/current status chỉ ở [plan §16.6](../BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status), kết quả ở [report hợp nhất](../BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-unified-20261006/REPORT.md). Không tạo checkpoint/runtime PASS mới từ việc cập nhật tài liệu.
 
 
 ---
@@ -2700,12 +2734,12 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 <!-- END RELEASE META -->
 
 ## Cách đặt vào repo
-Khuyến nghị giữ toàn bộ gói trong `project-root/botsales-kit/`. Tài liệu nằm một nơi, code sản phẩm sẽ ở root apps/ hoặc cấu trúc repo đã có. Không chạy app bằng prototype/index.html rồi coi đó là sản phẩm. Không overwrite root AGENTS/AI_RULES nếu đang có; loader snippet chỉ tham chiếu tới kit. Không sửa Universal.
+Trong repository hiện hành, giữ `botsales-kit/` và `BotSalesAI_Frontend/` cạnh nhau dưới repository root. Tài liệu canonical nằm trong kit; React source nằm tại `BotSalesAI_Frontend/apps/web`. Không tạo bản kit nested trong workspace. Không chạy app bằng prototype/index.html rồi coi đó là sản phẩm. Không overwrite root AGENTS/AI_RULES nếu đang có; loader snippet chỉ tham chiếu tới kit. Không sửa Universal.
 
-Chủ repo giao câu lệnh ở PROJECT_BUILD_PROMPT_VI.txt cho AI có công cụ đọc/ghi/chạy test. File tự nó không chạy, không cấp credentials hay kéo dài phiên. AI tự đọc kế hoạch và tracker, start T001, làm từng task trong quyền hiện có. Không dừng ở tóm tắt kế hoạch khi được giao implement; cũng không vượt gate live vì muốn tự làm tất cả.
+Chủ repo giao câu lệnh ở PROJECT_BUILD_PROMPT_VI.txt cho AI có công cụ đọc/ghi/chạy test. File tự nó không chạy, không cấp credentials hay kéo dài phiên. Trong phạm vi frontend, AI đọc `execution/frontend-plan.json`, `frontend-progress.json` và `next`, tiếp nhận FE001 hoặc bước đủ dependency; không tiếp nhận T001–T084 hay cập nhật full-product ledger. Không dừng ở tóm tắt kế hoạch khi được giao implement; cũng không vượt gate live vì muốn tự làm tất cả.
 
 ## Nguồn và lệnh
-T001 xác định repo root rồi `node scripts/progress.mjs bind ..` khi kit nằm trực tiếp dưới repo root. Bind không đổi source. Lệnh tracker chạy trong folder kit. Lệnh app ở execution/command-map.json ban đầu PLANNED_NOT_VERIFIED; T005 phải map vào lệnh có thật. Không copy bừa `pnpm test` rồi báo pass nếu package chưa tồn tại.
+FE001 xác định repository/workspace root và source binding hiện có; không bind lại ledger đã có VERIFIED evidence. Lệnh tracker chạy trong folder kit. Lệnh app chạy trong `BotSalesAI_Frontend`; command map hiện hành là `execution/frontend-command-map.json`. Kiểm package/scripts và lệnh thật trước khi sử dụng; `execution/command-map.json` thuộc full-product reference. Không copy bừa lệnh hoặc báo PASS khi chưa chạy.
 
 ## Evidence
 Dùng templates/CHECKPOINT_EVIDENCE.json làm shape, thay bằng actual outputs/source digest. Lưu log trực tiếp và test count; không tự viết nội dung output như thể test đã chạy. Chỉ ghi sourceFiles thật thuộc repo root; expected/observed phải đối chiếu bước task. Checkpoint evidence không được dẫn vào old HTML để pass React/Nest tasks. Mỗi bước update sinh báo cáo tiến độ mới. Missing evidence -> chưa đạt; stale file -> reverify impacted task.

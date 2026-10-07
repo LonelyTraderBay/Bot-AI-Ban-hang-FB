@@ -6,6 +6,21 @@ from pathlib import Path
 import argparse, datetime, hashlib, importlib.util, json, re, subprocess, sys
 R=Path(__file__).resolve().parents[1]
 
+def token_extension_integrity(approved,tokens,extension,current_digest):
+    def leaves(value,prefix=''):
+        if isinstance(value,dict):
+            return {leaf:item for key,child in value.items() for leaf,item in leaves(child, prefix+'.'+key if prefix else key).items()}
+        return {prefix:value}
+    original=leaves(approved); current=leaves(tokens); added=set(current)-set(original)
+    preserved=all(key in current and current[key]==value for key,value in original.items()) and tokens.get('colors')==approved.get('colors')
+    declared=extension.get('addedLeafPaths',[])
+    bound=(extension.get('scope')=='EXISTING_NON_PALETTE_ADDITIVE_FRONTEND_TOKENS'
+        and extension.get('currentSource',{}).get('path')=='design/tokens.json'
+        and extension.get('currentSource',{}).get('sha256')==current_digest
+        and sorted(added)==sorted(declared) and len(added)==len(declared)
+        and not any(key.startswith('colors.') or key=='theme' for key in added))
+    return preserved,bound
+
 def run(root=R, distribution=False):
     checks=[]
     def rec(name,ok,**detail):checks.append({'name':name,'status':'PASS' if ok else 'FAIL',**detail})
@@ -19,8 +34,14 @@ def run(root=R, distribution=False):
         and decision['approvedAt']=='2026-09-29T15:30:32Z' and decision['approvalSource']['kind']=='DIRECT_USER_MESSAGE')
     rec('Color approval is not product acceptance or live deployment permission',
         decision['liveDeploymentApproved'] is False and decision['productAcceptanceApproved'] is False)
-    rec('Approved source digest matches canonical tokens',decision['tokenSourceSha256']==sha('design/tokens.json'))
-    rec('Entire token source unchanged from approved 2.1 palette',sha('design/tokens.json')==baseline['design/tokens.json'])
+    extension=load('execution/frontend-token-extension-record.json')
+    approved_path=extension['approvedBaseline']['path']; approved=load(approved_path)
+    rec('Approved source digest matches preserved 2.1 token baseline',
+        decision['tokenSourceSha256']==baseline['design/tokens.json']==sha(approved_path)==extension['approvedBaseline']['sha256'])
+    preserved,bound=token_extension_integrity(approved,tokens,extension,sha('design/tokens.json'))
+    rec('Every approved token leaf and palette remains unchanged',
+        preserved)
+    rec('Existing non-palette extensions are explicitly inventoried and source-bound',bound)
     rec('Only one app palette and no system/theme selection',tokens['theme']=='dark-only' and decision['allowedModes']==['dark'] and not decision['allowThemeSwitch'] and not decision['allowSystemColorSelection'])
     rec('Palette copies are generated from the identical token bytes',sha('prototype/src/tokens.json')==sha('design/tokens.json'))
     rec('CSS copies match exactly',sha('design/tokens.css')==sha('prototype/src/tokens.css'))
@@ -67,8 +88,15 @@ def run(root=R, distribution=False):
     rec('Quality gate scenario references resolve',all(s in gids for g in load('governance/quality-gates.json')['gates'] for s in g['scenarioIds']))
     rec('Governance kit versions synchronized',all(load(p)['kitVersion']==release['version'] for p in ['governance/project-policy.json','governance/quality-gates.json','governance/acceptance-scenarios.json']))
     rec('Generated demo uses current label with no unreplaced marker','UI REVIEW · V'+release['version'] in text('prototype/index.html') and '__BOTSALES_RELEASE_VERSION__' not in text('prototype/index.html'))
-    rec('Progress page uses current label and canonical CSS',release['version'] in text('execution/PROGRESS.html') and text('design/tokens.css') in text('execution/PROGRESS.html'))
-    for script,args in [('scripts/generate-theme.py',['--check']),('scripts/sync-release.py',['--check'])]:
+    progress_html=text('execution/PROGRESS.html')
+    rec('Historical full-product progress retains the approved palette',
+        release['version'] in progress_html and all(value in progress_html for value in approved['colors'].values()))
+    frontend_report=load('execution/frontend-progress-report.json')
+    rec('Current frontend progress view is generated for the frontend plan',
+        frontend_report['planId']==load('execution/frontend-plan.json')['planId']
+        and len(frontend_report['tasks'])==28 and frontend_report['totalSteps']==140
+        and 'FRONTEND_WITH_SYNTHETIC_MOCK_API' in text('execution/FRONTEND_PROGRESS.md'))
+    for script,args in [('scripts/generate-theme.py',['--check']),('scripts/sync-release.py',['--check']),('prototype/build.py',['--check'])]:
         p=subprocess.run([sys.executable,str(root/script),*args],capture_output=True,text=True)
         rec('Freshness '+script,p.returncode==0,output=(p.stdout+p.stderr).strip())
     # Validate exact markdown links that are relative to root entry documents/index.

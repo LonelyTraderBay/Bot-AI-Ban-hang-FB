@@ -1,5 +1,8 @@
 # Bàn giao Frontend — cập nhật UI027, 05/10/2026
 
+**Current navigation:** trạng thái UI ở [plan §16.6](../../BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status), evidence tại [REPORT](../../BotSalesAI_Frontend/evidence/REPORT.md). Nội dung bên dưới là **HISTORICAL_SNAPSHOT** tại ngày ghi trong heading; không thay tracker/status hiện hành.
+
+
 Scope `FRONTEND_WITH_SYNTHETIC_MOCK_API`; người dùng giao AI hoàn thiện phần Frontend và chỉ nghiệm thu ở cuối. UI plan đạt **27/27 item, 135/135 checkpoint**. FE001–FE028 có 140 checkpoint; trạng thái hiện hành lấy từ `node scripts/progress.mjs status` và `validate` tại root frontend sau UI027, không chép số từ snapshot trước đổi Vite config. UI và FE là hai tracker riêng. Full-product plan/ledger chỉ đọc.
 
 Hồ sơ chính: [FE028 quality gates](frontend-evidence/FE028/quality-gate-matrix-current-20261004.json), [architecture review](frontend-evidence/FE028/architecture-review-current-20261004.md), [FE028 handoff](frontend-evidence/FE028/handoff.md), [FE027 UAT](frontend-evidence/FE027/uat-matrix-current-20261004.json), [UI027 verify/build](../../BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI027/S04-verify-20261005.log), [UI027 performance](../../BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI027/S05-paired-performance-20261005.md), [báo cáo](../../BotSalesAI_Frontend/evidence/REPORT.md) và [audit kế hoạch/tài liệu 04/10](../../BotSalesAI_Frontend/docs/FRONTEND_PLAN_DOCUMENT_AUDIT_2026-10-04.md).

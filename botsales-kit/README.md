@@ -10,7 +10,7 @@ Gói hiện hành thay thế 2.1/2.0 cho dự án chưa triển khai (giữ cơ 
 
 1. Copy cả folder vào repo dưới tên `botsales-kit` (không chép đè file quy tắc gốc của repo).
 2. Mở AI lập trình có quyền làm việc trong repo, gửi nội dung PROJECT_BUILD_PROMPT_VI.txt.
-3. Trong checkout Frontend, xem `execution/FRONTEND_PROGRESS.md`, `IMPLEMENTATION_PLAN.md` và phiếu `execution/frontend-tasks/FE*.md`. Task source là `execution/frontend-plan.json`, ledger `frontend-progress.json`; backlog UI bổ sung ở root docs. `PROGRESS.html` và `tasks/T*.md` theo dõi toàn sản phẩm ngoài scope, không dùng để nhận việc Frontend.
+3. Tại kit, xem `execution/FRONTEND_PROGRESS.md`, `IMPLEMENTATION_PLAN.md` và phiếu `execution/frontend-tasks/FE*.md`. Task source là `execution/frontend-plan.json`, ledger `execution/frontend-progress.json`; backlog UI bổ sung ở `../BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md`. `PROGRESS.html` và `execution/tasks/T*.md` theo dõi toàn sản phẩm ngoài scope, không dùng để nhận việc Frontend.
 
 AI tự khảo sát, dùng kế hoạch Frontend trong phạm vi đã giao và cập nhật bằng chứng thật. Tài khoản/chính sách live, chi tiền và phát hành nằm ngoài task Frontend local; không dùng việc thiếu chúng để khóa UI mock. Lỗi kiểm tra thực vẫn cần sửa và ghi đúng. File không tự khởi động AI hoặc duy trì phiên làm việc.
 

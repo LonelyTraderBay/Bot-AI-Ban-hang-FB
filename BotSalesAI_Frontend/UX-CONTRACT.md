@@ -28,8 +28,8 @@ This contract records observable frontend behavior. Business and permission poli
 - Normative UI policy: [standard v1.28](docs/FRONTEND_SPACING_STANDARD.md), SPC-001–075. Every new/changed UI follows the [sole workflow](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); no alternative UI checklist is defined here. Required UI checks and evidence provenance run through `npm run verify`; missing or stale evidence cannot be marked PASS.
 - Runtime versus planned API: [shared catalog CURRENT/TARGET](apps/web/src/shared/ui/README.md). This contract owns observable behavior; the catalog/standard own API and layout invariants.
 - Product UI uses Vietnamese across routes discovered from the current manifest; no marketing register inside app flows.
-- Rollout/dependencies: [plan v16.0 §16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). Results/limits: [unification report](evidence/frontend-ui-improvements/ui-governance-unified-20261006/REPORT.md).
-- Current implementation status is recorded only in [plan §16.6](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan); the policy/catalog review rationale is in [§16.17](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007). Policy documentation is not source/browser PASS, checkpoint or owner acceptance.
+- Rollout/dependencies: [plan v16.0 §16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). Results/limits: [current evidence report](evidence/REPORT.md).
+- Current implementation status is recorded only in [plan §16.6](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); the policy/catalog review rationale is in [§16.17](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007). Policy documentation is not source/browser PASS, checkpoint or owner acceptance.
 
 ## Canonical UI Map
 

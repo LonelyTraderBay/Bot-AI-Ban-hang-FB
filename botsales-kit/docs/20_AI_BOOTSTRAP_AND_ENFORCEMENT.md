@@ -6,12 +6,12 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 <!-- END RELEASE META -->
 
 ## Cách đặt vào repo
-Khuyến nghị giữ toàn bộ gói trong `project-root/../botsales-kit/`. Tài liệu nằm một nơi, code sản phẩm sẽ ở root apps/ hoặc cấu trúc repo đã có. Không chạy app bằng prototype/index.html rồi coi đó là sản phẩm. Không overwrite root AGENTS/AI_RULES nếu đang có; loader snippet chỉ tham chiếu tới kit. Không sửa Universal.
+Trong repository hiện hành, giữ `botsales-kit/` và `BotSalesAI_Frontend/` cạnh nhau dưới repository root. Tài liệu canonical nằm trong kit; React source nằm tại `BotSalesAI_Frontend/apps/web`. Không tạo bản kit nested trong workspace. Không chạy app bằng prototype/index.html rồi coi đó là sản phẩm. Không overwrite root AGENTS/AI_RULES nếu đang có; loader snippet chỉ tham chiếu tới kit. Không sửa Universal.
 
-Chủ repo giao câu lệnh ở PROJECT_BUILD_PROMPT_VI.txt cho AI có công cụ đọc/ghi/chạy test. File tự nó không chạy, không cấp credentials hay kéo dài phiên. AI tự đọc kế hoạch và tracker, start T001, làm từng task trong quyền hiện có. Không dừng ở tóm tắt kế hoạch khi được giao implement; cũng không vượt gate live vì muốn tự làm tất cả.
+Chủ repo giao câu lệnh ở PROJECT_BUILD_PROMPT_VI.txt cho AI có công cụ đọc/ghi/chạy test. File tự nó không chạy, không cấp credentials hay kéo dài phiên. Trong phạm vi frontend, AI đọc `execution/frontend-plan.json`, `frontend-progress.json` và `next`, tiếp nhận FE001 hoặc bước đủ dependency; không tiếp nhận T001–T084 hay cập nhật full-product ledger. Không dừng ở tóm tắt kế hoạch khi được giao implement; cũng không vượt gate live vì muốn tự làm tất cả.
 
 ## Nguồn và lệnh
-T001 xác định repo root rồi `node scripts/progress.mjs bind ..` khi kit nằm trực tiếp dưới repo root. Bind không đổi source. Lệnh tracker chạy trong folder kit. Lệnh app ở execution/command-map.json ban đầu PLANNED_NOT_VERIFIED; T005 phải map vào lệnh có thật. Không copy bừa `pnpm test` rồi báo pass nếu package chưa tồn tại.
+FE001 xác định repository/workspace root và source binding hiện có; không bind lại ledger đã có VERIFIED evidence. Lệnh tracker chạy trong folder kit. Lệnh app chạy trong `BotSalesAI_Frontend`; command map hiện hành là `execution/frontend-command-map.json`. Kiểm package/scripts và lệnh thật trước khi sử dụng; `execution/command-map.json` thuộc full-product reference. Không copy bừa lệnh hoặc báo PASS khi chưa chạy.
 
 ## Evidence
 Dùng templates/CHECKPOINT_EVIDENCE.json làm shape, thay bằng actual outputs/source digest. Lưu log trực tiếp và test count; không tự viết nội dung output như thể test đã chạy. Chỉ ghi sourceFiles thật thuộc repo root; expected/observed phải đối chiếu bước task. Checkpoint evidence không được dẫn vào old HTML để pass React/Nest tasks. Mỗi bước update sinh báo cáo tiến độ mới. Missing evidence -> chưa đạt; stale file -> reverify impacted task.

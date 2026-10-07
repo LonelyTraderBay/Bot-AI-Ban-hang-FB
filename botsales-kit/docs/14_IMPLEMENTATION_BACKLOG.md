@@ -5,7 +5,7 @@
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
-Nguồn đầy đủ: `../IMPLEMENTATION_PLAN.md` (generated from execution/plan.json + progress.json) và `../execution/tasks/T001.md`…`T084.md`. Tổng 14 giai đoạn, 84 task, 420 checkpoint. Mỗi task có dependency rõ, feature IDs, readFirst, vùng sửa, outputs, 5 bước cụ thể và ca từ chối/lỗi. Không dùng lại backlog 23 task của v1.1.
+Nguồn full-product: `../execution/plan.json`, `../execution/progress.json` và `../execution/tasks/T001.md`…`T084.md`, chỉ đọc trong phạm vi frontend. Tổng 14 giai đoạn, 84 task, 420 checkpoint. Mỗi task có dependency rõ, feature IDs, readFirst, vùng sửa, outputs, 5 bước cụ thể và ca từ chối/lỗi. `../IMPLEMENTATION_PLAN.md` hiện là đầu ra của frontend-plan/frontend-progress/FRONTEND_PLAN_GUIDE, gồm FE001–FE028/140 bước; không dùng nó làm bản kế hoạch full-product. Không dùng lại backlog 23 task của v1.1.
 
 ## Loop bắt buộc
 1. Xác minh source/worktree/tool quyền. Đọc START_HERE, Universal, AI_RULES_PROJECT và task hiện tại.

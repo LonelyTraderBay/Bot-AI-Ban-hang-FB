@@ -2,7 +2,7 @@
 
 **Dự án trong folder này triển khai Frontend React/TypeScript với API mock tổng hợp.** Scope và thực hiện tự động được chốt ngày 04/10/2026 tại [FRONTEND_SCOPE](docs/FRONTEND_SCOPE.md). AI tự sửa/kiểm thử/bàn giao trong scope; bạn chỉ nghiệm thu cuối. Kit có đặc tả Backend/toàn sản phẩm để tham chiếu contract, không giao task xây server ở đây.
 
-Quy định UI duy nhất là [workflow canonical v1.26](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075. Đọc [shared catalog CURRENT/TARGET](apps/web/src/shared/ui/README.md) và [plan v16.0 §16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) trước sửa UI. Policy/catalog review ở [§16.16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#plan-review-20261007) đã hoàn tất; implementation đang chạy từ S09. S03–S08 chỉ đóng theo evidence scoped; S10–S20 và final UI acceptance còn mở.
+Quy định UI duy nhất là [workflow canonical v1.28](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075. [Shared catalog](apps/web/src/shared/ui/README.md) mô tả API/source CURRENT và tiêu chí TARGET; [plan v16.0 §16.6](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) sở hữu trạng thái/dependency. Kết quả đo và giới hạn hiện hành tại [evidence report](evidence/REPORT.md); không lấy trạng thái rollout hoặc phần trăm từ snapshot lịch sử.
 
 UI và FE dùng hai tracker khác nhau; FE có 28 task/140 checkpoint, còn trạng thái VERIFIED/STALE/BLOCKED/next luôn đọc trực tiếp bằng `node ../botsales-kit/scripts/progress.mjs status` trên checkout hiện tại. Không dùng số trong README làm trạng thái ledger. Hồ sơ scope, giới hạn và bằng chứng đặt tại [REPORT](evidence/REPORT.md), [FE027 UAT snapshot SPC-059](../botsales-kit/execution/frontend-evidence/FE027/uat-matrix-spc059-current-20261006.json) và [FE028 handoff](../botsales-kit/execution/frontend-evidence/FE028/handoff.md); các snapshot không thay source freshness hiện hành.
 
@@ -60,7 +60,7 @@ scripts/                 generator, kiểm nguồn/ranh giới, thiết lập v�
 samples/                 CSV mẫu để thử import
 ```
 
-`app/router.tsx` là nơi ghép route; module không import module khác. Không đưa nghiệp vụ vào `shared` hoặc gọi trực tiếp SDK Facebook/AI từ trình duyệt. `docs/route-implementation.json` liên kết từng R01–R54 tới component nguồn; việc có component chưa đồng nghĩa route đã chạy trong browser.
+`apps/web/src/app/router.tsx` là nơi ghép route; module không import module khác. Không đưa nghiệp vụ vào `shared` hoặc gọi trực tiếp SDK Facebook/AI từ trình duyệt. `docs/route-implementation.json` liên kết từng R01–R54 tới component nguồn; việc có component chưa đồng nghĩa route đã chạy trong browser.
 
 **Màu chuẩn chỉ sửa tại `../botsales-kit/design/tokens.json` sau một quyết định đổi màu được duyệt**, rồi chạy `npm run generate`; không sửa `tokens.css` hoặc HEX trong component. Bản bàn giao giữ palette đã chốt, không có light/system/toggle.
 

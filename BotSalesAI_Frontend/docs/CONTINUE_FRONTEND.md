@@ -1,8 +1,8 @@
 # Tiếp tục Frontend — 07/10/2026
 
-**Current phase — source rollout:** the user has closed the policy review and authorized implementation by dependency until completion. Preserve all existing working-tree changes and keep the scope Frontend-only. Resume from [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan); the prior review is recorded in [§16.17](FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007).
+**Current navigation:** the user has closed the policy review and authorized implementation by dependency until completion. Preserve all existing working-tree changes and keep the scope Frontend-only. Resume from [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); the prior review is recorded in [§16.17](FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007).
 
-**Current next step:** continue from the current S-step and dependency order in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). This file is a continuation pointer, not a second status ledger. Preserve scoped closeouts and do not record acceptance or UI status beyond evidence.
+**Current next step:** continue from the current S-step and dependency order in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). This file is a continuation pointer, not a second status ledger. Preserve scoped closeouts and do not record acceptance or UI status beyond evidence.
 
 **Policy authority:** [FRONTEND_SPACING_STANDARD](FRONTEND_SPACING_STANDARD.md#unified-workflow) is the sole normative rule/workflow source; [shared catalog](../apps/web/src/shared/ui/README.md) describes CURRENT/TARGET APIs; [plan §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) owns priority/dependencies/status. §16.17 records the pre-source architecture review and baseline; §16.6 is the live implementation status. Historical policy snapshots remain historical.
 
@@ -14,7 +14,7 @@ Nguồn việc là [FRONTEND_UI_IMPROVEMENT_PLAN v16.0 §16](FRONTEND_UI_IMPROVE
 
 ## Trạng thái và bằng chứng
 
-[Report hợp nhất hiện hành](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/REPORT.md) ghi scope/inventory/mapping/docs verification và các giới hạn. **HISTORICAL_SNAPSHOT — audit v15.0:** [report cũ](../evidence/frontend-ui-improvements/ui-policy-steel-20261006/REPORT.md) có27 shared exports/112 semantic roles,176composition occurrences,68TS/TSX, ba strict gates0finding và24/24existing fixtures; adversarial probes vẫn vượt gate. Browser diagnostic Finance/Imports chỉ chứng minh state đã kiểm, không thay full E2E/native200/speech review.
+[Historical specification audit — 06/10/2026](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/REPORT.md) ghi scope/inventory/mapping/docs verification và các giới hạn. **HISTORICAL_SNAPSHOT — audit v15.0:** [report cũ](../evidence/frontend-ui-improvements/ui-policy-steel-20261006/REPORT.md) có27 shared exports/112 semantic roles,176composition occurrences,68TS/TSX, ba strict gates0finding và24/24existing fixtures; adversarial probes vẫn vượt gate. Browser diagnostic Finance/Imports chỉ chứng minh state đã kiểm, không thay full E2E/native200/speech review.
 
 §15/report shared-composition là source/runtime snapshot trước lượt docs-only:216current renders;114comparable/102partial baseline;full485/486FAIL +retest6/6 riêng. W36/FE28 snapshots cũ và FE003.S05/W33 journal không là task next hiện hành. Lịch sử giữ trong plan và evidence/REPORT; không ghi đè baseline hoặc dùng after làm before.
 

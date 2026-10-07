@@ -1,5 +1,8 @@
 # Audit toàn bộ kế hoạch và tài liệu — BotSalesAI Frontend
 
+**HISTORICAL_AUDIT:** giữ nguyên kết luận/số đo bên dưới theo ngày audit. Nguồn current ở [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) và [evidence report](../evidence/REPORT.md); không lấy status/đường dẫn cũ để tiếp tục triển khai.
+
+
 **Ngày kiểm tra:** 04/10/2026 · **Checkout:** `BotSalesAI_Frontend` · **Kết luận phạm vi:** `FRONTEND_WITH_SYNTHETIC_MOCK_API` · **Người review:** Codex self-review, không phải peer review độc lập.
 
 Tài liệu này chốt hai điều người dùng yêu cầu: (1) mọi việc triển khai trong folder này là Frontend-only, dùng API mock tổng hợp; (2) không để task Frontend/UI ở trạng thái `BLOCKED`, không dừng chờ người dùng giữa quá trình AI thực hiện. Người dùng chỉ nghiệm thu bộ bàn giao cuối. Kết luận dựa trên file kế hoạch chuẩn, graph, write scope, tracker hiệu lực, source tree, command logs và inventory theo SHA-256; không suy từ tên thư mục hoặc từ số phần trăm trong một snapshot lịch sử.

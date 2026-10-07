@@ -2,7 +2,18 @@
 
 **Mục tiêu đã được người dùng xác nhận ngày 30/09/2026:** phát triển và nghiệm thu frontend React/TypeScript bằng dữ liệu mock tổng hợp. Frontend phải có kiến trúc thống nhất, đủ bằng chứng về chất lượng và khả năng bảo trì để đề nghị nghiệm thu **Production-Ready / Enterprise-Grade Frontend Architecture trong phạm vi frontend với mock API**. Các nhãn này là mục tiêu kiểm chứng, chưa phải kết quả hiện tại.
 
-Nguồn task hiện hành: [frontend-plan.json](execution/frontend-plan.json); tiến độ: [frontend-progress.json](execution/frontend-progress.json); hướng dẫn sinh: [FRONTEND_PLAN_GUIDE.md](execution/FRONTEND_PLAN_GUIDE.md). File này và phiếu `execution/frontend-tasks/FE*.md` được sinh bằng `node scripts/progress.mjs report` tại `botsales-kit`. Đường dẫn trong phần hướng dẫn này tính từ kit; đường dẫn code trên phiếu tính từ `BotSalesAI_Frontend`. Không sửa tay đầu ra sinh.
+Nguồn task hiện hành: [frontend-plan.json](execution/frontend-plan.json); tiến độ: [frontend-progress.json](execution/frontend-progress.json). File này là nguồn hướng dẫn; `IMPLEMENTATION_PLAN.md` và phiếu `execution/frontend-tasks/FE*.md` được sinh bằng `node scripts/progress.mjs report` tại `botsales-kit`. Markdown links trong file nguồn tính từ thư mục chứa file và được generator rebase khi nhúng vào kế hoạch ở kit root; đường dẫn code trên phiếu tính từ `BotSalesAI_Frontend`. Không sửa tay đầu ra sinh.
+
+### Đối chiếu tên artifact dự kiến với layout đã triển khai
+
+Các tên thư mục trong task plan ghi intent của đợt lập kế hoạch, không tự chứng minh một thư mục hoặc tính năng đã tồn tại. Kiểm source và command map thực trước revalidation; dùng các owner hiện hành dưới đây để tìm bằng chứng. Bảng này giải thích layout thực tế, không ghi checkpoint hoặc thay writeScope của task.
+
+| Task / đường dẫn dự kiến ban đầu | Artifact thực tế để đối chiếu | Phạm vi |
+|---|---|---|
+| FE024 — `tests/security/` | [tests/security.spec.ts](../BotSalesAI_Frontend/tests/security.spec.ts) | Synthetic browser security cases; không server security proof |
+| FE025 — `tests/performance/` | [tests/artifacts/demo-preview.spec.ts](../BotSalesAI_Frontend/tests/artifacts/demo-preview.spec.ts) | Built-demo asset budgets và large-data measurements |
+| FE026 — `.github/workflows/` dưới Frontend | [workflow ở repo cha](../.github/workflows/frontend.yml) | Workflow source ở repo root; local checks không hosted CI PASS |
+| FE027 — `tests/uat/` | [route smoke](../BotSalesAI_Frontend/tests/frontend.spec.ts), [cross-module journeys](../BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts) và các FE browser specs tại `tests/` | Technical cases chạy qua runner hiện hành; UAT snapshots giữ date/source scope, không owner acceptance |
 
 ## 1. Phạm vi và điểm bắt đầu
 
@@ -13,7 +24,7 @@ Nguồn task hiện hành: [frontend-plan.json](execution/frontend-plan.json); t
 - Bản nghiệm thu `dist-demo` có mock API và nhãn dữ liệu mô phỏng. Bản `dist` phải build được, có giao tiếp HTTP theo contract và không chứa MSW/seed/nhánh fallback mock. Chưa có backend thật không chặn nghiệm thu frontend bằng mock; khả năng vận hành với API thật chưa được xác minh.
 - `execution/plan.json`, `progress.json`, `tasks/T*.md` và `PROGRESS.*` giữ vai trò kế hoạch toàn sản phẩm ngoài scope hiện tại. Không nhận T001–T084 hoặc cộng điểm ledger đó trong nhiệm vụ frontend. 100% frontend không phải 100% hệ thống.
 
-Bắt đầu FE001 để tiếp nhận source; tiếp tục FE002 sửa môi trường/dependencies và lỗi nền bằng bằng chứng. Root [CONTINUE_FRONTEND.md](../BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md), [KNOWN_GAPS.md](../BotSalesAI_Frontend/docs/KNOWN_GAPS.md), [route-implementation.json](../BotSalesAI_Frontend/docs/route-implementation.json) và [REPORT.md](../BotSalesAI_Frontend/evidence/REPORT.md) mô tả hiện trạng, không được suy source có component thành tính năng đã nghiệm thu.
+Bắt đầu FE001 để tiếp nhận source; tiếp tục FE002 sửa môi trường/dependencies và lỗi nền bằng bằng chứng. Frontend [CONTINUE_FRONTEND.md](../BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md), [KNOWN_GAPS.md](../BotSalesAI_Frontend/docs/KNOWN_GAPS.md), [route-implementation.json](../BotSalesAI_Frontend/docs/route-implementation.json) và [REPORT.md](../BotSalesAI_Frontend/evidence/REPORT.md) mô tả hiện trạng, không được suy source có component thành tính năng đã nghiệm thu.
 
 ## 2. Áp dụng AI_RULES.md nguyên bản vào mỗi thay đổi
 
@@ -123,7 +134,7 @@ Số FE checkpoint chỉ tăng sau bằng chứng nguyên task đúng diff; stor
 
 ## Tiến độ tại lần sinh này
 
-**0% — 0/140 bước — 0/28 việc.** Đây là tiến độ kiểm chứng frontend với API mock tổng hợp; không phải tiến độ backend/toàn hệ thống.
+**0% — 0/140 bước — 0/28 việc.** Đây là tỷ lệ bằng chứng FE còn hiệu lực theo dependency và source hashes, không phải phần trăm code đã viết. STALE làm mất điểm kiểm chứng dù source vẫn tồn tại; không cộng checkpoint từ suite chung. Scope Frontend + API mock, không phải backend/toàn hệ thống.
 
 | Giai đoạn | Trọng số | Đã xác minh | Đầu việc |
 |---|---:|---:|---|

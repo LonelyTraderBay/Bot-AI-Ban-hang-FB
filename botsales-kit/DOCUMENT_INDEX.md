@@ -11,16 +11,15 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 |---|---|---|
 | Bắt đầu | [START_HERE.md](START_HERE.md) | Cách đặt kit và giao việc |
 | Giao AI code | [PROJECT_BUILD_PROMPT_VI.txt](PROJECT_BUILD_PROMPT_VI.txt) | Thực hiện trong repo/công cụ có quyền |
-| Kế hoạch frontend | [execution/frontend-plan.json](execution/frontend-plan.json) | FE001–FE028; mock API đủ nghiệm thu frontend |
-| Bản kế hoạch để đọc | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Sinh từ frontend-plan, frontend-progress và FRONTEND_PLAN_GUIDE |
-| Tiến độ frontend | [execution/frontend-progress.json](execution/frontend-progress.json) | Chỉ evidence frontend đúng diff mới có điểm |
-| Xem tiến độ frontend | [execution/FRONTEND_PROGRESS.md](execution/FRONTEND_PROGRESS.md) | Sinh bằng tracker report mặc định |
-| Full-product ngoài scope | [execution/plan.json](execution/plan.json), [progress.json](execution/progress.json) | 84 task/420 bước gốc giữ nguyên, chỉ đọc |
-| Tiếp nhận scope | [execution/FRONTEND_SCOPE_ADOPTION.md](execution/FRONTEND_SCOPE_ADOPTION.md) | Quyết định phạm vi và bảo toàn nguồn |
+| Kế hoạch frontend | [execution/frontend-plan.json](execution/frontend-plan.json) | FE001–FE028; task, dependency và trọng số canonical |
+| Bản kế hoạch frontend để đọc | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Sinh từ frontend-plan, frontend-progress và FRONTEND_PLAN_GUIDE |
+| Tiến độ frontend hiệu lực | [execution/frontend-progress.json](execution/frontend-progress.json) | Tính bằng tracker; STALE không đồng nghĩa code chưa viết |
+| Xem tiến độ frontend | [execution/FRONTEND_PROGRESS.md](execution/FRONTEND_PROGRESS.md) | Sinh bằng node scripts/progress.mjs report |
+| Full-product ngoài scope | [execution/plan.json](execution/plan.json), [execution/progress.json](execution/progress.json) | 84 task/420 bước gốc chỉ đọc; không thay tiến độ frontend |
 | Màu đã duyệt | [design/decision.json](design/decision.json) | ADR-VIS-021; không mở lại quyết định |
 | Giá trị màu | [design/tokens.json](design/tokens.json) | Nguồn HEX/semantic token duy nhất |
 | Bảng màu đọc được | [design/PALETTE.md](design/PALETTE.md) | Sinh từ token, không sửa tay |
-| MUI mapping | [design/IMPLEMENTATION_NOTES.md](design/IMPLEMENTATION_NOTES.md) | FE006 trước FE007; T010/T011 chỉ là đặc tả gốc |
+| MUI mapping | [design/IMPLEMENTATION_NOTES.md](design/IMPLEMENTATION_NOTES.md) | Đọc tại FE005; T010/T011 là tham chiếu full-product |
 | Chuẩn AI dùng chung | [AI_RULES.md](AI_RULES.md) | Universal 3.1 nguyên bản |
 | Chuẩn dự án | [AI_RULES_PROJECT.md](AI_RULES_PROJECT.md) | Không ghi đè quy tắc gốc repo |
 | API hiện hành | [contracts/openapi.json](contracts/openapi.json) | JSON nguồn, YAML/index là output |
@@ -66,7 +65,8 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 `design/tokens.json` → `scripts/generate-theme.py` → CSS, PALETTE và bảng màu trong docs/03. 
 `contracts/*.json` → `scripts/generate-reference.py` → YAML/index, docs/04 và docs/17. 
 `release.json` + docs nguồn → `scripts/sync-release.py` → metadata, DOCUMENT_INDEX, ARCHITECTURE_BLUEPRINT. 
-`execution/plan.json` + progress + PLAN_GUIDE → `node scripts/progress.mjs report` → kế hoạch/phiếu việc/tiến độ. 
+`execution/frontend-plan.json` + frontend-progress + FRONTEND_PLAN_GUIDE → `node scripts/progress.mjs report` → IMPLEMENTATION_PLAN, phiếu FE và FRONTEND_PROGRESS.
+`execution/plan.json` + progress + PLAN_GUIDE → `node scripts/progress.mjs --full-product report` → FULL_PRODUCT_PLAN và PROGRESS (ngoài scope frontend; giữ read-only trong lượt frontend).
 `prototype/src/*` + release/token → `prototype/build.py` → prototype/index.html.
 
 Lịch sử nằm trong reference/ và CHANGELOG; mã phiên bản cũ ở đó không có hiệu lực thay thế nguồn hiện hành. Các phiên bản API/token/Universal khác nhau là chủ ý và được khai báo tại release.json.
