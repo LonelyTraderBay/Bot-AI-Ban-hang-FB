@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "id": "FEPLAN-003",
+  "status": "APPROVED_BY_USER_AUTHORIZATION",
+  "authorizationRef": "User request 2026-10-07: relocate botsales-kit to repository root and update path-only references; preserve the FE denominator and ledger semantics.",
+  "fromPlanSha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f",
+  "toPlanSha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e",
+  "baselineReport": {
+    "path": "execution/frontend-progress-report.json",
+    "sha256": "ed1fbe32cbb157af3390caa90705c50121c2b152e91ddbc12415617889ecac1f",
+    "generatedAt": "2026-10-07T00:27:41.551Z"
+  },
+  "reason": "Relocate the canonical product kit to repository root and update only its workspace-relative paths. Keep task/checkpoint counts, weights, evidence and completion semantics unchanged.",
+  "changes": [
+    {
+      "type": "repository_path_only",
+      "from": "BotSalesAI_Frontend/botsales-kit",
+      "to": "botsales-kit",
+      "replacements": [
+        [
+          "../AGENTS.md",
+          "../BotSalesAI_Frontend/AGENTS.md"
+        ],
+        [
+          "../AI_RULES.md",
+          "../BotSalesAI_Frontend/AI_RULES.md"
+        ],
+        [
+          "../README.md",
+          "../BotSalesAI_Frontend/README.md"
+        ],
+        [
+          "../docs/",
+          "../BotSalesAI_Frontend/docs/"
+        ],
+        [
+          "../evidence/",
+          "../BotSalesAI_Frontend/evidence/"
+        ],
+        [
+          "../apps/",
+          "../BotSalesAI_Frontend/apps/"
+        ],
+        [
+          "botsales-kit/",
+          "../botsales-kit/"
+        ]
+      ],
+      "reason": "Update plan references so frontend paths resolve from the new repository-root kit location without changing implementation scope."
+    }
+  ],
+  "invariants": {
+    "taskCount": 28,
+    "stepCount": 140,
+    "phaseWeights": [
+      10,
+      25,
+      40,
+      20,
+      5
+    ],
+    "changedTaskIds": [
+      "FE001",
+      "FE002",
+      "FE003",
+      "FE004",
+      "FE005",
+      "FE006",
+      "FE007",
+      "FE008",
+      "FE009",
+      "FE010",
+      "FE011",
+      "FE012",
+      "FE013",
+      "FE014",
+      "FE015",
+      "FE016",
+      "FE017",
+      "FE018",
+      "FE019",
+      "FE020",
+      "FE021",
+      "FE022",
+      "FE023",
+      "FE024",
+      "FE025",
+      "FE026",
+      "FE027",
+      "FE028"
+    ],
+    "changedFields": [
+      "readFirst",
+      "writeScope",
+      "task path references"
+    ],
+    "removedScopePaths": []
+  }
+}
