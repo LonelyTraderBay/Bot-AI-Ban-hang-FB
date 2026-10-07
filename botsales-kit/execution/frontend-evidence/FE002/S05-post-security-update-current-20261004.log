@@ -1,0 +1,26 @@
+FE002.S05 current test evidence
+executedAt=2026-10-04T14:36:04.067Z
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-fe002-clean-install-post-security-update-1e2a4201-45c1-4511-aa56-e4a9fbaeb5e7
+command=C:\Program Files\nodejs\node.exe "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" --script-shell=powershell.exe ci
+exitCode=0
+expected=Kiểm npm ci trên thư mục thử sạch chứa đúng manifest/lock, giữ workspace đang làm; ghi toolchain hashes.
+observed=npm ci exited 0 in the isolated clean temp workspace; manifest/lock copied from current Frontend checkout; temp lock unchanged; user worktree preserved.
+checksTotal=4; failed=0
+CHECK clean npm ci: PASS
+C:\Program Files\nodejs\node.exe "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" --script-shell=powershell.exe ci; exit 0 in C:\Users\Joker-PC\AppData\Local\Temp\botsales-fe002-clean-install-post-security-update-1e2a4201-45c1-4511-aa56-e4a9fbaeb5e7
+CHECK cold workspace provenance: PASS
+Copied current root/app manifests and lockfile to a separate clean temp path: C:\Users\Joker-PC\AppData\Local\Temp\botsales-fe002-clean-install-post-security-update-1e2a4201-45c1-4511-aa56-e4a9fbaeb5e7
+CHECK lockfile preservation: PASS
+temp lock SHA-256 unchanged: 1b581990fb49a594ff7422d342817b45579186cc5caec5e5e6c8be166d6f4703
+CHECK scope and side effects: PASS
+User worktree was not the npm ci cwd; no source, lockfile or .env.local rewrite in the project
+runLog=botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-post-security-update-current-20261004.log; runLogSha256=d6958bff279289290b3448ee050225c64c5e82e168da1fe8856feabb66bf3342
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no Backend/provider/staging result is claimed.
+sourceSnapshotSha256=c44d222b59e8188d9b08bfbda0d5430b50aa28817d291ec536baa9345189fc70
+SOURCE package.json sha256=ccd07977b9c080993c91288b82dbea8b0307ee1b5014ca3734a77b29fc0f559e
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE package-lock.json sha256=1b581990fb49a594ff7422d342817b45579186cc5caec5e5e6c8be166d6f4703
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE002/run-clean-install-post-security-update.mjs sha256=e21e605a2075219b3663548834488cece98b5fd7e0e6a1ea0ae0ec51f4aaf7c0
+SOURCE botsales-kit/execution/frontend-evidence/FE002/record-test-run.mjs sha256=fb1048bc270ef5cb08c48f0a68415dde7db5124dbe3721f8c4e2042e349e58b2
+reviewer=Codex self-review; no independent peer review claimed.

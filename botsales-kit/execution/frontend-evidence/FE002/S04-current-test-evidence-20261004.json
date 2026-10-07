@@ -1,0 +1,59 @@
+{
+  "taskId": "FE002",
+  "stepId": "S04",
+  "kind": "test_run",
+  "result": "PASS",
+  "commandId": "setup-doctor-capture",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-04T08:44:05.108Z",
+  "sourceRevision": "HEAD e68cb65 on main + current frontend working tree",
+  "expected": "Chạy npm setup và doctor với target thực; dùng worker MSW từ package, không tự viết worker giả.",
+  "observed": "setup and doctor exited 0; all doctor checks PASS; existing .env.local and MSW worker hashes unchanged; no Backend or provider used.",
+  "command": "& 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=powershell.exe run setup 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-setup-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=powershell.exe run doctor 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0",
+    "details": "Local package/tooling execution; no backend/API service required.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 3,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE002/S04-current-test-evidence-20261004.log",
+  "logSha256": "cd7e86781859b109456195b2c9ecdac29668f649ede47620a709e83e8085b87c",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "5048b3f946ff1e694474cc96ad2aec10f08eb5ba354d60b512f835a1479c5139"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    },
+    {
+      "path": "scripts/doctor.mjs",
+      "sha256": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e"
+    },
+    {
+      "path": "scripts/tools.mjs",
+      "sha256": "c5e8d51b9c60d48cdeadeff6422319c654fa08ae95bef2bb726926c85351aae0"
+    },
+    {
+      "path": "apps/web/public/mockServiceWorker.js",
+      "sha256": "3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/record-test-run.mjs",
+      "sha256": "587f4bff7ee2e1e7317e750af8dbd0b41c245865cf916d4b0596de5ee2e8adeb"
+    }
+  ],
+  "sourceSnapshotSha256": "bc03729e3920039a1de6b0224563ff7d63845c751d7dcfeeec51ec4990dceede"
+}

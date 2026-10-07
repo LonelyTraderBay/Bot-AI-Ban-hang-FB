@@ -1,16 +1,14 @@
 # BotSales AI — Frontend 0.1.0
 
-**Jokertrader · Nguồn yêu cầu: bộ chuẩn 2.1.1 · Graphite Gold dark-only.**
+**Dự án trong folder này triển khai Frontend React/TypeScript với API mock tổng hợp.** Scope và thực hiện tự động được chốt ngày 04/10/2026 tại [FRONTEND_SCOPE](docs/FRONTEND_SCOPE.md). AI tự sửa/kiểm thử/bàn giao trong scope; bạn chỉ nghiệm thu cuối. Kit có đặc tả Backend/toàn sản phẩm để tham chiếu contract, không giao task xây server ở đây.
 
-Đây là **mã nguồn React/TypeScript**, không phải file HTML demo cũ và không bao gồm backend sản phẩm. Có khai báo và component cho 54 route chuẩn; dữ liệu thử đi qua lớp HTTP MSW, UI dùng TanStack Query và hợp đồng OpenAPI gốc. API mô phỏng chỉ giữ dữ liệu trong bộ nhớ của tab.
+Quy định UI duy nhất là [workflow canonical v1.26](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075. Đọc [shared catalog CURRENT/TARGET](apps/web/src/shared/ui/README.md) và [plan v16.0 §16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) trước sửa UI. Policy/catalog review ở [§16.16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#plan-review-20261007) đã hoàn tất; implementation đang chạy từ S09. S03–S08 chỉ đóng theo evidence scoped; S10–S20 và final UI acceptance còn mở.
 
-## Phạm vi hiện hành — 02/10/2026
+UI và FE dùng hai tracker khác nhau; FE có 28 task/140 checkpoint, còn trạng thái VERIFIED/STALE/BLOCKED/next luôn đọc trực tiếp bằng `node ../botsales-kit/scripts/progress.mjs status` trên checkout hiện tại. Không dùng số trong README làm trạng thái ledger. Hồ sơ scope, giới hạn và bằng chứng đặt tại [REPORT](evidence/REPORT.md), [FE027 UAT snapshot SPC-059](../botsales-kit/execution/frontend-evidence/FE027/uat-matrix-spc059-current-20261006.json) và [FE028 handoff](../botsales-kit/execution/frontend-evidence/FE028/handoff.md); các snapshot không thay source freshness hiện hành.
 
-Phát triển và nghiệm thu **frontend-only bằng synthetic mock API** theo [kế hoạch frontend](botsales-kit/IMPLEMENTATION_PLAN.md). Trên Windows Node 24.19.0/npm 11.17.0, `npm run verify` đạt và bộ Playwright Chromium đạt 143/143. Ma trận có 54 route, 64 feature ID và 65/65 feature-route entries đều có tương tác UI mô phỏng gắn với test cụ thể; 357/357 quyền đọc route × role được kiểm trên 51 route cửa hàng × 7 role; bốn luồng xuyên module cũng đạt. Axe/keyboard và reflow 320 CSS px được kiểm trên đủ 54 route. Xem [CONTINUE_FRONTEND.md](docs/CONTINUE_FRONTEND.md), [KNOWN_GAPS.md](docs/KNOWN_GAPS.md) và [báo cáo kiểm chứng](evidence/REPORT.md) để biết giới hạn route-state, screen-reader, zoom thực và UAT.
+**HISTORICAL_SNAPSHOT:** Local React + synthetic-MSW evidence gồm `verify`/production build, spacing/visual-token scans 68 source files với 0 finding, reflow/text/zoom checks và built-demo browser results theo dated logs. Đây không phải Backend, hosted CI, staging, provider thật hoặc owner acceptance. FE-G05 còn Narrator speech/human conformance `NOT_RUN`; FE-G09 là nghiệm thu cuối của người dùng. Không tự chứng nhận Production-Ready/Enterprise-Grade toàn hệ thống. Xem [CONTINUE_FRONTEND](docs/CONTINUE_FRONTEND.md) và các timestamped evidence được liên kết trong handoff.
 
-## Trạng thái bàn giao — đọc trước
-
-**Trạng thái hiện tại:** React production build và demo preview chạy với API mô phỏng; domain/MSW đạt 88/88, Vitest 71/71, Chromium E2E 143/143. Các chức năng ngoài contract được trình bày thành preview/giới hạn rõ ràng, không giả lập lưu máy chủ hay tích hợp provider thật. Ma trận role-route kiểm trực tiếp 357 trường hợp; state variants vẫn chỉ được khẳng định nơi có test cụ thể. Tracker frontend chỉ tính checkpoint còn khớp evidence/source hash; xem `node botsales-kit/scripts/progress.mjs status`. Backend/provider thật không chặn nghiệm thu UI mock; GitHub CI, kiểm screen-reader đầy đủ, zoom browser thực và owner UAT chưa được xác nhận.
+`SHA256SUMS.json` là checksum gói giao ban đầu 29/09, không là checksum worktree hiện tại. FE026 clean-build manifest ngày 06/10 ghi riêng production tree và demo tree; W32 built-demo route matrix ghi artifact SHA-256 `6f4120d693536fd4f9ca8d417604c9d4cc16cfc2bcc46ccddbbec25405d978f2` ([W32 summary](evidence/frontend-ui-improvements/UI028/W32/summary-current-20261006.json)). Đây là checksum các artifact khác nhau, không phải checksum Git/worktree; dùng manifest đi kèm đúng run để đối chiếu.
 
 ## 1. Mở trong VS Code
 
@@ -28,7 +26,7 @@ npm run dev
 
 Repo hiện có `package-lock.json`; `npm ci` cài đúng lockfile. Không chạy `npm audit fix --force`, bỏ strict hoặc tắt test để ép build xanh.
 
-Trên Windows có `START_WINDOWS.cmd` hỗ trợ cùng quy trình và dừng khi gặp lỗi. Cấu hình VS Code tại `.vscode/tasks.json`; có thể dùng **Terminal → Run Task**. Playwright Chromium đã kiểm tra tự động; riêng `START_WINDOWS.cmd` và thao tác trình duyệt thủ công chưa được kiểm tra.
+Trên Windows có `START_WINDOWS.cmd` hỗ trợ cùng quy trình và dừng khi gặp lỗi. Cấu hình VS Code tại `.vscode/tasks.json`; có thể dùng **Terminal → Run Task**. Playwright Chromium/Firefox và Chrome cài máy đã có bằng chứng tự động; riêng `START_WINDOWS.cmd` và thao tác trình duyệt thủ công chưa được kiểm tra.
 
 ## 2. Chế độ chạy
 
@@ -40,8 +38,8 @@ Trên Windows có `START_WINDOWS.cmd` hỗ trợ cùng quy trình và dừng khi
 | `npm run preview` | Mở build demo đã tạo trên cổng 4173. |
 | `npm run build` | Build không chứa nhánh MSW của demo; cần backend phù hợp để dùng nghiệp vụ. |
 | `npm run doctor` | Kiểm Node, dependencies, worker file và lockfile. |
-| `npm run verify` | Generator, nguồn, boundaries, lint, full typecheck, mock-domain, Vitest và build. |
-| `npm run test:e2e` | Chạy các ca Playwright đã viết; cần Chromium (`npx playwright install chromium`). |
+| `npm run verify` | Generator, nguồn, boundaries, lint, typecheck, mock-domain, Vitest, build và strict layout/visual-token/composition gates. |
+| `npm run test:e2e` | Chạy các ca Playwright đã viết; cần Chromium (`npx playwright install chromium firefox`). |
 
 `npm run setup` sinh lại hợp đồng/màu và tạo `mockServiceWorker.js` từ MSW đã cài, không tự viết bản worker giả. Nó chỉ copy `.env.example` thành `.env.local` khi chưa có file đích.
 
@@ -57,14 +55,14 @@ apps/web/src/
   mocks/                  API mô phỏng DEV/TEST, dữ liệu tổng hợp
 packages/contracts/src/   kiểu/API/route được sinh từ OpenAPI gốc
 packages/design-tokens/   token được sinh từ nguồn đã duyệt
-botsales-kit/            contracts/tokens 2.1.1 + kế hoạch frontend/mock hiện hành
+../botsales-kit/            contracts/tokens 2.1.1 + kế hoạch frontend/mock hiện hành
 scripts/                 generator, kiểm nguồn/ranh giới, thiết lập và kiểm mock
 samples/                 CSV mẫu để thử import
 ```
 
 `app/router.tsx` là nơi ghép route; module không import module khác. Không đưa nghiệp vụ vào `shared` hoặc gọi trực tiếp SDK Facebook/AI từ trình duyệt. `docs/route-implementation.json` liên kết từng R01–R54 tới component nguồn; việc có component chưa đồng nghĩa route đã chạy trong browser.
 
-**Màu chuẩn chỉ sửa tại `botsales-kit/design/tokens.json` sau một quyết định đổi màu được duyệt**, rồi chạy `npm run generate`; không sửa `tokens.css` hoặc HEX trong component. Bản bàn giao giữ palette đã chốt, không có light/system/toggle.
+**Màu chuẩn chỉ sửa tại `../botsales-kit/design/tokens.json` sau một quyết định đổi màu được duyệt**, rồi chạy `npm run generate`; không sửa `tokens.css` hoặc HEX trong component. Bản bàn giao giữ palette đã chốt, không có light/system/toggle.
 
 ## 4. Những màn hình đã có source
 
@@ -86,12 +84,12 @@ Nhãn demo luôn xuất hiện. Mua hàng, lệnh gửi, kiểm thử AI và sca
 
 UI gọi cùng origin `/api/v2`; giữ cookie session phía backend. Với `dev:live`, đặt `API_PROXY_TARGET` trong `.env.local`. Các biến VITE_* được đóng gói vào browser: **không đặt secret, API key hoặc token Page vào đây**. `VITE_WEB_PUSH_PUBLIC_KEY` chỉ dành cho khóa công khai VAPID.
 
-Backend phải đáp ứng `botsales-kit/contracts/openapi.json`. Đăng nhập thật là OIDC, không dùng mock account. SSE chỉ làm mất hiệu lực cache và đọc snapshot lại. Khi mất phản hồi ghi, UI khóa thao tác tương ứng và hiển thị mã intent/lệnh; chưa có mã lệnh thì cần backend đối chiếu, không tự gửi lần hai.
+Backend phải đáp ứng `../botsales-kit/contracts/openapi.json`. Đăng nhập thật là OIDC, không dùng mock account. SSE chỉ làm mất hiệu lực cache và đọc snapshot lại. Khi mất phản hồi ghi, UI khóa thao tác tương ứng và hiển thị mã intent/lệnh; chưa có mã lệnh thì cần backend đối chiếu, không tự gửi lần hai.
 
 Quyền trên UI chỉ phục vụ trải nghiệm. Backend phải xác thực tenant, đối tượng, trường, phiên bản và chính sách ở từng request. Gói này không có server, cơ sở dữ liệu, worker 24/7 hoặc xác nhận an toàn tiền/kho thật.
 
 ## 7. Tiếp tục với AI trong VS Code
 
-Đọc `AGENTS.md`, `AI_RULES.md` nguyên bản, `docs/PROJECT_CONTEXT.md` và `evidence/REPORT.md`. Ưu tiên cài đúng dependency → full typecheck → sửa nguyên nhân → lint → tests → build → kiểm trình duyệt. Không sửa canonical schema/đổi stack hoặc bỏ kiểm tra chỉ để xử lý lỗi dependency. `docs/CONTINUE_FRONTEND.md` có thứ tự chi tiết.
+Đọc `AGENTS.md`, original `AI_RULES.md`, `docs/PROJECT_CONTEXT.md` và `evidence/REPORT.md`; mọi UI đi qua [workflow duy nhất](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow). [CONTINUE_FRONTEND](docs/CONTINUE_FRONTEND.md) chỉ dẫn việc hiện hành và nguồn evidence, không một pipeline song song. Không sửa canonical schema/đổi stack hoặc bỏ kiểm tra để xử lý lỗi dependency.
 
-**Tracker 84 việc/420 bước của kit vẫn nguyên trạng 0%.** Nó theo dõi toàn sản phẩm, không phải số file frontend đã sinh. Bằng chứng ở `evidence/` của repo này không được dùng để tự đánh dấu xong backend/staging/production.
+**HISTORICAL_SNAPSHOT — tracker full-product của gói ban đầu:** 84 việc/420 bước, 0%. Nó theo dõi toàn sản phẩm, không phải số file frontend đã sinh. Bằng chứng ở `evidence/` của repo này không được dùng để tự đánh dấu xong backend/staging/production.

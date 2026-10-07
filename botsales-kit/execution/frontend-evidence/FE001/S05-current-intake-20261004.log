@@ -1,0 +1,25 @@
+FE001.S05 current intake evidence
+executedAt=2026-10-04T16:06:15.257Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+command=node botsales-kit/scripts/progress.mjs validate; node botsales-kit/scripts/progress.mjs status; compare read-only full-product hashes
+exitCode=0
+expected=Bàn giao hiện trạng và xác nhận ledger frontend riêng; đọc validate/status/next, không nhận task toàn sản phẩm.
+observed=FE plan validates 28 tasks/140 checkpoints; status=4/140 verified, 28 stale, blocked=[]; next=FE001.S05; full-product plan/progress hashes unchanged.
+checksTotal=4; failed=0
+CHECK canonical FE plan/ledger validation: PASS
+{"valid":true,"tasks":28,"checkpoints":140,"scope":"Structure only; does not run product tests"}
+CHECK effective status after S01–S04: PASS
+verifiedSteps=4/140; blocked=[]; staleTasks=28; next=FE001.S05
+CHECK full-product plan/ledger preservation: PASS
+plan sha256=c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16; progress sha256=23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed; both match protected audit hashes
+CHECK tracker authority: PASS
+Only FE001–FE028 and frontend-progress.json are writable through the frontend script; full-product plan/progress remain read-only
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; backend/provider/staging results are not claimed.
+sourceSnapshotSha256=73b3d458948d963c796bf31b1064b9c9e6e8b5bad01fbd1f5c7d0de4507195ba
+SOURCE botsales-kit/execution/frontend-plan.json sha256=4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f
+SOURCE botsales-kit/execution/plan.json sha256=c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16
+SOURCE botsales-kit/execution/progress.json sha256=23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed
+SOURCE botsales-kit/scripts/progress.mjs sha256=3e64ec85fe4f2266947a02fe05ec2c83b2b41afbecdb750dbeb16447a71c7418
+SOURCE evidence/frontend-scope-automation-audit-20261004/after-audit.log sha256=1df134fadf7474242eac38e24c88cf44c5041e333ff5eaf3c49a0c84cf70fc8c
+SOURCE botsales-kit/execution/frontend-evidence/FE001/capture-current-intake.mjs sha256=542274d24e6f3c5b3d2905951ae3f5afa3141775f1d97500832c8aaf5d4cf8c2
+reviewer=Codex self-review; no independent peer review claimed.

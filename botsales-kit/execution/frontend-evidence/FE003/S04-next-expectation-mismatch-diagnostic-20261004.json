@@ -1,0 +1,54 @@
+{
+  "taskId": "FE003",
+  "stepId": "S04",
+  "kind": "artifact_review",
+  "result": "FAIL",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-04T09:22:20.757Z",
+  "sourceRevision": "Current dirty working tree; frontend tracker validation and negative probes rerun locally",
+  "expected": "Frontend plan validates and selects FE003.S04 as the next checkpoint. Current-source wrong-scope and missing-log evidence are rejected, and both probes leave frontend-progress.json unchanged.",
+  "observed": "Tracker validation/status/next exit codes: 0/0/0; next=FE003.S05. Negative probes returned 1 and 1 with the expected rejection messages. Ledger SHA256 before and after both probes: 447640195f8052b589cf458a3b5e30fd5bdaa13746b64d401efb0c07247afd9b / 447640195f8052b589cf458a3b5e30fd5bdaa13746b64d401efb0c07247afd9b. One or more checks did not meet the expected result.",
+  "command": "node botsales-kit/scripts/progress.mjs validate/status/next; checkpoint current-hash wrong-scope and missing-log fixtures; compare frontend ledger SHA256",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node v24.19.0",
+    "details": "Current local frontend repository; no full-product progress ledger mutation attempted.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 5,
+  "failed": 1,
+  "logFile": "execution/frontend-evidence/FE003/S04-refresh-current.log",
+  "logSha256": "13b71e198843bf2745b890a4ba1ee0636a531633f6a0dd6843008a4476b6e583",
+  "sourceFiles": [
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f"
+    },
+    {
+      "path": "botsales-kit/scripts/progress.mjs",
+      "sha256": "3e64ec85fe4f2266947a02fe05ec2c83b2b41afbecdb750dbeb16447a71c7418"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-wrong-scope-refresh.json",
+      "sha256": "1f93b497ad2ee10c545b80423ed71a8246bf6e04cc7895c966b21d8106b3d964"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-missing-log-refresh.json",
+      "sha256": "9b8d6bfbd7d1984a80efe793a58dedbebff0d0f8f3959969eb6512fe78c7b729"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-refresh-current.log",
+      "sha256": "13b71e198843bf2745b890a4ba1ee0636a531633f6a0dd6843008a4476b6e583"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-refresh-evidence.mjs",
+      "sha256": "61887f485d086bbb74dbbb21919d80028b19f447a9e5ab4295be2e1ffb777ff6"
+    }
+  ],
+  "sourceSnapshotSha256": "d61bad4f59b9ecdf4832763844260b47831c7427d21c3ab022c644e5cb381a22"
+}

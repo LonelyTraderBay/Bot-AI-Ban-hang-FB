@@ -1,0 +1,35 @@
+FE003.S01 current command-map review
+executedAt=2026-10-04T14:42:16.325Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+command=node botsales-kit/execution/frontend-evidence/FE003/capture-s01.mjs
+exitCode=0
+expected=Ánh xạ npm scripts hiện có: generate/source/boundaries/types/lint/domain/unit/build/demo/e2e; không dùng pnpm giả.
+observed=10/10 current command-map entries match package.json scripts and frontend cwd; retired contracts alias is explicitly not runnable and has a separate verified direct Node test; Vitest and Playwright configs exist. No tests were run by this artifact-review checkpoint.
+checksTotal=4; failed=0
+CHECK root npm script map: PASS
+10/10 required scripts exist and each registered command invokes its matching package script
+CHECK command cwd and availability: PASS
+All ten active commands use the frontend root and are marked VERIFIED_AVAILABLE with earlier run-log provenance
+CHECK retired alias handling: PASS
+Removed test:contracts alias remains DECLARED_NOT_RUN; direct contract-tests command is separately VERIFIED_AVAILABLE
+CHECK test runner configuration: PASS
+Vitest config exists with jsdom and frontend test include; Playwright config exists with Chromium and Firefox projects
+SCRIPT generate=generate:check; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run generate:check
+SCRIPT source=test:source; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source
+SCRIPT boundaries=boundaries; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries
+SCRIPT types=typecheck; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck
+SCRIPT lint=lint; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run lint
+SCRIPT domain=test:domain; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain
+SCRIPT unit=test; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test
+SCRIPT build=build; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build
+SCRIPT build-demo=build:demo; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build:demo
+SCRIPT e2e=test:e2e; cwd=BotSalesAI_Frontend; status=VERIFIED_AVAILABLE; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e
+SCOPE=FRONTEND_WITH_SYNTHETIC_MOCK_API; no prototype/backend result claimed.
+sourceSnapshotSha256=b78011764a38675cf5c659555b4e946c72b907e666e0e4217cd41e4152279ca6
+SOURCE package.json sha256=ccd07977b9c080993c91288b82dbea8b0307ee1b5014ca3734a77b29fc0f559e
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-plan.json sha256=4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f
+SOURCE apps/web/vitest.config.ts sha256=48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e
+SOURCE playwright.config.ts sha256=71aba6735ec90422b67441e6004087ddd8989cceee610e6f63ec88d5a0e1c100
+SOURCE botsales-kit/execution/frontend-evidence/FE003/capture-s01.mjs sha256=59e16a9d63cb91a845add8ffc1fa7a382a172a6fe6bf873443afa6eb09546f06
+reviewer=Codex self-review; no independent peer review claimed

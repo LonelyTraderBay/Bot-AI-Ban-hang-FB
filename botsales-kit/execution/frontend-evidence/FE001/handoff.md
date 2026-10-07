@@ -1,0 +1,21 @@
+# FE001 intake handoff — 04/10/2026
+
+Đây là handoff lịch sử tại thời điểm FE001–FE002 hoàn tất; trạng thái của nó được thay thế bởi handoff phiên hiện hành và audit kế hoạch ở `docs/FRONTEND_PLAN_DOCUMENT_AUDIT_2026-10-04.md`.
+
+## Phạm vi đã xác nhận
+
+Phạm vi triển khai là React/TypeScript Frontend trong `apps/web`, dùng synthetic mock API cho kiểm thử/nghiệm thu frontend. FE task và ledger chuẩn ở `execution/frontend-plan.json` / `frontend-progress.json`; API, route, permission, event và design tokens lấy từ contract canonical. Không xây Backend, database, worker, staging hoặc provider thật. `execution/plan.json`, `progress.json` và `tasks/T*.md` của toàn sản phẩm chỉ đọc.
+
+## Kết quả intake FE001.S01–S05
+
+- S01 xác minh Git root ở thư mục cha, nhánh `main`, revision hiện hành và worktree bẩn đã có từ trước; không stage/reset/clean hoặc ghi đè các thay đổi có sẵn. Root/kit `AI_RULES.md` trùng SHA-256.
+- S02 đối chiếu `route-implementation.json` với route manifest: 54/54 route ID/path khớp; source và component token đều hiện hữu; có 16 module. Đây là kiểm source crosswalk, không phải browser test mới.
+- S03 đối chiếu `evidence/REPORT.md`, `KNOWN_GAPS.md`, package manifests và Node 24.19.0/npm 11.17.0. `npm run generate:check` vừa chạy PASS: 11 outputs, 283 schemas, 210 operations, 54 routes. S39/S40 và UAT 146/146 là local evidence đã có, không tuyên bố là chạy lại trong intake.
+- S04 xác định FE003 là bước kế tiếp sau khi FE002 được hoàn tất đủ 5/5 checkpoint; dependency chỉ nằm trong FE graph và không có write target Backend/staging.
+- S05 xác nhận tracker FE có 28 task/140 checkpoint hợp lệ; sau FE001–FE002 hiện 10/140 VERIFIED, 26 STALE, `blocked=[]`. Full-product plan/progress hashes giữ nguyên.
+
+Evidence JSON/log cho từng bước nằm cạnh file này: `S01-current-intake-20261004`, ..., `S05-current-intake-20261004`.
+
+## Tiếp tục tại snapshot FE001–FE002
+
+Tại snapshot này, AI tiếp tục FE003 theo dependency. Trạng thái mới nhất sau FE004 là 20/140 checkpoint, FE001–FE004 DONE, FE005 kế tiếp và `blocked=[]`; xem `botsales-kit/execution/SESSION_HANDOFF.md`. Speech transcript/human conformance, hosted CI, Backend/provider/staging và final owner acceptance chưa được chứng minh; không ghi các mục đó PASS.

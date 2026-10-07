@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-04T16:36:04.085Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "sourceRevision": "HEAD e68cb65e61c5c1aab2ae169dd8033df305df8872 plus current dirty working tree; artifacts and source snapshots are linked in their evidence records.",
+  "plan": {
+    "id": "BOTSALES-FRONTEND-MOCK-20260930",
+    "tasks": 28,
+    "checkpoints": 140,
+    "dependencies": 50,
+    "externalDependencies": 0
+  },
+  "tracker": {
+    "overallPercent": 99.5,
+    "verifiedSteps": 139,
+    "totalSteps": 140,
+    "doneTasksBeforeFinalCheckpoint": 27,
+    "blocked": [],
+    "stale": [
+      "FE028"
+    ],
+    "next": [
+      {
+        "id": "FE028",
+        "title": "Cổng chất lượng frontend và bàn giao mở rộng",
+        "nextStep": {
+          "id": "S05",
+          "weight": 2,
+          "action": "Bàn giao source/diff/artifact/checksums/test summary/risks/next và cập nhật ledger frontend chỉ bằng evidence.",
+          "requiredEvidenceKind": "artifact_review",
+          "verification": "Progress FE không tự tăng từ tài liệu; full-product ledger giữ nguyên; không tự push/merge/deploy. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+          "required": true,
+          "status": "STALE",
+          "note": "Changed source botsales-kit/execution/frontend-evidence/FE028/handoff.md"
+        }
+      }
+    ],
+    "snapshotMeaning": "Captured immediately before FE028.S05 handoff checkpoint. FE028 is the only stale task because its old final-step snapshot is queued for replacement; this is not BLOCKED. Successful S05 evidence is expected to move the canonical tracker to 140/140."
+  },
+  "rubric": {
+    "passed": 7,
+    "total": 9,
+    "ratio": "7/9",
+    "claim": "Evidence-gated readiness; not code or architecture percentage."
+  },
+  "gates": [
+    {
+      "id": "FE-G01",
+      "title": "Môi trường tái lập",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Isolated clean npm ci, setup, verify and demo build exit 0; original/copy lock hashes match; clean production/demo output tree hashes match the current manifest.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-post-update-current-20261004.log",
+        "botsales-kit/execution/frontend-evidence/FE026/artifact-manifest-current-20261004.json"
+      ],
+      "limits": [
+        "npm install logs retain esbuild/MSW allowScripts warnings; scripts are not auto-approved."
+      ]
+    },
+    {
+      "id": "FE-G02",
+      "title": "Code và kiến trúc",
+      "status": "ĐẠT",
+      "basis": "Generator freshness 11/283/210/54; source 65/220/54; boundaries 430 imports, zero issue/cycle, negative fixtures 10/10; lint and strict typecheck pass.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE024/npm-verify-after-security-update-current-20261004.log"
+      ],
+      "limits": [
+        "Review is self-review with automated boundary evidence; no independent peer review is claimed."
+      ]
+    },
+    {
+      "id": "FE-G03",
+      "title": "Contract và mocks",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Canonical schema/source checks, domain/MSW 88/88 and Vitest 85/85 pass; demo uses synthetic data.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE024/npm-verify-after-security-update-current-20261004.log",
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json"
+      ],
+      "limits": [
+        "Does not establish a live API or backend transaction result."
+      ]
+    },
+    {
+      "id": "FE-G04",
+      "title": "Phủ chức năng",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "54 route smoke, 64 features, 65 interactions, 22 journeys, role 357/357, empty 11/11, errors 51/51 and zero untested applicable state cells.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json",
+        "botsales-kit/execution/frontend-evidence/FE008/S05-e2e-rerun-current-20261004.log"
+      ],
+      "limits": [
+        "Permission claims apply to UI behavior under synthetic session/fixtures, not server authorization."
+      ]
+    },
+    {
+      "id": "FE-G05",
+      "title": "UI/UX",
+      "status": "CHƯA_ĐẠT_ĐẦY_ĐỦ",
+      "basis": "Keyboard, axe, contrast, 400% zoom on 17 sampled routes, text-flow and target geometry have current browser evidence.",
+      "evidence": [
+        "evidence/frontend-ui-improvements/UI012/S47-technical-accessibility-acceptance-20261004.md"
+      ],
+      "limits": [
+        "Narrator speech/transcript is NOT_RUN; broad human conformance review is not performed; full WCAG conformance is not claimed."
+      ]
+    },
+    {
+      "id": "FE-G06",
+      "title": "An toàn Frontend",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "npm audit reports zero vulnerabilities; current security browser cases pass; raw HTML sink scan is zero; unknown/conflict/retry behavior has browser tests.",
+      "evidence": [
+        "FE024.S05 frontend security evidence\nexecutedAt=2026-10-04T15:12:19.424Z\ncwd=C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\ncommandId=npm-audit-20261002\ncommand=npm.cmd --script-shell=cmd.exe audit --json\nexitCode=0\nchecksTotal=4; failed=0\nCHECK 1: PASS npm audit reports 463 dependency records and 0 vulnerabilities (high=0, critical=0).\nCHECK 2: PASS The earlier 9-high transitive toolchain advisory was remediated by a compatible typescript-eslint 8.x update; the final lockfile audit is zero.\nCHECK 3: PASS Isolated npm ci passed with lock SHA unchanged, zero vulnerabilities, and esbuild/MSW import probes passing.\nCHECK 4: PASS Production build passed with the measured 738.39 kB raw / 186.88 kB gzip largest-chunk advisory retained; no bundle secret was asserted from local mock tests.\nnpmAudit={\"info\":0,\"low\":0,\"moderate\":0,\"high\":0,\"critical\":0,\"total\":0}\nsecurityBrowserCases=6; each passed in Chromium and Firefox\nunsafeHtmlSinkCount=0\nscope=FRONTEND_WITH_SYNTHETIC_MOCK_API; local React/MSW only; no backend authorization, live PII, hosting, or staging claim.\nsourceSnapshotSha256=f19fadfc2ee3072692d3eb884fcba5f9c7a385fd4fb4be6aa0e24a7545861b1d\nSOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a\nSOURCE apps/web/src/app/CommandRecovery.tsx sha256=2356719ba6346580ac92245217f91f20b0fbf7c8471ba2368b51d12205a555a0\nSOURCE apps/web/src/app/ScopeEvents.tsx sha256=a0716132ba111081869ce96e973b83578f0c73d33ccb315d6a180d6b22416275\nSOURCE apps/web/src/app/SessionProvider.tsx sha256=13d7f0716a3234416cf7cec954ecdf1730e08694a0d99d5bdb788c378629487d\nSOURCE apps/web/src/app/Shell.tsx sha256=423bcb9bb2d197459058f480c511ec5836af9eb2c6d8cb276bf079304809af54\nSOURCE apps/web/src/app/dirty-drafts.ts sha256=3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13\nSOURCE apps/web/src/app/feedback.tsx sha256=eb7410750e5548134c21ac9e64d5df451cb998f16608df881e90f8b8864f5e0a\nSOURCE apps/web/src/app/i18n.ts sha256=535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340\nSOURCE apps/web/src/app/locales/vi/customers.ts sha256=a2a880bc7aad48e156e0fe8d6cafd63a453a91187af62b398ae5c8247312e97b\nSOURCE apps/web/src/app/locales/vi/knowledge.ts sha256=a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9\nSOURCE apps/web/src/app/navigation.ts sha256=96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7\nSOURCE apps/web/src/app/router.tsx sha256=b32eb2727434b5c3da8414edae47bf002b249af44e0bbd153dcf7209f0c04ed3\nSOURCE apps/web/src/main.tsx sha256=2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb\nSOURCE apps/web/src/mocks/auxiliary.ts sha256=3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c\nSOURCE apps/web/src/mocks/browser.ts sha256=91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9\nSOURCE apps/web/src/mocks/catalog.ts sha256=48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56\nSOURCE apps/web/src/mocks/collections.json sha256=27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6\nSOURCE apps/web/src/mocks/control.ts sha256=2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541\nSOURCE apps/web/src/mocks/database.ts sha256=093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c\nSOURCE apps/web/src/mocks/files.ts sha256=21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd\nSOURCE apps/web/src/mocks/finance.ts sha256=c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d\nSOURCE apps/web/src/mocks/fulfillment.ts sha256=0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40\nSOURCE apps/web/src/mocks/handlers.ts sha256=e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608\nSOURCE apps/web/src/mocks/marketing-fixture.ts sha256=e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb\nSOURCE apps/web/src/mocks/orders.ts sha256=c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4\nSOURCE apps/web/src/mocks/procurement.ts sha256=3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0\nSOURCE apps/web/src/mocks/seed.json sha256=fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d\nSOURCE apps/web/src/mocks/service.ts sha256=e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69\nSOURCE apps/web/src/modules/bot/index.tsx sha256=58ab57695b089674dded246e4d140774728d90ba235c324879367f177c39ce2c\nSOURCE apps/web/src/modules/catalog/import-file.ts sha256=27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f\nSOURCE apps/web/src/modules/catalog/imports.tsx sha256=392fa4d18f22d4c565a49d84217420b0fbed4970f4121d1f688b1c978c685f86\nSOURCE apps/web/src/modules/catalog/index.tsx sha256=66093cd85139fc4785ee1f923f3b380afad02b8c45983b7414605062bea90948\nSOURCE apps/web/src/modules/customers/index.tsx sha256=153dd6b93f75d000096aefc2e7ad52788bef2f82255dfdff8956e364ce434493\nSOURCE apps/web/src/modules/dashboard/index.tsx sha256=601024aafa9b0a0fb38d2b337a672a94d51679687ea2235e4bb8edc195b4a6ba\nSOURCE apps/web/src/modules/finance/demo-account-preview.ts sha256=4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60\nSOURCE apps/web/src/modules/finance/index.tsx sha256=cdeef59d373cb19da31005d4d25fdc4ff0896116a62221eb9631bcdf2ed8971f\nSOURCE apps/web/src/modules/finance/report-explanations.ts sha256=39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020\nSOURCE apps/web/src/modules/fulfillment/index.tsx sha256=021f2e6ce435a78517ea11c45d7399e950af470b4415befeb9d3ed1cbd1f622f\nSOURCE apps/web/src/modules/inbox/conversation-components.tsx sha256=127e54e393276655b83cc2efa524fb74dd9dd52679f759deb8d7bf194d67c5bf\nSOURCE apps/web/src/modules/inbox/index.tsx sha256=8b527daebdc4b3388703dd593b6a771c449afdf9badce6b821c9cf1c87a8685d\nSOURCE apps/web/src/modules/integrations/index.tsx sha256=de8a8c8407b80792e2b8c3b25d5a31dc8239a99654f3df254f2685e9a4d2f44b\nSOURCE apps/web/src/modules/inventory/index.tsx sha256=11f315c4c979141968e9dccec005820cbdcdf1109f47e51c59a98e53e45803cf\nSOURCE apps/web/src/modules/knowledge/index.tsx sha256=2488e7ac7c35ee8ba50a47f086587b847db563ca3fd8d33badfbe8d48f8bc50a\nSOURCE apps/web/src/modules/notifications/index.tsx sha256=b5b78947f8d0b370ec66adef252ee0bdd25ef1dd2967f1aab2a661da02774bc8\nSOURCE apps/web/src/modules/notifications/push-capabilities.ts sha256=5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a\nSOURCE apps/web/src/modules/operations/index.tsx sha256=7a96883581b7b6ef4c0d0e7abb189da73233a483f81f470129484ce0bf0ca923\nSOURCE apps/web/src/modules/orders/demo-address-preview.ts sha256=7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a\nSOURCE apps/web/src/modules/orders/index.tsx sha256=3c0b098716a7fc06a89d5c53171554b5125b50f64ba6cc306ac045474c26a5d2\nSOURCE apps/web/src/modules/procurement/index.tsx sha256=acfc992ec62eda0358cce52d193044dd9458cd500fb154d4f8c4ee55ef8b2b43\nSOURCE apps/web/src/modules/reports/index.tsx sha256=88911e0be20acb3d1a30a98169236f7392441ec2393f44bdf78663ad99e452f0\nSOURCE apps/web/src/modules/reports/report-utils.ts sha256=d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0\nSOURCE apps/web/src/modules/workspace/index.tsx sha256=14d4c9ba6f9f0f8d1b7f3c0ac114ddcc24c81c67c86a7bc7475fed3158f7543d\nSOURCE apps/web/src/shared/api/client.ts sha256=4a4fe4c32470d08467dd0d56cbf69f5de912340b6c323c01cb844553e601edb1\nSOURCE apps/web/src/shared/api/client.type-contracts.ts sha256=7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e\nSOURCE apps/web/src/shared/api/errors.ts sha256=dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227\nSOURCE apps/web/src/shared/api/hooks.ts sha256=05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1\nSOURCE apps/web/src/shared/api/intents.ts sha256=3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b\nSOURCE apps/web/src/shared/api/validation.ts sha256=64403d633b0be7118e36bee153ac4144c14b994b6b8c5ae18d13061ead274ee3\nSOURCE apps/web/src/shared/model/auth.ts sha256=7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4\nSOURCE apps/web/src/shared/model/dirty-drafts.ts sha256=87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc\nSOURCE apps/web/src/shared/model/download.ts sha256=ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c\nSOURCE apps/web/src/shared/model/filters.ts sha256=913c3c6ae29ececf4de4dae865598bbba6b954fa10807a957b9360f21833bc4d\nSOURCE apps/web/src/shared/model/format.ts sha256=32d13ed518870d525b857a8be711b24b7d56b0f5c7eff4699ba4f572e958b223\nSOURCE apps/web/src/shared/model/labels.ts sha256=7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2\nSOURCE apps/web/src/shared/model/scope.tsx sha256=76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22\nSOURCE apps/web/src/shared/ui/components.tsx sha256=ff17cffd41aeebbf4e681514390df6981f2490d9bd879ab8dabbace2f983e3a0\nSOURCE apps/web/src/shared/ui/theme.ts sha256=ef20ec162ff218146b8f0c19c7522b25840d04cac524e7158ef6473376b889d8\nSOURCE apps/web/src/vite-env.d.ts sha256=b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc\nSOURCE apps/web/tests/api-client.test.tsx sha256=c4e9369d2b6297a743f0c43000301ddb0a703b23090bd87bbc1a3c1da461005e\nSOURCE apps/web/tests/catalog-import-file.test.ts sha256=c2b111d0f4848a25cc9bd9ad135af54213f01764ef9905ee331299d40cd3b970\nSOURCE apps/web/tests/components.test.tsx sha256=92e263718c9276e33278a7541e61660e09db38b330abf17990cca30b32d1ba3e\nSOURCE apps/web/tests/dashboard-labels.test.ts sha256=17afcd7d1fbc42134b3a07848104e5bca3b0744baff2ed1d309c5650877a700d\nSOURCE apps/web/tests/fe021-source-map.test.ts sha256=da338ba6ffac50d042df60cf30f179a2b3c753d6beb5ecb3ae550db492c2d28a\nSOURCE apps/web/tests/format.test.ts sha256=edb0b519d06d1628ee717bdd77394ffb441ee340859506a919f58c66b2fbddc4\nSOURCE apps/web/tests/push-capabilities.test.ts sha256=260bb3d89b3ebd391981084b46b199ae99442f4099b6f35ae987fd5d1c160e87\nSOURCE apps/web/tests/report-utils.test.ts sha256=ed3a365e175bfd161ad4141f58b584df8563392cfdb95e56748ae91ccf7e3fb8\nSOURCE apps/web/tests/setup.ts sha256=0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5\nSOURCE apps/web/tests/states/fe023-state.test.tsx sha256=15a3815aaaea1bfd726d2d7ada8d867f6695b3531d1ca90c513ad3798944661b\nSOURCE apps/web/tests/timezone.test.ts sha256=68b23d02af2d54ad89b7aeff783dffe942d1630bed38c35c1ce5be45e07fc05d\nSOURCE botsales-kit/contracts/openapi.json sha256=d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c\nSOURCE botsales-kit/contracts/permission-catalog.json sha256=58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1\nSOURCE botsales-kit/contracts/route-manifest.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2\nSOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744\nSOURCE botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-post-security-update-current-20261004.log sha256=d6958bff279289290b3448ee050225c64c5e82e168da1fe8856feabb66bf3342\nSOURCE botsales-kit/execution/frontend-evidence/FE024/capture-current-security-20261004.mjs sha256=d8aa3c07246be1f8f497613e759064fa96799cf20848e0b13916b97f79981285\nSOURCE botsales-kit/execution/frontend-evidence/FE024/npm-audit-post-update-current-20261004.log sha256=edeeebdd69996e0d59db792d9a143657fcad1aca2a6c7ae605fd637dbeeb8cac\nSOURCE botsales-kit/execution/frontend-evidence/FE024/npm-verify-after-security-update-current-20261004.log sha256=5e65e2f5456e35b0b047854d11676bbc7282c5c7356e0b524bde8b758e55aad5\nSOURCE botsales-kit/execution/frontend-plan.json sha256=4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f\nSOURCE package-lock.json sha256=1b581990fb49a594ff7422d342817b45579186cc5caec5e5e6c8be166d6f4703\nSOURCE package.json sha256=ccd07977b9c080993c91288b82dbea8b0307ee1b5014ca3734a77b29fc0f559e\nSOURCE playwright.config.ts sha256=71aba6735ec90422b67441e6004087ddd8989cceee610e6f63ec88d5a0e1c100\nSOURCE tests/accessibility/routes.spec.ts sha256=9ec199807f025335a2ff6ea90f69cea6a737adfbf5311abedf7bbf4f9766577c\nSOURCE tests/artifacts/demo-preview.spec.ts sha256=66b51d212bc3ba0c4916142b2bec792298e18ad0f1b366a6185d8d8e4acb8c8c\nSOURCE tests/fe009.spec.ts sha256=feec9605eda7a726c5b4b08c1a4da4be455f3280935a4f817dbbd8d00a513c08\nSOURCE tests/fe010.spec.ts sha256=d816a564ffa222ed065e0cccad219086a171f56c0e3f937866fe36731e5ea545\nSOURCE tests/fe011.spec.ts sha256=4935d39892497393840ba2bbe5f5dbe9b6ed1372aa0726e4d6dab94a80c566da\nSOURCE tests/fe012.spec.ts sha256=14c2d4f065fdf2c2aa8f80debcb45153c041b33ae25f0984f0cdd6cda2a53fd8\nSOURCE tests/fe013.spec.ts sha256=e593732f05074b8276714ffdf5c48e72983383e31e9c3fbc2097549da36fc95c\nSOURCE tests/fe014.spec.ts sha256=85c85a46f160212f7b0a56c334b1f0176b779c2e2b4819d65a9a9c894b03f57e\nSOURCE tests/fe015.spec.ts sha256=af4bc133dd079fb115fc6e365f1e482b18d3f65751e9451e85d3309b9dbed665\nSOURCE tests/fe016.spec.ts sha256=b83b950acde73e849078449006a7edea3896587bf2f0c22b1c89d00e075b256f\nSOURCE tests/fe017-validation.spec.ts sha256=44f86fc257a9dd645b0255562bff0c1177801a330a92c4dd4f7872b7d4e87e98\nSOURCE tests/fe017.spec.ts sha256=584332c7c8ebb99b714f8346c36cad8fa6c9927552ff23b0d9488d968491cd6f\nSOURCE tests/fe018.spec.ts sha256=ef6b90184efaecff594be774f1a3109fbc544050dc3878c8cfeb71d2bff88503\nSOURCE tests/fe019.spec.ts sha256=96310d25e03fe47d512efe3cadbf9fd53997c82b4b95ff5099272d6a68633425\nSOURCE tests/fe020.spec.ts sha256=8ab1a7f289aae644ad84783eccb196d3f3f22453d8fd69dd6d4caf874105591c\nSOURCE tests/fe021.spec.ts sha256=26afef11d6424ce8c12454bc6969cf0a78e292dc32837e8fa57863d8804d9fe7\nSOURCE tests/frontend.spec.ts sha256=32e2d0adcd7a56508231ebe103dd0d48dc9d11849a8b6ea56c2c7827001ff3ff\nSOURCE tests/route-role-matrix.spec.ts sha256=8254e7cb592e50c528ffcb60588c45aa8b3fbf49be7273dc2a0d572474d935c4\nSOURCE tests/security.spec.ts sha256=dbd94885111164222eb11742350d57991379910bc0d31203097448a427c234a4\nSOURCE tests/session/demo-server-cache-isolation.spec.ts sha256=8cbbfdc37f5a32c1a228be78b0875652660b10b4ad64c41139753dcd51e7c385\nSOURCE tests/states/fe023.spec.ts sha256=24324d01e83939a7674ca32a7030c140057a094a19c003eb3fd51e77f1e403d0\nSOURCE tests/states/route-empty-composition.spec.ts sha256=2384bc24a01d1ed0ee2d142bfd706ae91bfec625381ddf1793fe6beaf5149ca0\nSOURCE tests/states/route-error-composition.spec.ts sha256=bf76eb5e6edf0b94d818630bf524d66b482487d6bed18b0ac436a39b752c3df3\nSOURCE tests/ui006-lookups.spec.ts sha256=10232d95422dbd79f86812888c3f3e04a5f739694320b464c203c8c29534e0b4\nSOURCE tests/ui007-query-states.spec.ts sha256=fe2775f059e9595307c171cde49c1a1d47b88c4c79b8706bd3922dbccda451b8\nSOURCE tests/ui008-integration-empty.spec.ts sha256=4d23aa105a89f53aaaa2c536df7eb2a2e3626685470cab85b3ba1de358f40cf5\nSOURCE tests/ui009-scope-regression.spec.ts sha256=9939f7c1d99bb903f0e333f6913f172938fa39cc986c593cb9b8c840e18b509e\nSOURCE tests/ui010-dialog-draft.spec.ts sha256=b101a56dae428a8a8c9f1e11a8304563d829a744f39670daf1a50d685afa1d39\nSOURCE tests/ui011-date-time.spec.ts sha256=3b0c72599267f42d22493d44f06257fe66f3f697a855792fcf0c8ca857b6358e\nSOURCE tests/ui012-keyboard.spec.ts sha256=f780da7c5716ab6ec28844a880aab3168b1a74c9d3829bf40d26122abfc964c8\nSOURCE tests/ui013-url-state.spec.ts sha256=2fde7cd4bf8cc540e6af0b830fee6b38323dc45bc971a30e63bc09673bfa182f\nSOURCE tests/ui021-permission-edge.spec.ts sha256=8bd61c80c24eecce596ded9863aceb57f39d89d0479863bd5e96a13c3710ff5e\nSOURCE tests/vertical-slices/fe022-flows.spec.ts sha256=596ba0fb7b826e474e06a791604909c213c6a26c7a4d316dd94ad06a3194586d\n",
+        "botsales-kit/execution/frontend-evidence/FE024/npm-audit-post-update-current-20261004.log",
+        "botsales-kit/execution/frontend-evidence/FE008/S05-e2e-rerun-current-20261004.log"
+      ],
+      "limits": [
+        "Does not prove server-side authorization, tenant enforcement, or live PII handling."
+      ]
+    },
+    {
+      "id": "FE-G07",
+      "title": "Hiệu năng Frontend",
+      "status": "ĐẠT_VỚI_ADVISORY",
+      "basis": "Current demo budgets and 1000-row paginated dataset pass on Chromium/Firefox; 54-route 320px reflow has zero overflow/error.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE025/S03-current-revalidated-20261004.json",
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json"
+      ],
+      "limits": [
+        "Production largest chunk remains 738.39 kB raw with the Vite >500 kB advisory; local profile is not a device/CDN/backend SLO."
+      ]
+    },
+    {
+      "id": "FE-G08",
+      "title": "Artifact",
+      "status": "ĐẠT_LOCAL_EQUIVALENT",
+      "basis": "Production/demo artifacts are isolated and hash-reproducible; built demo preview test runs in Chromium and Firefox; local clean checks satisfy the plan alternative.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE026/artifact-manifest-current-20261004.json",
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-post-update-current-20261004.log",
+        "botsales-kit/execution/frontend-evidence/FE026/frontend-workflow-config-current-20261004.yml"
+      ],
+      "limits": [
+        "Workflow is configured and inspected; hosted GitHub Actions run is NOT_RUN. No deployment was made."
+      ]
+    },
+    {
+      "id": "FE-G09",
+      "title": "UAT và bàn giao",
+      "status": "CHỜ_NGHIỆM_THU_NGƯỜI_DÙNG",
+      "basis": "Technical UAT, matrix, artifact hashes, limits, run instructions and handoff are complete and reviewable.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json",
+        "botsales-kit/execution/frontend-evidence/FE028/handoff.md"
+      ],
+      "limits": [
+        "The user has not yet recorded final acceptance; no owner approval is self-recorded."
+      ]
+    }
+  ],
+  "productionClaimGate": {
+    "status": "READY_FOR_ACCEPTANCE",
+    "approvedScopedStatement": "Frontend đã kiểm chứng với API mock tổng hợp; đáp ứng các gate kiến trúc/chất lượng Frontend được liệt kê trên artifact/revision này.",
+    "prohibitedClaim": "Không chứng nhận Backend, provider, persistence, server authorization, staging, production runtime, toàn sản phẩm hoặc 9/9 gate.",
+    "artifactManifest": "botsales-kit/execution/frontend-evidence/FE026/artifact-manifest-current-20261004.json",
+    "evidenceIndex": {
+      "botsales-kit/execution/frontend-evidence/FE024/npm-verify-after-security-update-current-20261004.log": {
+        "sha256": "5e65e2f5456e35b0b047854d11676bbc7282c5c7356e0b524bde8b758e55aad5"
+      },
+      "botsales-kit/execution/frontend-evidence/FE024/S05-current-security-review-20261004.log": {
+        "sha256": "428ac8bca76670b2a306a28226cf1bb099c372115b63716919e46ca76564fc6f"
+      },
+      "botsales-kit/execution/frontend-evidence/FE024/npm-audit-post-update-current-20261004.log": {
+        "sha256": "edeeebdd69996e0d59db792d9a143657fcad1aca2a6c7ae605fd637dbeeb8cac"
+      },
+      "botsales-kit/execution/frontend-evidence/FE026/clean-build-post-update-current-20261004.log": {
+        "sha256": "f086c9cc6b586f812a5727381f23bfd90a517601853b5d0ccd0ab33e4283db35"
+      },
+      "botsales-kit/execution/frontend-evidence/FE026/artifact-manifest-current-20261004.json": {
+        "sha256": "06ffcb50b465a8f96d36ab9d065f1a3f864d4df408081dbf7c23e59ea440e1dc"
+      },
+      "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json": {
+        "sha256": "3c36fe7fada793fe2303dd757a208ab1804f8150414938538f1c41c93769df10"
+      },
+      "botsales-kit/execution/frontend-evidence/FE008/S05-e2e-rerun-current-20261004.log": {
+        "sha256": "ad38d9d921c0e2890ba35a8d16680a639e44bc9e9e3f96e9ff69df35f8826630"
+      },
+      "botsales-kit/execution/frontend-evidence/FE025/S03-current-revalidated-20261004.json": {
+        "sha256": "3c2928dc7edb33cabd53ba6829a7d35495526b4b76361291d1bb93bdc0fb2cab"
+      },
+      "evidence/frontend-ui-improvements/UI012/S47-technical-accessibility-acceptance-20261004.md": {
+        "sha256": "5beb965cebed44c9be061f97f1d29d2de43a9cee8906b6375b936258f482869a"
+      },
+      "botsales-kit/execution/frontend-evidence/FE026/frontend-workflow-config-current-20261004.yml": {
+        "sha256": "d80c5ba0d651375b45c6775625e00f5e4c7553190c2ce7139008baf60a095ab2"
+      },
+      "botsales-kit/execution/frontend-plan.json": {
+        "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f"
+      },
+      "botsales-kit/execution/frontend-progress.json": {
+        "sha256": "8259effbc7c25385cffba56caa485be690e8d6bb738d7b56ef61b71619254795"
+      },
+      "botsales-kit/execution/FRONTEND_PLAN_GUIDE.md": {
+        "sha256": "5b341e33dde44ff9ca7a0c456b5151adba21a4d8c3280fa59217eb3c26f8d945"
+      },
+      "botsales-kit/contracts/openapi.json": {
+        "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+      },
+      "botsales-kit/contracts/route-manifest.json": {
+        "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+      },
+      "botsales-kit/contracts/permission-catalog.json": {
+        "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+      },
+      "botsales-kit/design/tokens.json": {
+        "sha256": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895"
+      }
+    },
+    "userAcceptanceRecorded": false,
+    "hostedCiRunRecorded": false,
+    "deploymentRecorded": false
+  },
+  "definitionOfDone": {
+    "status": "PASS_FOR_AI_ASSIGNED_SCOPE",
+    "criteria": [
+      "Current-source tests and frontend verify passed.",
+      "Source/test/contract/artifact hashes are recorded.",
+      "Current-scope documents and handoff were reconciled.",
+      "Known warnings and NOT_RUN limits remain explicit.",
+      "Only frontend progress ledger was updated through its canonical script."
+    ]
+  }
+}

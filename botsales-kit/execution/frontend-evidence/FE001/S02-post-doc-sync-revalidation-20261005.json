@@ -1,0 +1,103 @@
+{
+  "taskId": "FE001",
+  "stepId": "S02",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-04T19:01:15.946Z",
+  "sourceRevision": "HEAD e68cb65 plus current frontend working tree",
+  "expected": "Map 54 route và 16 module hiện có qua route-implementation.json; phân biệt source có sẵn với browser chưa xác minh.",
+  "observed": "Retained the prior checkpoint-specific evidence at botsales-kit/execution/frontend-evidence/FE001/S02-current-intake-20261004.json and refreshed every recorded source hash. The only changed sources are no source mismatches. After the UI027 Vite chunk-only change, current unit tests pass 85/85, full verify/source/boundary/type/lint/domain/build checks pass, and the built-demo browser regression passes 388/388 across Chromium and Firefox. UI modules, route behavior, contracts and CSS were not changed by UI027.",
+  "command": "Read prior checkpoint and current UI027 verify/E2E/performance evidence for FE001.S02",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0 / Chromium 153 / Firefox 155",
+    "details": "Local Frontend React app, deterministic synthetic MSW; no live Backend/provider. Current Vite chunk change has a fresh full verify and browser regression run.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 5,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE001/S02-post-doc-sync-revalidation-20261005.log",
+  "logSha256": "23397d36fec9d99e0ca59067a3186756c5a760e460df96279a55e1b978a4f006",
+  "sourceFiles": [
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S02-current-intake-20261004.json",
+      "sha256": "14339138ad9f23cb1d63692d5270a158ffe60ccb6bc368e3ed9aaddb81eedb58"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/capture-current-intake.mjs",
+      "sha256": "542274d24e6f3c5b3d2905951ae3f5afa3141775f1d97500832c8aaf5d4cf8c2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE006/S05-unit-current-20261005.log",
+      "sha256": "da0edca83c90679aee3cd1c062d2fc5edf3a9a9d1c7a5b195039655f8f68d0d7"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f"
+    },
+    {
+      "path": "docs/route-implementation.json",
+      "sha256": "8c94c435b9172070539207cab12ae58e6ff25b49be60b5518f75f13da7b451fe"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI027/S04-e2e-full-20261005.log",
+      "sha256": "8b11b9b05143e3d2dad6e310a8ec6de04aaef30d5aec4029f38ad0c34a95a586"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI027/S04-verify-20261005.log",
+      "sha256": "a56c23eaf29b0592738c7be9eb1ad6dc263c3d2b833af50b6fbf8fe4c5c9540d"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI027/S05-paired-performance-20261005.md",
+      "sha256": "909bb2064b6a8bb07f4486c61dc6ee122c3141ca9dcb1397772f4d94f47ed5b3"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI027/revalidate-ledger-20261005.mjs",
+      "sha256": "889bcf6d45bc8ca2e5d8e89a1f0ad1dd7630dca3073fa469e651d3fc3b4c6c75"
+    }
+  ],
+  "sourceSnapshotSha256": "a99ff7fd95311cfca5338ecdbabf08f570405cec8cc478e35b1c71b738b6f16e",
+  "priorEvidence": {
+    "path": "botsales-kit/execution/frontend-evidence/FE001/S02-current-intake-20261004.json",
+    "sha256": "14339138ad9f23cb1d63692d5270a158ffe60ccb6bc368e3ed9aaddb81eedb58",
+    "executedAt": "2026-10-04T16:05:32.391Z",
+    "observed": "routes=54/54; uniqueIds=54; sourcePaths=54/54; componentTokens=54/54; modules=16; browser re-run=NOT_RUN. Source SHA-256 values for 17 mapped files are captured in the log.",
+    "logFile": "execution/frontend-evidence/FE001/S02-current-intake-20261004.log",
+    "logSha256": "ab4c625ed832d910580cd8bc8bda5641a57f0a40dc7ed8b6c336db5bab81b86f"
+  },
+  "supplementaryEvidence": [
+    {
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "commandId": "unit",
+      "logFile": "execution/frontend-evidence/FE006/S05-unit-current-20261005.log",
+      "logSha256": "da0edca83c90679aee3cd1c062d2fc5edf3a9a9d1c7a5b195039655f8f68d0d7",
+      "checksTotal": 85,
+      "failed": 0
+    },
+    {
+      "command": "UI027 post-change npm verify and production build",
+      "logFile": "evidence/frontend-ui-improvements/UI027/S04-verify-20261005.log",
+      "logSha256": "a56c23eaf29b0592738c7be9eb1ad6dc263c3d2b833af50b6fbf8fe4c5c9540d",
+      "checksTotal": 8,
+      "failed": 0
+    },
+    {
+      "command": "UI027 post-change full browser E2E on the built demo",
+      "logFile": "evidence/frontend-ui-improvements/UI027/S04-e2e-full-20261005.log",
+      "logSha256": "8b11b9b05143e3d2dad6e310a8ec6de04aaef30d5aec4029f38ad0c34a95a586",
+      "checksTotal": 388,
+      "failed": 0
+    },
+    {
+      "report": "evidence/frontend-ui-improvements/UI027/S05-paired-performance-20261005.md",
+      "sha256": "909bb2064b6a8bb07f4486c61dc6ee122c3141ca9dcb1397772f4d94f47ed5b3",
+      "note": "paired baseline/current chunk and Chromium performance profile"
+    }
+  ]
+}

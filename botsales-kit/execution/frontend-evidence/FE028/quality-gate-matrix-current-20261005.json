@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-05T02:20:10+07:00",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "sourceRevision": "HEAD e68cb65e61c5c1aab2ae169dd8033df305df8872 plus current frontend working tree",
+  "plan": {
+    "id": "BOTSALES-FRONTEND-MOCK-20260930",
+    "tasks": 28,
+    "checkpoints": 140,
+    "dependencies": 50,
+    "externalDependencies": 0,
+    "runtimeFolders": {
+      "apps/web": true,
+      "apps/api": false,
+      "apps/worker": false,
+      "infra": false
+    }
+  },
+  "tracker": {
+    "overallPercent": 97.5,
+    "verifiedSteps": 135,
+    "totalSteps": 140,
+    "doneTasksBeforeFinalReview": 27,
+    "blocked": [],
+    "stale": ["FE028"],
+    "next": ["FE028.S01"],
+    "snapshotMeaning": "Status immediately before FE028's final five artifact-review checkpoints. FE001-FE027 are current; FE028 is being reviewed now. This is not a final tracker result."
+  },
+  "uiPlan": {
+    "itemsDone": 27,
+    "itemsTotal": 27,
+    "checkpointsDone": 135,
+    "checkpointsTotal": 135,
+    "blockedRows": 0,
+    "latestItem": "UI027"
+  },
+  "rubric": {
+    "passed": 7,
+    "total": 9,
+    "ratio": "7/9",
+    "claim": "Frontend gate readiness by evidence, not code or architecture percentage."
+  },
+  "gates": [
+    {
+      "id": "FE-G01",
+      "title": "Môi trường tái lập",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Current UI027 verify and production build pass; earlier isolated clean install/build evidence remains applicable because dependencies and lockfile did not change.",
+      "evidence": [
+        "evidence/frontend-ui-improvements/UI027/S04-verify-20261005.log",
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-post-update-current-20261004.log"
+      ],
+      "limits": ["npm still prints esbuild/MSW allowScripts notices; no lifecycle script was auto-approved."]
+    },
+    {
+      "id": "FE-G02",
+      "title": "Code và kiến trúc",
+      "status": "ĐẠT",
+      "basis": "Generator 11/283/210/54; source 65/220/54; boundaries 430 imports, zero issue/cycle, negative fixtures 10/10; lint and strict typecheck pass after UI027.",
+      "evidence": ["evidence/frontend-ui-improvements/UI027/S04-verify-20261005.log"],
+      "limits": ["Codex self-review and automated checks; no independent peer review is claimed."]
+    },
+    {
+      "id": "FE-G03",
+      "title": "Contract và mocks",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Canonical generated/source checks, domain/MSW 88/88 and Vitest 85/85 pass; runtime tests use synthetic data.",
+      "evidence": ["evidence/frontend-ui-improvements/UI027/S04-verify-20261005.log"],
+      "limits": ["Does not establish live API or backend transaction behavior."]
+    },
+    {
+      "id": "FE-G04",
+      "title": "Phủ chức năng",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Built-demo Playwright passes 388/388 on Chromium and Firefox; the linked UAT matrix covers 54 routes, 64 features, 65 interactions, 22 journeys, role 357/357, empty 11/11 and error 51/51.",
+      "evidence": [
+        "evidence/frontend-ui-improvements/UI027/S04-e2e-full-20261005.log",
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json"
+      ],
+      "limits": ["Synthetic UI permissions do not prove server authorization."]
+    },
+    {
+      "id": "FE-G05",
+      "title": "UI/UX và accessibility",
+      "status": "CHƯA_ĐẠT_ĐẦY_ĐỦ",
+      "basis": "Automated keyboard, axe, contrast, text-flow, zoom and target-geometry evidence exists for the recorded routes and states.",
+      "evidence": ["evidence/frontend-ui-improvements/UI012/S47-technical-accessibility-acceptance-20261004.md"],
+      "limits": ["Narrator speech/transcript and broad human conformance review remain NOT_RUN; no full WCAG conformance claim."]
+    },
+    {
+      "id": "FE-G06",
+      "title": "An toàn Frontend",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "Current UI tests and earlier dependency audit report zero vulnerabilities; UI027 changed only Vite chunk grouping, not app security or dependency versions.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE024/npm-audit-post-update-current-20261004.log",
+        "evidence/frontend-ui-improvements/UI027/S04-e2e-full-20261005.log"
+      ],
+      "limits": ["Does not prove server-side authorization, tenant isolation or live PII handling."]
+    },
+    {
+      "id": "FE-G07",
+      "title": "Hiệu năng Frontend",
+      "status": "ĐẠT_TRONG_SCOPE",
+      "basis": "UI027 reduces the largest production chunk from 738.39 to 328.33 kB raw. Paired local Chromium profile shows route-ready median 3906.9 to 3812.1 ms and 1,004-customer list median 663.3 to 639.1 ms; transfer remains within the recorded frontend budget.",
+      "evidence": ["evidence/frontend-ui-improvements/UI027/S05-paired-performance-20261005.md"],
+      "limits": ["Synthetic local measurements; repeat profile is Chromium-only and does not establish device, CDN or backend SLOs."]
+    },
+    {
+      "id": "FE-G08",
+      "title": "Artifact và CI",
+      "status": "ĐẠT_LOCAL_EQUIVALENT",
+      "basis": "Current production build and built-demo browser regression pass; FE-G08 accepts clean local equivalent.",
+      "evidence": [
+        "evidence/frontend-ui-improvements/UI027/S04-verify-20261005.log",
+        "evidence/frontend-ui-improvements/UI027/S04-e2e-full-20261005.log"
+      ],
+      "limits": ["Hosted GitHub Actions remains NOT_RUN; no deployment was made."]
+    },
+    {
+      "id": "FE-G09",
+      "title": "UAT và bàn giao",
+      "status": "CHỜ_NGHIỆM_THU_NGƯỜI_DÙNG",
+      "basis": "Technical synthetic-MSW UAT, current architecture/gate review, instructions and handoff are prepared for final review.",
+      "evidence": ["botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json"],
+      "limits": ["The user owns final acceptance; no owner approval is self-recorded."]
+    }
+  ],
+  "productionClaimGate": {
+    "artifactAndRevision": "UI027 current production build and rebuilt demo; local working tree on HEAD e68cb65e plus recorded changes.",
+    "environment": "Windows Node 24.19.0/npm 11.17.0; Chromium 153 and Firefox 155; synthetic MSW only.",
+    "criteria": "FE-G01..09 as scoped in FRONTEND_PLAN_GUIDE.md.",
+    "exceptions": ["FE-G05 speech/human conformance NOT_RUN", "FE-G08 hosted CI NOT_RUN", "FE-G09 final user acceptance pending"],
+    "permittedClaim": "Frontend React/TypeScript đã kiểm chứng bằng API mock tổng hợp theo các gate được nêu; handoff READY_FOR_ACCEPTANCE.",
+    "excludedClaims": ["Backend/provider/persistence/staging", "whole-product production readiness", "user acceptance", "9/9 gate PASS"]
+  },
+  "definitionOfDone": {
+    "uiBacklog": "27/27 items and 135/135 checkpoints complete, including UI027.",
+    "feLedger": "The live post-FE028 state must be confirmed by progress.mjs validate/status; this matrix is the pre-FE028 snapshot.",
+    "fullProductLedger": "Read-only; unchanged by this frontend work.",
+    "userAcceptance": "Only the user can record final acceptance."
+  }
+}

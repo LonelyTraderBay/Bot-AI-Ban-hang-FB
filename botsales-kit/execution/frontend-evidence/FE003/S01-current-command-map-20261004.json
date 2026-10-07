@@ -1,0 +1,122 @@
+{
+  "taskId": "FE003",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-04T14:42:16.325Z",
+  "sourceRevision": "HEAD e68cb65 on main + current frontend working tree",
+  "expected": "Ánh xạ npm scripts hiện có: generate/source/boundaries/types/lint/domain/unit/build/demo/e2e; không dùng pnpm giả.",
+  "observed": "10/10 current command-map entries match package.json scripts and frontend cwd; retired contracts alias is explicitly not runnable and has a separate verified direct Node test; Vitest and Playwright configs exist. No tests were run by this artifact-review checkpoint.",
+  "command": "node botsales-kit/execution/frontend-evidence/FE003/capture-s01.mjs",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0",
+    "details": "Local source/config review; this checkpoint did not run the test suites.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 4,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE003/S01-current-command-map-20261004.log",
+  "logSha256": "db6de12f4f7ebf08c2718abcb4b7307cde1b43d78da9f0245ce4acf23e64d69c",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "ccd07977b9c080993c91288b82dbea8b0307ee1b5014ca3734a77b29fc0f559e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "4a3adb88f87019284f383dd22cfa8d93676086f201050377e31808eb94c5e94f"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "71aba6735ec90422b67441e6004087ddd8989cceee610e6f63ec88d5a0e1c100"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/capture-s01.mjs",
+      "sha256": "59e16a9d63cb91a845add8ffc1fa7a382a172a6fe6bf873443afa6eb09546f06"
+    }
+  ],
+  "sourceSnapshotSha256": "b78011764a38675cf5c659555b4e946c72b907e666e0e4217cd41e4152279ca6",
+  "commandMapping": [
+    {
+      "id": "generate",
+      "script": "generate:check",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run generate:check",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "source",
+      "script": "test:source",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "boundaries",
+      "script": "boundaries",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "types",
+      "script": "typecheck",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "lint",
+      "script": "lint",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run lint",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "domain",
+      "script": "test:domain",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "unit",
+      "script": "test",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "build",
+      "script": "build",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "build-demo",
+      "script": "build:demo",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build:demo",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "e2e",
+      "script": "test:e2e",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    }
+  ]
+}

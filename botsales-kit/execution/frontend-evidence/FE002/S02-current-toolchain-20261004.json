@@ -1,0 +1,54 @@
+{
+  "taskId": "FE002",
+  "stepId": "S02",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-04T14:07:03.202Z",
+  "sourceRevision": "HEAD e68cb65 on main + current frontend working tree",
+  "expected": "Khảo sát setup/doctor/install scripts và quyền ghi/cache/network; ghi baseline lỗi PATH hay registry nếu xảy ra thực.",
+  "observed": "setup/doctor scripts inspect cleanly; commands are registered VERIFIED_AVAILABLE; Node/package/MSW prerequisites exist; .env.local already exists and setup will not overwrite it.",
+  "command": "node botsales-kit/execution/frontend-evidence/FE002/capture-current-toolchain.mjs S02",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / npm 11.17.0",
+    "details": "Local toolchain/dependency review; synthetic frontend scope only.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 5,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE002/S02-current-toolchain-20261004.log",
+  "logSha256": "d46d84d61c41613ab0d3bcb703f3de10bd3a0c785faca3d6e5219a22ec59eae4",
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "ccd07977b9c080993c91288b82dbea8b0307ee1b5014ca3734a77b29fc0f559e"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    },
+    {
+      "path": "scripts/doctor.mjs",
+      "sha256": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e"
+    },
+    {
+      "path": "scripts/tools.mjs",
+      "sha256": "c5e8d51b9c60d48cdeadeff6422319c654fa08ae95bef2bb726926c85351aae0"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/capture-current-toolchain.mjs",
+      "sha256": "77d5a63d1f8a0beb16e9f8716ce1abea9a531c88b57403ed5d0f485264142bfe"
+    }
+  ],
+  "sourceSnapshotSha256": "98abdaac3aba0d0539f8d25c9ccf7c27e6d5eee67e07690653bc97dc66d04b02"
+}
