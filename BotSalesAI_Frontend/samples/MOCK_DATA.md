@@ -8,4 +8,4 @@ Seed gồm hai shop tách biệt, bảy role preset và dữ liệu catalog, t�
 
 MSW được nạp ở mode `demo`; production mode từ chối `VITE_ENABLE_MOCKS=true` và không khởi động mock worker. Banner trong ứng dụng ghi rõ dữ liệu mô phỏng. Các trang đối soát ngân hàng/COD vẫn có empty state trước khi người xem import CSV mẫu; import không mô phỏng xác nhận với ngân hàng, đơn vị vận chuyển hoặc backend thật.
 
-Nguồn kiểm: canonical `botsales-kit/contracts/openapi.json`, `route-manifest.json`, `feature-catalog.json`, `permission-catalog.json`, `events.schema.json`, database được reset từ seed và transcript do `npm run test:domain` sinh. Fixture không chứng minh hành vi backend, provider, production, đồng thời thật hay tính đúng đắn nghiệp vụ tài chính.
+Nguồn kiểm: canonical `../botsales-kit/contracts/openapi.json`, `route-manifest.json`, `feature-catalog.json`, `permission-catalog.json`, `events.schema.json`, database được reset từ seed và transcript do `npm run test:domain` sinh. Fixture không chứng minh hành vi backend, provider, production, đồng thời thật hay tính đúng đắn nghiệp vụ tài chính.

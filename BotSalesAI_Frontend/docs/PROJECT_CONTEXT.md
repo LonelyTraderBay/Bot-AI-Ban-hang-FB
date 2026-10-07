@@ -1,27 +1,29 @@
-# Hồ sơ dự án frontend
+# Hồ sơ dự án Frontend — 07/10/2026
 
-## Mục tiêu và nguồn đã duyệt
+**CURRENT PHASE:** Frontend-only work follows the dependency and evidence recorded in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). This context file records scope and canonical pointers; it does not duplicate S-step statuses. Do not change FE/full-product ledgers without task-level evidence.
 
-Mục tiêu theo yêu cầu người dùng: hoàn thiện frontend BotSales AI bằng React/TypeScript và synthetic mock API đủ cho nghiệm thu UI. Backend thật không phải điều kiện để hoàn tất giao diện. Áp dụng nguyên bản `AI_RULES.md`; giữ kiến trúc nhất quán, rõ ranh giới và có thể mở rộng. Chưa tuyên bố Production-Ready/Enterprise-Grade trước khi mọi gate bắt buộc được xác nhận.
+Phạm vi hiện hành: React/TypeScript Frontend trong apps/web, API synthetic MSW chỉ demo/test. AI tự triển khai/kiểm thử/tái xác minh/bàn giao trong scope; người dùng nghiệm thu cuối. [FRONTEND_SCOPE](FRONTEND_SCOPE.md) là nguồn phạm vi. Không Backend/provider/persistence/staging/deploy proof; không tự commit/push hoặc ghi owner acceptance.
 
-Nguồn contract là `botsales-kit/contracts/openapi.json`, `route-manifest.json` và `design/tokens.json`. Task chuẩn là `botsales-kit/execution/frontend-plan.json`; tiến độ chỉ ghi trong `frontend-progress.json` bằng `scripts/progress.mjs`. Kế hoạch, ledger toàn sản phẩm và `tasks/T*.md` ngoài scope, chỉ đọc.
+## Trạng thái source
 
-## Trạng thái hiện tại — 02/10/2026
+The source rollout review and its scope are recorded in [§16.17](FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007); current implementation status and remaining dependencies are recorded only in [§16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). Scoped checks do not prove full enforcement or full UI acceptance.
 
-- UI React có 54 route canonical và 16 module nghiệp vụ; MSW chỉ được bật ở demo/test. Production artifact không chứa worker hay runtime mock. Dữ liệu mẫu là tổng hợp, có nhãn và reset theo phiên tab.
-- Windows Node 24.19.0/npm 11.17.0: `npm run verify` đạt; generator 11 outputs/283 schemas/210 operations/54 routes; source 62 files/227 operation refs/54 routes; boundaries 410 imports, negative fixtures 8/8; ESLint, TypeScript, domain/MSW 88/88, Vitest 71/71 và production build đều đạt.
-- Full Chromium E2E đạt 147/147 trên demo build: route success/state, axe và keyboard, FE009–FE021, 357 route-role cases, 9 empty states, 51 route error compositions và bốn luồng xuyên module. Schema mock đạt 356/356; npm audit 0 lỗ hổng/478 dependencies.
-- Ma trận feature có 64 feature IDs và 65/65 feature-route interaction rows có browser test trực tiếp. Ma trận state có 54 route × 7 vai trò, 432 ô: 163 route-specific, 204 shared UI, 65 không áp dụng theo contract và 0 `NOT_TESTED`. Reflow 320 CSS px đạt 54/54 route.
-- Ledger frontend hiện 100% — 140/140 checkpoint, 28/28 task, không BLOCKED/STALE. Đây là hoàn thành checklist UI/mock; nó không cấp quyền phát hành hay thay owner approval. FE-G05 còn phần kiểm zoom thật/screen-reader/contrast thủ công; FE-G09 chờ chủ sản phẩm xác nhận.
+## Quy định và nguồn chuẩn
 
-## Kiến trúc và giới hạn
+Design consolidation remains the policy source: [workflow v1.28](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075; the [shared catalog](../apps/web/src/shared/ui/README.md) distinguishes CURRENT from TARGET APIs; and [plan §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) owns dependency/status. Current evidence is linked per step; the design document itself does not certify runtime or Enterprise conformance. Evidence hash/coverage validation and shared UI regression suites run in required `npm run verify`.
 
-Giữ một MUI, React Query và Router; module không import module nghiệp vụ khác; shared không chứa logic nghiệp vụ. API IO theo operationId/DTO canonical. MSW chỉ chạy trong demo/test; không có fallback mock ở live/production. Không sửa tay source generated; chạy `npm run generate:check` sau thay đổi contract.
+**HISTORICAL_SNAPSHOT — audit v15.0:** [report](../evidence/frontend-ui-improvements/ui-policy-steel-20261006/REPORT.md) ghi68 TS/TSX,28 TSX,16 modules;27 shared exports;176 composition uses/21 files. Ba strict scans0 findings,24/24existing fixtures vàgenerator exit0; adversarial probes vẫn chứng minh bypass. Browser diagnostic nhỏ ghi ba Finance first-body boundaries32/40px thay16 và Imports clearance label15/control24px tại806/1440. Đây là kết quả theo source/state của lần đó, không proof chạy lại build/full E2E/native200/speech/hosted CI trong lượt hợp nhất tài liệu.
 
-FE017 dùng quyền `knowledge.publish` cùng lifecycle check làm substitute UI theo quyết định trực tiếp của người dùng; canonical OpenAPI không có `Knowledge.allowedActions`, và không thêm field đó vào DTO/generated code. Các giới hạn contract/provider được ghi trong `docs/KNOWN_GAPS.md`; giao diện báo rõ preview mô phỏng, không giả vờ đã lưu server hoặc gọi dịch vụ thật.
+Lượt triển khai trước ở [§15](FRONTEND_UI_IMPROVEMENT_PLAN.md#15-audit-và-triển-khai-shared-composition-toàn-dự-án--06102026) và [report](../evidence/frontend-ui-improvements/shared-composition-20261006/REPORT.md):six owners đã triển khai, current renders216/216;114pairs comparable/102baseline partial. Full E2E485/486 FAIL, targeted artifact retest6/6 riêng; không cộng thànhfull suite PASS. Các Wxx/UI027/FE04-10 trong kế hoạch và REPORT là HISTORICAL_SNAPSHOT theo hash, không chứng minh current freshness.
 
-Bằng chứng mới nhất nằm ở `botsales-kit/execution/frontend-evidence/FE026/verify-ui-select-and-feplan-002-20261002.log`, `FE027/e2e-ui-select-and-feplan-002-current-20261002.log`, `FE023/unit-verbose-ui-select-current-20261002.log`, `FE024/mock-schema-isolated-ui-select-current-20261002.log` và `FE027/ui-screenshots-20261002/manifest.json`. Xem `evidence/REPORT.md` để biết trạng thái FE-G01..09 và phần chưa được xác nhận.
+## Nguồn chuẩn và tiến độ
+
+- Hành vi: ../botsales-kit/contracts/openapi.json, contracts/route-manifest.json, permission/event contracts và UX-CONTRACT. Atomic values: design/tokens.json →generator; không sửa generated bằng tay.
+- Runtime owner: theme.ts/layout.ts/visual.ts/components.tsx/composition.tsx. [Shared catalog](../apps/web/src/shared/ui/README.md) giải thích API; không normative scale/ledger thứ hai. Một MUI/theme, QueryClient, Router; module không import module khác; shared không import app/modules/mocks.
+- Quy định và workflow UI duy nhất: [FRONTEND_SPACING_STANDARD](FRONTEND_SPACING_STANDARD.md#unified-workflow); AGENTS/DESIGN/UX/coding standards route tới nó. AI_RULES Universal3.1 root/kit giữ nguyên; không tạo checklist hoặc skill rule riêng cùng vai trò.
+- FE task/ledger: execution/frontend-plan.json/frontend-progress.json. Đọc node ../botsales-kit/scripts/progress.mjs status sau thay đổi source/policy; snapshot trước policy audit ghi0/140 effective,28 stale,blocked=[] /next FE001.S01. Đây là evidence freshness, không0% code. Không ghi tăng từ audit/docs.
+- Full-product execution/plan.json/progress.json/tasks/T*.md chỉ đọc. FE-G01..09 cần evidence còn hiệu lực; không dùng số fixture/component/rule làm điểm readiness.
 
 ## Tiếp tục
 
-Checklist triển khai frontend mock đã đủ 100%. Bước sau là người dùng xem các ảnh demo và xác nhận UAT; nếu cần tuyên bố production/release thì hoàn thành kiểm zoom browser thật, screen-reader, axe color contrast và các gate môi trường/owner còn mở. Không tự ghi owner acceptance, không cập nhật ledger toàn sản phẩm, không push/merge/deploy. Đọc `AGENTS.md`, `AI_RULES.md`, `docs/FRONTEND_SCOPE.md`, `docs/KNOWN_GAPS.md` và `evidence/REPORT.md` trước khi mở rộng.
+[CONTINUE_FRONTEND](CONTINUE_FRONTEND.md), [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) và [REPORT](../evidence/REPORT.md) là đường vào hiện hành; §16.17 giữ lý do thiết kế. Tiếp tục theo dependency; không chạy lại S03–S08 nếu input/evidence còn đúng. Mọi bước theo [workflow canonical](FRONTEND_SPACING_STANDARD.md#unified-workflow), không nhận FE003.S05/W33 từ journal cũ. Strict FAIL/UNKNOWN hoặc mandatory NOT_RUN không đóng UI; hosted CI/owner/speech chưa quan sát được giữ giới hạn đúng scope, không tạo dependency chờ giữa chừng.

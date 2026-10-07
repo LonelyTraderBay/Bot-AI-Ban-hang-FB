@@ -1,27 +1,27 @@
-# Tiếp tục frontend với mock API
+# Tiếp tục Frontend — 07/10/2026
 
-Cập nhật 02/10/2026 theo yêu cầu người dùng: hoàn thiện UI frontend bằng synthetic mock API; backend thật không phải điều kiện nghiệm thu màn hình. Scope `FRONTEND_WITH_SYNTHETIC_MOCK_API`. Không cập nhật ledger toàn sản phẩm.
+**Current phase — source rollout:** the user has closed the policy review and authorized implementation by dependency until completion. Preserve all existing working-tree changes and keep the scope Frontend-only. Resume from [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan); the prior review is recorded in [§16.17](FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007).
 
-## Trạng thái hoàn tất
+**Current next step:** continue from the current S-step and dependency order in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). This file is a continuation pointer, not a second status ledger. Preserve scoped closeouts and do not record acceptance or UI status beyond evidence.
 
-`node botsales-kit/scripts/progress.mjs status` xác nhận 100% — 140/140 checkpoint, 28/28 task, `blocked=[]`, `stale=[]`. `validate` xác nhận cấu trúc 28 task/140 checkpoint. Ledger biểu thị checklist UI frontend với mock API, không phải release certification.
+**Policy authority:** [FRONTEND_SPACING_STANDARD](FRONTEND_SPACING_STANDARD.md#unified-workflow) is the sole normative rule/workflow source; [shared catalog](../apps/web/src/shared/ui/README.md) describes CURRENT/TARGET APIs; [plan §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) owns priority/dependencies/status. §16.17 records the pre-source architecture review and baseline; §16.6 is the live implementation status. Historical policy snapshots remain historical.
 
-## Bằng chứng mới nhất
+## Công việc hiện hành
 
-Windows Node 24.19.0/npm 11.17.0: `npm run verify` đạt (generator, source/boundaries, lint/typecheck, domain/MSW 88/88, Vitest 71/71, production build). Full Chromium E2E đạt 147/147 trên React demo build: 54 route success, axe/keyboard, FE009–FE021, state tests, 357 role-route checks, 9 empty-state routes, 51 route error compositions và bốn vertical journeys. Mock JSON Schema 356/356; npm audit 0/478. Ma trận state: 54 routes × 7 roles, 432 cells, 0 `NOT_TESTED`. Reflow 320 CSS px không tràn trên 54/54 route.
+Nguồn việc là [FRONTEND_UI_IMPROVEMENT_PLAN v16.0 §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). Quy định và cách thực hiện lấy từ [workflow duy nhất v1.28](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075; API hiện hành/target lấy từ [catalog CURRENT/TARGET](../apps/web/src/shared/ui/README.md). File này chỉ route tới việc và bằng chứng, không một workflow/checklist song song. Required validators and source gates run through root `npm run verify`; browser coverage closes through S19 evidence.
 
-Log hiện hành: `botsales-kit/execution/frontend-evidence/FE026/verify-ui-select-and-feplan-002-20261002.log`, `FE027/e2e-ui-select-and-feplan-002-current-20261002.log`, `FE023/unit-verbose-ui-select-current-20261002.log`, `FE024/mock-schema-isolated-ui-select-current-20261002.log`, `FE024/npm-audit-ui-select-current-20261002.json`. Bốn ảnh UI và request manifests ở `botsales-kit/execution/frontend-evidence/FE027/ui-screenshots-20261002/manifest.json`.
+**Historical snapshot — S06 partial** (replaced by the S06/S07 closeouts and current status above). Refresh inventory/baseline per batch, preserve dirty work, and do not treat a scoped tooling PASS as full UI acceptance.
 
-## Quyết định và giới hạn
+## Trạng thái và bằng chứng
 
-FE017 dùng quyền `knowledge.publish` + lifecycle check cho UI mock theo quyết định trực tiếp của người dùng; không thêm `Knowledge.allowedActions` vào OpenAPI/DTO/generated code. Production artifact không có MSW worker; demo có. Các màn hình/provider preview được gắn nhãn synthetic và không giả đã lưu server.
+[Report hợp nhất hiện hành](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/REPORT.md) ghi scope/inventory/mapping/docs verification và các giới hạn. **HISTORICAL_SNAPSHOT — audit v15.0:** [report cũ](../evidence/frontend-ui-improvements/ui-policy-steel-20261006/REPORT.md) có27 shared exports/112 semantic roles,176composition occurrences,68TS/TSX, ba strict gates0finding và24/24existing fixtures; adversarial probes vẫn vượt gate. Browser diagnostic Finance/Imports chỉ chứng minh state đã kiểm, không thay full E2E/native200/speech review.
 
-FE-G05 còn chờ browser zoom thật, screen-reader và hoàn tất color-contrast; 320px hiện là reflow proxy. FE-G09 tự động đạt, nhưng chủ sản phẩm chưa xác nhận UAT. GitHub CI, backend/provider, server authorization, hosting và staging không được suy ra từ local tests. Production build có advisory chunk 730.75 KiB raw/184.41 KiB gzip; audit strict của design tool còn 12 false positive đã đối chiếu trong `evidence/frontend-design-audit-reconciliation-current-20261002.md`. Xem `docs/KNOWN_GAPS.md` và `evidence/REPORT.md` để biết từng giới hạn.
+§15/report shared-composition là source/runtime snapshot trước lượt docs-only:216current renders;114comparable/102partial baseline;full485/486FAIL +retest6/6 riêng. W36/FE28 snapshots cũ và FE003.S05/W33 journal không là task next hiện hành. Lịch sử giữ trong plan và evidence/REPORT; không ghi đè baseline hoặc dùng after làm before.
 
-Luôn đọc `AGENTS.md`, nguyên bản `AI_RULES.md`, `docs/FRONTEND_SCOPE.md`, `docs/PROJECT_CONTEXT.md`, `docs/KNOWN_GAPS.md` và `evidence/REPORT.md`. Chỉ sửa source React/TS trong `apps/web`; generated contract phải do generator tạo; chạy `npm run generate:check` và các gates liên quan sau khi sửa.
+Đọc node ../botsales-kit/scripts/progress.mjs status để lấy FE effective status/next. Lượt audit trước policy ghi0/140 verified,28 stale,blocked=[],next FE001.S01; không đồng nghĩa implementation0%. Không ghi tay FE ledger/full-product tracker hoặc owner acceptance. UI §16 có dependency kỹ thuật, không BLOCKED vì chờ external.
 
-## Runner revalidation ngày 01/10/2026
+## Điều kiện bàn giao
 
-Sau FE002, Vitest/RTL chạy 66/66 trong 7 file; Playwright nạp 123 test trong 18 file; full Chromium `npm run test:e2e` chạy lại và đạt 123/123, bao gồm setup, `generate:check`, typecheck, production/demo builds và bốn vertical journeys. Axe được nạp trong browser cases; package import cũng được xác minh. Lần gọi Vitest với `--script-shell=powershell.exe` bị Windows execution policy chặn ở `vitest.ps1`; lần chạy lại qua `cmd.exe` thành công và suite không bị tắt.
+Điều kiện bàn giao/closing nằm ở [workflow canonical](FRONTEND_SPACING_STANDARD.md#unified-workflow) và acceptance của bước hiện hành trong [plan §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). Strict FAIL/UNKNOWN hoặc mandatory NOT_RUN không DONE; paired proof bị thiếu giữ giới hạn mở. Không ghi owner acceptance hoặc tăng FE-G01..09 từ policy/component count; docs-only không tạo runtime PASS.
 
-Log mới: `botsales-kit/execution/frontend-evidence/FE003/S03-vitest-cmd-current-20261001.log`, `S03-playwright-list-current-20261001.log`, `S03-axe-import-current-20261001.log` và `S03-e2e-current-20261001.log`. Đây là local Windows evidence, không phải GitHub CI. Tiếp tục dùng command map `botsales-kit/execution/frontend-command-map.json` và shell `cmd.exe` cho lệnh npm gọi shim trên Windows.
+Phạm vi duy nhất React Frontend với synthetic MSW. Không server/liveprovider/persistence/staging/deploy; giữcontracts/tokens canonical vàAI_RULES nguyên bản. Git root ởfolder cha; workflow thật ../.github/workflows/frontend.yml. Cấu hình workflow không là hosted run PASS; local equivalent được scope cho phép. Không commit/push/merge/deploy nếu chưa được giao riêng.

@@ -2,91 +2,9 @@
 version: alpha
 name: BotSales AI — Graphite Gold
 description: "Giao diện vận hành bán hàng đa module: dữ liệu rõ, thao tác an toàn, điểm nhấn vàng trên nền graphite."
-colors:
-  primary: "#F6C85F"
-  on-primary: "#15181E"
-  canvas: "#111318"
-  surface: "#1C2028"
-  raised: "#282F3A"
-  input: "#171B22"
-  text: "#F5F7FA"
-  text-secondary: "#B9C2D0"
-  success: "#4DD7A3"
-  success-surface: "#193B33"
-  warning: "#FFB078"
-  warning-surface: "#3E3027"
-  danger: "#FF8596"
-  danger-surface: "#402832"
-  info: "#8ABCFB"
-  info-surface: "#25354B"
-typography:
-  sans:
-    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
-    fontSize: "14px"
-    lineHeight: "1.5"
-rounded:
-  DEFAULT: "8px"
-  control: "8px"
-  card: "12px"
-  dialog: "16px"
-spacing:
-  xs: "4px"
-  sm: "8px"
-  md: "12px"
-  lg: "16px"
-  xl: "24px"
-  xxl: "32px"
-  xxxl: "48px"
-components:
-  page:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.text}"
-    typography: "14px/1.5 system sans"
-  button:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    typography: "14px/1.5, 650"
-    rounded: "8px"
-    padding: "8px 16px"
-    height: "44px minimum"
-  panel:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.text}"
-    rounded: "12px"
-    padding: "16px"
-  dialog:
-    backgroundColor: "{colors.raised}"
-    textColor: "{colors.text}"
-    rounded: "16px"
-    padding: "24px"
-  input:
-    backgroundColor: "{colors.input}"
-    textColor: "{colors.text}"
-    rounded: "8px"
-    height: "44px minimum"
-  secondary-text:
-    textColor: "{colors.text-secondary}"
-    typography: "12px/1.5 system sans"
-  success-status:
-    backgroundColor: "{colors.success-surface}"
-    textColor: "{colors.success}"
-    rounded: "8px"
-    padding: "4px 8px"
-  warning-status:
-    backgroundColor: "{colors.warning-surface}"
-    textColor: "{colors.warning}"
-    rounded: "8px"
-    padding: "4px 8px"
-  danger-status:
-    backgroundColor: "{colors.danger-surface}"
-    textColor: "{colors.danger}"
-    rounded: "8px"
-    padding: "4px 8px"
-  info-status:
-    backgroundColor: "{colors.info-surface}"
-    textColor: "{colors.info}"
-    rounded: "8px"
-    padding: "4px 8px"
+tokens: ../botsales-kit/design/tokens.json
+uiRules: docs/FRONTEND_SPACING_STANDARD.md
+sharedUiCatalog: apps/web/src/shared/ui/README.md
 ---
 
 # BotSales AI Design System
@@ -107,19 +25,23 @@ BotSales AI is a merchant operations workbench: inbox, orders, stock, procuremen
 - **Memorable signature:** gold is a restrained state/action signal, never a decorative glow or a substitute for text labels.
 - **Restraint:** use borders, spacing and hierarchy before shadows, gradients or motion. Dense data surfaces remain neutral.
 - **Anti-references:** neon chatbot dashboards, decorative gradients on every card, color-only status, and generic KPI hero layouts without operational meaning.
-- **Token ownership/runtime mapping:** `botsales-kit/design/tokens.json` is canonical. `scripts/generate.mjs` emits the workspace token package/CSS; `apps/web/src/shared/ui/theme.ts` maps those tokens into MUI. `npm run generate:check` is the drift gate. This file mirrors the approved values and does not generate a second token system.
+- **Token ownership/runtime mapping:** `../botsales-kit/design/tokens.json` is canonical. `scripts/generate.mjs` emits the workspace token package/CSS; `apps/web/src/shared/ui/theme.ts` maps those tokens into MUI. `npm run generate:check` is the drift gate. Frontmatter provides canonical pointers only; it does not duplicate token values or layout rules.
 
 ## Colors
 
-The exact palette is owned by `botsales-kit/design/tokens.json` and ADR-VIS-021; the frontmatter lists the values used by shared components. `primary` is the action/focus accent; `canvas`, `surface` and `raised` create three graphite depth levels. Success, warning, danger and info use their semantic tokens and corresponding surface tokens. Status always has text or an icon as well as color. The control outline uses canonical token `borderControl` from `tokens.json`; the design frontmatter schema has no border-color component slot, so its runtime mapping is documented here and in the MUI theme. Decorative borders do not communicate interactivity. Forced-colors remains system-controlled.
+The exact palette is owned by `../botsales-kit/design/tokens.json` and ADR-VIS-021. This document describes identity and intent; runtime values come from the generated token package and shared MUI theme. `primary` is the action/focus accent; `canvas`, `surface` and `raised` create three graphite depth levels. Success, warning, danger and info use their semantic tokens and corresponding surface tokens. Status always has text or an icon as well as color. The control outline uses canonical token `borderControl` from `tokens.json`; the design frontmatter schema has no border-color component slot, so its runtime mapping is documented here and in the MUI theme. Decorative borders do not communicate interactivity. Forced-colors remains system-controlled.
 
 ## Typography
 
-Use the system sans stack already shipped by the app; do not download fonts or introduce a second display family. Body text uses the 14px token with 1.5 line height; comfortable copy and headings use the existing MUI theme scale. Numeric values use tabular figures where available. Preserve Vietnamese diacritics and allow long shop, customer and document names to wrap or expose a full-value path instead of clipping.
+Use the system sans stack already shipped by the app; do not download fonts or introduce a second display family. Body copy and headings use the current canonical typography tokens and MUI theme variants; do not create a local type scale. Numeric values use tabular figures where available. Preserve Vietnamese diacritics and allow long shop, customer and document names to wrap or expose a full-value path instead of clipping.
 
 ## Layout
 
-Follow the generated breakpoints: mobile below 768px, tablet from 768px and desktop from 1280px. Desktop uses the 240px navigation rail, with a 72px compact variant where supported; the mobile app header is 56px. Use the 4/8/12/16/24/32/48px spacing tokens. Inbox list and context columns use the approved 300px and 320px targets while the conversation keeps the remaining width and its own scroll region. Tables may scroll horizontally on narrow screens; keep labels and actions available. Reserve geometry for loading and errors and do not clip long forms to fit a table viewport.
+The sole normative UI policy is [FRONTEND_SPACING_STANDARD v1.28](docs/FRONTEND_SPACING_STANDARD.md), SPC-001–075. Every UI task uses its [canonical workflow](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); this design context owns product identity and intent, not a parallel checklist or numeric layout standard. Its frontmatter contains pointers only; `../botsales-kit/design/tokens.json` remains the canonical value source. UI evidence must pass the repository validator and `npm run verify`; a clean document or source scan alone cannot close rendered route/state coverage.
+
+Use the [shared catalog CURRENT/TARGET](apps/web/src/shared/ui/README.md) to select an existing owner and distinguish planned contracts from runtime APIs. Responsive geometry and semantic profiles are defined by canonical tokens and the spacing standard. Tables may scroll within a named region; inbox panes retain independent scroll owners, record identity and primary actions remain usable, and long content reflows.
+
+The [v16.0 plan §16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) owns rollout priorities, dependencies and current status. [Plan §16.17](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007) records the shared-UI review rationale. Earlier W/UI028/shared-composition evidence is historical by source hash. This document does not grant a source/browser PASS, checkpoint or Enterprise certification.
 
 ## Elevation & Depth
 
@@ -127,7 +49,7 @@ Hierarchy comes from the canvas/surface/raised/elevated token layers and restrai
 
 ## Shapes
 
-Controls use 8px radius, cards 12px and dialogs 16px. Use the 44px touch target for primary controls and icon buttons. Dividers use the decorative border token; focus uses a visible 2px accent outline with offset.
+Shape, touch-target and focus values resolve through canonical tokens and the shared MUI theme. The metadata header does not contain visual values; shape and touch targets resolve through canonical tokens and the shared MUI theme. Dividers use decorative border roles; focus remains visible and distinguishable.
 
 ## Components
 

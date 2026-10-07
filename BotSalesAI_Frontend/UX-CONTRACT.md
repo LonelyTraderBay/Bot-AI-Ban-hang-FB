@@ -9,25 +9,27 @@ This contract records observable frontend behavior. Business and permission poli
 - Target market: not legally classified by this frontend scope. Do not infer tax, privacy or payment obligations from the UI language or demo currency.
 - Active locale: Vietnamese (`vi`).
 - Timezone/calendar: retain the shop timezone for timestamps; date-only API values remain date-only strings and are not timezone-shifted.
-- Accessibility target: WCAG 2.2 AA for the frontend implementation; manual screen-reader and actual browser-zoom evidence is tracked separately.
+- Accessibility target: WCAG 2.2 AA for the frontend implementation; screen-reader evidence is tracked separately from browser automation. Bounded native resize/zoom results belong to dated historical reports, not the current plan's S-step status. Under the 2026-10-04 policy in docs/FRONTEND_SCOPE.md, unobserved manual screen-reader output is disclosed at final delivery and does not require an intermediate user session; no full WCAG conformance claim follows from axe or DOM checks.
 
 ## Business-context sources
 
 | Domain / scope | Authoritative source | Source type | Reviewed date |
 |---|---|---|---|
-| Permission model | `botsales-kit/contracts/permission-catalog.json`, `route-manifest.json` | Permission/API contract | 2026-10-02 |
-| Data lifecycle and command outcomes | `botsales-kit/contracts/openapi.json`, `botsales-kit/docs/06_API_AND_REALTIME.md` | API/domain contract | 2026-10-02 |
+| Permission model | `../botsales-kit/contracts/permission-catalog.json`, `route-manifest.json` | Permission/API contract | 2026-10-02 |
+| Data lifecycle and command outcomes | `../botsales-kit/contracts/openapi.json`, `../botsales-kit/docs/06_API_AND_REALTIME.md` | API/domain contract | 2026-10-02 |
 | Deletion and retention | Contract operations only; no separate retention policy is defined in this frontend scope | API contract / unresolved owner policy | 2026-10-02 |
-| Billing and payment | `botsales-kit/contracts/openapi.json`, relevant finance operations; server accounting policy is outside frontend scope | API contract | 2026-10-02 |
+| Billing and payment | `../botsales-kit/contracts/openapi.json`, relevant finance operations; server accounting policy is outside frontend scope | API contract | 2026-10-02 |
 | Legal/regulatory copy | No legal-copy authority is supplied for this UI scope; do not add compliance claims | Unresolved owner input | 2026-10-02 |
 
 ## Visual contract
 
-- Project design system: `DESIGN.md`.
-- Token ownership: existing runtime package remains canonical; `botsales-kit/design/tokens.json` → `scripts/generate.mjs` → generated token package/CSS → `apps/web/src/shared/ui/theme.ts`.
-- Drift gate: `npm run generate:check`; never hand-edit generated contract/token outputs.
-- Supported theme: approved Graphite Gold dark-only (`botsales-kit/design/decision.json`).
-- Locale and surface: Vietnamese product UI, all 54 routes; no marketing register within app flows.
+- Project identity and register: [DESIGN.md](DESIGN.md); approved Graphite Gold dark-only decision remains in `../botsales-kit/design/decision.json`.
+- Atomic values: `../botsales-kit/design/tokens.json` → generator → generated package/CSS → shared theme/layout/visual owners. Generated output is not a second canonical source.
+- Normative UI policy: [standard v1.28](docs/FRONTEND_SPACING_STANDARD.md), SPC-001–075. Every new/changed UI follows the [sole workflow](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); no alternative UI checklist is defined here. Required UI checks and evidence provenance run through `npm run verify`; missing or stale evidence cannot be marked PASS.
+- Runtime versus planned API: [shared catalog CURRENT/TARGET](apps/web/src/shared/ui/README.md). This contract owns observable behavior; the catalog/standard own API and layout invariants.
+- Product UI uses Vietnamese across routes discovered from the current manifest; no marketing register inside app flows.
+- Rollout/dependencies: [plan v16.0 §16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). Results/limits: [unification report](evidence/frontend-ui-improvements/ui-governance-unified-20261006/REPORT.md).
+- Current implementation status is recorded only in [plan §16.6](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan); the policy/catalog review rationale is in [§16.17](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007). Policy documentation is not source/browser PASS, checkpoint or owner acceptance.
 
 ## Canonical UI Map
 
@@ -45,7 +47,7 @@ This contract records observable frontend behavior. Business and permission poli
 
 | Component | Default | Hover | Focus | Active | Disabled | Busy | Error |
 |---|---|---|---|---|---|---|---|
-| Button | MUI hierarchy; 44px minimum target | Theme hover token | Visible 2px accent outline | Theme pressed token | Mutations guard the handler and explain permission/capability where needed | Stable label/size and visible progress where used | Inline error remains available |
+| Button | MUI hierarchy and canonical target | Theme hover token | Visible theme focus outline | Theme pressed token | Mutations guard the handler and explain permission/capability where needed | Stable label/size and visible progress where used | Inline error remains available |
 | Icon button | Use only for compact utility action with accessible name | Theme hover | Visible outline and tooltip where useful | Same semantic intent | Native disabled behavior | Preserve geometry | Inline status, not color alone |
 | Input | Visible label and theme border | Border contrast increases | Accent border/outline | N/A | Native disabled/read-only semantics | Preserve field size | `aria-invalid` and associated help/error where field state is owned |
 | Secret input | Masked by default | N/A | Visible outline | N/A | Native disabled | N/A | Never expose secret in URL/log/toast |
@@ -115,9 +117,9 @@ This contract records observable frontend behavior. Business and permission poli
 ## Verification
 
 - Static/runtime commands: `npm run generate:check`, `npm run verify`, `npm run test:e2e`, `npm audit`.
-- Browser matrix currently evidenced: Chromium desktop plus route reflow at 320 CSS px. Other browsers/devices are not inferred from Chromium.
-- Accessibility: Playwright/Axe and keyboard skip-link checks on 54 routes; actual browser zoom and full screen-reader review remain unverified until separately evidenced.
+- Required route/profile/state/browser methods follow the [canonical workflow](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); results must name the run, source hash and tested scope. A historical Chromium or Chromium/Firefox run does not verify untouched devices or the current revision.
+- Accessibility evidence separates browser/Axe/keyboard, viewport reflow, native text resize, actual browser zoom and screen-reader speech. Historical bounded passes and unobserved speech are reported separately; neither becomes full conformance or current PASS from this documentation edit.
 - Component/state coverage: `apps/web/src/shared/ui/components.tsx`, `tests/states/`, `tests/accessibility/routes.spec.ts`.
 - Canonical sibling workflow: catalog→stock→order and inbox→knowledge/bot from `tests/vertical-slices/fe022-flows.spec.ts`.
-- Project audit: `py -3 <frontend-design-premium>/scripts/audit_project.py . --mode strict`; latest report is in `evidence/frontend-design-audit-current-20261002.json` and findings must be resolved or explained with direct source evidence.
+- Historical design-source audit: `py -3 <frontend-design-premium>/scripts/audit_project.py . --mode strict`; `evidence/frontend-design-audit-current-20261002.json` records that dated snapshot. Its filename does not grant current enforcement or replace the current workflow's source/render evidence.
 - CRUD full-flow evidence: `tests/vertical-slices/fe022-flows.spec.ts`; failure-path evidence: `tests/states/route-error-composition.spec.ts`.

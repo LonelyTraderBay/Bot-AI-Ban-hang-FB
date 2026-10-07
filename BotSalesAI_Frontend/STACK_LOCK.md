@@ -1,9 +1,18 @@
-# Khai báo phiên bản và trạng thái khóa
+# Toolchain và dependency lock — đối chiếu 04/10/2026
 
-Baseline target Node24, TypeScript5.9.2. Exact top-level package versions nằm tại hai package.json, không dùng ^ hoặc ~. Đây **chưa phải resolved dependency lock** vì môi trường không cài npm được. Không có package-lock.json giả; lệnh npm install trên máy được phép sẽ sinh lockfile, sau đó cần review/đóng băng và dùng npm ci.
+Nguồn chuẩn phiên bản khai báo: package.json root, apps/web/package.json; phiên bản resolved là package-lock.json thật hiện có. Không dùng tài liệu khai báo cũ để kết luận chưa có lockfile. packageManager npm@11.17.0; engine Node >=24 <25. Evidence S39/S40 dùng Windows Node24.19.0/npm11.17.0.
 
-Các gói chính: React/ReactDOM19.1.1, Router7.8.2, MUI7.3.1, Vite7.1.3, Query5.85.5, RHF7.62.0, Zod4.1.3, MSW2.11.1. Chưa xác minh tổ hợp này bằng build hoặc rà toàn bộ advisory. Không tuyên bố chúng là “mới nhất/không lỗ hổng”. Đừng auto upgrade stack hoặc giải quyết lỗi bằng force-install.
+| Thành phần | Phiên bản khai báo hiện hành |
+|---|---|
+| React / ReactDOM | 19.1.1 |
+| TypeScript / Vite | 5.9.2 / 7.3.6 |
+| MUI Material / icons | 7.3.1 |
+| TanStack Query / Router | 5.85.5 / 7.18.4 |
+| RHF / Zod | 7.62.0 / 4.1.3 |
+| i18next / react-i18next | 25.4.2 / 15.7.3 |
+| MSW / Vitest / Playwright / axe-core playwright | 2.11.1 / 5.0.3 / 1.63.0 / 4.10.2 |
+| Recharts / AJV | 3.1.2 / 8.20.0 |
 
-Công cụ thực sự chạy khi tạo gói: Node22.16.0, TypeScript5.8.3 môi trường, Pythonjsonschema. Bằng chứng đó chỉ áp dụng parser/mocks/schema, không targetapp.
+Các khai báo này đã đọc từ manifests, không là kết quả dependency vulnerability scan mới. Không tự nâng stack, npm audit fix --force hoặc force-install trong task UI/docs. Khi tái lập dùng npm ci theo lock, setup/doctor và checks theo diff. Lượt audit tài liệu không cold-install/build/test lại; runtime logs S39/S40/S08 tại evidence/REPORT.md, fingerprint S08 định danh input đã kiểm.
 
-Tham chiếu công cụ chính thức để kiểm khi tiếp nhận: https://vite.dev/guide/ ; https://v7.vite.dev/guide/ ; https://mswjs.io/docs/integrations/browser/ ; https://mui.com/material-ui/getting-started/installation/ . Lựa chọn kiến trúc gốc ở botsales-kit/docs/02_ARCHITECTURE.md vẫn có hiệu lực.
+Baseline khi giao gói 29/09 dùng Node22.16.0/TS5.8.3 và chưa cài dependency là lịch sử, không mô tả checkout hiện tại. Nội dung cũ/hash được giữ trong before-documents.json của hồ sơ audit. Kiến trúc một MUI/Query/Router, canonical contract và Graphite Gold token vẫn theo scope hiện hành.
