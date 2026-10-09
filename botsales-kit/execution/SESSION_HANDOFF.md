@@ -1,4 +1,29 @@
-# Bàn giao Frontend — cập nhật UI027, 05/10/2026
+# Bàn giao Frontend — cập nhật 08/10/2026
+
+<!-- CORRECTIONS_CURRENT -->
+## Kết quả hiện hành — component A01–A07 sau F01–F09 và Toolbar/Shell
+
+[Báo cáo source/gates](../../BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/REPORT.md) và [ca nghiệm thu](../../BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/ACCEPTANCE_GUIDE.md): READY_FOR_ACCEPTANCE_LOCAL_SCOPE; full E2E580/580,174 unit,39 contracts,built-demo6/6,native33/33 trên source mới. Thứ tự UI chỉ ở plan §16.6; FE freshness đọc canonical CLI, giữ mẫu số140. Counts554/173,566/174 và các manifest cũ bên dưới là snapshot lịch sử, không thay lần chạy mới.
+
+Local React/TypeScript + HTTP MSW tổng hợp. Speech, hosted CI, Backend/provider thật và quyết định người dùng giữ trạng thái quan sát riêng; không tự điền PASS.
+<!-- END_CORRECTIONS_CURRENT -->
+
+## HISTORICAL_SNAPSHOT — hồ sơ trước đợt F01–F09
+
+## Snapshot hiện hành — 08/10/2026
+
+Phạm vi đã kiểm là `BotSalesAI_Frontend` React/TypeScript với `FRONTEND_WITH_SYNTHETIC_MOCK_API`, tại `HEAD 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6` cộng working tree. Giữ nguyên mọi staged/unstaged/untracked changes sẵn có. Không sửa FE/full-product evidence ngoài bằng chứng của FE028; không cập nhật ledger toàn sản phẩm, không commit/push/merge/deploy.
+
+- FE026 clean isolated build/verify/audit và artifact manifests hiện hành: [log](frontend-evidence/FE026/clean-build-current-20261008-attempt03.log), [manifest](frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json), [registered verify](frontend-evidence/FE026/registered-verify-current-20261008.log).
+- FE027 matrix hiện hành: [UAT](frontend-evidence/FE027/uat-matrix-current-20261008.json), [full browser run](frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log), [capture manifest](frontend-evidence/FE027/ui-screenshots-current-20261008/manifest.json). 512/512 local browser cases; 54 route, 64 feature, 65 route-feature rows, 22 journey, 357/357 role, empty 11/11, error 51/51.
+- FE028 current quality matrix, architecture self-review, claim gate và handoff: [quality](frontend-evidence/FE028/quality-gate-matrix-current-20261008.json), [architecture](frontend-evidence/FE028/architecture-review-current-20261008.md), [claim gate](frontend-evidence/FE028/production-claim-review-current-20261008.json), [handoff](frontend-evidence/FE028/handoff.md).
+- Gate verdict: 7/9 đạt trong local synthetic scope; FE-G05 chưa đạt đầy đủ do thiếu Narrator speech/transcript và broad human conformance review; FE-G09 chờ người dùng nghiệm thu. FE-G08 local equivalent đạt, hosted GitHub CI chưa chạy. Không claim full WCAG, live Backend/provider, staging, production, hoặc Production-Ready/Enterprise-Grade toàn hệ thống.
+- UI spacing rollout là tracker riêng; bảng §16.6 của [UI improvement plan](../../BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) ghi S20 `READY_FOR_ACCEPTANCE_LOCAL_SCOPE`. Không cộng số UI vào FE ledger.
+- Trạng thái FE hiện hành sau khi ghi receipt FE028 chỉ đọc từ `node scripts/progress.mjs validate`, `status`, `report` tại thư mục `botsales-kit`; generated `IMPLEMENTATION_PLAN.md`/`FRONTEND_PROGRESS.md` không sửa tay. 140 checkpoint là freshness/coverage của evidence theo task plan, không phải phần trăm code.
+
+Các phần bên dưới là **HISTORICAL_SNAPSHOT** theo timestamp trong từng mục; không thay thế artifact 08/10 hoặc trạng thái CLI hiện hành.
+
+## Historical snapshot — UI027 handoff, 05/10/2026
 
 **Current navigation:** trạng thái UI ở [plan §16.6](../../BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status), evidence tại [REPORT](../../BotSalesAI_Frontend/evidence/REPORT.md). Nội dung bên dưới là **HISTORICAL_SNAPSHOT** tại ngày ghi trong heading; không thay tracker/status hiện hành.
 
@@ -12,3 +37,20 @@ Local evidence after UI027: verify đạt (generator 11/283/210/54; source 65/22
 FE-G01..09 có **7/9 gate đạt** theo matrix 04/10. FE-G05 còn Narrator speech/human conformance `NOT_RUN`; FE-G09 chờ người dùng chấp thuận. Hosted GitHub CI chưa chạy; clean local equivalent được phép cho FE-G08. Không có backend/provider/persistence/staging/production runtime proof; không claim Production-Ready/Enterprise-Grade toàn hệ thống. UI027 đã loại chunk vượt 500 kB; npm allowScripts warning cho esbuild/MSW còn được giữ.
 
 Git root ở thư mục cha và worktree đã có thay đổi người dùng; giữ nguyên trạng thái. Không commit/push/merge/deploy. Các file lịch sử giữ số đo ở đúng thời điểm; không dùng snapshot cũ thay trạng thái hiện hành. Nếu phát sinh yêu cầu mới, xác nhận diff và nguồn canonical rồi tạo evidence/task mới qua script chuẩn.
+
+## CURRENT HANDOFF — FE001 hoàn tất và tiếp tục FE002 — 07/10/2026
+
+- Nguyên nhân tracker FE hiển thị 0/140: raw ledger còn giữ 140 receipt `VERIFIED`, nhưng CLI tính hiệu lực từ source/evidence hashes hiện tại; cả 28 task thành `STALE`. 128 receipt dừng trước tiên ở hash nguồn thay đổi, 12 receipt không resolve được path sau khi `botsales-kit/` nằm cạnh workspace Frontend. Đây là 0/140 checkpoint còn hiệu lực, không phải 0% code đã triển khai.
+- Đã sửa resolver source trong `scripts/progress.mjs` để xử lý riêng root Frontend và kit; kiểm soát path escape vẫn qua `rel()`. Regression harness hiện tách fixture full-product khỏi mặc định Frontend và ép UTF-8 trên Windows; `python scripts/test_progress.py` đạt 26/26. Lần chạy ban đầu fail được giữ tại `evidence/tracker-tests-initial-20261007.json`; kết quả mới ở `evidence/tracker-tests.json`.
+- FE001.S01–S05 đã được kiểm tra và ghi receipt/log mới trong `execution/frontend-evidence/FE001/`. Tracker canonical sau `report`: **5/140 checkpoint, 3.33%; FE001 DONE; `blocked=[]`; bước kế tiếp FE002.S01**. Con số này là bằng chứng hiện hành của FE tracker, không phải ước lượng phần trăm code.
+- S02 đối chiếu đủ 54 route/16 module và 17 source entry files; component/path khớp manifest và fingerprint route source khớp run React demo hiện tại. Record E2E hiện hành tại HEAD `53c0ba8f413b1f1e0fa16a747ed27f728b861dd6` đạt 504/504 Chromium/Firefox với MSW synthetic. S03 đối chiếu package/report/gaps và xác nhận 162 runtime fingerprints của verify/E2E đều khớp checkout; hosted CI, Backend/provider, screen-reader speech và owner acceptance vẫn chưa xác minh.
+- S05 chỉ chạy `validate/status/next` read-only cho full-product ledger; `execution/plan.json` và `execution/progress.json` giữ nguyên SHA-256 trước/sau. Denominator FE vẫn 28 task/140 checkpoint; full-product reference vẫn 84/420. Không sửa ledger T.
+- FE002 Change Budget theo plan gồm đúng `package.json`, `apps/web/package.json`, `package-lock.json`, `.node-version`, `scripts/setup.mjs`, `scripts/doctor.mjs`, `docs/PROJECT_CONTEXT.md`. FE002 không có route/operation; kiểm toolchain/install/setup/doctor theo V0–V3. Ghi SHA trước/sau mọi lệnh cài; clean `npm ci` chỉ trên bản sao cô lập; giữ nguyên các thay đổi ngoài 7 path này.
+- Báo cáo plan/progress được sinh bằng `node scripts/progress.mjs report`; tiếp tục bằng lệnh `start FE002`, rồi hoàn tất từng S01–S05 theo receipt có log/hash. Không dùng full-product task làm dependency và không claim Backend/production.
+
+## CURRENT HANDOFF — FE002 hoàn tất, tiếp tục FE003 — 07/10/2026
+
+- FE002.S01–S05 đã được tái xác minh theo thứ tự, có receipt và log mới tại `execution/frontend-evidence/FE002/`; tracker canonical sau `validate`/`report` đạt **10/140 checkpoint, 6.67%**, FE001 và FE002 DONE, `blocked=[]`, bước kế tiếp FE003.S01.
+- Toolchain thực tế là Node `v24.19.0`/npm `11.17.0`; `npm install`, setup và doctor exit 0. Setup sinh 11 đầu ra contract/token; doctor đạt 9/9. Hash năm manifest/config giữ nguyên qua các thao tác cài đặt; `.env.local` và MSW worker có sẵn không bị ghi đè. Npm cảnh báo lifecycle scripts esbuild/MSW chưa được allow; bước này không tự phê duyệt chúng.
+- Lần clean `npm ci` đầu tiên trong bản sao tạm thất bại vì `cmd.exe` kế thừa PATH hiện tại không resolve được Node. Đối chứng mới ghi nhận inherited PATH dài 14.378 ký tự khiến `where.exe node.exe` exit 1; PATH tiến trình giới hạn 97 ký tự resolve đúng Node. Lần chạy lại ở thư mục tạm khác đạt `npm ci` exit 0, `npm ls --depth=0` exit 0, 412 package paths. Thư mục thất bại cũ và log lỗi được giữ; thư mục thử thành công chỉ được xóa sau khi kiểm tra đạt. Không thay PATH hệ thống.
+- Báo cáo `IMPLEMENTATION_PLAN.md` và `execution/FRONTEND_PROGRESS.md` đã sinh lại từ ledger canonical. Full-product ledger không được checkpoint hoặc sửa. Tiếp tục FE003 theo task card; không dùng kết quả cấu hình tracker để tuyên bố toàn bộ UI hoặc Backend đã nghiệm thu.

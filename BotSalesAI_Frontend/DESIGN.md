@@ -37,7 +37,7 @@ Use the system sans stack already shipped by the app; do not download fonts or i
 
 ## Layout
 
-The sole normative UI policy is [FRONTEND_SPACING_STANDARD v1.28](docs/FRONTEND_SPACING_STANDARD.md), SPC-001–075. Every UI task uses its [canonical workflow](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); this design context owns product identity and intent, not a parallel checklist or numeric layout standard. Its frontmatter contains pointers only; `../botsales-kit/design/tokens.json` remains the canonical value source. UI evidence must pass the repository validator and `npm run verify`; a clean document or source scan alone cannot close rendered route/state coverage.
+The sole normative UI policy is [FRONTEND_SPACING_STANDARD v1.29](docs/FRONTEND_SPACING_STANDARD.md), SPC-001–075. Every UI task uses its [canonical workflow](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); this design context owns product identity and intent, not a parallel checklist or numeric layout standard. Its frontmatter contains pointers only; `../botsales-kit/design/tokens.json` remains the canonical value source. UI evidence must pass the repository validator and `npm run verify`; a clean document or source scan alone cannot close rendered route/state coverage.
 
 Use the [shared catalog CURRENT/TARGET](apps/web/src/shared/ui/README.md) to select an existing owner and distinguish planned contracts from runtime APIs. Responsive geometry and semantic profiles are defined by canonical tokens and the spacing standard. Tables may scroll within a named region; inbox panes retain independent scroll owners, record identity and primary actions remain usable, and long content reflows.
 

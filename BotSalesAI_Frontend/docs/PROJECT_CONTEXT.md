@@ -1,4 +1,28 @@
-# Hồ sơ dự án Frontend — 07/10/2026
+# Hồ sơ dự án Frontend — 08/10/2026
+
+<!-- CORRECTIONS_CURRENT -->
+## Phạm vi hiện hành — UX và nghiệp vụ bổ sung 09/10/2026
+
+Đang thực hiện UX01–UX15 và sáu nhóm chức năng theo [kế hoạch UI §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). Baseline và impact tại [contract](../evidence/frontend-ux-completion-20261009/CONTRACT.md). Trạng thái chỉ đọc từ kế hoạch; các gate của đợt trước không chứng minh source đang sửa đã hoàn tất. FE vẫn có 140 checkpoint; freshness phải đọc lại bằng CLI canonical.
+
+Phạm vi Frontend + contract canonical + MSW tổng hợp. Nghiệm thu local cuối đợt chưa được xác nhận; Backend/provider/production có mốc riêng.
+
+## HISTORICAL_SNAPSHOT — kết quả — thu gọn spacing 09/10/2026
+
+[Báo cáo](../evidence/frontend-spacing-density-20261009/REPORT.md), [case nghiệm thu](../evidence/frontend-spacing-density-20261009/ACCEPTANCE_GUIDE.md): **READY_FOR_ACCEPTANCE_LOCAL_SCOPE**. Full624/624,181unit,41contracts,6built-demo,216route observations/70focused cases,16deep native/108label probes đạt trên source của đợt density. Canonical140/140,0stale/blocked; xem CLI và receipt để đọc freshness. Trạng thái chỉ ở UI plan §16.6/16.20; các kết quả614/175/40 trước density là HISTORICAL_SNAPSHOT.
+
+Scope local Frontend/mock; speech/hosted CI NOT_RUN, user acceptance PENDING; Backend/provider/production ngoài scope.
+<!-- END_CORRECTIONS_CURRENT -->
+
+## HISTORICAL_SNAPSHOT — hồ sơ trước đợt F01–F09
+
+## Snapshot kiểm thực tế — 08/10/2026
+
+Checkout đã được kiểm là `HEAD 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6` cộng working tree hiện hành. FE026 clean isolated run và FE027 built-demo UAT hiện hành liên kết source/artifact bằng SHA-256; `npm run verify` exit 0 và browser suite đạt 512/512 Chromium/Firefox. Ma trận hiện hành ghi 54 route, 64 feature, 65 feature-route row, 22 journey, 357/357 private route-role, empty 11/11, error 51/51 và không còn applicable state cell chưa kiểm.
+
+Đây là nghiệm thu kỹ thuật local trong `FRONTEND_WITH_SYNTHETIC_MOCK_API`. FE-G05 chưa đạt đầy đủ vì Narrator speech/transcript và broad human accessibility review chưa chạy; FE-G09 chờ người dùng nghiệm thu. Hosted CI chưa chạy; backend/provider/server authorization/persistence/staging/production chưa được kiểm. FE tracker đo checkpoint evidence freshness, không đo tỷ lệ source đã viết; dùng CLI canonical và generated report để đọc con số hiện hành. UI spacing rollout là kế hoạch riêng: xem §16.6 trong [plan](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) và không gộp với FE.
+
+Chi tiết có hash: [FE026 clean artifact manifest](../../botsales-kit/execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json), [FE027 UAT matrix](../../botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261008.json), [FE028 quality gates](../../botsales-kit/execution/frontend-evidence/FE028/quality-gate-matrix-current-20261008.json), [FE028 handoff](../../botsales-kit/execution/frontend-evidence/FE028/handoff.md).
 
 **CURRENT PHASE:** Frontend-only work follows the dependency and evidence recorded in [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). This context file records scope and canonical pointers; it does not duplicate S-step statuses. Do not change FE/full-product ledgers without task-level evidence.
 
@@ -10,7 +34,7 @@ The source rollout review and its scope are recorded in [§16.17](FRONTEND_UI_IM
 
 ## Quy định và nguồn chuẩn
 
-Design consolidation remains the policy source: [workflow v1.28](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075; the [shared catalog](../apps/web/src/shared/ui/README.md) distinguishes CURRENT from TARGET APIs; and [plan §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) owns dependency/status. Current evidence is linked per step; the design document itself does not certify runtime or Enterprise conformance. Evidence hash/coverage validation and shared UI regression suites run in required `npm run verify`.
+Design consolidation remains the policy source: [workflow v1.29](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075; the [shared catalog](../apps/web/src/shared/ui/README.md) distinguishes CURRENT from TARGET APIs; and [plan §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) owns dependency/status. Current evidence is linked per step; the design document itself does not certify runtime or Enterprise conformance. Evidence hash/coverage validation and shared UI regression suites run in required `npm run verify`.
 
 **HISTORICAL_SNAPSHOT — audit v15.0:** [report](../evidence/frontend-ui-improvements/ui-policy-steel-20261006/REPORT.md) ghi68 TS/TSX,28 TSX,16 modules;27 shared exports;176 composition uses/21 files. Ba strict scans0 findings,24/24existing fixtures vàgenerator exit0; adversarial probes vẫn chứng minh bypass. Browser diagnostic nhỏ ghi ba Finance first-body boundaries32/40px thay16 và Imports clearance label15/control24px tại806/1440. Đây là kết quả theo source/state của lần đó, không proof chạy lại build/full E2E/native200/speech/hosted CI trong lượt hợp nhất tài liệu.
 

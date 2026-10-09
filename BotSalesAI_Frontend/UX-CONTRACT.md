@@ -25,7 +25,7 @@ This contract records observable frontend behavior. Business and permission poli
 
 - Project identity and register: [DESIGN.md](DESIGN.md); approved Graphite Gold dark-only decision remains in `../botsales-kit/design/decision.json`.
 - Atomic values: `../botsales-kit/design/tokens.json` → generator → generated package/CSS → shared theme/layout/visual owners. Generated output is not a second canonical source.
-- Normative UI policy: [standard v1.28](docs/FRONTEND_SPACING_STANDARD.md), SPC-001–075. Every new/changed UI follows the [sole workflow](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); no alternative UI checklist is defined here. Required UI checks and evidence provenance run through `npm run verify`; missing or stale evidence cannot be marked PASS.
+- Normative UI policy: [standard v1.29](docs/FRONTEND_SPACING_STANDARD.md), SPC-001–075. Every new/changed UI follows the [sole workflow](docs/FRONTEND_SPACING_STANDARD.md#unified-workflow); no alternative UI checklist is defined here. Required UI checks and evidence provenance run through `npm run verify`; missing or stale evidence cannot be marked PASS.
 - Runtime versus planned API: [shared catalog CURRENT/TARGET](apps/web/src/shared/ui/README.md). This contract owns observable behavior; the catalog/standard own API and layout invariants.
 - Product UI uses Vietnamese across routes discovered from the current manifest; no marketing register inside app flows.
 - Rollout/dependencies: [plan v16.0 §16](docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan). Results/limits: [current evidence report](evidence/REPORT.md).

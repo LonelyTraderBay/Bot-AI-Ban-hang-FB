@@ -1,12 +1,12 @@
 # Kế hoạch hoàn thiện UI và kiến trúc React Frontend, theo dõi tiến độ
 
-**CURRENT PHASE — hoàn tất đồng bộ tài liệu và kiểm tự động local (07/10/2026):** trạng thái hiện hành nằm tại §16.6; kết quả/log/fingerprint tại [evidence report](../evidence/REPORT.md). Source hiện tại đã được kiểm bằng root verify, 504/504 browser cases và reconciliation mới; S19 snapshot cũ giữ lịch sử. UI/FE/S-step là các phép đo riêng; không suy % code đúng hoặc owner acceptance từ số route/checkpoint. Native zoom/text-only chưa rerun trong lượt này; screen-reader speech, hosted CI và Backend không được nhận là PASS.
+**CURRENT PHASE — IN_PROGRESS UX completion và mở rộng nghiệp vụ (09/10/2026):** UX01–UX15 + 6 nhóm capability được người dùng duyệt. [Contract/baseline](../evidence/frontend-ux-completion-20261009/CONTRACT.md); thứ tự/trạng thái duy nhất tại §16.6. Phạm vi Frontend + canonical contract + MSW; nghiệm thu người dùng riêng.
 
-**Mã kế hoạch:** FE-UI-FOLLOWUP-20261002 · **Phiên bản:** 16.0 · **Lập / cập nhật ngày:** 07/10/2026.
+**Mã kế hoạch:** FE-UI-FOLLOWUP-20261002 · **Phiên bản:** 16.0 · **Lập / cập nhật ngày:** 09/10/2026.
 
 **Mục tiêu đã chốt 04/10/2026:** hoàn thiện UI và kiến trúc React **Frontend-only**, kiểm chứng bằng mock API tổng hợp; AI tự sửa, kiểm thử, tái xác minh và chuẩn bị bàn giao. Người dùng chỉ nghiệm thu cuối. Chính sách scope/tự thực hiện: [FRONTEND_SCOPE.md](FRONTEND_SCOPE.md). Mục 12 ghi audit toàn bộ tài liệu, mâu thuẫn trước sửa và xử lý từng điểm; bản đối chiếu từng nhóm tài liệu là [audit kế hoạch/tài liệu Frontend](FRONTEND_PLAN_DOCUMENT_AUDIT_2026-10-04.md).
 
-**Nguồn điều hành UI:** [§16](#steel-plan) giữ dependency/trạng thái rollout, CURRENT/TARGET contract nằm trong [shared catalog](../apps/web/src/shared/ui/README.md), còn quy định duy nhất là [standard v1.28 §0](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075. S01–S02 là audit/specification; S03–S08 có closeout scoped trong §16.6. v15.0 và các mục 8.x–15.x là snapshot lịch sử; không lấy `next` cũ hoặc số liệu lịch sử thay bằng chứng mới.
+**Nguồn điều hành UI:** [§16](#steel-plan) giữ dependency/trạng thái rollout, CURRENT/TARGET contract nằm trong [shared catalog](../apps/web/src/shared/ui/README.md), còn quy định duy nhất là [standard v1.29 §0](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075. S01–S02 là audit/specification; S03–S08 có closeout scoped trong §16.6. v15.0 và các mục 8.x–15.x là snapshot lịch sử; không lấy `next` cũ hoặc số liệu lịch sử thay bằng chứng mới.
 
 ## Lịch sử phiên bản và closeout
 
@@ -85,7 +85,7 @@ Phiên bản 10.8 ghi W23 Dashboard DONE: 36→0 owner findings, strict source d
 
 **Trạng thái UI migration trước policy rollout:** UI001–UI028 có technical handoff; UI checkpoints 140/140, UI028 C01–C05 `DONE 5/5` và W01–W36 `DONE 36/36` theo snapshot evidence được liên kết. Các số FE/UI này là tracker riêng, không phải S01–S20. Giới hạn giữ nguyên: W08 Empty thiếu paired pre-code baseline nên `DIAGNOSTIC_ONLY`; FE-G05 human/Narrator review `NOT_RUN`; FE-G09 chờ nghiệm thu người dùng. Kết quả thuộc Frontend local với synthetic MSW. Trạng thái rollout quy định hiện hành nằm tại đầu tài liệu và §16.6.
 
-Các log run cũ FAIL/interrupted, strict scanner exit 1, warnings và giới hạn speech/hosted được giữ đúng. Các số 100% trong snapshot UI001–UI027 là tiến độ checkpoint ở phạm vi/ngày cũ; backlog hiện hành là 27/28 task và 137/140 checkpoint, không phải phần trăm chất lượng kiến trúc hoặc 9/9 gate. Đọc [mục 12.8](#128-audit-tài-liệu-và-bàn-giao-cuối--04102026) cho lịch sử và §14 cho phạm vi spacing mới.
+Các log run cũ FAIL/interrupted, strict scanner exit 1, warnings và giới hạn speech/hosted được giữ đúng. Các số 100% trong snapshot UI001–UI027 là tiến độ checkpoint ở phạm vi/ngày cũ; snapshot backlog trước rollout là 27/28 task và 137/140 checkpoint; trạng thái hiện hành chỉ ở §16.6 và CLI canonical, không phải phần trăm chất lượng kiến trúc hoặc 9/9 gate. Đọc [mục 12.8](#128-audit-tài-liệu-và-bàn-giao-cuối--04102026) cho lịch sử và §14 cho phạm vi spacing mới.
 
 ## 2. Nguồn, phạm vi và nguyên tắc giữ kiến trúc
 
@@ -2162,7 +2162,7 @@ Audit không chạy lại build/full E2E/native zoom/speech review/hosted CI. Ru
 
 ### 16.3. Inventory và quyết định cho toàn bộ 27 shared exports
 
-Số JSX/consumer files bên dưới lấy từ audit hiện hành; số consumer files không tính file định nghĩa của chính component. Nội bộ shared vẫn có thể là consumer. Không dùng tỷ lệ sử dụng để đánh giá readiness. Catalog ghi CURRENT/TARGET props/slots/semantics/acceptance của đủ 27 API; [shared contract review](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/shared-contract-review.md) là evidence nguồn, không phải policy thứ hai.
+**HISTORICAL_SNAPSHOT — inventory 27 API của lượt audit được liên kết bên dưới.** Số JSX/consumer files không tính file định nghĩa của chính component; nội bộ shared vẫn có thể là consumer. Không dùng tỷ lệ sử dụng để đánh giá readiness. Số symbol và consumer hiện hành lấy từ [catalog CURRENT/TARGET](../apps/web/src/shared/ui/README.md) và export discovery; [shared contract review](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/shared-contract-review.md) giữ bằng chứng snapshot, không phải policy thứ hai.
 
 | Component | JSX / files | Owner/invariant cần giữ | Hướng xử lý |
 |---|---:|---|---|
@@ -2248,30 +2248,96 @@ Component nhận children vẫn phải kiểm nội dung được truyền; sour
 
 ### 16.6. Kế hoạch triển khai chi tiết, dependency và tiến độ
 
+**CURRENT — UX completion + capability extension — 09/10/2026.** Người dùng duyệt toàn bộ 15 nhóm UX và 6 nhóm capability: kho/địa chỉ, kế toán quản trị đủ luồng, consent với customer challenge, purchase.send tự động có hạn mức, media ảnh/thoại/tệp và Marketing period/bucket/attribution. Giữ mẫu số FE140, full-product ledger read-only. Bằng chứng lịch sử trước thay đổi không chứng minh source mới.
+
+| Bước / ưu tiên | Công việc và owner | Dependency | Trạng thái | Điều kiện đóng |
+|---|---|---|---|---|
+| UX.C00 / P0 | Git/source/before renders, contract/impact và current doc pointers | Không | COMPLETED_BASELINE | Fingerprints, ảnh viewport 54×2, dirty source được giữ |
+| UX.C01 / P1 | UX01/02: đích góp ý, domain labels | C00 | VERIFIED_SCOPED | CTA đúng tác vụ, tồn/các nhãn domain đúng, regression |
+| UX.C02 / P1 | UX04/05: global draft guard, list return context | C01 verified | VERIFIED_SCOPED | Guard đầy đủ, sạch sau acknowledged save, URL scoped giữ được |
+| UX.C03 / P1 | UX03: Shared confirmation + all consumers | C02 verified | VERIFIED_SCOPED | Identity/consequence/verb và dirty/busy/version regression |
+| UX.C04 / P2 | UX06/07/10/15: labels/title/table/detail owner | C03 verified | VERIFIED_SCOPED | Combined browser 28/28; [phạm vi kiểm chứng](../evidence/frontend-ux-completion-20261009/C04-scoped-result.md); native/full closure ở C11 |
+| UX.C05 / P1 | Canonical contract + CRUD kho/địa chỉ/tài khoản | C04 verified | VERIFIED_SCOPED | API 2.1.0; browser 172/172, unit 196/196, domain/MSW 102/102, kit 522/522; [phạm vi](../evidence/frontend-ux-completion-20261009/C05-scoped-result.md); final closure ở C11 |
+| UX.C06 / P1 | Kế toán quản trị: mở sổ/ledger/trial/balance/reconciliation | C05 verified | VERIFIED_SCOPED | API 2.2.0, 11 operations và R57–R60; browser 16/16 + address regression 7/7; unit 197/197; domain/HTTP 113/113; kit 530/530; [contract](../evidence/frontend-ux-completion-20261009/C06-CONTRACT.md), [kết quả scoped](../evidence/frontend-ux-completion-20261009/C06-scoped-result.md); full closeout ở C11 |
+| UX.C07 / P1 | Consent/opt-out/customer challenge | C06 verified | VERIFIED_SCOPED | Pending không grant, challenge một lần gắn identity/nội dung, opt-out suppression và service exemption; unit 20/20, Chromium/Firefox 8/8, contract/kit/source gates PASS; [kết quả](../evidence/frontend-ux-completion-20261009/C07-scoped-result.md); full closeout ở C11 |
+| UX.C08 / P1 | Delegation purchase.send có hạn mức | C07 verified | VERIFIED_SCOPED | Owner grant, budget atomic, version/revoke/expiry/unknown; [kết quả scoped](../evidence/frontend-ux-completion-20261009/C08-scoped-result.md); full closeout tại C11 |
+| UX.C09 / P2 | Media Inbox upload/send/recovery | C08 verified | VERIFIED_SCOPED | Capability/purpose/scope/MIME/size/count/readback; giữ nội dung và tệp mới trong lúc gửi; unit 6/6, Chromium/Firefox 6/6, source/contract/kit gates PASS; [kết quả scoped](../evidence/frontend-ux-completion-20261009/C09-scoped-result.md); full gates/built-demo ở C11 |
+| UX.C10 / P2 | Marketing + UX08/09/11/12/13/14 | C09 verified | NOT_STARTED | Aggregate/URL/identity/date/forms/feedback/empty/pager |
+| UX.C11 / P0 | Full gates/fresh evidence/FE dependency/demo/handoff | C01–C10 verified | NOT_STARTED | Same final source, full runs đạt, READY_FOR_ACCEPTANCE_LOCAL_SCOPE |
+
+Thiết kế đã chốt: R55 kho, R56 tài khoản, R57 mở sổ, R58 sổ cái, R59 cân đối phát sinh, R60 cân đối quản trị, R61 consent public; địa chỉ trong R08, delegation trong R38. Owner/manager quản trị kho; owner/accountant quản trị tài khoản; owner quản trị delegation. Giữ GraphiteGold/Shared/tokens v1.29/no dependency. Các API mới mở rộng minor, DTO/output chạy generator. Kế toán quản trị một currency, fixture moving weighted average/delivery recognition, không nhận kế toán pháp định/provider live.
+
+Nghiệm thu kỹ thuật: 15/15 UX + 6/6 capability có code/regression/fresh proof và mandatory gates trên final source. Route/state/role discovery theo manifest mới, không pin 54; speech/hosted CI/user acceptance ghi quan sát. Bảng trên là nguồn trạng thái duy nhất, evidence của batch không tạo tracker riêng.
+
+**HISTORICAL_SNAPSHOT — Shared consolidation:**
+
+**09/10/2026 — hợp nhất Shared UI: READY_FOR_ACCEPTANCE_LOCAL_SCOPE.** P2 Inbox → P3 Dashboard → P3 tài liệu đã thực hiện tuần tự, full614/614 và required source gates đạt. Các lỗi xác nhận trong gate đã sửa tại owner: demo conditional304, Shared label overlap/click focus, Toolbar/demo geometry và variant row R10/R11 width0 và phân chia chiều cao composer Inbox. Regression trước/sau được giữ; native8 deep/108 all-route probes đạt. Canonical FE140/140,0 stale/blocked sau dependency revalidation; local technical scope hoàn tất, người dùng PENDING. Ba finding P2/P3 và các root fix bổ sung thuộc S11/S12/S14, chốt S19/S20 hiện có; không tạo ledger/mẫu số mới. [Chi tiết §16.19](#shared-consolidation-20261009), [report](../evidence/frontend-shared-consolidation-20261009/REPORT.md), [ca nghiệm thu](../evidence/frontend-shared-consolidation-20261009/ACCEPTANCE_GUIDE.md).
+
+| Thứ tự / ưu tiên | Công việc | Dependency và owner | Trạng thái | Điều kiện đóng |
+|---|---|---|---|---|
+| 0 — chuẩn bị | Chốt baseline/impact | Git/source, audit và workflow contract | COMPLETE_SCOPED | Before6 renders, source hashes/dirty paths/owner impact được giữ |
+| 1 — P2 | Inbox Toolbar.filters + FieldGroup | Bước0; S11/S12, R05/R06 | COMPLETE_REGRESSION_ON_FINAL_SOURCE | URL/cursor/query/draft/metadata, responsive, axe/keyboard/native đạt |
+| 2 — P3 | Một primary CTA Dashboard | Bước1 đã kiểm; S12, R04 | COMPLETE_REGRESSION_ON_FINAL_SOURCE |8 tuples quyền, label/href, độc lập create, focus/hover/active/modifier/target đạt |
+| 3 — P3 | Wording Shared API discovery | Bước2 đã kiểm; S14, standard/catalog/current plan | COMPLETE_REGRESSION_ON_FINAL_SOURCE |40 contracts đạt; current export28, không pin count; snapshot lịch sử giữ nguyên |
+| 4 — chốt | Full source/evidence/demo | Bước1–3; S19/S20/canonical owners | READY_FOR_ACCEPTANCE_LOCAL_SCOPE |Full run/gates, compiled/native/baseline/hash; FE dependency receipts; nghiệm thu người dùng riêng |
+
+**Giới hạn hồ sơ ở lượt lập kế hoạch:** [planning record](../evidence/frontend-shared-consolidation-20261009/PLANNING_RECORD.json) chỉ ghi baseline trước/sau chỉnh tài liệu. Không sửa React/API/theme/tokens/tests, không chạy mới unit/E2E/build và không đóng công việc source. Thay đổi file plan làm fingerprint tài liệu của các manifest trước trở thành snapshot lịch sử; giữ nguyên logs/hashes cũ, tái xác minh closure bằng công cụ canonical trong bước4, không sửa hash để nhận PASS.
+
+**HISTORICAL_SNAPSHOT — 08/10/2026 — WIDTH.W01–W04: READY_FOR_ACCEPTANCE_LOCAL_SCOPE tại source trước Shared consolidation.** Người dùng yêu cầu triển khai các finding đã đo, sửa tận gốc theo ưu tiên. [Contract/baseline](../evidence/frontend-width-fixes-20261008/CONTRACT.md); snapshot phân tích trước sửa giữ nguyên. Các dòng WIDTH dưới đây thuộc nguồn trạng thái §16.6, không tạo tracker thứ hai hoặc tăng mẫu số FE.
+
+| Thứ tự | Công việc | Owner/phạm vi | Trạng thái | Điều kiện đóng |
+|---|---|---|---|---|
+| 1 — P1 | WIDTH.W01 sparse collections | R30 AI và R02 workspaces; 0/1/2/3 item, breakpoint/refetch/scope | COMPLETE_REGRESSION_ON_FINAL_SOURCE | Regression đỏ trước/xanh sau ở cả engines; card đơn lẻ fill vùng collection |
+| 2 — P2 | WIDTH.W02 form/surface width | R13 imports, R33 shop, R42 shipping preview | COMPLETE_REGRESSION_ON_FINAL_SOURCE | Body fill inset Panel, field groups responsive; draft/file/mapping/preview giữ hành vi |
+| 3 — P2 | WIDTH.W03 full-row notice | R40 Devices hai pane và protection notice | COMPLETE_REGRESSION_ON_FINAL_SOURCE | Notice full row, parent sở hữu section boundary; pane giữ semantics |
+| 4 — P2 | WIDTH.W04 atomic detail slot | Shared DetailLine; inventory98 calls/13 consumer modules, all-route closure | COMPLETE_REGRESSION_ON_FINAL_SOURCE | Một logical row gồm divider; gap chỉ giữa rows; plain container không đổi nhịp |
+| 5 — P0 chốt | WIDTH final verification/handoff | Final source, docs/catalog/evidence, canonical FE freshness | READY_FOR_ACCEPTANCE_LOCAL_SCOPE | Required verify/full E2E/build/demo/native gates và current fingerprints đạt; limits quan sát đúng |
+
+**HISTORICAL_SNAPSHOT — 08/10/2026 — xử lý A01–A07 sau component audit: COMPLETE_LOCAL_AUTOMATED_REVALIDATION.** A01 Orders → A02 ProductEditor → A03 Imports → A04 Amount → A05 Status → A06 Empty → A07 readonly address/payment và MenuItem đã sửa tại owner; full580/580,174 unit,39 contracts,6 built-demo và33 native cases đạt. [Contract/baseline](../evidence/frontend-component-fixes-20261008/CONTRACT.md), [report/gates](../evidence/frontend-component-fixes-20261008/REPORT.md), [ca nghiệm thu](../evidence/frontend-component-fixes-20261008/ACCEPTANCE_GUIDE.md). FE denominator140, dependency/freshness bằng canonical CLI; quyết định người dùng PENDING.
+
 S01–S20 là các bước ổn định trong backlog §16, không phải task/ledger mới. Workflow và các fields bằng chứng theo standard §0/§13.2. Bảng này chỉ ghi công việc, dependency, acceptance và status. DONE_AUDIT/SPECIFICATION không có nghĩa DONE_RUNTIME. Kết quả hiện hành tại [evidence report](../evidence/REPORT.md). Các artifact closeout cũ là snapshot theo log/fingerprint; revalidation trên source mới nằm ở S19, không nhân bản current status trong entrypoint/catalog.
+
+**HISTORICAL_SNAPSHOT — 08/10/2026 — bổ sung P2 Toolbar/Shell (S10/S11/S12/S15–S20): COMPLETE_LOCAL_AUTOMATED_REVALIDATION.** [Contract/baseline](../evidence/frontend-toolbar-20261008/CONTRACT.md), [report/gates](../evidence/frontend-toolbar-20261008/REPORT.md) và [ca nghiệm thu](../evidence/frontend-toolbar-20261008/ACCEPTANCE_GUIDE.md). Shared alignment/filters, Products/Inventory/Movements và Shell wrap đã sửa theo finding thật; regression mọi Toolbar consumer trong full suite. FE denominator giữ 140, canonical source freshness tái xác minh sau đóng liên kết tài liệu. F01–F09 dưới đây là batch lịch sử, behavior được kiểm lại trong full source cuối. Source trước A01–A07; behavior được kiểm lại trong full suite mới.
+
+**HISTORICAL_SNAPSHOT — 08/10/2026 corrective batch F01–F09: READY_FOR_ACCEPTANCE_LOCAL_SCOPE tại source trước Toolbar.** [Report](../evidence/frontend-corrections-20261008/REPORT.md) giữ logs/source hashes/limits. FE mẫu số 140, full-product read-only.
+
+| Thứ tự | Ưu tiên / finding | Owner và acceptance | Tiến độ batch |
+|---|---|---|---|
+| 1 | P0 baseline | Giữ dirty checkout; 106 inputs/hash và probe trước sửa; npm CLI có lệnh tái lập | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 2 | P1 F04 | Request/wait/poll dừng theo lifecycle; không trả success cho scope cũ; giữ recovery metadata | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 3 | P1 F01 | Baseline/version + đối chiếu bản gốc/nháp/server; customers/shop | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 4 | P1 F01/F02/F03 | Product/images/category/order/supplier/notification/privacy; collections nguyên khối, giữ late edit | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 5 | P1 F05 | Composer revision; pending khóa gửi, unknown giữ nháp và chờ recovery | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 6 | P1 F06 | Semantic order draft; navigation/shop/logout/reload guard; success chỉ làm sạch phần đã lưu | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 7 | P2 F07 | Render actions nhận requestClose/busy; footer/icon/Escape/backdrop cùng guard | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 8 | P2 F08 | Customer notes 4000/4001 tại trường, create/update không gửi dữ liệu sai | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 9 | P2 F09 | Known Inbox invalidation; duplicate/out-of-order/gap/reconnect/revoke/scope cũ | COMPLETE_REGRESSION_ON_FINAL_SOURCE |
+| 10 | P0 final S14/S16–S20 | Catalog/coverage, full verify/E2E/build/built-demo/native zoom, canonical evidence/FE dependency refresh, demo/handoff | COMPLETE_LOCAL_TECHNICAL_HANDOFF |
+
+Chỉ chuyển các hàng batch sang COMPLETE khi đúng regression và final source evidence đạt. Không cộng targeted retest vào một full run thất bại; không tự nhận speech/hosted CI/Backend/owner acceptance.
 
 | Bước | Ưu tiên / dependency | Công việc và file owner | Acceptance đo được | Trạng thái |
 |---|---|---|---|---|
-| S01 | P0 /— | Inventory disk/Git/import/entry/route; toàn bộ 27 API và các owner app/local/style/package/asset/test/config; adversarial baseline | Mọi file liên quan có owner/treatment/step; routes/source khớp; exclusions và unknown resolution rõ; không đoán % readiness | DONE_AUDIT |
-| S02 | P0 /S01 | Hợp nhất standard/workflow canonical, catalog CURRENT/TARGET, routing docs và UI plan; giữ nguyên nghĩa của 75 ID | Một workflow; 27 contracts; tách current/history; kiểm links/IDs/deps/coverage; runtime không đổi | DONE_SPECIFICATION |
+| S01 | P0 /— | Inventory disk/Git/import/entry/route; toàn bộ 28 API và các owner app/local/style/package/asset/test/config; adversarial baseline | Mọi file liên quan có owner/treatment/step; routes/source khớp; exclusions và unknown resolution rõ; không đoán % readiness | DONE_AUDIT |
+| S02 | P0 /S01 | Hợp nhất standard/workflow canonical, catalog CURRENT/TARGET, routing docs và UI plan; giữ nguyên nghĩa của 75 ID | Một workflow; 28 contracts; tách current/history; kiểm links/IDs/deps/coverage; runtime không đổi | DONE_SPECIFICATION |
 | S03 | P0 /S01,S02 | Refresh inventory/hashes và design/evidence scope contract; xác minh pinned TypeScript resolution, gồm fallback tooling | Resolve import/style/tooling inputs hoặc ghi rõ unsupported FAIL; làm rõ originals/generated/ledgers bất biến; chụp baseline đã tải xong trước mỗi source batch | DONE_INTAKE — [proof](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/status.json); render before vẫn bắt buộc trước UI edit |
 | S04 | P0 /S03 | Ba gates hiện có: root/parser/scope fail-closed; discovery JSX/native/CSS/HTML/assets/packages/slots và xác định gate áp dụng | Reject empty/missing root/import/new file/parse failure; expected inventory = scan coverage; generated/library paths có gate riêng | DONE_DISCOVERY_SCOPED — [coverage proof](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S04-coverage.json); final semantic/source acceptance vẫn qua S05–S10/S19 |
 | S05 | P0 /S04 | Resolver/binding/provenance nhỏ qua TypeScript Program/tsconfig/realpath/alias/barrel/namespace/element-access/shadow | P01/02/08/19/20 không lọt; canonical aliases PASS; module public entry/boundary đúng; không tin dựa vào tên | DONE_BINDING_CAPABILITY_SCOPED — [proof](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S05-status.json), [review](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S05-binding-review.md); S05 prerequisite đóng, trạng thái S06–S08 theo các hàng tiếp theo; final acceptance còn mở |
-| S06 | P0 /S05 | Public canonical values readonly; quét consumer writes tại layout/visual/token owners | P09 mutation/alias/Object.assign FAIL; reads/generator/types đúng; consumer không sửa runtime canonical data | DONE_GUARD_CAPABILITY_SCOPED — canonical values readonly và consumer-write guards đã implement; current source/gate revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). Không dùng counts của closeout cũ làm current acceptance. |
-| S07 | P0 /S05 | Mọi style entry: native/MUI spread, styled/GlobalStyles/style-tag/createElement, ReactNode creators, slotProps/CSS | Gate kiểm JSX/DOM/CSS entry và producer; positive ref/name/event/native props PASS; negative bypass FAIL; unresolved style path UNKNOWN/strict FAIL | DONE_STYLE_PRODUCER_COVERAGE — style entry discovery/binding đã implement; giữ [closeout lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S07-final.md). Current source/build và negative regressions theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). |
-| S08 | P0 /S05,S07 | Value/unit provenance: shorthand/logical vars/calc/aliases/computed arithmetic/theme/breakpoint; metadata input của generated assets | Chặn P03–07/19/21–25 tại đúng gate; canonical/system/forced-color/intrinsic geometry PASS theo scope, không làm tròn mọi số | DONE_VALUE_UNIT_PROVENANCE — finite value/unit/source provenance đã implement; [closeout lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S08-final.md) giữ ngày/scope riêng. Current checks theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). |
-| S09 | P0 /S05,S07 | Role/ancestry ownership theo binding; wrappers/fragments/conditionals/QueryState/portals/native render | P10–15/20 FAIL; distinct nested surfaces PASS; ownership chưa resolve không được coi sạch; affected action/control edges nhìn thấy phải đúng | DONE_OWNERSHIP_SCOPED — checker xử lý finite wrappers/fragments/conditional roots, shared gap owners và ActionGroup; các sửa spacing ở Approvals, Devices, P&L và Shipments được giữ. Current composition/route measurements theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md); không suy mọi dynamic branch đã render. |
-| S10 | P1 /S05,S09 | Khóa đủ 27 public API và value/slot closure; normalize safe as const/satisfies; flow/geometry/columns/variant/responsive | F01 PASS; unknown override/keys/values/branches FAIL; giữ valid native form/ref/ARIA/data/RHF; source/types/catalog khớp mọi export | COMPLETE_LOCAL_CONTRACT — 21 components + 6 compositions có source/types/catalog và named direct-render cases; `Column<T>` là supporting type. Catalog line references và JSX counts có regression đối chiếu TypeScript symbols. Hai conditional notices giữ lifecycle rationale, không tạo consumer giả. Current checks/limits theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). |
-| S11 | P0 /S03,S09,S15 | Fresh baseline → sửa owner ở ba titled Panel cases của Finance → rà toàn bộ Panel/page/shell consumers theo §16.11 | Header last visible → first body 16±0.5 CSS px ở affected small/large; không double inset; giữ h2/actions/bottom inset/behavior | DONE_OWNER_FIX_SCOPED — existing shared Panel owns header/body boundary; giữ [paired before/after lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S11-shared-panel-after-fix-20261007.json). Lượt này không đổi React layout. Test Finance được sửa oracle theo first Alert thật, giữ header gap 16±0.5px, body top 0px và responsive inline/bottom 16/24px; revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). |
-| S12 | P1 /S03,S08,S09,S10,S15 | Inventory 86 QueryState placements; state geometry/variant nhỏ nhất cần thiết; intrinsic link role; Pager regression; rollout toàn bộ 16 modules/24 feature files, gồm Imports clearance đã được người dùng đánh dấu nếu S15 tái hiện | Không dùng universal 240 cho inline; giữ pending/stale/error/refetch/draft/URL/permission; safe malformed-page behavior sau repro; mọi file/route/slot được EDIT/KEEP_VERIFY | DONE_CONSUMER_PROFILES_SCOPED — QueryState section/inline profiles và Pager malformed-cursor handling đã implement; giữ [migration/dispositions lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-profile-migration-20261007.json). Current consumer symbols, source gates và browser route/state verification theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). |
-| S13 | P2 /S02,S10 | Runtime cleanup tùy chọn: lifecycle của hai notice, metadata 422 sau repro, phân loại close offset, format các owner đã sửa | KEEP/adopt/remove rationale bắt buộc qua S14/S19; cleanup N/A nếu không có defect/benefit; defect tái hiện phải nâng priority vào S11/S12, không trì hoãn | N/A_OPTIONAL_CLEANUP — không có runtime defect mới được tái hiện trong scope đồng bộ tài liệu. Lifecycle disposition của hai notice giữ tại S10/S14; không xóa chỉ vì 0 consumer. Defect mới phải mở mandatory remediation theo bằng chứng. |
-| S14 | P1 /S02,S05,S10 | Policy check/fixtures thường trực, nhỏ, nếu checker hiện có chưa đáp ứng; IDs/pointers/catalog export-type-role-consumer mapping | Missing/duplicate/stale/export mới chưa có mapping FAIL; quyết định lifecycle của toàn bộ 27 API có lý do; generated/reference permissions đúng | COMPLETE_CATALOG_LIFECYCLE_SCOPED — 27 exported React APIs có mapped contract/consumer hoặc lifecycle rationale. Giữ conditional `PartialDataNotice`/`CapabilityUnavailable`; catalog CURRENT không còn ghi mọi API là chưa implement. Current API/catalog regression và limits theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). |
-| S15 | P0 /S03,S09,S10 | Gia cố browser collector và ownership regression hiện có trước khi sửa owner: readiness/minimum observations/profile/slot/state/variant | Reject wrong route/loading/zero groups; baseline tái hiện ba Finance boundary và kiểm user-reported `/s/shop-demo/imports` alert→demo-controls clearance tại 806×884; positive distinct surface/fragment/wrapped actions PASS; final acceptance sau S11/S12 | DONE_READINESS_AND_ANCESTRY_SCOPED — actual route readiness và positive ancestry collectors đã implement. Các captures/log closeout trước đây giữ source/date scope riêng; current full-route DOM/ready/empty/role revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md), không nhận hash cũ là current. |
-| S16 | P1 /S11,S12,S15 | Dùng runner/assertions hiện có: reflow/text 200%/browser zoom 200%/focus/hit/occlusion/portal/native fallback | 320 CSS px; native text/zoom có method riêng; critical target/action/draft không mất; method chưa chạy ghi NOT_RUN | COMPLETE_METHODS_SCOPED — reflow/text-stress/keyboard/browser suites được kiểm lại tại [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). Native Chromium browser zoom và Firefox text-only zoom giữ [kết quả lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S16-actual-browser-zoom-final-current-20261007.log) / [text-only lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S16-native-text-only-final-current-20261007.log); NOT_RERUN_THIS_DOCUMENT_SYNC. DOM 200% stress không chứng minh native zoom hoặc screen-reader speech hiện hành. |
-| S17 | P1 /S03,S14,S15,S16 | Check/fixtures thường trực, nhỏ, về evidence completeness/provenance; dùng task artifacts hiện có | Missing/stale/fake before/nonzero exit/incomplete file-route-slot-state coverage strict FAIL; N/A có lý do; validator không tự chứng minh log đúng | COMPLETE_PROVENANCE_SCOPED — 11 validator fixtures, 38 shared-contract fixtures và 82 layout fixtures có captured exits/log hashes; S17 manifest refresh từ source thật và validator PASS. Validator kiểm provenance/coverage khai báo, không tự xác nhận screenshot hay acceptance. Current proof theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). |
-| S18 | P1 /S04,S05,S06,S07,S08,S09,S10,S14,S17 | Nối required checks vào verify/workflow đang hoạt động ../.github/workflows/frontend.yml; trigger cho chính workflow/UI closure, timeout/artifacts | Local equivalent chạy đủ; không che workflow/script failures; parent workflow active/nested retired đúng; không nhận hosted PASS | COMPLETE_LOCAL_EQUIVALENT — parent workflow và strict verify wiring được đối chiếu source; root verify và full E2E có exit 0 trên code hiện tại. Harness PATH thiếu Git đã được sửa và rerun; log FAIL giữ riêng. Hosted CI/branch protection NOT_RUN. Current proof theo [kiểm thực tế hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md). |
-| S19 | P0 /S11,S12,S14,S16,S17,S18 | Đối chiếu cuối toàn bộ file/consumer; relevant unit/domain/fixtures/source/build/demo isolation + dedicated built-demo route E2E khi shared impact toàn app | Refresh inventory động và verdict/treatment cho mọi row; review public API gồm lifecycle; reconcile route/state + changed-source coverage; final hashes | COMPLETE_LOCAL_AUTOMATED_REVALIDATION — 504/504 Chromium/Firefox full-suite cases trên Vite demo dev server, cộng 6/6 dedicated production-demo preview cases trên `dist-demo`: 54 routes mỗi browser tại 390px/1440px, không overflow/page errors; artifact SHA và browser logs nằm trong [report](../evidence/frontend-ui-document-sync-20261007/REPORT.md). 432 state cells phân biệt route-specific/shared/N/A, không nâng shared proof thành route proof. [Manifest mới](../evidence/frontend-ui-document-sync-20261007/S19-current-evidence.json) bind inventory/API/route/fingerprint/command hashes và giới hạn native/manual/hosted/Backend; snapshot S19 cũ giữ lịch sử. |
-| S20 | P0 /S19 | Final diff/hash/catalog/rule/coverage handoff REPORT; FE/full-product chỉ đọc theo quyền hiện hành | Mandatory local scope checks có proof; open limits rõ; UI/ARCH riêng; không claim owner/speech/hosted/Enterprise từ docs | READY_FOR_ACCEPTANCE_LOCAL_SCOPE — tài liệu/generator/catalog và local automated UI proof được bàn giao tại [report hiện hành](../evidence/frontend-ui-document-sync-20261007/REPORT.md), có UI/ARCH verdict riêng. Không nhận owner acceptance, speech, hosted CI, Backend hoặc mọi dynamic branch; không tăng FE/full-product ledger từ suite chung. |
+| S06 | P0 /S05 | Public canonical values readonly; quét consumer writes tại layout/visual/token owners | P09 mutation/alias/Object.assign FAIL; reads/generator/types đúng; consumer không sửa runtime canonical data | DONE_GUARD_CAPABILITY_SCOPED — canonical values readonly và consumer-write guards đã implement; current source/gate revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). Không dùng counts của closeout cũ làm current acceptance. |
+| S07 | P0 /S05 | Mọi style entry: native/MUI spread, styled/GlobalStyles/style-tag/createElement, ReactNode creators, slotProps/CSS | Gate kiểm JSX/DOM/CSS entry và producer; positive ref/name/event/native props PASS; negative bypass FAIL; unresolved style path UNKNOWN/strict FAIL | DONE_STYLE_PRODUCER_COVERAGE — style entry discovery/binding đã implement; giữ [closeout lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S07-final.md). Current source/build và negative regressions theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
+| S08 | P0 /S05,S07 | Value/unit provenance: shorthand/logical vars/calc/aliases/computed arithmetic/theme/breakpoint; metadata input của generated assets | Chặn P03–07/19/21–25 tại đúng gate; canonical/system/forced-color/intrinsic geometry PASS theo scope, không làm tròn mọi số | DONE_VALUE_UNIT_PROVENANCE — finite value/unit/source provenance đã implement; [closeout lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S08-final.md) giữ ngày/scope riêng. Current checks theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
+| S09 | P0 /S05,S07 | Role/ancestry ownership theo binding; wrappers/fragments/conditionals/QueryState/portals/native render | P10–15/20 FAIL; distinct nested surfaces PASS; ownership chưa resolve không được coi sạch; affected action/control edges nhìn thấy phải đúng | DONE_OWNERSHIP_SCOPED — checker xử lý finite wrappers/fragments/conditional roots, shared gap owners và ActionGroup; các sửa spacing ở Approvals, Devices, P&L và Shipments được giữ. Current composition/route measurements theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md); không suy mọi dynamic branch đã render. |
+| S10 | P1 /S05,S09 | Khóa đủ 28 public API và value/slot closure; normalize safe as const/satisfies; flow/geometry/columns/variant/responsive | F01 PASS; unknown override/keys/values/branches FAIL; giữ valid native form/ref/ARIA/data/RHF; source/types/catalog khớp mọi export | COMPLETE_LOCAL_CONTRACT — 22 components + 6 compositions có source/types/catalog và named direct-render cases; `Column<T>` là supporting type. Catalog line references và JSX counts có regression đối chiếu TypeScript symbols. Hai conditional notices giữ lifecycle rationale, không tạo consumer giả. Current checks/limits theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
+| S11 | P0 /S03,S09,S15 | Fresh baseline → sửa owner ở ba titled Panel cases của Finance → rà toàn bộ Panel/page/shell consumers theo §16.11 | Header last visible → first body operational12/comfortable16 ±0.5 CSS px ở affected small/large; không double inset; giữ h2/actions/bottom inset/behavior | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
+| S12 | P1 /S03,S08,S09,S10,S15 | Inventory 86 QueryState placements; state geometry/variant nhỏ nhất cần thiết; intrinsic link role; Pager regression; rollout toàn bộ 16 modules/24 feature files, gồm Imports clearance đã được người dùng đánh dấu nếu S15 tái hiện | Không dùng universal 240 cho inline; giữ pending/stale/error/refetch/draft/URL/permission; safe malformed-page behavior sau repro; mọi file/route/slot được EDIT/KEEP_VERIFY | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
+| S13 | P2 /S02,S10 | Runtime cleanup tùy chọn: lifecycle của hai notice, metadata 422 sau repro, phân loại close offset, format các owner đã sửa | KEEP/adopt/remove rationale bắt buộc qua S14/S19; cleanup N/A nếu không có defect/benefit; defect tái hiện phải nâng priority vào S11/S12, không trì hoãn | N/A_OPTIONAL_CLEANUP — S13 chỉ là cleanup tùy chọn; các defect W01–W04 đã tái hiện và được xử lý trong mandatory batch trên. Lifecycle disposition của hai notice giữ tại S10/S14; không xóa chỉ vì 0 consumer. Defect mới phải mở mandatory remediation theo bằng chứng. |
+| S14 | P1 /S02,S05,S10 | Policy check/fixtures thường trực, nhỏ, nếu checker hiện có chưa đáp ứng; IDs/pointers/catalog export-type-role-consumer mapping | Missing/duplicate/stale/export mới chưa có mapping FAIL; quyết định lifecycle của toàn bộ 28 API có lý do; generated/reference permissions đúng | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
+| S15 | P0 /S03,S09,S10 | Gia cố browser collector và ownership regression hiện có trước khi sửa owner: readiness/minimum observations/profile/slot/state/variant | Reject wrong route/loading/zero groups; baseline tái hiện ba Finance boundary và kiểm user-reported `/s/shop-demo/imports` alert→demo-controls clearance tại 806×884; positive distinct surface/fragment/wrapped actions PASS; final acceptance sau S11/S12 | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
+| S16 | P1 /S11,S12,S15 | Reflow/text 200%/browser zoom 200%/focus/hit/occlusion/portal/native fallback theo owner hiện có | 320 CSS px; native text/zoom có method riêng; critical target/action/draft không mất; method chưa chạy ghi NOT_RUN | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
+| S17 | P1 /S03,S14,S15,S16 | Check/fixtures thường trực, nhỏ, về evidence completeness/provenance; dùng task artifacts hiện có | Missing/stale/fake before/nonzero exit/incomplete file-route-slot-state coverage strict FAIL; N/A có lý do; validator không tự chứng minh log đúng | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
+| S18 | P1 /S04,S05,S06,S07,S08,S09,S10,S14,S17 | Nối required checks vào verify/workflow đang hoạt động ../.github/workflows/frontend.yml; trigger cho chính workflow/UI closure, timeout/artifacts | Local equivalent chạy đủ; không che workflow/script failures; parent workflow active/nested retired đúng; không nhận hosted PASS | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
+| S19 | P0 /S11,S12,S14,S16,S17,S18 | Inventory/source/API/consumer/route-state, all gates và artifact cuối | Zero unknown/missing/stale mandatory proof trong local scope | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
+| S20 | P0 /S19 | Diff/hash/catalog/gates/FE tracker/demo và acceptance guide | Local technical handoff; giới hạn riêng | COMPLETE_LOCAL_DENSITY_REVALIDATION — standard v1.29 operational header12/reading16, gutter16/24, body12/16; [proof và limits](../evidence/frontend-spacing-density-20261009/REPORT.md). Native16deep/108labels; full624; không nhận speech/hosted/user acceptance. |
 
 **Thứ tự thực thi:** S03 → S04–05 → S06–09 → S10 → S15 readiness/regression harness → S11 confirmed owner fix → S12 waves → S16 → S17–18 → S19–20. S14 chạy sau S10, song song owner migration. S13 cleanup P2 không là prerequisite của S19: classification/lifecycle decisions vẫn bắt buộc ở S14/S19, runtime cleanup chỉ làm nếu cần; defect thật phải nâng vào mandatory wave. Không để cải thiện readability tùy chọn trì hoãn sửa lỗi đã chứng minh. S15 tạo harness trước sửa; final evidence dùng source cuối, không lấy baseline sau khi sửa.
 
@@ -2296,7 +2362,7 @@ Markdown không bảo đảm người có quyền source sẽ không bypass. Enf
 | Nhóm | Negative phải bắt | Positive phải giữ | Scope |
 |---|---|---|---|
 | Binding/source | Local trusted-name spoof, shadow/barrel/renamed styled, mutation | Canonical resolved alias/path, readonly access | Source TS/TSX + CSS import closure |
-| API/value | Generic style/unknown metadata/spread, invalid responsive/geometry/variant | Native form/ref/ARIA/valid cast/finite branches | 27 shared components + new export/type owners |
+| API/value | Generic style/unknown metadata/spread, invalid responsive/geometry/variant | Native form/ref/ARIA/valid cast/finite branches | Mọi public Shared API và export/type owner mới theo discovery/catalog |
 | Owner | Double gap/inset qua wrapper/conditional, fake Paper role | Flush body, distinct nested surfaces, table/toolbar slots | Compositions + Panel/shell/profile |
 | Visual/units | Font/border shorthand raw, undefined variable, px×8, selector override | Theme variant/canonical CSS variable/forced colors | Mapping + consumer style |
 | Scope/parser | Empty root/missing new file/parse error/missing import | Inventory match/generator fresh | Mỗi strict gate và wiring |
@@ -2313,14 +2379,14 @@ Chỉ thay trạng thái mỗi bước khi acceptance ở hàng tương ứng c�
 
 ### 16.10. Coverage từng file, không bỏ sót code UI
 
-Nguồn tái lập: [inventory.mjs](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/inventory.mjs), [inventory.json](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/inventory.json), [coverage-review](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/coverage-review.md). Đây là audit của task hiện tại, không phải runtime gate thường trực hoặc FE tracker.
+Nguồn tái lập: [inventory.mjs](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/inventory.mjs), [inventory.json](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/inventory.json), [coverage-review](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/coverage-review.md). **HISTORICAL_SNAPSHOT — inventory audit 06/10/2026**, không phải runtime gate thường trực hoặc FE tracker. Inventory hiện hành theo [batch source cuối](../evidence/frontend-shared-consolidation-20261009/inventory-current.json); các số và NOT_RUN bên dưới thuộc lượt audit ban đầu.
 
 Mỗi hàng có path/hash/category/owner/editPolicy/plannedTreatment/requiredVerification/rolloutSteps/gitState/import references/route impact; verificationStatus ở lượt này là NOT_RUN_THIS_DOCS_TURN. KEEP_VERIFY yêu cầu assessment/check khi nhận việc triển khai, không có nghĩa “file không đổi = đã đạt”. Khi có finding thì chuyển EDIT_VERIFY và chỉ sửa vùng liên quan. Deleted paths có RETIRED_VALIDATE; không tự động khôi phục deletion đang có trong dirty checkout.
 
 | Boundary | Inventory/owner cần reconcile | Triển khai/kiểm |
 |---|---|---|
 | App/root/native/Shell/style | main.tsx, index.html, app files, bootstrap.css, routes/fallback/feedback/recovery/nav/banner/demo/footer | S03–09 scope/style; S11–12 assessment; S15–19 states/render/focus |
-| Shared foundation | 27 API owners, theme/layout/visual, model/API hooks/helpers | S05–10 binding/value/API; S11–14 minimal fixes/catalog; S19: mọi consumer |
+| Shared foundation | Mọi public Shared API owners theo export discovery, theme/layout/visual, model/API hooks/helpers | S05–10 binding/value/API; S11–14 minimal fixes/catalog; S19: mọi consumer |
 | Feature UI và helpers | 24 files / 16 modules; JSX + import/parser/chart/preview helpers | Waves §16.11; source/read/action states, không chỉ index.tsx |
 | Generated app outputs | 11 outputs theo scripts/generate.mjs, gồm contracts/tokens/CSS/icon/manifest | GENERATE_VERIFY; input/version/freshness/isolation; không hand edit |
 | Public/PWA/vendor/demo | app-sw.js/sample CSV / pinned MSW worker / mock state/locale/data | Boundary/paths/persistence/capability/source-gate applicability; worker/generated/library owner rõ |
@@ -2329,7 +2395,7 @@ Mỗi hàng có path/hash/category/owner/editPolicy/plannedTreatment/requiredVer
 
 **Đối chiếu bắt buộc:** (1) disk partition = relevant + excluded, có count/reason; (2) xem xét tracked present/deleted/untracked/ignored active entries; (3) đối chiếu tsconfig/Vite/HTML/CSS/assets/import closure với router thực tế và manifest; (4) mọi hàng có treatment/verification reason/step; (5) source trong diff added/moved/deleted không mất khỏi scope; (6) required source coverage và affected route/slot/state cases khớp phạm vi đã khai báo. File/import/route/export mới phải mở scope từ source, không cố định 355/54/27 làm allowlist. Đây là mục tiêu S04/S14/S17/S19; inventory docs chỉ chứng minh discovery/classification, chưa chứng minh tuân thủ khi render.
 
-**Resolution còn phải làm ở S03:** fallback require của global TypeScript trong môi trường còn UNKNOWN path/version. AI xác minh pinned local compiler path/version hoặc thay resolver hữu hạn, nhỏ, trước source edit. Ba temp compile paths và một domain-scenarios.cjs đã có mapping source rõ; runtime app closure không có unresolved first-party imports. Không ghi “full strict coverage đã sạch” từ mapping này; audit đã chứng minh resolver gates còn bypass.
+**HISTORICAL_SNAPSHOT — resolution được ghi tại audit S03:** fallback require của global TypeScript trong môi trường còn UNKNOWN path/version. AI xác minh pinned local compiler path/version hoặc thay resolver hữu hạn, nhỏ, trước source edit. Ba temp compile paths và một domain-scenarios.cjs đã có mapping source rõ; runtime app closure không có unresolved first-party imports. Không ghi “full strict coverage đã sạch” từ mapping này; audit đã chứng minh resolver gates còn bypass.
 
 ### 16.11. Thứ tự wave toàn bộ module và owner ngoài module
 
@@ -2337,7 +2403,7 @@ Mỗi hàng có path/hash/category/owner/editPolicy/plannedTreatment/requiredVer
 
 | Wave | Module/owner | Files /routes tại snapshot | Nội dung cần chốt và kiểm |
 |---|---|---|---|
-| 0 /P0 | app/root/Shell + shared foundation | Ngoài 24 feature files; toàn bộ affected routes khi shared owner đổi | Single providers/native first paint, page edges/demo tools/nav/portals; 27 API value/slots; theme/fields/actions; guarded baseline |
+| 0 /P0 | app/root/Shell + shared foundation | Ngoài 24 feature files; toàn bộ affected routes khi shared owner đổi | Single providers/native first paint, page edges/demo tools/nav/portals; Mọi public API values/slots theo discovery; theme/fields/actions; guarded baseline |
 | 1 /P0 | finance | 3 files /R20,R21,R22,R48,R49,R50 | Sửa owner của ba titled Panels đã xác nhận lỗi; demo-account-preview/report-explanations giữ semantics; cards/form/query/error/long text |
 | 2 /P1 | catalog | 3 files /R09–R14 | index/imports/import-file: uploader/mapping/group spacing, field label/error/RHF/native file/ref; CSV dry run/result, cursor/edit dialog |
 | 2 /P1 | orders | 2 files /R17–R19,R43 | index/demo-address-preview: checkout/list/draft/action/confirm, permission/pending/conflict/unknown; không đổi payload formatting |
@@ -2382,7 +2448,7 @@ S20 bàn giao change/reason/tests/risks, final hashes/commands/exits thực tế
 |---|---|---|
 | 1 / P0 / S03 | Refresh từng file/hash/owner/consumer; xác minh compiler local đúng pin; freeze baseline thật trước source edit | Scope đầy đủ và resolvable; ghi expected route/state/slot/variant. Snapshot cũ không thay intake mới |
 | 2 / P0 / S04–S09 | Gia cố gates hiện có từ bypass đã chứng minh: scope/parser → binding resolver → mutation/style/value/owner | Positive giữ canonical/native forms; negative/UNKNOWN bắt đúng. Nếu bắt lỗi source thật, giữ acceptance mở theo capability note §16.6, không che findings |
-| 3 / P1 với prerequisite P0 / S10,S14,S15 | Chốt props/slots hữu hạn cho 27 API và lifecycle; browser harness phải bắt sai readiness/zero observations và Finance defect trước sửa | Không mở generic styles; native/ref/RHF/ARIA hợp lệ vẫn chạy. Harness có reproduction trước owner migration |
+| 3 / P1 với prerequisite P0 / S10,S14,S15 | Chốt props/slots hữu hạn cho mọi public API theo discovery và lifecycle; browser harness phải bắt sai readiness/zero observations và Finance defect trước sửa | Không mở generic styles; native/ref/RHF/ARIA hợp lệ vẫn chạy. Harness có reproduction trước owner migration |
 | 4 / P0 / S11 | Sửa title-to-body owner đã xác nhận ở Finance; kiểm Panel/Shell/page consumers toàn impact | Khoảng cách theo contract trên phần tử nhìn thấy; không double inset, mất heading/action/draft hoặc sửa CSS symptom |
 | 5 / P1 / S12, waves 2–5 | Migrate lần lượt Catalog/Orders/Procurement → Customers/Inventory/Fulfillment → Workspace/Bot/Integrations/Knowledge/Notifications/Operations → Inbox/Reports/Dashboard | Từng file EDIT_VERIFY hoặc KEEP_VERIFY có rationale; QueryState placement và async/permission branches được kiểm. Geometry đặc thù có profile, không ép form rhythm |
 | 6 / P1 / S16–S18 | Reflow/native resize/zoom/focus và evidence completeness; wiring verify/active workflow | Phương pháp và exits thật; thiếu mandatory proof giữ open. Không nhận cấu hình CI là hosted PASS |
@@ -2509,7 +2575,7 @@ Khoảng cách chuẩn và font lấy từ [standard](FRONTEND_SPACING_STANDARD.
 
 #### C. Quyết định cho toàn bộ 27 shared APIs
 
-Catalog [CURRENT/TARGET](../apps/web/src/shared/ui/README.md) là hợp đồng từng API; bảng dưới chốt hướng migration, không mô tả source đã hoàn thành.
+**HISTORICAL_SNAPSHOT — quyết định migration cho 27 API của lượt audit ban đầu.** Catalog [CURRENT/TARGET](../apps/web/src/shared/ui/README.md) và export discovery là nguồn danh sách hiện hành; bảng dưới giữ quyết định theo thời điểm ghi, không mô tả source đã hoàn thành.
 
 | API | Quyết định / việc cần làm | Bước |
 |---|---|---|
@@ -2552,6 +2618,8 @@ Không tính tỷ lệ Enterprise từ số task/docs/rules. Chỉ nhận scope 
 
 ### 16.16. Rà soát hợp nhất quy định, shared UI và thứ tự triển khai — 07/10/2026
 
+> **SNAPSHOT_LICH_SU — 07/10/2026.** Phần này lưu quyết định/bằng chứng ở thời điểm ghi; các số liệu, lời mô tả current và TODO cũ không là trạng thái source 08/10. Thứ tự/trạng thái hiện hành chỉ ở §16.6 và [báo cáo F01–F09](../evidence/frontend-corrections-20261008/REPORT.md). Catalog source cuối: 22 components + 6 compositions = 28 public APIs; các bổ sung ngày 08/10 được nêu riêng.
+
 **Trạng thái của đợt review 07/10:** người dùng đã xem xét xong và yêu cầu tiếp tục triển khai theo plan. Phần rà soát này là snapshot quyết định/policy, không là gate runtime. Sau đó, S09 được tiếp tục bằng checker/probe changes trong working tree; trạng thái hiện thời nằm ở đầu tài liệu và bảng §16.6. Không ghi FE/full-product checkpoint, không đổi kết quả S03–S08; yêu cầu tiếp tục là tiến độ công việc, không phải task `BLOCKED`.
 
 #### Kết quả kiểm kê và nguồn có thẩm quyền
@@ -2563,7 +2631,7 @@ Không tính tỷ lệ Enterprise từ số task/docs/rules. Chỉ nhận scope 
 | Giá trị design | `../botsales-kit/design/tokens.json` và generator | Nguồn token nguyên tử; output sinh không sửa tay. `DESIGN.md` diễn đạt nhận diện; không trở thành nguồn token/layout thứ hai. |
 | UI rules/workflow | `docs/FRONTEND_SPACING_STANDARD.md`, SPC-001–075 | Nguồn normative duy nhất cho spacing, typography/visual ownership, composition, exception, quy trình và acceptance. Không lập rule set hoặc checklist song song. |
 | Runtime shared owner | `theme.ts`, `layout.ts`, `visual.ts`, `components.tsx`, `composition.tsx` | Code/types là sự thật về CURRENT runtime; token → mapping/theme → shared owner → feature consumer. §16.16 S10/S14 phải reconcile mọi key với rule/catalog hoặc ghi lý do internal/geometry. |
-| Public shared catalog | `apps/web/src/shared/ui/README.md` | CURRENT/TARGET và quyết định KEEP/MIGRATE/lifecycle theo consumer; không là nguồn status/scale thứ hai. Có 21 component exports + 6 composition exports (27 React components); `Column<T>` là exported supporting type của DataTable và phải được bao trong contract/test. |
+| Public shared catalog | `apps/web/src/shared/ui/README.md` | CURRENT/TARGET và quyết định KEEP/MIGRATE/lifecycle theo consumer; không là nguồn status/scale thứ hai. Danh sách và count hiện hành lấy từ symbol/export discovery và catalog; `Column<T>` là exported supporting type của DataTable và phải được bao trong contract/test. |
 | Ưu tiên/trạng thái | Bảng §16.6 | S03–S08 đóng scoped theo evidence; S09–S20 còn mở. Không tạo task hay ledger trùng. |
 | Kết quả | Step closeouts, `evidence/REPORT.md` và artifacts có command/exit/hash | Mỗi con số có đúng scope/date; source scan, build, browser, hosted, speech và user acceptance là các lớp evidence khác nhau. |
 
@@ -2625,6 +2693,8 @@ Coverage phải khóa đủ ba mặt riêng: (1) mọi nguồn file/import/route
 
 ### 16.17. Rà soát trước source: shared UI, quy định và kế hoạch — 07/10/2026
 
+> **SNAPSHOT_LICH_SU — 07/10/2026.** Phần này lưu quyết định/bằng chứng ở thời điểm ghi; các số liệu, lời mô tả current và TODO cũ không là trạng thái source 08/10. Thứ tự/trạng thái hiện hành chỉ ở §16.6 và [báo cáo F01–F09](../evidence/frontend-corrections-20261008/REPORT.md). Catalog source cuối: 22 components + 6 compositions = 28 public APIs; các bổ sung ngày 08/10 được nêu riêng.
+
 **Bối cảnh tại thời điểm review trước source:** yêu cầu lúc đó là phân tích cách chia shared/local, rule spacing và đường kiểm tra trước khi sửa runtime. Nội dung bên dưới ghi lại quyết định, audit và baseline snapshot của giai đoạn đó; nó không phải trạng thái triển khai hiện tại. Những probe tạm đo layout không được tính là suite/evidence bền cho đến khi được đóng theo S15. Review không sinh task `BLOCKED`; sau khi người dùng chốt, source rollout tiếp tục tự động theo dependency Frontend và owner acceptance chỉ ở cuối.
 
 **Cập nhật sau khi người dùng chốt review (07/10):** source rollout đã được cho phép. S09 được xử lý trước theo dependency; kết quả implementation và bằng chứng mới nhất nằm tại bảng §16.6 và artifact S09. Dữ liệu audit trong bảng dưới là baseline trước rollout, không sửa ngược thành kết quả sau.
@@ -2672,6 +2742,8 @@ Lệnh đã chạy trong review: `node scripts/check-layout.mjs`, `node scripts/
 Dependencies kỹ thuật vẫn tuần tự theo §16.6; `TODO`/`IN_PROGRESS`/`NOT_RUN` là trạng thái tiến độ/evidence, không phải yêu cầu owner mở khóa giữa chừng. Không cập nhật FE/full-product ledger từ kế hoạch này. Không ghi owner acceptance, speech PASS, hosted PASS hoặc Enterprise-Grade khi chưa có bằng chứng thích hợp.
 ### 16.18. Chốt hướng quy định trước batch source tiếp theo — 07/10/2026
 
+> **SNAPSHOT_LICH_SU — 07/10/2026.** Phần này lưu quyết định/bằng chứng ở thời điểm ghi; các số liệu, lời mô tả current và TODO cũ không là trạng thái source 08/10. Thứ tự/trạng thái hiện hành chỉ ở §16.6 và [báo cáo F01–F09](../evidence/frontend-corrections-20261008/REPORT.md). Catalog source cuối: 22 components + 6 compositions = 28 public APIs; các bổ sung ngày 08/10 được nêu riêng.
+
 **Phạm vi của quyết định này:** tiếp tục bàn và chốt policy/workflow trước batch sửa React UI tiếp theo. Không phát sinh thay đổi source UI mới trong bước rebaseline này. Những thay đổi source và test đã có trong working tree từ các bước trước được giữ nguyên; không reset hoặc diễn giải chúng thành bằng chứng S19 đã đóng.
 
 #### Quy định duy nhất và ranh giới shared ownership
@@ -2680,7 +2752,7 @@ Mỗi loại quyết định chỉ có một nguồn chuẩn: `FRONTEND_SPACING_
 
 Quy tắc áp dụng cho mọi UI mới và code UI được sửa. Consumer chọn semantic owner/variant hữu hạn; nó không tự khai báo gap, inset, type scale hoặc style passthrough để thay owner. Page edge, section, surface/title-body, field group, related content, sibling action và khoảng nội bộ control là quan hệ khác nhau. Mỗi ranh giới chỉ có một owner; nested surface riêng được phép có inset của chính nó. Geometry đặc thù chart/table/pane giữ owner phù hợp và không bị ép thành spacing token.
 
-Giữ catalog hiện có gồm 21 component function + 6 composition function (27 public APIs); `Column<T>` là supporting type. Chỉ tạo hoặc mở rộng shared API khi invariant lặp đã xác nhận, consumer thật và contract nêu rõ slot/native form/ref/ARIA/state/variant cùng impact. Nếu primitive MUI/theme đã đáp ứng hoặc semantics khác nhau, giữ primitive/feature-local. Không chuyển nghiệp vụ, permission, schema, query/cache hay payload vào layout engine; hai notice không có consumer vẫn là conditional, không tạo consumer giả.
+Catalog hiện hành gồm 22 component function + 6 composition function (28 public APIs), gồm DraftConflict theo invariant F01 đã xác nhận; `Column<T>` là supporting type. Chỉ tạo hoặc mở rộng shared API khi invariant lặp đã xác nhận, consumer thật và contract nêu rõ slot/native form/ref/ARIA/state/variant cùng impact. Nếu primitive MUI/theme đã đáp ứng hoặc semantics khác nhau, giữ primitive/feature-local. Không chuyển nghiệp vụ, permission, schema, query/cache hay payload vào layout engine; hai notice không có consumer vẫn là conditional, không tạo consumer giả.
 
 Đường cưỡng chế là instruction → inventory/source/type fixtures fail-closed → `npm run verify` → active workflow. Catalog/test mới khóa 113 leaf path giữa `LayoutSxContract` và runtime `layoutSx`: mỗi path phải có semantic owner trong standard hoặc đúng một crosswalk row với classification, owner và consumer thực; path thiếu/trùng/sai loại/không có consumer phải fail. Đây là cơ chế tăng enforcement, không phải lời hứa rằng tài liệu tự ngăn mọi AI hoặc người chạy lệnh bỏ gate. Hosted CI/branch protection chỉ được gọi PASS khi có bằng chứng trực tiếp.
 
@@ -2697,11 +2769,149 @@ Giữ catalog hiện có gồm 21 component function + 6 composition function (2
 | 6 | P0 — S18/S20 final audit | Rerun generator, source/boundary/lint/type/domain/unit/build/layout/visual/composition/evidence gates; full Chromium/Firefox E2E; refresh inventory/matrix/manifests/fingerprints; đọc và đối chiếu diff toàn bộ. | `verify` và full E2E pass trên cùng final source; 0 missing mandatory evidence/unauthorized finding; artifact sẵn sàng nghiệm thu với UI/ARCH verdict và limits riêng. |
 | 7 | P2 có điều kiện — cleanup | Chỉ xóa/tách/simplify khi có defect hoặc maintenance benefit đo được; kiểm generated/retired references và regressions. | Không để orphan active import/asset/route; không phát sinh abstraction hoặc migration ngoài giá trị chứng minh được. |
 
-#### Số liệu và trạng thái hiện đã được đối chiếu
+#### Số liệu của snapshot 07/10 và bổ sung 08/10
 
 - Local `npm.cmd run verify` exit 0 và full Chromium/Firefox E2E 504/504 pass ở source snapshot trong evidence; đây là bằng chứng local, không phải hosted CI, production hoặc owner acceptance.
 - Inventory hiện phân hoạch 76,387 disk paths thành 377 path thuộc workspace Frontend và 76,010 excluded; 1 active workflow ở parent repository được ghi riêng vì nằm ngoài cây thư mục này. Có 379 disposition records: 378 current paths và 1 retired deleted nested-workflow path giữ source/replacement hash; 0 pending. Có 0 unknown file và 0 unresolved import trong runtime closure; 5 non-literal dynamic imports chỉ thuộc test/tooling đã có classification, canonical target và log đối chiếu. Không diễn giải disposition thành file UI đã pass.
 - Trong boundary đó, 73 file `apps/web/src` chịu source/UI gates và `apps/web/index.html` chịu HTML entry/layout/import/build/browser gates. Có 54 routes/16 modules, 27 shared API exports và 113 layout leaf paths đã đối chiếu type/runtime; 39 leaf path không được nêu trực tiếp trong standard có crosswalk row với owner/class/consumer.
 - Ma trận 54×8 state declarations hiện reconcile 432 cells: 204 shared-tested, 163 route-specific-tested, 65 N/A có lý do; riêng ma trận 54×7 role có 357 browser cases. Số các trục không gộp thành “tỷ lệ UI hoàn thiện”.
-- Shared API có 27/27 direct render coverage, 38 cases. Catalog contract test kiểm type/runtime/crosswalk/consumer closure; S19 kết thúc coverage theo route/state, đổi source và hash bằng chứng trên snapshot hiện tại. S20 ghi handoff và limits local.
+- **Bổ sung 08/10 — source F01–F09:** Shared API có 28/28 direct render coverage; 38 contract fixtures và rendered unit cases riêng. Catalog contract test kiểm type/runtime/crosswalk/consumer closure; S19 kết thúc coverage theo route/state, đổi source và hash bằng chứng trên snapshot hiện tại. S20 ghi handoff và limits local.
 - Không ghi “100% UI tuân thủ” chỉ từ inventory, static gate, direct render hoặc E2E riêng lẻ. Các bằng chứng thủ công không quan sát được, screen-reader speech, hosted CI/branch protection và owner acceptance phải nêu riêng đúng trạng thái; chúng không tạo bước chờ cho các phần Frontend có thể tự làm.
+
+<a id="shared-consolidation-20261009"></a>
+
+### 16.19. Kế hoạch chi tiết hợp nhất Shared UI — 09/10/2026
+
+Phần này mô tả cách thực hiện; thứ tự, dependency và trạng thái chỉ ở §16.6. Quy trình/DoR/DoD áp dụng nguyên [standard §0](FRONTEND_SPACING_STANDARD.md#unified-workflow) và [artifact fields §13.2](FRONTEND_SPACING_STANDARD.md#132-fields-bằng-chứng-của-chính-task). Không thêm spacing scale, policy hoặc checklist tổng quát mới.
+
+#### 16.19.1. Mục tiêu, phạm vi và lựa chọn đã chốt
+
+- Hợp nhất đúng ba điểm được xác nhận trong [audit](../evidence/frontend-shared-adoption-audit-20261008/REPORT.md): filter Inbox nằm ngoài Toolbar.filters; hai CTA Dashboard trùng chrome; cách ghi count Shared APIs còn dùng số27.
+- Phạm vi UI ảnh hưởng trực tiếp: R04 Tổng quan, R05 Hộp thư, R06 Chi tiết hội thoại. Đối chiếu đủ16 module/54 routes cho cùng pattern, nhưng chỉ sửa thêm consumer có cùng nguyên nhân và invariant được chứng minh.
+- Ưu tiên phương án không đổi public Shared API: Toolbar.filters + FieldGroup hiện có; một primary CTA local ở Dashboard; count tài liệu lấy từ symbol/export discovery. Không thêm dependency, schema/API hoặc component Shared mới chỉ đổi tên primitive.
+- AuthCard, composer/message list, DraftForm, chart SVG, app guards và file controls giữ owner theo catalog. Hai conditional notices không được thêm consumer giả hoặc xóa theo số lần dùng.
+- Đích hoàn tất là batch có code, regression, evidence và demo để nghiệm thu local. Backend/provider/production và quyết định nghiệm thu người dùng giữ phạm vi riêng.
+
+#### 16.19.2. Bước0 — baseline và phạm vi ảnh hưởng
+
+1. Đọc Git status/diff và hash source ngay trước implementation; giữ toàn bộ staged/unstaged/untracked hiện có. Planning record không thay baseline trước sửa UI.
+2. Refresh inventory Shared adoption/Toolbar consumers từ source và manifest; đối chiếu route R04/R05/R06 thực tế với entry functions. R05/R06 dùng cùng InboxPage nhưng phải kiểm riêng navigation/state của từng route.
+3. Ghi contract task trong thư mục evidence của batch: intent, profile, owner của Panel/Toolbar/filter/CTA, props/slot, behavior bất biến, EDIT/KEEP và expected measurements theo owners chuẩn.
+4. Chụp/đo before cho Inbox list/detail và Dashboard ở small/large; thêm state có labels dài, metadata chưa tải/lỗi và permissions liên quan. Ghi rõ đây là baseline cải tiến, không tự tạo assertion đỏ cho một runtime bug chưa được xác nhận.
+5. Kiểm Node/npm và lệnh suite thực trong package.json. Trên host này dùng npm.cmd hoặc Node CLI hiện có; không chỉnh execution policy để chạy shim.
+
+**Files đọc/đối chiếu:** modules/inbox/index.tsx; modules/inbox/conversation-components.tsx; modules/dashboard/index.tsx; shared/ui/components.tsx, composition.tsx, layout.ts, visual.ts, README.md; tests/design/toolbar-impact.mjs và suites nêu bên dưới. Chỉ mở rộng impact nếu cần thay Shared owner.
+
+#### 16.19.3. Bước1 — P2 hợp nhất filter Inbox
+
+**Hiện trạng đã đọc:** `apps/web/src/modules/inbox/index.tsx:52–66` đặt Toolbar rồi Stack riêng chứa status/mode/channel/assignedUserId. Stack tự ghép toolbar.controlGap với surface.bodyInsetAfterHeader. Toolbar đã có filters slot ở ngoài form tìm kiếm; FieldGroup đã có direction/flexWrap/geometry/ARIA hữu hạn.
+
+**Phương án chính:** đưa bốn controls vào `Toolbar.filters`, ghép bằng `FieldGroup` có `bodyMode="flush"`, responsive direction/flexWrap và accessible label. Toolbar giữ inset/cách bố trí search-filter; FieldGroup giữ khoảng cách control. Chọn geometry của controls theo pane thực, không thêm body inset/top gap lần nữa.
+
+**Các bước code:**
+
+1. Di chuyển JSX controls vào filters slot, giữ nguyên label, options, value, handlers và metadata source. Bỏ wrapper Stack và hai layout roles cũ chỉ tại boundary được thay; không bỏ import vẫn dùng ở phần khác.
+2. Giữ group ngoài native form search; thay select không submit search hoặc gửi command. Không biến filter group thành form lồng nhau.
+3. Giữ nguyên updateFilter, detailHref, q và query listConversations. R05 dùng cursor; R06 list dùng listCursor, message cursor độc lập. Thay một filter chỉ reset cursor của list hiện tại.
+4. Đo actual pane: desktop list pane hiện có width300; ở viewport nhỏ route detail ẩn pane list. Đánh giá các label dài và minWidth trong pane hẹp, điều chỉnh geometry hữu hạn nếu có số đo chứng minh overflow. Không dùng negative margin/hide overflow để che lỗi.
+5. Giữ bản nháp composer, selection conversation, scroll độc lập, permission và scope lifecycle. Metadata refetch/lỗi không được tự reset filter URL đang chọn.
+
+**Files dự kiến EDIT:** `apps/web/src/modules/inbox/index.tsx`, `tests/ui-toolbar-layout.spec.ts`, `tests/fe016.spec.ts`. Mở rộng unit contract ở `apps/web/tests/shared-ui-render-contract.test.tsx` chỉ nếu existing slot assertions thiếu invariant cần khóa. `shared/ui/components.tsx` và `composition.tsx` dự kiến KEEP.
+
+**Kiểm chứng liên quan trước chuyển bước2:**
+
+| Nhóm | Cases và kỳ vọng cụ thể |
+|---|---|
+| Structural/owner | filters ở trong Toolbar boundary, ngoài form search; một inset owner; không xuất hiện generic sx/style/opaque forwarding trên Shared; đủ bốn combobox accessible names |
+| Query/URL | Từng filter và tổ hợp q/status/mode/channelId/assignedUserId gửi đúng query; chọn tất cả bỏ key; search/clear giữ filters; reload/deep link/back giữ giá trị |
+| Cursor | R05 reset cursor list; R06 reset listCursor, giữ cursor messages; đổi hội thoại/back/shop giữ hành vi suites hiện có |
+| Async/draft | Metadata pending/error/empty/refetch; query pending/error/empty; nhập composer rồi thao tác filter/refetch vẫn giữ draft và send policy |
+| Layout | R05/R06 ở320/390/768/1280/1440 CSS px, đặc biệt pane300 trên desktop; inline edges của filters/search theo Toolbar owner; gap theo FieldGroup; không clipping/overlap/page overflow |
+| A11y/interaction | Tab/focus theo DOM, chọn option bằng keyboard, search Enter/clear/IME hiện hành; axe vùng ảnh hưởng; menu portal vẫn truy cập được |
+| Native methods | Browser zoom200% và text-only200% theo phương pháp harness hiện có, ghi riêng kết quả; không dùng CSS zoom thay native method |
+
+Ưu tiên bổ sung case vào suite sở hữu hiện có, tránh một bộ probe mới cạnh tranh. Nếu structural assertion trước sửa thất bại và sau sửa đạt, ghi đúng invariant consolidation; không gọi đó là chứng minh một bug hình học chưa đo.
+
+#### 16.19.4. Bước2 — P3 gộp CTA Dashboard
+
+**Hiện trạng đã đọc:** `apps/web/src/modules/dashboard/index.tsx:59–60` có hai Link cùng style/icon ở hai nhánh mutually exclusive. Chọn operations khi canOps; nếu không thì orders khi canOrders. CTA tạo đơn ở dòng61 độc lập.
+
+**Phương án chính:** chọn descriptor local cho primary action (label + destination) theo đúng thứ tự canOps → canOrders → không có; render một Link với style hiện có khai báo một lần. Giữ CTA tạo đơn và ActionGroup riêng. Phương án này thu hẹp duplicate mà không thêm component/API shared hoặc style factory.
+
+**Các bước code:**
+
+1. Đặt lựa chọn primary action trong DashboardPage, lấy shop.id hiện hành. Không sao chép permissions vào state hoặc đổi thứ tự ưu tiên.
+2. Render một primary Link khi descriptor tồn tại, giữ RouterLink semantics, ArrowForward icon, theme colors/radius, hover/active/focus và target hiện tại.
+3. Giữ CTA tạo đơn theo orders.write; container có actions khi bất kỳ action hợp lệ nào tồn tại. Hero, greeting, KPI links, grid, API queries và confirm/pause workflow giữ nguyên.
+4. Rà CTA chrome trùng ở các module từ inventory. Chỉ hợp nhất thêm khi cùng behavior/profile; download anchor R31 và KPI inline links có semantics khác nên KEEP theo rationale.
+
+**Files dự kiến EDIT:** `apps/web/src/modules/dashboard/index.tsx`, `tests/ui-dashboard-layout.spec.ts`. Không tạo Shared CTA mới; các file shared/theme/tokens dự kiến KEEP.
+
+**Matrix quyền bắt buộc:** kiểm bốn tổ hợp canOps/canOrders, mỗi tổ hợp kiểm canCreateOrder=false/true bằng fixture hợp lệ của harness — tám tuple logic; không sửa role/permission contract để có fixture.
+
+| canOps | canOrders | Primary CTA |
+|---|---|---|
+| true | true | Xem việc cần làm → /s/{shopId}/operations |
+| true | false | Xem việc cần làm → /s/{shopId}/operations |
+| false | true | Xem đơn hàng → /s/{shopId}/orders |
+| false | false | Không có primary CTA; CTA tạo đơn vẫn theo quyền riêng |
+
+Kiểm mỗi branch có đúng một primary CTA, label/href đúng shop, tạo đơn độc lập, zero unauthorized action, modifier-open/link semantics, keyboard focus/hover/active, target theo token chuẩn. Chạy layout suite small/large và native methods vùng hero ảnh hưởng; giữ các assertion page width/CTA target hiện có. Không hạ assertion để đóng batch.
+
+#### 16.19.5. Bước3 — P3 đồng bộ count trong tài liệu
+
+**Nguồn count:** exported symbols tại shared/ui/components.tsx, composition.tsx và draft-conflict.tsx; hiện28 public APIs gồm22 components +6 compositions. Catalog README/current consumers đối chiếu theo source; counts không trở thành allowlist cứng.
+
+1. Đổi cách diễn đạt SPC-067 tại `docs/FRONTEND_SPACING_STANDARD.md` sang phạm vi “mọi public Shared API và export mới”, trỏ catalog hiện hành; nếu ghi count28 phải ghi đúng snapshot/date/source.
+2. Rà các current references trong standard/catalog/plan §16.8/§16.11 để xử lý count27 đang có thể bị hiểu là hiện hành. Phần đã đánh dấu HISTORICAL_SNAPSHOT giữ số tại thời điểm ghi; không replace toàn bộ27 trong repo.
+3. Xác nhận DraftConflict có owner/catalog/render-contract mapping; Comparison private và Column<T> supporting type không tăng số API. PartialDataNotice/CapabilityUnavailable vẫn KEEP conditional với zero consumer nếu state thực chưa cần.
+4. Giữ SPC IDs/anchors/normative semantics và một nguồn quy định; đây là sửa clarity/current pointers, không đổi spacing/token scale. Chỉ đồng bộ version pointers nếu thực sự đổi version chuẩn.
+5. Dùng generator sở hữu nếu report là generated; không sửa kit IMPLEMENTATION_PLAN/generated outputs hoặc ledger để giải quyết wording.
+
+**Files dự kiến EDIT:** standard và current count references trong UI plan; Shared README chỉ EDIT nếu source/export/count thực sự lệch. Existing contract tests `tests/ui-shared-api-contract.test.mjs` kiểm source/catalog và pointers; bổ sung assertion discovery-based khi có khoảng trống, không pin28 vĩnh viễn.
+
+**Điều kiện kiểm liên quan:** current wording/count khớp symbols; links/anchors tồn tại; source/types/catalog/consumer đúng; historical evidence nguyên trạng; không có tracker/rule bản sao hoặc tăng FE checkpoint do sửa văn bản.
+
+#### 16.19.6. Bước4 — gates, evidence và bàn giao source cuối
+
+Thực hiện verification pipeline của standard/plan hiện hành, với impact trực tiếp R04/R05/R06 và closure đủ54 routes/16 modules:
+
+1. Chạy targeted regression của từng bước đã nêu rồi rà final diff/source impact; phát hiện consumer cùng nguyên nhân phải được xử lý/KEEP có rationale trước full gates.
+2. Chạy `npm.cmd run generate:check`, toàn bộ `npm.cmd run verify`, full `npm.cmd run test:e2e` với Chromium và Firefox, production build, demo build và built-demo review theo harness/config thực tế. Số tests lấy từ discovery/run mới, không cố giữ600 cũ khi bổ sung cases.
+3. Kiểm browser mới với keyboard/axe/reflow và native zoom/text theo impact; all-route smoke và Toolbar consumer regression từ graph hiện có. Source scan không thay render proof; một full run thất bại không được cộng targeted retest thành PASS.
+4. Ghi commands/exit/log/artifact hashes, before/after, route/state/permission coverage và expected/observed. Refresh inventory/shared catalog counts/generated reports bằng nguồn sở hữu khi cần; giữ bằng chứng lịch sử.
+5. Tái xác minh checkpoint FE bị ảnh hưởng và dependency bằng canonical tools; mẫu số140 giữ nguyên. UI batch status chỉ đóng ở §16.6 sau proof cuối, không sửa kit full-product ledger.
+6. Tạo hướng dẫn nghiệm thu R05 filter/search/paging → R06 conversation/back/draft → R04 permissions/CTA. Demo build đúng source cuối, mở màn thực tế và đưa links/artifacts/result/remaining limits.
+
+**Điều kiện kết thúc batch:** ba điểm hoàn tất và các mandatory checks có bằng chứng fresh; UI sẵn sàng nghiệm thu local. Chỉ khi đó ghi READY_FOR_ACCEPTANCE_LOCAL_SCOPE cho batch. User acceptance, screen-reader speech/broad human review và hosted CI ghi theo quan sát; không tự điền PASS.
+
+#### 16.19.7. Quản lý rủi ro và bàn giao thay đổi
+
+| Rủi ro cụ thể | Cách kiểm soát |
+|---|---|
+| Thêm inset hai lần khi chuyển filters | Toolbar giữ inset; FieldGroup flush; đo computed edges/gaps theo canonical owner |
+| Pane hẹp dù viewport desktop | Kiểm width300 của list pane và labels dài, không chỉ page viewport; geometry hữu hạn nếu cần |
+| Reset nhầm message cursor hoặc mất composer draft | Giữ handlers; regression R05/R06 URL/cursor/draft/back/refetch trước full run |
+| CTA đổi permission priority/shop destination | Tám tuple quyền + scope switch, một primary Link, tạo đơn độc lập |
+| Sửa count làm mất lịch sử hoặc stale evidence | Phân current/historical bằng source owner; giữ old logs/hashes, refresh proof cuối bằng tools |
+| Mở rộng phạm vi refactor theo tỷ lệ Shared | Chỉ sửa cùng invariant có finding thật; các owner feature-local/catalog giữ rationale |
+
+Nhóm bàn giao theo thứ tự: P2 Inbox + regression; P3 Dashboard + regression; P3 tài liệu; chốt evidence/demo. Khi người dùng yêu cầu commit/push, tách coherent commits, ghi chú tiếng Việt, chỉ stage phần của batch và báo local/remote riêng. Lượt lập kế hoạch chưa tạo commit hoặc triển khai các nhóm trên.
+
+
+<a id="spacing-density-20261009"></a>
+
+### 16.20. Thu gọn mật độ theo vai trò — 09/10/2026
+
+Người dùng đã duyệt triển khai đến hoàn tất kỹ thuật local. Quy định duy nhất là standard v1.29 §4/§4.1; không đổi tokens/base8, dependency, API nghiệp vụ hoặc full-product tracker. Baseline loaded trước source edit: [before.json](../evidence/frontend-spacing-density-20261009/before.json), 216 observations trên54 route/small-large/hai browser; source snapshots và dirty Git được giữ. Design contract/impact: [CONTRACT](../evidence/frontend-spacing-density-20261009/CONTRACT.md).
+
+| Thứ tự | Ưu tiên | Công việc | Trạng thái hiện hành |
+|---|---|---|---|
+| 1 | P0 | Baseline, nguồn quy định v1.29, doc parity/Shared count | COMPLETE_LOCAL_DENSITY_REVALIDATION |
+| 2 | P1 | Table/detail divided rows + permanent regression | COMPLETE_LOCAL_DENSITY_REVALIDATION |
+| 3 | P1 | Toolbar/pager và disclosure demo giữ state | COMPLETE_LOCAL_DENSITY_REVALIDATION |
+| 4 | P1 | Page/header/surface/reading + form/dialog finite variants | COMPLETE_LOCAL_DENSITY_REVALIDATION |
+| 5 | P2 | Inbox/stats/report/navigation/footer/empty và all-consumer closure | COMPLETE_LOCAL_DENSITY_REVALIDATION |
+| 6 | P0 final | Strict source/unit/verify/full E2E/build/built-demo/native, canonical freshness, handoff | COMPLETE_LOCAL_DENSITY_REVALIDATION |
+
+Các kết quả Shared consolidation §16.19 giữ phạm vi source lịch sử. Đợt density: READY_FOR_ACCEPTANCE_LOCAL_SCOPE. [Proof/source hash/limits](../evidence/frontend-spacing-density-20261009/REPORT.md); FE140 giữ mẫu số. Speech/hosted CI NOT_RUN; user acceptance PENDING.

@@ -4,7 +4,7 @@ Scope hiện hành theo yêu cầu người dùng 30/09/2026: apps/web, frontend
 
 Đọc START_HERE.md, IMPLEMENTATION_PLAN.md, execution/SESSION_HANDOFF.md và nguồn task. Task chuẩn: execution/frontend-plan.json; ledger: frontend-progress.json; dùng FE001–FE028. Không nhận T001–T084 hoặc thay execution/progress.json toàn sản phẩm. Kế hoạch/phiếu là đầu ra sinh, không sửa tay.
 
-Quy tắc quyết định chung theo original `AI_RULES.md`; AI tự tìm dữ kiện trong repo và chỉ hỏi quyết định chưa thể xác minh. Với UI Frontend, áp dụng [workflow duy nhất](../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md#unified-workflow), v1.28 SPC-001–075; không tạo quy trình/checklist cạnh tranh trong kit. Không được skip required `npm run verify`, che stale/failing evidence hoặc đánh dấu task hoàn thành thiếu coverage.
+Quy tắc quyết định chung theo original `AI_RULES.md`; AI tự tìm dữ kiện trong repo và chỉ hỏi quyết định chưa thể xác minh. Với UI Frontend, áp dụng [workflow duy nhất](../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md#unified-workflow), v1.29 SPC-001–075; không tạo quy trình/checklist cạnh tranh trong kit. Không được skip required `npm run verify`, che stale/failing evidence hoặc đánh dấu task hoàn thành thiếu coverage.
 
 Một MUI/theme/Router/Query; module không import module khác, app ghép public entries, shared không nghiệp vụ. Không generic CRUD engine hoặc framework vì dự đoán mở rộng. DTO/routes/tokens sinh từ canonical JSON, không sửa output. Graphite Gold dark-only giữ nguyên.
 

@@ -4,7 +4,7 @@
 
 **Nguồn chuẩn:** workflow §0 và SPC-001–075 là normative UI policy duy nhất. `REPORT`/evidence giữ kết quả có hash; plan §16.6 giữ tiến độ. Gate PASS không tự chứng minh toàn bộ giao diện đạt chuẩn.
 
-**Phiên bản:** 1.28 · **Ngày:** 07/10/2026 · **Phạm vi:** toàn bộ mã/cấu hình/đầu vào phục vụ React UI trong checkout Frontend và import closure của nó. SPC-001–075 giữ ID ổn định. [Quy trình thống nhất](#unified-workflow) là đường thực hiện duy nhất; [shared catalog](../apps/web/src/shared/ui/README.md) mô tả CURRENT/TARGET contracts; [plan §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) quy định thứ tự và trạng thái; [§16.17](FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007) giữ rationale của review trước source.
+**Phiên bản:** 1.29 · **Ngày:** 09/10/2026 · **Phạm vi:** toàn bộ mã/cấu hình/đầu vào phục vụ React UI trong checkout Frontend và import closure của nó. SPC-001–075 giữ ID ổn định. [Quy trình thống nhất](#unified-workflow) là đường thực hiện duy nhất; [shared catalog](../apps/web/src/shared/ui/README.md) mô tả CURRENT/TARGET contracts; [plan §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan) quy định thứ tự và trạng thái; [§16.17](FRONTEND_UI_IMPROVEMENT_PLAN.md#preimplementation-review-20261007) giữ rationale của review trước source.
 
 <a id="unified-workflow"></a>
 
@@ -191,48 +191,49 @@ const insetCss = `${tokens.space.lg}px`; // dùng ở raw CSS override, không p
 | Semantic role | Mobile <768 | Tablet 768–1279 | Desktop ≥1280 | Owner |
 |---|---:|---:|---:|---|
 | `page.gutter` | 16 | 24 | 24 | Shell/global page layout |
-| `page.contentInsetBlock` | 24 | 24 | 24 | Shell main top/bottom; trang không thêm page padding lần hai |
+| `page.contentInsetBlock` | 16 | 16 | 16 | Shell main top/bottom; trang không thêm page padding lần hai |
 | `composition.childBoundaries` | margin block 0 | margin block 0 | margin block 0 | Semantic composition reset direct-child margins để cha sở hữu gap |
-| `page.sectionGap` | 24 | 24 | 24 | Shared PageSections |
-| `page.sectionBefore` / `page.sectionAfter` | 24 | 24 | 24 | Panel boundary; same role, before/after edge |
+| `page.sectionGap` | 16 | 16 | 16 | Shared PageSections |
+| `page.sectionBefore` / `page.sectionAfter` | 16 | 16 | 16 | Panel boundary; same role, before/after edge |
 | `pageHeader.titleDescriptionGap` | 8 | 8 | 8 | PageHeader |
 | `pageHeader.columnsGap` | 16 | 16 | 16 | PageHeader title/actions flow |
-| `pageHeader.afterGap` | 24 | 24 | 24 | PageHeader |
-| `surface.inset` | 16 | 24 | 24 | Panel/Stat/Card |
+| `pageHeader.afterGap` | 16 | 16 | 16 | PageHeader |
+| `surface.inset` | 12 | 16 | 16 | Panel/Stat/Card |
 | `surface.compactInset` | 12 | 12 | 12 | Compact nested checklist/status item; not a replacement for main surface inset |
 | `surface.compactContentGap` | 8 | 8 | 8 | Compact nested content groups |
 | `surface.contentGap` | 12 | 12 | 12 | Shared SurfaceContent; SectionGrid với content rhythm |
-| `surface.headerInset` | px/pt 16 | px/pt 24 | px/pt 24 | Panel title; bottom edge owns 16px header/body gap |
-| `surface.bodyInsetAfterHeader` | px/bottom 16 | px/bottom 24 | px/bottom 24 | Panel inset body; no second top gap |
+| `surface.headerInset` | px/pt 12; pb12 | px/pt 16; pb12 | px/pt 16; pb12 | Panel title; bottom edge owns 12px operational header/body gap |
+| `surface.bodyInsetAfterHeader` | px/bottom 12; top0 | px/bottom 16; top0 | px/bottom 16; top0 | Panel inset body; no second top gap |
 | `surface.sectionBefore` | 16 | 16 | 16 | Panel boundary after adjacent surface |
 | `surface.titleDescriptionGap` | 4 | 4 | 4 | Header slot |
 | `surface.headerFlowGap` | 16 | 16 | 16 | Panel title/actions, wraps on narrow width |
 | `form.fieldGap` | 16 | 16 | 16 | Shared FormFields |
+| `form.labelAfterGap` (CSS) | 4 | 4 | 4 | Shared theme: label trong flow → input; token hiện có |
 | `form.inlineGap` | 8 | 8 | 8 | Shared FieldGroup |
 | `actions.inlineGap` | 8 | 8 | 8 | Shared ActionGroup |
 | `actions.relatedLinksGap` | 12 | 12 | 12 | Shared ActionGroup with `density="comfortable"` for related sibling controls |
-| `actions.beforeGap` | 24 | 24 | 24 | Form/dialog composition |
+| `actions.beforeGap` | 16 | 16 | 16 | Form/dialog composition |
 | `actions.linkTarget` | min-height 44, px16/py8 | same | same | Download/text link hit area; height from canonical `layout.touchTarget` |
-| `grid.gutter` | 24 | 24 | 24 | Shared SectionGrid, section rhythm |
+| `grid.gutter` | 16 | 16 | 16 | Shared SectionGrid, section rhythm |
 | `stats.gutter` | 16 | 16 | 16 | Shared Stats |
-| `stats.afterGap` | 24 | 24 | 24 | Stats to next section |
+| `stats.afterGap` | 16 | 16 | 16 | Stats to next section |
 | `dashboard.groupInset` | 24 | 32 | 32 | Dashboard hero group; responsive shared owner |
-| `dashboard.sectionGap` | 24 | 24 | 24 | Dashboard hero/action flow and supporting section grid |
+| `dashboard.sectionGap` | 16 | 16 | 16 | Dashboard hero/action flow and supporting section grid |
 | `dashboard.heroTitleFlow` | mt/mb 8 | mt/mb 8 | mt/mb 8 | Dashboard eyebrow/title and title/helper boundary |
 | `dashboard.heroDescriptionGap` | 16 | 16 | 16 | Dashboard title to helper copy |
-| `dashboard.actionTarget` | height ≥44, px16/py8 | same | same | Dashboard primary/secondary CTA; height from canonical touch target |
+| `dashboard.actionTarget` | height ≥44, px12/py8 | same | same | Dashboard primary/secondary CTA; height from canonical touch target |
 | `dashboard.metricValueGap` | 4 | 4 | 4 | Dashboard finance label to its amount |
 | `dashboard.footerFlow` | top/gap 16 | top/gap 16 | top/gap 16 | Dashboard warnings and as-of/shop attribution |
-| `toolbar.inset` | 16 | 16 | 16 | Shared Toolbar |
-| `toolbar.controlGap` | 12 | 12 | 12 | Shared Toolbar |
+| `toolbar.inset` | 12 | 12 | 12 | Shared Toolbar |
+| `toolbar.controlGap` | 8 | 8 | 8 | Shared Toolbar |
 | `table.mobileHintInset` | px 16 / pt 8 | px 16 / pt 8 | px 16 / pt 8 | DataTable mobile-only scroll hint |
-| `table.cellInset` | 12 dọc / 16 ngang | như mobile | như mobile | Theme/DataTable |
+| `table.cellInset` | 8 dọc / 12 ngang | như mobile | như mobile | Theme/DataTable |
 | `code.inlineGap` | 4 | 4 | 4 | CopyableCode value/control |
 | `lookup.loadMoreRow` | gap 8 / px 8 / mt 4 | như mobile | như mobile | LookupLoadMore status/action row |
-| `pager.inset` | 16 | 16 | 16 | Shared Pager |
-| `detail.rowInsetBlock` | 12 | 12 | 12 | DetailLine row |
-| `detail.valueGap` | 16 | 16 | 16 | DetailLine label/value |
-| `empty.insetBlock` | 32 | 48 | 48 | Shared Empty |
+| `pager.inset` | 12 | 12 | 12 | Shared Pager |
+| `detail.rowInsetBlock` | 8 | 8 | 8 | DetailLine row |
+| `detail.valueGap` | 12 | 12 | 12 | DetailLine label/value |
+| `empty.insetBlock` | 24 | 32 | 32 | Shared Empty |
 | `empty.insetInline` | 16 | 16 | 16 | Shared Empty |
 | `empty.contentGap` | 16 | 16 | 16 | Shared Empty |
 | `dialog.inset` | 16 | 24 | 24 | Shared dialog slots |
@@ -240,40 +241,61 @@ const insetCss = `${tokens.space.lg}px`; // dùng ở raw CSS override, không p
 | `auth.brandMarkGap` | 12 | 12 | 12 | Brand mark and wordmark within AuthCard |
 | `auth.brandTitleGap` | 32 | 32 | 32 | AuthCard brand row to page title |
 | `footer.insetInline` | 16 | 24 | 24 | Shell |
-| `footer.insetBlock` | 16 | 16 | 16 | Shell |
-| `shell.demoToolsBefore` | 24 | 24 | 24 | Shell notice to floated demo controls; preserves a visible label clearance |
+| `footer.insetBlock` | 8 | 8 | 8 | Shell |
+| `shell.demoToolsBefore` | 12 | 12 | 12 | Shell notice to normal-flow disclosure; controls remain reachable on every viewport |
 
 Inbox/Conversation semantic roles are owned by the Inbox feature profile; they still resolve only through the shared bridge above.
 
 | Inbox role | Mobile <768 | Tablet 768–1279 | Desktop ≥1280 | Owner |
 |---|---:|---:|---:|---|
-| `inbox.paneInset` | 16 | 16 | 16 | Message viewport |
+| `inbox.paneInset` | 12 | 12 | 12 | Message viewport |
 | `inbox.bubbleInset` | 12 | 12 | 12 | Message bubble |
 | `inbox.messageContentGap` | 4 | 4 | 4 | Sender label to message text |
 | `inbox.messageMetaGap` | 8 | 8 | 8 | Message body/source/meta flow |
 | `inbox.messageGroupGap` | 12 | 12 | 12 | Adjacent messages |
-| `inbox.composerInset` | 16 | 16 | 16 | Reply/note composer |
+| `inbox.composerInset` | 12 | 12 | 12 | Reply/note composer |
 | `inbox.composerActionGap` | 8 | 8 | 8 | Composer action row |
 | `inbox.composerControlsBeforeGap` | 8 | 8 | 8 | Composer field to action row |
-| `inbox.listInset` | 16 | 16 | 16 | Conversation list item |
+| `inbox.listInset` | 12 | 12 | 12 | Conversation list item |
 | `inbox.listContentGap` | 12 | 12 | 12 | Avatar to conversation summary |
 | `inbox.unreadCountInset` | 8 horizontal | 8 horizontal | 8 horizontal | Unread count indicator |
 | `inbox.listStatusBeforeGap` | 8 | 8 | 8 | Preview to mode/status |
-| `inbox.contextInset` | 16 | 24 | 24 | Customer context pane |
+| `inbox.contextInset` | 12 | 16 | 16 | Customer context pane |
 
-Queue filter content after `Toolbar` uses `surface.bodyInsetAfterHeader` so the toolbar owns its top edge and the filter owner supplies only horizontal/bottom inset. Thread notices use one `inbox.paneInset` wrapper. Demo previews reuse `surface.*`, `form.*` and `actions.*`; they do not receive route-local spacing presets.
+Queue filters use `Toolbar.filters` with a flush `FieldGroup`; Toolbar owns the inset and boundary, with no second filter inset. Thread notices use one `inbox.paneInset` wrapper. Demo previews reuse `surface.*`, `form.*` and `actions.*`; they do not receive route-local spacing presets.
 
 Reports roles compose only inside the shared Reports/dashboard-report profile; the marker indent is additional to the list's surface inset. Chart viewport and empty-state roles preserve the established chart bounds and fallback reading area.
 
 | Report role | Mobile <768 | Tablet 768–1279 | Desktop ≥1280 | Owner |
 |---|---:|---:|---:|---|
-| `report.contextGap` | 16 | 16 | 16 | Report notes, snapshot attribution and adjacent explanatory content |
-| `report.listSurfaceInset` | 24 all edges | 24 all edges | 24 all edges | Question list surface |
+| `report.contextGap` | 12 | 12 | 12 | Report notes, snapshot attribution and adjacent explanatory content |
+| `report.listSurfaceInset` | 16 all edges | 16 all edges | 16 all edges | Question list surface |
 | `report.listMarkerInset` | +16 left | +16 left | +16 left | List marker/text indent; additive after surface inset |
 | `report.listItemGap` | 12 | 12 | 12 | Adjacent question rows |
 | `report.chartViewportInset` | 16 all edges | 16 all edges | 16 all edges | Chart viewport padding, preserves fixed chart geometry |
-| `report.emptyStateInset` | 24 all edges | 24 all edges | 24 all edges | Empty chart explanation |
+| `report.emptyStateInset` | 16 all edges | 16 all edges | 16 all edges | Empty chart explanation |
 | `report.subheadingAfterGap` | 8 | 8 | 8 | Report subsection heading |
+
+
+### 4.1. Mật độ theo vai trò — quyết định đã duyệt 09/10/2026
+
+Nhịp vận hành mặc định: page block16, section16, surface12 mobile/16 từ768, header-body12, toolbar/pager12, table cell8 dọc/12 ngang, detail row8. Giữ gutter16/24, base8 và scale4/8/12/16/24/32/48; không global shrink theme/font/target. Trường có helper/error dài và form nghiệp vụ phức tạp giữ fieldGap16 mặc định; compact12 là named variant có consumer đơn giản. Các quan hệ4/8 và message bubble/group vẫn giữ nhịp đọc.
+
+| Role bổ sung | Giá trị | Owner/consumer thật |
+|---|---:|---|
+| `form.compactFieldGap` | 12 | FormFields density compact; editor danh mục hai trường |
+| `detail.dividedListGap` | 0 | SurfaceContent rhythm dividedRows; danh sách capabilities AI gồm DetailLine có divider |
+| `surface.comfortableInset` | 16/24 | Panel density comfortable; nội dung kiến thức dài |
+| `surface.comfortableHeaderInset` | px/pt16/24, pb16 | Reading Panel header; một owner cho boundary |
+| `surface.comfortableBodyInsetAfterHeader` | px/pb16/24, top0 | Reading Panel body; không top inset thứ hai |
+| `page.majorSectionGap` | 24 | PageSections rhythm major; nguồn kiến thức và bản xem trước độc lập |
+| `dialog.compactInset` | 16 | EditDialog compact mặc định; editor thường |
+
+Dialog density comfortable dùng `dialog.inset`16/24; ConfirmDialog và DraftConflict chọn comfortable rõ ràng. Dialog actions inset12/gap8; viewport margin16/32 giữ. Stats value gap8/note gap4; notice after12; fallback block16; navigation brand block16/account inset12; auth24/32 và Dashboard hero24/32 giữ. Các geometry roles (header56/64, query section240, chart/pane widths) không giảm máy móc.
+
+Demo warning luôn hiện. Công cụ demo thu/mở tại mọi viewport, mặc định thu; trạng thái role/fault/dataset có summary, selections và status còn nguyên khi thu/mở. Disclosure có aria-controls/expanded và thao tác bàn phím. Không ẩn error/helper, đổi permission/state, fixed row height hoặc font để đạt mật độ. Giữ target44 theo contract dự án; đo hit area thực tế riêng, không suy ra từ size=small.
+
+Mọi giá trị và variant mới phải đi qua bridge/type/finite checker/catalog, có negative/positive/rendered regression và source fingerprints mới. Kết quả trước v1.29 là historical source scope; không đổi threshold để gọi run cũ đạt trên profile mới. Đo table, divided rows, ordinary/reading Panels, simple/complex forms, confirmation/conflict dialogs, demo disclosure và responsive/zoom trước đóng.
 
 **SPC-006 — Một bridge semantic tại shared/ui.** Owner runtime là `apps/web/src/shared/ui/layout.ts`: derived factors nội bộ từ token; export `layoutSx`, semantic spacing references và raw CSS values đúng units cho vai trò dùng thật. Dùng lại PageHeader, Panel, Stat/Stats, Toolbar, DataTable, Pager, Empty, EditDialog. Consumer có thể compose preset với geometry/behavior cục bộ, không tái định nghĩa spacing hoặc override role chung. Theme import bridge; bridge chỉ import token và MUI types, không import theme/components/modules/app để tránh cycle. Không tạo theme thứ hai, module-specific scale, layout engine, config renderer hay wrapper cho mọi primitive. Phân biệt factor với px trong tên/type; API hiện hành phải typecheck và tuân SPC-064–075; W02 là bước triển khai lịch sử.
 
@@ -285,7 +307,7 @@ Các role riêng cho Shell/fallback/navigation cũng phải theo identity closur
 
 ## 5. Shell, responsive và hình học
 
-**SPC-008 — Geometry khác spacing.** Width sidebar 240, header 56/64, inbox 300/320/min400, touch target 44, radius 8/12/16, border/focus và chiều cao chart không là spacing token. Giá trị này vẫn phải có owner/nguồn, co giãn được hoặc có ngoại lệ cụ thể. `fontSize="small"` của icon không là cỡ chữ nội dung.
+**SPC-008 — Geometry khác spacing.** Width sidebar 240, header 56/64, inbox 300/320/min400, touch target 44, radius 8/12/16, border/focus và chiều cao chart không là spacing token. Giá trị này vẫn phải có owner/nguồn, co giãn được hoặc có ngoại lệ cụ thể. `fontSize="small"` của icon không là cỡ chữ nội dung. Card collection kiểm số item0/1/2/3 ở các breakpoint: một item dùng đủ vùng collection; giữ cột của workflow nhiều pane. Form và surface phải thống nhất chiều rộng có căn cứ; không để cap route-local tạo nửa surface trống. Trường liên quan dùng FieldGroup responsive hiện có, không thêm spacing scale.
 
 **SPC-009 — Tài liệu và runtime phải cùng nghĩa.** `../botsales-kit/design/tokens.json` là nguồn token nguyên tử; `DESIGN.md` là bản tóm tắt nhận diện, không có thẩm quyền tạo token/layout values thứ hai. Frontmatter của DESIGN hiện lặp một phần màu, chữ, radius và spacing; không chỉnh các giá trị đó độc lập. Bảng ở §4 của standard này định nghĩa responsive semantic profiles/owner, còn theme/layout là mapping runtime phải khớp với token và rule. Khi phát hiện lệch, sửa đúng canonical source rồi sinh output; summary không thể sinh tự động phải được đối chiếu parity hoặc bỏ phần lặp trong S14 sau khi xác minh consumers. UI không đóng khi code khác quyết định gutter/header hiện hành; không sửa token để hợp thức hóa literal sai.
 
@@ -301,7 +323,7 @@ Form hiện có max-width 850 là geometry giới hạn độ dài dòng, không
 
 **SPC-013 — Surface có profile inset hoặc flush.** Form/detail/stat dùng inset 16/24. Panel chứa table/toolbar/pager dùng body flush vì các slot này có inset riêng. Đây là hai trường hợp thật đã có; dùng union typed `bodyMode: 'inset' | 'flush'`, mặc định tương thích là `flush`, không thêm nhiều boolean mâu thuẫn. Shared Panel nhận khoảng trước/sau theo semantic preset và chỉ nhận geometry qua prop có type đóng; không mở generic `sx` để caller tự ghi spacing.
 
-**SPC-014 — Header–body gap đo tại mép nội dung.** Gap chuẩn 16 px từ đáy phần nội dung header cuối cùng đang hiển thị tới mép trên nội dung body đầu tiên. Khi actions wrap xuống dưới title/description, đo từ actions cuối cùng; không lấy đáy title rồi tính cả action row thành gap. Header của Panel sở hữu đáy 16 px; body inset kế thừa inset ngang/đáy nhưng không thêm top inset lần hai. Không header bottom 24 +body top24 thành48 hoặc header16 +child top16/24 thành32/40. Panel không title không giữ vùng header trống. Nội dung dài làm header nở tự nhiên, giữ semantic heading và hierarchy.
+**SPC-014 — Header–body gap đo theo profile của Panel.** Operational Panel giữ 12px từ đáy nội dung header đến mép child đầu tiên; comfortable reading Panel giữ16px. Header là owner duy nhất; body top0, child flush, inset ngang/bottom theo profile. Khoảng nội bộ của child (DetailLine row, Alert) được đo riêng; không cộng vào header boundary. Không local override hoặc double inset.
 
 **SPC-015 — Nested surface không tự nhân inset.** Nested panel chỉ có padding khi có biên/nền/ý nghĩa nhóm riêng. Group trung tính dùng divider hoặc semantic gap do group sở hữu; không lồng Paper/Box p3 vào Panel inset rồi bỏ nội dung giữa chúng. Một route/table flush có toolbar/body/pager riêng được phép vì mỗi slot sở hữu vùng riêng.
 
@@ -313,15 +335,15 @@ Form hiện có max-width 850 là geometry giới hạn độ dài dòng, không
 
 **SPC-019 — Tables có mật độ riêng.** Cell default 12 dọc ×16 ngang; height theo text/actions. Không assert mọi row đúng 44: nút 44 và padding cell khiến row cao hơn. Dense text-only chỉ dùng shared variant có tên (8×16), kiểm full value và target actions, không giảm font để nhét cột. Header/cell/pager phải đồng nhất toàn module. Overflow chỉ ở region bảng có tên/focus/keyboard, không che tràn cả page để giả PASS.
 
-**SPC-020 — Dialog/drawer theo viewport.** Dialog mép viewport tối thiểu 16 mobile/32 desktop; inset nội dung 16/24; action gap 8; header/body/footer tổng gap đúng profile. Content scroll được khi cần, actions/close/focus không bị che ở text resize hoặc màn hình thấp. Dùng min/max-height theo viewport nội dung, không fixed height cắt form. Drawer giữ cơ chế focus/return, không thay routing hay draft guard để đổi padding.
+**SPC-020 — Dialog/drawer theo viewport.** Dialog mép viewport tối thiểu 16 mobile/32 desktop; EditDialog compact inset 16; ConfirmDialog/DraftConflict/dirty-discard comfortable inset 16/24; actions inset 12/gap 8; header/body/footer tổng gap đúng profile. Content scroll được khi cần, actions/close/focus không bị che ở text resize hoặc màn hình thấp. Dùng min/max-height theo viewport nội dung, không fixed height cắt form. Drawer giữ cơ chế focus/return, không thay routing hay draft guard để đổi padding.
 
-**SPC-021 — Inbox/workspace panes có owner riêng.** Pane gutter 16; message bubble inset 12; khoảng trong message 4/8, giữa message 12; composer inset 16 và action gap 8. List item inset 16; context inset 16/24 theo diện tích. Khi hẹp, giảm số pane trước khi giảm cỡ chữ/target. Giữ scroll owner, selected conversation, cursor, Back và focus; không ép 3 pane vào 320 px. Bubble/current p14,4 là candidate cần chuyển về preset, không thay message content/state.
+**SPC-021 — Inbox/workspace panes có owner riêng.** Pane/composer/list inset12; context12/16; message bubble inset12; khoảng trong message 4/8, giữa message 12; composer action gap8. Khi hẹp, các inset nhỏ vẫn giữ vùng nhập và action targets; bubble/message rhythm4/8/12 không giảm. Khi hẹp, giảm số pane trước khi giảm cỡ chữ/target. Giữ scroll owner, selected conversation, cursor, Back và focus; không ép 3 pane vào 320 px. Giữ bubble12 theo preset; không thay message content/state.
 
-**SPC-022 — Reports/charts giữ geometry có ý nghĩa.** Surface/gap theo preset; plot margins/tick offset/legend layout được đặt tên và kiểm clipping thay vì làm tròn mọi tọa độ. Một list trong surface có thể cần tổng inset trái 40 =24 surface +16 marker indent: giữ cấu trúc và biểu diễn hai owner hoặc named composite; không tự ép thành 32 vì 40 ngoài scale. Long axis labels phải đủ vùng, wrap/disclose đúng cách và có text/table alternative.
+**SPC-022 — Reports/charts giữ geometry có ý nghĩa.** Surface/gap theo preset; plot margins/tick offset/legend layout được đặt tên và kiểm clipping thay vì làm tròn mọi tọa độ. Một list báo cáo trong surface operational có thể cần tổng inset trái 32 =16 surface +16 marker indent: giữ cấu trúc và biểu diễn hai owner hoặc named composite; không tự ép thành 32 vì 40 ngoài scale. Long axis labels phải đủ vùng, wrap/disclose đúng cách và có text/table alternative.
 
-**SPC-023 — Dashboard nhất quán nhưng có cấp nhóm.** Stats gap 16; section gap 24; nhóm giới thiệu lớn có inset 24/32 theo profile riêng. Không dùng padding/gap không tên 20 px. Không tăng hero hoặc whitespace để bù thiếu dữ liệu; giữ KPI label/asOf/permission semantics.
+**SPC-023 — Dashboard nhất quán nhưng có cấp nhóm.** Stats gap 16; section gap 16; nhóm độc lập dùng PageSections rhythm major 24; nhóm giới thiệu lớn có inset 24/32 theo profile riêng. Không dùng padding/gap không tên 20 px. Không tăng hero hoặc whitespace để bù thiếu dữ liệu; giữ KPI label/asOf/permission semantics.
 
-**SPC-024 — Async states cùng khung.** Loading/empty/error/forbidden/stale/unknown dùng shared owner. `QueryState` mặc định `pendingProfile="inline"` với chiều cao tự nhiên; chỉ dùng `pendingProfile="section"` cho vùng dữ liệu chính có nội dung lớn (ví dụ bảng, KPI, grid hoặc detail panel) khi inventory và browser check xác nhận cần giữ chỗ. Section profile lấy chiều cao tối thiểu 240px từ `layoutSx.query.sectionPending`; không truyền số tùy ý. Lookup phụ, dialog, truy vấn null/conditional nhỏ giữ inline. Loading có thể giữ geometry gần với nội dung dữ liệu, nhưng không áp min-height 240 chung cho query nhỏ hoặc toàn bộ 86 consumer. Inline query không làm cả card nhảy do inset/gap lặp; khi nội dung sau tải lớn, chọn profile theo slot và kiểm pending→ready. Empty inset 32/48, không cộng với nested inset cùng owner. Lỗi nhiều dòng được nở, không thay lỗi thành empty để khớp layout. Demo banner/tools đi cùng page gutter, mobile collapse nhưng giữ accessible control.
+**SPC-024 — Async states cùng khung.** Loading/empty/error/forbidden/stale/unknown dùng shared owner. `QueryState` mặc định `pendingProfile="inline"` với chiều cao tự nhiên; chỉ dùng `pendingProfile="section"` cho vùng dữ liệu chính có nội dung lớn (ví dụ bảng, KPI, grid hoặc detail panel) khi inventory và browser check xác nhận cần giữ chỗ. Section profile lấy chiều cao tối thiểu 240px từ `layoutSx.query.sectionPending`; không truyền số tùy ý. Lookup phụ, dialog, truy vấn null/conditional nhỏ giữ inline. Loading có thể giữ geometry gần với nội dung dữ liệu, nhưng không áp min-height 240 chung cho query nhỏ hoặc toàn bộ 86 consumer. Inline query không làm cả card nhảy do inset/gap lặp; khi nội dung sau tải lớn, chọn profile theo slot và kiểm pending→ready. Empty inset 24/32, không cộng với nested inset cùng owner. Lỗi nhiều dòng được nở, không thay lỗi thành empty để khớp layout. Demo banner/tools đi cùng page gutter, tools mặc định thu gọn ở mọi viewport, disclosure/summary giữ trạng thái và accessible controls.
 
 ## 7. Chữ, zoom, focus và nội dung dài
 
@@ -329,11 +351,15 @@ Form hiện có max-width 850 là geometry giới hạn độ dài dòng, không
 
 **SPC-026 — Focus không bị cắt hoặc che.** Giữ outline 2 px và offset hiện hành; container clipping/rounded overflow phải chừa đúng vùng focus. Sticky header/footer/composer phải cho focused control nhìn thấy; có thể dùng scroll-padding/scroll-margin từ geometry header + token gap. Quy định nội bộ cố gắng giữ toàn target/focus nhìn thấy; AA 2.4.11 tối thiểu yêu cầu component không bị che hoàn toàn. [W3C Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html).
 
+**Profile outlined hiện hành (09/10/2026):** Shared theme đặt label trong normal flow, font meta12px và CSS role form.labelAfterGap4px; không floating transform/outline notch. Nhãn nhiều dòng tự tăng chiều cao khi chữ200%. Form/ref/aria/validation vẫn do MUI và owner nghiệp vụ quản lý. Toolbar wrap theo chỗ trống và min-width theo chữ; mock-tools geometry tại shell.demoControl. Native label/value/intrinsic-height/notch probes phải kiểm mobile và desktop, không suy từ overflow-only PASS. Floating-label snapshots trước profile này giữ nguyên là lịch sử.
+
 **SPC-027 — Độ bền khi người dùng thay cách đọc.** Kiểm text resize 200% không mất nội dung/chức năng; reflow ở 320 CSS px cho content cuộn dọc. Bảng/plot cần hai chiều có phạm vi ngoại lệ riêng; label/text/actions xung quanh vẫn phải reflow. Viewport 320 chỉ là một probe, không tự chứng minh browser zoom thật. [W3C Resize Text](https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html), [W3C Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html).
 
 Test override đồng thời line-height 1.5×font, paragraph-after 2×font, letter-spacing 0.12×font và word-spacing 0.16×font, không mất nội dung/chức năng. Đây là kiểm khả năng chịu override, không bắt mọi heading/body mặc định phải dùng các giá trị đó. [W3C Text Spacing](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html).
 
 Mục tiêu 44×44 của sản phẩm cao hơn minimum AA 2.5.8 24×24 có ngoại lệ. Link trong câu và native controls cần đánh giá đúng category; không gọi mọi target <44 là WCAG FAIL. [W3C Target Size](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum).
+
+**Geometry DetailLine (UX15, v1.29):** owner shared dùng grid với nhãn tối thiểu 8ch, mục tiêu 35% chiều rộng; giá trị dùng phần còn lại và wrap. Khi vùng sử dụng ≤20rem, chuyển thành nhãn trên/giá trị dưới bằng container query. Chữ `ch`/`rem` giữ quan hệ với chữ khi resize; không thêm inset/gap hoặc giảm target. Caption ngắn như “Kênh” không được co tách chữ; caption/code dài vẫn phải wrap và kiểm trên viewport hẹp/native zoom.
 
 ## 8. Áp dụng đủ 16 module / 54 route
 
@@ -538,9 +564,9 @@ Thiếu màn tham chiếu không chặn task: tự xác định từ profile tab
 
 ### 13.4. Shared composition bắt buộc và owner duy nhất — 06/10/2026
 
-**SPC-061 — Dùng component cho các quan hệ bố cục lặp lại.** Trong app/module/shared consumer, các role chuẩn phải đi qua component tương ứng trong `apps/web/src/shared/ui/composition.tsx`: form.fieldGap → FormFields; form.inlineGap → FieldGroup; surface.contentGap → SurfaceContent; actions.inlineGap → ActionGroup density `compact` (mặc định); actions.relatedLinksGap → ActionGroup density `comfortable`; page.sectionGap → PageSections; grid.gutter → SectionGrid. Hai density dùng role token hiện có 8/12 px và cùng quy tắc wrap; không nhận giá trị tùy ý. Không viết lại Stack/Box, local wrapper hoặc preset tương đương để né owner. API đóng: không sx/style/className/spacing/gap/margin/padding override, không opaque spread; geometry chỉ là finite shape theo catalog. Giữ component MUI thuần qua theme khi chỉ cần primitive; không tạo wrapper đổi tên hoặc universal form/table engine. Nghiệp vụ/columns/schema/quyền vẫn do module sở hữu. Đọc [shared UI catalog](../apps/web/src/shared/ui/README.md) trước khi code; variant mới phải có rationale và consumer thật theo SPC-053.
+**SPC-061 — Dùng component cho các quan hệ bố cục lặp lại.** Trong app/module/shared consumer, các role chuẩn phải đi qua component tương ứng trong `apps/web/src/shared/ui/composition.tsx`: form.fieldGap/compactFieldGap → FormFields density comfortable/compact; form.inlineGap → FieldGroup; surface.contentGap/detail.dividedListGap → SurfaceContent rhythm content/dividedRows; actions.inlineGap → ActionGroup density `compact` (mặc định); actions.relatedLinksGap → ActionGroup density `comfortable`; page.sectionGap/majorSectionGap → PageSections rhythm section/major; grid.gutter → SectionGrid. Hai density dùng role token hiện có 8/12 px và cùng quy tắc wrap; không nhận giá trị tùy ý. Không viết lại Stack/Box, local wrapper hoặc preset tương đương để né owner. API đóng: không sx/style/className/spacing/gap/margin/padding override, không opaque spread; geometry chỉ là finite shape theo catalog. Giữ component MUI thuần qua theme khi chỉ cần primitive; không tạo wrapper đổi tên hoặc universal form/table engine. Nghiệp vụ/columns/schema/quyền vẫn do module sở hữu. Đọc [shared UI catalog](../apps/web/src/shared/ui/README.md) trước khi code; variant mới phải có rationale và consumer thật theo SPC-053.
 
-**SPC-062 — Chỉ một owner cho mỗi boundary/inset.** Shell main sở hữu page gutter và inset dọc 24 px. Semantic composition sở hữu gap giữa direct children và reset margin-top/bottom của chúng về 0; nội dung bên trong mỗi con giữ owner riêng. Không thêm beforeGap/afterGap cho con đang nằm trong semantic gap parent. Panel bodyMode=inset chứa composition flush; Panel không title và flush có thể chọn composition inset khi workflow cần; Panel có title phải giữ header→first-body gap16 theo SPC-014/068, không cộng top inset lần hai. Không double inset, không local negative margin để bù, không `!important` tại consumer. Boundary đứng độc lập chọn named before/after variant đã có. Shared parent và flow/grid cùng tuân quy tắc; profile đặc thù dùng semantic owner theo workflow, không ép mọi mật độ giống nhau.
+**SPC-062 — Chỉ một owner cho mỗi boundary/inset.** Shell main sở hữu page gutter 16/24 và inset dọc 16 px. Semantic composition sở hữu gap giữa direct children và reset margin-top/bottom của chúng về 0; nội dung bên trong mỗi con giữ owner riêng. Không thêm beforeGap/afterGap cho con đang nằm trong semantic gap parent. Panel bodyMode=inset chứa composition flush; Panel không title và flush có thể chọn composition inset khi workflow cần; Panel có title phải giữ header→first-body gap12 operational/16 comfortable theo SPC-014/068, không cộng top inset lần hai. Không double inset, không local negative margin để bù, không `!important` tại consumer. Boundary đứng độc lập chọn named before/after variant đã có. Một detail row gồm nội dung và divider là một logical child; parent gap chỉ giữa rows. Notice áp dụng toàn workflow là sibling của grid pane trong PageSections, không auto-place vào một ô grid. Shared parent và flow/grid cùng tuân quy tắc; profile đặc thù dùng semantic owner theo workflow, không ép mọi mật độ giống nhau.
 
 **SPC-063 — Quy định phải có gate và consumer evidence.** `npm run test:ui-composition` chạy AST ownership check và negative fixtures trong `npm run verify`, cùng spacing/visual-token gates hiện có. Gate phải chặn raw role wrapper, alias/default/namespace imports, style override, opaque spread/geometry, direct child boundary hoặc inset bị nhân đôi có thể phân tích tĩnh. Source scan không chứng minh browser CSS cascade hoặc dynamic nesting; khi đổi shared owner phải có import graph/route impact matrix và regression render/hành vi theo SPC-057, gồm native form/ref/draft, dialog/navigation khi liên quan. Ghi findings trước/sau, final hashes, command/exit và state/viewports thực tế. Không tự ghi Backend/staging/owner acceptance, tiến độ FE hoặc readiness từ số component/line giảm.
 
@@ -560,9 +586,9 @@ Triển khai đo được và kiểm chứng của lượt này được ghi t�
 
 **SPC-066 — Bao phủ toàn bộ đường đưa style vào UI.** Gate phải xét JSX native/MUI/shared, System props, `sx`/`style`, spread/helper/callback, `slotProps`/theme overrides/`styled`, CSS imported/selector/pseudo/media, shorthand và logical properties. Alias wrapper, `createElement`, factory và indirect dynamic styling không được làm mất kiểm tra. Tập nguồn phải được phát hiện từ workspace/import graph, đối chiếu số file; root thiếu, parse lỗi, style import ngoài scope chưa phân loại hoặc không có file để scan phải thất bại. Generated files chỉ được loại theo owner cụ thể và phải qua `generate:check`. Không phát triển interpreter JavaScript tổng quát: phần chưa resolve được giữ `UNKNOWN` và chuyển cách viết về dạng hữu hạn.
 
-**SPC-067 — Khóa cả giá trị và forwarding của shared API.** Với 27 shared exports và API mới, typography/spacing/appearance chỉ do owner chuẩn quyết định. Cấm generic `sx`/`style`/`className` escape hatch, unknown props và opaque forwarding vào UI owner; Composition public API không nhận opaque spread. RHF/native field spreads có name/value/ref/event/validation được giữ khi type/source chứng minh nội dung; style hoặc nguồn chưa resolve không được coi hợp lệ. ReactNode children/actions/extra/render và nested MUI slots được kiểm tại source tạo nội dung, không miễn vì wrapper đã đóng props. Geometry chỉ gồm key/đơn vị/responsive branch hợp lệ, không CSS injection, token không resolve hoặc đổi mật độ qua geometry. Variant runtime phải nằm trong union hữu hạn và mọi branch được phân tích/kiểm; dynamic unknown thất bại. Metadata/ARIA/ref/native form props mở đúng nhu cầu thật, forward rõ, giữ accessibility/behavior; không mở arbitrary props để giảm dòng. React `key` không phải prop style. Không sửa domain/API cache/permission để phục vụ layout.
+**SPC-067 — Khóa cả giá trị và forwarding của shared API.** Với mọi public Shared API và export mới được khám phá từ source và đối chiếu [catalog hiện hành](../apps/web/src/shared/ui/README.md), typography/spacing/appearance chỉ do owner chuẩn quyết định. Cấm generic `sx`/`style`/`className` escape hatch, unknown props và opaque forwarding vào UI owner; Composition public API không nhận opaque spread. RHF/native field spreads có name/value/ref/event/validation được giữ khi type/source chứng minh nội dung; style hoặc nguồn chưa resolve không được coi hợp lệ. ReactNode children/actions/extra/render và nested MUI slots được kiểm tại source tạo nội dung, không miễn vì wrapper đã đóng props. Geometry chỉ gồm key/đơn vị/responsive branch hợp lệ, không CSS injection, token không resolve hoặc đổi mật độ qua geometry. Variant runtime phải nằm trong union hữu hạn và mọi branch được phân tích/kiểm; dynamic unknown thất bại. Metadata/ARIA/ref/native form props mở đúng nhu cầu thật, forward rõ, giữ accessibility/behavior; không mở arbitrary props để giảm dòng. React `key` không phải prop style. Không sửa domain/API cache/permission để phục vụ layout.
 
-**SPC-068 — Kiểm một owner trên quan hệ render thực.** Parent giữ inter-child gap; surface giữ inset; child chỉ giữ nhịp nội bộ. Fragment, conditional child, local wrapper, component con và portal không được che double boundary/inset. Với Panel có title, header giữ gap đến nội dung đầu 16px theo SPC-014; không cộng thêm top inset của body/child để thành 32/40px. Panel không title có thể chọn body inset theo profile. Hai surface khác nhau có inset riêng hợp lệ; không nhầm nesting thực với hai owner cùng một mép. Direct-child reset không đủ cho mọi wrapper: source closure và computed geometry phải đối chiếu. Icon–label trong một control là quan hệ nội bộ, không tự dùng role nhóm hành động; nếu cần role, bổ sung ở canonical owner có consumer và test. Không bù sai bằng negative margin, `!important`, selector override hoặc thêm wrapper rỗng.
+**SPC-068 — Kiểm một owner trên quan hệ render thực.** Parent giữ inter-child gap; surface giữ inset; child chỉ giữ nhịp nội bộ. Fragment, conditional child, local wrapper, component con và portal không được che double boundary/inset. Với Panel có title, header giữ gap đến nội dung đầu 12px operational/16px comfortable theo SPC-014; không cộng thêm top inset của body/child để thành 32/40px. Panel không title có thể chọn body inset theo profile. Hai surface khác nhau có inset riêng hợp lệ; không nhầm nesting thực với hai owner cùng một mép. Direct-child reset không đủ cho mọi wrapper: source closure và computed geometry phải đối chiếu. Icon–label trong một control là quan hệ nội bộ, không tự dùng role nhóm hành động; nếu cần role, bổ sung ở canonical owner có consumer và test. Không bù sai bằng negative margin, `!important`, selector override hoặc thêm wrapper rỗng.
 
 **SPC-069 — Đồng bộ thị giác bằng vai trò, không bằng chép số.** Dùng canonical spacing scale và semantic matrix §4, MUI/theme typography/palette/radius/focus/density. CSS shorthand, custom property, `calc`, logical property và responsive value vẫn phải truy được token/owner/unit. Font size/line-height/height không được dùng để ép vừa thay vì reflow. Một profile có hierarchy/nhịp/primary action chung; khác biệt workflow/density phải có named variant và consumer thật. Geometry như chart/table width hoặc content-driven height được phép có rationale; không bắt mọi số hình học thành spacing token. `QueryState` không mặc định áp một min-height chung cho mọi inline query theo SPC-024; state geometry cần consumer và đo thực. Theme/internal library reset hợp lệ chỉ theo phạm vi đã phân loại, không blanket exemption.
 
@@ -584,7 +610,7 @@ Triển khai đo được và kiểm chứng của lượt này được ghi t�
 |---|---|---|---|
 | Instruction routing | Root/kit `AGENTS.md` trỏ standard/catalog/plan; hiện trạng được đồng bộ tại plan §16.17 | S14 kiểm pointer, SPC ID/anchor và current summary; văn bản không tự chặn lệnh bị bỏ qua | Một normative policy; không có current/next trái nhau |
 | Token/units | Generator + S08 layout/value/unit checks; visual-token gate riêng | S19 đối chiếu đủ source/import closure và generated inputs/outputs | Canonical value resolve được; unsupported/UNKNOWN thất bại |
-| Shared API | S05 binding resolution + S07 style-entry checks; 21 component + 6 composition contracts trong catalog | S09 ancestry/owner; S10 props/slots/finite values/supporting types | Alias, descendants, forbidden override và unknown branch bị bắt; native behavior hợp lệ còn nguyên |
+| Shared API | S05 binding resolution + S07 style-entry checks; mọi public component và composition contracts được discovery trong catalog | S09 ancestry/owner; S10 props/slots/finite values/supporting types | Alias, descendants, forbidden override và unknown branch bị bắt; native behavior hợp lệ còn nguyên |
 | Ownership | Sáu compositions, Panel semantics và direct-child checks | S09 wrapper/conditional/QueryState/portal/native-render ownership; S11 edge regression | Một owner trên mép render thật; computed inset/gap đúng profile |
 | Source coverage | S04 discovery; S07/S08 gates hiện quét layout 76, visual 75, composition 74 files | S19 refresh từ disk/Git/import/manifest/diff; số file không pin | Expected scope reconciled với scanned scope; không silent skip |
 | Browser | Có historical/local route evidence, không thay current rerun | S15/S16 readiness, states/variants, native resize/zoom/focus/hit/portal | Mọi affected route có đủ observations theo impact |

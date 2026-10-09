@@ -1,7 +1,7 @@
 # 18 — Chuẩn code thống nhất cho BotSales AI
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.0.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -170,7 +170,7 @@ DỤNG với lý do. Evidence gồm command/cwd/exit code/revision/environment v
 thật. Tách tài liệu, mock, staging, production. Không gọi compliance/enterprise chỉ
 vì checklist dài. Không tự merge/deploy; Universal 19.6 là cổng tuyên bố cuối.
 
-Các CODE-025–036 dưới đây là chỉ mục truy vết tới UI policy, không một workflow/checklist hoặc bảng giá trị thứ hai. Mọi task UI đọc [workflow duy nhất](../../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md#unified-workflow), v1.28 SPC-001–075, và [catalog CURRENT/TARGET](../../BotSalesAI_Frontend/apps/web/src/shared/ui/README.md).
+Các CODE-025–036 dưới đây là chỉ mục truy vết tới UI policy, không một workflow/checklist hoặc bảng giá trị thứ hai. Mọi task UI đọc [workflow duy nhất](../../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md#unified-workflow), v1.29 SPC-001–075, và [catalog CURRENT/TARGET](../../BotSalesAI_Frontend/apps/web/src/shared/ui/README.md).
 
 CODE-025 — Cổng bắt đầu/đóng UI lấy từ workflow canonical; allowance debt Wxx là HISTORICAL_SNAPSHOT, không áp dụng task hiện hành. Strict FAIL/UNKNOWN hoặc mandatory NOT_RUN không DONE. Nguồn: SPC-033, SPC-041, SPC-044, SPC-049, SPC-052, SPC-054, SPC-070, SPC-075 trong standard.
 

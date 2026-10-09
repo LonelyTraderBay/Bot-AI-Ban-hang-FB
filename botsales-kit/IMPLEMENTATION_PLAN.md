@@ -214,7 +214,7 @@ Số FE checkpoint chỉ tăng sau bằng chứng nguyên task đúng diff; stor
 
 **Bằng chứng:** artifact_review. Có baseline thực và thay đổi sẵn có; không nhận việc code chỉ vì mở kế hoạch. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE001.S02 · 3/10 điểm · STALE
 
@@ -222,7 +222,7 @@ Map 54 route và 16 module hiện có qua route-implementation.json; phân biệ
 
 **Bằng chứng:** artifact_review. Mỗi route trỏ file/component thực hoặc gap rõ; không dựng lại scaffold. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source docs/route-implementation.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE001.S03 · 2/10 điểm · STALE
 
@@ -230,7 +230,7 @@ Map 54 route và 16 module hiện có qua route-implementation.json; phân biệ
 
 **Bằng chứng:** artifact_review. Kết quả lịch sử không biến thành PASS hiện tại; không suy DNS cũ vẫn bị chặn hôm nay. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source evidence/REPORT.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE001.S04 · 2/10 điểm · STALE
 
@@ -238,7 +238,7 @@ Chọn mục tiêu frontend đầu tiên, scope file, API/route và các mức V
 
 **Bằng chứng:** artifact_review. Task có Definition of Ready rõ và không phụ thuộc gate backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/execution/frontend-plan.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE001.S05 · 2/10 điểm · STALE
 
@@ -246,7 +246,7 @@ Bàn giao hiện trạng và xác nhận ledger frontend riêng; đọc validate
 
 **Bằng chứng:** artifact_review. 28 task frontend bắt đầu 0%; ledger 84 task giữ nguyên trạng. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/execution/frontend-plan.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE001.AC01 — Scope nghiệm thu mock frontend được ghi nhất quán.
@@ -299,7 +299,7 @@ Kiểm Node24/npm và exact package versions/peer requirements; giữ stack đan
 
 **Bằng chứng:** artifact_review. Không đổi major/stack ngoài lỗi tương thích được chứng minh; không ghi latest. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE002.S02 · 3/10 điểm · STALE
 
@@ -307,7 +307,7 @@ Khảo sát setup/doctor/install scripts và quyền ghi/cache/network; ghi base
 
 **Bằng chứng:** artifact_review. Cwd/điều kiện/tác động lệnh xác định; không giả lỗi môi trường thành lỗi code. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE002.S03 · 2/10 điểm · STALE
 
@@ -315,7 +315,7 @@ Cài dependencies bằng npm install để tạo lockfile thật; xử lý peer 
 
 **Bằng chứng:** test_run. Install thành công, manifest/lock khớp; không lockfile tự viết hoặc stub thư viện. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE002.S04 · 2/10 điểm · STALE
 
@@ -323,7 +323,7 @@ Chạy npm setup và doctor với target thực; dùng worker MSW từ package, 
 
 **Bằng chứng:** test_run. Node/dependencies/lock/worker được kiểm trên máy thực; setup không ghi đè env đã có. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE002.S05 · 2/10 điểm · STALE
 
@@ -331,7 +331,7 @@ Kiểm npm ci trên thư mục thử sạch chứa đúng manifest/lock, giữ w
 
 **Bằng chứng:** test_run. Cold install tái lập; không đè user changes hoặc nhận React build PASS chỉ vì install. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE002.AC01 — Có lockfile thật và clean install tái lập.
@@ -383,7 +383,7 @@ Không chuyển checkpoint thành VERIFIED khi chưa có bằng chứng đúng b
 
 **Bằng chứng:** artifact_review. Tên/cwd/script khớp package.json; lệnh dự kiến vẫn DECLARED_NOT_RUN. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE003.S02 · 3/10 điểm · STALE
 
@@ -391,7 +391,7 @@ Chọn gate FE-G01..09, môi trường, fixture/scenario và bằng chứng cầ
 
 **Bằng chứng:** artifact_review. Ma trận kiểm có phạm vi frontend; không yêu cầu DB/Meta/staging thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE003.S03 · 2/10 điểm · STALE
 
@@ -399,7 +399,7 @@ Kiểm cấu hình Vitest/RTL/MSW/Playwright/axe thực; thu baseline có lỗi 
 
 **Bằng chứng:** artifact_review. Test runner và config được nạp; testfail ghi CHƯA ĐẠT, không nhận gate PASS. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE003.S04 · 2/10 điểm · STALE
 
@@ -407,7 +407,7 @@ Kiểm tracker frontend validate/status/next và mẫu evidence; đăng ký lệ
 
 **Bằng chứng:** artifact_review. Evidence sai scope/thiếu log/hash bị từ chối; cấu trúc đúng không thay review coverage. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/execution/frontend-command-map.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE003.S05 · 2/10 điểm · STALE
 
@@ -415,7 +415,7 @@ Kiểm tracker frontend validate/status/next và mẫu evidence; đăng ký lệ
 
 **Bằng chứng:** artifact_review. Có handoff tái hiện checks; không ghi CI PASS khi chưa có run. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/scripts/progress.mjs
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE003.AC01 — Lệnh/checkpoint dùng nguồn hiện có và ledger frontend.
@@ -469,7 +469,7 @@ Không chuyển checkpoint thành VERIFIED khi chưa có bằng chứng đúng b
 
 **Bằng chứng:** test_run. Có lỗi/quan hệ thật và scope hẹp; không chia mọi file theo mẫu một cách máy móc. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE004.S02 · 3/10 điểm · STALE
 
@@ -477,7 +477,7 @@ Sửa type/lint/boundary theo schema thư viện thật, giữ strict/noUnchecke
 
 **Bằng chứng:** test_run. Không any, type suppression, exclude module lỗi hoặc declaration giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE004.S03 · 2/10 điểm · STALE
 
@@ -485,7 +485,7 @@ Tách trách nhiệm phần đang sửa: app composition, module local logic và
 
 **Bằng chứng:** test_run. Không module X import Y, shared import app/modules/mocks hoặc cycle/SDK lọt vào web. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE004.S04 · 2/10 điểm · STALE
 
@@ -493,7 +493,7 @@ Kiểm negative fixtures alias/relative/type-only/dynamic imports và file khôn
 
 **Bằng chứng:** test_run. Vi phạm bị phát hiện; checker không bỏ qua nguồn không parse hoặc cycle. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE004.S05 · 2/10 điểm · STALE
 
@@ -501,7 +501,7 @@ Chạy full typecheck/lint/boundaries và source checker; review diff theo Chang
 
 **Bằng chứng:** test_run. Các cổng chạy trên full source; refactor chỉ phần liên quan, public behavior giữ đúng. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source package.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE004.AC01 — Full TypeScript/lint đạt trên source thật.
@@ -563,7 +563,7 @@ Không chuyển checkpoint thành VERIFIED khi chưa có bằng chứng đúng b
 
 **Bằng chứng:** test_run. Tất cả refs/operation đang dùng tồn tại; Money/id/optional/null khớp source. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE005.S02 · 3/10 điểm · STALE
 
@@ -571,7 +571,7 @@ Kiểm generator từ kit sang packages/CSS/manifest và sửa lỗi generator c
 
 **Bằng chứng:** test_run. npm generate:check đồng nhất; contract YAML/index/generated DTO không thành nguồn song song. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/contracts/events.schema.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE005.S03 · 2/10 điểm · STALE
 
@@ -579,7 +579,7 @@ Hoàn thiện client credential/CSRF/version/idempotency/AbortSignal/Problem; va
 
 **Bằng chứng:** test_run. Không fetch riêng trong JSX, hardcode endpoint/DTO hoặc retry mutation mù. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE005.S04 · 2/10 điểm · STALE
 
@@ -587,7 +587,7 @@ Test transport với fixture HTTP success/202/409/412/422/428/429/timeout/schema
 
 **Bằng chứng:** test_run. Field errors giữ form; 202 chưa success; unsupported enum không map thành trạng thái tốt. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/contracts/openapi.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE005.S05 · 2/10 điểm · STALE
 
@@ -595,7 +595,7 @@ Chạy generator/contract/helper tests/typecheck; ghi negative case missing sche
 
 **Bằng chứng:** test_run. Schema sai bị từ chối; output fresh; phạm vi chỉ frontend transport, không chứng minh server. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/contracts/events.schema.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE005.AC01 — Generated freshness và schema validation có positive/negative cases.
@@ -650,7 +650,7 @@ Không chuyển checkpoint thành VERIFIED khi chưa có bằng chứng đúng b
 
 **Bằng chứng:** test_run. Một Graphite Gold dark-only từ tokens nguyên bản, không thêm bảng màu/theme. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE006.S02 · 3/10 điểm · STALE
 
@@ -658,7 +658,7 @@ Hoàn thiện primitive/shared behavior cần dùng: form/error/table/dialog/loa
 
 **Bằng chứng:** test_run. Các trạng thái/layout dùng theme/token; không wrapper từng primitive vô nghĩa hoặc flash nền trắng. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE006.S03 · 2/10 điểm · STALE
 
@@ -666,7 +666,7 @@ Hoàn thiện label/error association/focus return/touch target/reduced-motion/f
 
 **Bằng chứng:** test_run. Keyboard/zoom hỗ trợ thật; trạng thái không chỉ phân biệt bằng màu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE006.S04 · 2/10 điểm · STALE
 
@@ -674,7 +674,7 @@ Kiểm component và gallery trên viewport docs/03, contrast thực với axe +
 
 **Bằng chứng:** test_run. Focus/order/contrast/error label đạt; ảnh React app thật, không ảnh prototype. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE006.S05 · 2/10 điểm · STALE
 
@@ -682,7 +682,7 @@ Chạy token drift/component/type checks và negative palette/copy HEX test; rev
 
 **Bằng chứng:** test_run. Bridge và tokens đồng nhất; public props rõ, không generic form/table engine. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE006.AC01 — Một theme/provider và nguồn token.
@@ -735,7 +735,7 @@ Không chuyển checkpoint thành VERIFIED khi chưa có bằng chứng đúng b
 
 **Bằng chứng:** test_run. Router ghép public module entries; không route trống hoặc cache tenant-free. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE007.S02 · 3/10 điểm · STALE
 
@@ -743,7 +743,7 @@ Hoàn thiện shell/navigation/query keys principal/shop/permissionVersion/filte
 
 **Bằng chứng:** test_run. Một Router/QueryClient/theme provider; 401/403 không giả empty success. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE007.S03 · 2/10 điểm · STALE
 
@@ -751,7 +751,7 @@ Hoàn thiện shell/navigation/query keys principal/shop/permissionVersion/filte
 
 **Bằng chứng:** test_run. Không data shop trước hiện ở scope mới; form không mất âm thầm; token không localStorage. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE007.S04 · 2/10 điểm · STALE
 
@@ -759,7 +759,7 @@ Test switch-shop race/late response/revoke/deep-link refresh/chunk-error/mobile 
 
 **Bằng chứng:** test_run. Late response bị loại; route guard/stream cleanup và error boundary hoạt động. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE007.S05 · 2/10 điểm · STALE
 
@@ -767,7 +767,7 @@ Chạy shell E2E + helpers/component checks; kiểm nhãn demo và lỗi startup
 
 **Bằng chứng:** test_run. React app thật chạy đúng; live missing backend hiện unavailable, không tự bật mock. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE007.AC01 — Query/cache/stream scope không rò giữa user/shop.
@@ -826,7 +826,7 @@ Lập dataset/scenario theo 54 routes/feature-catalog và canonical schema; dùn
 
 **Bằng chứng:** test_run. Quan hệ ID/tiền/trạng thái hợp lệ, dữ liệu tổng hợp và seed/clock/reset tái lập. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE008.S02 · 3/10 điểm · STALE
 
@@ -834,7 +834,7 @@ Hoàn thiện MSW HTTP handlers và mock service theo operationId, cursor/filter
 
 **Bằng chứng:** test_run. UI dùng cùng transport; không fixture trong JSX hoặc mock fallback live. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE008.S03 · 2/10 điểm · STALE
 
@@ -842,7 +842,7 @@ Bổ sung nhiều dòng/dữ liệu lớn, empty/partial, permission denied, sta
 
 **Bằng chứng:** test_run. Có ca happy/unhappy định danh; không toast thành công trong failure; không gọi dịch vụ thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE008.S04 · 2/10 điểm · STALE
 
@@ -850,7 +850,7 @@ Chạy simulator/schema checks và network tests; kiểm request/response/seed/c
 
 **Bằng chứng:** test_run. Các payload đúng schema; mock-invalid/schema-error và wrong-shop được phát hiện trong test. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE008.S05 · 2/10 điểm · STALE
 
@@ -858,7 +858,7 @@ Test reset/isolation và activation demo/test-only; ghi nhãn synthetic, limitat
 
 **Bằng chứng:** test_run. Hai test/shops không rò trạng thái; production không kích hoạt mock; không nhận simulator là backend. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE008.AC01 — Dữ liệu phủ đủ luồng UAT và state/role quan trọng.
@@ -914,7 +914,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE009.S02 · 3/10 điểm · STALE
 
@@ -922,7 +922,7 @@ Hoàn thiện shop/membership/onboarding/customer list-detail/forms/jobs/privacy
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE009.S03 · 2/10 điểm · STALE
 
@@ -930,7 +930,7 @@ Kiểm role/read-only/revoke/422/412/not-found, shop switch và privacy capabili
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE009.S04 · 2/10 điểm · STALE
 
@@ -938,7 +938,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE009.S05 · 2/10 điểm · STALE
 
@@ -946,7 +946,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE009.AC01 — Hai shops/roles có dữ liệu tách biệt; membership bị thu hồi không fallback shop khác.
@@ -1002,7 +1002,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE010.S02 · 3/10 điểm · STALE
 
@@ -1010,7 +1010,7 @@ Hoàn thiện product/category/variant/editor/image/import UI, nhiều dòng/SKU
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE010.S03 · 2/10 điểm · STALE
 
@@ -1018,7 +1018,7 @@ Kiểm duplicate SKU/invalid fields/upload/import partial/412 và permission cos
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE010.S04 · 2/10 điểm · STALE
 
@@ -1026,7 +1026,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE010.S05 · 2/10 điểm · STALE
 
@@ -1034,7 +1034,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE010.AC01 — Tạo/sửa/list/detail/variant có payload và kết quả mock đúng quan hệ.
@@ -1091,7 +1091,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE011.S02 · 3/10 điểm · STALE
 
@@ -1099,7 +1099,7 @@ Hoàn thiện stock positions/reservations/movements/adjustment UI và liên k�
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE011.S03 · 2/10 điểm · STALE
 
@@ -1107,7 +1107,7 @@ Kiểm stock unavailable/version conflict/permission denied/negative quantity/un
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE011.S04 · 2/10 điểm · STALE
 
@@ -1115,7 +1115,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE011.S05 · 2/10 điểm · STALE
 
@@ -1123,7 +1123,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE011.AC01 — Stock/reserved/available hiển thị theo snapshot mock, không tính lại quyền quyết định.
@@ -1181,7 +1181,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE012.S02 · 3/10 điểm · STALE
 
@@ -1189,7 +1189,7 @@ Hoàn thiện order list/detail/editor nhiều dòng, quote/confirmation/cancel/
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE012.S03 · 2/10 điểm · STALE
 
@@ -1197,7 +1197,7 @@ Kiểm quote expired/address ID thiếu/422/412/428/202/unknown/double click/off
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE012.S04 · 2/10 điểm · STALE
 
@@ -1205,7 +1205,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE012.S05 · 2/10 điểm · STALE
 
@@ -1213,7 +1213,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE012.AC01 — Đổi giá/hàng yêu cầu quote/xác nhận mới theo mock contract.
@@ -1270,7 +1270,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE013.S02 · 3/10 điểm · STALE
 
@@ -1278,7 +1278,7 @@ Hoàn thiện work-item claim/pick/pack/dispatch/delivery/return UI theo states 
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE013.S03 · 2/10 điểm · STALE
 
@@ -1286,7 +1286,7 @@ Kiểm claim stale/already-assigned, partial stock, pack validation, dispatch un
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE013.S04 · 2/10 điểm · STALE
 
@@ -1294,7 +1294,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE013.S05 · 2/10 điểm · STALE
 
@@ -1302,7 +1302,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE013.AC01 — Claim đúng role/version; cạnh tranh mô phỏng hiện conflict rõ.
@@ -1358,7 +1358,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE014.S02 · 3/10 điểm · STALE
 
@@ -1366,7 +1366,7 @@ Hoàn thiện supplier/reorder/proposal/approval/purchase/receipt nhiều dòng 
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE014.S03 · 2/10 điểm · STALE
 
@@ -1374,7 +1374,7 @@ Kiểm supplier khác shop/chưa duyệt, thay giá/qty làm approval stale, thi
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE014.S04 · 2/10 điểm · STALE
 
@@ -1382,7 +1382,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE014.S05 · 2/10 điểm · STALE
 
@@ -1390,7 +1390,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE014.AC01 — Editor nhiều dòng, quantities/MOQ/packSize và remaining receipts đúng schema.
@@ -1448,7 +1448,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE015.S02 · 3/10 điểm · STALE
 
@@ -1456,7 +1456,7 @@ Hoàn thiện cashflow/journal nhiều dòng/COD/statements/matching/receivables
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE015.S03 · 2/10 điểm · STALE
 
@@ -1464,7 +1464,7 @@ Kiểm unbalanced journal/duplicate source/locked period/partial match/unknown p
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE015.S04 · 2/10 điểm · STALE
 
@@ -1472,7 +1472,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE015.S05 · 2/10 điểm · STALE
 
@@ -1480,7 +1480,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE015.AC01 — Totals/report lấy từ API mock, không tổng trang hiện tại hoặc Number(amount) cho quyết định tiền.
@@ -1538,7 +1538,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE016.S02 · 3/10 điểm · STALE
 
@@ -1546,7 +1546,7 @@ Hoàn thiện conversation/message/media/contact refs/takeover/handoff UI; compo
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE016.S03 · 2/10 điểm · STALE
 
@@ -1554,7 +1554,7 @@ Kiểm takeover version/revoke/late event/untrusted message HTML/send timeout/ca
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE016.S04 · 2/10 điểm · STALE
 
@@ -1562,7 +1562,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE016.S05 · 2/10 điểm · STALE
 
@@ -1570,7 +1570,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE016.AC01 — Takeover/handoff/allowedActions từ API mock, không hai luồng gửi cùng lúc unsafe.
@@ -1626,7 +1626,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE017.S02 · 3/10 điểm · STALE
 
@@ -1634,7 +1634,7 @@ Hoàn thiện source/document/version/review/publish/feedback UI với dữ li�
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE017.S03 · 2/10 điểm · STALE
 
@@ -1642,7 +1642,7 @@ Kiểm thiếu dữ liệu bắt buộc/upload invalid/review stale/publish deni
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE017.S04 · 2/10 điểm · STALE
 
@@ -1650,7 +1650,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE017.S05 · 2/10 điểm · STALE
 
@@ -1658,7 +1658,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE017.AC01 — Draft/review/published/version history phân biệt; dùng allowedActions khi contract có khai báo. Knowledge hiện chưa có field này trong OpenAPI, nên luồng mock kiểm quyền bằng permission chuẩn knowledge.publish cùng lifecycle ready_for_review; không thêm field vào DTO/API/generated.
@@ -1716,7 +1716,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE018.S02 · 3/10 điểm · STALE
 
@@ -1724,7 +1724,7 @@ Hoàn thiện bot/team/tool-permission/budget/kill-switch/sandbox/eval UI; model
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE018.S03 · 2/10 điểm · STALE
 
@@ -1732,7 +1732,7 @@ Kiểm expired approval/limit exceeded/tool denied/kill switch/unknown/config co
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE018.S04 · 2/10 điểm · STALE
 
@@ -1740,7 +1740,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE018.S05 · 2/10 điểm · STALE
 
@@ -1748,7 +1748,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE018.AC01 — Cấu hình theo capabilities/allowedActions, không branch tên provider SDK.
@@ -1807,7 +1807,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE019.S02 · 3/10 điểm · STALE
 
@@ -1815,7 +1815,7 @@ Hoàn thiện integrations/credentials write-only/capability status, notificatio
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE019.S03 · 2/10 điểm · STALE
 
@@ -1823,7 +1823,7 @@ Kiểm consent denied/revoked subscription/unavailable browser/device/error reco
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE019.S04 · 2/10 điểm · STALE
 
@@ -1831,7 +1831,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE019.S05 · 2/10 điểm · STALE
 
@@ -1839,7 +1839,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE019.AC01 — Secret fields giữ tạm trong form và clear; không secret trong bundle/log/storage.
@@ -1897,7 +1897,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE020.S02 · 3/10 điểm · STALE
 
@@ -1905,7 +1905,7 @@ Hoàn thiện approval queue/tasks/briefing/team-policy/runtime readiness UI; c�
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE020.S03 · 2/10 điểm · STALE
 
@@ -1913,7 +1913,7 @@ Kiểm stale approval/role denied/partial data/kill switch/budget unavailable v�
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE020.S04 · 2/10 điểm · STALE
 
@@ -1921,7 +1921,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE020.S05 · 2/10 điểm · STALE
 
@@ -1929,7 +1929,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE020.AC01 — Approval sau đổi payload yêu cầu cấp lại theo API mock.
@@ -1987,7 +1987,7 @@ Map routeId/operationId/permissions/feature scenarios bên dưới với source 
 
 **Bằng chứng:** test_run. Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE021.S02 · 3/10 điểm · STALE
 
@@ -1995,7 +1995,7 @@ Hoàn thiện dashboard/report/marketing filters/charts/data table/export UI; KP
 
 **Bằng chứng:** test_run. Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE021.S03 · 2/10 điểm · STALE
 
@@ -2003,7 +2003,7 @@ Kiểm empty/partial/redacted/stale/large pagination/export denied/error và mis
 
 **Bằng chứng:** test_run. Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE021.S04 · 2/10 điểm · STALE
 
@@ -2011,7 +2011,7 @@ Viết/chạy component + network/contract regression cho acceptance của task;
 
 **Bằng chứng:** test_run. Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE021.S05 · 2/10 điểm · STALE
 
@@ -2019,7 +2019,7 @@ Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/ro
 
 **Bằng chứng:** test_run. Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE021.AC01 — Chart kèm bảng dữ liệu; filters/date/timezone/pagination và các số thống nhất với mock API.
@@ -2076,7 +2076,7 @@ Map feature-catalog/routes vào các luồng catalog→stock→order→prep, pro
 
 **Bằng chứng:** test_run. Không thiếu feature UI; mỗi route/feature có test/case hoặc gap đã giải thích. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE022.S02 · 3/10 điểm · STALE
 
@@ -2084,7 +2084,7 @@ Ghép public entries qua app props/router/intents; bổ sung scenario quan hệ 
 
 **Bằng chứng:** test_run. Module không import module khác; shared không chứa logic điều phối nghiệp vụ. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE022.S03 · 2/10 điểm · STALE
 
@@ -2092,7 +2092,7 @@ Kiểm dữ liệu sau mutation/refetch/SSE và source refs; giữ unknown/draft
 
 **Bằng chứng:** test_run. Luồng mock có ID/history đúng, không chỉ toast/ảnh; late data và permission không rò. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE022.S04 · 2/10 điểm · STALE
 
@@ -2100,7 +2100,7 @@ Chạy E2E các luồng happy/unhappy, edit/replay/partial/forbidden/version/tim
 
 **Bằng chứng:** test_run. Các bước/expected state hợp lệ được chứng minh bằng browser và requests thật tới MSW. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE022.S05 · 2/10 điểm · STALE
 
@@ -2108,7 +2108,7 @@ Sinh ma trận route/feature/scenario từ kết quả test; ghi scope/gaps và 
 
 **Bằng chứng:** test_run. 54 route và 64 feature UI được truy vết; khả năng backend thật không bị tick PASS. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE022.AC01 — Luồng xuyên module chạy với mock HTTP đủ quan hệ dữ liệu.
@@ -2164,7 +2164,7 @@ Lập route×states×roles theo state có ý nghĩa, inventory text/i18n keys v�
 
 **Bằng chứng:** test_run. Không ép trạng thái vô nghĩa; thiếu case/translation được định danh. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE023.S02 · 3/10 điểm · STALE
 
@@ -2172,7 +2172,7 @@ Hoàn thiện loading/empty/partial/error/forbidden/not-found/offline/stale/subm
 
 **Bằng chứng:** test_run. Không spinner vô hạn, error thành empty success hoặc action rỗng. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE023.S03 · 2/10 điểm · STALE
 
@@ -2180,7 +2180,7 @@ Hoàn thiện 422 field mapping/412 conflict/428 missing version, URL filters, l
 
 **Bằng chứng:** test_run. Giữ input, focus error và lựa chọn xử lý; không chỉ lookup 100 dòng cho mọi dữ liệu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE023.S04 · 2/10 điểm · STALE
 
@@ -2188,7 +2188,7 @@ Chạy browser/component tests state/focus/refetch/dirty forms với fixtures de
 
 **Bằng chứng:** test_run. Route/shop/dialog transitions không mất input âm thầm; text/labels nhất quán tiếng Việt. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE023.S05 · 2/10 điểm · STALE
 
@@ -2196,7 +2196,7 @@ Sinh coverage từ test results, review exception/gap và kiểm public API comp
 
 **Bằng chứng:** test_run. Không text chưa dịch được coi đạt i18n hoàn chỉnh; test chưa chạy vẫn NOT_RUN. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE023.AC01 — Trạng thái phù hợp/field errors/dirty drafts có kiểm thực.
@@ -2251,7 +2251,7 @@ Không chuyển checkpoint thành VERIFIED khi chưa có bằng chứng đúng b
 
 **Bằng chứng:** test_run. Scope XSS/secret/tenant cache/client actions rõ; server enforcement ngoài phạm vi. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE024.S02 · 3/10 điểm · STALE
 
@@ -2259,7 +2259,7 @@ Sửa raw HTML/URL/file/secret lifecycle/cached sensitive data trong phần có 
 
 **Bằng chứng:** test_run. Không SDK/key/token/PII trong bundle/URL/localStorage/log; untrusted content không thực thi. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE024.S03 · 2/10 điểm · STALE
 
@@ -2267,7 +2267,7 @@ Kiểm stale response/revoke/shop switch/hidden fields và mutation idempotency/
 
 **Bằng chứng:** test_run. Data/action UI không vượt fixture allowedActions; unknown không sinh duplicate intent. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE024.S04 · 2/10 điểm · STALE
 
@@ -2275,7 +2275,7 @@ Chạy negative browser/transport tests với XSS payload, unsafe URL/export, un
 
 **Bằng chứng:** test_run. Payload bị xử lý an toàn; field visibility/permissions/scope cleanup hoạt động trên browser thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE024.S05 · 2/10 điểm · STALE
 
@@ -2283,7 +2283,7 @@ Review dependency advisory trên lockfile và diff/bundle; ghi phát hiện/lý 
 
 **Bằng chứng:** test_run. Không tự nâng cả repo hoặc hạ rule; chưa kiểm advisory ghi CHƯA XÁC MINH. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE024.AC01 — Frontend security negative cases đạt trên mock/browser.
@@ -2341,7 +2341,7 @@ Chọn viewport/browser matrix theo docs/03, dataset lớn có ID và baseline b
 
 **Bằng chứng:** test_run. Không bịa RPS/SLO/hardware; tiêu chí performance frontend được xác định trước khi kết luận. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE025.S02 · 3/10 điểm · STALE
 
@@ -2349,7 +2349,7 @@ Sửa overflow/touch/keyboard/focus/zoom/reduced-motion/forced-colors và semant
 
 **Bằng chứng:** test_run. Màn 320px/desktop theo docs dùng được; responsive không làm mất action/data bắt buộc. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE025.S03 · 2/10 điểm · STALE
 
@@ -2357,7 +2357,7 @@ Sửa overflow/touch/keyboard/focus/zoom/reduced-motion/forced-colors và semant
 
 **Bằng chứng:** test_run. Không cache/global state/virtualization mới nếu chưa chứng minh nhu cầu; ngưỡng đã chọn không bị hạ để pass. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE025.S04 · 2/10 điểm · STALE
 
@@ -2365,7 +2365,7 @@ Chạy Playwright/axe và kiểm thủ công keyboard/focus/screenreader phù h�
 
 **Bằng chứng:** test_run. Critical violations trong scope được xử lý; mock data không thay kiểm hành vi browser. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE025.S05 · 2/10 điểm · STALE
 
@@ -2373,7 +2373,7 @@ Kiểm lại artifact sau sửa và bàn giao số đo/budget/scope supported br
 
 **Bằng chứng:** test_run. Không gọi mọi thiết bị/browser PASS từ Chromium desktop; ngoại lệ được giải thích. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source apps/web/src/app/CommandRecovery.tsx
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE025.AC01 — UI theo viewport/docs và keyboard/focus/a11y có evidence.
@@ -2428,7 +2428,7 @@ Map build/build:demo/preview/dev modes và biến môi trường; phân biệt m
 
 **Bằng chứng:** test_run. Artifact target/cấu hình/cwd xác định; không deployment hoặc dữ liệu thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/contracts/openapi.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE026.S02 · 3/10 điểm · STALE
 
@@ -2436,7 +2436,7 @@ Hoàn thiện build isolation để production không chứa MSW/seed/mockServic
 
 **Bằng chứng:** test_run. Build thiếu API thật vẫn hoàn thành artifact frontend; runtime unavailable rõ, không tự fallback. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/contracts/openapi.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE026.S03 · 2/10 điểm · STALE
 
@@ -2444,7 +2444,7 @@ Chạy clean install/type/lint/unit/contract/build và demo build trên target/l
 
 **Bằng chứng:** test_run. Production không request MSW hoặc nhúng mocks/secret; demo chạy React thật với MSW. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/contracts/openapi.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE026.S04 · 2/10 điểm · STALE
 
@@ -2452,7 +2452,7 @@ Nối gate frontend vào CI phù hợp repo và chạy E2E trên artifact previe
 
 **Bằng chứng:** test_run. Config CI phân biệt với run CI; browser test đúng artifact/hash được bàn giao. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/contracts/openapi.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE026.S05 · 2/10 điểm · STALE
 
@@ -2460,7 +2460,7 @@ Ghi manifest/checksums/cách chạy/cấu hình API/rollback artifact frontend v
 
 **Bằng chứng:** test_run. Tái lập bản build theo lock; không nhận hosting/staging deployment đã xảy ra. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Missing evidence/source file: botsales-kit/contracts/openapi.json
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE026.AC01 — Cả dist và dist-demo build đúng chế độ; mock isolation được kiểm thực.
@@ -2517,7 +2517,7 @@ Lập UAT matrix route/feature/state/role từ nguồn canonical và coverage FE
 
 **Bằng chứng:** test_run. Mỗi yêu cầu UI có case/test/evidence hoặc gap rõ; không thiếu các luồng nhiều dòng/partial. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE027.S02 · 3/10 điểm · STALE
 
@@ -2525,7 +2525,7 @@ Chạy 54 routes và các luồng chính với dataset đủ, hai shops/roles v�
 
 **Bằng chứng:** test_run. Browser app có hành động và dữ liệu thay đổi đúng, không acceptance từ JSON/ảnh prototype. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE027.S03 · 2/10 điểm · STALE
 
@@ -2533,7 +2533,7 @@ Thu screenshot/trace/request evidence từ React artifact thật và review scen
 
 **Bằng chứng:** test_run. Ảnh/log không lộ secret/PII; tất cả provider/data có nhãn simulated, không đòi tài khoản thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE027.S04 · 2/10 điểm · STALE
 
@@ -2541,7 +2541,7 @@ Sửa lỗi UAT trong scope, viết regression phù hợp và chạy lại gate 
 
 **Bằng chứng:** test_run. Acceptance tương ứng đạt trên đúng diff; failed hoặc mandatory gap chưa giải quyết vẫn chặn phần đó. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE027.S05 · 2/10 điểm · STALE
 
@@ -2549,7 +2549,7 @@ Bàn giao kết quả UAT cho người dùng; ghi người chấp thuận khi c�
 
 **Bằng chứng:** test_run. Báo cáo UAT phân biệt executed tests với owner acceptance pending; frontend mock đủ là phạm vi đã duyệt. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE027.AC01 — 54 routes/feature UI và luồng mock UAT có evidence đúng artifact.
@@ -2607,7 +2607,7 @@ Không chuyển checkpoint thành VERIFIED khi chưa có bằng chứng đúng b
 
 **Bằng chứng:** artifact_review. Tất cả mandatory frontend gates có evidence; missing không tự chuyển N/A. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE028.S02 · 3/10 điểm · STALE
 
@@ -2615,7 +2615,7 @@ Review kiến trúc app/module/shared/transport/mock/public entry và cách thê
 
 **Bằng chứng:** artifact_review. Không cycle/duplicate state/provider hoặc abstraction vô căn cứ; tự review không giả peer review. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE028.S03 · 2/10 điểm · STALE
 
@@ -2623,7 +2623,7 @@ Review kiến trúc app/module/shared/transport/mock/public entry và cách thê
 
 **Bằng chứng:** artifact_review. Người tiếp quản tái lập được; tương lai nối API qua transport mà không import mocks vào UI. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE028.S04 · 2/10 điểm · STALE
 
@@ -2631,7 +2631,7 @@ Review kiến trúc app/module/shared/transport/mock/public entry và cách thê
 
 **Bằng chứng:** artifact_review. Không tự chứng nhận hệ thống production hoặc tự nhận owner acceptance; thiếu gate thì kết luận chưa đủ. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 #### FE028.S05 · 2/10 điểm · STALE
 
@@ -2639,7 +2639,7 @@ Bàn giao source/diff/artifact/checksums/test summary/risks/next và cập nhậ
 
 **Bằng chứng:** artifact_review. Progress FE không tự tăng từ tài liệu; full-product ledger giữ nguyên; không tự push/merge/deploy. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.
 
-**Cần kiểm lại:** Changed source AGENTS.md
+**Cần kiểm lại:** Changed source apps/web/src/app/Shell.tsx
 
 ### Kiểm tra nghiệm thu của đầu việc
 - FE028.AC01 — Đủ bằng chứng về frontend quality/architecture cho scope mock đã nêu.

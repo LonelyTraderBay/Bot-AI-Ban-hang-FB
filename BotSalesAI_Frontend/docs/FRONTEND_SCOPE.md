@@ -1,8 +1,8 @@
 # Phạm vi và thực hiện tự động của dự án Frontend
 
-**Phạm vi hiện hành:** React/TypeScript Frontend trong `apps/web`, với API mock tổng hợp cho demo/test. Trạng thái, thứ tự và bằng chứng triển khai chỉ lấy từ [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); tài liệu scope này không giữ bản sao trạng thái S-step. Giữ Frontend-only và không cập nhật FE/full-product ledger nếu thiếu evidence nguyên task.
+**Phạm vi hiện hành:** React/TypeScript Frontend trong `apps/web`, contract canonical trong kit và API mock tổng hợp cho demo/test. Quyết định 09/10/2026 cho phép mở rộng contract, quyền, route, event, scenario và migration record cho UX01–UX15 cùng sáu nhóm nghiệp vụ trong [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). Không triển khai Backend/provider/production. Tài liệu scope không giữ bản sao trạng thái; FE/full-product ledger chỉ cập nhật theo evidence thuộc owner.
 
-Chính sách phạm vi: mọi công việc sản phẩm trong `BotSalesAI_Frontend` là React/TypeScript Frontend với API mock tổng hợp; AI tự triển khai, kiểm thử và chuẩn bị hồ sơ để người dùng nghiệm thu cuối theo quyết định 04/10/2026. UI dùng [workflow duy nhất v1.28](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075, và [shared catalog CURRENT/TARGET](../apps/web/src/shared/ui/README.md). File này giữ thẩm quyền phạm vi/tự thực hiện; không một checklist UI hoặc nguồn token thứ hai; mandatory verify/evidence gates không được skip hoặc waiver để giả PASS.
+Chính sách phạm vi: mọi công việc sản phẩm trong `BotSalesAI_Frontend` là React/TypeScript Frontend với API mock tổng hợp; AI tự triển khai, kiểm thử và chuẩn bị hồ sơ để người dùng nghiệm thu cuối theo quyết định 04/10/2026. UI dùng [workflow duy nhất v1.29](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075, và [shared catalog CURRENT/TARGET](../apps/web/src/shared/ui/README.md). File này giữ thẩm quyền phạm vi/tự thực hiện; không một checklist UI hoặc nguồn token thứ hai; mandatory verify/evidence gates không được skip hoặc waiver để giả PASS.
 
 ## 1. Phạm vi có hiệu lực
 
@@ -26,7 +26,7 @@ Công việc và thứ tự kỹ thuật lấy từ [plan v16.0 §16](FRONTEND_U
 | Quy trình và tiêu chí FE-G01..09 | `../botsales-kit/execution/FRONTEND_PLAN_GUIDE.md` |
 | Bản đọc sinh tự động | `../botsales-kit/IMPLEMENTATION_PLAN.md`, `frontend-tasks/FE*.md`, `FRONTEND_PROGRESS.md`, `frontend-progress-report.json` |
 | Backlog UI + kiến trúc bổ sung | [FRONTEND_UI_IMPROVEMENT_PLAN v16.0 §16](FRONTEND_UI_IMPROVEMENT_PLAN.md#steel-plan), cùng backlog UI hiện có; không tạo ledger chép tay |
-| Quy tắc/UI workflow | [FRONTEND_SPACING_STANDARD v1.28](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075; nguồn normative duy nhất. [Shared catalog](../apps/web/src/shared/ui/README.md) giải thích CURRENT/TARGET API, không nguồn rule/scale mới. |
+| Quy tắc/UI workflow | [FRONTEND_SPACING_STANDARD v1.29](FRONTEND_SPACING_STANDARD.md#unified-workflow), SPC-001–075; nguồn normative duy nhất. [Shared catalog](../apps/web/src/shared/ui/README.md) giải thích CURRENT/TARGET API, không nguồn rule/scale mới. |
 | Bằng chứng thực / tiếp tục | `evidence/REPORT.md`, `docs/CONTINUE_FRONTEND.md`; luôn đối chiếu source/artifact hashes |
 | Audit toàn bộ tài liệu | Mục 12 của kế hoạch UI và inventory từng file trong `evidence/frontend-scope-automation-audit-20261004/` |
 
@@ -56,4 +56,4 @@ Phân biệt ba mốc: **hoàn tất việc AI có thể tự kiểm chứng**; 
 
 Frontend-only/mock được duyệt 30/09; Backend/provider thật không chặn UI mock. FE017 được phép dùng `knowledge.publish` + lifecycle, không thêm `Knowledge.allowedActions` vào schema. UI020 desktop Chrome ≥154 / Firefox ≥155 đã được duyệt; Edge/Safari/physical mobile best effort, PWA install/OS push ngoài scope đã chọn. UI021 có accepted-review exception cho 13 findings; scanner exit 1 vẫn giữ đúng. Quyết định tự thực hiện 04/10 thay các prerequisite owner/manual/hosted của kế hoạch cũ; không sửa kết quả lịch sử.
 
-Không có quyền mới để commit/push/merge/deploy, gửi tin thật, chi tiền, đổi canonical API/palette hoặc ghi owner approval. Việc này không cần những thao tác đó để hoàn tất hồ sơ Frontend local.
+Không có quyền mới để commit/push/merge/deploy, gửi tin thật, chi tiền, đổi canonical API ngoài phạm vi đã duyệt hoặc đổi palette hoặc ghi owner approval. Việc này không cần những thao tác đó để hoàn tất hồ sơ Frontend local.

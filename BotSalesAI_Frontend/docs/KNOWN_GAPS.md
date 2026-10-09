@@ -1,4 +1,33 @@
-# Giới hạn còn lại sau UI027 Frontend update — 05/10/2026
+# Giới hạn còn lại sau UI027 Frontend update — cập nhật 08/10/2026
+
+<!-- CORRECTIONS_CURRENT -->
+## Phạm vi hiện hành — UX và nghiệp vụ bổ sung 09/10/2026
+
+Đang thực hiện UX01–UX15 và sáu nhóm chức năng theo [kế hoạch UI §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). Baseline và impact tại [contract](../evidence/frontend-ux-completion-20261009/CONTRACT.md). Trạng thái chỉ đọc từ kế hoạch; các gate của đợt trước không chứng minh source đang sửa đã hoàn tất. FE vẫn có 140 checkpoint; freshness phải đọc lại bằng CLI canonical.
+
+Phạm vi Frontend + contract canonical + MSW tổng hợp. Nghiệm thu local cuối đợt chưa được xác nhận; Backend/provider/production có mốc riêng.
+
+## HISTORICAL_SNAPSHOT — kết quả — thu gọn spacing 09/10/2026
+
+[Báo cáo](../evidence/frontend-spacing-density-20261009/REPORT.md), [case nghiệm thu](../evidence/frontend-spacing-density-20261009/ACCEPTANCE_GUIDE.md): **READY_FOR_ACCEPTANCE_LOCAL_SCOPE**. Full624/624,181unit,41contracts,6built-demo,216route observations/70focused cases,16deep native/108label probes đạt trên source của đợt density. Canonical140/140,0stale/blocked; xem CLI và receipt để đọc freshness. Trạng thái chỉ ở UI plan §16.6/16.20; các kết quả614/175/40 trước density là HISTORICAL_SNAPSHOT.
+
+Scope local Frontend/mock; speech/hosted CI NOT_RUN, user acceptance PENDING; Backend/provider/production ngoài scope.
+<!-- END_CORRECTIONS_CURRENT -->
+
+## HISTORICAL_SNAPSHOT — hồ sơ trước đợt F01–F09
+
+## Giới hạn được xác nhận bằng bằng chứng hiện hành — 08/10/2026
+
+| Hạng mục | Trạng thái đo được | Ranh giới |
+|---|---|---|
+| FE-G05 / accessibility thủ công | **CHƯA ĐẠT ĐẦY ĐỦ**. Axe, keyboard 18/18, responsive/reflow, Chromium browser zoom 200%, Firefox text-only 200%, forced-colors/reduced-motion và một số ảnh đã có bằng chứng | Narrator speech/transcript và broad human conformance review chưa chạy; không claim WCAG đầy đủ |
+| FE-G09 / nghiệm thu cuối | **CHƯA XÁC MINH**. Route/feature/state/role matrix và handoff kỹ thuật đã được lập | Chỉ người dùng/project authority ghi được quyết định nghiệm thu |
+| FE-G08 / hosted CI | **Local equivalent ĐẠT** theo gate Frontend; production/demo isolation, build lặp, built-demo preview và local suite có log | GitHub Actions run/branch protection chưa chạy/quan sát; không claim hosted CI PASS |
+| Backend/provider/live | **CHƯA XÁC MINH, ngoài scope Frontend local** | Không có bằng chứng server authorization, database/persistence, provider, staging, production deployment hoặc recovery |
+| Hiệu năng production | Local synthetic dataset và bundle hiện hành đã được đo | Chưa đo physical device/CDN/production user hoặc backend SLO |
+| UI spacing rollout | S20 trong `FRONTEND_UI_IMPROVEMENT_PLAN.md` §16.6 là `READY_FOR_ACCEPTANCE_LOCAL_SCOPE` | Đây là kết luận local theo evidence UI riêng; không khẳng định mọi dynamic branch/route đã được con người review đầy đủ |
+
+FE evidence hiện hành: [FE028 quality matrix](../../botsales-kit/execution/frontend-evidence/FE028/quality-gate-matrix-current-20261008.json), [FE027 UAT matrix](../../botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261008.json), [FE028 handoff](../../botsales-kit/execution/frontend-evidence/FE028/handoff.md). Các mục lịch sử bên dưới giữ nguyên theo ngày/source snapshot; dùng CLI canonical để xác định checkpoint freshness, không dùng các số lịch sử thay trạng thái hiện tại.
 
 **Current navigation:** trạng thái UI ở [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status), evidence tại [REPORT](../evidence/REPORT.md). Nội dung bên dưới là **HISTORICAL_SNAPSHOT** tại ngày ghi trong heading; không thay tracker/status hiện hành.
 
