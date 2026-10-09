@@ -1,5 +1,6 @@
 import { setFault, setRole, resetService } from './service';
 import { loadLargeCustomerDataset } from './database';
+import {loadEmptyManagementDataset} from './finance-dataset';
 export async function setMockControl(key: string, value: string) {
     if (!__MOCK__)
         throw new Error('Mock control bị tắt.');
@@ -10,6 +11,9 @@ export async function setMockControl(key: string, value: string) {
             resetService();
         else if (value === 'large-customers')
             loadLargeCustomerDataset();
+        else if (value === 'finance-empty') {
+            resetService();loadEmptyManagementDataset();
+        }
         else
             throw new Error('Không hỗ trợ bộ dữ liệu mô phỏng.');
     }

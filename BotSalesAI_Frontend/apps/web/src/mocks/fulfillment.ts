@@ -1,5 +1,6 @@
-import { all, find, insert, ensure, checkVersion, touch, command, str, strings, num, rows, now, stockFor, move, units, money } from './database';
+import { all, find, insert, ensure, checkVersion, touch, command, str, strings, num, rows, record as recordMoney, now, stockFor, move, units, money } from './database';
 import type { Input, Row } from './database';
+import { carryingValue, dispatchCost, setStockValue, postBusinessJournal, fiscalDate } from './accounting';
 export function fulfillment(op: string, input: Input): Row | undefined {
     const { shopId, body } = input;
     switch (op) {
@@ -115,12 +116,15 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             ensure(['planned', 'label_ready'].includes(str(shipment.state)), 'Vận đơn không thể bàn giao lần nữa.');
             const order = find('orders', str(shipment.orderId), shopId);
             ensure(order.fulfillmentState === 'packed', 'Đơn chưa đóng gói.');
+            let totalCost=0n;
             for (const line of rows(order.lines)) {
                 const stock = stockFor(shopId, str(line.variantId), str(order.warehouseId));
-                const cost = stock.unitCost ? units(stock.unitCost) * BigInt(num(line.quantity)) : null;
-                line.costSnapshot = cost === null ? null : money(cost);
+                const cost=dispatchCost(stock,num(line.quantity)),value=carryingValue(stock);
+                ensure(cost!==null&&value!==null,'Cần giá vốn đã đối chiếu trước khi bàn giao.',409,'COST_NOT_KNOWN');
+                line.costSnapshot=money(cost,str(recordMoney(order.total).currency));totalCost+=cost;setStockValue(stock,value-cost,num(stock.onHand)-num(line.quantity),str(recordMoney(order.total).currency));
                 move(input, stock, -num(line.quantity), -num(line.quantity), 'fulfillment', 'Bàn giao kiện hàng mô phỏng', { type: 'shipment', id: shipment.id });
             }
+            if(totalCost>0n)postBusinessJournal(shopId,'shipment_dispatch',str(shipment.id),[{code:'157',debit:totalCost,credit:0n,description:'Giá vốn hàng đang vận chuyển'},{code:'156',debit:0n,credit:totalCost,description:'Xuất giá trị khỏi kho'}]);
             shipment.state = 'handed_over';
             touch(shipment);
             order.fulfillmentState = 'dispatched';
@@ -150,6 +154,10 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             touch(shipment);
             const order = find('orders', str(shipment.orderId), shopId);
             if (body.eventType === 'delivered') {
+                ensure(rows(order.lines).every(l=>l.costSnapshot!==null&&l.costSnapshot!==undefined),'Chưa có giá vốn bàn giao.',409,'COST_NOT_KNOWN');
+                const cost=rows(order.lines).reduce((n,l)=>n+units(l.costSnapshot),0n),sale=units(order.total),receivable=order.paymentState==='verified'?'337':order.paymentMethod==='cod'?'138':'131';
+                postBusinessJournal(shopId,'order_delivery',str(order.id),[{code:receivable,debit:sale,credit:0n,description:'Ghi nhận phải thu hoặc kết chuyển tiền ứng trước'},{code:'511',debit:0n,credit:sale,description:'Doanh thu theo giao hàng đã xác nhận'},{code:'632',debit:cost,credit:0n,description:'Giá vốn lịch sử của hàng đã giao'},{code:'157',debit:0n,credit:cost,description:'Kết chuyển hàng đang vận chuyển'}],fiscalDate(shopId,str(body.occurredAt)));
+
                 order.fulfillmentState = 'delivered';
                 order.orderState = 'completed';
                 order.allowedActions = ['request_return', 'record_payment'];
@@ -166,7 +174,7 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             checkVersion(r, input);
             ensure(!['inspected', 'closed', 'rejected'].includes(str(r.state)), 'Yêu cầu trả đã xử lý.');
             const order = find('orders', str(r.orderId), shopId);
-            let refund = 0n;
+            let refund = 0n,restoredCost=0n;
             for (const inspected of rows(body.lines)) {
                 const line = rows(r.lines).find(l => l.orderLineId === inspected.orderLineId);
                 ensure(line, 'Dòng trả không hợp lệ.', 422);
@@ -174,15 +182,23 @@ export function fulfillment(op: string, input: Input): Row | undefined {
                 ensure(Number.isInteger(acceptedQuantity) && acceptedQuantity >= 0 && acceptedQuantity <= num(line.quantity), 'Số lượng nhận phải là số nguyên từ 0 đến số lượng đã yêu cầu.', 422);
                 const original = rows(order.lines).find(l => l.id === line.orderLineId);
                 ensure(original, 'Dòng đơn không tồn tại.');
+                line.acceptedQuantity=acceptedQuantity;
                 line.disposition = inspected.disposition;
                 line.reason = inspected.reason;
-                if (inspected.disposition === 'sellable' && acceptedQuantity > 0)
-                    move(input, stockFor(shopId, str(original.variantId), str(order.warehouseId)), acceptedQuantity, 0, 'return', str(inspected.reason), { type: 'return', id: r.id });
+                if (inspected.disposition === 'sellable' && acceptedQuantity > 0) {
+                    ensure(original.costSnapshot!==null&&original.costSnapshot!==undefined,'Không dùng giá vốn hiện tại thay lịch sử đã giao.',409,'COST_NOT_KNOWN');
+                    const stock=stockFor(shopId,str(original.variantId),str(order.warehouseId)),value=carryingValue(stock);ensure(value!==null,'Giá trị tồn hiện tại chưa đối chiếu.',409,'COST_NOT_KNOWN');
+                    const prior=all('returns',shopId).filter(other=>other.id!==r.id&&other.orderId===order.id&&['inspected','closed'].includes(str(other.state))).flatMap(other=>rows(other.lines)).filter(l=>l.orderLineId===original.id).reduce((n,l)=>n+num(l.acceptedQuantity),0);
+                    const cost=units(original.costSnapshot)*BigInt(prior+acceptedQuantity)/BigInt(num(original.quantity))-units(original.costSnapshot)*BigInt(prior)/BigInt(num(original.quantity));
+                    setStockValue(stock,value+cost,num(stock.onHand)+acceptedQuantity,str(recordMoney(original.costSnapshot).currency));restoredCost+=cost;
+                    move(input,stock,acceptedQuantity,0,'return',str(inspected.reason),{type:'return',id:r.id});
+                }
                 refund += units(original.unitPrice) * BigInt(acceptedQuantity);
             }
             ensure(rows(r.lines).every(l => l.disposition !== 'pending'), 'Phải kiểm đủ các dòng.');
+            if(refund>0n||restoredCost>0n)postBusinessJournal(shopId,'return_inspection',str(r.id),[{code:'521',debit:refund,credit:0n,description:'Hàng bán được nhận trả'},{code:'338',debit:0n,credit:refund,description:'Nghĩa vụ hoàn tiền, chưa ghi tiền đã hoàn'},{code:'156',debit:restoredCost,credit:0n,description:'Nhập lại theo giá vốn gốc'},{code:'632',debit:0n,credit:restoredCost,description:'Đảo giá vốn phần hàng bán được nhập lại'}]);
             r.state = 'inspected';
-            r.refundObligation = money(refund);
+            r.refundObligation = money(refund,str(recordMoney(order.total).currency));
             touch(r);
             order.fulfillmentState = 'part_returned';
             order.allowedActions = ['request_return', 'request_refund'];

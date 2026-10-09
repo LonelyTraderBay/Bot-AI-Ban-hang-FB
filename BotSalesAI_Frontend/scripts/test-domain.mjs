@@ -2,6 +2,10 @@ import fs from 'node:fs';import os from 'node:os';import path from 'node:path';i
 import {root,typescript,require} from './tools.mjs';
 import {runMockNetworkScenarios} from '../tests/fixtures/mock-network.mjs';
 const compiler=typescript();const dir=fs.mkdtempSync(path.join(os.tmpdir(),'botsales-domain-'));
+// Compiled mock modules use the same installed validators as the browser build.
+fs.mkdirSync(path.join(dir,'node_modules/@botsales/contracts'),{recursive:true});
+for(const dependency of ['ajv','ajv-formats'])fs.symlinkSync(path.join(root,'node_modules',dependency),path.join(dir,'node_modules',dependency),process.platform==='win32'?'junction':'dir');
+fs.writeFileSync(path.join(dir,'node_modules/@botsales/contracts/package.json'),JSON.stringify({main:path.join(dir,'packages/contracts/src/index.js')}));
 fs.mkdirSync(path.join(root,'evidence/logs'),{recursive:true});
 try{
  const configPath=path.join(dir,'tsconfig.json');

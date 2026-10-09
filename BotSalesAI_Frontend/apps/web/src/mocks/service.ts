@@ -5,11 +5,14 @@ import type { Row, Input } from './database';
 import { catalog } from './catalog';
 import { orders } from './orders';
 import { fulfillment } from './fulfillment';
-import { procurement } from './procurement';
+import { markDelegatedPurchasesUnknown, procurement } from './procurement';
 import { allTimeReportWindow, finance, cashflow, profitLoss } from './finance';
 import { auxiliary } from './auxiliary';
 import { clearFileState, files, upload } from './files';
-import { marketingFixture } from './marketing-fixture';
+import { marketingSummary } from './marketing-report';
+import { masters, visibleOrderAddress } from './masters';
+import { privacy as privacyOperations, safeConsentChallenge } from './privacy';
+import type { EventEnvelope } from '@botsales/contracts';
 export { MockFailure };
 export const CSRF = 'botsales-demo-csrf-not-a-real-secret';
 let loggedIn = true;
@@ -24,22 +27,31 @@ let fault: Fault = 'none';
 type OperationFailure = { status: number; code: string; message: string };
 const operationFailures = new Map<string, OperationFailure>();
 const operationDelays = new Map<string, number>();
-type ChangeEvent = {
-    eventId: string;
-    type: 'resync.required';
-    schemaVersion: number;
-    shopId: string;
-    resourceType: string;
-    resourceId: string;
-    resourceVersion: number;
-    occurredAt: string;
-    sequence: number;
-};
+type ChangeEvent = EventEnvelope;
 let eventSequence = 0;
 const listeners = new Set<(event: ChangeEvent) => void>();
 export function subscribeChanges(listener: (event: ChangeEvent) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; }
-function notify(shopId: string) { const sequence = ++eventSequence; const event: ChangeEvent = {
-    eventId: `mock-${sequence}`, type: 'resync.required', schemaVersion: 2, shopId, resourceType: 'shop', resourceId: shopId, resourceVersion: 0, occurredAt: now(), sequence
+const masterChanges: Record<string, {collection:string;resourceType:string;type:EventEnvelope['type']}> = {
+    createOpeningBalance:{collection:'openingBalances',resourceType:'opening_balance',type:'opening_balance.updated'}, updateOpeningBalance:{collection:'openingBalances',resourceType:'opening_balance',type:'opening_balance.updated'}, postOpeningBalance:{collection:'openingBalances',resourceType:'opening_balance',type:'opening_balance.updated'},
+    createJournal:{collection:'journals',resourceType:'journal',type:'journal.updated'}, postJournal:{collection:'journals',resourceType:'journal',type:'journal.updated'}, reverseJournal:{collection:'journals',resourceType:'journal',type:'journal.updated'},
+    createAccountingPeriod:{collection:'periods',resourceType:'accounting_period',type:'accounting_period.updated'}, closeAccountingPeriod:{collection:'periods',resourceType:'accounting_period',type:'accounting_period.updated'}, reopenAccountingPeriod:{collection:'periods',resourceType:'accounting_period',type:'accounting_period.updated'},
+    createWarehouse:{collection:'warehouses',resourceType:'warehouse',type:'warehouse.updated'}, updateWarehouse:{collection:'warehouses',resourceType:'warehouse',type:'warehouse.updated'}, archiveWarehouse:{collection:'warehouses',resourceType:'warehouse',type:'warehouse.updated'},
+    createCustomerAddress:{collection:'addresses',resourceType:'customer_address',type:'customer_address.updated'}, updateCustomerAddress:{collection:'addresses',resourceType:'customer_address',type:'customer_address.updated'}, archiveCustomerAddress:{collection:'addresses',resourceType:'customer_address',type:'customer_address.updated'},
+    createAccount:{collection:'accounts',resourceType:'account',type:'account.updated'}, updateAccount:{collection:'accounts',resourceType:'account',type:'account.updated'}, archiveAccount:{collection:'accounts',resourceType:'account',type:'account.updated'},
+    createCustomerConsentChallenge:{collection:'consentChallenges',resourceType:'consent_challenge',type:'consent_challenge.updated'},
+    exchangeConsentChallenge:{collection:'consentChallenges',resourceType:'consent_challenge',type:'consent_challenge.updated'},
+    confirmConsentChallenge:{collection:'consentChallenges',resourceType:'consent_challenge',type:'consent_challenge.updated'},
+    recordCustomerConsent:{collection:'consents',resourceType:'customer_consent',type:'customer_consent.updated'},
+    createPurchaseDelegation:{collection:'purchaseDelegations',resourceType:'purchase_delegation',type:'purchase_delegation.updated'},
+    updatePurchaseDelegation:{collection:'purchaseDelegations',resourceType:'purchase_delegation',type:'purchase_delegation.updated'},
+    evaluatePurchaseSuggestion:{collection:'suggestions',resourceType:'purchase_suggestion',type:'purchase_suggestion.updated'},
+    evaluatePurchaseOrder:{collection:'purchases',resourceType:'purchase_order',type:'purchase.updated'},
+    evaluatePurchaseReservation:{collection:'purchaseDelegationReservations',resourceType:'purchase_reservation',type:'purchase_reservation.updated'},
+};
+function notify(shopId: string, op: string, resourceId: string) {
+    const change=masterChanges[op], resource=change ? all(change.collection,shopId).find(row=>row.id===resourceId) : undefined;
+    const sequence = ++eventSequence; const event: ChangeEvent = {
+    eventId: `mock-${sequence}`, type: resource && change ? change.type : 'resync.required', schemaVersion: 2, shopId, resourceType: resource && change ? change.resourceType : 'shop', resourceId: resource ? str(resource.id) : shopId, resourceVersion: resource ? num(resource.version) : 0, occurredAt: now(), sequence
 }; for (const listener of listeners)
     listener(event); }
 export function setFault(value: Fault) { fault = value; }
@@ -94,6 +106,8 @@ export type MockResult = {
 };
 function read(op: string, input: Input): unknown {
     const { shopId } = input;
+    if (op === 'getFile')
+        return files(op, input);
     if (op === 'getBotConfig')
         return first('bots', shopId);
     if (op === 'getPrivacyPolicy')
@@ -116,12 +130,7 @@ function read(op: string, input: Input): unknown {
             asOf: now(), queuedTasks: all('workItems', shopId).filter(t => t.state === 'queued').length, overdueTasks: all('workItems', shopId).filter(t => t.dueAt && Date.parse(str(t.dueAt)) < Date.parse(now()) && !['completed', 'cancelled'].includes(str(t.state))).length, pendingApprovals: all('approvals', shopId).filter(a => a.status === 'pending').length, unknownCommands: all('commands', shopId).filter(c => c.status === 'unknown').length, roles: all('agentRoles', shopId), health: ['Meta', 'AI provider', 'Worker', 'Thông báo điện thoại'].map(component => ({ component, status: 'unknown', checkedAt: null, expiresAt: null, reason: 'Chưa có backend và kiểm tra tích hợp thật.' }))
         };
     if (op === 'getMarketingSummary')
-        return {
-            asOf: now(), ...(shopId === 'shop-demo' ? marketingFixture : {
-                knownAttributedOrders: 0, unknownAttributionOrders: all('orders', shopId).length,
-                topQuestions: all('conversations', shopId).map(c => str(c.lastMessagePreview)), lostSaleReasons: [], estimatedSpend: null, actualSpend: null
-            })
-        };
+        return marketingSummary(input);
     if (op === 'getReportSummary')
         return {
             shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'].filter(type => grantedPermissions(role).includes(({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[type] || '')), warnings: ['Dữ liệu mô phỏng trong phiên, không có tài khoản quảng cáo thật.']
@@ -153,10 +162,13 @@ function read(op: string, input: Input): unknown {
             return [];
         }
         if (collection === 'stock' && !grantedPermissions(role).includes('finance.read'))
-            data = data.map(s => ({ ...s, unitCost: null }));
-        return data;
+            data = data.map(s => ({ ...s, unitCost: null, carryingValue: null }));
+        if (collection === 'consentChallenges')
+            data = data.map(safeConsentChallenge);
+        return collection === 'orders' ? data.map(order => visibleOrderAddress(order,shopId)) : data;
     }
-    return find(collection, input.id, shopId);
+    const found = find(collection, input.id, shopId);
+    return collection === 'orders' ? visibleOrderAddress(found,shopId) : found;
 }
 let serial: Promise<unknown> = Promise.resolve();
 /** Serialize mutation scenarios so the mock itself cannot double-commit concurrent commands. */
@@ -195,12 +207,16 @@ async function execute(request: MockRequest): Promise<MockResult> {
         clearFileState();
         return { status: 204, data: undefined };
     }
-    currentSession();
+    if (!['exchangeConsentChallenge', 'confirmConsentChallenge'].includes(request.op))
+        currentSession();
     if (request.op === 'listShops')
         return { status: 200, data: db.shops || [] };
     if (request.op === 'createShop') {
         const created = insert('shops', 'Shop', '', { ...body, id: id('shop'), defaultWarehouseId: id('warehouse'), policyVersion: 'unconfigured' });
         const newShop = str(created.id);
+        insert('warehouses','Warehouse',newShop,{id:created.defaultWarehouseId,code:'MAIN',name:'Kho chính',addressLine:'Chưa thiết lập địa điểm kho',status:'active'});
+        for (const account of all('accounts','shop-demo'))
+            insert('accounts','Account',newShop,{code:account.code,name:account.name,group:account.group,status:'active',used:false});
         insert('members', 'Membership', newShop, { userId: input.userId, roles: ['owner'], permissions: grantedPermissions('owner'), permissionVersion: 1, status: 'active' });
         for (const [collection, schema] of [['bots', 'BotConfig'], ['privacyPolicies', 'PrivacyPolicy'], ['notificationPolicies', 'NotificationPolicy']] as const) {
             const example = (db[collection] || [])[0];
@@ -221,6 +237,20 @@ async function execute(request: MockRequest): Promise<MockResult> {
     }
     if (meta.permission)
         ensure(grantedPermissions(role).includes(meta.permission), 'Bạn không có quyền thực hiện thao tác này.', 403, 'FORBIDDEN');
+    if (request.op === 'getFile') {
+        const file = find('files', request.path.fileId || '', shopId);
+        const purpose = str(file.purpose);
+        const readPermission: Record<string, string> = {
+            product_image: 'catalog.read', product_import: 'catalog.import', knowledge_source: 'knowledge.read',
+            bank_statement: 'finance.read', cod_statement: 'finance.read', conversation_media: 'conversations.read'
+        };
+        const permission = readPermission[purpose];
+        ensure(permission && grantedPermissions(role).includes(permission), 'Bạn không có quyền đọc tệp theo mục đích gốc.', 403, 'FILE_READ_FORBIDDEN');
+        if (purpose === 'conversation_media') {
+            ensure(file.resourceId, 'Tệp media thiếu phạm vi hội thoại.', 403, 'FILE_SCOPE_MISMATCH');
+            find('conversations', str(file.resourceId), shopId);
+        }
+    }
     const operationFailure = operationFailures.get(request.op);
     if (operationFailure)
         throw new MockFailure(operationFailure.status, operationFailure.code, operationFailure.message);
@@ -239,10 +269,9 @@ async function execute(request: MockRequest): Promise<MockResult> {
     if (request.op === 'uploadFile') {
         const purpose = request.form?.get('purpose');
         ensure(typeof purpose === 'string', 'Cần chỉ định mục đích tải tệp.', 422, 'UPLOAD_PURPOSE_REQUIRED');
-        // Financial statement purposes are demo-only adapters; the canonical FileUpload enum does not include them.
         const requiredPermission: Record<string, string> = {
             product_image: 'catalog.write', product_import: 'catalog.import', knowledge_source: 'knowledge.write',
-            bank_statement: 'finance.reconcile', cod_statement: 'finance.reconcile'
+            bank_statement: 'finance.reconcile', cod_statement: 'finance.reconcile', conversation_media: 'conversations.reply'
         };
         const permission = requiredPermission[purpose];
         ensure(permission, 'Mục đích tải tệp không được hỗ trợ.', 422);
@@ -291,12 +320,16 @@ async function execute(request: MockRequest): Promise<MockResult> {
     }
     const snapshot = structuredClone(db);
     try {
-        let data: unknown;
+        let data: unknown = masters(request.op,input);
+        if (meta.method === 'GET' && Array.isArray(data) && (fault === 'empty' || fault === 'empty_persistent')) {
+            if (fault === 'empty') fault = 'none';
+            data = [];
+        }
         if (request.op === 'uploadFile') {
             ensure(request.form, 'Thiếu file.', 422);
             data = await upload(input, request.form);
         }
-        else if (meta.method === 'GET')
+        else if (data === undefined && meta.method === 'GET')
             data = read(request.op, input);
         if (data === undefined)
             data = catalog(request.op, input);
@@ -311,21 +344,52 @@ async function execute(request: MockRequest): Promise<MockResult> {
         if (data === undefined)
             data = await auxiliary(request.op, input);
         if (data === undefined)
+            data = await privacyOperations(request.op, input);
+        if (data === undefined)
             data = files(request.op, input);
         if (data === undefined)
             throw new MockFailure(501, 'NOT_SIMULATED', `Thao tác ${request.op} chưa được mô phỏng. Giao diện không ghi nhận thành công giả.`);
-        if (mutating)
+        const reorderEvents = request.op === 'evaluateReorder' ? {
+            suggestionIds: (Array.isArray(record(record(data).result).suggestionIds) ? record(record(data).result).suggestionIds as unknown[] : []).map(str),
+            purchaseOrderIds: (Array.isArray(record(record(data).result).purchaseOrderIds) ? record(record(data).result).purchaseOrderIds as unknown[] : []).map(str),
+            reservationIds: (Array.isArray(record(record(data).result).reservationIds) ? record(record(data).result).reservationIds as unknown[] : []).map(str),
+        } : null;
+        if (mutating && !['exchangeConsentChallenge', 'confirmConsentChallenge'].includes(request.op))
             audit(input, request.op, record(data).id ? { type: meta.responseSchema || 'command', id: record(data).id } : null);
+        if (meta.responseSchema === 'OrderResponse') data = visibleOrderAddress(record(data),shopId);
+        if (meta.responseSchema === 'OrderQuoteResponse') {
+            const quote=record(data),order=find('orders',str(quote.orderId),shopId);
+            data={...quote,shippingAddressSnapshot:visibleOrderAddress({customerId:order.customerId,shippingAddressSnapshot:quote.shippingAddressSnapshot},shopId).shippingAddressSnapshot};
+        }
         const result: MockResult = { status: meta.status, data: meta.status === 204 ? undefined : data };
         if (fault === 'unknown' && mutating && meta.responseSchema === 'CommandResponse') {
             fault = 'none';
             record(data).status = 'unknown';
+            if (request.op === 'evaluateReorder') markDelegatedPurchasesUnknown(shopId, record(data));
             result.commandId = str(record(data).id);
         }
+        if (mutating) {
+            const resultData = record(data);
+            const challengeId = str(resultData.challengeId) || str(resultData.id);
+            const eventShopId = shopId || str(resultData.shopId) || str(db.consentChallenges?.find(row => row.id === challengeId)?.shopId) || str(db.consents?.find(row => row.id === resultData.consentRecordId)?.shopId);
+            if (eventShopId) {
+                notify(eventShopId,request.op,meta.responseSchema === 'CommandResponse' ? input.id : challengeId || str(resultData.id));
+                if (request.op === 'evaluateReorder') {
+                    for (const suggestionId of reorderEvents?.suggestionIds || []) notify(eventShopId, 'evaluatePurchaseSuggestion', suggestionId);
+                    for (const purchaseId of reorderEvents?.purchaseOrderIds || []) notify(eventShopId, 'evaluatePurchaseOrder', purchaseId);
+                    for (const reservationId of reorderEvents?.reservationIds || []) notify(eventShopId, 'evaluatePurchaseReservation', reservationId);
+                }
+                if (request.op === 'createPurchaseDelegation' || request.op === 'updatePurchaseDelegation')
+                    notify(eventShopId, request.op, str(resultData.id));
+                if (request.op === 'confirmConsentChallenge' && resultData.consentRecordId)
+                    notify(eventShopId,'recordCustomerConsent',str(resultData.consentRecordId));
+            }
+        }
+        // A batch evaluation can affect many resources; the public Command contract
+        // only carries one ResourceRef, so keep its internal event IDs out of the API.
+        if (request.op === 'evaluateReorder') record(data).result = null;
         if (mutating && headers['idempotency-key'])
             seen.set(dedupeKey, { body: bodyHash, response: structuredClone(result) });
-        if (mutating)
-            notify(shopId);
         return result;
     }
     catch (error) {

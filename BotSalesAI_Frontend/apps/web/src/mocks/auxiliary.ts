@@ -1,6 +1,7 @@
 import { MockFailure, all, find, first, insert, ensure, checkVersion, touch, command, str, num, strings, record, id, now, future, job, grantedPermissions } from './database';
 import type { Input, Row } from './database';
 import { hashValue } from './orders';
+import { resolveConversationAttachments } from './files';
 const capability = () => ({
     text: 'supported', streaming: 'unsupported', vision: 'unsupported', structuredOutput: 'unknown', toolCalling: 'unsupported', embeddings: 'unsupported', usageReporting: 'unsupported', lastVerifiedAt: null
 });
@@ -13,7 +14,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
     const { shopId, body } = input;
     switch (op) {
         case 'getProviderCatalog': return providerCatalog();
-        case 'getInboxMetadata': return { channels: all('channels', shopId).map(c => ({ id: c.id, displayName: c.name })), assignees: all('members', shopId).filter(m => m.status === 'active').map(m => ({ userId: m.userId, displayName: m.userId === 'user-demo' ? 'Chủ shop (mẫu)' : str(m.userId) })) };
+        case 'getInboxMetadata': return { channels: all('channels', shopId).map(c => ({ id: c.id, displayName: c.name, mediaPolicy: c.status === 'connected' ? c.mediaPolicy ?? null : null })), assignees: all('members', shopId).filter(m => m.status === 'active').map(m => ({ userId: m.userId, displayName: m.userId === 'user-demo' ? 'Chủ shop (mẫu)' : str(m.userId) })) };
         case 'updateShop': {
             const s = find('shops', shopId, shopId);
             checkVersion(s, input);
@@ -40,17 +41,24 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
         case 'addInternalNote':
         case 'sendMessage': {
             const c = find('conversations', input.id, shopId);
+            let attachments: Row[] = [];
+            const text = str(body.text).trim();
             if (op === 'sendMessage') {
                 ensure(body.expectedConversationVersion === c.version, 'Hội thoại đã đổi. Tải lại trước khi gửi.', 412, 'STALE_VERSION');
                 ensure(c.mode === 'human' && c.assignedUserId === input.userId, 'Cần tiếp quản hội thoại trước khi gửi.');
                 ensure(record(c.sendEligibility).state === 'allowed', 'Kênh chưa cho phép gửi tin.');
+                attachments = resolveConversationAttachments(input, c, strings(body.fileIds));
+                ensure(text.length > 0 || attachments.length > 0, 'Nhập nội dung hoặc đính kèm ít nhất một tệp.', 422, 'MESSAGE_CONTENT_REQUIRED');
             }
+            else ensure(text.length > 0, 'Nhập nội dung ghi chú.', 422, 'MESSAGE_CONTENT_REQUIRED');
             const message = insert('messages', 'Message', shopId, {
-                conversationId: c.id, direction: op === 'addInternalNote' ? 'internal' : 'outbound', senderKind: 'human', text: body.text, status: 'sent', clientMessageId: body.clientMessageId ?? null, sourceEvidence: []
+                conversationId: c.id, direction: op === 'addInternalNote' ? 'internal' : 'outbound', senderKind: 'human', text, status: 'sent', clientMessageId: body.clientMessageId ?? null, sourceEvidence: [], ...(attachments.length ? { attachments } : {})
             });
             if (op === 'sendMessage') {
-                c.lastMessagePreview = body.text;
+                c.lastMessagePreview = text || `Đã gửi ${attachments.length} tệp đính kèm`;
                 touch(c);
+                // Command.result is a canonical ResourceRef. Attachment metadata
+                // belongs to the persisted Message read model, not this reference.
                 return command(shopId, op, { type: 'message', id: message.id });
             }
             return message;

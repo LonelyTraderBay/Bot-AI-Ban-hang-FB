@@ -2,7 +2,7 @@ const assert=require('node:assert/strict');
 exports.run=async function({service:svc,database:d,fileModule,operations:ops}){
 let n=0;const transcript=[];const checks=[];
 async function check(name,fn){try{await fn();checks.push({name,status:'PASS'});}catch(e){checks.push({name,status:'FAIL',error:e.message});}}
-async function call(op,body,path={},extra={}){const spec=ops[op];const query=['getCashflow','getProfitLoss'].includes(op)?new URLSearchParams({from:'2026-09-01T00:00:00.000Z',to:'2026-10-01T00:00:00.000Z',timezone:'Asia/Vientiane'}):new URLSearchParams();const r=await svc.handle({op,path:{shopId:'shop-demo',...path},query,body,headers:{'x-csrf-token':svc.CSRF,'idempotency-key':'test-'+(++n),...extra}});transcript.push({op,requestSchema:spec.requestSchema,request:body,schema:spec.responseSchema,data:structuredClone(r.data)});return structuredClone(r.data);}
+async function call(op,body,path={},extra={}){const spec=ops[op];const query=['getCashflow','getProfitLoss','getLedger','getTrialBalance'].includes(op)?new URLSearchParams({from:'2026-09-01T00:00:00.000Z',to:'2026-10-01T00:00:00.000Z',timezone:'Asia/Vientiane'}):op==='getBalanceSheet'?new URLSearchParams({atDate:'2026-09-29'}):new URLSearchParams();const r=await svc.handle({op,path:{shopId:'shop-demo',...path},query,body,headers:{'x-csrf-token':svc.CSRF,'idempotency-key':'test-'+(++n),...extra}});transcript.push({op,requestSchema:spec.requestSchema,request:body,schema:spec.responseSchema,data:structuredClone(r.data)});return structuredClone(r.data);}
 const row=(c,id)=>d.find(c,id,'shop-demo');const first=c=>d.all(c,'shop-demo')[0];
 svc.resetService();
 await check('Full order lifecycle and purchase partial receiving use actual simulator handlers',async()=>{

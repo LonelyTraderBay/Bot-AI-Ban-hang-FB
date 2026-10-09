@@ -1,5 +1,7 @@
-import { all, find, insert, ensure, checkVersion, touch, command, str, num, rows, id, now, stockFor, move, variant, units, zero, money } from './database';
+import { all, find, insert, ensure, checkVersion, touch, command, str, num, rows, record, id, now, stockFor, move, variant, units, zero, money } from './database';
 import type { Input, Row } from './database';
+import { activeWarehouse } from './masters';
+import { carryingValue, setStockValue, postBusinessJournal } from './accounting';
 export function catalog(op: string, input: Input): Row | undefined {
     const { shopId, body } = input;
     switch (op) {
@@ -28,10 +30,9 @@ export function catalog(op: string, input: Input): Row | undefined {
             const product = existing ? touch(Object.assign(existing, data)) : insert('products', 'Product', shopId, { ...data, categoryId: body.categoryId ?? null, imageFileIds: body.imageFileIds || [], description: body.description || '' });
             for (const v of variants) {
                 v.productId = str(product.id);
-                if (!all('stock', shopId).some(s => s.variantId === v.id)) {
-                    const warehouseId = str(find('shops', shopId, shopId).defaultWarehouseId);
-                    insert('stock', 'StockSnapshot', shopId, { variantId: v.id, warehouseId, sku: v.sku, onHand: 0, reserved: 0, available: 0, lowStockThreshold: 0, unitCost: null, asOf: now() });
-                }
+                for(const warehouse of all('warehouses',shopId).filter(w=>w.status==='active'))
+                    if (!all('stock', shopId).some(s => s.variantId === v.id && s.warehouseId===warehouse.id))
+                        insert('stock', 'StockSnapshot', shopId, { variantId: v.id, warehouseId:warehouse.id, sku: v.sku, onHand: 0, reserved: 0, available: 0, lowStockThreshold: 0, unitCost: null, asOf: now() });
             }
             return product;
         }
@@ -70,14 +71,24 @@ export function catalog(op: string, input: Input): Row | undefined {
             return touch(Object.assign(c, body));
         }
         case 'createInventoryAdjustment': {
+            activeWarehouse(shopId,str(body.warehouseId));
             const s = stockFor(shopId, str(body.variantId), str(body.warehouseId));
             checkVersion(s, input);
             ensure(num(body.quantityDelta) !== 0, 'Số lượng điều chỉnh phải khác 0.', 422);
             variant(shopId, str(body.variantId));
+            const oldValue=carryingValue(s),oldQuantity=num(s.onHand),newQuantity=oldQuantity+num(body.quantityDelta),currency=str(find('shops',shopId,shopId).currency);
+            ensure(newQuantity>=0,'Điều chỉnh vượt tồn hiện có.',409,'INSUFFICIENT_STOCK');
+            if(body.unitCost)ensure(record(body.unitCost).currency===currency&&units(body.unitCost)>=0n,'Giá vốn phải không âm và dùng đồng tiền cửa hàng.',422);
+            const nextValue=body.unitCost?units(body.unitCost)*BigInt(newQuantity):oldValue===null?null:oldQuantity===0?(newQuantity===0?0n:null):num(body.quantityDelta)<0?oldValue-oldValue*BigInt(-num(body.quantityDelta))/BigInt(oldQuantity):oldValue+oldValue*BigInt(num(body.quantityDelta))/BigInt(oldQuantity);
             move(input, s, num(body.quantityDelta), 0, 'adjustment', str(body.reason), null);
-            if (body.unitCost) {
-                ensure(units(body.unitCost) >= 0n, 'Giá vốn không âm.', 422);
-                s.unitCost = body.unitCost;
+            if(nextValue!==null) {
+                setStockValue(s,nextValue,newQuantity,currency);
+                if(oldValue!==null&&nextValue!==oldValue) {
+                    const delta=nextValue-oldValue,movement=all('movements',shopId).at(-1);
+                    postBusinessJournal(shopId,'stock_adjustment',str(movement?.id),delta>0n?[{code:'156',debit:delta,credit:0n,description:'Điều chỉnh tăng giá trị tồn'},{code:'711',debit:0n,credit:delta,description:'Đối ứng điều chỉnh tồn có nguồn'}]:[{code:'642',debit:-delta,credit:0n,description:'Điều chỉnh giảm giá trị tồn'},{code:'156',debit:0n,credit:-delta,description:'Giảm giá trị tồn có nguồn'}]);
+                }
+            }else {
+                s.carryingValue=null;s.unitCost=null;
             }
             return command(shopId, op, { type: 'stock', id: s.id });
         }
