@@ -13,7 +13,7 @@ const runnerPath = path.relative(root, fileURLToPath(import.meta.url)).replaceAl
 const firefoxPath = 'C:/Users/Joker-PC/AppData/Local/ms-playwright/firefox-1543/firefox/firefox.exe';
 const sourceInputs = [
     runnerPath,
-    'botsales-kit/contracts/route-manifest.json',
+    '../botsales-kit/contracts/route-manifest.json',
     'apps/web/src/app/Shell.tsx',
     'apps/web/src/app/tokens.css',
     'apps/web/src/modules/catalog/index.tsx',
@@ -185,8 +185,10 @@ async function prepareScenario(send, context, scenario) {
             const check = () => {
               const link = [...document.querySelectorAll('a')].find(element => element.textContent?.trim() === 'Sản phẩm' && element.getClientRects().length);
               if (link) {
+                const label = link.querySelector('.MuiListItemText-primary');
+                if (!label) throw new Error('Navigation primary label was not rendered in its text container.');
                 link.dataset.w30LongLabel = 'true';
-                link.append(document.createTextNode(' ' + 'Danh mục sản phẩm nhãn dài '.repeat(8) + ' ID-' + 'NAV-LONG-'.repeat(8)));
+                label.textContent = 'Sản phẩm ' + 'Danh mục sản phẩm nhãn dài '.repeat(8) + ' ID-' + 'NAV-LONG-'.repeat(8);
                 resolve('mobile-navigation-open-long-label-visible');
               } else if (Date.now() - started > 7000) reject(new Error('Visible Sản phẩm navigation link did not open'));
               else setTimeout(check, 50);
@@ -283,6 +285,22 @@ async function measure(send, context, selectors) {
         const element = document.querySelector(selector);
         return { selector, found: Boolean(element), ...(element ? describe(element) : {}) };
       });
+      const navigationLabelLayout = (() => {
+        const link = document.querySelector('[data-w30-long-label="true"]');
+        const label = link?.querySelector('.MuiListItemText-primary');
+        const item = link?.closest('li');
+        const nextItem = item?.nextElementSibling;
+        if (!link || !label || !nextItem) return null;
+        const linkRect = link.getBoundingClientRect();
+        const labelRect = label.getBoundingClientRect();
+        const nextRect = nextItem.getBoundingClientRect();
+        return {
+          labelContainedByLink: labelRect.top >= linkRect.top - 1 && labelRect.bottom <= linkRect.bottom + 1,
+          directTextChild: [...link.childNodes].some(node => node.nodeType === Node.TEXT_NODE && Boolean(node.textContent?.trim())),
+          labelFollowingOverlap: Math.max(0, Math.min(labelRect.bottom, nextRect.bottom) - Math.max(labelRect.top, nextRect.top)),
+          linkFollowingOverlap: Math.max(0, Math.min(linkRect.bottom, nextRect.bottom) - Math.max(linkRect.top, nextRect.top)),
+        };
+      })();
       const viewportWidth = document.documentElement.clientWidth;
       const documentWidth = document.documentElement.scrollWidth;
       const textClips = [...document.querySelectorAll('main *, nav *, [role="dialog"] *')]
@@ -313,6 +331,7 @@ async function measure(send, context, selectors) {
           visualViewportScale: visualViewport.scale,
         },
         targets: targetGeometry,
+        navigationLabelLayout,
         textClips,
         dialog: dialog ? describe(dialog) : null,
         activeFocus: active && activeStyle && activeRect ? {
@@ -455,6 +474,10 @@ try {
           return { found: true, tag: element.tagName.toLowerCase(), label: element.getAttribute('aria-label') || element.innerText?.slice(0, 80) || '' };
         })()`);
         if (!focus.found) throw new Error(`${scenario.id}: keyboard focus target not found or not visible.`);
+        const focusedScreenshotPath = path.join(path.dirname(outputPath), `native-text-only-200-${scenario.id}-focused-${evidenceRunId}.png`);
+        const focusedScreenshot = await send('browsingContext.captureScreenshot', { context, origin: 'viewport' }, 20_000);
+        const focusedScreenshotBytes = Buffer.from(focusedScreenshot.data, 'base64');
+        fs.writeFileSync(focusedScreenshotPath, focusedScreenshotBytes);
         await send('input.performActions', {
             context,
             actions: [{ id: 'w30-keyboard', type: 'key', actions: [
@@ -487,6 +510,11 @@ try {
         }
         if (after.viewport.pageOverflow > 1) issues.push(`Document horizontal overflow: ${after.viewport.pageOverflow}px.`);
         if (after.textClips.length) issues.push(`Potential clipped text elements: ${after.textClips.length}.`);
+        if (after.navigationLabelLayout && (!after.navigationLabelLayout.labelContainedByLink
+            || after.navigationLabelLayout.directTextChild
+            || after.navigationLabelLayout.labelFollowingOverlap > 1
+            || after.navigationLabelLayout.linkFollowingOverlap > 1))
+            issues.push(`Long navigation label geometry is invalid: ${JSON.stringify(after.navigationLabelLayout)}.`);
         if (scenario.id === 'dialog-long-reason' && after.dialog && (after.dialog.y < -1 || after.dialog.bottom > after.viewport.height + 1))
             issues.push(`Dialog extends beyond viewport: ${after.dialog.y}..${after.dialog.bottom} of ${after.viewport.height}px.`);
         if (!after.activeFocus?.visible || ((after.activeFocus.outlineStyle === 'none' || after.activeFocus.outlineWidth === '0px') && after.activeFocus.boxShadow === 'none'))
@@ -512,6 +540,10 @@ try {
             },
             baseline: before,
             textOnly200: after,
+            focusedScreenshot: {
+                path: path.relative(root, focusedScreenshotPath).replaceAll('\\', '/'),
+                sha256: createHash('sha256').update(focusedScreenshotBytes).digest('hex'),
+            },
             screenshot: {
                 path: path.relative(root, screenshotPath).replaceAll('\\', '/'),
                 sha256: createHash('sha256').update(screenshotBytes).digest('hex'),

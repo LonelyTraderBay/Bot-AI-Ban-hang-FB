@@ -9,7 +9,7 @@ import { startDemoServer } from '../../../../tests/session/demo-server.mjs';
 const root = process.cwd();
 const outputPath = path.join(root, `evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-current-${evidenceRunId}.json`);
 const sourceInputs = [
-    'botsales-kit/contracts/route-manifest.json',
+    '../botsales-kit/contracts/route-manifest.json',
     'apps/web/src/app/Shell.tsx',
     'apps/web/src/app/tokens.css',
     'apps/web/src/modules/catalog/index.tsx',
@@ -18,6 +18,7 @@ const sourceInputs = [
     'tests/ui028-w30-stress.spec.ts',
     'tests/evidence-run-id.mjs',
     'evidence/frontend-ui-improvements/UI028/W30/design-contract-pre-stress-current-20261006.md',
+    'evidence/frontend-ui-improvements/UI028/W30/capture-actual-browser-zoom-200-current-20261006.mjs',
 ];
 const scenarios = [
     { id: 'form-error-short', path: '/s/shop-demo/products/new' },
@@ -84,8 +85,10 @@ async function prepare(page, scenario) {
         await link.waitFor({ state: 'visible', timeout: 8_000 });
         await page.waitForTimeout(500);
         await link.evaluate(element => {
+            const label = element.querySelector('.MuiListItemText-primary');
+            if (!label) throw new Error('Navigation primary label was not rendered in its text container.');
             element.dataset.w30LongLabel = 'true';
-            element.append(document.createTextNode(` ${'Danh mục sản phẩm nhãn dài '.repeat(8)} ID-${'NAV-LONG-'.repeat(8)}`));
+            label.textContent = `Sản phẩm ${'Danh mục sản phẩm nhãn dài '.repeat(8)} ID-${'NAV-LONG-'.repeat(8)}`;
         });
         return { targets: ['[data-w30-long-label="true"]', 'main h1'], focusTarget: '[data-w30-long-label="true"]' };
     }
@@ -136,6 +139,19 @@ async function measure(page, selectors) {
             const element = document.querySelector(selector);
             return { selector, found: Boolean(element), ...(element ? describe(element) : {}) };
         });
+        const stressedNavigationLink = document.querySelector('[data-w30-long-label="true"]');
+        const stressedNavigationLabel = stressedNavigationLink?.querySelector('.MuiListItemText-primary');
+        const stressedNavigationItem = stressedNavigationLink?.closest('li');
+        const followingNavigationItem = stressedNavigationItem?.nextElementSibling;
+        const linkRect = stressedNavigationLink?.getBoundingClientRect();
+        const labelRect = stressedNavigationLabel?.getBoundingClientRect();
+        const followingRect = followingNavigationItem?.getBoundingClientRect();
+        const navigationLabelLayout = stressedNavigationLink && stressedNavigationLabel && linkRect && labelRect && followingRect ? {
+            labelContainedByLink: labelRect.top >= linkRect.top - 1 && labelRect.bottom <= linkRect.bottom + 1,
+            directTextChild: [...stressedNavigationLink.childNodes].some(node => node.nodeType === Node.TEXT_NODE && Boolean(node.textContent?.trim())),
+            labelFollowingOverlap: Math.max(0, Math.min(labelRect.bottom, followingRect.bottom) - Math.max(labelRect.top, followingRect.top)),
+            linkFollowingOverlap: Math.max(0, Math.min(linkRect.bottom, followingRect.bottom) - Math.max(linkRect.top, followingRect.top)),
+        } : null;
         const viewportWidth = document.documentElement.clientWidth;
         const documentWidth = document.documentElement.scrollWidth;
         const textClips = [...document.querySelectorAll('main *, nav *, [role="dialog"] *')]
@@ -166,6 +182,7 @@ async function measure(page, selectors) {
                 visualViewportScale: visualViewport.scale,
             },
             targets: targetGeometry,
+            navigationLabelLayout,
             textClips,
             dialog: dialog ? describe(dialog) : null,
             activeFocus: active && activeStyle && activeRect ? {
@@ -255,8 +272,13 @@ try {
         }));
         const fixture = await prepare(page, scenario);
         await page.locator(fixture.focusTarget).first().focus();
+        const focusedScreenshotPath = path.join(root, `evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-${scenario.id}-focused-${evidenceRunId}.png`);
+        const focusedScreenshotBytes = await page.screenshot({ fullPage: false });
+        fs.writeFileSync(focusedScreenshotPath, focusedScreenshotBytes);
         await page.keyboard.press('Tab');
         const measurements = await measure(page, fixture.targets);
+        const screenshotPath = path.join(root, `evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-${scenario.id}-after-tab-${evidenceRunId}.png`);
+        const screenshotBytes = await page.screenshot({ fullPage: false });
         const issues = [];
         if (before !== 1) issues.push(`Expected unzoomed baseline 1.0; observed ${before}.`);
         if (zoomResult.zoom !== 2) issues.push(`Browser tab zoom API reported ${zoomResult.zoom}; expected 2.0.`);
@@ -275,6 +297,13 @@ try {
         if (!measurements.activeFocus || ((measurements.activeFocus.outlineStyle === 'none' || measurements.activeFocus.outlineWidth === '0px') && measurements.activeFocus.boxShadow === 'none'))
             issues.push('Keyboard focus indicator was not measurable after actual browser zoom.');
         if (measurements.textClips.length) issues.push(`Potential clipped text elements: ${measurements.textClips.length}.`);
+        if (measurements.navigationLabelLayout && (!measurements.navigationLabelLayout.labelContainedByLink
+            || measurements.navigationLabelLayout.directTextChild
+            || measurements.navigationLabelLayout.labelFollowingOverlap > 1
+            || measurements.navigationLabelLayout.linkFollowingOverlap > 1))
+            issues.push(`Long navigation label geometry is invalid: ${JSON.stringify(measurements.navigationLabelLayout)}.`);
+        fs.writeFileSync(screenshotPath, screenshotBytes);
+        fs.writeFileSync(focusedScreenshotPath, focusedScreenshotBytes);
         evidence.scenarios.push({
             id: scenario.id,
             route: scenario.path,
@@ -282,6 +311,8 @@ try {
             defaultViewport,
             renderedAfterZoom: baseline,
             measurements,
+            focusedScreenshot: { path: path.relative(root, focusedScreenshotPath).replaceAll('\\', '/'), sha256: createHash('sha256').update(focusedScreenshotBytes).digest('hex') },
+            screenshotAfterTab: { path: path.relative(root, screenshotPath).replaceAll('\\', '/'), sha256: createHash('sha256').update(screenshotBytes).digest('hex') },
             writeRequests: scenarioWrites,
             pageErrors: scenarioPageErrors,
             issues,

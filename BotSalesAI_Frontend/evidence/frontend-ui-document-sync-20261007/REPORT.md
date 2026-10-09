@@ -43,7 +43,7 @@ Inventory ghi **381 current paths**: 261 trong workspace +120 external inputs/wo
 | Documentation consistency | 95 active/generated/template/live-evidence documents, 75 unique ordered SPC IDs; local path/anchor problems 0, FE display matches CLI | [measured count/hash record](documents-current.json) |
 | Exact inline file paths | 220 references, 0 unresolved; historical proposed filenames giữ nhãn dự kiến | [record](literal-paths-current.json) |
 
-W28 full-suite route checks đo 54 routes ở 390px và 1440px trên demo dev server; dedicated production-demo run đo lại toàn bộ 54 routes ở cả hai width trên Chromium/Firefox và artifact SHA ở trên. Reflow W29 kiểm representative profiles ở 9 widths; W30 kiểm năm DOM text/spacing-stress scenarios mỗi engine. Không gọi đây là mọi route ở mọi width hoặc native zoom proof.
+W28 full-suite route checks đo 54 routes ở 390px và 1440px trên demo dev server; dedicated production-demo run đo lại toàn bộ 54 routes ở cả hai width trên Chromium/Firefox và artifact SHA ở trên. Reflow W29 kiểm representative profiles ở 9 widths; W30 kiểm năm DOM text/spacing-stress scenarios mỗi engine. Bằng chứng native zoom/text-only hiện hành 5/5 cho từng phương pháp nằm trong [W30 follow-up](../frontend-ui-improvements/UI028/W30/native-zoom-followup-current-20261007.md); đây vẫn là năm tình huống đại diện, không phải mọi route/state.
 
 ## Lỗi tìm thấy, sửa và retest
 
@@ -51,6 +51,7 @@ W28 full-suite route checks đo 54 routes ở 390px và 1440px trên demo dev se
 2. **Verify harness thiếu Git trong PATH:** các code gates PASS nhưng evidence CLI dừng `spawnSync git ENOENT`. Harness resolve binary Git thật trên host, đưa directory vào PATH và record môi trường. [Initial FAIL](verify-initial-path-failure-record.json), [log](verify-initial-path-failure.log); rerun verify exit 0.
 3. **Release/self-test và output drift:** isolated fixture thiếu adjacent Frontend docs; bổ sung actual required inputs và missing-document negative case. Token integrity phân biệt approved baseline với existing additive extensions; prototype byte count/SHA và generated navigation được kiểm theo owner. Initial failures giữ riêng; current 272/9/16 checks PASS.
 4. **Generated trailing spaces:** sửa hai dòng tại sync-release owner rồi regenerate; [diff check](git-diff-check-record.json) exit 0, initial result giữ riêng.
+5. **FE021 Firefox test harness:** test chờ marketing-summary response sau khi điều hướng và hard reload để bắt request, làm Firefox/MSW khởi động lại service worker và route rơi vào 404. Đăng ký response waiter trước `gotoDemo` và bỏ hard reload không cần thiết. Focused Firefox test đạt 1/1; toàn bộ FE021 đạt 16/16 trên Chromium/Firefox; full suite hiện hành đạt 504/504. Đây là sửa thứ tự trong test, không phải sửa lỗi React runtime.
 
 ## Verdict, retention và giới hạn
 
@@ -58,5 +59,5 @@ W28 full-suite route checks đo 54 routes ở 390px và 1440px trên demo dev se
 - **ARCH: PRESERVED_AND_VERIFIED_LOCAL.** Không đổi React runtime trong lượt docs/tooling này; 80 runtime file hashes được chụp đầu lượt vẫn khớp. Giữ bốn module/checker/test spacing changes có sẵn; root source/boundary/build và import closure được kiểm thật. Không thêm dependency/framework hoặc thay business/query/permission flow.
 - Hồ sơ S17 được refresh từ actual captured checks, giữ pre-sync snapshot. [S19 manifest mới](S19-current-evidence.json) bind current inventory, doc/source fingerprints và actual command logs; manifest cũ giữ lịch sử. Source/head/arguments/exit/log hashes ở từng `*-record.json`; HEAD không thay working-tree hashes.
 - Chưa có file dư đủ bằng chứng để xóa an toàn. Universal copies cần cho từng component; audit/log/reference cũ còn path consumers và provenance. Giữ chúng theo historical/read-only role. IDE tab nested kit không có file thực; nguồn plan đúng ở sibling kit.
-- Native Chromium zoom/Firefox text-only methods **NOT_RERUN_THIS_DOCUMENT_SYNC**; kết quả trước đây giữ ngày/source scope riêng. DOM 200% stress không xác nhận native zoom, screen-reader speech hoặc human review toàn bộ states/slots/branches.
+- Native Chromium browser zoom 200% và Firefox text-only 200% hiện đạt **5/5 mỗi phương pháp** theo [bằng chứng W30](../frontend-ui-improvements/UI028/W30/native-zoom-followup-current-20261007.md). Kết quả chỉ bao phủ năm tình huống đại diện; screen-reader speech/transcript và human review toàn bộ states/slots/branches vẫn NOT_RUN.
 - Không hosted CI/branch protection, owner acceptance, Backend/provider/persistence/staging/production proof. Không tăng FE/full-product ledger từ general suites; stale FE evidence cần revalidate đúng task/dependency. Không commit/push/delete/move source files trong lượt này.
