@@ -261,9 +261,9 @@
     {
       "id": "SC2-B08",
       "featureId": "B08",
-      "given": "Capability-gated, signed media fetch, scan/type/size limit, transcript review; Meta policy server quyết định.",
-      "when": "Thực hiện luồng hợp lệ và các trường hợp từ chối/mất phản hồi dưới đây trên implementation đúng task.",
-      "then": "Ảnh chuyển tiền không xác nhận payment; comment không tự cấp phép private message; không hỗ trợ thì UI nêu rõ.",
+      "given": "Inbox media can be composed only when the selected channel exposes a valid mediaPolicy; upload uses purpose conversation_media and the exact conversation resource; send references ready same-scope file IDs.",
+      "when": "Exercise text-only compatibility, allowed image/audio/document uploads, missing policy, MIME/size/count violations, wrong shop/conversation/purpose, non-ready scan status, read permission, and send unknown with new content added while the first command is pending.",
+      "then": "Unsupported media and any non-ready or out-of-scope file is not sent; messages expose safe file metadata and scoped readback; acknowledged success removes only the submitted snapshot; unknown keeps the draft and does not blindly resend. Provider delivery, real scanning, payment evidence, and Meta comment/private-message policy remain outside this synthetic scenario.",
       "routeIds": [
         "R06"
       ],
@@ -503,11 +503,12 @@
     {
       "id": "SC2-D06",
       "featureId": "D06",
-      "given": "Mặc định draft_for_approval; automatic chỉ khi allowlist giá/số lượng/budget + approval authority còn hợp lệ.",
-      "when": "Thực hiện luồng hợp lệ và các trường hợp từ chối/mất phản hồi dưới đây trên implementation đúng task.",
-      "then": "Approval thay giá/qty/supplier cần cấp lại; không tự thanh toán từ quyền mua.",
+      "given": "Grant purchase.send do owner tạo ở trạng thái paused, gắn agent generation, human owner, supplier/warehouse/offer, maxPerOrder, procurement policy/period và expiry.",
+      "when": "Owner kích hoạt grant và rule auto_send; chạy hai ý định đồng thời sát/vượt budget, đổi giá/quantity/policy, pause/revoke/expiry, và fault unknown rồi thử lại bằng cùng key/khác key.",
+      "then": "Chỉ intent khớp snapshot/version được gửi; tổng reserved+consumed không vượt cap. Unknown giữ reservation và không lặp; pause/revoke chặn gửi chưa tiếp nhận; không có thanh toán. Provider thật không được suy ra từ mock.",
       "routeIds": [
-        "R46",
+        "R38",
+        "R45",
         "R46"
       ],
       "taskIds": [
@@ -922,7 +923,8 @@
       "when": "Thực hiện luồng hợp lệ và các trường hợp từ chối/mất phản hồi dưới đây trên implementation đúng task.",
       "then": "Opt-out suppresses marketing jobs queued before change; backups restore reapplies tombstones.",
       "routeIds": [
-        "R33"
+        "R35",
+        "R61"
       ],
       "taskIds": [
         "T021",
@@ -930,7 +932,29 @@
         "T075",
         "T079"
       ],
-      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+      "executionStatus": "NOT_RUN_PRODUCT_TEST",
+      "frontendScopedChecks": [
+        {
+          "id": "C07-R01",
+          "condition": "Pending challenge không tạo hoặc nâng consent thành granted."
+        },
+        {
+          "id": "C07-R02",
+          "condition": "Challenge bind identity/channel/purpose/contentVersion; token chỉ đi trong POST body."
+        },
+        {
+          "id": "C07-R03",
+          "condition": "Sai, hết hạn, identity đổi, contentVersion lệch và replay đều bị từ chối."
+        },
+        {
+          "id": "C07-R04",
+          "condition": "Marketing queue kiểm consent status và version lúc thực thi; service message không bị opt-out marketing chặn."
+        },
+        {
+          "id": "C07-R05",
+          "condition": "Local mock/browser evidence không được tính là provider, Backend, backup hoặc product acceptance."
+        }
+      ]
     },
     {
       "id": "SC2-G06",
@@ -963,7 +987,29 @@
         "T058",
         "T064"
       ],
-      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+      "executionStatus": "NOT_RUN_PRODUCT_TEST",
+      "frontendScopedChecks": [
+        {
+          "id": "C10-MKT-01",
+          "condition": "Marketing summary defaults to the last 30 inclusive shop-local days and returns that range in its payload."
+        },
+        {
+          "id": "C10-MKT-02",
+          "condition": "Applying valid fromDate/toDate and day/week/month returns server/mock aggregated buckets; browser does not filter prior totals."
+        },
+        {
+          "id": "C10-MKT-03",
+          "condition": "Partial, invalid, reversed and over-366-day date ranges are rejected; no invalid request is sent from the UI."
+        },
+        {
+          "id": "C10-MKT-04",
+          "condition": "Known and unknown attribution remain separate; missing actual spend remains null."
+        },
+        {
+          "id": "C10-MKT-05",
+          "condition": "Marketing filters survive reload through the URL and no auto-publish or spend mutation is introduced."
+        }
+      ]
     },
     {
       "id": "SC2-G08",
@@ -979,7 +1025,17 @@
         "T053",
         "T058"
       ],
-      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+      "executionStatus": "NOT_RUN_PRODUCT_TEST",
+      "frontendScopedChecks": [
+        {
+          "id": "C10-MKT-06",
+          "condition": "Estimated spend and actual spend are separately aggregated per selected range and time bucket."
+        },
+        {
+          "id": "C10-MKT-07",
+          "condition": "Empty ranges return zero counts and null spend without borrowing values from another period."
+        }
+      ]
     },
     {
       "id": "SC2-H01",
@@ -1166,6 +1222,85 @@
         "T082",
         "T083",
         "T084"
+      ],
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "SC2-C05-WAREHOUSE",
+      "featureId": "D01",
+      "given": "Current session, canonical fixture and versioned resource.",
+      "when": "Create/read/update/archive, paginated lookup, stale conflict and unauthorized/cross-shop requests.",
+      "then": "Owner/manager CRUD; warehouse role denied management; cross-shop/stale rejected; stock/reservations/open work prevent archive.",
+      "routeIds": [
+        "R55"
+      ],
+      "taskIds": [
+        "T013",
+        "T020",
+        "T022",
+        "T047",
+        "T066"
+      ],
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "SC2-C05-ACCOUNT",
+      "featureId": "E01",
+      "given": "Current session, canonical fixture and versioned resource.",
+      "when": "Create/read/update/archive, paginated lookup, stale conflict and unauthorized/cross-shop requests.",
+      "then": "Owner/accountant CRUD; manager denied; used code/group immutable; archived IDs remain historical but cannot post new journals.",
+      "routeIds": [
+        "R56"
+      ],
+      "taskIds": [
+        "T013",
+        "T028",
+        "T030",
+        "T047",
+        "T054",
+        "T066"
+      ],
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "SC2-C05-ADDRESS",
+      "featureId": "G04",
+      "given": "Current session, canonical fixture and versioned resource.",
+      "when": "Create/read/update/archive, paginated lookup, stale conflict and unauthorized/cross-shop requests.",
+      "then": "Same-customer/same-shop references only; redacted values never echoed or written; quote and confirmed order snapshots remain unchanged after edits.",
+      "routeIds": [
+        "R08"
+      ],
+      "taskIds": [
+        "T021",
+        "T038"
+      ],
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
+      "id": "SC2-C06-FINANCE",
+      "featureId": "E01",
+      "given": "Canonical synthetic VND journal/account/stock policy and finance-golden fixture.",
+      "when": "Opening/posting/dispatch/delivery/return/refund/import/reconcile; stale, duplicate, closed period and paginated reads.",
+      "then": "Profit 80000 then 30000 VND; assets = liabilities + equity; immutable source journals, correct period and full read-model totals.",
+      "routeIds": [
+        "R20",
+        "R22",
+        "R48",
+        "R49",
+        "R50",
+        "R57",
+        "R58",
+        "R59",
+        "R60"
+      ],
+      "taskIds": [
+        "T013",
+        "T028",
+        "T030",
+        "T047",
+        "T054",
+        "T066"
       ],
       "executionStatus": "NOT_RUN_PRODUCT_TEST"
     }

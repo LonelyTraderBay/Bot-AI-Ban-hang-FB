@@ -1,7 +1,6 @@
 # 17 — Truy vết yêu cầu → màn hình → kế hoạch → kiểm thử
-
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.0.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.0 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -33,15 +32,15 @@ Sinh từ feature-catalog.json bằng scripts/generate-reference.py. Đây là l
 | C06 — Trạng thái giao độc lập | R42 | T025, T035, T036, T062, T071, T072 | SC2-C06 |
 | C07 — Đổi/trả từng phần | R43 | T035, T062 | SC2-C07 |
 | C08 — Sửa/hủy theo giai đoạn | R43 | T023, T025, T026, T029, T030 | SC2-C08 |
-| D01 — Tồn theo trạng thái và SKU | R47 | T013, T020, T022, T047, T066 | SC2-D01 |
+| D01 — Tồn theo trạng thái và SKU | R47, R55 | T013, T020, T022, T047, T066 | SC2-D01 |
 | D02 — Nhà cung cấp hàng hóa | R44 | T043, T048 | SC2-D02 |
 | D03 — Quy tắc nhập lại | R45 | T022, T043, T044, T048 | SC2-D03 |
 | D04 — Nguy cơ hết hàng | R45 | T044, T048 | SC2-D04 |
 | D05 — Vòng đời đơn mua | R46 | T045, T046, T048, T071, T080 | SC2-D05 |
-| D06 — Tự gửi đơn mua có giới hạn | R46 | T045, T046, T048 | SC2-D06 |
+| D06 — Tự gửi đơn mua có giới hạn | R38, R45, R46 | T045, T046, T048 | SC2-D06 |
 | D07 — Ngăn đặt trùng và vượt vốn | R45 | T044, T045, T046, T048 | SC2-D07 |
 | D08 — Nhận và đối chiếu hàng | R47 | T047, T048, T071, T072 | SC2-D08 |
-| E01 — Chứng từ và sổ kép | R48 | T013, T028, T030, T047, T054, T066 | SC2-E01 |
+| E01 — Chứng từ và sổ kép | R48, R56, R57, R58, R59, R60 | T013, T028, T030, T047, T054, T066 | SC2-E01 |
 | E02 — Giá vốn và lợi nhuận | R48 | T028, T035, T036, T049, T054, T062, T079 | SC2-E02 |
 | E03 — Chi phí và phân bổ | R48 | T049, T051, T054 | SC2-E03 |
 | E04 — Đối soát ngân hàng | R49 | T027, T050, T054, T071 | SC2-E04 |
@@ -60,8 +59,8 @@ Sinh từ feature-catalog.json bằng scripts/generate-reference.py. Đây là l
 | G01 — Onboarding vận hành | R33 | T002, T010, T011, T014, T018, T059, T063, T066, T068, T079 | SC2-G01 |
 | G02 — Nội dung sản phẩm | R33 | T019, T020, T024, T039 | SC2-G02 |
 | G03 — Chính sách phiên bản | R33 | T039, T063 | SC2-G03 |
-| G04 — Hồ sơ khách liên kết | R54 | T021, T038 | SC2-G04 |
-| G05 — Consent và ngừng liên hệ | R33 | T021, T063, T075, T079 | SC2-G05 |
+| G04 — Hồ sơ khách liên kết | R54, R08 | T021, T038 | SC2-G04 |
+| G05 — Consent và ngừng liên hệ | R35, R61 | T021, T063, T075, T079 | SC2-G05 |
 | G06 — Vòng cải thiện có duyệt | R33 | T039, T042, T063 | SC2-G06 |
 | G07 — Thông tin marketing cho chủ shop | R53 | T053, T058, T064 | SC2-G07 |
 | G08 — Hiệu quả chiến dịch | R53 | T053, T058 | SC2-G08 |

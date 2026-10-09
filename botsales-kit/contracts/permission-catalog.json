@@ -1,5 +1,5 @@
 {
-  "version": "2.0",
+  "version": "2.2",
   "status": "APPROVED_DESIGN_NOT_IMPLEMENTED",
   "permissions": [
     {
@@ -213,6 +213,18 @@
     {
       "id": "bot.pause",
       "description": "Quyền bot.pause; kiểm scope/resource/field tại backend, không từ role name."
+    },
+    {
+      "id": "warehouses.manage",
+      "description": "Tạo, sửa và ngừng dùng kho có kiểm tra tồn/giữ hàng/nghiệp vụ mở"
+    },
+    {
+      "id": "finance.accounts.manage",
+      "description": "Quản trị tài khoản kế toán; bảo vệ mã/nhóm đã dùng trong chứng từ"
+    },
+    {
+      "id": "procurement.delegation.manage",
+      "description": "Cấp, kích hoạt, tạm dừng và thu hồi ủy quyền purchase.send có giới hạn; chỉ owner."
     }
   ],
   "rolePresets": {
@@ -269,7 +281,10 @@
       "procurement.receive",
       "finance.reconcile",
       "finance.close",
-      "bot.pause"
+      "bot.pause",
+      "warehouses.manage",
+      "finance.accounts.manage",
+      "procurement.delegation.manage"
     ],
     "manager": [
       "approvals.request",
@@ -305,7 +320,8 @@
       "orders.write",
       "procurement.read",
       "reports.export",
-      "reports.read"
+      "reports.read",
+      "warehouses.manage"
     ],
     "sales": [
       "catalog.read",
@@ -353,7 +369,8 @@
       "operations.read",
       "orders.read",
       "reports.export",
-      "reports.read"
+      "reports.read",
+      "finance.accounts.manage"
     ],
     "bot_admin": [
       "bot.configure",

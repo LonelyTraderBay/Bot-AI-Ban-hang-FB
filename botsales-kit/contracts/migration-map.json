@@ -26,5 +26,156 @@
     "Use /api/v2, do not silently reinterpret v1 fulfilled data as delivered.",
     "Old prototype is not an evidence source for actual financial or fulfillment state.",
     "Existing production consumers, if any, require dual-version rollout and approved migration."
+  ],
+  "additiveExtensions": [
+    {
+      "from": "2.0.0",
+      "to": "2.1.0",
+      "breaking": false,
+      "approvedOn": "2026-10-09",
+      "operations": [
+        "listWarehouses",
+        "createWarehouse",
+        "getWarehouse",
+        "updateWarehouse",
+        "archiveWarehouse",
+        "listCustomerAddresses",
+        "createCustomerAddress",
+        "getCustomerAddress",
+        "updateCustomerAddress",
+        "archiveCustomerAddress",
+        "listAccounts",
+        "createAccount",
+        "getAccount",
+        "updateAccount",
+        "archiveAccount"
+      ],
+      "routeIds": [
+        "R55",
+        "R56"
+      ],
+      "rules": [
+        "Existing APIs stay valid. Optional snapshots add response metadata; address selection in draft PATCH is optional.",
+        "No database/provider implementation or production release is certified.",
+        "Warehouse/address/account archive retains historical references; lookup must use canonical operations."
+      ]
+    },
+    {
+      "from": "2.1.0",
+      "to": "2.2.0",
+      "breaking": false,
+      "approvedOn": "2026-10-09",
+      "operations": [
+        "listOpeningBalances",
+        "getOpeningBalance",
+        "createOpeningBalance",
+        "updateOpeningBalance",
+        "postOpeningBalance",
+        "createAccountingPeriod",
+        "getLedger",
+        "getTrialBalance",
+        "getBalanceSheet",
+        "listStatementFormats",
+        "previewStatementImport"
+      ],
+      "routeIds": [
+        "R57",
+        "R58",
+        "R59",
+        "R60"
+      ],
+      "rules": [
+        "Existing response/request fields remain valid; report provenance and valuation metadata are optional additive fields.",
+        "Management synthetic policy only; no national reporting/provider/backend certification.",
+        "Original posted lines remain immutable; reversal retains source uniqueness."
+      ]
+    },
+    {
+      "from": "2.2.0",
+      "to": "2.3.0",
+      "breaking": false,
+      "approvedOn": "2026-10-09",
+      "operations": [
+        "listCustomerConsents",
+        "listCustomerConsentChallenges",
+        "createCustomerConsentChallenge",
+        "exchangeConsentChallenge",
+        "confirmConsentChallenge"
+      ],
+      "routeIds": [
+        "R61"
+      ],
+      "rules": [
+        "Consent record ghi purpose/channel/status/version cùng history/evidence; không cho nhân viên bật consent trực tiếp.",
+        "Pending challenge không cấp quyền marketing; GET chỉ đọc; exchange/confirm là POST với CSRF và idempotency.",
+        "Challenge gắn customer identity, channel, purpose, nội dung/version và expiry; token/session không nằm trong URL hoặc log.",
+        "Opt-out kiểm lại cả consent version tại thời điểm gửi; message dịch vụ không dùng consent marketing làm điều kiện.",
+        "Frontend/MSW synthetic only; chưa có Backend, email/SMS provider, campaign worker hoặc backup tombstone integration."
+      ]
+    },
+    {
+      "from": "2.3.0",
+      "to": "2.4.0",
+      "breaking": false,
+      "approvedOn": "2026-10-09",
+      "operations": [
+        "listPurchaseDelegations",
+        "createPurchaseDelegation",
+        "updatePurchaseDelegation",
+        "listPurchaseDelegationReservations"
+      ],
+      "routeIds": [
+        "R38",
+        "R45",
+        "R46"
+      ],
+      "rules": [
+        "Existing purchase approval and send operations remain valid. New grant always starts paused and authorizes purchase.send only.",
+        "Auto-send evaluates grant, policy, offer, intent and version immediately before dispatch; reservations serialize per policy period.",
+        "Unknown keeps its reservation and blocks a new idempotency key. Revoke/pause cannot undo an already accepted external action.",
+        "No actual provider, supplier endpoint, payment or backend is certified."
+      ]
+    },
+    {
+      "from": "2.4.0",
+      "to": "2.5.0",
+      "breaking": false,
+      "approvedOn": "2026-10-09",
+      "operations": [
+        "sendMessage",
+        "uploadFile",
+        "getFile",
+        "getInboxMetadata"
+      ],
+      "routeIds": [
+        "R06"
+      ],
+      "rules": [
+        "Text-only send remains valid. Message writes may add file IDs; message reads add optional safe attachment metadata.",
+        "Channel media policy is optional; absence disables Inbox attachments. Upload and send recheck exact shop/conversation, purpose, MIME, size, count and ready status.",
+        "conversation_media upload requires conversations.reply; readback checks the original purpose/resource permission. Content URLs are short-lived and scoped.",
+        "Existing message.created envelope remains unchanged; clients invalidate the message read model and fetch attachment content through getFile.",
+        "Frontend and synthetic MSW only. “ready” is a synthetic fixture; no real antivirus, Meta policy, provider, backend, or production storage is certified."
+      ]
+    },
+    {
+      "from": "2.5.0",
+      "to": "2.6.0",
+      "breaking": false,
+      "approvedOn": "2026-10-09",
+      "operations": [
+        "getMarketingSummary"
+      ],
+      "routeIds": [
+        "R53"
+      ],
+      "rules": [
+        "Existing marketing summary fields remain valid; period and bucket trend are additive response fields.",
+        "fromDate/toDate are paired date-only shop-local dates; omitted pair defaults to the latest 30 calendar days, inclusive.",
+        "Bucket is day/week/month; ranges over 366 days are rejected before aggregate generation.",
+        "Known attribution, unknown attribution, estimated spend and nullable actual spend are calculated by the API read model; clients do not filter or derive totals from an old aggregate payload.",
+        "Frontend and synthetic MSW only; no ad platform, provider, campaign spend, backend or production reporting is certified."
+      ]
+    }
   ]
 }

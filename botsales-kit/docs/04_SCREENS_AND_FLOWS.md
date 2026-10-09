@@ -1,11 +1,10 @@
 # 04 — Màn hình và luồng hiện hành
-
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.0.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.0 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
-Nguồn chuẩn: contracts/route-manifest.json. File này sinh bởi scripts/generate-reference.py. 54 route là hợp đồng màn hình sản phẩm; prototype có phạm vi riêng tại prototype/PROTOTYPE_SCOPE.json.
+Nguồn chuẩn: contracts/route-manifest.json. File này sinh bởi scripts/generate-reference.py. 61 route là hợp đồng màn hình sản phẩm; prototype có phạm vi riêng tại prototype/PROTOTYPE_SCOPE.json.
 
 Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệt và design/tokens.json, dark-only, session/tenant/permission, lỗi/empty/stale/unknown và navigation keyboard ở docs/03,08,09. Actions phải có backend allowedActions, không chỉ đủ permission string.
 
@@ -123,13 +122,13 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Mục đích:** Hỗ trợ khách và kiểm soát bot/human rõ ràng.
 
-**Nội dung:** Message timeline, delivery status, composer, sendEligibility, mode/assignee, source evidence, customer/order panel theo quyền.
+**Nội dung:** Message timeline with safe attachment metadata and scoped media readback, delivery status, capability-driven composer, sendEligibility, mode/assignee, source evidence, customer/order panel by permission.
 
-**Hành vi:** Lịch sử phân trang giữ scroll; draft reply không persist; Enter gửi chỉ theo setting, Shift+Enter xuống dòng; internal note có nhãn nổi bật.
+**Hành vi:** Lịch sử phân trang giữ scroll; draft reply không persist; text-only vẫn tương thích; media upload theo policy MIME/size/count và conversation scope; file chỉ gửi theo ID sau synthetic scan ready; Enter/Shift+Enter giữ behavior hiện có; internal note không gửi media.
 
-**Trường hợp cần xử lý:** Policy unknown/blocked disable gửi; takeover race; send timeout unknown; duplicate/out-of-order event; 403 gỡ messages; không tự gửi lại.
+**Trường hợp cần xử lý:** Policy unknown/blocked disable gửi; takeover race; send timeout unknown; duplicate/out-of-order event; 403 gỡ messages; không tự gửi lại.; policy media thiếu/không hợp lệ thì tắt đính kèm; MIME/size/count/scope/purpose sai hoặc scan chưa ready thì không gửi; send unknown giữ bản nháp và chặn gửi trùng; object URL bị thu hồi khi bỏ tệp/đóng composer.
 
-**API đọc:** getConversation, listMessages, getCommand, getInboxMetadata
+**API đọc:** getConversation, listMessages, getCommand, getInboxMetadata, getFile
 
 | Hành động | operationId | Quyền |
 |---|---|---|
@@ -140,6 +139,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 | Phân công | `assignConversation` | `conversations.assign` |
 | Đánh dấu xong | `resolveConversation` | `conversations.assign` |
 | Đánh giá câu trả lời | `createFeedback` | `conversations.read` |
+| Đính kèm media | `uploadFile` | `conversations.reply` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
@@ -179,15 +179,18 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Trường hợp cần xử lý:** 412 giữ draft và cho tải phiên bản mới; contact null không bị ghi đè thành chuỗi rỗng; permission change.
 
-**API đọc:** getCustomer
+**API đọc:** getCustomer, listCustomerAddresses, getCustomerAddress
 
 | Hành động | operationId | Quyền |
 |---|---|---|
 | Lưu hồ sơ | `updateCustomer` | `customers.write` |
+| Thêm địa chỉ | `createCustomerAddress` | `customers.write` |
+| Lưu địa chỉ | `updateCustomerAddress` | `customers.write` |
+| Ngừng dùng địa chỉ | `archiveCustomerAddress` | `customers.write` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
-**Kịch bản:** SC-001, SC-002, SC-003, SC-004, SC-006, SC-007, SC-008, SC-010, SC-011, SC-038. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+**Kịch bản:** SC-001, SC-002, SC-003, SC-004, SC-006, SC-007, SC-008, SC-010, SC-011, SC-038, SC2-C05-ADDRESS. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
 
 ## R09 — Sản phẩm
 
@@ -869,21 +872,24 @@ No green healthy when last check too old; unknown distinct down.
 
 **Nội dung:** Approval binds shop/action/resourceVersion/policyVersion/intentHash/expiry; reason required reject.
 Versioned rule amounts/actions/scopes; current effective authority checked before execution.
+Delegation chỉ cấp purchase.send; owner quản lý scope, hạn mức, version, expiry, pause và revoke. Grant mới luôn paused.
 
 **Hành vi:** Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.
 
 **Trường hợp cần xử lý:** Expired/changed/replayed approvals fail; batch approval excludes stale rows with reasons.
 Supervisor không tự nâng scope, không approval của mình thành người thật.
 
-**API đọc:** listApprovals, getApproval
+**API đọc:** listApprovals, getApproval, listPurchaseDelegations, listPurchaseDelegationReservations
 
 | Hành động | operationId | Quyền |
 |---|---|---|
 | decideApproval | `decideApproval` | `approvals.decide` |
+| createPurchaseDelegation | `createPurchaseDelegation` | `procurement.delegation.manage` |
+| updatePurchaseDelegation | `updatePurchaseDelegation` | `procurement.delegation.manage` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
-**Kịch bản:** SC2-F04, SC2-F05. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+**Kịch bản:** SC2-F04, SC2-F05, SC2-D06. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
 
 ## R39 — Trung tâm thông báo
 
@@ -1077,7 +1083,7 @@ Hai workers reorder cùng SKU tạo tối đa một active proposal; reserved bu
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
-**Kịch bản:** SC2-D03, SC2-D04, SC2-D07. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+**Kịch bản:** SC2-D03, SC2-D04, SC2-D07, SC2-D06. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
 
 ## R46 — Đơn mua hàng
 
@@ -1173,7 +1179,7 @@ Delivered COD receivable; carrier collection/fees/remittance; pending mismatch q
 **Trường hợp cần xử lý:** Ảnh chuyển khoản chỉ evidence chờ kiểm; unmatched/partial/duplicate visible; offline không post.
 Khách trả carrier khác shop received cash; net remittance + fees cân bằng gross clearing.
 
-**API đọc:** listReconciliationCases, listBankTransactions, listCODSettlements
+**API đọc:** listReconciliationCases, listBankTransactions, listCODSettlements, listStatementFormats
 
 | Hành động | operationId | Quyền |
 |---|---|---|
@@ -1181,6 +1187,7 @@ Khách trả carrier khác shop received cash; net remittance + fees cân bằng
 | importCODStatement | `importCODStatement` | `finance.reconcile` |
 | matchSettlement | `matchSettlement` | `finance.reconcile` |
 | matchCODSettlement | `matchCODSettlement` | `finance.reconcile` |
+| Xem trước sao kê | `previewStatementImport` | `finance.reconcile` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
@@ -1206,6 +1213,7 @@ Backdated post vào locked period bị chặn; export không thay dữ liệu ng
 |---|---|---|
 | closeAccountingPeriod | `closeAccountingPeriod` | `finance.close` |
 | reopenAccountingPeriod | `reopenAccountingPeriod` | `finance.close` |
+| Tạo kỳ kế toán | `createAccountingPeriod` | `finance.close` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
@@ -1317,3 +1325,161 @@ Không tự merge cùng tên/số bị che; scope mismatch denied.
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
 **Kịch bản:** SC2-B06, SC2-G04. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R55 — Quản trị kho
+
+**Route:** `/s/:shopId/settings/warehouses` · **Module:** `inventory` · **Đọc:** `inventory.read`
+
+**Mục đích:** Quản trị kho có lịch sử và phiên bản.
+
+**Nội dung:** Danh sách có phân trang, tìm kiếm, trạng thái; editor dùng baseline và đối chiếu xung đột.
+
+**Hành vi:** Archive có version/reason; không hard-delete, giữ command recovery và quyền hiện hành.
+
+**Trường hợp cần xử lý:** Cross-shop, redaction, stale version lần hai, tham chiếu đã dùng và outcome unknown.
+
+**API đọc:** listWarehouses, getWarehouse
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Tạo mới | `createWarehouse` | `warehouses.manage` |
+| Lưu thay đổi | `updateWarehouse` | `warehouses.manage` |
+| Ngừng dùng | `archiveWarehouse` | `warehouses.manage` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-D01, SC2-C05-WAREHOUSE. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R56 — Tài khoản kế toán
+
+**Route:** `/s/:shopId/finance/accounts` · **Module:** `finance` · **Đọc:** `finance.read`
+
+**Mục đích:** Tài khoản kế toán có lịch sử và phiên bản.
+
+**Nội dung:** Danh sách có phân trang, tìm kiếm, trạng thái; editor dùng baseline và đối chiếu xung đột.
+
+**Hành vi:** Archive có version/reason; không hard-delete, giữ command recovery và quyền hiện hành.
+
+**Trường hợp cần xử lý:** Cross-shop, redaction, stale version lần hai, tham chiếu đã dùng và outcome unknown.
+
+**API đọc:** listAccounts, getAccount
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Tạo mới | `createAccount` | `finance.accounts.manage` |
+| Lưu thay đổi | `updateAccount` | `finance.accounts.manage` |
+| Ngừng dùng | `archiveAccount` | `finance.accounts.manage` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-E01, SC2-C05-ACCOUNT. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R57 — Mở sổ kế toán
+
+**Route:** `/s/:shopId/finance/opening-balances` · **Module:** `finance` · **Đọc:** `finance.read`
+
+**Mục đích:** Mở sổ kế toán theo chứng từ quản trị tổng hợp.
+
+**Nội dung:** Snapshot, policy, trạng thái đủ dữ liệu, tổng và nguồn chứng từ.
+
+**Hành vi:** Aggregate từ read-model, không tổng hợp trang UI; mutation version/permission/idempotency/recovery.
+
+**Trường hợp cần xử lý:** Thiếu nguồn/mở sổ, lệch tồn, khóa kỳ, stale lần hai, duplicate/reversal, pagination và cross-shop.
+
+**API đọc:** listOpeningBalances, getOpeningBalance, listAccounts, listWarehouses, listProducts
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Tạo bản nháp | `createOpeningBalance` | `finance.post` |
+| Lưu bản nháp | `updateOpeningBalance` | `finance.post` |
+| Ghi mở sổ | `postOpeningBalance` | `finance.post` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-E01, SC2-C06-FINANCE. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R58 — Sổ cái
+
+**Route:** `/s/:shopId/finance/ledger` · **Module:** `finance` · **Đọc:** `finance.read`
+
+**Mục đích:** Sổ cái theo chứng từ quản trị tổng hợp.
+
+**Nội dung:** Snapshot, policy, trạng thái đủ dữ liệu, tổng và nguồn chứng từ.
+
+**Hành vi:** Aggregate từ read-model, không tổng hợp trang UI; mutation version/permission/idempotency/recovery.
+
+**Trường hợp cần xử lý:** Thiếu nguồn/mở sổ, lệch tồn, khóa kỳ, stale lần hai, duplicate/reversal, pagination và cross-shop.
+
+**API đọc:** getLedger, getJournal, listAccounts
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-E01, SC2-C06-FINANCE. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R59 — Cân đối phát sinh
+
+**Route:** `/s/:shopId/finance/trial-balance` · **Module:** `finance` · **Đọc:** `finance.read`
+
+**Mục đích:** Cân đối phát sinh theo chứng từ quản trị tổng hợp.
+
+**Nội dung:** Snapshot, policy, trạng thái đủ dữ liệu, tổng và nguồn chứng từ.
+
+**Hành vi:** Aggregate từ read-model, không tổng hợp trang UI; mutation version/permission/idempotency/recovery.
+
+**Trường hợp cần xử lý:** Thiếu nguồn/mở sổ, lệch tồn, khóa kỳ, stale lần hai, duplicate/reversal, pagination và cross-shop.
+
+**API đọc:** getTrialBalance, getLedger
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-E01, SC2-C06-FINANCE. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R60 — Cân đối quản trị
+
+**Route:** `/s/:shopId/finance/balance-sheet` · **Module:** `finance` · **Đọc:** `finance.read`
+
+**Mục đích:** Cân đối quản trị theo chứng từ quản trị tổng hợp.
+
+**Nội dung:** Snapshot, policy, trạng thái đủ dữ liệu, tổng và nguồn chứng từ.
+
+**Hành vi:** Aggregate từ read-model, không tổng hợp trang UI; mutation version/permission/idempotency/recovery.
+
+**Trường hợp cần xử lý:** Thiếu nguồn/mở sổ, lệch tồn, khóa kỳ, stale lần hai, duplicate/reversal, pagination và cross-shop.
+
+**API đọc:** getBalanceSheet, getLedger
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-E01, SC2-C06-FINANCE. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R61 — Xác nhận quyền marketing
+
+**Route:** `/consent/confirm` · **Module:** `workspace` · **Đọc:** `session/bootstrap`
+
+**Mục đích:** Khách xác nhận hoặc rút lại đồng ý marketing bằng challenge một lần gắn đúng danh tính, kênh và nội dung.
+
+**Nội dung:** Trang công khai không yêu cầu shop session; challenge ngắn hạn không chứa PII, không xuất hiện trong request URL và chỉ được đọc trong POST body.
+
+**Hành vi:** Pending không cấp consent. Chỉ POST sau khi khách xem đúng phiên bản nội dung mới ghi consent/history; GET không làm thay đổi trạng thái.
+
+**Trường hợp cần xử lý:** Sai/hết hạn/replay, identity đổi, nội dung đổi sau khi gửi, opt-out sau khi queue, request unknown và service message không bị chặn bởi marketing opt-out.
+
+**API đọc:**
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Đổi link thành phiên xác nhận | `exchangeConsentChallenge` | `authenticated/context` |
+| Xác nhận lựa chọn | `confirmConsentChallenge` | `authenticated/context` |
+
+**States:** loading, empty, error, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-G05, SC2-C07-CONSENT. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.

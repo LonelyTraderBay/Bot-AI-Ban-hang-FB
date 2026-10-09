@@ -448,7 +448,10 @@
           "procurement.receive",
           "finance.reconcile",
           "finance.close",
-          "bot.pause"
+          "bot.pause",
+          "warehouses.manage",
+          "finance.accounts.manage",
+          "procurement.delegation.manage"
         ]
       },
       "Role": {
@@ -1209,6 +1212,16 @@
           },
           "asOf": {
             "$ref": "#/components/schemas/DateTime"
+          },
+          "carryingValue": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -1564,6 +1577,16 @@
                 "type": "null"
               }
             ]
+          },
+          "shippingAddressSnapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AddressSnapshot"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -1702,6 +1725,16 @@
             "items": {
               "type": "string"
             }
+          },
+          "shippingAddressSnapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AddressSnapshot"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -2046,6 +2079,25 @@
             "items": {
               "type": "string"
             }
+          },
+          "sourceJournalIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          "policyVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "completeness": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "provisional",
+              "incomplete"
+            ]
           }
         },
         "required": [
@@ -2080,7 +2132,9 @@
             "$ref": "#/components/schemas/DateTime"
           },
           "policyVersion": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
           },
           "grossSales": {
             "$ref": "#/components/schemas/Money"
@@ -2197,6 +2251,12 @@
                 "type": "null"
               }
             ]
+          },
+          "sourceJournalIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            }
           }
         },
         "required": [
@@ -2463,7 +2523,8 @@
             ]
           },
           "text": {
-            "type": "string"
+            "type": "string",
+            "description": "Empty string is used only in a media-only Message response; writes omit text when sending media only."
           },
           "status": {
             "type": "string",
@@ -2495,6 +2556,13 @@
             "items": {
               "$ref": "#/components/schemas/ResourceRef"
             }
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageAttachment"
+            },
+            "maxItems": 5
           }
         },
         "required": [
@@ -2525,14 +2593,34 @@
           "expectedConversationVersion": {
             "type": "integer",
             "minimum": 1
+          },
+          "fileIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            },
+            "minItems": 1,
+            "maxItems": 5,
+            "uniqueItems": true
           }
         },
         "required": [
           "clientMessageId",
-          "text",
           "expectedConversationVersion"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "text"
+            ]
+          },
+          {
+            "required": [
+              "fileIds"
+            ]
+          }
+        ]
       },
       "NoteWrite": {
         "type": "object",
@@ -3709,6 +3797,17 @@
             "items": {
               "type": "string"
             }
+          },
+          "mediaPolicy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MediaPolicy"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional sanitized media policy for this channel; absent/null disables Inbox media."
           }
         },
         "required": [
@@ -3799,6 +3898,27 @@
               {
                 "type": "string",
                 "format": "uri-reference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "product_image",
+              "product_import",
+              "knowledge_source",
+              "bank_statement",
+              "cod_statement",
+              "conversation_media"
+            ]
+          },
+          "resourceId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
               },
               {
                 "type": "null"
@@ -5053,8 +5173,14 @@
             "enum": [
               "product_image",
               "product_import",
-              "knowledge_source"
+              "knowledge_source",
+              "bank_statement",
+              "cod_statement",
+              "conversation_media"
             ]
+          },
+          "resourceId": {
+            "$ref": "#/components/schemas/Id"
           }
         },
         "required": [
@@ -5239,7 +5365,29 @@
               "knowledge.published",
               "bot.config.updated",
               "session.revoked",
-              "resync.required"
+              "resync.required",
+              "work_item.updated",
+              "approval.updated",
+              "notification.updated",
+              "shipment.updated",
+              "purchase.updated",
+              "receipt.updated",
+              "journal.updated",
+              "reconciliation.updated",
+              "agent_role.updated",
+              "budget.updated",
+              "health.updated",
+              "warehouse.updated",
+              "customer_address.updated",
+              "account.updated",
+              "journal.updated",
+              "accounting_period.updated",
+              "opening_balance.updated",
+              "consent_challenge.updated",
+              "customer_consent.updated",
+              "purchase_delegation.updated",
+              "purchase_reservation.updated",
+              "purchase_suggestion.updated"
             ]
           },
           "schemaVersion": {
@@ -5816,6 +5964,16 @@
           "notes": {
             "type": "string",
             "maxLength": 2000
+          },
+          "shippingAddressId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
@@ -5981,11 +6139,22 @@
                 },
                 "displayName": {
                   "type": "string"
+                },
+                "mediaPolicy": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/MediaPolicy"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 }
               },
               "required": [
                 "id",
-                "displayName"
+                "displayName",
+                "mediaPolicy"
               ],
               "additionalProperties": false
             }
@@ -7301,6 +7470,10 @@
                     "damaged",
                     "quarantined"
                   ]
+                },
+                "acceptedQuantity": {
+                  "type": "integer",
+                  "minimum": 0
                 }
               },
               "required": [
@@ -7728,6 +7901,16 @@
                 "type": "null"
               }
             ]
+          },
+          "purchaseDelegationId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -7796,6 +7979,16 @@
           "expectedVersion": {
             "type": "integer",
             "minimum": 1
+          },
+          "purchaseDelegationId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -7867,6 +8060,36 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "purchaseDelegationId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "autoSendStatus": {
+            "type": "string",
+            "enum": [
+              "not_attempted",
+              "blocked",
+              "sent",
+              "unknown"
+            ]
+          },
+          "autoSendReason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
               },
               {
                 "type": "null"
@@ -8022,6 +8245,27 @@
               "type": "string",
               "maxLength": 100
             }
+          },
+          "purchaseDelegationId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "purchaseDelegationGeneration": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -8357,6 +8601,24 @@
                 "type": "null"
               }
             ]
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "replacesJournalId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "minimum": 0
           }
         },
         "required": [
@@ -8399,6 +8661,16 @@
           "reason": {
             "type": "string",
             "maxLength": 1000
+          },
+          "replacesJournalId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -9058,6 +9330,16 @@
           },
           "reserved": {
             "$ref": "#/components/schemas/Money"
+          },
+          "approvalId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -9329,6 +9611,15 @@
                 "type": "null"
               }
             ]
+          },
+          "period": {
+            "$ref": "#/components/schemas/MarketingSummaryPeriod"
+          },
+          "trend": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarketingTrendPoint"
+            }
           }
         },
         "required": [
@@ -9610,6 +9901,11 @@
           },
           "sourceBatchId": {
             "type": "string",
+            "maxLength": 200
+          },
+          "validationToken": {
+            "type": "string",
+            "minLength": 1,
             "maxLength": 200
           }
         },
@@ -10660,6 +10956,2730 @@
         "required": [
           "data",
           "meta"
+        ],
+        "additionalProperties": false
+      },
+      "Warehouse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "addressLine": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "archived"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "shopId",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "code",
+          "name",
+          "addressLine",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "CustomerAddress": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "customerId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "nullable": true
+          },
+          "recipient": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "line1": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ward": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "province": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "postalCode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "countryCode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "archived"
+            ]
+          },
+          "redactedFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "shopId",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "customerId",
+          "label",
+          "recipient",
+          "phone",
+          "line1",
+          "ward",
+          "district",
+          "province",
+          "postalCode",
+          "countryCode",
+          "status",
+          "redactedFields"
+        ],
+        "additionalProperties": false
+      },
+      "Account": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]{1,40}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "group": {
+            "type": "string",
+            "enum": [
+              "asset",
+              "liability",
+              "equity",
+              "income",
+              "expense"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "archived"
+            ]
+          },
+          "used": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "shopId",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "code",
+          "name",
+          "group",
+          "status",
+          "used"
+        ],
+        "additionalProperties": false
+      },
+      "AddressSnapshot": {
+        "type": "object",
+        "properties": {
+          "addressId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "addressVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "nullable": true
+          },
+          "recipient": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "line1": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ward": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "province": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "postalCode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "countryCode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "redactedFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "addressId",
+          "addressVersion",
+          "label",
+          "recipient",
+          "phone",
+          "line1",
+          "ward",
+          "district",
+          "province",
+          "postalCode",
+          "countryCode"
+        ],
+        "additionalProperties": false,
+        "description": "Immutable server snapshot used by a quote/confirmed order. Later address edits do not rewrite it; redacted fields are never exposed in administrative reads."
+      },
+      "WarehouseWrite": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "addressLine": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "addressLine"
+        ],
+        "additionalProperties": false
+      },
+      "WarehouseWritePatch": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "addressLine": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "minProperties": 1,
+        "description": "Partial PATCH under If-Match; omitted values remain. Server checks the merged state and field/resource authorization."
+      },
+      "WarehouseResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Warehouse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "WarehouseListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Warehouse"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": false
+      },
+      "CustomerAddressWrite": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "recipient": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "line1": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "ward": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "province": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "postalCode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "countryCode": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          }
+        },
+        "required": [
+          "label",
+          "recipient",
+          "phone",
+          "line1",
+          "ward",
+          "district",
+          "province",
+          "postalCode",
+          "countryCode"
+        ],
+        "additionalProperties": false
+      },
+      "CustomerAddressWritePatch": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "recipient": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "line1": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "ward": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "province": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "postalCode": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "countryCode": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "minProperties": 1,
+        "description": "Partial PATCH under If-Match; omitted values remain. Server checks the merged state and field/resource authorization."
+      },
+      "CustomerAddressResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CustomerAddress"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "CustomerAddressListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerAddress"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": false
+      },
+      "AccountWrite": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]{1,40}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "group": {
+            "type": "string",
+            "enum": [
+              "asset",
+              "liability",
+              "equity",
+              "income",
+              "expense"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "group"
+        ],
+        "additionalProperties": false
+      },
+      "AccountWritePatch": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]{1,40}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "group": {
+            "type": "string",
+            "enum": [
+              "asset",
+              "liability",
+              "equity",
+              "income",
+              "expense"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "minProperties": 1,
+        "description": "Partial PATCH under If-Match; omitted values remain. Server checks the merged state and field/resource authorization."
+      },
+      "AccountResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "AccountListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Account"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": false
+      },
+      "OpeningStockLine": {
+        "type": "object",
+        "properties": {
+          "variantId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "warehouseId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "unitCost": {
+            "$ref": "#/components/schemas/Money"
+          }
+        },
+        "required": [
+          "variantId",
+          "warehouseId",
+          "quantity",
+          "unitCost"
+        ],
+        "additionalProperties": false
+      },
+      "OpeningBalanceWrite": {
+        "type": "object",
+        "properties": {
+          "effectiveDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "policyVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalLine"
+            }
+          },
+          "inventory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpeningStockLine"
+            }
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "effectiveDate",
+          "policyVersion",
+          "lines",
+          "inventory",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "OpeningBalance": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "effectiveDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "policyVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalLine"
+            }
+          },
+          "inventory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpeningStockLine"
+            }
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "posted"
+            ]
+          },
+          "journalId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "shopId",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "effectiveDate",
+          "policyVersion",
+          "lines",
+          "inventory",
+          "reason",
+          "status",
+          "journalId"
+        ],
+        "additionalProperties": false
+      },
+      "OpeningBalanceResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/OpeningBalance"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "OpeningBalanceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpeningBalance"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": false
+      },
+      "AccountingPeriodCreate": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "startDate",
+          "endDate",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "LedgerEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "journalId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "sourceType": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "sourceId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "effectiveDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "accountId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "accountCode": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "accountName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "debit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "credit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/Money"
+          }
+        },
+        "required": [
+          "id",
+          "journalId",
+          "sourceType",
+          "sourceId",
+          "effectiveDate",
+          "accountId",
+          "accountCode",
+          "accountName",
+          "description",
+          "debit",
+          "credit",
+          "balance"
+        ],
+        "additionalProperties": false
+      },
+      "Ledger": {
+        "type": "object",
+        "properties": {
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "asOf": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "policyVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "completeness": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "provisional",
+              "incomplete"
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "from": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "to": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "accountId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "openingBalance": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "closingBalance": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "totalDebit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "totalCredit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LedgerEntry"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "shopId",
+          "asOf",
+          "policyVersion",
+          "completeness",
+          "warnings",
+          "from",
+          "to",
+          "timezone",
+          "accountId",
+          "openingBalance",
+          "closingBalance",
+          "totalDebit",
+          "totalCredit",
+          "entries",
+          "page"
+        ],
+        "additionalProperties": false
+      },
+      "LedgerResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Ledger"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "TrialBalanceLine": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "group": {
+            "type": "string",
+            "enum": [
+              "asset",
+              "liability",
+              "equity",
+              "income",
+              "expense"
+            ]
+          },
+          "openingDebit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "openingCredit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "debit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "credit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "closingDebit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "closingCredit": {
+            "$ref": "#/components/schemas/Money"
+          }
+        },
+        "required": [
+          "accountId",
+          "code",
+          "name",
+          "group",
+          "openingDebit",
+          "openingCredit",
+          "debit",
+          "credit",
+          "closingDebit",
+          "closingCredit"
+        ],
+        "additionalProperties": false
+      },
+      "TrialBalance": {
+        "type": "object",
+        "properties": {
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "asOf": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "policyVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "completeness": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "provisional",
+              "incomplete"
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "from": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "to": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrialBalanceLine"
+            }
+          },
+          "totalDebit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "totalCredit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "closingDebit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "closingCredit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "difference": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "balanced": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "shopId",
+          "asOf",
+          "policyVersion",
+          "completeness",
+          "warnings",
+          "from",
+          "to",
+          "timezone",
+          "rows",
+          "totalDebit",
+          "totalCredit",
+          "closingDebit",
+          "closingCredit",
+          "difference",
+          "balanced"
+        ],
+        "additionalProperties": false
+      },
+      "TrialBalanceResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/TrialBalance"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "BalanceSheetLine": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "group": {
+            "type": "string",
+            "enum": [
+              "asset",
+              "liability",
+              "equity",
+              "income",
+              "expense"
+            ]
+          },
+          "balance": {
+            "$ref": "#/components/schemas/Money"
+          }
+        },
+        "required": [
+          "accountId",
+          "code",
+          "name",
+          "group",
+          "balance"
+        ],
+        "additionalProperties": false
+      },
+      "BalanceSheet": {
+        "type": "object",
+        "properties": {
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "asOf": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "policyVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "completeness": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "provisional",
+              "incomplete"
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "atDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BalanceSheetLine"
+            }
+          },
+          "assets": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "liabilities": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "equity": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "retainedProfit": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "difference": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "balanced": {
+            "type": "boolean"
+          },
+          "sourceJournalIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            }
+          }
+        },
+        "required": [
+          "shopId",
+          "asOf",
+          "policyVersion",
+          "completeness",
+          "warnings",
+          "atDate",
+          "rows",
+          "assets",
+          "liabilities",
+          "equity",
+          "retainedProfit",
+          "difference",
+          "balanced",
+          "sourceJournalIds"
+        ],
+        "additionalProperties": false
+      },
+      "BalanceSheetResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BalanceSheet"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "StatementFormat": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "formatId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "bank",
+              "cod"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "maxRows": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "maxBytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "requiredColumns": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          },
+          "exampleCsv": {
+            "type": "string"
+          },
+          "resourceOptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "$ref": "#/components/schemas/Id"
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                }
+              },
+              "required": [
+                "id",
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "id",
+          "formatId",
+          "kind",
+          "name",
+          "maxRows",
+          "maxBytes",
+          "requiredColumns",
+          "exampleCsv",
+          "resourceOptions"
+        ],
+        "additionalProperties": false
+      },
+      "StatementFormatListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatementFormat"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": false
+      },
+      "StatementPreviewRow": {
+        "type": "object",
+        "properties": {
+          "row": {
+            "type": "integer",
+            "minimum": 2
+          },
+          "values": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "row",
+          "values",
+          "errors"
+        ],
+        "additionalProperties": false
+      },
+      "StatementPreview": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "bank",
+              "cod"
+            ]
+          },
+          "accountOrCarrierId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "sourceBatchId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "formatId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatementPreviewRow"
+            }
+          },
+          "validRows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "invalidRows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "validationToken": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/DateTime"
+          }
+        },
+        "required": [
+          "fileId",
+          "kind",
+          "accountOrCarrierId",
+          "sourceBatchId",
+          "formatId",
+          "rows",
+          "validRows",
+          "invalidRows",
+          "validationToken",
+          "expiresAt"
+        ],
+        "additionalProperties": false
+      },
+      "StatementPreviewResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StatementPreview"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "ConsentHistoryEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "occurredAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "actorType": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "staff",
+              "system"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "requested",
+              "granted",
+              "withdrawn",
+              "declined"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "messenger",
+              "sms",
+              "email"
+            ]
+          },
+          "evidenceType": {
+            "type": "string",
+            "enum": [
+              "customer_challenge",
+              "verified_opt_out",
+              "staff_recorded"
+            ]
+          },
+          "evidenceReference": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contentVersion": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "occurredAt",
+          "actorType",
+          "action",
+          "channel",
+          "evidenceType",
+          "evidenceReference",
+          "contentVersion"
+        ],
+        "additionalProperties": false
+      },
+      "ConsentChallenge": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "customerId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "purpose": {
+            "const": "marketing"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "messenger",
+              "sms",
+              "email"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "confirm",
+              "withdraw"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "exchanged",
+              "confirmed",
+              "declined",
+              "expired"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 2000
+          },
+          "contentVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          }
+        },
+        "required": [
+          "id",
+          "shopId",
+          "customerId",
+          "purpose",
+          "channel",
+          "action",
+          "status",
+          "message",
+          "contentVersion",
+          "expiresAt",
+          "version",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": true
+      },
+      "ConsentChallengeWrite": {
+        "type": "object",
+        "properties": {
+          "purpose": {
+            "const": "marketing"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "messenger",
+              "sms",
+              "email"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 2000
+          },
+          "contentVersion": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "purpose",
+          "channel",
+          "message",
+          "contentVersion"
+        ],
+        "additionalProperties": false
+      },
+      "ConsentChallengeExchangeRequest": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "additionalProperties": false
+      },
+      "PublicConsentChallengeView": {
+        "type": "object",
+        "properties": {
+          "challengeSessionId": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 512
+          },
+          "purpose": {
+            "const": "marketing"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "messenger",
+              "sms",
+              "email"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "confirm",
+              "withdraw"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 2000
+          },
+          "contentVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "challengeId": {
+            "$ref": "#/components/schemas/Id"
+          }
+        },
+        "required": [
+          "challengeId",
+          "challengeSessionId",
+          "purpose",
+          "channel",
+          "action",
+          "message",
+          "contentVersion",
+          "expiresAt"
+        ],
+        "additionalProperties": false
+      },
+      "ConsentConfirmationRequest": {
+        "type": "object",
+        "properties": {
+          "challengeSessionId": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 512
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "decline"
+            ]
+          },
+          "contentVersion": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "challengeSessionId",
+          "decision",
+          "contentVersion"
+        ],
+        "additionalProperties": false
+      },
+      "ConsentConfirmation": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "declined"
+            ]
+          },
+          "purpose": {
+            "const": "marketing"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "messenger",
+              "sms",
+              "email"
+            ]
+          },
+          "consentStatus": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "granted",
+                  "withdrawn"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "consentVersion": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "consentRecordId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "challengeId": {
+            "$ref": "#/components/schemas/Id"
+          }
+        },
+        "required": [
+          "challengeId",
+          "status",
+          "purpose",
+          "channel",
+          "consentStatus",
+          "consentVersion",
+          "consentRecordId"
+        ],
+        "additionalProperties": false
+      },
+      "CustomerConsentListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerConsent"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": true
+      },
+      "ConsentChallengeListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsentChallenge"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": true
+      },
+      "ConsentChallengeResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ConsentChallenge"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": true
+      },
+      "PublicConsentChallengeViewResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PublicConsentChallengeView"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": true
+      },
+      "ConsentConfirmationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ConsentConfirmation"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": true
+      },
+      "CustomerConsent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "customerId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "purpose": {
+            "const": "marketing"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "messenger",
+              "sms",
+              "email"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "granted",
+              "withdrawn"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsentHistoryEntry"
+            }
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          }
+        },
+        "required": [
+          "id",
+          "shopId",
+          "customerId",
+          "purpose",
+          "channel",
+          "status",
+          "version",
+          "history",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": true
+      },
+      "PurchaseDelegationOfferSnapshot": {
+        "type": "object",
+        "properties": {
+          "supplierOfferId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "offerVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "unitCost": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "minimumQuantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "packSize": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "supplierOfferId",
+          "offerVersion",
+          "unitCost",
+          "minimumQuantity",
+          "packSize"
+        ],
+        "additionalProperties": false
+      },
+      "PurchaseDelegation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "agentId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "humanOwnerId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "toolId": {
+            "const": "purchase.send"
+          },
+          "supplierId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "warehouseId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "offerSnapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PurchaseDelegationOfferSnapshot"
+            },
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "maxPerOrder": {
+            "$ref": "#/components/schemas/PositiveMoney"
+          },
+          "budgetPolicyId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "budgetPolicyVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "budgetPeriod": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "monthly",
+              "per_order"
+            ]
+          },
+          "agentGeneration": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "generation": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "paused",
+              "active",
+              "revoked",
+              "expired"
+            ]
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "lastReason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lastChangedBy": {
+            "$ref": "#/components/schemas/Id"
+          }
+        },
+        "required": [
+          "id",
+          "shopId",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "agentId",
+          "humanOwnerId",
+          "toolId",
+          "supplierId",
+          "warehouseId",
+          "offerSnapshots",
+          "maxPerOrder",
+          "budgetPolicyId",
+          "budgetPolicyVersion",
+          "budgetPeriod",
+          "agentGeneration",
+          "generation",
+          "status",
+          "expiresAt",
+          "lastReason",
+          "lastChangedBy"
+        ],
+        "additionalProperties": false
+      },
+      "PurchaseDelegationCreateRequest": {
+        "type": "object",
+        "properties": {
+          "agentId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "supplierId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "warehouseId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "offerIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            },
+            "minItems": 1,
+            "maxItems": 100,
+            "uniqueItems": true
+          },
+          "maxPerOrder": {
+            "$ref": "#/components/schemas/PositiveMoney"
+          },
+          "budgetPolicyId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/DateTime"
+          }
+        },
+        "required": [
+          "agentId",
+          "supplierId",
+          "warehouseId",
+          "offerIds",
+          "maxPerOrder",
+          "budgetPolicyId",
+          "expiresAt"
+        ],
+        "additionalProperties": false
+      },
+      "PurchaseDelegationUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "paused",
+              "revoked"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "status",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "PurchaseDelegationReservation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "shopId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/DateTime"
+          },
+          "delegationId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "purchaseOrderId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "budgetPolicyId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "budgetPolicyVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "delegationGeneration": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "agentGeneration": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "intentHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "period": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "monthly",
+              "per_order"
+            ]
+          },
+          "periodKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "reserved",
+              "consumed",
+              "unknown",
+              "released"
+            ]
+          },
+          "commandId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "shopId",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "delegationId",
+          "purchaseOrderId",
+          "budgetPolicyId",
+          "budgetPolicyVersion",
+          "delegationGeneration",
+          "agentGeneration",
+          "intentHash",
+          "amount",
+          "period",
+          "periodKey",
+          "status",
+          "commandId"
+        ],
+        "additionalProperties": false
+      },
+      "PurchaseDelegationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PurchaseDelegation"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false
+      },
+      "PurchaseDelegationListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PurchaseDelegation"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": false
+      },
+      "PurchaseDelegationReservationListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PurchaseDelegationReservation"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          }
+        },
+        "required": [
+          "data",
+          "meta",
+          "page"
+        ],
+        "additionalProperties": false
+      },
+      "MediaPolicy": {
+        "type": "object",
+        "properties": {
+          "allowedMimeTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 128
+            },
+            "minItems": 1,
+            "maxItems": 24,
+            "uniqueItems": true
+          },
+          "maxAttachmentCount": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "maxFileSizeBytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10485760
+          }
+        },
+        "required": [
+          "allowedMimeTypes",
+          "maxAttachmentCount",
+          "maxFileSizeBytes"
+        ],
+        "additionalProperties": false,
+        "description": "Channel-owned media limits. Missing policy means media is unavailable; API rechecks every limit at upload and send."
+      },
+      "MessageAttachment": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "mimeType": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 128
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "fileId",
+          "name",
+          "mimeType",
+          "sizeBytes"
+        ],
+        "additionalProperties": false,
+        "description": "Safe message metadata only; read content through the purpose-scoped getFile operation."
+      },
+      "DateOnly": {
+        "type": "string",
+        "format": "date",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "MarketingBucket": {
+        "type": "string",
+        "enum": [
+          "day",
+          "week",
+          "month"
+        ]
+      },
+      "MarketingSummaryPeriod": {
+        "type": "object",
+        "properties": {
+          "fromDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "toDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "bucket": {
+            "$ref": "#/components/schemas/MarketingBucket"
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "fromDate",
+          "toDate",
+          "bucket",
+          "timezone"
+        ],
+        "additionalProperties": false
+      },
+      "MarketingTrendPoint": {
+        "type": "object",
+        "properties": {
+          "fromDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "toDate": {
+            "$ref": "#/components/schemas/DateOnly"
+          },
+          "knownAttributedOrders": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "unknownAttributionOrders": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "estimatedSpend": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actualSpend": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "fromDate",
+          "toDate",
+          "knownAttributedOrders",
+          "unknownAttributionOrders",
+          "estimatedSpend",
+          "actualSpend"
         ],
         "additionalProperties": false
       }

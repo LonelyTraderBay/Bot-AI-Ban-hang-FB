@@ -1,0 +1,35 @@
+{
+  "scope": "SYNTHETIC_LOCAL_FORMATS_NOT_PROVIDER_CERTIFIED",
+  "formats": [
+    {
+      "id": "bank-botsales-csv-v1",
+      "formatId": "botsales-csv-v1",
+      "kind": "bank",
+      "name": "CSV mẫu ngân hàng",
+      "maxRows": 1000,
+      "maxBytes": 5242880,
+      "requiredColumns": [
+        "externalTransactionId",
+        "amount",
+        "currency",
+        "direction",
+        "occurredAt",
+        "referenceText"
+      ],
+      "exampleCsv": "externalTransactionId,amount,currency,direction,occurredAt,referenceText\nBANK-DEMO-001,229000,VND,credit,2026-09-29T14:00:00Z,Đối soát COD mẫu DH-1001\n"
+    },
+    {
+      "id": "cod-botsales-csv-v1",
+      "formatId": "botsales-csv-v1",
+      "kind": "cod",
+      "name": "CSV mẫu COD",
+      "maxRows": 1000,
+      "maxBytes": 5242880,
+      "requiredColumns": [
+        "externalBatchId",
+        "orderIds"
+      ],
+      "exampleCsv": "externalBatchId,orderIds\nCOD-DEMO-001,DH-1001\n"
+    }
+  ]
+}

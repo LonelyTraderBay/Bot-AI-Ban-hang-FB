@@ -1,5 +1,5 @@
 {
-  "version": "2.0",
+  "version": "2.6",
   "operations": [
     {
       "operationId": "getCsrfToken",
@@ -1136,6 +1136,13 @@
       "module": "finance"
     },
     {
+      "operationId": "createAccountingPeriod",
+      "method": "POST",
+      "path": "/shops/{shopId}/periods",
+      "permission": "finance.close",
+      "module": "finance"
+    },
+    {
       "operationId": "getAccountingPeriod",
       "method": "GET",
       "path": "/shops/{shopId}/periods/{resourceId}",
@@ -1470,6 +1477,244 @@
       "path": "/auth/callback",
       "permission": null,
       "module": "workspace"
+    },
+    {
+      "operationId": "listWarehouses",
+      "method": "GET",
+      "path": "/shops/{shopId}/warehouses",
+      "permission": "inventory.read",
+      "module": "warehouse"
+    },
+    {
+      "operationId": "createWarehouse",
+      "method": "POST",
+      "path": "/shops/{shopId}/warehouses",
+      "permission": "warehouses.manage",
+      "module": "warehouse"
+    },
+    {
+      "operationId": "getWarehouse",
+      "method": "GET",
+      "path": "/shops/{shopId}/warehouses/{warehouseId}",
+      "permission": "inventory.read",
+      "module": "warehouse"
+    },
+    {
+      "operationId": "updateWarehouse",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/warehouses/{warehouseId}",
+      "permission": "warehouses.manage",
+      "module": "warehouse"
+    },
+    {
+      "operationId": "archiveWarehouse",
+      "method": "POST",
+      "path": "/shops/{shopId}/warehouses/{warehouseId}/archive",
+      "permission": "warehouses.manage",
+      "module": "warehouse"
+    },
+    {
+      "operationId": "listCustomerAddresses",
+      "method": "GET",
+      "path": "/shops/{shopId}/customers/{customerId}/addresses",
+      "permission": "customers.read",
+      "module": "customeraddress"
+    },
+    {
+      "operationId": "createCustomerAddress",
+      "method": "POST",
+      "path": "/shops/{shopId}/customers/{customerId}/addresses",
+      "permission": "customers.write",
+      "module": "customeraddress"
+    },
+    {
+      "operationId": "getCustomerAddress",
+      "method": "GET",
+      "path": "/shops/{shopId}/customers/{customerId}/addresses/{addressId}",
+      "permission": "customers.read",
+      "module": "customeraddress"
+    },
+    {
+      "operationId": "updateCustomerAddress",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/customers/{customerId}/addresses/{addressId}",
+      "permission": "customers.write",
+      "module": "customeraddress"
+    },
+    {
+      "operationId": "archiveCustomerAddress",
+      "method": "POST",
+      "path": "/shops/{shopId}/customers/{customerId}/addresses/{addressId}/archive",
+      "permission": "customers.write",
+      "module": "customeraddress"
+    },
+    {
+      "operationId": "listAccounts",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/accounts",
+      "permission": "finance.read",
+      "module": "account"
+    },
+    {
+      "operationId": "createAccount",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/accounts",
+      "permission": "finance.accounts.manage",
+      "module": "account"
+    },
+    {
+      "operationId": "getAccount",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/accounts/{accountId}",
+      "permission": "finance.read",
+      "module": "account"
+    },
+    {
+      "operationId": "updateAccount",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/finance/accounts/{accountId}",
+      "permission": "finance.accounts.manage",
+      "module": "account"
+    },
+    {
+      "operationId": "archiveAccount",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/accounts/{accountId}/archive",
+      "permission": "finance.accounts.manage",
+      "module": "account"
+    },
+    {
+      "operationId": "listOpeningBalances",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/opening-balances",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "createOpeningBalance",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/opening-balances",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "getOpeningBalance",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/opening-balances/{openingId}",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "updateOpeningBalance",
+      "method": "PUT",
+      "path": "/shops/{shopId}/finance/opening-balances/{openingId}",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "postOpeningBalance",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/opening-balances/{openingId}/post",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "getLedger",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/ledger",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "getTrialBalance",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/trial-balance",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "getBalanceSheet",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/balance-sheet",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listStatementFormats",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/statement-formats",
+      "permission": "finance.reconcile",
+      "module": "finance"
+    },
+    {
+      "operationId": "previewStatementImport",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/statement-import-preview",
+      "permission": "finance.reconcile",
+      "module": "finance"
+    },
+    {
+      "operationId": "listCustomerConsents",
+      "method": "GET",
+      "path": "/shops/{shopId}/customer-consents",
+      "permission": "privacy.manage",
+      "module": "privacy"
+    },
+    {
+      "operationId": "listCustomerConsentChallenges",
+      "method": "GET",
+      "path": "/shops/{shopId}/customer-consent-challenges",
+      "permission": "privacy.manage",
+      "module": "privacy"
+    },
+    {
+      "operationId": "createCustomerConsentChallenge",
+      "method": "POST",
+      "path": "/shops/{shopId}/customers/{customerId}/consent-challenges",
+      "permission": "privacy.manage",
+      "module": "privacy"
+    },
+    {
+      "operationId": "exchangeConsentChallenge",
+      "method": "POST",
+      "path": "/public/consent/challenges/exchange",
+      "permission": null,
+      "module": "privacy"
+    },
+    {
+      "operationId": "confirmConsentChallenge",
+      "method": "POST",
+      "path": "/public/consent/confirmations",
+      "permission": null,
+      "module": "privacy"
+    },
+    {
+      "operationId": "listPurchaseDelegations",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-delegations",
+      "permission": "procurement.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "createPurchaseDelegation",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-delegations",
+      "permission": "procurement.delegation.manage",
+      "module": "procurement"
+    },
+    {
+      "operationId": "updatePurchaseDelegation",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/purchase-delegations/{resourceId}",
+      "permission": "procurement.delegation.manage",
+      "module": "operations"
+    },
+    {
+      "operationId": "listPurchaseDelegationReservations",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-delegation-reservations",
+      "permission": "procurement.delegation.manage",
+      "module": "operations"
     }
   ]
 }

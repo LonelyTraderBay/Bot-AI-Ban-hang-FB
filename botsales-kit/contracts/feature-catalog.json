@@ -327,6 +327,13 @@
       ],
       "routeIds": [
         "R06"
+      ],
+      "approvedExtensions": [
+        {
+          "approvedOn": "2026-10-09",
+          "scope": "Capability-driven Inbox media upload/send/readback with canonical file IDs, resource-scoped synthetic MSW, and local regression only.",
+          "deliveryBoundary": "FRONTEND_CANONICAL_CONTRACT_SYNTHETIC_MSW; real scan/provider/policy remains unverified"
+        }
       ]
     },
     {
@@ -510,7 +517,15 @@
         "T066"
       ],
       "routeIds": [
-        "R47"
+        "R47",
+        "R55"
+      ],
+      "approvedExtensions": [
+        {
+          "approvedOn": "2026-10-09",
+          "scope": "CRUD kho, archive chặn tồn/giữ hàng/nghiệp vụ mở; lookup cùng contract.",
+          "deliveryBoundary": "FRONTEND_CANONICAL_CONTRACT_SYNTHETIC_MSW"
+        }
       ]
     },
     {
@@ -599,8 +614,8 @@
       "title": "Tự gửi đơn mua có giới hạn",
       "group": "Kho và mua hàng",
       "module": "procurement",
-      "spec": "Mặc định draft_for_approval; automatic chỉ khi allowlist giá/số lượng/budget + approval authority còn hợp lệ.",
-      "acceptance": "Approval thay giá/qty/supplier cần cấp lại; không tự thanh toán từ quyền mua.",
+      "spec": "Chỉ owner grant purchase.send cho agent với supplier/warehouse/offer allowlist, maxPerOrder, procurement budget policy/period, generation và expiry. Grant mặc định paused; budget/policy vẫn do người có quyền quyết định.",
+      "acceptance": "Reservation budget theo policy+period là atomic. Trước dispatch kiểm grant/policy/resource version, intent hash, currency, hạn mức và agent generation. Intent đổi phải xét lại; pause/revoke chặn tác động chưa được tiếp nhận. Unknown giữ reservation và không gửi lại; không có quyền thanh toán.",
       "doc": "docs/23_PROCUREMENT.md",
       "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
       "approvedAt": "2026-09-29T09:24:12Z",
@@ -611,6 +626,8 @@
         "T048"
       ],
       "routeIds": [
+        "R38",
+        "R45",
         "R46"
       ]
     },
@@ -676,7 +693,24 @@
         "T066"
       ],
       "routeIds": [
-        "R48"
+        "R48",
+        "R56",
+        "R57",
+        "R58",
+        "R59",
+        "R60"
+      ],
+      "approvedExtensions": [
+        {
+          "approvedOn": "2026-10-09",
+          "scope": "CRUD tài khoản; mã/nhóm đã dùng được bảo vệ; lookup bút toán từ API.",
+          "deliveryBoundary": "FRONTEND_CANONICAL_CONTRACT_SYNTHETIC_MSW"
+        },
+        {
+          "approvedOn": "2026-10-09",
+          "scope": "Mở sổ, journal-driven ledger/trial/balance/P&L/cashflow và đối soát quản trị.",
+          "deliveryBoundary": "FRONTEND_CANONICAL_CONTRACT_SYNTHETIC_MSW"
+        }
       ]
     },
     {
@@ -1078,7 +1112,15 @@
         "T038"
       ],
       "routeIds": [
-        "R54"
+        "R54",
+        "R08"
+      ],
+      "approvedExtensions": [
+        {
+          "approvedOn": "2026-10-09",
+          "scope": "CRUD địa chỉ theo khách/cửa hàng và field redaction; đơn đã xác nhận giữ snapshot.",
+          "deliveryBoundary": "FRONTEND_CANONICAL_CONTRACT_SYNTHETIC_MSW"
+        }
       ]
     },
     {
@@ -1099,7 +1141,8 @@
         "T079"
       ],
       "routeIds": [
-        "R33"
+        "R35",
+        "R61"
       ]
     },
     {
@@ -1127,8 +1170,8 @@
       "title": "Thông tin marketing cho chủ shop",
       "group": "Dữ liệu và marketing",
       "module": "workspace",
-      "spec": "Frequently asked, lost-sale reasons, demand vs stock and content ideas, evidence links.",
-      "acceptance": "Report missing attribution separately; no auto publish ads/content.",
+      "spec": "Frequently asked, lost-sale reasons, demand vs stock and content ideas, evidence links. Marketing summaries support a shop-local date range and day/week/month aggregation.",
+      "acceptance": "Report missing attribution separately; no auto publish ads/content. API defaults to 30 inclusive shop-local days, caps custom ranges at 366 days, and returns aggregates with unknown attribution separate.",
       "doc": "docs/01_PRODUCT_SCOPE.md",
       "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
       "approvedAt": "2026-09-29T09:24:12Z",
@@ -1147,8 +1190,8 @@
       "title": "Hiệu quả chiến dịch",
       "group": "Dữ liệu và marketing",
       "module": "workspace",
-      "spec": "Spend import with source IDs, promo results, known/estimated attribution split.",
-      "acceptance": "Không tự tăng ad spend; không ghi estimate thành actual finance expense.",
+      "spec": "Spend import with source IDs, promo results, known/estimated attribution split. Marketing summary spend is returned by the selected shop-local range and bucket; actual and estimated values remain separate.",
+      "acceptance": "Không tự tăng ad spend; không ghi estimate thành actual finance expense. API aggregate keeps unavailable actual spend null and never treats estimated spend as actual finance expense.",
       "doc": "docs/01_PRODUCT_SCOPE.md",
       "status": "APPROVED_SCOPE_NOT_IMPLEMENTED",
       "approvedAt": "2026-09-29T09:24:12Z",

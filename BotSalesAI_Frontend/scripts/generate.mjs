@@ -177,7 +177,7 @@ export function validateContractBundle(bundle) {
     return issues;
 }
 
-export function renderGenerated({ api, routes, tokens, permissions }) {
+export function renderGenerated({ api, routes, tokens, permissions, statementFormats, financeGolden }) {
     const outputs = {};
     const add = (file, text) => { outputs[file] = text; };
     const q = json;
@@ -237,6 +237,11 @@ export function renderGenerated({ api, routes, tokens, permissions }) {
     add('packages/contracts/src/schemas.json', `${JSON.stringify({ components: { schemas: api.components.schemas } }, null, 2)}\n`);
     add('packages/contracts/src/routes.json', `${JSON.stringify(routes, null, 2)}\n`);
     add('packages/contracts/src/permissions.json', `${JSON.stringify(permissions, null, 2)}\n`);
+    if (statementFormats) {
+        add('packages/contracts/src/statement-formats.json', `${JSON.stringify(statementFormats, null, 2)}\n`);
+        for (const format of statementFormats.formats) add(`samples/${format.kind}.csv`, format.exampleCsv);
+    }
+    if (financeGolden) add('packages/contracts/src/finance-golden.json', `${JSON.stringify(financeGolden, null, 2)}\n`);
     add('packages/contracts/src/index.ts', `${preamble}export type * from './generated';\nexport { API_BASE_PATH } from './generated';\nexport { default as operations } from './operations.json';\nexport { default as routeManifest } from './routes.json';\nexport { default as permissionCatalog } from './permissions.json';\nexport { default as schemaCatalog } from './schemas.json';\n`);
     add('packages/design-tokens/src/tokens.json', `${JSON.stringify(tokens, null, 2)}\n`);
     add('packages/design-tokens/src/index.ts', `${preamble}import tokenData from './tokens.json';\ntype DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K] };\nexport const tokens: DeepReadonly<typeof tokenData> = tokenData;\nexport const colors = tokens.colors;\n`);
@@ -282,6 +287,8 @@ export function loadContractBundle(root = defaultRoot) {
         tokens: read('../botsales-kit/design/tokens.json'),
         permissions: read('../botsales-kit/contracts/permission-catalog.json'),
         events: read('../botsales-kit/contracts/events.schema.json'),
+        statementFormats: read('../botsales-kit/fixtures/statement-formats.json'),
+        financeGolden: read('../botsales-kit/fixtures/finance-golden.json'),
     };
 }
 
