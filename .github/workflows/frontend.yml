@@ -1,15 +1,7 @@
 name: frontend
 on:
   push:
-    paths:
-      - BotSalesAI_Frontend/**
-      - botsales-kit/**
-      - .github/workflows/frontend.yml
   pull_request:
-    paths:
-      - BotSalesAI_Frontend/**
-      - botsales-kit/**
-      - .github/workflows/frontend.yml
 permissions:
   contents: read
 concurrency:
@@ -37,8 +29,8 @@ jobs:
       - name: Audit locked dependencies
         run: npm audit --audit-level=low
       - run: npm run setup
-      - run: npm run verify
       - run: npx playwright install --with-deps chromium firefox
+      - run: npm run verify
       - run: npm run test:e2e
       - name: Upload revision-scoped build and browser evidence
         if: ${{ always() }}
