@@ -9,11 +9,14 @@ import { createUiBindings } from './ui-bindings.mjs';
 
 export const compositionOwners = {
     'form.fieldGap': 'FormFields',
+    'form.compactFieldGap': 'FormFields',
     'form.inlineGap': 'FieldGroup',
     'surface.contentGap': 'SurfaceContent',
+    'detail.dividedListGap': 'SurfaceContent',
     'actions.inlineGap': 'ActionGroup',
     'actions.relatedLinksGap': 'ActionGroup',
     'page.sectionGap': 'PageSections',
+    'page.majorSectionGap': 'PageSections',
     'grid.gutter': 'SectionGrid',
 };
 export const bodyModes = {
@@ -24,11 +27,12 @@ export const bodyModes = {
     ActionGroup: new Set(['flush', 'header']),
 };
 export const finiteProps = {
-    Panel: { beforeGap: new Set(['section', 'surface']), afterGap: new Set(['section']) },
-    FormFields: { beforeGap: new Set(['surface']), afterGap: new Set(['section']) },
-    SurfaceContent: { beforeGap: new Set(['surface']), afterGap: new Set(['notice']) },
+    Panel: { density: new Set(['compact', 'comfortable']), beforeGap: new Set(['section', 'surface']), afterGap: new Set(['section']) },
+    FormFields: { density: new Set(['compact', 'comfortable']), beforeGap: new Set(['surface']), afterGap: new Set(['section']) },
+    SurfaceContent: { rhythm: new Set(['content', 'dividedRows']), beforeGap: new Set(['surface']), afterGap: new Set(['notice']) },
     ActionGroup: { density: new Set(['compact', 'comfortable']), beforeGap: new Set(['form', 'surface', 'detail']), afterGap: new Set(['section', 'notice']) },
-    PageSections: { beforeGap: new Set(['section']) },
+    EditDialog: { density: new Set(['compact', 'comfortable']) },
+    PageSections: { rhythm: new Set(['section', 'major']), beforeGap: new Set(['section']) },
     SectionGrid: { rhythm: new Set(['section', 'content']) },
 };
 export const insetModes = {
@@ -46,11 +50,11 @@ const spacingProps = new Set(['sx', 'style', 'className', 'spacing', 'gap', 'row
 export const geometryKeys = new Set(['width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'flex', 'gridColumn']);
 export const flowKeys = ['children', 'key', 'direction', 'alignItems', 'justifyContent', 'flexWrap', 'id', 'role', 'aria-label', 'aria-labelledby', 'aria-describedby', 'data-testid', 'data-draft-clean', 'geometry'];
 export const publicProps = {
-    FormFields: new Set([...flowKeys, 'bodyMode', 'beforeGap', 'afterGap', 'component', 'noValidate', 'onSubmit', 'ref']),
+    FormFields: new Set([...flowKeys, 'density', 'bodyMode', 'beforeGap', 'afterGap', 'component', 'noValidate', 'onSubmit', 'ref']),
     FieldGroup: new Set([...flowKeys, 'bodyMode']),
-    SurfaceContent: new Set([...flowKeys, 'bodyMode', 'beforeGap', 'afterGap']),
+    SurfaceContent: new Set([...flowKeys, 'bodyMode', 'rhythm', 'beforeGap', 'afterGap']),
     ActionGroup: new Set([...flowKeys, 'bodyMode', 'density', 'beforeGap', 'afterGap']),
-    PageSections: new Set([...flowKeys, 'beforeGap', 'shrinkChildren']),
+    PageSections: new Set([...flowKeys, 'rhythm', 'beforeGap', 'shrinkChildren']),
     SectionGrid: new Set(['children', 'key', 'id', 'role', 'aria-label', 'alignItems', 'data-testid', 'data-draft-clean', 'geometry', 'columns', 'shrinkChildren', 'rhythm']),
 };
 const posix = value => value.split(path.sep).join('/');
@@ -396,10 +400,11 @@ export function inspectComposition(source, file = 'apps/web/src/modules/example/
             tags.push({ ...location(node), tag: bindings ? tag : shared.get(localName) || composed.get(localName) || tag });
             const attributes = node.attributes.properties;
             const modeAttribute = node.attributes.properties.find(item => ts.isJsxAttribute(item) && item.name.getText(sf) === 'bodyMode');
-            const modeOwner = resolved?.owner === 'components' && resolved.exportName === 'Panel' ? 'Panel' : composition;
+            const componentOwner = bindings ? resolved?.owner === 'components' ? resolved.exportName : undefined : shared.get(localName);
+            const modeOwner = componentOwner === 'Panel' ? 'Panel' : composition;
             const currentModes = modeAttribute ? literalValues(attributeExpression(modeAttribute)) : new Set(['flush']);
             if (modeOwner && modeAttribute && (!currentModes || !bodyModes[modeOwner] || [...currentModes].some(mode => !bodyModes[modeOwner].has(mode)))) addIssue(modeAttribute, 'composition.ownership-unknown', 'bodyMode must resolve only to supported literals; unresolved ownership cannot pass.');
-            const finiteOwner = modeOwner || composition;
+            const finiteOwner = componentOwner || composition;
             for (const attribute of attributes) {
                 if (!ts.isJsxAttribute(attribute)) continue;
                 const name = attribute.name.getText(sf);
@@ -587,7 +592,7 @@ export function inspectComposition(source, file = 'apps/web/src/modules/example/
             }
             const modeOwner = info.isPanel ? 'Panel' : info.composition;
             if (modeOwner && info.modeEntry && info.modeUnknown) addIssue(info.modeEntry.node, 'composition.ownership-unknown', 'bodyMode must resolve only to supported literals; unresolved ownership cannot pass.');
-            const finiteOwner = modeOwner || info.composition;
+            const finiteOwner = info.owner === 'components' ? info.exportName : info.composition;
             for (const entry of props.entries) {
                 const allowed = finiteProps[finiteOwner]?.[entry.name];
                 if (!allowed) continue;

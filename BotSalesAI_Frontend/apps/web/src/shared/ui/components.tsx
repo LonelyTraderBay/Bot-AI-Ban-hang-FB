@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { visualSx } from './visual';
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
-import { Link as RouterLink, useSearchParams } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertTitle, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, InputAdornment, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import SearchRounded from '@mui/icons-material/SearchRounded';
@@ -14,8 +14,9 @@ import type { QueryOperationId } from '../api/client';
 import { colors, tokens } from '@botsales/tokens';
 import { layoutSx } from './layout';
 import { ApiError, UnknownResultError, errorMessage } from '../api/errors';
-import { formatMoney } from '../model/format';
-import { label } from '../model/labels';
+import { codePointLength, formatMoney } from '../model/format';
+import { label, type LabelDomain } from '../model/labels';
+import { listReturnState } from '../model/list-return';
 import { useScope, useCan } from '../model/scope';
 export function PageHeader({ title, subtitle, actions, eyebrow }: {
     title: string;
@@ -36,20 +37,21 @@ type PanelGeometry = {
     height?: CSSProperties['height'];
     gridColumn?: ResponsiveGeometry<CSSProperties['gridColumn']>;
 };
-export function Panel({ title, subtitle, children, action, bodyMode = 'flush', beforeGap, afterGap, geometry }: {
+export function Panel({ title, subtitle, children, action, bodyMode = 'flush', density = 'compact', beforeGap, afterGap, geometry }: {
     title?: string;
     subtitle?: string;
     children: ReactNode;
     action?: ReactNode;
     bodyMode?: 'inset' | 'flush';
+    density?: 'compact' | 'comfortable';
     beforeGap?: 'section' | 'surface';
     afterGap?: 'section';
     geometry?: PanelGeometry;
 }) {
     const body = bodyMode === 'inset'
-        ? <Box sx={title ? layoutSx.surface.bodyInsetAfterHeader : layoutSx.surface.inset}>{children}</Box>
+        ? <Box sx={title ? (density === 'comfortable' ? layoutSx.surface.comfortableBodyInsetAfterHeader : layoutSx.surface.bodyInsetAfterHeader) : (density === 'comfortable' ? layoutSx.surface.comfortableInset : layoutSx.surface.inset)}>{children}</Box>
         : children;
-    return <Paper variant="outlined" sx={[
+    return <Paper variant="outlined" data-ui-density={density} sx={[
         { borderRadius: `${tokens.radius.card}px`, overflow: 'hidden' },
         beforeGap === 'section' && layoutSx.page.sectionBefore,
         beforeGap === 'surface' && layoutSx.surface.sectionBefore,
@@ -61,7 +63,7 @@ export function Panel({ title, subtitle, children, action, bodyMode = 'flush', b
             gridColumn: geometry?.gridColumn,
         },
     ]}>
-        {title && <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={[layoutSx.surface.headerInset, layoutSx.surface.headerFlowGap]}><Box sx={{ minWidth: 0 }}><Typography component="h2" variant="h6">{title}</Typography>{subtitle && <Typography variant="body2" color="text.secondary" sx={layoutSx.surface.titleDescriptionGap}>{subtitle}</Typography>}</Box>{action}</Stack>}
+        {title && <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={[density === 'comfortable' ? layoutSx.surface.comfortableHeaderInset : layoutSx.surface.headerInset, layoutSx.surface.headerFlowGap]}><Box sx={{ minWidth: 0 }}><Typography component="h2" variant="h6">{title}</Typography>{subtitle && <Typography variant="body2" color="text.secondary" sx={layoutSx.surface.titleDescriptionGap}>{subtitle}</Typography>}</Box>{action}</Stack>}
         {body}
     </Paper>;
 }
@@ -77,9 +79,10 @@ export function Stat({ title, value, note, accent = false, icon }: {
 export function Stats({ children }: {
     children: ReactNode;
 }) { return <Box sx={[layoutSx.stats.gutter, layoutSx.stats.afterGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' } }]}>{children}</Box>; }
-export function Amount({ value }: {
+export function Amount({ value, wrap = false }: {
     value: Money | null | undefined;
-}) { return <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{formatMoney(value)}</Box>; }
+    wrap?: boolean;
+}) { return <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', whiteSpace: wrap ? 'normal' : 'nowrap', overflowWrap: wrap ? 'anywhere' : undefined }}>{formatMoney(value)}</Box>; }
 export function CopyableCode({ value, label: codeLabel = 'mã' }: {
     value: string;
     label?: string;
@@ -102,14 +105,16 @@ export function CopyableCode({ value, label: codeLabel = 'mã' }: {
         </Typography>}
     </Stack>;
 }
-const positive = new Set(['active', 'completed', 'succeeded', 'connected', 'published', 'approved', 'received', 'settled', 'verified', 'posted', 'delivered', 'passed', 'healthy']);
+const positive = new Set(['active', 'completed', 'succeeded', 'connected', 'published', 'approved', 'received', 'settled', 'verified', 'posted', 'delivered', 'passed', 'healthy', 'in_stock']);
 const danger = new Set(['failed', 'rejected', 'cancelled', 'revoked', 'denied', 'error']);
-const warn = new Set(['unknown', 'blocked', 'degraded', 'pending_approval', 'partial', 'part_received', 'unconfigured', 'provisional', 'incomplete', 'paused', 'expired']);
-export function Status({ value }: {
+const warn = new Set(['unknown', 'blocked', 'degraded', 'pending_approval', 'partial', 'part_received', 'unconfigured', 'provisional', 'incomplete', 'paused', 'expired', 'low_stock', 'out_of_stock']);
+export function Status({ value, domain, density = 'standard' }: {
     value: string;
+    domain?: LabelDomain;
+    density?: 'standard' | 'compact';
 }) {
     const palette = positive.has(value) ? [colors.success, colors.successSurface] : danger.has(value) ? [colors.danger, colors.dangerSurface] : warn.has(value) ? [colors.warning, colors.warningSurface] : [colors.info, colors.infoSurface];
-    return <Chip label={label(value)} sx={{ color: palette[0], background: palette[1], maxWidth: '100%', height: 'auto', minHeight: 32, '& .MuiChip-label': { whiteSpace: 'normal', overflowWrap: 'anywhere' } }}/>;
+    return <Chip label={label(value, domain)} title={value} sx={{ color: palette[0], background: palette[1], maxWidth: '100%', height: density === 'compact' ? 21 : 'fit-content', minHeight: density === 'compact' ? 21 : 32, verticalAlign: density === 'compact' ? 'top' : undefined, '& .MuiChip-label': { whiteSpace: 'normal', overflowWrap: 'anywhere' } }}/>;
 }
 export interface Column<T> {
     key: string;
@@ -117,11 +122,12 @@ export interface Column<T> {
     render: (row: T) => ReactNode;
     align?: 'left' | 'right' | 'center';
 }
-export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ liệu phù hợp.', label: tableLabel = 'Dữ liệu' }: {
+export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ liệu phù hợp.', emptyAction, label: tableLabel = 'Dữ liệu' }: {
     rows: readonly T[];
     columns: readonly Column<T>[];
     rowKey: (row: T) => string;
     empty?: string;
+    emptyAction?: ReactNode;
     label?: string;
 }) {
     return <>
@@ -131,13 +137,13 @@ export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ li
                 event.preventDefault();
                 event.currentTarget.scrollBy({ left: event.key === 'ArrowRight' ? 40 : -40 });
             }
-        }}><Table size="small" aria-label={tableLabel} sx={{ minWidth: { xs: 600, md: 'auto' } }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}{rows.length === 0 && <TableRow><TableCell colSpan={columns.length}><Empty text={empty}/></TableCell></TableRow>}</TableBody></Table></TableContainer>
+        }}><Table size="small" aria-label={tableLabel} sx={{ minWidth: { xs: 600, md: 'auto' } }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}{rows.length === 0 && <TableRow><TableCell colSpan={columns.length}><Empty text={empty} action={emptyAction}/></TableCell></TableRow>}</TableBody></Table></TableContainer>
     </>;
 }
 export function Empty({ text, action }: {
     text: string;
     action?: ReactNode;
-}) { return <Stack role="status" aria-live="polite" alignItems="center" sx={[layoutSx.empty.contentGap, layoutSx.empty.insetBlock, layoutSx.empty.insetInline]}><Box aria-hidden="true" sx={{ width: tokens.layout.touchTarget, height: tokens.layout.touchTarget, borderRadius: `${tokens.radius.control}px`, bgcolor: colors.raised, display: 'grid', placeItems: 'center', color: 'text.secondary' }}>—</Box><Typography color="text.secondary" textAlign="center">{text}</Typography>{action}</Stack>; }
+}) { return <Stack role="status" aria-live="polite" alignItems="center" sx={[layoutSx.empty.contentGap, layoutSx.empty.insetBlock, layoutSx.empty.insetInline, { minWidth: 0 }]}><Box aria-hidden="true" sx={{ width: tokens.layout.touchTarget, height: tokens.layout.touchTarget, borderRadius: `${tokens.radius.control}px`, bgcolor: colors.raised, display: 'grid', placeItems: 'center', color: 'text.secondary' }}>—</Box><Typography color="text.secondary" textAlign="center" sx={{ maxWidth: '100%', overflowWrap: 'anywhere' }}>{text}</Typography>{action}</Stack>; }
 export function QueryState({ query, children, pendingProfile = 'inline' }: {
     query: {
         isPending: boolean;
@@ -191,19 +197,21 @@ export function ErrorNotice({ error, fieldLabels }: {
     if (!error)
         return null;
     const status = error instanceof ApiError ? error.status : 0;
-    const title = error instanceof UnknownResultError ? t('state.unknownTitle') : status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : status === 409 || status === 412 ? t('state.conflictTitle') : status === 422 ? t('state.validationTitle') : status === 428 ? t('state.versionRequiredTitle') : t('state.requestErrorTitle');
-    const guidance = status === 409 || status === 412 ? t('state.conflictHelp') : status === 422 ? t('state.validationHelp') : status === 428 ? t('state.versionRequiredHelp') : undefined;
-    return <Alert ref={alertRef} severity={error instanceof UnknownResultError || status === 403 || status === 409 || status === 412 || status === 428 ? 'warning' : 'error'} sx={layoutSx.notice.afterGap} role="alert"><AlertTitle>{title}</AlertTitle>{errorMessage(error)}{guidance && <Typography component="div" variant="body2" sx={layoutSx.notice.contentGap}>{guidance}</Typography>}{validationFields?.map(field => {
+    const versionConflict = status === 412 || status === 428 || (status === 409 && error instanceof ApiError && ['STALE_VERSION', 'VERSION_CONFLICT', 'VERSION_MISMATCH'].includes(error.code));
+    const title = error instanceof UnknownResultError ? t('state.unknownTitle') : status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : versionConflict ? (status === 428 ? t('state.versionRequiredTitle') : t('state.conflictTitle')) : status === 422 ? t('state.validationTitle') : t('state.requestErrorTitle');
+    const guidance = versionConflict ? (status === 428 ? t('state.versionRequiredHelp') : t('state.conflictHelp')) : status === 422 ? t('state.validationHelp') : undefined;
+    return <Alert ref={alertRef} severity={error instanceof UnknownResultError || status === 403 || versionConflict ? 'warning' : 'error'} sx={layoutSx.notice.afterGap} role="alert"><AlertTitle>{title}</AlertTitle>{errorMessage(error)}{guidance && <Typography component="div" variant="body2" sx={layoutSx.notice.contentGap}>{guidance}</Typography>}{validationFields?.map(field => {
         const normalized = field.path.replace(/^\//, '').replace(/~1/g, '/').replace(/~0/g, '~');
         const lastSegment = normalized.split(/[./]/).flatMap(segment => segment.split('[').flatMap(part => part.split(']'))).filter(Boolean).at(-1) || normalized;
         const label = fieldLabels?.[normalized] || fieldLabels?.[lastSegment] || field.path;
         return <div key={field.path}><strong>{t('state.field')} {label}:</strong> {field.message}</div>;
     })}{error instanceof UnknownResultError && error.commandId && <Typography component="div" variant="body2" sx={layoutSx.notice.contentGap}>{t('state.command')}: <Box component="code" sx={{ overflowWrap: 'anywhere' }}>{error.commandId}</Box></Typography>}</Alert>;
 }
-export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, cursorParam = 'cursor' }: {
+export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filters, cursorParam = 'cursor' }: {
     operation: QueryOperationId;
     placeholder?: string;
     extra?: ReactNode;
+    filters?: ReactNode;
     cursorParam?: string;
 }) {
     const [params, setParams] = useSearchParams();
@@ -227,22 +235,72 @@ export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, curs
     };
     const supportsSearch = operations[operation].queryParameters.some(parameter => parameter.name === 'q');
     if (!supportsSearch)
-        return extra ? <>{extra}</> : null;
-    return <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }} direction={{ xs: 'column', md: 'row' }} sx={[layoutSx.toolbar.inset, layoutSx.toolbar.controlGap]}>
+        return extra || filters ? <>{extra}{filters}</> : null;
+    return <Stack sx={[layoutSx.toolbar.inset, layoutSx.toolbar.controlGap]}>
+ <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }} direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-end' }} sx={[layoutSx.toolbar.controlGap, { flexWrap: 'wrap' }]}>
  <TextField inputRef={inputRef} label="Tìm kiếm" placeholder={placeholder} size="small" value={draft} onChange={e => setDraft(e.target.value)} slotProps={{
      htmlInput: { onKeyDown: (event: ReactKeyboardEvent<HTMLInputElement>) => { if (event.key === 'Enter' && event.nativeEvent.isComposing) event.preventDefault(); } },
      input: { startAdornment: <InputAdornment position="start"><SearchRounded fontSize="small"/></InputAdornment>, endAdornment: draft ? <InputAdornment position="end"><IconButton aria-label="Xóa tìm kiếm" edge="end" onMouseDown={event => event.preventDefault()} onClick={clearSearch}><CloseRounded fontSize="small"/></IconButton></InputAdornment> : undefined }
- }} sx={{ width: '100%', minWidth: 0, flex: 1 }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>;
+ }} sx={{ width: '100%', minWidth: 'min(100%, 12em)', flex: { xs: '1 1 auto', md: '1 1 12em' } }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>
+ {filters}</Stack>;
 }
+const cursorHistoryByList = new Map<string, Array<string | null>>();
+const MAX_CURSOR_HISTORY_LISTS = 100;
+
+function cursorHistoryKey(pathname: string, params: URLSearchParams, cursorParam: string) {
+    const filters = new URLSearchParams(params);
+    filters.delete(cursorParam);
+    filters.sort();
+    return `${pathname}?${filters.toString()}`;
+}
+
+function rememberCursorHistory(key: string, cursors: Array<string | null>) {
+    cursorHistoryByList.delete(key);
+    cursorHistoryByList.set(key, cursors);
+    while (cursorHistoryByList.size > MAX_CURSOR_HISTORY_LISTS) {
+        const oldest = cursorHistoryByList.keys().next().value;
+        if (oldest === undefined) break;
+        cursorHistoryByList.delete(oldest);
+    }
+}
+
 export function Pager({ page, cursorParam = 'cursor' }: {
     page?: Page;
     cursorParam?: string;
 }) {
     const [params, setParams] = useSearchParams();
+    const location = useLocation();
     if (!page)
         return null;
-    return <Stack direction="row" justifyContent="space-between" alignItems="center" sx={layoutSx.pager.inset}><Typography variant="caption" color="text.secondary">{typeof page.total === 'number' ? `${page.total} kết quả` : `Tối đa ${page.limit} dòng / trang`}</Typography><Stack direction="row" sx={layoutSx.pager.actionsGap}><Button size="small" disabled={!params.has(cursorParam)} onClick={() => { const next = new URLSearchParams(params); next.delete(cursorParam); setParams(next); }}>Đầu danh sách</Button><Button size="small" disabled={!page.hasMore || !page.nextCursor} onClick={() => { const next = new URLSearchParams(params); if (page.nextCursor)
-        next.set(cursorParam, page.nextCursor); setParams(next); }}>Trang tiếp</Button></Stack></Stack>;
+    const key = cursorHistoryKey(location.pathname, params, cursorParam);
+    const currentCursor = params.get(cursorParam);
+    const history = cursorHistoryByList.get(key) || [];
+    const currentIndex = history.lastIndexOf(currentCursor);
+    const previousCursor = currentIndex > 0 ? history[currentIndex - 1] : null;
+    return <Stack direction="row" justifyContent="space-between" alignItems="center" sx={layoutSx.pager.inset}>
+        <Typography variant="caption" color="text.secondary">{typeof page.total === 'number' ? `${page.total} kết quả` : `Tối đa ${page.limit} dòng / trang`}</Typography>
+        <Stack direction="row" sx={layoutSx.pager.actionsGap}>
+            <Button size="small" disabled={!currentCursor} onClick={() => { rememberCursorHistory(key, [null]); const next = new URLSearchParams(params); next.delete(cursorParam); setParams(next); }}>Đầu danh sách</Button>
+            <Button size="small" disabled={currentIndex <= 0} title={currentIndex < 0 && currentCursor ? 'Liên kết trực tiếp chưa có lịch sử; dùng Đầu danh sách để quay về đầu.' : undefined} onClick={() => {
+                if (currentIndex <= 0) return;
+                rememberCursorHistory(key, history.slice(0, currentIndex));
+                const next = new URLSearchParams(params);
+                if (previousCursor) next.set(cursorParam, previousCursor); else next.delete(cursorParam);
+                setParams(next);
+            }}>Trang trước</Button>
+            <Button size="small" disabled={!page.hasMore || !page.nextCursor} onClick={() => {
+                if (!page.nextCursor) return;
+                const visited = cursorHistoryByList.get(key) || (currentCursor ? [currentCursor] : [null]);
+                const index = visited.lastIndexOf(currentCursor);
+                const base = index >= 0 ? visited.slice(0, index + 1) : [...visited, currentCursor];
+                if (base.at(-1) !== page.nextCursor) base.push(page.nextCursor);
+                rememberCursorHistory(key, base);
+                const next = new URLSearchParams(params);
+                next.set(cursorParam, page.nextCursor);
+                setParams(next);
+            }}>Trang tiếp</Button>
+        </Stack>
+    </Stack>;
 }
 export function LookupLoadMore({ label, loadedCount, hasMore, busy = false, onLoadMore }: {
     label: string;
@@ -261,7 +319,7 @@ export function LookupLoadMore({ label, loadedCount, hasMore, busy = false, onLo
 export function RouteLink({ to, children }: {
     to: string;
     children: ReactNode;
-}) { return <Button component={RouterLink} to={to} size="small" endIcon={<ArrowForwardRounded fontSize="small"/>}>{children}</Button>; }
+}) { const location=useLocation(); return <Button component={RouterLink} to={to} state={listReturnState(location.pathname,location.search,to)} size="small" endIcon={<ArrowForwardRounded fontSize="small"/>}>{children}</Button>; }
 export function MutationButton({ permission, allowedActions, action, busy, children, ...props }: {
     permission: string | null;
     allowedActions?: string[];
@@ -289,15 +347,18 @@ function draftControlValue(control: HTMLInputElement | HTMLSelectElement | HTMLT
         return `selected:${Array.from(control.selectedOptions).map(option => option.value).join('|')}`;
     return control.value;
 }
-export function EditDialog({ open, title, description, onClose, children, actions, busy = false, dirtyGuard = true, draftCommit }: {
+export function EditDialog({ open, title, description, onClose, children, actions, busy = false, dirtyGuard = true, draftCommit, allowEditsWhileBusy = false, density = 'compact' }: {
     open: boolean;
     title: string;
     description?: string;
     onClose: () => void;
     children: ReactNode;
-    actions: ReactNode;
+    actions: ReactNode | ((controls: { requestClose: () => void; busy: boolean }) => ReactNode);
     busy?: boolean;
     dirtyGuard?: boolean;
+    density?: 'compact' | 'comfortable';
+    /** Enable only when the editor preserves changes made after its submitted snapshot. */
+    allowEditsWhileBusy?: boolean;
     /** Mark controls within one persisted draft scope clean after its mutation succeeds. */
     draftCommit?: { scope: string | null; sequence: number };
 }) {
@@ -353,6 +414,9 @@ export function EditDialog({ open, title, description, onClose, children, action
             target = scopedElement;
         }
         const controls = Array.from(target.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea'));
+        for (const control of baselineRef.current.keys())
+            if (target.contains(control)) baselineRef.current.delete(control);
+        if (scope === undefined) baselineRef.current.clear();
         for (const control of controls)
             baselineRef.current.set(control, draftControlValue(control));
         baselineReadyRef.current = baselineRef.current.size > 0;
@@ -421,14 +485,14 @@ export function EditDialog({ open, title, description, onClose, children, action
         setDiscardOpen(false);
     };
     return <>
-        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={titleId}>{title}<IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ position: 'absolute', right: 12, top: 12 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} dividers sx={layoutSx.dialog.inset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{actions}</DialogActions></Dialog>
+        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={`${titleId}-heading`} sx={[density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset, { display: 'flex', alignItems: 'flex-start' }]}><Box component="span" id={titleId} sx={{ minWidth: 0, flex: 1, overflowWrap: 'anywhere' }}>{title}</Box><IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ flexShrink: 0 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} inert={busy && !allowEditsWhileBusy} dividers sx={density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{typeof actions === 'function' ? actions({ requestClose, busy }) : actions}</DialogActions></Dialog>
         <Dialog open={open && discardOpen} onClose={() => setDiscardOpen(false)} aria-labelledby={`${titleId}-draft-warning`} aria-describedby={`${titleId}-draft-description`} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onExited: () => {
             if (!discardConfirmedRef.current)
                 return;
             discardConfirmedRef.current = false;
             onClose();
         } } }}>
-            <DialogTitle id={`${titleId}-draft-warning`}>{t('draft.closeTitle')}</DialogTitle>
+            <DialogTitle id={`${titleId}-draft-warning`} sx={layoutSx.dialog.inset}>{t('draft.closeTitle')}</DialogTitle>
             <DialogContent sx={layoutSx.dialog.inset}><DialogContentText id={`${titleId}-draft-description`}>{t('draft.closeDescription')}</DialogContentText></DialogContent>
             <DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={() => setDiscardOpen(false)}>{t('draft.continueEditing')}</Button><Button color="warning" variant="contained" onClick={discardChanges}>{t('draft.discard')}</Button></DialogActions>
         </Dialog>
@@ -443,24 +507,53 @@ export function CapabilityUnavailable({ children }: { children?: ReactNode }) {
     const { t } = useTranslation();
     return <Alert severity="info" role="status">{children || t('state.capabilityUnavailable')}</Alert>;
 }
-export function ConfirmDialog({ open, title, description, onClose, onConfirm, busy, error, requireReason = false }: {
+export function ConfirmDialog({ open, title, description, onClose, onConfirm, confirmLabel = 'Xác nhận', busy, error, requireReason = false }: {
     open: boolean;
     title: string;
     description: string;
     onClose: () => void;
     onConfirm: (reason: string) => Promise<unknown>;
+    confirmLabel?: string;
     busy?: boolean;
     error?: unknown;
     requireReason?: boolean;
 }) {
     const [reason, setReason] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+    const [failure, setFailure] = useState<Error | null>(null);
+    const inFlight = useRef(false);
+    const generation = useRef({ active: false });
     useEffect(() => {
-        if (!open)
+        const lifetime = { active: true };
+        generation.current = lifetime;
+        if (!open) {
             setReason('');
-    }, [open]);
-    return <EditDialog open={open} title={title} description={description} onClose={onClose} busy={busy} actions={<Button variant="contained" disabled={busy || (requireReason && reason.trim().length < 5)} onClick={() => { void onConfirm(reason).then(() => { setReason(''); onClose(); }).catch(() => undefined); }}>Xác nhận</Button>}><ErrorNotice error={error}/>{requireReason && <TextField label="Lý do (ít nhất 5 ký tự)" value={reason} onChange={e => setReason(e.target.value)} fullWidth multiline minRows={2}/>}</EditDialog>;
+            setFailure(null);
+            setSubmitting(false);
+        }
+        return () => { lifetime.active = false; };
+    }, [open, title]);
+    const submit = async () => {
+        if (inFlight.current || busy || (requireReason && codePointLength(reason.trim()) < 5)) return;
+        const started = generation.current;
+        inFlight.current = true;
+        setSubmitting(true);
+        setFailure(null);
+        try {
+            await onConfirm(reason);
+            if (started.active && generation.current === started) { setReason(''); onClose(); }
+        }
+        catch (cause) {
+            if (started.active && generation.current === started) setFailure(cause instanceof Error ? cause : new Error('Không hoàn tất được thao tác. Kiểm tra kết quả trước khi gửi lại.'));
+        }
+        finally {
+            inFlight.current = false;
+            if (started.active && generation.current === started) setSubmitting(false);
+        }
+    };
+    return <EditDialog density="comfortable" open={open} title={title} description={description} onClose={onClose} busy={busy || submitting} actions={<Button variant="contained" disabled={busy || submitting || (requireReason && codePointLength(reason.trim()) < 5)} onClick={() => void submit()}>{confirmLabel}</Button>}><ErrorNotice error={error || failure}/>{requireReason && <TextField label="Lý do (ít nhất 5 ký tự)" value={reason} onChange={e => setReason(e.target.value)} fullWidth multiline minRows={2}/>}</EditDialog>;
 }
 export function DetailLine({ label: caption, children }: {
     label: string;
     children: ReactNode;
-}) { return <><Stack direction="row" justifyContent="space-between" sx={[layoutSx.detail.valueGap, layoutSx.detail.rowInsetBlock]}><Typography color="text.secondary">{caption}</Typography><Box sx={{ textAlign: 'right', overflowWrap: 'anywhere', minWidth: 0 }}>{children}</Box></Stack><Divider /></>; }
+}) { return <Box data-ui-detail-line sx={{ minWidth: 0, containerType: 'inline-size' }}><Box sx={[layoutSx.detail.valueGap, layoutSx.detail.rowInsetBlock, { display: 'grid', gridTemplateColumns: 'minmax(8ch, 35%) minmax(0, 1fr)', alignItems: 'start', '@container (max-width: 20rem)': { gridTemplateColumns: 'minmax(0, 1fr)' } }]}><Typography color="text.secondary" sx={{ minWidth: 0, overflowWrap: 'break-word' }}>{caption}</Typography><Box sx={{ textAlign: 'right', overflowWrap: 'anywhere', minWidth: 0, '@container (max-width: 20rem)': { textAlign: 'left' } }}>{children}</Box></Box><Divider /></Box>; }

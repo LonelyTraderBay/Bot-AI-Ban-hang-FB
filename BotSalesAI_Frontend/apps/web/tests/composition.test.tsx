@@ -37,7 +37,7 @@ describe('Shared content ownership', () => {
         render(<ThemeProvider theme={theme}><CssBaseline/><PageSections data-testid="sections"><Panel bodyMode="inset"><FormFields data-testid="fields"><TextField label="Sản phẩm"/><Alert data-testid="notice" sx={layoutSx.notice.afterGap}>Lỗi có thể khôi phục</Alert><Button>Thử lại</Button></FormFields></Panel><SurfaceContent data-testid="content"><Alert sx={layoutSx.notice.afterGap}>Dữ liệu cập nhật</Alert><Button>Mở</Button></SurfaceContent></PageSections></ThemeProvider>);
         const fields = screen.getByTestId('fields');
         expect(getComputedStyle(fields).gap).toBe(`${tokens.space.lg}px`);
-        expect(getComputedStyle(screen.getByTestId('sections')).gap).toBe(`${tokens.space.xl}px`);
+        expect(getComputedStyle(screen.getByTestId('sections')).gap).toBe(`${tokens.space.lg}px`);
         expect(getComputedStyle(screen.getByTestId('content')).gap).toBe(`${tokens.space.md}px`);
     });
 });

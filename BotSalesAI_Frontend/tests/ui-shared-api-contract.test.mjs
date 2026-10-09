@@ -12,8 +12,22 @@ const configPath = path.join(root, 'apps/web/tsconfig.json');
 const config = ts.readConfigFile(configPath, ts.sys.readFile);
 assert.equal(config.error, undefined, 'apps/web/tsconfig.json must be readable');
 const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, path.dirname(configPath));
-const program = ts.createProgram(parsed.fileNames, parsed.options);
+const componentFiles = fs.readdirSync(path.join(root, 'apps/web/src/shared/ui')).filter(name => name.endsWith('.tsx') && name !== 'composition.tsx').map(name => `apps/web/src/shared/ui/${name}`);
+const sharedFiles = [...componentFiles, 'apps/web/src/shared/ui/composition.tsx'];
+const programRoots = [...new Set([...sharedFiles, 'apps/web/src/shared/ui/layout.ts'].map(file => path.join(root, file)))];
+const program = ts.createProgram(programRoots, parsed.options);
 const checker = program.getTypeChecker();
+
+function readSourceFile(file) {
+    const absolute = path.resolve(root, file);
+    return program.getSourceFile(absolute) || ts.createSourceFile(
+        absolute,
+        fs.readFileSync(absolute, 'utf8'),
+        parsed.options.target || ts.ScriptTarget.Latest,
+        true,
+        absolute.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+    );
+}
 
 function moduleExports(file) {
     const source = program.getSourceFile(path.join(root, file));
@@ -40,10 +54,98 @@ const forbiddenStyleProps = new Set([
     'p', 'pt', 'pr', 'pb', 'pl', 'px', 'py', 'padding', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight',
 ]);
 
+function importedJsxCandidates(source, exportedFiles) {
+    const locals = new Map();
+    const namespaces = new Map();
+    const normalize = file => path.resolve(file).replaceAll('\\', '/').toLowerCase();
+    const resolveSharedUiPath = specifier => {
+        const target = specifier.startsWith('@/')
+            ? path.join(root, 'apps/web/src', specifier.slice(2))
+            : path.resolve(path.dirname(source.fileName), specifier);
+        return normalize(path.extname(target) ? target : `${target}.tsx`);
+    };
+    for (const statement of source.statements) {
+        if (!ts.isImportDeclaration(statement) || !statement.importClause || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
+        const specifier = statement.moduleSpecifier.text.replaceAll('\\', '/');
+        if (!specifier.includes('shared/ui/')) continue;
+        const resolvedFile = resolveSharedUiPath(specifier);
+        const namesFromModule = new Map([...exportedFiles].filter(([, file]) => normalize(file) === resolvedFile).map(([name]) => [name, name]));
+        if (!namesFromModule.size) continue;
+        const bindings = statement.importClause.namedBindings;
+        if (bindings && ts.isNamespaceImport(bindings)) {
+            namespaces.set(bindings.name.text, namesFromModule);
+        }
+        if (bindings && ts.isNamedImports(bindings)) {
+            for (const item of bindings.elements) {
+                const exportedName = item.propertyName?.text || item.name.text;
+                if (namesFromModule.has(exportedName)) locals.set(item.name.text, exportedName);
+            }
+        }
+    }
+    const unwrap = node => {
+        while (ts.isAsExpression(node) || ts.isSatisfiesExpression(node) || ts.isParenthesizedExpression(node)) node = node.expression;
+        return node;
+    };
+    let changed = true;
+    while (changed) {
+        changed = false;
+        const visit = node => {
+            if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) {
+                const initializer = unwrap(node.initializer);
+                if (ts.isIdentifier(initializer) && locals.has(initializer.text) && !locals.has(node.name.text)) {
+                    locals.set(node.name.text, locals.get(initializer.text));
+                    changed = true;
+                }
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(source);
+    }
+    return { locals, namespaces };
+}
+
+function importedJsxSymbol(tag, candidates) {
+    if (ts.isIdentifier(tag)) return candidates.locals.get(tag.text);
+    if (ts.isPropertyAccessExpression(tag) && ts.isIdentifier(tag.expression))
+        return candidates.namespaces.get(tag.expression.text)?.get(tag.name.text);
+    return undefined;
+}
+
+function symbolSourcePath(symbol) {
+    return (symbol.valueDeclaration || symbol.declarations?.[0])?.getSourceFile().fileName;
+}
+
+test('Amount consumers declare wrapping outside DataTable columns and keep table money unbroken', () => {
+    let wrapped = 0, table = 0;
+    const moduleRoot = path.join(root, 'apps/web/src/modules');
+    const amountFiles = uiSourceFiles(root).filter(file => path.resolve(file).startsWith(moduleRoot + path.sep) && file.endsWith('.tsx'));
+    for (const file of amountFiles) {
+        const sourceText = fs.readFileSync(file, 'utf8');
+        if (!sourceText.includes('<Amount') && !sourceText.includes('.Amount')) continue;
+        const source = readSourceFile(file);
+        assert.ok(source, `missing TypeScript program source for ${file}`);
+        const candidates = importedJsxCandidates(source, new Map([['Amount', path.join(root, 'apps/web/src/shared/ui/components.tsx')]]));
+        const visit = node => {
+            if ((ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) && importedJsxSymbol(node.tagName, candidates) === 'Amount') {
+                let column = false;
+                for (let parent = node.parent; parent; parent = parent.parent) {
+                    if (ts.isPropertyAssignment(parent) && parent.name.getText(source) === 'render') column = true;
+                }
+                const wrap = node.attributes.properties.find(prop => ts.isJsxAttribute(prop) && prop.name.getText(source) === 'wrap');
+                if (column) { assert.equal(Boolean(wrap), false, 'table Amount uses the unbroken default'); table++; }
+                else { assert.ok(wrap && (!wrap.initializer || wrap.initializer.getText(source) === '{true}'), `outside-table Amount must wrap: ${source.fileName}:${source.getLineAndCharacterOfPosition(node.getStart()).line + 1}`); wrapped++; }
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(source);
+    }
+    assert.ok(wrapped > 0 && table > 0, 'both Money presentation branches need real consumers');
+});
+
 test('the shared catalog covers every public React component and supporting Column type', () => {
     const componentFile = 'apps/web/src/shared/ui/components.tsx';
     const compositionFile = 'apps/web/src/shared/ui/composition.tsx';
-    const components = publicFunctionContracts(componentFile).map(api => api.name);
+    const components = componentFiles.flatMap(publicFunctionContracts).map(api => api.name);
     const compositions = publicFunctionContracts(compositionFile).map(api => api.name);
     const catalog = fs.readFileSync(path.join(root, 'apps/web/src/shared/ui/README.md'), 'utf8');
     const actual = [...components, ...compositions].sort();
@@ -51,8 +153,8 @@ test('the shared catalog covers every public React component and supporting Colu
     const documented = catalogRows.filter(name => actual.includes(name));
     const unrecognized = catalogRows.filter(name => !actual.includes(name));
 
-    assert.equal(components.length, 21, `component exports changed: ${components.join(', ')}`);
-    assert.equal(compositions.length, 6, `composition exports changed: ${compositions.join(', ')}`);
+    assert.ok(components.length > 0 && compositions.length > 0, 'both public owner families must be discovered');
+    assert.equal(new Set(actual).size, actual.length, 'public API names must be unique across owner files');
     assert.deepEqual(documented.sort(), actual, 'every public component must have exactly one CURRENT/TARGET catalog row');
     assert.ok(unrecognized.every(name => name === 'Component' || name === 'Composition'), `catalog table has unmapped API rows: ${unrecognized.join(', ')}`);
     assert.match(catalog, /`Column<T>`/, 'DataTable supporting type must remain documented');
@@ -64,7 +166,7 @@ test('the shared catalog covers every public React component and supporting Colu
     const compositionSection = catalog.split('## 3. CURRENT/TARGET — sáu compositions')[1]?.split('## 4. Owner UI ngoài catalog')[0] || '';
     for (const prop of flowKeys.filter(name => name !== 'key')) assert.ok(compositionSection.includes(prop), `shared flow prop ${prop} is missing from the catalog contract`);
     const compositionNames = new Set(compositions);
-    for (const api of [...publicFunctionContracts(componentFile), ...publicFunctionContracts(compositionFile)]) {
+    for (const api of [...componentFiles.flatMap(publicFunctionContracts), ...publicFunctionContracts(compositionFile)]) {
         const row = rowByName.get(api.name);
         assert.ok(row, `missing catalog row for ${api.name}`);
         const undocumented = api.props.filter(prop => !(compositionNames.has(api.name) && flowKeys.includes(prop) && prop !== 'key') && !row.includes(prop));
@@ -72,11 +174,18 @@ test('the shared catalog covers every public React component and supporting Colu
     }
 });
 
+test('SPC-067 covers discovered public Shared APIs without a fixed export count', () => {
+    const standard = fs.readFileSync(path.join(root, 'docs/FRONTEND_SPACING_STANDARD.md'), 'utf8');
+    const block = standard.split('**SPC-067')[1]?.split('**SPC-068')[0];
+    assert.ok(block, 'the normative forwarding rule must exist');
+    assert.match(block, /mọi public Shared API và export mới/);
+    assert.match(block, /shared\/ui\/README\.md/);
+    assert.doesNotMatch(block, /\b\d+\s+(?:shared|public)\s+(?:exports|APIs|components)/i, 'the rule must cover future discovered exports');
+    assert.ok(sharedFiles.flatMap(publicFunctionContracts).length > 0, 'discovery cannot silently become empty');
+});
+
 test('every public React API has a direct rendered contract test', () => {
-    const exports = [
-        ...publicFunctionContracts('apps/web/src/shared/ui/components.tsx'),
-        ...publicFunctionContracts('apps/web/src/shared/ui/composition.tsx'),
-    ];
+    const exports = sharedFiles.flatMap(publicFunctionContracts);
     const renderTestPath = path.join(root, 'apps/web/tests/shared-ui-render-contract.test.tsx');
     assert.ok(fs.existsSync(renderTestPath), 'the shared rendered-contract suite must exist');
     const renderSource = fs.readFileSync(renderTestPath, 'utf8');
@@ -93,20 +202,18 @@ test('every public React API has a direct rendered contract test', () => {
 
 test('catalog declaration lines and stated JSX counts match resolved source symbols', () => {
     const catalog = fs.readFileSync(path.join(root, 'apps/web/src/shared/ui/README.md'), 'utf8');
-    const owners = new Map([
-        'apps/web/src/shared/ui/components.tsx',
-        'apps/web/src/shared/ui/composition.tsx',
-    ].flatMap(file => publicFunctionContracts(file).map(api => [
+    const owners = new Map(sharedFiles.flatMap(file => publicFunctionContracts(file).map(api => [
         moduleExports(file).find(symbol => symbol.getName() === api.name),
         { ...api, uses: 0 },
     ])));
-    for (const source of program.getSourceFiles()) {
-        const file = source.fileName.replaceAll('\\', '/');
-        if (!file.includes('/apps/web/src/') || source.isDeclarationFile) continue;
+    const ownerByName = new Map([...owners].map(([symbol, api]) => [api.name, symbol]));
+    for (const file of uiSourceFiles(root).filter(file => path.resolve(file).startsWith(path.join(root, 'apps/web/src') + path.sep))) {
+        const source = readSourceFile(file);
+        if (source.isDeclarationFile) continue;
+        const candidates = importedJsxCandidates(source, new Map([...owners].map(([symbol, api]) => [api.name, symbolSourcePath(symbol)])));
         function visit(node) {
-            if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
-                const local = checker.getSymbolAtLocation(node.tagName);
-                const symbol = local && (local.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(local) : local);
+            if ((ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) && importedJsxSymbol(node.tagName, candidates)) {
+                const symbol = ownerByName.get(importedJsxSymbol(node.tagName, candidates));
                 const api = owners.get(symbol);
                 if (api && api.declaration.getSourceFile() !== source) api.uses++;
             }
@@ -114,44 +221,43 @@ test('catalog declaration lines and stated JSX counts match resolved source symb
         }
         visit(source);
     }
+    const staleRows = [];
     for (const api of owners.values()) {
         const source = api.declaration.getSourceFile();
         const actualLine = source.getLineAndCharacterOfPosition(api.declaration.name.getStart(source)).line + 1;
         const row = catalog.match(new RegExp('^\\| ' + api.name + ' /[^\\n]+$', 'm'))?.[0];
         assert.ok(row, `${api.name} catalog row is required`);
         const documentedLine = Number(row.match(/\/(\d+) \|/)?.[1]);
-        assert.equal(documentedLine, actualLine, `${api.name} catalog source line is stale`);
+        if (documentedLine !== actualLine) staleRows.push(`${api.name}: documented line ${documentedLine}, source line ${actualLine}`);
         for (const count of row.matchAll(/\b(\d+) uses\b/g))
-            assert.equal(Number(count[1]), api.uses, `${api.name} catalog JSX count is stale`);
+            if (Number(count[1]) !== api.uses) staleRows.push(`${api.name}: documented uses ${count[1]}, source uses ${api.uses}`);
     }
+    assert.deepEqual(staleRows, [], `shared UI catalog has stale source line/use counts:\n${staleRows.join('\n')}`);
     assert.match(catalog, /<a id="8-layout-owner-crosswalk"><\/a>/, 'the canonical crosswalk anchor must be stable');
 });
 
 test('every shared React export has a resolved production consumer or an explicit zero-use lifecycle decision', () => {
-    const sharedFiles = [
-        'apps/web/src/shared/ui/components.tsx',
-        'apps/web/src/shared/ui/composition.tsx',
-    ];
     const owners = new Map(sharedFiles.flatMap(file => publicFunctionContracts(file).map(api => [moduleExports(file).find(symbol => symbol.getName() === api.name), api.name])));
+    const ownerByName = new Map([...owners].map(([symbol, name]) => [name, symbol]));
     const consumers = new Map([...owners].map(([symbol]) => [symbol, new Set()]));
     const normalized = file => path.resolve(file).replaceAll('\\', '/').toLowerCase();
     const sourceRoot = `${normalized(path.join(root, 'apps/web/src'))}/`;
     const ownerRoot = `${sourceRoot}shared/ui/`;
-    const productionFiles = program.getSourceFiles().filter(source => {
-        const file = normalized(source.fileName);
-        return file.startsWith(sourceRoot) && file.endsWith('.tsx') && !file.startsWith(ownerRoot) && !source.isDeclarationFile;
-    });
+    const productionFiles = uiSourceFiles(root).filter(file => {
+        const normalizedFile = normalized(file);
+        return normalizedFile.startsWith(sourceRoot) && normalizedFile.endsWith('.tsx') && !normalizedFile.startsWith(ownerRoot);
+    }).map(readSourceFile);
 
     function tagName(node) {
         return ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node) ? node.tagName : undefined;
     }
 
     for (const source of productionFiles) {
+        const candidates = importedJsxCandidates(source, new Map([...owners].map(([symbol, name]) => [name, symbolSourcePath(symbol)])));
         function visit(node) {
             const tag = tagName(node);
-            if (tag) {
-                const local = checker.getSymbolAtLocation(tag);
-                const resolved = local && (local.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(local) : local);
+            if (tag && importedJsxSymbol(tag, candidates)) {
+                const resolved = ownerByName.get(importedJsxSymbol(tag, candidates));
                 const files = resolved ? consumers.get(resolved) : undefined;
                 if (files) files.add(path.relative(root, source.fileName).replaceAll('\\', '/'));
             }
@@ -173,7 +279,7 @@ test('every shared React export has a resolved production consumer or an explici
             assert.ok(!zeroUseOwners.has(name), `${name} gained a production consumer; refresh its S14 lifecycle evidence and catalog`);
         }
     }
-    assert.equal(owners.size, 27, 'public consumer inventory must include all 27 component/composition exports');
+    assert.equal(owners.size, 28, 'public consumer inventory must include all 28 component/composition exports');
 });
 
 test('required UI evidence and regression gates remain wired to root verify and the active parent workflow', () => {
@@ -191,7 +297,12 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.ok(fs.existsSync(parentWorkflow), 'the active frontend workflow must remain in the repository root');
     assert.equal(fs.existsSync(path.join(root, '.github/workflows/frontend.yml')), false, 'the retired nested workflow must not shadow the parent workflow');
     const workflow = fs.readFileSync(parentWorkflow, 'utf8');
-    assert.match(workflow, /BotSalesAI_Frontend\/\*\*/);
+    assert.match(workflow, /^  push:\s*$/m);
+    assert.match(workflow, /^  pull_request:\s*$/m);
+    assert.doesNotMatch(workflow, /^\s+paths(?:-ignore)?:/m, 'Every change must run the required gates');
+    const browserInstall = workflow.indexOf('npx playwright install --with-deps chromium firefox');
+    const verifyStep = workflow.indexOf('run: npm run verify');
+    assert.ok(browserInstall >= 0 && browserInstall < verifyStep, 'Browser-backed verify requires installed engines first');
     assert.match(workflow, /npm run verify/);
     assert.match(workflow, /npm run test:e2e/);
     assert.match(workflow, /timeout-minutes: 45/);
@@ -231,17 +342,15 @@ test('QueryState consumers reserve section loading for primary content and keep 
 
     const primaryOwners = new Set(['DataTable', 'Stats', 'SectionGrid', 'Panel', 'FormFields']);
     const ownerSymbols = new Map([...components, ...compositions].filter(([name]) => primaryOwners.has(name)));
+    const candidateNames = new Set(['QueryState', 'EditDialog', ...primaryOwners]);
+    const candidateSymbols = new Map([...components, ...compositions].filter(([name]) => candidateNames.has(name)).map(([name, symbol]) => [name, symbolSourcePath(symbol)]));
     const moduleRoot = path.join(root, 'apps/web/src/modules');
     const sourceFiles = uiSourceFiles(root).filter(file => path.resolve(file).startsWith(moduleRoot + path.sep) && file.endsWith('.tsx'));
     let placementCount = 0;
     let sectionCount = 0;
 
-    function resolvesTo(tagName, exportedSymbol) {
-        const localSymbol = checker.getSymbolAtLocation(tagName);
-        if (!localSymbol) return false;
-        return localSymbol.flags & ts.SymbolFlags.Alias
-            ? checker.getAliasedSymbol(localSymbol) === exportedSymbol
-            : localSymbol === exportedSymbol;
+    function resolvesTo(tagName, exportedSymbol, candidates) {
+        return importedJsxSymbol(tagName, candidates) === exportedSymbol.getName();
     }
 
     function tagNameOf(node) {
@@ -249,18 +358,19 @@ test('QueryState consumers reserve section loading for primary content and keep 
     }
 
     for (const file of sourceFiles) {
-        const source = program.getSourceFile(file);
+        const source = readSourceFile(file);
         assert.ok(source, `missing TypeScript program source for ${file}`);
+        const candidates = importedJsxCandidates(source, candidateSymbols);
         function visit(node) {
             const queryTag = tagNameOf(node);
-            if (queryTag && resolvesTo(queryTag, queryState)) {
+            if (queryTag && resolvesTo(queryTag, queryState, candidates)) {
                 const queryElement = ts.isJsxElement(node.parent) ? node.parent : undefined;
                 const contentOwners = new Set();
                 function inspectChildren(child) {
                     const childTag = tagNameOf(child);
-                    if (childTag && resolvesTo(childTag, queryState)) return;
+                    if (childTag && resolvesTo(childTag, queryState, candidates)) return;
                     if (childTag) {
-                        for (const [owner, symbol] of ownerSymbols) if (resolvesTo(childTag, symbol)) contentOwners.add(owner);
+                        for (const [owner, symbol] of ownerSymbols) if (resolvesTo(childTag, symbol, candidates)) contentOwners.add(owner);
                     }
                     ts.forEachChild(child, inspectChildren);
                 }
@@ -268,7 +378,7 @@ test('QueryState consumers reserve section loading for primary content and keep 
 
                 let insideDialog = false;
                 for (let parent = node.parent; parent; parent = parent.parent) {
-                    if (ts.isJsxElement(parent) && resolvesTo(parent.openingElement.tagName, editDialog)) insideDialog = true;
+                    if (ts.isJsxElement(parent) && resolvesTo(parent.openingElement.tagName, editDialog, candidates)) insideDialog = true;
                 }
                 const shouldUseSection = !insideDialog && contentOwners.size > 0;
                 const profileAttribute = node.attributes.properties.find(property => ts.isJsxAttribute(property) && property.name.text === 'pendingProfile');
@@ -295,7 +405,7 @@ test('body modes, placement roles and geometry keys match the TypeScript contrac
     const contracts = publicFunctionContracts('apps/web/src/shared/ui/composition.tsx');
     const components = publicFunctionContracts('apps/web/src/shared/ui/components.tsx');
     const byName = new Map(contracts.map(api => [api.name, api]));
-    const ownerContract = owner => owner === 'Panel' ? components.find(api => api.name === owner) : byName.get(owner);
+    const ownerContract = owner => byName.get(owner) || components.find(api => api.name === owner);
 
     for (const [owner, values] of Object.entries(bodyModes)) {
         const api = ownerContract(owner);
@@ -395,10 +505,7 @@ test('Panel geometry and DataTable columns remain closed public contracts', () =
 });
 
 test('shared component and composition props expose no arbitrary layout/style escape hatch', () => {
-    const contracts = [
-        ...publicFunctionContracts('apps/web/src/shared/ui/components.tsx'),
-        ...publicFunctionContracts('apps/web/src/shared/ui/composition.tsx'),
-    ];
+    const contracts = sharedFiles.flatMap(publicFunctionContracts);
 
     for (const api of contracts) {
         const escaped = api.props.filter(prop => forbiddenStyleProps.has(prop));
@@ -408,7 +515,7 @@ test('shared component and composition props expose no arbitrary layout/style es
 
 test('layout role types, runtime values, consumers and ownership documentation stay closed', () => {
     const layoutFile = 'apps/web/src/shared/ui/layout.ts';
-    const source = program.getSourceFile(path.join(root, layoutFile));
+    const source = readSourceFile(path.join(root, layoutFile));
     assert.ok(source, `expected ${layoutFile}`);
     const contract = source.statements.find(statement => ts.isTypeAliasDeclaration(statement) && statement.name.text === 'LayoutSxContract');
     const layoutDeclaration = source.statements.flatMap(statement => ts.isVariableStatement(statement) ? statement.declarationList.declarations : [])

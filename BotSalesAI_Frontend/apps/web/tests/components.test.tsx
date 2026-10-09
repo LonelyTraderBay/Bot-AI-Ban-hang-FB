@@ -11,7 +11,6 @@ import {MemoryRouter,useSearchParams} from 'react-router-dom';
 import {colors,tokens} from '@botsales/tokens';
 import {theme} from '../src/shared/ui/theme';
 import {CopyableCode,DataTable,EditDialog,Empty,ErrorNotice,Pager,Panel,PartialDataNotice,QueryState,Status,Toolbar} from '../src/shared/ui/components';
-import {UnknownResultError} from '../src/shared/api/errors';
 import {useListQuery} from '../src/shared/model/filters';
 import type {QueryOperationId} from '../src/shared/api/client';
 import {auditAppDesignSource,readProjectFile} from '../../../tests/design/palette-guard.mjs';
@@ -172,6 +171,12 @@ describe('Accessible shared presentation',()=>{
         expect(screen.getByText('Sản phẩm mẫu')).toBeInTheDocument();
     });
 
+    it('keeps contextual empty actions inside the shared table empty state',()=>{
+        renderWithTheme(<DataTable rows={[]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách tác vụ" empty="Chưa có tác vụ. Chọn tệp để bắt đầu." emptyAction={<Button>Chọn tệp</Button>}/>);
+        expect(screen.getByRole('status')).toHaveTextContent('Chưa có tác vụ. Chọn tệp để bắt đầu.');
+        expect(screen.getByRole('button',{name:'Chọn tệp'})).toBeInTheDocument();
+    });
+
     it('keeps status and empty states understandable without relying on color',()=>{
         renderWithTheme(<><Status value="unknown"/><Empty text="Chưa có kết quả phù hợp."/></>);
         expect(screen.getByText(/chưa rõ/i)).toBeInTheDocument();
@@ -207,8 +212,8 @@ describe('Accessible shared presentation',()=>{
         expect(empty).not.toBeNull();
         expect(getComputedStyle(empty!).gap).toBe(`${tokens.space.lg}px`);
         expect(getComputedStyle(empty!).paddingLeft).toBe(`${tokens.space.lg}px`);
-        expect(getComputedStyle(screen.getByText('Chưa tải đủ dữ liệu.').closest('[role="status"]')!).marginBottom).toBe(`${tokens.space.lg}px`);
-        expect(getComputedStyle(screen.getByRole('alert')).marginBottom).toBe(`${tokens.space.lg}px`);
+        expect(getComputedStyle(screen.getByText('Chưa tải đủ dữ liệu.').closest('[role="status"]')!).marginBottom).toBe(`${tokens.space.md}px`);
+        expect(getComputedStyle(screen.getByRole('alert')).marginBottom).toBe(`${tokens.space.md}px`);
     });
 
     it('sets dialog insets and action gap explicitly instead of inheriting button margins',async()=>{
@@ -221,10 +226,10 @@ describe('Accessible shared presentation',()=>{
         const description=dialog.querySelector('[id$="-description"]');
         expect(content).not.toBeNull();
         expect(actions).not.toBeNull();
-        expect(['16px','24px']).toContain(getComputedStyle(content!).paddingLeft);
+        expect(getComputedStyle(content!).paddingLeft).toBe(`${tokens.space.lg}px`);
         expect(['16px','32px']).toContain(getComputedStyle(dialog).marginLeft);
         expect(getComputedStyle(description!).marginBottom).toBe(`${tokens.space.lg}px`);
-        expect(getComputedStyle(actions!).padding).toBe(`${tokens.space.lg}px`);
+        expect(getComputedStyle(actions!).padding).toBe(`${tokens.space.md}px`);
         expect(getComputedStyle(actions!).gap).toBe(`${tokens.space.sm}px`);
         expect(getComputedStyle(actions!.querySelectorAll('button')[1]).marginLeft).toBe('0px');
     });
@@ -257,8 +262,21 @@ describe('Accessible shared presentation',()=>{
         renderWithTheme(<MemoryRouter initialEntries={['/s/shop/categories?status=active&cursor=current']}><Pager page={{limit:20,total:25,hasMore:true,nextCursor:'cursor-next'}}/><QueryProbe/></MemoryRouter>);
         await user.click(screen.getByRole('button',{name:'Trang tiếp'}));
         expect(screen.getByLabelText('Bộ lọc')).toHaveTextContent('status=active&cursor=cursor-next');
+        expect((screen.getByRole('button',{name:'Trang trước'}) as HTMLButtonElement).disabled).toBe(false);
+        await user.click(screen.getByRole('button',{name:'Trang trước'}));
+        expect(screen.getByLabelText('Bộ lọc')).toHaveTextContent('status=active');
+        await user.click(screen.getByRole('button',{name:'Trang tiếp'}));
         await user.click(screen.getByRole('button',{name:'Đầu danh sách'}));
         expect(screen.getByLabelText('Bộ lọc')).toHaveTextContent('status=active');
+    });
+
+    it('keeps a deep-linked cursor usable with an explicit first-list fallback',async()=>{
+        const user=userEvent.setup();
+        renderWithTheme(<MemoryRouter initialEntries={['/s/pager-direct?filter=ready&cursor=opaque-cursor']}><Pager page={{limit:20,hasMore:true,nextCursor:'another-cursor'}}/><QueryProbe/></MemoryRouter>);
+        expect((screen.getByRole('button',{name:'Trang trước'}) as HTMLButtonElement).disabled).toBe(true);
+        expect((screen.getByRole('button',{name:'Đầu danh sách'}) as HTMLButtonElement).disabled).toBe(false);
+        await user.click(screen.getByRole('button',{name:'Đầu danh sách'}));
+        expect(screen.getByLabelText('Bộ lọc')).toHaveTextContent('filter=ready');
     });
 
     it.each([null, ''] as const)('disables next when the page claims more results but has no usable cursor (%s)',async nextCursor=>{

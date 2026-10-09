@@ -470,6 +470,7 @@ function scan(root, registryPath = null) {
                     if (!validText) addFinding(file, locationOf(sourceFile, node), key, exprLabel(node), 'BRIDGE_CSS_TOKEN_INVALID', 'Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references');
                     return;
                 }
+                if (cssPixelCall(node)) return;
                 addFinding(file, locationOf(sourceFile, node), key, exprLabel(node), 'BRIDGE_CSS_TOKEN_INVALID', 'Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references');
             };
             if (!cssValues || !ts.isObjectLiteralExpression(cssValues)) addFinding(file, { line: 1, column: 1 }, 'layoutCss', '', 'BRIDGE_CSS_TOKEN_INVALID', 'Bridge must export a structured layoutCss role map');
@@ -487,6 +488,7 @@ function scan(root, registryPath = null) {
             if (!reference) return null;
             const terminal = reference.path.at(-1);
             if (reference.importedName === 'layoutCss') {
+                if (reference.path.join('.') === 'form.labelAfterGap' && property === 'marginBottom') return null;
                 if (!['padding'].includes(property) || terminal !== 'cellInset') return `CSS role ${terminal || '(map)'} does not match spacing property ${property}`;
                 return null;
             }

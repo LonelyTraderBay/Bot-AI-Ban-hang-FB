@@ -99,3 +99,18 @@ test('related sibling gaps belong to ActionGroup comfortable density, not consum
     const unknown = inspectComposition(`import {ActionGroup} from '../../shared/ui/composition'; const UI=()=> <ActionGroup density="spacious"/>;`);
     assert.ok(unknown.issues.some(issue => issue.rule === 'composition.value-unknown'));
 });
+
+test('density profiles are finite and new spacing paths retain the shared owner', () => {
+    const valid = inspectComposition(`import { FormFields, SurfaceContent, PageSections } from '../../shared/ui/composition'; import { Panel, EditDialog } from '../../shared/ui/components'; const UI=()=> <><FormFields density="compact"/><SurfaceContent rhythm="dividedRows"/><PageSections rhythm="major"/><Panel density="comfortable"/><EditDialog density="comfortable"/></>;`);
+    assert.deepEqual(valid.issues, []);
+    for (const [name, prop] of [['FormFields','density'],['SurfaceContent','rhythm'],['PageSections','rhythm'],['Panel','density'],['EditDialog','density']]) {
+        for (const value of ['"unknown"','{choice}']) {
+            const result = inspectComposition(`import { ${name} } from '../../shared/ui/${['Panel','EditDialog'].includes(name)?'components':'composition'}'; const UI=()=> <${name} ${prop}=${value}/>;`);
+            assert.ok(result.issues.some(issue => issue.rule === 'composition.value-unknown'), name + ' ' + value);
+        }
+    }
+    for (const role of ['form.compactFieldGap','page.majorSectionGap','detail.dividedListGap']) {
+        const result = inspectComposition(`import { Stack } from '@mui/material'; import { layoutSx } from '../../shared/ui/layout'; const UI=()=> <Stack sx={layoutSx.${role}}/>;`);
+        assert.equal(result.issues[0]?.rule, 'composition.shared-owner', role);
+    }
+});

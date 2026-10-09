@@ -1,12 +1,14 @@
 import { createRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Button, CssBaseline, TextField, ThemeProvider } from '@mui/material';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { tokens } from '@botsales/tokens';
 import { theme } from '../src/shared/ui/theme';
+import { DraftConflict } from '../src/shared/ui/draft-conflict';
+import { useVersionedDraft } from '../src/shared/model/versioned-draft';
 import { ScopeContext } from '../src/shared/model/scope';
 import type { Scope } from '../src/shared/model/scope';
 import { UnknownResultError } from '../src/shared/api/errors';
@@ -36,6 +38,26 @@ function LocationProbe() {
 }
 
 describe('S10 shared component rendered-slot contract', () => {
+    it('DraftConflict requires a two-sided choice, excludes hidden data, and applies only to the draft', async () => {
+        const user = userEvent.setup();
+        function Harness() {
+            const [draft, setDraft] = useState({ name: 'Base', secret: '' });
+            const [version, setVersion] = useState(1);
+            const editor = useVersionedDraft({ identity: 'synthetic', source: { version, values: { name: version === 1 ? 'Base' : 'Server', secret: '' }, hidden: ['secret'] }, draft, apply: setDraft, refresh: async () => undefined });
+            return <><Button onClick={() => { setDraft({ name: 'Mine', secret: '' }); setVersion(2); }}>Concurrent edit</Button><DraftConflict editor={editor} labels={{ name: 'Tên', secret: 'Ẩn' }}/><output aria-label="Bản nháp">{draft.name}</output><output aria-label="Phiên bản">{editor.baseline?.version}</output></>;
+        }
+        renderWithTheme(<Harness/>);
+        await user.click(screen.getByRole('button', { name: 'Concurrent edit' }));
+        await user.click(screen.getByRole('button', { name: 'Đối chiếu', exact: true }));
+        expect(screen.getByRole('dialog', { name: 'Đối chiếu thay đổi', exact: true })).toBeInTheDocument();
+        expect(screen.queryByRole('combobox', { name: 'Chọn dữ liệu: Ẩn' })).not.toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Áp dụng vào bản nháp' })).toBeDisabled();
+        await user.click(screen.getByRole('combobox', { name: 'Chọn dữ liệu: Tên' }));
+        await user.click(screen.getByRole('option', { name: 'Giữ bản nháp' }));
+        await user.click(screen.getByRole('button', { name: 'Áp dụng vào bản nháp' }));
+        expect(screen.getByLabelText('Bản nháp')).toHaveTextContent('Mine');
+        expect(screen.getByLabelText('Phiên bản')).toHaveTextContent('2');
+    });
     it('PageHeader renders its eyebrow, h1, description and action slots', () => {
         renderWithTheme(<PageHeader eyebrow="BÁO CÁO" title="Tổng quan bán hàng" subtitle="Dữ liệu trong ngày" actions={<Button>Mở báo cáo</Button>} />);
         expect(screen.getByText('BÁO CÁO')).toBeInTheDocument();
@@ -73,9 +95,11 @@ describe('S10 shared component rendered-slot contract', () => {
     });
 
     it('Amount formats supported money and its null fallback through the shared owner', () => {
-        renderWithTheme(<><Amount value={{ amount: '12345.6700', currency: 'VND' }} /><Amount value={null} /></>);
+        renderWithTheme(<><Amount wrap value={{ amount: '12345.6700', currency: 'VND' }} /><Amount value={null} /></>);
         expect(screen.getByText('12.345,67 ₫')).toBeInTheDocument();
+        expect(screen.getByText('12.345,67 ₫')).toHaveStyle({ whiteSpace: 'normal', overflowWrap: 'anywhere' });
         expect(screen.getByText('Chưa có dữ liệu')).toBeInTheDocument();
+        expect(screen.getByText('Chưa có dữ liệu')).toHaveStyle({ whiteSpace: 'nowrap' });
     });
 
     it('CopyableCode announces clipboard failure without losing the code slot', async () => {
@@ -92,7 +116,8 @@ describe('S10 shared component rendered-slot contract', () => {
         renderWithTheme(<><Status value="active" /><Status value="partial" /><Status value="unmapped_status" /></>);
         expect(screen.getByText('Đang hoạt động')).toBeInTheDocument();
         expect(screen.getByText('Hoàn thành một phần')).toBeInTheDocument();
-        expect(screen.getByText('unmapped_status')).toBeInTheDocument();
+        expect(screen.getByText('Chưa xác định')).toBeInTheDocument();
+        expect(screen.getByText('Chưa xác định').closest('.MuiChip-root')).toHaveStyle({ height: 'fit-content', minHeight: '32px' });
     });
 
     it('DataTable renders a ReactNode column callback and its empty-state slot', () => {
@@ -133,12 +158,21 @@ describe('S10 shared component rendered-slot contract', () => {
         expect(screen.getByText(/command-42/)).toBeInTheDocument();
     });
 
-    it('Toolbar preserves its extra slot when search is unsupported and omits an empty form', () => {
-        const { rerender } = renderWithTheme(<MemoryRouter><Toolbar operation="listPrepJobs" extra={<Button>Bộ lọc bổ sung</Button>} /></MemoryRouter>);
+    it('Toolbar preserves extra and filters when search is unsupported and omits an empty form', () => {
+        const { rerender } = renderWithTheme(<MemoryRouter><Toolbar operation="listPrepJobs" extra={<Button>Bộ lọc bổ sung</Button>} filters={<Button>Bộ lọc phụ</Button>} /></MemoryRouter>);
         expect(screen.getByRole('button', { name: 'Bộ lọc bổ sung' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Bộ lọc phụ' }).closest('form')).toBeNull();
         expect(screen.queryByRole('textbox', { name: 'Tìm kiếm' })).not.toBeInTheDocument();
         rerender(<ThemeProvider theme={theme}><CssBaseline /><MemoryRouter><Toolbar operation="listPrepJobs" /></MemoryRouter></ThemeProvider>);
         expect(screen.queryByRole('textbox', { name: 'Tìm kiếm' })).not.toBeInTheDocument();
+    });
+
+    it('Toolbar places independent filters outside the search form and retains inline extra', () => {
+        renderWithTheme(<MemoryRouter><Toolbar operation="listProducts" extra={<Button>Trạng thái</Button>} filters={<TextField label="Lọc phụ" />} /></MemoryRouter>);
+        const form = screen.getByRole('textbox', { name: 'Tìm kiếm' }).closest('form');
+        expect(form).not.toBeNull();
+        expect(screen.getByRole('button', { name: 'Trạng thái' }).closest('form')).toBe(form);
+        expect(screen.getByRole('textbox', { name: 'Lọc phụ' }).closest('form')).toBeNull();
     });
 
     it('Pager treats a missing page as absent and labels a page without total', () => {
@@ -194,6 +228,52 @@ describe('S10 shared component rendered-slot contract', () => {
         expect(screen.getByRole('button', { name: 'Đóng' })).toBeDisabled();
     });
 
+    it.each(['footer', 'icon', 'Escape', 'backdrop'] as const)('EditDialog guards custom actions and the %s close path for dirty and busy states', async path => {
+        const user = userEvent.setup(), close = vi.fn();
+        const dialog = (busy: boolean) => <EditDialog open title="Guarded editor" onClose={close} busy={busy} actions={({ requestClose, busy }) => <Button disabled={busy} onClick={requestClose}>Custom close</Button>}><TextField label="Draft value" defaultValue="Original"/></EditDialog>;
+        const view = renderWithTheme(dialog(false));
+        await user.type(screen.getByLabelText('Draft value'), ' changed');
+        const requestClose = async () => {
+            if (path === 'footer' || path === 'icon') {
+                const button = screen.getByRole('button', { name: path === 'footer' ? 'Custom close' : 'Đóng', exact: true });
+                if ((button as HTMLButtonElement).disabled) { expect(button).toBeDisabled(); fireEvent.click(button); }
+                else await user.click(button);
+            }
+            if (path === 'Escape') await user.keyboard('{Escape}');
+            if (path === 'backdrop') {
+                const container = document.querySelector('.MuiDialog-container')!;
+                fireEvent.mouseDown(container); fireEvent.click(container);
+            }
+        };
+        await requestClose();
+        expect(screen.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?', exact: true })).toBeInTheDocument();
+        expect(close).not.toHaveBeenCalled();
+        await user.click(screen.getByRole('button', { name: 'Tiếp tục sửa', exact: true }));
+        await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?', exact: true })).not.toBeInTheDocument());
+        view.rerender(<ThemeProvider theme={theme}><CssBaseline/>{dialog(true)}</ThemeProvider>);
+        await requestClose();
+        expect(close).not.toHaveBeenCalled();
+        expect(screen.queryByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?', exact: true })).not.toBeInTheDocument();
+        expect(screen.getByLabelText('Draft value')).toHaveValue('Original changed');
+    });
+
+    it('EditDialog clears stale controls from its baseline after a successful save removes the form', async () => {
+        const user = userEvent.setup(), close = vi.fn();
+        function Harness() {
+            const [saved, setSaved] = useState(false);
+            return <EditDialog open title="Nhập dữ liệu" onClose={close} draftCommit={saved ? { scope: null, sequence: 1 } : undefined} actions={<Button onClick={() => setSaved(true)}>Lưu thành công</Button>}>
+                {saved ? <div role="status">Đã lưu</div> : <TextField label="Mã đợt" defaultValue="BAN-01" />}
+            </EditDialog>;
+        }
+        renderWithTheme(<Harness />);
+        await user.type(screen.getByRole('textbox', { name: 'Mã đợt' }), '-MỚI');
+        await user.click(screen.getByRole('button', { name: 'Lưu thành công' }));
+        expect(await screen.findByRole('status')).toHaveTextContent('Đã lưu');
+        await user.click(screen.getByRole('button', { name: 'Hủy', exact: true }));
+        expect(close).toHaveBeenCalledOnce();
+        expect(screen.queryByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?' })).not.toBeInTheDocument();
+    });
+
     it('PartialDataNotice and CapabilityUnavailable render their declared message slots', () => {
         renderWithTheme(<><PartialDataNotice /><CapabilityUnavailable>Quyền đồng bộ chưa bật</CapabilityUnavailable><CapabilityUnavailable /></>);
         const notices = screen.getAllByRole('status');
@@ -221,6 +301,10 @@ describe('S10 shared component rendered-slot contract', () => {
         await waitFor(() => expect(onConfirm).toHaveBeenCalledWith('12345'));
         expect(screen.getByLabelText('Trạng thái dialog')).toHaveTextContent('đang mở');
         expect(screen.getByRole('alert')).toHaveTextContent('Không thể xác nhận');
+        await user.clear(reason); await user.type(reason, '😀'.repeat(4));
+        expect(confirm).toBeDisabled();
+        await user.type(reason, '😀'); expect(confirm).toBeEnabled();
+        await user.click(confirm); await waitFor(() => expect(onConfirm).toHaveBeenLastCalledWith('😀'.repeat(5)));
     });
 
     it('ConfirmDialog closes only after a successful confirmation', async () => {
@@ -241,6 +325,19 @@ describe('S10 shared component rendered-slot contract', () => {
         expect(screen.getByText('Mã đơn')).toBeInTheDocument();
         expect(screen.getByTestId('detail-value')).toHaveTextContent('ORDER-1001');
         expect(screen.getByRole('separator')).toBeInTheDocument();
+    });
+    it('W04 DetailLine occupies one logical child including its divider in flow and plain containers', () => {
+        for (const grouped of [false, true]) {
+            const rows = <><DetailLine label="Bản gốc"><strong>Giá trị A</strong></DetailLine><DetailLine label="Bản mới"><strong>Giá trị B</strong></DetailLine></>;
+            const { container, unmount } = renderWithTheme(grouped ? <SurfaceContent data-testid="detail-slots">{rows}</SurfaceContent> : <div data-testid="detail-slots">{rows}</div>);
+            const parent = container.querySelector('[data-testid="detail-slots"]')!;
+            expect(parent.children).toHaveLength(2);
+            for (const child of [...parent.children]) {
+                expect(child.querySelectorAll('.MuiDivider-root')).toHaveLength(1);
+                expect(child.querySelector('strong')).not.toBeNull();
+            }
+            unmount();
+        }
     });
 });
 
@@ -271,7 +368,7 @@ describe('S10 shared composition rendered variants', () => {
 
     it('FieldGroup applies its toolbar inset only to the toolbar profile', () => {
         renderWithTheme(<FieldGroup bodyMode="toolbar" data-testid="toolbar-fields"><TextField label="Mã đơn" /></FieldGroup>);
-        expect(getComputedStyle(screen.getByTestId('toolbar-fields')).padding).toBe(tokens.space.lg + 'px');
+        expect(getComputedStyle(screen.getByTestId('toolbar-fields')).padding).toBe(tokens.space.md + 'px');
         expect(screen.getByRole('textbox', { name: 'Mã đơn' })).toBeInTheDocument();
     });
 
@@ -307,7 +404,7 @@ describe('S10 shared composition rendered variants', () => {
         renderWithTheme(<PageSections data-testid="page-sections"><><section>Phần A</section><section>Phần B</section></></PageSections>);
         const sections = screen.getByTestId('page-sections');
         expect(sections).toHaveAttribute('data-ui-composition', 'page-sections');
-        expect(getComputedStyle(sections).gap).toBe(tokens.space.xl + 'px');
+        expect(getComputedStyle(sections).gap).toBe(tokens.space.lg + 'px');
         expect(screen.getByText('Phần B')).toBeInTheDocument();
     });
 
@@ -319,5 +416,29 @@ describe('S10 shared composition rendered variants', () => {
         expect(getComputedStyle(grid).display).toBe('grid');
         expect(getComputedStyle(grid).gap).toBe(tokens.space.md + 'px');
         expect(screen.getByText('Chi tiết')).toBeInTheDocument();
+    });
+});
+
+
+describe('EditDialog pending content ownership', () => {
+    it.each([false, true])('locks content unless the editor explicitly retains late edits: %s', allow => {
+        renderWithTheme(<EditDialog open title="Kiểm tra chờ lưu" busy allowEditsWhileBusy={allow} onClose={() => undefined} actions={<Button disabled>Lưu</Button>}><TextField label="Bản nháp" /></EditDialog>);
+        const content = screen.getByLabelText('Bản nháp').closest('.MuiDialogContent-root');
+        if (allow) expect(content).not.toHaveAttribute('inert'); else expect(content).toHaveAttribute('inert');
+    });
+});
+
+describe('Operational density finite profiles', () => {
+    it.each([['compact', 12], ['comfortable', 16]] as const)('FormFields preserves its %s profile', (density, gap) => {
+        renderWithTheme(<FormFields density={density} data-testid="density-fields"><span>Nhập liệu</span></FormFields>);
+        expect(getComputedStyle(screen.getByTestId('density-fields')).gap).toBe(gap + 'px');
+    });
+    it.each([['content', 12], ['dividedRows', 0]] as const)('SurfaceContent preserves its %s rhythm', (rhythm, gap) => {
+        renderWithTheme(<SurfaceContent rhythm={rhythm} data-testid="density-surface"><DetailLine label="Tên">Giá trị</DetailLine></SurfaceContent>);
+        expect(getComputedStyle(screen.getByTestId('density-surface')).gap).toBe(gap + 'px');
+    });
+    it.each([['section', 16], ['major', 24]] as const)('PageSections preserves its %s rhythm', (rhythm, gap) => {
+        renderWithTheme(<PageSections rhythm={rhythm} data-testid="density-sections"><span>Nội dung</span></PageSections>);
+        expect(getComputedStyle(screen.getByTestId('density-sections')).gap).toBe(gap + 'px');
     });
 });

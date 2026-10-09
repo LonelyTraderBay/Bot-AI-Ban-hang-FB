@@ -80,6 +80,46 @@ function exception({ selector = '.skip-link', value = '12px', property = 'paddin
 
 beforeEach(resetFixture);
 
+function addLabelRole(group = 'form', value = 'cssPixel(tokens.space.xs)') {
+    fs.writeFileSync(path.join(fixtureRoot, 'apps/web/src/shared/ui/layout.ts'),
+        validBridge.replace('export const layoutCss = { table:', `export const layoutCss = { ${group}: { labelAfterGap: ${value} }, table:`));
+}
+
+test('CSS label gap accepts the canonical direct pixel constructor and its exact owner/property', () => {
+    addLabelRole();
+    writeSource(`import { Box } from '@mui/material'; import { layoutCss } from '../../shared/ui/layout';
+export function Good() { return <Box style={{ marginBottom: layoutCss.form.labelAfterGap }} />; }`);
+    const result = runChecker();
+    assert.equal(result.status, 0, result.stdout || result.stderr);
+    assert.deepEqual(reportOf(result).findings, []);
+});
+
+test('CSS label gap cannot be used as an unrelated spacing property', () => {
+    addLabelRole();
+    writeSource(`import { Box } from '@mui/material'; import { layoutCss } from '../../shared/ui/layout';
+export function Bad() { return <Box style={{ marginTop: layoutCss.form.labelAfterGap }} />; }`);
+    const result = runChecker();
+    assert.equal(result.status, 1);
+    assert.equal(reportOf(result).counts.SEMANTIC_ROLE_MISMATCH, 1);
+});
+
+test('CSS label gap rejects a raw pixel constructor argument', () => {
+    addLabelRole('form', 'cssPixel(4)');
+    writeSource('export function Bad() { return null; }');
+    const result = runChecker();
+    assert.equal(result.status, 1);
+    assert.equal(reportOf(result).counts.BRIDGE_CSS_TOKEN_INVALID, 1);
+});
+
+test('CSS label gap cannot impersonate a role from another owner', () => {
+    addLabelRole('other');
+    writeSource(`import { Box } from '@mui/material'; import { layoutCss } from '../../shared/ui/layout';
+export function Bad() { return <Box style={{ marginBottom: layoutCss.other.labelAfterGap }} />; }`);
+    const result = runChecker();
+    assert.equal(result.status, 1);
+    assert.equal(reportOf(result).counts.SEMANTIC_ROLE_MISMATCH, 1);
+});
+
 test('accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values', () => {
     writeSource(`import { Box, Stack, TextField } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
