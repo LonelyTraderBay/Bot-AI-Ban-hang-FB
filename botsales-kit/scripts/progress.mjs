@@ -16,6 +16,9 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const fail=m=>{throw new Error(m);};
 const rel=(base,p)=>{if(typeof p!=='string'||!p||path.isAbsolute(p))fail('Expected relative file path');const dest=path.resolve(base,p);if(dest!==base&&!dest.startsWith(base+path.sep))fail('Path escapes approved root: '+p);if(!fs.existsSync(dest)||!fs.statSync(dest).isFile())fail('Missing evidence/source file: '+p);const real=fs.realpathSync(dest), realBase=fs.realpathSync(base);if(!real.startsWith(realBase+path.sep))fail('Symlink escapes approved root');return real;};
+const sourceFile=p=>frontend&&p.startsWith('botsales-kit/')
+ ? rel(ROOT,p.slice('botsales-kit/'.length))
+ : rel(sourceRoot,p);
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plan=read(PLANFILE), state=read(FILE), stateBefore=sha(fs.readFileSync(FILE));
 const release=read(path.join(ROOT,'release.json'));
@@ -40,7 +43,7 @@ function verifyEvidence(t,s,evidencePath){
  if(!e.environment?.name||!e.environment?.details)fail('Missing actual environment');
  if(!Number.isInteger(e.checksTotal)||e.checksTotal<1||e.failed!==0)fail('No checks or failures present');
  if(!Array.isArray(e.sourceFiles)||!e.sourceFiles.length)fail('Missing actual source hashes');
- const unique=new Set();for(const f of e.sourceFiles){if(unique.has(f.path))fail('Duplicate source path');unique.add(f.path);if(!/^[a-f0-9]{64}$/.test(f.sha256||''))fail('Invalid source hash');if(sha(fs.readFileSync(rel(sourceRoot,f.path)))!==f.sha256)fail('Changed source '+f.path);}
+ const unique=new Set();for(const f of e.sourceFiles){if(unique.has(f.path))fail('Duplicate source path');unique.add(f.path);if(!/^[a-f0-9]{64}$/.test(f.sha256||''))fail('Invalid source hash');if(sha(fs.readFileSync(sourceFile(f.path)))!==f.sha256)fail('Changed source '+f.path);}
  const actualSnapshot=sha(Buffer.from(e.sourceFiles.map(f=>f.path+':'+f.sha256).sort().join('\n')));
  if(e.sourceSnapshotSha256!==actualSnapshot)fail('Snapshot digest mismatch');
  if(sha(fs.readFileSync(rel(ROOT,e.logFile)))!==e.logSha256)fail('Changed/missing log');

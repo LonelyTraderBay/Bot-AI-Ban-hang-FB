@@ -7,9 +7,13 @@ with tempfile.TemporaryDirectory(prefix='botsales-tracker-test-') as tmp:
  base=Path(tmp);kit=base/'kit';src=base/'source';src.mkdir();(src/'actual.txt').write_text('Fixture only; no product execution')
  for folder in ['scripts','execution','design','templates']:shutil.copytree(R/folder,kit/folder)
  shutil.copy2(R/'release.json',kit/'release.json')
+ # These tests cover the legacy full-product CLI in an isolated copy. The real
+ # repository defaults to the FE ledger and keeps the full-product ledger read-only.
+ for name in ['frontend-plan.json','frontend-progress.json','frontend-progress-report.json']:
+  (kit/'execution'/name).unlink(missing_ok=True)
  original=(kit/'execution/progress.json').read_bytes();plan=(kit/'execution/plan.json').read_bytes()
  def cmd(*args,ok=True):
-  p=subprocess.run(['node',str(kit/'scripts/progress.mjs'),*args],capture_output=True,text=True)
+  p=subprocess.run(['node',str(kit/'scripts/progress.mjs'),*args],capture_output=True,text=True,encoding='utf-8')
   if (p.returncode==0)!=ok:raise AssertionError((args,p.stdout,p.stderr))
   return p
  def reset():
@@ -57,6 +61,49 @@ with tempfile.TemporaryDirectory(prefix='botsales-tracker-test-') as tmp:
   cmd('start','T001','agent');cmd('block','T001','Need authorized repo access');assert json.loads(cmd('next').stdout).get('message');cmd('resume','T001');assert json.loads(cmd('next').stdout)['id']=='T001'
  test('Block/resume updates next without auto-skip',block)
  test('No-op fabricated report does not change percentage',lambda:cmd('report'))
+
+def frontend_source_roots_test(escape=False):
+ with tempfile.TemporaryDirectory(prefix='botsales-frontend-tracker-test-') as tmp:
+  base=Path(tmp);kit=base/'botsales-kit';source=base/'BotSalesAI_Frontend'
+  (kit/'scripts').mkdir(parents=True);(kit/'execution').mkdir();(kit/'contracts').mkdir()
+  (source/'apps/web/src').mkdir(parents=True)
+  shutil.copy2(R/'scripts/progress.mjs',kit/'scripts/progress.mjs')
+  shutil.copy2(R/'release.json',kit/'release.json')
+  (kit/'contracts/route-manifest.json').write_text('{"fixture":true}',encoding='utf-8')
+  (source/'apps/web/src/main.tsx').write_text('export const fixture = true;\n',encoding='utf-8')
+  plan_obj={'planId':'FRONTEND-PATH-TEST','version':'1','scope':'FRONTEND_WITH_SYNTHETIC_MOCK_API','phases':[{'id':'F00','title':'Fixture','weightPercent':100}],'tasks':[{'id':'FE001','priority':1,'phase':'F00','title':'Path fixture','dependsOn':[],'implementationSteps':[{'id':'S01','weight':1,'requiredEvidenceKind':'artifact_review'}]}]}
+  plan_bytes=(json.dumps(plan_obj,separators=(',',':'))+'\n').encode();(kit/'execution/frontend-plan.json').write_bytes(plan_bytes)
+  state={'version':'1.0','planId':'FRONTEND-PATH-TEST','planSha256':sha(plan_bytes),'scope':'FRONTEND_WITH_SYNTHETIC_MOCK_API','sourceRootRelative':'../BotSalesAI_Frontend','revision':0,'tasks':{'FE001':{'status':'NOT_STARTED','owner':None,'blockedReason':None,'steps':{'S01':{'status':'NOT_STARTED'}}}},'history':[],'migrations':[]}
+  (kit/'execution/frontend-progress.json').write_text(json.dumps(state),encoding='utf-8')
+  (kit/'execution/frontend-command-map.json').write_text('{"commands":[]}',encoding='utf-8')
+  log_rel='execution/evidence/FE001-S01.log';log=kit/log_rel;log.parent.mkdir(parents=True);log.write_text('Isolated source-root resolver test; no product claim.\n',encoding='utf-8')
+  sources=[
+   {'path':'apps/web/src/main.tsx','sha256':sha((source/'apps/web/src/main.tsx').read_bytes())},
+   {'path':'botsales-kit/contracts/route-manifest.json','sha256':sha((kit/'contracts/route-manifest.json').read_bytes())},
+  ]
+  if escape:sources[1]['path']='botsales-kit/../../outside/route-manifest.json'
+  snap=sha('\n'.join(sorted(f["path"]+':'+f['sha256'] for f in sources)).encode())
+  evidence={'taskId':'FE001','stepId':'S01','kind':'artifact_review','result':'PASS','verificationScope':'FRONTEND_WITH_SYNTHETIC_MOCK_API','executedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'sourceRevision':'SELFTEST-SNAPSHOT-ONLY','expected':'Resolve Frontend and canonical kit source paths within their respective roots.','observed':'Isolated source-root resolver fixture.','command':'manual isolated path fixture','reviewer':'selftest-runner','environment':{'name':'Isolated tracker test','details':'Synthetic source path fixture, not product execution','dataSource':'source-only'},'checksTotal':1,'failed':0,'sourceFiles':sources,'sourceSnapshotSha256':snap,'logFile':log_rel,'logSha256':sha(log.read_bytes())}
+  ev=kit/'execution/evidence/FE001-S01.json';ev.write_text(json.dumps(evidence),encoding='utf-8')
+  def run(*args,ok=True):
+   result=subprocess.run(['node',str(kit/'scripts/progress.mjs'),*args,'--defer-reports'],capture_output=True,text=True,encoding='utf-8')
+   if (result.returncode==0)!=ok:raise AssertionError((args,result.stdout,result.stderr))
+   return result
+  run('start','FE001','selftest')
+  if escape:
+   p=run('checkpoint','FE001','S01','execution/evidence/FE001-S01.json',ok=False)
+   if 'Path escapes approved root' not in p.stderr:raise AssertionError(p.stderr)
+  else:
+   run('checkpoint','FE001','S01','execution/evidence/FE001-S01.json')
+   status=json.loads(run('status').stdout)
+   if status['verifiedSteps']!=1:raise AssertionError(status)
+
+def record_frontend_root_test(name,escape):
+ try:frontend_source_roots_test(escape);results.append({'name':name,'status':'PASS'})
+ except Exception as e:results.append({'name':name,'status':'FAIL','error':str(e)})
+
+record_frontend_root_test('Frontend receipts resolve FE and kit paths in separate approved roots',False)
+record_frontend_root_test('Frontend kit-prefixed paths cannot escape the approved kit root',True)
 report={'scope':'TRACKER_SELF_TEST_ONLY_ISOLATED_COPIES','results':results,'passed':sum(r['status']=='PASS' for r in results),'total':len(results)}
 (R/'evidence/tracker-tests.json').write_text(json.dumps(report,ensure_ascii=False,indent=2));print(json.dumps(report,ensure_ascii=False,indent=2))
 assert report['passed']==report['total']
