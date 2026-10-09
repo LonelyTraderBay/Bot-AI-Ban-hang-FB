@@ -19,7 +19,6 @@ import { useListQuery } from '@/shared/model/filters';
 import { limitCodePoints, codePointLength, dateTime } from '@/shared/model/format';
 import { Amount, PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
 import { layoutSx } from '@/shared/ui/layout';
-import { AddressesPanel } from './addresses';
 const customerFormFields = [
     { name: 'displayName', labelKey: 'customers.form.customerName', multiline: false },
     { name: 'phone', labelKey: 'customers.form.phone', multiline: false },
@@ -121,7 +120,7 @@ export function CustomerPage() {
     return <>
         <PageHeader title={customer.data?.data.displayName || t('customers.detail.fallbackTitle')} subtitle={t('customers.detail.subtitle')} actions={<RouteLink to={listHref}>{t('customers.detail.listAction')}</RouteLink>}/>
         <QueryState query={customer} pendingProfile="section">
-            {customer.data && <SectionGrid shrinkChildren columns={{ xs: '1fr', lg: '1.2fr 1fr' }}>
+            {customer.data && <SectionGrid columns={{ xs: '1fr', lg: '1.2fr 1fr' }}>
                 <Panel title={t('customers.detail.information')} bodyMode="inset">
                     <FormFields component="form" ref={draftForm} data-draft-clean={!editor.dirty ? 'true' : undefined} onSubmit={save} >
                         <ErrorNotice error={update.error}/>
@@ -132,13 +131,12 @@ export function CustomerPage() {
                     </FormFields>
                 </Panel>
                 <PageSections >
-                    <AddressesPanel key={customer.data.data.id} customer={customer.data.data}/>
                     <Panel title={t('customers.detail.recentOrders')} bodyMode="inset">
                         <Stack>
                             {canReadOrders
                                 ? <QueryState query={orders}>
                                     {orders.data && <>
-                                        {orders.data.data.map(order => <DetailLine key={order.id} label={order.id}><RouteLink to={'/s/' + shop.id + '/orders/' + order.id}>Mã đơn: {order.id} · {businessLabel(order.orderState)}</RouteLink></DetailLine>)}
+                                        {orders.data.data.map(order => <DetailLine key={order.id} label={order.id}><RouteLink to={'/s/' + shop.id + '/orders/' + order.id}>{businessLabel(order.orderState)}</RouteLink></DetailLine>)}
                                         {orders.data.data.length === 0 && <Typography color="text.secondary">{t('customers.detail.noOrders')}</Typography>}
                                         <Typography variant="caption" color="text.secondary">{t('customers.detail.orderPreviewLimit')}</Typography>
                                         <RouteLink to={'/s/' + shop.id + '/orders'}>{t('customers.detail.openOrders')}</RouteLink>

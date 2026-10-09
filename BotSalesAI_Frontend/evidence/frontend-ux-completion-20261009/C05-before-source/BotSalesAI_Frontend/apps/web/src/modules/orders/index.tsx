@@ -16,11 +16,12 @@ import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, limitCodePoints, dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
 import { layoutSx } from '@/shared/ui/layout';
+import { getDemoAddressOptions } from './demo-address-preview';
 export function OrdersPage() { const { shop } = useScope(); const navigate = useNavigate(); const list = useApi('listOrders', { query: useListQuery('listOrders') }); return <><PageHeader title="Đơn hàng" subtitle="Tách riêng trạng thái đơn, giao hàng và thanh toán." actions={<MutationButton permission="orders.write" variant="contained" onClick={() => navigate(`/s/${shop.id}/orders/new`)}>Tạo đơn hàng</MutationButton>}/><Panel><Toolbar operation="listOrders" placeholder="Tìm mã đơn hoặc khách hàng…"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable label="Danh sách đơn hàng" rows={list.data.data} rowKey={o => o.id} columns={[
     {
         key: 'id', label: 'Đơn hàng', render: o => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{o.id}</Typography><Typography variant="caption" color="text.secondary">{dateTime(o.createdAt, shop.timezone)}</Typography></Stack>
     },
-    { key: 'customer', label: 'Khách', render: o => `Mã khách hàng: ${o.customerId}` }, { key: 'total', label: 'Tổng tiền', align: 'right', render: o => <Amount value={o.total}/> }, { key: 'order', label: 'Đơn', render: o => <Status value={o.orderState}/> }, { key: 'shipping', label: 'Giao hàng', render: o => <Status value={o.fulfillmentState}/> }, { key: 'payment', label: 'Tiền', render: o => <Status value={o.paymentState}/> }, { key: 'action', label: '', render: o => <RouteLink to={`/s/${shop.id}/orders/${o.id}`}>Xem đơn</RouteLink> }
+    { key: 'customer', label: 'Khách', render: o => o.customerId }, { key: 'total', label: 'Tổng tiền', align: 'right', render: o => <Amount value={o.total}/> }, { key: 'order', label: 'Đơn', render: o => <Status value={o.orderState}/> }, { key: 'shipping', label: 'Giao hàng', render: o => <Status value={o.fulfillmentState}/> }, { key: 'payment', label: 'Tiền', render: o => <Status value={o.paymentState}/> }, { key: 'action', label: '', render: o => <RouteLink to={`/s/${shop.id}/orders/${o.id}`}>Xem đơn</RouteLink> }
 ]}/><Pager page={list.data.page}/></>}</QueryState></Panel></>; }
 function DraftForm({ initial, onSaved, onBusyChange }: {
     initial?: Order;
@@ -44,8 +45,6 @@ function DraftForm({ initial, onSaved, onBusyChange }: {
     useEffect(() => { onBusyChange?.(create.pending || update.pending); }, [create.pending, update.pending, onBusyChange]);
     const initialNotes = typeof initial?.notes === 'string' ? initial.notes : '';
     const [customerId, setCustomer] = useState(initial?.customerId || params.get('customerId') || ''), [conversationId, setConversation] = useState(initial?.conversationId || params.get('conversationId') || ''), [warehouse, setWarehouse] = useState(initial?.warehouseId || shop.defaultWarehouseId), [addressId, setAddress] = useState(initial?.shippingAddressId || ''), [method, setMethod] = useState<'cod' | 'prepay'>(initial?.paymentMethod || 'cod'), [notes, setNotes] = useState(initialNotes);
-    const warehouses = usePagedApi('listWarehouses', { query: { status: 'active', limit: 20 } }, useCan('inventory.read'));
-    const addresses = usePagedApi('listCustomerAddresses', { path: { customerId }, query: { status: 'active', limit: 20 } }, !!customerId && canReadCustomers);
     const conv = usePagedApi('listConversations', { query: { customerId: customerId || undefined, limit: 20 } }, canReadConversations && !!customerId);
     const [lines, setLines] = useState(initial?.lines.map(l => ({ key: l.id, variantId: l.variantId, variantLabel: `${l.name} · ${l.sku}`, quantity: String(l.quantity) })) || [{ key: crypto.randomUUID(), variantId: '', variantLabel: '', quantity: '1' }]);
     const variants = products.data?.data.filter(p => p.status === 'active').flatMap(p => p.variants.filter(v => v.active).map(v => ({ ...v, productName: p.name }))) || [];
@@ -58,13 +57,13 @@ function DraftForm({ initial, onSaved, onBusyChange }: {
     };
     const fresh = useApi('getOrder', { path: { orderId: resource?.id || '' } }, !!resource);
     const current = fresh.data && (!resource || fresh.data.data.version >= resource.version) ? fresh.data.data : resource;
-    const values = { customerId, conversationId, warehouse, addressId, notes, lines: lines.map(line => ({ variantId: line.variantId, quantity: line.quantity })) };
+    const values = { customerId, conversationId, warehouse, notes, lines: lines.map(line => ({ variantId: line.variantId, quantity: line.quantity })) };
     const editor = useVersionedDraft({
         identity: `${shop.id}:order:${resource?.id || 'new'}`,
         source: current ? orderSnapshot(current) : undefined,
         draft: values,
         apply: value => {
-            setCustomer(value.customerId); setConversation(value.conversationId); setWarehouse(value.warehouse); setAddress(value.addressId); setNotes(value.notes);
+            setCustomer(value.customerId); setConversation(value.conversationId); setWarehouse(value.warehouse); setNotes(value.notes);
             setLines(existing => value.lines.map(line => ({ ...line, key: existing.find(item => item.variantId === line.variantId)?.key || crypto.randomUUID(), variantLabel: existing.find(item => item.variantId === line.variantId)?.variantLabel || '' })));
         }, refresh: () => fresh.refetch({ throwOnError: true }),
     });
@@ -80,7 +79,6 @@ function DraftForm({ initial, onSaved, onBusyChange }: {
                 ...(prepared.patch.customerId !== undefined ? { customerId: body.customerId } : {}),
                 ...(prepared.patch.conversationId !== undefined ? { conversationId: body.conversationId } : {}),
                 ...(prepared.patch.warehouse !== undefined ? { warehouseId: body.warehouseId } : {}),
-                ...(prepared.patch.addressId !== undefined ? { shippingAddressId: addressId || null } : {}),
                 ...(prepared.patch.lines !== undefined ? { lines: body.lines } : {}),
                 ...(prepared.patch.notes !== undefined ? { notes: body.notes } : {}),
             } });
@@ -91,14 +89,14 @@ function DraftForm({ initial, onSaved, onBusyChange }: {
     } catch (error) { editor.failed(error); } };
     const selectedCustomer = customers.data?.data.find(customer => customer.id === customerId);
     return <Box component="form" ref={form => { const element = form as HTMLFormElement | null; formRef.current = element; bindDraft(element); }} onSubmit={event => { event.preventDefault(); if (valid) void save(); }}><PageSections >
-        <ErrorNotice error={create.error || update.error}/><DraftConflict editor={editor} labels={{ customerId: 'Khách hàng', conversationId: 'Hội thoại', warehouse: 'Kho xuất', addressId: 'Địa chỉ giao hàng', notes: 'Ghi chú', lines: 'Dòng đơn hàng' }} busy={create.pending || update.pending}/>
+        <ErrorNotice error={create.error || update.error}/><DraftConflict editor={editor} labels={{ customerId: 'Khách hàng', conversationId: 'Hội thoại', warehouse: 'Kho xuất', notes: 'Ghi chú', lines: 'Dòng đơn hàng' }} busy={create.pending || update.pending}/>
         {!canReadCustomers && <Alert severity="warning">Bạn cần quyền customers.read để tìm và tạo đơn với khách hàng. Đơn nháp hiện có vẫn giữ nguyên mã khách.</Alert>}
         {!canReadProducts && <Alert severity="warning">Bạn cần quyền catalog.read để tìm và chọn sản phẩm cho đơn hàng.</Alert>}
         {customers.isError && <ErrorNotice error={customers.error}/>}
         {products.isError && <ErrorNotice error={products.error}/>}
         <Panel title="Người mua và giao hàng" bodyMode="inset"><FormFields >
             <TextField label="Tìm khách hàng" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} disabled={!canReadCustomers} helperText="Tìm qua listCustomers với q; chỉ chọn mã do API trả về."/>
-            <TextField select label="Khách hàng" value={customerId} onChange={e => { setCustomer(e.target.value); setConversation(''); setAddress(''); }} disabled={!canReadCustomers && !resource} required={canReadCustomers} helperText={canReadCustomers ? (customers.isPending ? 'Đang tải khách hàng…' : customers.data?.data.length === 0 ? 'Không tìm thấy khách phù hợp.' : !customerId ? 'Chọn khách hàng để lưu đơn nháp.' : undefined) : undefined}>
+            <TextField select label="Khách hàng" value={customerId} onChange={e => { setCustomer(e.target.value); setConversation(''); }} disabled={!canReadCustomers && !resource} required={canReadCustomers} helperText={canReadCustomers ? (customers.isPending ? 'Đang tải khách hàng…' : customers.data?.data.length === 0 ? 'Không tìm thấy khách phù hợp.' : !customerId ? 'Chọn khách hàng để lưu đơn nháp.' : undefined) : undefined}>
                 {customerId && !selectedCustomer && <MenuItem value={customerId}>Đang giữ mã khách: {customerId}</MenuItem>}
                 {customers.data?.data.map(customer => <MenuItem key={customer.id} value={customer.id}>{customer.displayName}</MenuItem>)}
             </TextField>
@@ -108,24 +106,17 @@ function DraftForm({ initial, onSaved, onBusyChange }: {
             </TextField>
             <LookupLoadMore label="hội thoại" loadedCount={conv.loadedCount} hasMore={conv.hasMore} busy={conv.isLoadingMore} onLoadMore={conv.loadMore}/>
             <FormFields direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'start' }}>
-                <TextField select label="Kho xuất" value={warehouse} onChange={e => setWarehouse(e.target.value)} fullWidth disabled={create.pending || update.pending} sx={{ flex: 1, minWidth: 0 }}>
-                    {warehouse && !warehouses.data?.data.some(w => w.id === warehouse) && <MenuItem value={warehouse}>Đang giữ kho {warehouse}</MenuItem>}
-                    {warehouses.data?.data.map(w => <MenuItem key={w.id} value={w.id}>{w.code} · {w.name}</MenuItem>)}
-                </TextField>
-                <TextField select label="Địa chỉ giao hàng" value={addressId} onChange={e => setAddress(e.target.value)} fullWidth disabled={!customerId || create.pending || update.pending} sx={{ flex: 1, minWidth: 0 }} helperText="Chỉ dùng địa chỉ thuộc khách đã chọn do API trả về; trường bị che vẫn được bảo vệ.">
+                <TextField label="Mã kho xuất" value={warehouse} onChange={e => setWarehouse(e.target.value)} fullWidth sx={{ flex: 1, minWidth: 0 }}/>
+                {resource || create.pending ? <FieldGroup role="group" aria-label={__MOCK__ ? 'Địa chỉ giao hàng (mẫu demo)' : 'Mã địa chỉ đã xác minh'} geometry={{ flex: 1, minWidth: 0, width: '100%' }}>
+                    <Typography variant="caption" color="text.secondary">{__MOCK__ ? 'Địa chỉ giao hàng (mẫu demo)' : 'Mã địa chỉ đã xác minh'}</Typography>
+                    <Typography sx={{ overflowWrap: 'anywhere' }}>{(__MOCK__ ? getDemoAddressOptions(shop.id).find(address => address.id === addressId)?.label : undefined) || addressId || 'Chưa chọn địa chỉ'}</Typography>
+                    <Typography variant="caption" color="text.secondary">Địa chỉ được giữ nguyên khi chỉnh sửa đơn nháp.</Typography>
+                </FieldGroup> : __MOCK__ ? <TextField select label="Địa chỉ giao hàng (mẫu demo)" value={addressId} onChange={e => setAddress(e.target.value)} fullWidth sx={{ flex: 1, minWidth: 0 }} helperText="Lựa chọn tổng hợp để kiểm thử luồng đơn hàng.">
                     <MenuItem value="">Chưa chọn địa chỉ</MenuItem>
-                    {addressId && !addresses.data?.data.some(a => a.id === addressId) && <MenuItem value={addressId}>Đang giữ địa chỉ {addressId}</MenuItem>}
-                    {addresses.data?.data.map(a => <MenuItem key={a.id} value={a.id}>{a.label || `Địa chỉ ${a.id}`} · {a.recipient || 'Người nhận đã che'}</MenuItem>)}
-                </TextField>
+                    {getDemoAddressOptions(shop.id).map(address => <MenuItem key={address.id} value={address.id}>{address.label}</MenuItem>)}
+                </TextField> : <TextField label="Mã địa chỉ đã xác minh" value={addressId} onChange={e => setAddress(e.target.value)} fullWidth sx={{ flex: 1, minWidth: 0 }} helperText="Nhập ID do hệ thống địa chỉ cung cấp."/>}
             </FormFields>
-            <ErrorNotice error={warehouses.error || addresses.error}/>
-            {addressId && <FieldGroup role="group" aria-label="Thông tin địa chỉ giao hàng">
-                <Typography variant="caption" color="text.secondary">Địa chỉ đang chọn</Typography>
-                <Typography sx={{overflowWrap:'anywhere'}}>{addresses.data?.data.find(address=>address.id===addressId)?.label || addressId}</Typography>
-            </FieldGroup>}
-            <LookupLoadMore label="kho xuất" loadedCount={warehouses.loadedCount} hasMore={warehouses.hasMore} busy={warehouses.isLoadingMore} onLoadMore={warehouses.loadMore}/>
-            {customerId && <LookupLoadMore label="địa chỉ giao hàng" loadedCount={addresses.loadedCount} hasMore={addresses.hasMore} busy={addresses.isLoadingMore} onLoadMore={addresses.loadMore}/>}
-            <Alert severity="info">Đơn xác nhận giữ snapshot địa chỉ của báo giá. Khi địa chỉ đổi trước xác nhận, cần lấy báo giá và khách đồng ý lại.</Alert>
+            {__MOCK__ ? <Alert severity="info">Địa chỉ mẫu chỉ phục vụ nghiệm thu giao diện. Dữ liệu demo không đại diện địa chỉ thật và không xác minh địa chỉ với khách hàng.</Alert> : <Alert severity="info">Contract frontend chưa có API CRUD địa chỉ giao hàng; chỉ sử dụng ID do hệ thống địa chỉ cung cấp.</Alert>}
             {resource || create.pending ? <FieldGroup role="group" aria-label="Thanh toán">
                 <Typography variant="caption" color="text.secondary">Thanh toán</Typography>
                 <Typography sx={{ overflowWrap: 'anywhere' }}>{method === 'cod' ? 'Thu khi giao (COD)' : 'Trả trước, cần xác minh tiền'}</Typography>
@@ -223,7 +214,7 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
                     key: 'name', label: 'Sản phẩm / SKU', render: l => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{l.name}</Typography><Typography variant="caption">{l.sku}</Typography></Stack>
                 },
                 { key: 'qty', label: 'Số lượng', align: 'right', render: l => l.quantity }, { key: 'price', label: 'Đơn giá', align: 'right', render: l => <Amount value={l.unitPrice}/> }, { key: 'total', label: 'Thành tiền', align: 'right', render: l => <Amount value={l.lineTotal}/> }
-            ]}/><Box sx={[layoutSx.surface.inset, { textAlign: 'right' }]}><Typography color="text.secondary">Tổng từ API</Typography><Typography variant="h4"><Amount wrap value={order.total}/></Typography></Box></Panel><Panel title="Thông tin xử lý" bodyMode="inset"><Box><DetailLine label="Khách"><RouteLink to={`/s/${shop.id}/customers/${order.customerId}`}>Mã khách hàng: {order.customerId}</RouteLink></DetailLine><DetailLine label="Kho">Mã kho: {order.warehouseId}</DetailLine><DetailLine label="Địa chỉ">{order.shippingAddressSnapshot ? [order.shippingAddressSnapshot.label, order.shippingAddressSnapshot.recipient, order.shippingAddressSnapshot.line1, order.shippingAddressSnapshot.province].filter(Boolean).join(' · ') : (order.shippingAddressId ? `Mã địa chỉ: ${order.shippingAddressId}` : 'Chưa có địa chỉ được xác minh')}</DetailLine><DetailLine label="Thanh toán">{order.paymentMethod === 'cod' ? 'COD' : 'Trả trước'}</DetailLine>{order.conversationId && <RouteLink to={`/s/${shop.id}/inbox/${order.conversationId}`}>Mở hội thoại</RouteLink>}{order.prepTaskId && <RouteLink to={`/s/${shop.id}/fulfillment`}>Chuẩn bị đơn</RouteLink>}</Box></Panel></SectionGrid>
+            ]}/><Box sx={[layoutSx.surface.inset, { textAlign: 'right' }]}><Typography color="text.secondary">Tổng từ API</Typography><Typography variant="h4"><Amount wrap value={order.total}/></Typography></Box></Panel><Panel title="Thông tin xử lý" bodyMode="inset"><Box><DetailLine label="Khách"><RouteLink to={`/s/${shop.id}/customers/${order.customerId}`}>{order.customerId}</RouteLink></DetailLine><DetailLine label="Kho">{order.warehouseId}</DetailLine><DetailLine label="Địa chỉ">{order.shippingAddressId || 'Chưa có địa chỉ được xác minh'}</DetailLine><DetailLine label="Thanh toán">{order.paymentMethod === 'cod' ? 'COD' : 'Trả trước'}</DetailLine>{order.conversationId && <RouteLink to={`/s/${shop.id}/inbox/${order.conversationId}`}>Mở hội thoại</RouteLink>}{order.prepTaskId && <RouteLink to={`/s/${shop.id}/fulfillment`}>Chuẩn bị đơn</RouteLink>}</Box></Panel></SectionGrid>
  <ActionGroup direction="row" beforeGap="form"><MutationButton permission="orders.write" allowedActions={order.allowedActions} action="edit" onClick={() => setEditing(true)}>Sửa đơn nháp</MutationButton><MutationButton permission="orders.write" allowedActions={order.allowedActions} action="quote" variant="contained" busy={quoteOp.pending} onClick={async () => { try {
                 const r = await quoteOp.execute({ path: { orderId }, version: order.version });
                 synchronizeApiTime(r.meta.asOf);
@@ -375,7 +366,7 @@ export function ReturnsPage() {
 }
 
 function orderSnapshot(order: Order) {
-    return { version: order.version, values: { customerId: order.customerId, conversationId: order.conversationId || '', warehouse: order.warehouseId, addressId: order.shippingAddressId || '', notes: typeof order.notes === 'string' ? order.notes : '', lines: order.lines.map(line => ({ variantId: line.variantId, quantity: String(line.quantity) })) } };
+    return { version: order.version, values: { customerId: order.customerId, conversationId: order.conversationId || '', warehouse: order.warehouseId, notes: typeof order.notes === 'string' ? order.notes : '', lines: order.lines.map(line => ({ variantId: line.variantId, quantity: String(line.quantity) })) } };
 }
 
 function returnInspectionSnapshot(item: ReturnCase) {

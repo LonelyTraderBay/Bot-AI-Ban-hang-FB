@@ -33,8 +33,8 @@ export function FulfillmentPage() {
             <Toolbar operation="listPrepJobs" />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
-                    <DataTable label="Công việc chuẩn bị đơn" rows={list.data.data} rowKey={prep => prep.id} columns={[
-                        { key: 'order', label: 'Đơn hàng', render: prep => <RouteLink to={`/s/${shop.id}/orders/${prep.orderId}`}>Mã đơn: {prep.orderId}</RouteLink> },
+                    <DataTable rows={list.data.data} rowKey={prep => prep.id} columns={[
+                        { key: 'order', label: 'Đơn hàng', render: prep => <RouteLink to={`/s/${shop.id}/orders/${prep.orderId}`}>{prep.orderId}</RouteLink> },
                         { key: 'state', label: 'Giai đoạn', render: prep => <Status value={prep.state} /> },
                         { key: 'items', label: 'Dòng hàng', render: prep => `${prep.lines.filter(line => line.requiredQuantity === line.pickedQuantity && !line.hasIssue).length}/${prep.lines.length} đã kiểm đủ` },
                         { key: 'assigned', label: 'Người nhận', render: prep => prep.assigneeUserId || 'Chưa có' },
@@ -155,7 +155,7 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
         <ConfirmDialog
             open={packing}
             title="Hoàn tất đóng gói"
-            confirmLabel="Xác nhận đã đóng gói" description={`Công việc ${resourceId}, đơn ${prep?.orderId || ""}: xác nhận đã kiểm đủ SKU, số lượng và đóng gói thực tế. Bước tiếp theo là bàn giao kiện; chưa xác nhận đã giao cho khách.`}
+            description="Bạn đã kiểm đủ SKU, số lượng và đóng gói thực tế?"
             onClose={() => setPacking(false)}
             busy={pack.pending}
             error={pack.error}
@@ -168,7 +168,6 @@ export function ShipmentsPage() {
     const { shop } = useScope();
     const [searchParams] = useSearchParams();
     const list = useApi('listShipments', { query: useListQuery('listShipments') });
-    const [previewOpen, setPreviewOpen] = useState(false);
     const [orderSearchInput, setOrderSearchInput] = useState('');
     const [orderSearch, setOrderSearch] = useState('');
     useEffect(() => {
@@ -233,13 +232,14 @@ export function ShipmentsPage() {
     return <>
         <PageHeader title="Vận đơn & giao hàng" subtitle="Bàn giao hàng, khách nhận hàng và tiền về là ba sự kiện khác nhau." actions={<MutationButton permission="fulfillment.write" variant="contained" onClick={() => setOpen(true)}>Tạo vận đơn</MutationButton>} />
         <PageSections>
+            {__MOCK__ ? <ShippingQuotePreview /> : <Panel title="Phí & vùng giao hàng"><Alert severity="info" sx={layoutSx.surface.inset}>API hiện chỉ trả phí báo giá/thực tế nếu đã có trên vận đơn; chưa có operation để kiểm tra vùng giao hoặc xin báo giá mới.</Alert></Panel>}
             <Panel>
                 <Toolbar operation="listShipments" />
                 <QueryState query={list} pendingProfile="section">
                     {list.data && <>
-                        <DataTable label="Danh sách vận đơn" rows={list.data.data} rowKey={item => item.id} columns={[
-                        { key: 'id', label: 'Vận đơn', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.trackingCode || item.id}</Typography><Typography variant="caption">{item.carrierId ? `Mã đơn vị vận chuyển: ${item.carrierId}` : 'Giao thủ công'}</Typography></Stack> },
-                        { key: 'order', label: 'Đơn', render: item => <RouteLink to={`/s/${shop.id}/orders/${item.orderId}`}>Mã đơn: {item.orderId}</RouteLink> },
+                        <DataTable rows={list.data.data} rowKey={item => item.id} columns={[
+                        { key: 'id', label: 'Vận đơn', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.trackingCode || item.id}</Typography><Typography variant="caption">{item.carrierId || 'Giao thủ công'}</Typography></Stack> },
+                        { key: 'order', label: 'Đơn', render: item => <RouteLink to={`/s/${shop.id}/orders/${item.orderId}`}>{item.orderId}</RouteLink> },
                         { key: 'state', label: 'Trạng thái', render: item => <Status value={item.state} /> },
                         { key: 'quote', label: 'Phí báo giá', render: item => <Amount value={item.shippingFeeQuote}/> },
                         { key: 'actual', label: 'Phí thực tế', render: item => <Amount value={item.shippingFeeActual}/> },
@@ -252,12 +252,6 @@ export function ShipmentsPage() {
                         <Pager page={list.data.page} />
                     </>}
                 </QueryState>
-            </Panel>
-            <Panel title="Xem thử phí và vùng giao hàng" subtitle="Mở khi cần kiểm tra giao diện mẫu; nội dung này không xác nhận khả năng giao hoặc tạo vận đơn." bodyMode="inset">
-                <Button aria-expanded={previewOpen} aria-controls="shipment-fee-preview" onClick={() => setPreviewOpen(value => !value)}>{previewOpen ? 'Ẩn bản xem thử phí giao hàng' : 'Mở bản xem thử phí giao hàng'}</Button>
-                <Box id="shipment-fee-preview" role="region" aria-label="Bản xem thử phí giao hàng" data-testid="shipment-fee-preview" hidden={!previewOpen}>
-                    {__MOCK__ ? <ShippingQuotePreview /> : <Alert severity="info">API hiện chỉ trả phí báo giá/thực tế nếu đã có trên vận đơn; chưa có thao tác kiểm tra vùng giao hoặc xin báo giá mới.</Alert>}
-                </Box>
             </Panel>
         </PageSections>
 
@@ -360,7 +354,8 @@ function ShippingQuotePreview() {
     const zone = shippingZones.find(item => item.id === zoneId)!;
     const amount = zone.baseFees?.[sizeId];
 
-    return <FormFields>
+    return <Panel title="Xem trước phí & vùng giao hàng" subtitle="Bản xem trước UI trong demo; không cập nhật đơn và không gửi yêu cầu tới hãng vận chuyển." bodyMode="inset">
+        <FormFields>
             <Alert severity="info">DỮ LIỆU MÔ PHỎNG · Phí dưới đây chỉ minh họa trạng thái giao diện, không phải báo giá cho địa chỉ hoặc hãng vận chuyển thật.</Alert>
             <FieldGroup direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'start' }}>
                 <TextField select label="Vùng giao thử" value={zoneId} onChange={event => setZoneId(event.target.value as typeof zoneId)} sx={{ flex: 1, minWidth: 0 }}>
@@ -380,5 +375,6 @@ function ShippingQuotePreview() {
                         ? <Alert severity="warning">Báo giá mẫu đã hết hiệu lực; cần lấy báo giá mới trước khi xác nhận.</Alert>
                         : <Alert severity="success">Ước tính mẫu: {amount?.toLocaleString('vi-VN')} VND · {zone.label} · {packageSizes.find(item => item.id === sizeId)?.label}</Alert>}
             <Typography variant="caption" color="text.secondary">Trong dữ liệu vận đơn, phí báo giá và phí thực tế được trình bày riêng. Bản xem trước này không lưu cấu hình vùng, không xác nhận khả năng giao và không tạo vận đơn.</Typography>
-    </FormFields>;
+        </FormFields>
+    </Panel>;
 }
