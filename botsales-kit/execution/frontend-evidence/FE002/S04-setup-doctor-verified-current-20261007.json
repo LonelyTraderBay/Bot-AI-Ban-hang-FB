@@ -1,0 +1,90 @@
+{
+  "taskId": "FE002",
+  "stepId": "S04",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T12:14:43.518454+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working tree snapshot)",
+  "expected": "Run the package-owned setup and doctor against the real Frontend target; confirm Node/dependencies/lock/worker and that setup leaves the existing env intact.",
+  "observed": "`npm.cmd --script-shell=powershell.exe run setup` exited 0: generator 11/283/210/54 and package MSW worker copied. `npm.cmd --script-shell=powershell.exe run doctor` exited 0 with 9/9 checks PASS. Existing .env.local hash and all 18 tracked manifest/config/generated target hashes are unchanged; configured worker exists after setup. No real provider/backend was contacted.",
+  "commandId": "setup",
+  "command": "npm.cmd --script-shell=powershell.exe run setup",
+  "reviewer": "Codex",
+  "environment": {
+    "name": "Local Windows Frontend workspace",
+    "details": "Actual Node 24.19.0/npm 11.17.0, installed packages and workspace-owned MSW worker; setup/doctor ran in apps repo root.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 26,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": ".gitignore",
+      "sha256": "104f5354a63e43a684711c3be75c405df0fcf311d07439f75fc771a156086ac8"
+    },
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/public/mockServiceWorker.js",
+      "sha256": "3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S04-before-setup-snapshot-current-20261007.json",
+      "sha256": "6f51ce5928ad76e39a9a883647b77ec6ee3439360411cb471df780d5edbd21cf"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output-current-20261007.log",
+      "sha256": "2477f93e7b6abc177143a939a60b9e6cb1121c5efc52cd50ef4c36b5edbad941"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S04-setup-output-current-20261007.log",
+      "sha256": "a043fb672beaefba380b5c990aaeec273142be1f991043ef9870b72fe3acf850"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/finalize-setup-doctor-check.py",
+      "sha256": "998b2d36fbffeb6abd63f911baecdc63c98eb48347585b930a40985e7344d763"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "scripts/doctor.mjs",
+      "sha256": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e"
+    },
+    {
+      "path": "scripts/generate.mjs",
+      "sha256": "02867fe31f4686636c9af095dbf975cc23ddcaea6a82ba320999e25900b2e4e6"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    },
+    {
+      "path": "scripts/tools.mjs",
+      "sha256": "df9bb454ec2a12f2cee7729187df9e244836132ff21c39e3b69767fc313db2ef"
+    }
+  ],
+  "sourceSnapshotSha256": "d7f08405e20b6cb940e8df4894da282dfd56e5a9b2c34c523f9fef7af841ec08",
+  "logFile": "execution/frontend-evidence/FE002/S04-setup-doctor-verified-current-20261007.log",
+  "logSha256": "213486cb868b4f08cd1599f299de5ad3ddd26a695528c09af550647558e3da17"
+}

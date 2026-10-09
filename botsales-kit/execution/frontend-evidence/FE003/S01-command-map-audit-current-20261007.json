@@ -1,0 +1,41 @@
+{
+  "taskId": "FE003",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T12:25:09.953396+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working tree snapshot)",
+  "expected": "Map the named generate/source/boundaries/types/lint/domain/unit/build/demo/e2e purposes to scripts that exist in the actual npm workspace and registered commands with matching cwd; do not invent pnpm.",
+  "observed": "All 10 purposes align with actual root package scripts and VERIFIED_AVAILABLE command-map entries; `unit` maps to npm test and `demo` to build:demo; no pnpm entries. Audit process exited 0.",
+  "command": "python botsales-kit/execution/frontend-evidence/FE003/capture-s01-command-map.py",
+  "reviewer": "Codex",
+  "environment": {
+    "name": "Windows source and command-map audit",
+    "details": "Read-only JSON audit at repository revision 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6; cwd is repository root; no product command was represented as run by this audit.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 12,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/capture-s01-command-map.py",
+      "sha256": "ceb23c61a7c0066f2980beead1d37a60776be0f60c2c50ec65eb8b6765a77a6f"
+    }
+  ],
+  "sourceSnapshotSha256": "078894c5c555d337a8c4e3e35cdfc119b40e6e08a5fcf6b52dccb95aabf41aa8",
+  "logFile": "execution/frontend-evidence/FE003/S01-command-map-audit-current-20261007.log",
+  "logSha256": "54229a638b050ee6731bd5cc69ab3d5a8037f1e906448f2a5c2bb4959c4cd0cd"
+}

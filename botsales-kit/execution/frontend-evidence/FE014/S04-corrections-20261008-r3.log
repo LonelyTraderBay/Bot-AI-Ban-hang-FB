@@ -1,0 +1,376 @@
+{
+  "executedAt": "2026-10-08T07:43:39.879Z",
+  "taskId": "FE014",
+  "stepId": "S04",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+      "verification": "Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R44",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "SuppliersPage"
+        },
+        {
+          "id": "R45",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "ReplenishmentPage"
+        },
+        {
+          "id": "R46",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "PurchasesPage"
+        },
+        {
+          "id": "R47",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "ReceiptsPage"
+        }
+      ],
+      "operationIds": [
+        "confirmPurchaseOrder",
+        "createGoodsReceipt",
+        "createPurchaseOrder",
+        "createReorderRule",
+        "createSupplier",
+        "createSupplierOffer",
+        "evaluateReorder",
+        "getGoodsReceipt",
+        "getPurchaseOrder",
+        "getSupplier",
+        "listGoodsReceipts",
+        "listPurchaseOrders",
+        "listPurchaseSuggestions",
+        "listReorderRules",
+        "listSupplierOffers",
+        "listSuppliers",
+        "postGoodsReceipt",
+        "requestPurchaseApproval",
+        "sendPurchaseOrder",
+        "setSupplierStatus",
+        "updateReorderRule",
+        "updateSupplier"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent",
+        "FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers",
+        "FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry",
+        "FE014.S03 auto-send cannot be configured without an enabled procurement budget",
+        "FE014.S03 manager without procurement.receive cannot open receipt actions",
+        "FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once",
+        "FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals"
+      ],
+      "executions": 14,
+      "assertionInventory": [
+        {
+          "file": "tests/fe014.spec.ts",
+          "sha256": "85c85a46f160212f7b0a56c334b1f0176b779c2e2b4819d65a9a9c894b03f57e",
+          "cases": [
+            {
+              "title": "FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent",
+              "line": 25,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Đơn mua hàng', exact: true })).toBeVisible()",
+                "expect(firstQuantity).toHaveAttribute('aria-invalid', 'true')",
+                "expect(draft.getByRole('button', { name: 'Lưu đơn nháp' })).toBeDisabled()",
+                "expect(response.status()).toBe(201)",
+                "expect(request.headers()['idempotency-key']).toBeTruthy()",
+                "expect(body).toMatchObject({ supplierId: 'supplier-01', warehouseId: 'warehouse-01', suggestionId: null })",
+                "expect(body.lines).toEqual([\n        { variantId: 'v-p1', supplierOfferId: 'offer-p1', quantity: 10 },\n        { variantId: 'v-p2', supplierOfferId: 'offer-p2', quantity: 5 },\n    ])",
+                "expect(purchaseId).toBeTruthy()",
+                "expect(page.getByRole('dialog', { name: `Đơn mua ${purchaseId}` })).toBeVisible()",
+                "expect(page.getByRole('dialog', { name: `Đơn mua ${purchaseId}` }).getByText('1.675.000', { exact: false })).toBeVisible()",
+                "expect(JSON.parse(approvalReq.postData() || 'null')).toEqual({ expectedVersion: 1 })",
+                "expect((await approvalResponse).status()).toBe(200)",
+                "expect(requests).toHaveLength(2)",
+                "expect(requests[1].headers['idempotency-key']).toBeTruthy()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers",
+              "line": 77,
+              "assertions": [
+                "expect(supplierRow).toBeVisible()",
+                "expect(page.getByRole('columnheader', { name: 'Tối thiểu / Quy cách' })).toBeVisible()",
+                "expect(dialog.getByLabel('Tên nhà cung cấp')).toHaveValue('Xưởng hàng mẫu')",
+                "expect(updateResponse.status(), await updateResponse.text()).toBe(200)",
+                "expect(page.getByRole('table').first().getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' }).getByText('FE027 · đầu mối mô phỏng')).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry",
+              "line": 95,
+              "assertions": [
+                "expect((await requestedApproval).status()).toBe(200)",
+                "expect(approvalRow).toBeVisible()",
+                "expect(JSON.parse(decision.postData() || 'null')).toMatchObject({ decision: 'approve', reason: 'Duyệt đúng hash và số lượng đơn mua FE014.' })",
+                "expect((await decisionResponse).status()).toBe(200)",
+                "expect(purchaseRow).toBeVisible()",
+                "expect(approvedDialog.getByText('Đã duyệt', { exact: true })).toBeVisible()",
+                "expect(JSON.parse(sendReq.postData() || 'null')).toMatchObject({ expectedVersion: 3 })",
+                "expect(JSON.parse(sendReq.postData() || 'null').intentHash).toBeTruthy()",
+                "expect((await sentResponse).status()).toBe(202)",
+                "expect(approvedAfterFaultDialog.getByRole('alert').filter({ hasText: 'Mã lệnh cần kiểm tra' })).toBeVisible()",
+                "expect(sendDialog).toHaveCount(0)",
+                "expect(approvedAfterFaultDialog.getByRole('button', { name: 'Gửi đơn mua' })).toHaveCount(0)",
+                "expect(approvedAfterFaultDialog.getByRole('alert').filter({ hasText: 'Chưa xác minh kết quả gửi' })).toBeVisible()",
+                "expect(sendCalls).toHaveLength(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.S03 auto-send cannot be configured without an enabled procurement budget",
+              "line": 154,
+              "assertions": [
+                "expect(rule.getByText('Không có chính sách ngân sách mua hàng đang bật và có hạn mức.', { exact: true })).toBeVisible()",
+                "expect(rule.getByRole('combobox', { name: 'Ngân sách mua hàng đã duyệt' })).toHaveCount(0)",
+                "expect(rule.getByRole('button', { name: 'Lưu quy tắc' })).toBeDisabled()",
+                "expect(rule.getByText(/Backend phải kiểm nhà cung cấp, giá, lượng, ngân sách/)).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.S03 manager without procurement.receive cannot open receipt actions",
+              "line": 167,
+              "assertions": [
+                "expect((await createResponse).status()).toBe(201)",
+                "expect(JSON.parse(created.postData() || 'null')).toMatchObject({ sourceDocumentRef: 'FE014-GR-PERMISSION-01', lines: [{ acceptedQuantity: 1, rejectedQuantity: 0 }] })",
+                "expect(receipt).toBeVisible()",
+                "expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true })).toBeVisible()",
+                "expect(receipt.getByRole('button', { name: 'Xem / ghi nhận phiếu' })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once",
+              "line": 187,
+              "assertions": [
+                "expect(draft.getByText('Đặt 10 · đã nhận 4 · bị từ chối 0 · còn 6')).toBeVisible()",
+                "expect(draft.getByRole('button', { name: 'Tạo phiếu nháp' })).toBeDisabled()",
+                "expect(JSON.parse(createReq.postData() || 'null')).toMatchObject({ purchaseOrderId: 'seed-purchaseorder-10046', expectedPurchaseVersion: 6, sourceDocumentRef: 'FE014-GR-PARTIAL-01', lines: [{ purchaseLineId: 'seed-purchase-line-10045', acceptedQuantity: 3, rejectedQuantity: 3, reason: 'Ba sản phẩm lỗi bao bì, từ chối theo kiểm nhận.' }] })",
+                "expect(createResp.status()).toBe(201)",
+                "expect(createdReceiptCall?.headers['idempotency-key']).toBeTruthy()",
+                "expect(receiptRow).toBeVisible()",
+                "expect(receiptDialog.getByRole('button', { name: 'Kiểm & ghi nhận vào kho' })).toBeVisible()",
+                "expect(JSON.parse(postReq.postData() || 'null')).toEqual({ expectedVersion: 1 })",
+                "expect((await postResponse).status()).toBe(202)",
+                "expect(postedReceipt.getByText('Đã ghi sổ', { exact: true })).toBeVisible()",
+                "expect(postedReceipt.getByRole('button', { name: 'Kiểm & ghi nhận vào kho' })).toHaveCount(0)",
+                "expect(receiptCalls.filter(call => call.method === 'POST' && /\\/post$/.test(call.path))).toHaveLength(1)",
+                "expect(stockRow).toBeVisible()",
+                "expect(stockRow.getByRole('cell').nth(1)).toHaveText('3')",
+                "expect(page.getByRole('heading', { name: 'Công nợ & khóa kỳ', exact: true })).toBeVisible()",
+                "expect(matchingDebts).toHaveLength(1)",
+                "expect(matchingDebts[0].originalAmount.amount).toBe('195000')",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy()",
+                "expect(audit.violations.map(issue => issue.id)).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals",
+              "line": 258,
+              "assertions": [
+                "expect(ruleDialog.getByRole('spinbutton', { name: 'Ngưỡng nhập' })).toHaveValue('2')",
+                "expect(ruleDialog.getByRole('spinbutton', { name: 'Nhập tới' })).toHaveValue('20')",
+                "expect(ruleDialog.getByRole('spinbutton', { name: 'Tồn an toàn' })).toHaveValue('2')",
+                "expect(ruleDialog.getByRole('combobox', { name: 'Mức tự động' })).toContainText('2 · Lập nháp chờ duyệt')",
+                "expect((await evaluateWait).status()).toBe(202)",
+                "expect(p6).toContainText('Quy tắc min-max; đã trừ hàng đang đặt. Không phải dự báo AI.')",
+                "expect(p6.getByRole('button', { name: 'Lập đơn nháp' })).toBeDisabled()",
+                "expect(p8.getByRole('button', { name: 'Lập đơn nháp' })).toBeEnabled()",
+                "expect((await createWait).status()).toBe(201)",
+                "expect(page).toHaveURL(/\\/s\\/shop-demo\\/purchases$/)",
+                "expect((await reevaluateWait).status()).toBe(202)",
+                "expect(refreshedP8.getByRole('button', { name: 'Lập đơn nháp' })).toBeDisabled()",
+                "expect(refreshedP8.getByRole('cell').nth(4)).toHaveText('20')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 173,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 554,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 173-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T06:37:29.347Z",
+      "finishedAt": "2026-10-08T07:30:19.236Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441445991-24436/e2e.log",
+        "sha256": "3cacad22f6067dd1457cbb612a006c0c23b5fbe412b9463eb0e9cce03e58def3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T07:34:52.342Z",
+      "finishedAt": "2026-10-08T07:37:44.467Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444892341-75160/verify.log",
+        "sha256": "dfbd8a6d477a6eecb4157cfc065af49dbd42757c5af1562dc2ef420eb54a06c9"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T06:33:11.870Z",
+      "finishedAt": "2026-10-08T06:33:20.247Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191868-26044/unit.log",
+        "sha256": "30b43fa2caed68b69a8af1d3f42966be47fb599333ec8aeabf545d4e3a06828a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T06:33:12.561Z",
+      "finishedAt": "2026-10-08T06:33:13.122Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192559-16080/source-maps.log",
+        "sha256": "5995622faa92f23d7d7aaf71389770d0c2f06620028cee851c437263d462ea95"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T07:30:53.995Z",
+      "finishedAt": "2026-10-08T07:34:07.500Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444650847-70468/built-demo.log",
+        "sha256": "7a0b4144184a753be8151839e9a6c36446ccb91e0ed149baca057f25fd9f5c9d"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "9ebf7d1323f0056da6fb0c6c650564404b5f0183ecc829c3728f7fccb97fb27e"
+}

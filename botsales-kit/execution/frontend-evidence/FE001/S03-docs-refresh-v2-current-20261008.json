@@ -1,0 +1,302 @@
+{
+  "taskId": "FE001",
+  "stepId": "S03",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T18:20:26.009462+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (current documentation, code and test-evidence snapshot); documentation-only source fingerprints refreshed on 2026-10-08; original command was not rerun by this review.; documentation-only source fingerprints refreshed on 2026-10-08; original command was not rerun by this review.",
+  "expected": "Reconcile REPORT/KNOWN_GAPS/package scripts with actual current-source checks; distinguish dated history from current evidence and record failures/environment limits.",
+  "observed": "The dated report's 504/504 run is separated from the fresh 512/512 local E2E rerun. Package verify retains all 12 local gates with E2E separate. FE005's 138 unit tests/typecheck and FE022's focused 5/5 are linked; current-source matrix snapshots match. The old PowerShell failure is attributed to nested PATH and the corrected invocation passed. Full npm run verify, hosted CI, live backend/provider, staging, production and owner acceptance are not claimed.",
+  "command": "python botsales-kit/execution/frontend-evidence/FE001/reconcile-s03-current-runtime-docs-20261008.py",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB",
+  "reviewer": "Codex documentation-only evidence freshness review; original run retained; no independent peer review claimed",
+  "environment": {
+    "name": "Local Windows Frontend documentation and runtime artifact reconciliation",
+    "details": "Read-only comparison of documentation, package scripts, FE005/FE009/FE022 captures, and a current-source E2E command-session summary; E2E uses local React/MSW mock only.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 409,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S01-current-20261008.json",
+      "sha256": "1e20ca4533d64fb1fed40cb933237088b6bca724f678df2c85c7f50ad026615c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S02-route-map-audit-current-20261008.json",
+      "sha256": "b444264a97e5e75ffed31cf1cca08a536f6039e6f1d1dacded676895c2e2095e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S02-route-map-audit-current-20261008.log",
+      "sha256": "c328a189140c042c1b7319092f77045de6da99b8bed41bd195e29b6c8614c64f"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log",
+      "sha256": "2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S03-full-verify-current-20261008.log",
+      "sha256": "50c47a8991f9fae4dd69474a4386dc5cdf020932a3286a114f936eebfbe885fc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S03-full-verify-powershell-current-20261008.log",
+      "sha256": "6a495a18b618c1a01b7df5f2c1fb23bd4afc3d12d357cbab31b95cc999cd15f3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S03-full-verify-retry-path-current-20261008.log",
+      "sha256": "1d8eae4a8066aa64c44017dc83a6f35132d933f002e434df84224565893eb9e3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/audit-route-map-current-20261008.py",
+      "sha256": "0dec9e2c789d8b7ec5f6e40d270fcb32db823c4ba12f12fc33ce8520cbe75da9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/reconcile-s03-current-runtime-docs-20261008.py",
+      "sha256": "0de224198e5fb6a4dabd176492c6ac5c31fb6e4eebf5d7ed01f42048f27930f6"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-client-current-20261007.log",
+      "sha256": "dc5c7aab574fce53e0984511ec29ae49cef78b39a5179cf8a0a487d3c72c1cdc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-client-current-20261007.receipt.json",
+      "sha256": "9a086458ad39943942fdd44fb815cb8b0b6606a63f08b8189e5f7a5af905cd16"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-types-current-20261007.log",
+      "sha256": "9e04ec511f174b9d4160e2a73b9e7deaa50a87d0045932132de4484abfe4278b"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-unit-current-20261007.log",
+      "sha256": "629d4b47ee11e0dfa19f4467ca2d3032f1cf90714bef4c682cc96e7dc7bc6179"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S02-current-20261007.json",
+      "sha256": "8d3803a8da59b17179e0e023240283f8356d380161dd5a5e93f01b781a1aa762"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S02-e2e-current-20261007.log",
+      "sha256": "bcf5d2baa09ffa365ab4ad8b2a82b76941f3b15613955349dd006d223c619513"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE022/S01-current-20261008.json",
+      "sha256": "b265fb5efad4ec27065ed2f4833002d289419162dfcbda12482da92eb56e0ddc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE022/S01-route-matrix-current-20261008.log",
+      "sha256": "76b68f576228a55d096886c1b11e81e79670f402295c041be2d5889db4cf6ef4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE022/S04-current-20261008.json",
+      "sha256": "e3434b52d6415da1ac0afab89e02bf49f6d5f304bd8bd6ec4e62e0c55062de98"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE022/S04-focused-vertical-slices-current-20261008.log",
+      "sha256": "95f4ff6d118d550417267d71cc87bc438de74da83f9be1129ce67539928aa620"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE022/S04-focused-vertical-slices-powershell-failed-current-20261007.log",
+      "sha256": "8cb3549cda59d0a59fde924091e9158985ffb85ad6c3a6f1e413f5ac8ce23e9c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "497d5239577de2b1daaf3a1a1aec1eaea678955289fa6a7562fa06890f4e9ddc"
+    },
+    {
+      "path": "evidence/REPORT.md",
+      "sha256": "34ee59155d5035ea08b960f77be14debd57b304d038d8b6798e1a141fd788170"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/REPORT.md",
+      "sha256": "e95be4d5831e343b5bfe1aa76e79c05d1d126d75063e66709c88118e3ec80f77"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/e2e-record.json",
+      "sha256": "20e982ab894dc4a9494d01218ab230776c84295f9cf6a1289007ba271c9bb9d5"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/e2e.log",
+      "sha256": "f0aed15b41fd27767829f897603f2d435f1e37674500d9563d43ae1b09b31b55"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/verify-record.json",
+      "sha256": "e3d583317deb9ab3fead2f46105aaaf502d3d2d3478bd9481624077ba948f82b"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/verify.log",
+      "sha256": "5917f7a430275e426297307fbc8e10f90961dd9e99405bdf2ca90e707fcfe123"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-1440-current-20261008-002058-43460.json",
+      "sha256": "13b276a09e4f6d681cd379db623c5801f56cf4c8b2658513073dacc896b5fdda"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-390-current-20261008-002058-43460.json",
+      "sha256": "979b2ae2d9ddf2f4996479508df45be3e53f536edf8e4920fb9f686ce6076442"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W28/route-geometry-firefox-1440-current-20261008-004332-63192.json",
+      "sha256": "6193df521e4afde6b2e3884d16dce6c254f621b4058a5ddf9e8fd6678cdad012"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W28/route-geometry-firefox-390-current-20261008-004332-63192.json",
+      "sha256": "ec9b4067203a111e77ec6e9097b3221d51052da8a38905436f14d3b092326732"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1024-current-20261008-002058-43460.json",
+      "sha256": "d12e39c981b6fe3c62d6a7abb682056665256afb0679797b4a093cb2950c8675"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1279-current-20261008-002058-43460.json",
+      "sha256": "2da2b3010fc7e30140c846b94ae3e0c619c5b728707e233efc9aa444f5e3b201"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1280-current-20261008-002058-43460.json",
+      "sha256": "82567b0fddad1ae87a2729ed74ae83300935d7f7f28a5101c64f090783e2415e"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1440-current-20261008-002058-43460.json",
+      "sha256": "05c83bf5f3cf3fdbb8a43f773c037c4d1fb3499fd2288e72969a54b623e7db74"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1920-current-20261008-002058-43460.json",
+      "sha256": "8e309d4b770db76c4aaafe920e91776f08a11ac85f4419d1fe3ad57776278dac"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-320-current-20261008-002058-43460.json",
+      "sha256": "378a1d206b9d01ea95dd33a01a350b5a80537c1090b6f94c8e7178f8cad0f8c2"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-390-current-20261008-002058-43460.json",
+      "sha256": "784ca90a587bb7e289549ebb91759fea9f545a9583e64cf1f37c3a1fbb36f8a8"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-767-current-20261008-002058-43460.json",
+      "sha256": "cc1d39b151606d00b7c507691502a14e5d87905687a767108987753057c04824"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-768-current-20261008-002058-43460.json",
+      "sha256": "09a0ed17734f5384da0cd0e9c586bf4519b80ea0e175103de2f9bc660cf402b7"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1024-current-20261008-004332-63192.json",
+      "sha256": "e3347021a52a04109169fa3d35f97a7f3f5279d694b31090ca77fbb28b23fa59"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1279-current-20261008-004332-63192.json",
+      "sha256": "9725e59cc6977d3ad4e7855b5ae6fb0f7af6def428afa52adc2a2800f79d95af"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1280-current-20261008-004332-63192.json",
+      "sha256": "0f65da29c5b20169b85cc6c32885fba60de142a659ec1b1c182e94c8ed082bff"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1440-current-20261008-004332-63192.json",
+      "sha256": "0068cfabcca293c9a7f43f019d864184a88146aa9f7fc0b40c14bc5ea2ce43a2"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1920-current-20261008-004332-63192.json",
+      "sha256": "dff9dc0c5a6d3160787d1b0fde0a69cede5059057c336adc5eeae9e735239bf4"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-320-current-20261008-004332-63192.json",
+      "sha256": "acefcecef84221a79d412f5e70c421bbe757478ffde6b4c46861d51658569c26"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-390-current-20261008-004332-63192.json",
+      "sha256": "235b009624e4cf88991333c4b8c5e6de97767b9af3adc2fdc1a2b3d4f7509de7"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-767-current-20261008-004332-63192.json",
+      "sha256": "094b752bfb183210a7d46b63300ca0c23abd25fc7f5eb54696f9b7dbc8b2b988"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-768-current-20261008-004332-63192.json",
+      "sha256": "20d2df3b91a9fe10b4b6c21bd80e06ffc60e1c11f275997410252677a8a55a1c"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-chromium-dialog-long-reason-current-20261008-002058-43460.json",
+      "sha256": "bcb9f823dfff1eff181692e4280714178e9ba79cbaa3273243e483c9a717399c"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-chromium-form-error-short-current-20261008-002058-43460.json",
+      "sha256": "1da91a33884b13583bdf833bbfea57cd894809ba5d70cea0be86d0af6bb89615"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-chromium-inbox-long-composer-current-20261008-002058-43460.json",
+      "sha256": "7cf1f33833ab0cef357742099da2dc57fecd86c03d6af76cb079eb36d5cbb5aa"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-chromium-mobile-menu-long-label-current-20261008-002058-43460.json",
+      "sha256": "fa2085639da2d994fadae8bf587108fe80fd11b8d5424b6293e38663299a5723"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-chromium-report-long-id-current-20261008-002058-43460.json",
+      "sha256": "6f5c798aa23a4c62c3c49c3bc254d4f8605ff97426d6bdde64f0b063a1c4c2d5"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-firefox-dialog-long-reason-current-20261008-004332-63192.json",
+      "sha256": "6193ee87e16461d6d2d4ae36c3a89d08ecd5bb6cb2c62b41d1daa2cd7eebe98a"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-firefox-form-error-short-current-20261008-004332-63192.json",
+      "sha256": "f34aa839ca7233b8c98be0ac6fafc3225e27b582af2bf9b5f9a6c106b992fb4d"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-firefox-inbox-long-composer-current-20261008-004332-63192.json",
+      "sha256": "53d39291c6709bd833df82758e5deaa06d5b51d5c21c7dd8c3a217aa183034eb"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-firefox-mobile-menu-long-label-current-20261008-004332-63192.json",
+      "sha256": "ac8430ec1344ae710b57008c623aa9d1a9a86b75ddd2f49793d05db9cdbc49c9"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/stress-firefox-report-long-id-current-20261008-004332-63192.json",
+      "sha256": "96a6e288210a10ff3b547e803f98dc7ff4ac8c5ddc27a7b48fb64f18a588ea2f"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    }
+  ],
+  "sourceSnapshotSha256": "2e3c47cdaae76b1662166141ff8dec5dbae4c823b229d017eefc7c44b76cf82f",
+  "logFile": "execution/frontend-evidence/FE001/S03-docs-refresh-v2-current-20261008.log",
+  "logSha256": "ff2c60394da73f6d727b2629f4a5c67a5f324b0f00f0bb10ee732fcf7c5cdc7a",
+  "revalidation": {
+    "reviewedAt": "2026-10-07T22:06:09.769Z",
+    "kind": "documentation-only source freshness review",
+    "originalEvidence": {
+      "path": "execution/frontend-evidence/FE001/S03-docs-refresh-current-20261008.json",
+      "sha256": "7dc05fe2fd2d0fc89cb70803218f4646a386a14ed26c67fb5d4913a7b26ba86d",
+      "executedAt": "2026-10-07T18:20:26.009462+00:00",
+      "logFile": "execution/frontend-evidence/FE001/S03-docs-refresh-current-20261008.log",
+      "logSha256": "9badf6489ca123d6e36707b6b08f4896621a85de156d57a28456dc205e94f229"
+    },
+    "changedDocumentationSources": [
+      "evidence/REPORT.md"
+    ],
+    "runtimeTestsRerun": false,
+    "note": "No product source, test, contract, configuration, generated output, or command-map input changed in this refresh. Original execution logs remain preserved and are not represented as rerun."
+  }
+}

@@ -1,0 +1,813 @@
+{
+  "executedAt": "2026-10-09T05:14:34.621Z",
+  "taskId": "FE022",
+  "stepId": "S05",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Sinh ma trận route/feature/scenario từ kết quả test; ghi scope/gaps và regressions.",
+      "verification": "54 route và 64 feature UI được truy vết; khả năng backend thật không bị tick PASS. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R01",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "LoginPage"
+        },
+        {
+          "id": "R02",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "WorkspacesPage"
+        },
+        {
+          "id": "R03",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "OnboardingPage"
+        },
+        {
+          "id": "R04",
+          "source": "apps/web/src/modules/dashboard/index.tsx",
+          "component": "DashboardPage"
+        },
+        {
+          "id": "R05",
+          "source": "apps/web/src/modules/inbox/index.tsx",
+          "component": "InboxPage"
+        },
+        {
+          "id": "R06",
+          "source": "apps/web/src/modules/inbox/index.tsx",
+          "component": "InboxPage"
+        },
+        {
+          "id": "R07",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "CustomersPage"
+        },
+        {
+          "id": "R08",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "CustomerPage"
+        },
+        {
+          "id": "R09",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductsPage"
+        },
+        {
+          "id": "R10",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductEditorPage"
+        },
+        {
+          "id": "R11",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductEditorPage"
+        },
+        {
+          "id": "R12",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "CategoriesPage"
+        },
+        {
+          "id": "R13",
+          "source": "apps/web/src/modules/catalog/imports.tsx",
+          "component": "ImportsPage"
+        },
+        {
+          "id": "R14",
+          "source": "apps/web/src/modules/catalog/imports.tsx",
+          "component": "ImportResultPage"
+        },
+        {
+          "id": "R15",
+          "source": "apps/web/src/modules/inventory/index.tsx",
+          "component": "InventoryPage"
+        },
+        {
+          "id": "R16",
+          "source": "apps/web/src/modules/inventory/index.tsx",
+          "component": "MovementsPage"
+        },
+        {
+          "id": "R17",
+          "source": "apps/web/src/modules/orders/index.tsx",
+          "component": "OrdersPage"
+        },
+        {
+          "id": "R18",
+          "source": "apps/web/src/modules/orders/index.tsx",
+          "component": "NewOrderPage"
+        },
+        {
+          "id": "R19",
+          "source": "apps/web/src/modules/orders/index.tsx",
+          "component": "OrderDetailPage"
+        },
+        {
+          "id": "R20",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "CashflowPage"
+        },
+        {
+          "id": "R21",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "EntriesPage"
+        },
+        {
+          "id": "R22",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "ProfitLossPage"
+        },
+        {
+          "id": "R23",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "KnowledgePage"
+        },
+        {
+          "id": "R24",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "KnowledgeDetailPage"
+        },
+        {
+          "id": "R25",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "FeedbackPage"
+        },
+        {
+          "id": "R26",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "BotConfigPage"
+        },
+        {
+          "id": "R27",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "PlaygroundPage"
+        },
+        {
+          "id": "R28",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "EvaluationsPage"
+        },
+        {
+          "id": "R29",
+          "source": "apps/web/src/modules/integrations/index.tsx",
+          "component": "ChannelsPage"
+        },
+        {
+          "id": "R30",
+          "source": "apps/web/src/modules/integrations/index.tsx",
+          "component": "AIProvidersPage"
+        },
+        {
+          "id": "R31",
+          "source": "apps/web/src/modules/reports/index.tsx",
+          "component": "ReportsPage"
+        },
+        {
+          "id": "R32",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "TeamPage"
+        },
+        {
+          "id": "R33",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "ShopSettingsPage"
+        },
+        {
+          "id": "R34",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "AuditPage"
+        },
+        {
+          "id": "R35",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "PrivacyPage"
+        },
+        {
+          "id": "R36",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "JobPage"
+        },
+        {
+          "id": "R37",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "OperationsPage"
+        },
+        {
+          "id": "R38",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "ApprovalsPage"
+        },
+        {
+          "id": "R39",
+          "source": "apps/web/src/modules/notifications/index.tsx",
+          "component": "NotificationsPage"
+        },
+        {
+          "id": "R40",
+          "source": "apps/web/src/modules/notifications/index.tsx",
+          "component": "DevicesPage"
+        },
+        {
+          "id": "R41",
+          "source": "apps/web/src/modules/fulfillment/index.tsx",
+          "component": "FulfillmentPage"
+        },
+        {
+          "id": "R42",
+          "source": "apps/web/src/modules/fulfillment/index.tsx",
+          "component": "ShipmentsPage"
+        },
+        {
+          "id": "R43",
+          "source": "apps/web/src/modules/orders/index.tsx",
+          "component": "ReturnsPage"
+        },
+        {
+          "id": "R44",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "SuppliersPage"
+        },
+        {
+          "id": "R45",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "ReplenishmentPage"
+        },
+        {
+          "id": "R46",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "PurchasesPage"
+        },
+        {
+          "id": "R47",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "ReceiptsPage"
+        },
+        {
+          "id": "R48",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "JournalsPage"
+        },
+        {
+          "id": "R49",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "ReconciliationPage"
+        },
+        {
+          "id": "R50",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "DebtsPage"
+        },
+        {
+          "id": "R51",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "AgentTeamPage"
+        },
+        {
+          "id": "R52",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "DigestsPage"
+        },
+        {
+          "id": "R53",
+          "source": "apps/web/src/modules/reports/index.tsx",
+          "component": "MarketingPage"
+        },
+        {
+          "id": "R54",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "ServiceCasesPage"
+        }
+      ],
+      "operationIds": [
+        "acknowledgeNotification",
+        "addInternalNote",
+        "approvePrivacyRequest",
+        "archiveCategory",
+        "archiveProduct",
+        "assignConversation",
+        "beginChannelConnect",
+        "beginLogin",
+        "beginTelegramPairing",
+        "cancelOrder",
+        "checkChannelHealth",
+        "claimWorkItem",
+        "closeAccountingPeriod",
+        "commitProductImport",
+        "confirmOrder",
+        "confirmPurchaseOrder",
+        "controlAutomation",
+        "createAIConnection",
+        "createCategory",
+        "createCustomer",
+        "createDevice",
+        "createEvaluation",
+        "createExport",
+        "createFeedback",
+        "createFinanceEntry",
+        "createGoodsReceipt",
+        "createInventoryAdjustment",
+        "createJournal",
+        "createKnowledge",
+        "createKnowledgeRevision",
+        "createOrder",
+        "createPrivacyRequest",
+        "createProduct",
+        "createProductImport",
+        "createPurchaseOrder",
+        "createReorderRule",
+        "createReturnCase",
+        "createServiceCase",
+        "createShipment",
+        "createShop",
+        "createSupplier",
+        "createSupplierOffer",
+        "decideApproval",
+        "deleteAIConnection",
+        "disconnectChannel",
+        "evaluateReorder",
+        "getAIConnection",
+        "getApproval",
+        "getBotConfig",
+        "getBotRevision",
+        "getCashflow",
+        "getCategory",
+        "getChannel",
+        "getCommand",
+        "getConversation",
+        "getCsrfToken",
+        "getCustomer",
+        "getDashboard",
+        "getEvaluation",
+        "getFile",
+        "getFinanceEntry",
+        "getGoodsReceipt",
+        "getInboxMetadata",
+        "getJob",
+        "getJournal",
+        "getKnowledge",
+        "getKnowledgeRevision",
+        "getMarketingSummary",
+        "getMember",
+        "getNotification",
+        "getNotificationPolicy",
+        "getOperationsSummary",
+        "getOrder",
+        "getPrepJob",
+        "getPrivacyPolicy",
+        "getProduct",
+        "getProfitLoss",
+        "getProviderCatalog",
+        "getPurchaseOrder",
+        "getReportSummary",
+        "getReturnCase",
+        "getServiceCase",
+        "getSession",
+        "getShipment",
+        "getShop",
+        "getSupplier",
+        "handoverShipment",
+        "importBankStatement",
+        "importCODStatement",
+        "inspectReturn",
+        "inviteMember",
+        "listAIConnections",
+        "listAccountingPeriods",
+        "listAgentRoles",
+        "listApprovals",
+        "listAuditEvents",
+        "listBankTransactions",
+        "listBotRevisions",
+        "listBudgetPolicies",
+        "listCODSettlements",
+        "listCategories",
+        "listChannels",
+        "listConversations",
+        "listCustomers",
+        "listDebtItems",
+        "listDevices",
+        "listDigests",
+        "listEvaluations",
+        "listFeedback",
+        "listFinanceEntries",
+        "listGoodsReceipts",
+        "listJobs",
+        "listJournals",
+        "listKnowledge",
+        "listKnowledgeRevisions",
+        "listMembers",
+        "listMessages",
+        "listNotifications",
+        "listOrders",
+        "listPrepJobs",
+        "listPrivacyRequests",
+        "listProducts",
+        "listPurchaseOrders",
+        "listPurchaseSuggestions",
+        "listReconciliationCases",
+        "listReorderRules",
+        "listReturnCases",
+        "listServiceCases",
+        "listShipments",
+        "listShops",
+        "listStockMovements",
+        "listStockSnapshots",
+        "listSupplierOffers",
+        "listSuppliers",
+        "listWorkItems",
+        "matchCODSettlement",
+        "matchSettlement",
+        "packPrepJob",
+        "pauseBot",
+        "payOrder",
+        "pickPrepLine",
+        "postFinanceEntry",
+        "postGoodsReceipt",
+        "postJournal",
+        "publishBotConfig",
+        "publishKnowledge",
+        "quoteOrder",
+        "reconnectChannel",
+        "recordShipmentEvent",
+        "refundOrder",
+        "releaseConversation",
+        "reopenAccountingPeriod",
+        "requestPurchaseApproval",
+        "resolveConversation",
+        "restoreBotRevision",
+        "restoreKnowledgeRevision",
+        "retireKnowledge",
+        "reverseFinanceEntry",
+        "reverseJournal",
+        "reviewFeedback",
+        "revokeDevice",
+        "revokeMembership",
+        "runPlayground",
+        "sendMessage",
+        "sendPurchaseOrder",
+        "setServiceCaseStatus",
+        "setSupplierStatus",
+        "stepUp",
+        "submitKnowledgeReview",
+        "takeoverConversation",
+        "testAIConnection",
+        "testDevice",
+        "updateAIConnection",
+        "updateAgentRole",
+        "updateBotDraft",
+        "updateCategory",
+        "updateCustomer",
+        "updateFinanceEntry",
+        "updateKnowledge",
+        "updateMemberRoles",
+        "updateNotificationPolicy",
+        "updateOrderDraft",
+        "updatePrivacyPolicy",
+        "updateProduct",
+        "updateReorderRule",
+        "updateShop",
+        "updateSupplier",
+        "updateWorkItem",
+        "uploadFile"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked",
+        "FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity",
+        "FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation",
+        "FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs",
+        "FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps"
+      ],
+      "executions": 10,
+      "assertionInventory": [
+        {
+          "file": "tests/vertical-slices/fe022-flows.spec.ts",
+          "sha256": "3a4819b00bc1f2361493b1778d262011a4ab90c80ec323dac34bc7ed95b72da8",
+          "cases": [
+            {
+              "title": "FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked",
+              "line": 38,
+              "assertions": [
+                "expect(stockRow).toBeVisible()",
+                "expect(page).toHaveURL(/\\/products\\?q=AO-002$/)",
+                "expect(page.getByText('Áo thun Essential', { exact: true })).toBeVisible()",
+                "expect(before).toBeTruthy()",
+                "expect(orderRow).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Đơn DH-1001', exact: true })).toBeVisible()",
+                "expect((await quote).status()).toBe(200)",
+                "expect((await customerConfirmation).status()).toBe(200)",
+                "expect((await confirmation).status()).toBe(202)",
+                "expect(page.getByText('Đã xác nhận', { exact: true })).toBeVisible()",
+                "expect(after).toBeTruthy()",
+                "expect(after?.onHand).toBe(before?.onHand)",
+                "expect(after?.reserved).toBe((before?.reserved || 0) + 1)",
+                "expect(after?.available).toBe((before?.available || 0) - 1)",
+                "expect(prep).toBeTruthy()",
+                "expect(prep?.lines).toEqual(expect.arrayContaining([expect.objectContaining({ sku: 'AO-002', orderLineId: 'ol-1001' })]))",
+                "expect.arrayContaining([expect.objectContaining({ sku: 'AO-002', orderLineId: 'ol-1001' })])",
+                "expect.objectContaining({ sku: 'AO-002', orderLineId: 'ol-1001' })",
+                "expect(prepRow).toBeVisible()",
+                "expect((await claim).status()).toBe(200)",
+                "expect(picked.status()).toBe(200)",
+                "expect(JSON.parse(picked.request().postData() || 'null')).toMatchObject({ orderLineId: 'ol-1001', scannedSku: 'AO-002', pickedQuantity: 1 })",
+                "expect(dialog.getByText('1/1', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity",
+              "line": 92,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Đơn mua hàng', exact: true })).toBeVisible()",
+                "expect(before).toBeTruthy()",
+                "expect(created.status()).toBe(201)",
+                "expect((await requestApproval).status()).toBe(200)",
+                "expect(approvalRow).toBeVisible()",
+                "expect((await decision).status()).toBe(200)",
+                "expect(purchaseRow).toBeVisible()",
+                "expect((await sendReady).status()).toBe(202)",
+                "expect(details.getByText('Đã gửi', { exact: true })).toBeVisible()",
+                "expect((await supplierConfirmation).status()).toBe(200)",
+                "expect(details.getByText('Đã xác nhận', { exact: true })).toBeVisible()",
+                "expect(receiptResponse.status()).toBe(201)",
+                "expect(receipt).toMatchObject({ purchaseOrderId: purchaseId, status: 'draft', sourceDocumentRef: 'FE022-RECEIPT-VS02' })",
+                "expect((await post).status()).toBe(202)",
+                "expect(after?.onHand).toBe((before?.onHand || 0) + 2)",
+                "expect(payable).toMatchObject({ direction: 'payable', originalAmount: { amount: '200000' } })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation",
+              "line": 168,
+              "assertions": [
+                "expect((await importResponse).status()).toBe(200)",
+                "expect(caseRow).toBeVisible()",
+                "expect(debtBefore).toBeTruthy()",
+                "expect((await matchResponse).status()).toBe(202)",
+                "expect(imported).toMatchObject({ matchState: 'suggested' })",
+                "expect(Number(debts.find(debt => debt.id === 'seed-debtitem-10028')?.outstandingAmount.amount)).toBe(Number(debtBefore?.outstandingAmount.amount) - 50000)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs",
+              "line": 204,
+              "assertions": [
+                "expect(feedbackResponseResult.status()).toBe(201)",
+                "expect(feedback.data.status).toBe('pending')",
+                "expect(reviewed).toMatchObject({ id: feedback.data.id, status: 'approved', knowledgeDraftId: expect.any(String) })",
+                "expect.any(String)",
+                "expect(draftRow).toBeVisible()",
+                "expect(detail).toMatchObject({ id: reviewed.knowledgeDraftId, status: 'draft', sourceKind: 'feedback' })",
+                "expect(page.getByText('Đã xác minh chính sách đổi hàng trong dữ liệu mẫu.', { exact: true })).toBeVisible()",
+                "expect(evaluation).toMatchObject({ status: 'passed', knowledgeRevisionId: detail.draftRevisionId, mockOnly: true })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps",
+              "line": 246,
+              "assertions": [
+                "expect(routeManifest.routes).toHaveLength(54)",
+                "expect(featureCatalog.features).toHaveLength(64)",
+                "expect(matrix).toHaveLength(routeManifest.routes.length)",
+                "expect(new Set(matrix.map(route => route.routeId))).toEqual(new Set(routeManifest.routes.map(route => route.id)))",
+                "expect(row).toMatchObject({ route: route.path, state: 'BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API', acceptanceScenarioIds: route.acceptanceScenarioIds })",
+                "expect(row?.routeEvidence).toMatchObject({\n            testFile: 'tests/frontend.spec.ts',\n            testTitle: 'all canonical routes render inside the real React demo application',\n            result: 'PASS',\n        })",
+                "expect(routeSource).toContain(row?.routeEvidence.testTitle || '')",
+                "expect(fs.existsSync(path.resolve(process.cwd(), row?.routeEvidence.logFile || ''))).toBeTruthy()",
+                "expect(new Set(row?.featureCoverage.map(feature => feature.featureId))).toEqual(new Set(expectedFeatures.map(feature => feature.id)))",
+                "expect(feature.canonicalRouteIds).toEqual(definition?.routeIds)",
+                "expect(['ROUTE_MOUNT_ONLY', 'PARTIAL_SYNTHETIC_CROSS_MODULE_JOURNEY', 'FRONTEND_INTERACTION_VERIFIED_SYNTHETIC']).toContain(feature.coverage)",
+                "expect(feature.gap.trim().length).toBeGreaterThan(20)",
+                "expect(feature.evidenceCases.length).toBeGreaterThan(0)",
+                "expect(feature.evidenceCases.some(evidence => evidence.id !== 'ROUTE-SMOKE-54')).toBeTruthy()",
+                "expect(evidence.result).toBe('PASS')",
+                "expect(fs.existsSync(path.resolve(process.cwd(), evidence.file))).toBeTruthy()",
+                "expect(fs.existsSync(path.resolve(process.cwd(), evidence.logFile))).toBeTruthy()",
+                "expect(source).toContain(evidence.id === 'ROUTE-SMOKE-54' ? evidence.title : evidence.id)",
+                "expect(fs.readFileSync(path.resolve(process.cwd(), evidence.logFile), 'utf8')).toContain(evidence.title)",
+                "expect(feature.coverage).toBe('FRONTEND_INTERACTION_VERIFIED_SYNTHETIC')",
+                "expect(mappedIds).toEqual(new Set(featureCatalog.features.map(feature => feature.id)))",
+                "expect(journeySource).toContain('FE022.VS01')",
+                "expect(journeySource).toContain('FE022.VS02')",
+                "expect(journeySource).toContain('FE022.VS03')",
+                "expect(journeySource).toContain('FE022.VS04')",
+                "expect(mappedIds.has('B06')).toBeTruthy()",
+                "expect(mappedIds.has('C04')).toBeTruthy()",
+                "expect(mappedIds.has('E08')).toBeTruthy()",
+                "expect(feature?.coverage).toBe('FRONTEND_INTERACTION_VERIFIED_SYNTHETIC')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 181,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 624,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 181-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled width behavior",
+      "routeObservations": 216,
+      "focusedCases": 70,
+      "artifact": "built-shared-review.json",
+      "limit": "Actual compiled geometry/axe/keyboard; counts remain separate from full browser suite."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "composer-stability",
+      "startedAt": "2026-10-09T05:07:15.134Z",
+      "finishedAt": "2026-10-09T05:08:10.178Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522425617-76720/composer-stability.log",
+        "sha256": "c079a393ffdf279c19f59e441cbf4ff5dab6167a5476fbc4d1bfaad7d793da56"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "imports-clearance-regression",
+      "startedAt": "2026-10-09T05:08:19.164Z",
+      "finishedAt": "2026-10-09T05:08:39.156Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522490344-8672/imports-clearance-regression.log",
+        "sha256": "950791e791deafe07d84a64fcbecb6479f91ee1dcd33b86f6eb82521d196ae2a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-09T03:47:09.137Z",
+      "finishedAt": "2026-10-09T04:47:48.711Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
+        "sha256": "8c35ba10b993a303946c89addd4dcb04c7fc718f5cff8daa5a74f2e3fd8fe85d"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-09T03:44:04.675Z",
+      "finishedAt": "2026-10-09T03:47:01.145Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517444670-94456/verify.log",
+        "sha256": "fe34adfd7fbd0931c58b87f7e5405aa833e13009571d6cc92d5517e9b15ab0f0"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-09T03:42:18.472Z",
+      "finishedAt": "2026-10-09T03:42:24.862Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517338471-44912/unit.log",
+        "sha256": "d1928a0902ebc21f0c0780bc9467ca4e0f52beb179b91314a6cf1533aee097a8"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-09T03:47:01.271Z",
+      "finishedAt": "2026-10-09T03:47:01.452Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621270-95168/source-maps.log",
+        "sha256": "a7dc3557124f4394e17cdb8a7a42cd23a7ee839ade15529024a2fa2d7cb76e33"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-09T04:48:06.078Z",
+      "finishedAt": "2026-10-09T04:51:16.462Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791521277863-27488/built-demo.log",
+        "sha256": "4c4a6c6fdcbbd0bfa0e5344760595a858ad7e5df5662cdcfbdb32c0d8380db58"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "startup-cache-regression",
+      "startedAt": "2026-10-09T05:11:14.912Z",
+      "finishedAt": "2026-10-09T05:11:36.059Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522665730-96308/startup-cache-regression.log",
+        "sha256": "b78941e75dca7664227a303ce9bbb0e70d77c3957ae994adfbd112ae2be241d3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-regression",
+      "startedAt": "2026-10-09T05:10:37.682Z",
+      "finishedAt": "2026-10-09T05:11:05.627Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522628388-90736/label-regression.log",
+        "sha256": "f28164351bc45da0b3df30632d3557484bc591686832bb955d35119531c55684"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "variant-regression",
+      "startedAt": "2026-10-09T05:09:47.479Z",
+      "finishedAt": "2026-10-09T05:10:28.292Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522578658-74300/variant-regression.log",
+        "sha256": "62f3d31abc4f6d7965fb2f70604b46342b5b0d978064d34f335264ad9171c42f"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-focus-regression",
+      "startedAt": "2026-10-09T05:09:17.882Z",
+      "finishedAt": "2026-10-09T05:09:38.570Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522549023-26236/label-focus-regression.log",
+        "sha256": "6891aae72dc105e22e42f974e8faf94492ed251b3c7f67146a0a2ae6335e96ab"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "composer-regression",
+      "startedAt": "2026-10-09T05:08:48.237Z",
+      "finishedAt": "2026-10-09T05:09:08.934Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522519245-33232/composer-regression.log",
+        "sha256": "1fcc0bfd08e59012b4cf1aad212270969d3f68a497ceac5c02e2e27a5995a176"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "f0686540c9742326335377b8a683b175898700b954437742f2e5c3d9bf75840d"
+}

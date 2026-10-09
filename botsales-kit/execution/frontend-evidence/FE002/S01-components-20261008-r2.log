@@ -1,0 +1,660 @@
+{
+  "executedAt": "2026-10-08T13:13:21.301Z",
+  "taskId": "FE002",
+  "stepId": "S01",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Kiểm Node24/npm và exact package versions/peer requirements; giữ stack đang được chọn, ghi patch/nguồn thực.",
+      "verification": "Không đổi major/stack ngoài lỗi tương thích được chứng minh; không ghi latest. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [],
+      "operationIds": [],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes",
+        "F01 requires an explicit choice for a field changed by both editors",
+        "F06 detects an order draft and blocks navigation until explicit discard",
+        "F02 retains an unsaved product image through an unrelated refetch",
+        "F03 retains notification-policy inputs through a background resync and navigation",
+        "F05 keeps text typed while a previous internal note is pending",
+        "F08 validates 4001 customer-note characters at the field and accepts 4000",
+        "F07 routes the fulfillment footer close through the shared discard guard",
+        "F09 refreshes new Inbox messages without refetching the visible product and stock snapshots",
+        "F01 shop settings merges a server-only locale change and preserves edits typed during save",
+        "F03 privacy policy preserves refetch drafts and compares before applying the newest version",
+        "F01 category keeps a late edit after saving, and reopens with a clean current baseline",
+        "F01 supplier preserves a concurrent server-only term and PATCHes the local name",
+        "F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft",
+        "F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion",
+        "F01 order editor keeps its original version and compares whole line lists before PATCH",
+        "F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard",
+        "F01 analogous return-inspection draft does not adopt a refetched version without comparison",
+        "F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content",
+        "F08 privacy bounds reject invalid days and long jurisdiction before HTTP",
+        "F06 order custom close respects the draft guard and busy editors remain protected"
+      ],
+      "executions": 42,
+      "assertionInventory": [
+        {
+          "file": "tests/frontend-corrections.spec.ts",
+          "sha256": "c4566d11bd0da0fedbb3af885936c6a80a2669350e8a9a17a76f0449b7f30f90",
+          "cases": [
+            {
+              "title": "F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes",
+              "line": 18,
+              "assertions": [
+                "expect(name).toHaveValue('Linh (khách mẫu)')",
+                "expect((await mutate(page, 'customers/c1', { notes: 'Concurrent server note' }, 'PATCH', current.version)).status).toBe(200)",
+                "expect(name).toHaveValue('Local draft')",
+                "expect(notes).toHaveValue(originalNotes)",
+                "expect(dialog).toBeVisible()",
+                "expect(dialog.getByText('Concurrent server note', { exact: true })).toBeVisible()",
+                "expect(notes).toHaveValue('Concurrent server note')",
+                "expect(request.headers()['if-match']).toBe(`\"${current.version + 1}\"`)",
+                "expect(request.postDataJSON()).toEqual({ displayName: 'Local draft' })",
+                "expect(page.getByRole('heading', { name: 'Local draft', exact: true })).toBeVisible()",
+                "expect(stored.notes).toBe('Concurrent server note')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F01 requires an explicit choice for a field changed by both editors",
+              "line": 46,
+              "assertions": [
+                "expect(page.getByLabel('Tên khách hàng', { exact: true })).toHaveValue('Linh (khách mẫu)')",
+                "expect((await mutate(page, 'customers/c1', { displayName: 'Theirs' }, 'PATCH', 1)).status).toBe(200)",
+                "expect(page.getByRole('button', { name: 'Đối chiếu', exact: true })).toBeVisible()",
+                "expect(apply).toBeDisabled()",
+                "expect(apply).toBeEnabled()",
+                "expect(page.getByLabel('Tên khách hàng', { exact: true })).toHaveValue('Mine')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F06 detects an order draft and blocks navigation until explicit discard",
+              "line": 62,
+              "assertions": [
+                "expect(warning).toBeVisible()",
+                "expect(page.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Keep this order draft')",
+                "expect(page).toHaveURL(/\\/orders$/)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F02 retains an unsaved product image through an unrelated refetch",
+              "line": 75,
+              "assertions": [
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect(page.getByText('1 tệp được gắn với sản phẩm', { exact: true })).toBeVisible()",
+                "expect(page.getByText('1 tệp được gắn với sản phẩm', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F03 retains notification-policy inputs through a background resync and navigation",
+              "line": 87,
+              "assertions": [
+                "expect(minutes).toHaveValue('')",
+                "expect(minutes).toHaveValue('17')",
+                "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F05 keeps text typed while a previous internal note is pending",
+              "line": 98,
+              "assertions": [
+                "expect(text).toHaveValue(submittedText)",
+                "expect(submittedResponse.status()).toBe(201)",
+                "expect((await submittedResponse.json()).data.text).toBe(submittedText)",
+                "expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeEnabled()",
+                "expect(text).toHaveValue('Typed next while pending')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F08 validates 4001 customer-note characters at the field and accepts 4000",
+              "line": 113,
+              "assertions": [
+                "expect(dialog.getByText('Ghi chú không được vượt quá 4.000 ký tự.', { exact: true })).toBeVisible()",
+                "expect(posted).toBe(false)",
+                "expect(dialog.getByText('Ghi chú không được vượt quá 4.000 ký tự.', { exact: true })).toBeVisible()",
+                "expect(posted).toBe(false)",
+                "expect(created.status()).toBe(201)",
+                "expect(payload.data.notes).toBe('a'.repeat(4000))",
+                "expect(page).toHaveURL(demoUrl + '/s/shop-demo/customers/' + payload.data.id)",
+                "expect(unicodeCreated.status()).toBe(201)",
+                "expect(unicodePayload.data.notes).toBe('😀'.repeat(4000))",
+                "expect(page).toHaveURL(demoUrl + '/s/shop-demo/customers/' + unicodePayload.data.id)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F07 routes the fulfillment footer close through the shared discard guard",
+              "line": 147,
+              "assertions": [
+                "expect(warning).toBeVisible()",
+                "expect(dialog.getByLabel('Nhập/quét SKU thực tế')).toHaveValue('Unsaved scan')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F09 refreshes new Inbox messages without refetching the visible product and stock snapshots",
+              "line": 161,
+              "assertions": [
+                "expect(page.getByRole('table', { name: 'Nguồn giá và tồn trong hộp thư', exact: true })).toBeVisible()",
+                "expect(page.getByText('Synthetic normal SSE message', { exact: true })).toBeVisible()",
+                "expect(requests.filter(path => /\\/(products|inventory\\/snapshots|customers|orders|shipments|service-cases)(\\/|$)/.test(path))).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F01 shop settings merges a server-only locale change and preserves edits typed during save",
+              "line": 191,
+              "assertions": [
+                "expect(name).not.toHaveValue('')",
+                "expect(changed).toBe(200)",
+                "expect(page.getByLabel('Ngôn ngữ', { exact: true })).toHaveValue('en-US')",
+                "expect((await sent).postDataJSON()).toEqual({ name: 'Submitted shop' })",
+                "expect(page.getByRole('button', { name: 'Lưu cấu hình', exact: true })).toBeEnabled()",
+                "expect(name).toHaveValue('Typed later shop')",
+                "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F03 privacy policy preserves refetch drafts and compares before applying the newest version",
+              "line": 217,
+              "assertions": [
+                "expect((await mutate(page, 'privacy/policy', { jurisdictionNote: 'Synthetic server jurisdiction' }, 'PATCH', current.version)).status).toBe(200)",
+                "expect(days).toHaveValue('180')",
+                "expect(page.getByLabel('Căn cứ / thị trường áp dụng')).toHaveValue('Synthetic server jurisdiction')",
+                "expect(request.postDataJSON()).toEqual({ chatRetentionDays: 180 })",
+                "expect(request.headers()['if-match']).toBe(`\"${current.version + 1}\"`)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F01 category keeps a late edit after saving, and reopens with a clean current baseline",
+              "line": 234,
+              "assertions": [
+                "expect(name).toBeEnabled()",
+                "expect(dialog.getByRole('button', { name: 'Lưu', exact: true })).toBeEnabled()",
+                "expect(dialog).toBeVisible()",
+                "expect(name).toHaveValue('Late category')",
+                "expect(dialog).not.toBeVisible()",
+                "expect(name).toHaveValue('Submitted category')",
+                "expect(dialog).not.toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F01 supplier preserves a concurrent server-only term and PATCHes the local name",
+              "line": 255,
+              "assertions": [
+                "expect(dialog.getByLabel('Tên nhà cung cấp', { exact: true })).toBeEnabled()",
+                "expect((await mutate(page, 'suppliers/' + current.id, { expectedVersion: current.version, paymentTerms: 'Concurrent terms' }, 'PATCH', current.version)).status).toBe(200)",
+                "expect(dialog.getByLabel('Điều kiện thanh toán', { exact: true })).toHaveValue('Concurrent terms')",
+                "expect((await sent).postDataJSON()).toEqual({ expectedVersion: current.version + 1, name: 'Local supplier' })",
+                "expect(dialog).not.toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft",
+              "line": 272,
+              "assertions": [
+                "expect(page.getByText('Ghi chú không được vượt quá 4.000 ký tự.', { exact: true })).toBeVisible()",
+                "expect(writes).toBe(0)",
+                "expect((await rejected).status()).toBe(422)",
+                "expect(notes).toHaveValue('b'.repeat(4000))",
+                "expect(page.getByText('Ghi chú không được vượt quá 4.000 ký tự.', { exact: true })).toBeVisible()",
+                "expect(writes).toBe(previousWrites)",
+                "expect((await unicodeRejected).status()).toBe(422)",
+                "expect(notes).toHaveValue('😀'.repeat(4000))",
+                "expect((await accepted).status()).toBe(200)",
+                "expect(notes).toHaveValue('😀'.repeat(4000))",
+                "expect(await page.evaluate(async () => (await (await fetch('/api/v2/shops/shop-demo/customers/c1')).json()).data.notes)).toBe('😀'.repeat(4000))"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion",
+              "line": 300,
+              "assertions": [
+                "expect(page.getByLabel('Nội dung trả lời khách')).toHaveValue('Mode switched while pending')",
+                "expect((await unknown).status()).toBe(503)",
+                "expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeDisabled()",
+                "expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeDisabled()",
+                "expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeEnabled()",
+                "expect(page.getByLabel('Ghi chú cho nhóm')).toHaveValue('Retained unknown draft')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F01 order editor keeps its original version and compares whole line lists before PATCH",
+              "line": 326,
+              "assertions": [
+                "expect(current).toBeTruthy()",
+                "expect((await mutate(page, 'orders/' + current.id, { warehouseId: 'warehouse-02' }, 'PATCH', current.version)).status).toBe(200)",
+                "expect(comparison.getByRole('combobox', { name: /^Chọn dữ liệu: Dòng đơn hàng/ })).toBeVisible()",
+                "expect(editor.getByLabel('Mã kho xuất')).toHaveValue('warehouse-02')",
+                "expect(request.postDataJSON()).toEqual({ notes: 'Local order note' })",
+                "expect(request.headers()['if-match']).toBe(`\"${current.version + 1}\"`)",
+                "expect(editor).not.toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard",
+              "line": 345,
+              "assertions": [
+                "expect(await page.evaluate(async () => (await fetch('/api/v2/session')).status)).toBe(200)",
+                "expect(warning).toBeVisible()",
+                "expect(warning).toBeVisible()",
+                "expect(browserDialog.type()).toBe('beforeunload')",
+                "expect(page.getByLabel('Sản phẩm 2', { exact: true })).toBeVisible()",
+                "expect(response.status(), JSON.stringify(payload)).toBe(201)",
+                "expect(page).toHaveURL(demoUrl + '/s/shop-demo/orders/' + payload.data.id)",
+                "expect(warning).not.toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F01 analogous return-inspection draft does not adopt a refetched version without comparison",
+              "line": 370,
+              "assertions": [
+                "expect(created.status, JSON.stringify(created.payload)).toBe(201)",
+                "expect(editor.getByLabel('Ghi nhận kiểm tra')).toBeVisible()",
+                "expect(comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' })).toBeDisabled()",
+                "expect((await sent).postDataJSON()).toMatchObject({ expectedVersion: created.payload.data.version + 1, lines: [{ reason: 'Local physical inspection' }] })",
+                "expect(editor).not.toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content",
+              "line": 394,
+              "assertions": [
+                "expect((await mutate(page, 'customers/c1', { displayName: 'Server second', notes: 'LongContent'.repeat(350) }, 'PATCH', 1)).status).toBe(200)",
+                "expect(comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' })).toBeEnabled()",
+                "expect((await mutate(page, 'customers/c1', { displayName: 'Server third' }, 'PATCH', 2)).status).toBe(200)",
+                "expect(comparison.getByText('Server third', { exact: true })).toBeVisible()",
+                "expect(comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' })).toBeDisabled()",
+                "expect.poll(() => comparison.evaluate(element => {\r\n        for (let current: Element | null = element; current; current = current.parentElement)\r\n            if (Number(getComputedStyle(current).opacity) !== 1) return false;\r\n        return true;\r\n    })).toBe(true)",
+                "expect.poll(() => comparison.evaluate(element => {\r\n        for (let current: Element | null = element; current; current = current.parentElement)\r\n            if (Number(getComputedStyle(current).opacity) !== 1) return false;\r\n        return true;\r\n    }))",
+                "expect(accessibility.violations).toEqual([])",
+                "expect(geometry.width).toBeLessThanOrEqual(320)",
+                "expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth + 1)",
+                "expect(comparison).not.toBeVisible()",
+                "expect(page.getByLabel('Tên khách hàng', { exact: true })).toHaveValue('Mine')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F08 privacy bounds reject invalid days and long jurisdiction before HTTP",
+              "line": 423,
+              "assertions": [
+                "expect(days).toHaveAttribute('aria-invalid', 'true')",
+                "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()",
+                "expect(note).toHaveAttribute('aria-invalid', 'true')",
+                "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()",
+                "expect(writes).toEqual([])",
+                "expect((await saved).status()).toBe(200)",
+                "expect(writes).toHaveLength(1)",
+                "expect(note).toHaveAttribute('aria-invalid', 'true')",
+                "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()",
+                "expect(writes).toHaveLength(1)",
+                "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeEnabled()",
+                "expect(response.status()).toBe(200)",
+                "expect((await response.json()).data.jurisdictionNote).toBe('😀'.repeat(length))",
+                "expect(writes).toHaveLength(index + 2)",
+                "expect(note).toHaveValue('😀'.repeat(length))",
+                "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "F06 order custom close respects the draft guard and busy editors remain protected",
+              "line": 448,
+              "assertions": [
+                "expect(warning).toBeVisible()",
+                "expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Unsaved order close')",
+                "expect(editor.getByRole('button', { name: 'Đóng chỉnh sửa', exact: true })).toBeDisabled()",
+                "expect(editor).toBeVisible()",
+                "expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Late order change')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 174,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 580,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 174-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    },
+    {
+      "name": "Current environment executions",
+      "runs": [
+        {
+          "executable": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "--version"
+          ],
+          "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+          "startedAt": "2026-10-08T11:48:23.560Z",
+          "finishedAt": "2026-10-08T11:48:23.674Z",
+          "exitCode": 0,
+          "log": {
+            "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/environment-1.log",
+            "sha256": "a38e383f1e9080b0dd9001481f6e56b341000de90a05061b66734350ad3adc41"
+          }
+        },
+        {
+          "executable": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "--script-shell=cmd.exe",
+            "ci"
+          ],
+          "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+          "startedAt": "2026-10-08T11:48:23.674Z",
+          "finishedAt": "2026-10-08T11:49:36.316Z",
+          "exitCode": 0,
+          "log": {
+            "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/environment-2.log",
+            "sha256": "a6d4ce9329955a1d892fdab36b9f3d3985e0203f1e81e1eb58812cd16e024750"
+          }
+        },
+        {
+          "executable": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "ls",
+            "--depth=0"
+          ],
+          "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+          "startedAt": "2026-10-08T11:49:36.317Z",
+          "finishedAt": "2026-10-08T11:49:36.837Z",
+          "exitCode": 0,
+          "log": {
+            "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/environment-3.log",
+            "sha256": "54546d1da9b9138f547b3b83579f2a78252b40e620edf3862dbdc0ac1c9ff621"
+          }
+        },
+        {
+          "executable": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "setup"
+          ],
+          "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+          "startedAt": "2026-10-08T11:49:36.837Z",
+          "finishedAt": "2026-10-08T11:49:37.288Z",
+          "exitCode": 0,
+          "log": {
+            "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/environment-4.log",
+            "sha256": "3b1ccbc2700f36f6dacf53468a0310dc9146402bba7e3458b71ea760c6019177"
+          }
+        },
+        {
+          "executable": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "run",
+            "doctor"
+          ],
+          "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+          "startedAt": "2026-10-08T11:49:37.288Z",
+          "finishedAt": "2026-10-08T11:49:37.508Z",
+          "exitCode": 0,
+          "log": {
+            "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/environment-5.log",
+            "sha256": "672964dbb21e82e121d2af5d557c6560d07f6fcdea96a2be8052b7f46d0f2d1c"
+          }
+        },
+        {
+          "executable": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+            "audit",
+            "--audit-level=low"
+          ],
+          "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+          "startedAt": "2026-10-08T11:49:37.508Z",
+          "finishedAt": "2026-10-08T11:49:38.281Z",
+          "exitCode": 0,
+          "log": {
+            "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/environment-6.log",
+            "sha256": "6d8c5c8f3d7684adb070417bd608d01ae90aa3dc26a65af03ffda4955f38d9a3"
+          }
+        }
+      ],
+      "coldInstall": {
+        "name": "clean-install",
+        "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"ci\"",
+        "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-components-clean-20261008-UhudSO\\BotSalesAI_Frontend",
+        "exitCode": 0
+      },
+      "exactLockPreserved": true
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T12:04:15.857Z",
+      "finishedAt": "2026-10-08T13:01:24.980Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791461051112-24880/e2e.log",
+        "sha256": "0d615324b9e8f61d00996ad9b00103b60815d0af16b223d888ab9308a626c966"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T12:00:38.731Z",
+      "finishedAt": "2026-10-08T12:03:41.371Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460838729-35556/verify.log",
+        "sha256": "2bf03ff3a3789667568cf2e52b9b4d8f32d4d2b03ecbe2333462f8ef93245d0c"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T11:58:37.260Z",
+      "finishedAt": "2026-10-08T11:58:44.713Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460717257-83008/unit.log",
+        "sha256": "6a52939fd24f06a2700c7aec5b45e73a63495140cc7be6b6b42fa6d5878c2612"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T11:58:44.810Z",
+      "finishedAt": "2026-10-08T11:58:45.052Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460724809-86548/source-maps.log",
+        "sha256": "031e77043d35d92181bc7a3975bb04f8ea186bb5cc3aa41325ac9637064e0fd9"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T12:05:42.238Z",
+      "finishedAt": "2026-10-08T12:08:56.218Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791461137424-54940/built-demo.log",
+        "sha256": "3f1000af3cd493c20b1b28030fe48f1bd9b992f40597ad178e1418ac9e418de6"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "1e29bdb73f48ce505d1df2db805847fce79b6d7117e8caac799f333b6ac2c5ab"
+}

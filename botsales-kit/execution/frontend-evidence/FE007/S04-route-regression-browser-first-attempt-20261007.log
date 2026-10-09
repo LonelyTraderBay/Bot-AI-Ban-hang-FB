@@ -1,0 +1,78 @@
+
+Running 16 tests using 1 worker
+
+
+
+[1/16] [chromium] › tests\frontend.spec.ts:99:1 › switching shops cancels a delayed request and loads only the new shop scope
+[2/16] [chromium] › tests\frontend.spec.ts:130:1 › deep links survive browser refresh and logout clears the mock session
+[3/16] [chromium] › tests\frontend.spec.ts:200:1 › mobile navigation opens, routes, and closes without viewport overflow
+[4/16] [chromium] › tests\frontend.spec.ts:214:1 › chunk loading errors use the route recovery boundary
+[5/16] [chromium] › tests\route-role-matrix.spec.ts:42:1 › route read access matches canonical permissions for every demo role
+[chromium] › tests\route-role-matrix.spec.ts:42:1 › route read access matches canonical permissions for every demo role
+ROUTE_ROLE_MATRIX_CASES=357 ROLES=7 PRIVATE_ROUTES=51 RESULT=PASS
+
+[6/16] [chromium] › tests\session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+[chromium] › tests\session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+VITE_CACHE_ISOLATION=PASS rootA=C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\test-demo\playwright-54028-5ca0194e-63c0-49a2-aaa7-294846ddbe87-parallel-a rootB=C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\test-demo\playwright-54028-5ca0194e-63c0-49a2-aaa7-294846ddbe87-parallel-b otherCheckout=true
+
+[7/16] [chromium] › tests\session\session-revocation.spec.ts:20:1 › session.revoked SSE closes the stream and clears the active shop session
+[8/16] [chromium] › tests\ui009-scope-regression.spec.ts:23:1 › UI009 delayed customer orders from the previous shop cannot leak into the new shop profile
+
+
+[9/16] [firefox] › tests\frontend.spec.ts:99:1 › switching shops cancels a delayed request and loads only the new shop scope
+[10/16] [firefox] › tests\frontend.spec.ts:130:1 › deep links survive browser refresh and logout clears the mock session
+[11/16] [firefox] › tests\frontend.spec.ts:200:1 › mobile navigation opens, routes, and closes without viewport overflow
+[12/16] [firefox] › tests\frontend.spec.ts:214:1 › chunk loading errors use the route recovery boundary
+[13/16] [firefox] › tests\route-role-matrix.spec.ts:42:1 › route read access matches canonical permissions for every demo role
+[firefox] › tests\route-role-matrix.spec.ts:42:1 › route read access matches canonical permissions for every demo role
+ROUTE_ROLE_MATRIX_CASES=357 ROLES=7 PRIVATE_ROUTES=51 RESULT=PASS
+
+[14/16] [firefox] › tests\session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+[firefox] › tests\session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+VITE_CACHE_ISOLATION=PASS rootA=C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\test-demo\playwright-46136-eef97e0e-b22f-42fc-abaa-8da8e50c3173-parallel-a rootB=C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\test-demo\playwright-46136-eef97e0e-b22f-42fc-abaa-8da8e50c3173-parallel-b otherCheckout=true
+
+[15/16] [firefox] › tests\session\session-revocation.spec.ts:20:1 › session.revoked SSE closes the stream and clears the active shop session
+  1) [firefox] › tests\session\session-revocation.spec.ts:20:1 › session.revoked SSE closes the stream and clears the active shop session 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 2
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      82 |     await expect(page.getByRole('heading', { name: 'Chào mừng trở lại', exact: true })).toBeVisible({ timeout: 15000 });
+      83 |     await expect.poll(() => sessionReads).toBeGreaterThanOrEqual(2);
+    > 84 |     await expect.poll(() => eventRequests).toBe(1);
+         |                                            ^
+      85 |     expect(new URL(page.url()).pathname).toBe('/login');
+      86 |     expect(new URL(page.url()).searchParams.get('returnTo')).toBe('/s/shop-demo/overview');
+      87 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\session\session-revocation.spec.ts:84:44
+
+    Error Context: test-results\playwright-46136-eef97e0e-b22f-42fc-abaa-8da8e50c3173\session-session-revocation-9db49-ars-the-active-shop-session-firefox\error-context.md
+
+    Error Context: test-results\playwright-46136-eef97e0e-b22f-42fc-abaa-8da8e50c3173\session-session-revocation-9db49-ars-the-active-shop-session-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-46136-eef97e0e-b22f-42fc-abaa-8da8e50c3173\session-session-revocation-9db49-ars-the-active-shop-session-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-46136-eef97e0e-b22f-42fc-abaa-8da8e50c3173\session-session-revocation-9db49-ars-the-active-shop-session-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[16/16] [firefox] › tests\ui009-scope-regression.spec.ts:23:1 › UI009 delayed customer orders from the previous shop cannot leak into the new shop profile
+  1 failed
+    [firefox] › tests\session\session-revocation.spec.ts:20:1 › session.revoked SSE closes the stream and clears the active shop session 
+  15 passed (1.8m)
+(node:54028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

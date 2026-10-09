@@ -1,0 +1,88 @@
+{
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "result": "PASS",
+  "generatedAt": "2026-10-07T14:02:35.222Z",
+  "operationCatalog": 210,
+  "currentRuns": {
+    "domain": {
+      "commandId": "domain",
+      "exitCode": 0,
+      "simulatorChecks": 75,
+      "networkChecks": 13,
+      "handlers": 210
+    },
+    "unit": {
+      "commandId": "unit",
+      "exitCode": 0,
+      "apiClientTestIncludedByVitestConfig": true
+    }
+  },
+  "networkScenarios": [
+    {
+      "name": "Registers every canonical HTTP operation and reports the custom SSE endpoint",
+      "status": "PASS"
+    },
+    {
+      "name": "Loads the service worker only in demo mode and guards production from mock activation",
+      "status": "PASS"
+    },
+    {
+      "name": "Covers the canonical route, feature, shop, and role catalogs",
+      "status": "PASS"
+    },
+    {
+      "name": "Returns schema-valid, paginated data and rejects stale cursors",
+      "status": "PASS"
+    },
+    {
+      "name": "Pages through a deterministic large dataset without dropping or duplicating rows",
+      "status": "PASS"
+    },
+    {
+      "name": "Scopes reads to the requested shop and role permissions",
+      "status": "PASS"
+    },
+    {
+      "name": "Maps request validation, CSRF, and missing If-Match to contract errors",
+      "status": "PASS"
+    },
+    {
+      "name": "Creates a product with schema-complete variants through HTTP",
+      "status": "PASS"
+    },
+    {
+      "name": "Preserves idempotency and exposes stale and unknown mutation outcomes over HTTP",
+      "status": "PASS"
+    },
+    {
+      "name": "Resets records, role, faults, idempotency keys, sequence, and fixed clock deterministically",
+      "status": "PASS"
+    },
+    {
+      "name": "Returns observable transient and empty states without fabricating records",
+      "status": "PASS"
+    },
+    {
+      "name": "Aborted delayed reads do not leak into the next request",
+      "status": "PASS"
+    },
+    {
+      "name": "Streams only the authorized shop and emits events matching the canonical v2 schema",
+      "status": "PASS"
+    }
+  ],
+  "transport": {
+    "operationsGeneratedFromContract": true,
+    "requestAndResponseSchemaValidation": true,
+    "paginationAndCursor": true,
+    "requiredVersionAndCsrfHeaderHandling": true,
+    "sseShopAuthorization": true,
+    "clientVersionAndIdempotency": true,
+    "commandStatusPollingAndUnknownReconciliation": true,
+    "serverAllowedActionsUsedBySharedUi": true,
+    "demoLiveModesSeparated": true,
+    "productionMockActivationRejected": true,
+    "unhandledApiRequestsFail": true,
+    "featureModuleDirectMockImports": 0
+  }
+}

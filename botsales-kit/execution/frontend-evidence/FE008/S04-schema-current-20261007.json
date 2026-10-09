@@ -1,0 +1,198 @@
+{
+  "taskId": "FE008",
+  "stepId": "S04",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T14:19:22.159Z",
+  "sourceRevision": "HEAD 53c0ba8 on main plus current frontend working tree",
+  "expected": "Simulator transcript, request/response and every current mock database row validate against canonical JSON Schemas; invalid request and wrong-shop cases are detected by current network tests.",
+  "observed": "The current captured simulator transcript/database passed 356/356 checks with existing frontend Ajv 2020, covering 89 transcript entries and all 51 mock collections. Supporting registered domain run passed 75/75 simulator checks and 13/13 MSW network scenarios over 210 handlers, including 422 malformed request, 404 wrong-shop, 403 role-denied and shop-authorized SSE cases. The optional Python validator could not run because its isolated Temp jsonschema package is incomplete; its stale 2026-10-04 report was excluded and no dependency was installed.",
+  "commandId": "domain",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows Node 24.19.0 / project Ajv 2020 runtime",
+    "details": "Schema audit uses the existing frontend Ajv dependency. Current S02 report and user-owned frontend evidence outputs were preserved; Python temp package failure is separately recorded.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 444,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/src/mocks/collections.json",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+    },
+    {
+      "path": "apps/web/src/shared/api/validation.ts",
+      "sha256": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/capture-s04-ajv-schema-current-20261007.mjs",
+      "sha256": "2e8bc87e3c65dadaf7f519ad1f421b9483884b6219add3b363f3b2173d96b4f5"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-domain-current-20261007.log",
+      "sha256": "14a0a7cc34f429e7108e90a40ad47b872cbbd463fbc1bf638104db1147056a9a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-domain-report-current-20261007.json",
+      "sha256": "92dda4303ae4059018ff2481ffa59f399e73a72a860573d117b34e09c13dfd2c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-transport-current-20261007.json",
+      "sha256": "3708c918f33b68f943b52c165ee7188ac50593cfe9424d6eafac464c3529b184"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-unit-current-20261007.log",
+      "sha256": "efde00b9af573cf5a771e8fa188b43f5767e184355296d516ae513f28ce36fc4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S04-ajv-schema-audit-current-20261007.json",
+      "sha256": "99aa03e50ee88774e916f87eb2996fcbe99047297bcc9521f2eaff9221fd80bb"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S04-ajv-schema-audit-current-20261007.log",
+      "sha256": "95be923a2c76039e0276e4811eff014463458ea21381d4a6cce245d04a54ddf8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S04-ajv-schema-report-current-20261007.json",
+      "sha256": "9fecea2bfd0e23a3a337867e7c051d64803c49bc3e931768e4feefcca0a44590"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S04-ajv-schema-run-current-20261007.log",
+      "sha256": "79140ee9b4aa0b7e649cca216fd3d55e22708f05deedb2bee941076cdd837842"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S04-schema-run-current-20261007.log",
+      "sha256": "6f74fb88a4741832568381dcbc38105215c067d9bee6718f971ebe847b7b08a1"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+    },
+    {
+      "path": "tests/domain-scenarios.cjs",
+      "sha256": "ac65e916a6433de60f96292ac03381b625aece42a04f6ac37085eb1243766245"
+    },
+    {
+      "path": "tests/fixtures/mock-network.mjs",
+      "sha256": "a074b777328e7aae5d81f6f2b60ea0653c674fcd80b1c146820e94daffdad6e6"
+    }
+  ],
+  "sourceSnapshotSha256": "68cc5bab9abf87e513a8d02f8d8f87b58152778ceb1bd147f27c5ff735c0e961",
+  "logFile": "execution/frontend-evidence/FE008/S04-schema-current-20261007.log",
+  "logSha256": "a89389b91a92b3b19e0aeafba84bcee29623f120ccf4e4858acd63f9f4686606",
+  "commandResults": [
+    {
+      "commandId": "domain",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE008/S02-domain-current-20261007.log",
+      "logSha256": "14a0a7cc34f429e7108e90a40ad47b872cbbd463fbc1bf638104db1147056a9a",
+      "simulatorChecks": 75,
+      "networkChecks": 13,
+      "handlers": 210
+    },
+    {
+      "commandId": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE008/S02-unit-current-20261007.log",
+      "logSha256": "efde00b9af573cf5a771e8fa188b43f5767e184355296d516ae513f28ce36fc4",
+      "testsPassed": 138
+    }
+  ],
+  "audit": {
+    "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+    "result": "PASS",
+    "generatedAt": "2026-10-07T14:19:22.159Z",
+    "schema": {
+      "checkedAt": "2026-10-07T14:19:22.158Z",
+      "status": "PASS",
+      "checks": 356,
+      "errors": [],
+      "transcriptEntries": 89,
+      "databaseCollections": 51,
+      "collectionSchemas": 51,
+      "componentSchemas": 283,
+      "scope": "Current captured simulator request/response transcript and database rows checked with the same Ajv 2020 configuration used by the frontend API boundary; not backend, React browser, or production validation."
+    },
+    "simulator": {
+      "checks": 75,
+      "passed": 75
+    },
+    "network": {
+      "operations": 210,
+      "handlers": 210,
+      "checks": 13,
+      "passed": 13,
+      "invalidRequest422": true,
+      "wrongShop404": true,
+      "permissionDenied403": true,
+      "sseAuthorization": true
+    },
+    "runtimeChoice": {
+      "validator": "Existing Ajv 2020 frontend dependency/configuration",
+      "addedProjectDependency": false,
+      "pythonOptionalChecker": "Unavailable: isolated temp jsonschema folder lacks jsonschema/__init__.py and Draft202012Validator; its stale prior report was excluded."
+    }
+  }
+}

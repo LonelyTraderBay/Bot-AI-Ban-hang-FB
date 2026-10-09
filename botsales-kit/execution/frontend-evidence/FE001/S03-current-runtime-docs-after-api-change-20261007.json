@@ -1,0 +1,93 @@
+{
+  "taskId": "FE001",
+  "stepId": "S03",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T13:20:45.452828+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working tree snapshot)",
+  "expected": "Đối chiếu REPORT/KNOWN_GAPS/package.json; ghi kiểm đã chạy, chưa chạy và lỗi nền theo môi trường.",
+  "observed": "The previous full verify and 504/504 E2E records are explicitly classified as historical after the API client source change: each now has exactly one runtime fingerprint mismatch, apps/web/src/shared/api/client.ts. Current replacement evidence is FE005.S03 with 138 passing Vitest tests and strict typecheck pass. Package verify has 12 local gates; E2E remains a separate command. Historical doc sections and unverified hosted/live/owner boundaries remain labeled; no full current-source E2E, hosted CI, Backend/provider, staging, production, or owner acceptance is claimed.",
+  "command": "python botsales-kit/execution/frontend-evidence/FE001/reconcile-s03-current-runtime-docs-20261007.py",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Local Windows Frontend report/runtime artifact review",
+    "details": "Read-only reconciliation of package scripts, current navigation docs, captured local verify/E2E records, current source hashes, and FE005 targeted API verification. No browser/backend was launched by this review.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 7,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "ae8c64d17b14f5a73e3b65f076ec6dc4eadbcc39e5c4b20fc3d7b9de88ecbd53"
+    },
+    {
+      "path": "evidence/REPORT.md",
+      "sha256": "d126ec152336691f35111a5ceb895fa6be71efd023bf659385b1d32fb35ad268"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/REPORT.md",
+      "sha256": "e95be4d5831e343b5bfe1aa76e79c05d1d126d75063e66709c88118e3ec80f77"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/e2e-record.json",
+      "sha256": "20e982ab894dc4a9494d01218ab230776c84295f9cf6a1289007ba271c9bb9d5"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/e2e.log",
+      "sha256": "f0aed15b41fd27767829f897603f2d435f1e37674500d9563d43ae1b09b31b55"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/verify-record.json",
+      "sha256": "e3d583317deb9ab3fead2f46105aaaf502d3d2d3478bd9481624077ba948f82b"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/verify.log",
+      "sha256": "5917f7a430275e426297307fbc8e10f90961dd9e99405bdf2ca90e707fcfe123"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/reconcile-s03-current-runtime-docs-20261007.py",
+      "sha256": "5efc5ab113f545268c00c9e5289d250907c6ccd4567fe68db00d9a86cbd9b1fa"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-client-current-20261007.log",
+      "sha256": "dc5c7aab574fce53e0984511ec29ae49cef78b39a5179cf8a0a487d3c72c1cdc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-client-current-20261007.receipt.json",
+      "sha256": "9a086458ad39943942fdd44fb815cb8b0b6606a63f08b8189e5f7a5af905cd16"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    }
+  ],
+  "sourceSnapshotSha256": "807dacf633a8ff955bcf904f70d033d73d0d0a8e4f939cc5edfcd4f1cf140f49",
+  "logFile": "execution/frontend-evidence/FE001/S03-current-runtime-docs-after-api-change-20261007.log",
+  "logSha256": "0035cea3c1098a32d7089be8c39995a62bcd1db04e0271450e03598f820758e9",
+  "currentReplacementEvidence": {
+    "path": "execution/frontend-evidence/FE005/S03-api-client-current-20261007.receipt.json",
+    "sha256": "9a086458ad39943942fdd44fb815cb8b0b6606a63f08b8189e5f7a5af905cd16"
+  }
+}

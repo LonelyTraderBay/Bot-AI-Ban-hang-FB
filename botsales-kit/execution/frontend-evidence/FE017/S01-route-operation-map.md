@@ -18,6 +18,14 @@ Shared upload limitation remains outside this task: other product-import and fin
 
 Primary sources: `contracts/route-manifest.json` R23–R25, `contracts/openapi.json` operations and schemas `Knowledge`, `KnowledgeWrite`, `KnowledgePublishRequest`, `FeedbackReview`, `FileUpload`, `FileObject`; `contracts/permission-catalog.json`; `docs/02_ARCHITECTURE.md`, `docs/06_API_AND_REALTIME.md`, `docs/07_AI_AND_CHANNELS.md`, `docs/09_STATE_AND_DATA_ACCESS.md`, and `docs/18_CODING_STANDARDS.md`.
 
+## Revalidation against current source — 2026-10-08
+
+- Canonical FE017 still owns routes R23–R25 and 15 operations; the route operation union matches the task's 15 operation IDs.
+- The feature catalog maps H07 to R34 and H08 to R52. The FE017 task instead lists R23–R25, whose route-manifest entries omit featureIds. This is an unresolved feature-to-route traceability mismatch. It is recorded as a contract gap; no route or feature mapping was guessed or changed.
+- Knowledge.allowedActions remains absent from the canonical schema. The verified UI gate is the previously approved substitute: knowledge.publish permission plus the canonical ready_for_review lifecycle state. This is not evidence of a server-provided allowed-actions field.
+- Current focused Chromium/Firefox run: 20/20. It contains 8 FE017-specific scenarios twice (16 results) plus 2 shared FE027 scenarios twice (4 results). Current source-map group: 16/16, including FE017's 4 source-map assertions. Current full E2E: 512/512; current unit: 138/138; current domain/network: 88/88.
+- All results are local React/MSW synthetic behavior. They do not verify a live file processor, publication service, feedback service, or backend authorization.
+
 ## Acceptance decisions confirmed during the 01/10/2026 run
 
 - The canonical `Knowledge` schema still has no `allowedActions`. Per the user's latest instruction to fully unblock frontend implementation with mock data, FE017 uses an explicitly documented frontend substitute: `knowledge.publish` permission plus canonical resource lifecycle/version/review/evaluation checks. Tests assert that the field is absent and unauthorized/stale publish requests are rejected. This is not server-provided `allowedActions`; no DTO field, permission or endpoint is invented. Production API authorization remains unverified.

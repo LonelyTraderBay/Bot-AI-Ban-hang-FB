@@ -1,0 +1,465 @@
+{
+  "executedAt": "2026-10-08T07:40:59.116Z",
+  "taskId": "FE015",
+  "stepId": "S01",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+      "verification": "Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R20",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "CashflowPage"
+        },
+        {
+          "id": "R21",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "EntriesPage"
+        },
+        {
+          "id": "R22",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "ProfitLossPage"
+        },
+        {
+          "id": "R48",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "JournalsPage"
+        },
+        {
+          "id": "R49",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "ReconciliationPage"
+        },
+        {
+          "id": "R50",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "DebtsPage"
+        }
+      ],
+      "operationIds": [
+        "closeAccountingPeriod",
+        "createFinanceEntry",
+        "createJournal",
+        "getCashflow",
+        "getCommand",
+        "getFinanceEntry",
+        "getJournal",
+        "getProfitLoss",
+        "importBankStatement",
+        "importCODStatement",
+        "listAccountingPeriods",
+        "listBankTransactions",
+        "listCODSettlements",
+        "listDebtItems",
+        "listFinanceEntries",
+        "listJournals",
+        "listReconciliationCases",
+        "matchCODSettlement",
+        "matchSettlement",
+        "postFinanceEntry",
+        "postJournal",
+        "reopenAccountingPeriod",
+        "reverseFinanceEntry",
+        "reverseJournal",
+        "updateFinanceEntry"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE015.AC01 report filters use exact timezone boundaries and mock API aggregates",
+        "FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data",
+        "UI003 report timestamps follow the active shop timezone",
+        "FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values",
+        "FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings",
+        "FE015.AC02 closed accounting period is visible and disables journal draft creation",
+        "FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions",
+        "UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page",
+        "FE015.AC03 COD settlement matches net remittance plus documented fee",
+        "FE015.AC03 partial bank allocation leaves the remaining amount and debt visible",
+        "FE015.AC03 unknown journal posting is not resent from the same draft"
+      ],
+      "executions": 22,
+      "assertionInventory": [
+        {
+          "file": "tests/fe015.spec.ts",
+          "sha256": "aa701e02703a32e7203757173977d8f6347aec697fb7be598a89f82e73d8ea19",
+          "cases": [
+            {
+              "title": "FE015.AC01 report filters use exact timezone boundaries and mock API aggregates",
+              "line": 50,
+              "assertions": [
+                "expect(from).toBeVisible()",
+                "expect(septemberResponse.status()).toBe(200)",
+                "expect(report).toMatchObject({ from: '2026-08-31T17:00:00.000Z', to: '2026-10-01T17:00:00.000Z', timezone: 'Asia/Vientiane' })",
+                "expect(report.receipts.amount).toBe('249000')",
+                "expect(report.disbursements.amount).toBe('274000')",
+                "expect(october.receipts.amount).toBe('0')",
+                "expect(october.disbursements.amount).toBe('0')",
+                "expect(profitResponse.status()).toBe(200)",
+                "expect(profit).toHaveProperty('policyVersion', 'synthetic-policy-1')",
+                "expect(profit).toHaveProperty('asOf')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data",
+              "line": 96,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Lợi nhuận quản trị', exact: true })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Hỏi đáp có nguồn', exact: true })).toBeVisible()",
+                "expect(page.getByText(/Chế độ mô phỏng: câu trả lời theo mẫu cố định/)).toBeVisible()",
+                "expect(explanation).toBeVisible()",
+                "expect(explanation).toContainText('Snapshot báo cáo ghi nhận doanh thu thuần')",
+                "expect(explanation).toContainText('Khoảng báo cáo')",
+                "expect(explanation).toContainText('synthetic-policy-1')",
+                "expect(explanation.getByText(/getProfitLoss chưa trả về journal ID/)).toBeVisible()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI003 report timestamps follow the active shop timezone",
+              "line": 117,
+              "assertions": [
+                "expect(timezone).toHaveValue('Asia/Vientiane')",
+                "expect(updateResponse.status()).toBe(200)",
+                "expect((await updateResponse.json()).data.timezone).toBe('UTC')",
+                "expect(page.getByRole('status')).toContainText('Đã lưu cấu hình cửa hàng.')",
+                "expect(utcReportResponse.status()).toBe(200)",
+                "expect(utcReport).toMatchObject({ from: '2026-09-01T00:00:00.000Z', to: '2026-10-01T00:00:00.000Z', timezone: 'UTC' })",
+                "expect(Date.parse(utcReport.asOf)).toBeGreaterThan(0)",
+                "expect(page.locator('body')).toContainText(dateTime(utcReport.from, 'UTC'))",
+                "expect(page.locator('body')).toContainText(dateTime(utcReport.to, 'UTC'))",
+                "expect(page.locator('body')).toContainText(dateTime(utcReport.asOf, 'UTC'))",
+                "expect(vientianeReportResponse.status()).toBe(200)",
+                "expect(vientianeReport).toMatchObject({ from: '2026-08-31T17:00:00.000Z', to: '2026-09-30T17:00:00.000Z', timezone: 'Asia/Vientiane' })",
+                "expect(Date.parse(vientianeReport.asOf)).toBeGreaterThan(0)",
+                "expect(page.locator('body')).toContainText(dateTime(vientianeReport.from, 'Asia/Vientiane'))",
+                "expect(page.locator('body')).toContainText(dateTime(vientianeReport.asOf, 'Asia/Vientiane'))"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values",
+              "line": 174,
+              "assertions": [
+                "expect(response.status()).toBe(200)",
+                "expect(page.getByRole('heading', { name: 'Lợi nhuận quản trị', exact: true })).toBeVisible()",
+                "expect(page.getByText(label, { exact: true }).first()).toBeVisible()",
+                "expect(page.getByText(formatMoney(amount), { exact: true }).first()).toBeVisible()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings",
+              "line": 202,
+              "assertions": [
+                "expect(dialog.getByRole('alert').filter({ hasText: 'đang mở' })).toBeVisible()",
+                "expect(save).toBeDisabled()",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Cần cân bằng' })).toBeVisible()",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Đã cân bằng' })).toBeVisible()",
+                "expect(JSON.parse(request.postData() || 'null')).toEqual({\n        sourceType: 'manual', sourceId: 'FE015-JOURNAL-01', effectiveDate: '2026-09-29',\n        lines: [\n            { accountId: 'cash', debit: { amount: '100.25', currency: 'VND' }, credit: { amount: '0', currency: 'VND' }, description: 'Thu tiền mẫu' },\n            { accountId: 'sales', debit: { amount: '0', currency: 'VND' }, credit: { amount: '100.25', currency: 'VND' }, description: 'Doanh thu mẫu' },\n        ], reason: 'Ghi nhận bút toán kiểm thử cân bằng.',\n    })",
+                "expect((await responseWait).status()).toBe(201)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE015.AC02 closed accounting period is visible and disables journal draft creation",
+              "line": 237,
+              "assertions": [
+                "expect(period).toBeVisible()",
+                "expect(JSON.parse((await closeRequest).postData() || 'null')).toEqual({ expectedVersion: 1 })",
+                "expect((await closeResponse).status()).toBe(202)",
+                "expect(period.getByText('Đã đóng', { exact: true })).toBeVisible()",
+                "expect(journal.getByRole('alert').filter({ hasText: 'đã khóa; không thể tạo' })).toBeVisible()",
+                "expect(journal.getByRole('button', { name: 'Lưu nháp' })).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions",
+              "line": 258,
+              "assertions": [
+                "expect(response.status()).toBe(200)",
+                "expect(payload.data).toMatchObject({ status: 'partial', total: 2, completed: 1, errorCount: 1 })",
+                "expect(payload.data.rowErrors).toHaveLength(1)",
+                "expect(page.getByRole('row').filter({ hasText: 'FE015-IMPORT-OK' })).toBeVisible()",
+                "expect(page.getByRole('row').filter({ hasText: 'FE015-IMPORT-BAD' })).toHaveCount(0)",
+                "expect(reimport.payload.data).toMatchObject({ status: 'failed', completed: 0, errorCount: 1 })",
+                "expect(page.getByRole('row').filter({ hasText: 'FE015-IMPORT-OK' })).toHaveCount(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page",
+              "line": 281,
+              "assertions": [
+                "expect(bankImport.payload.data).toMatchObject({ status: 'succeeded', completed: 25, errorCount: 0 })",
+                "expect(codImport.payload.data).toMatchObject({ status: 'succeeded', completed: 1, errorCount: 0 })",
+                "expect(page.getByRole('row').filter({ hasText: 'FE015-UI001-BANK-05' })).toBeVisible()",
+                "expect(page.getByRole('row').filter({ hasText: 'FE015-UI001-BANK-25' })).toHaveCount(0)",
+                "expect(bankCursor).toBeTruthy()",
+                "expect(new URL(page.url()).searchParams.has('codCursor')).toBe(false)",
+                "expect(new URL(page.url()).searchParams.has('caseCursor')).toBe(false)",
+                "expect(listRequests.some(request => request.collection === 'bank-transactions' && request.cursor === bankCursor)).toBe(true)",
+                "expect(listRequests.filter(request => ['cod-settlements', 'reconciliation-cases'].includes(request.collection)).every(request => request.cursor === null)).toBe(true)",
+                "expect(codRow).toBeVisible()",
+                "expect(codDialog.getByRole('button', { name: 'Tải thêm giao dịch ngân hàng' })).toBeVisible()",
+                "expect(codDialog.getByRole('button', { name: 'Xác nhận khớp' })).toBeEnabled()",
+                "expect(page.getByRole('tab', { name: 'Chênh lệch cần xử lý' })).toHaveAttribute('aria-selected', 'true')",
+                "expect(page.getByRole('alert').filter({ hasText: /Cursor không còn phù hợp|INVALID_CURSOR/ })).toHaveCount(0)",
+                "expect(rows.nth(1)).toBeVisible()",
+                "expect(caseRow).toBeDefined()",
+                "expect(caseDialog.getByRole('textbox', { name: 'Giao dịch ngoài hệ thống' })).toHaveValue((await bankDetail).data.externalTransactionId)",
+                "expect(caseDialog.getByRole('combobox', { name: 'Khoản công nợ' })).toContainText('seed-debtitem-10028')",
+                "expect(listRequests.some(request => request.collection === 'debts' && request.cursor === null)).toBe(true)",
+                "expect(caseDialog.getByRole('button', { name: 'Ghi kết quả đối soát' })).toBeEnabled()",
+                "expect((await codMatchResponse).status()).toBe(202)",
+                "expect(afterMatchBank.payload.data).toMatchObject({ status: 'succeeded', completed: 1, errorCount: 0 })",
+                "expect(postMatchCase).toBeVisible()",
+                "expect((await postMatchBankDetail.json()).data.externalTransactionId).toBe('FE015-UI001-POSTMATCH-BANK')",
+                "expect(postMatchDialog.getByRole('textbox', { name: 'Giao dịch ngoài hệ thống' })).toHaveValue('FE015-UI001-POSTMATCH-BANK')",
+                "expect(page.getByRole('option', { name: /seed-debtitem-10028/ })).toHaveCount(0)",
+                "expect(new URL(page.url()).searchParams.has('bankCursor')).toBe(false)",
+                "expect(page.getByRole('alert').filter({ hasText: /Cursor không còn phù hợp|INVALID_CURSOR/ })).toHaveCount(0)",
+                "expect(invalidListResponses).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE015.AC03 COD settlement matches net remittance plus documented fee",
+              "line": 408,
+              "assertions": [
+                "expect(codImport.payload.data).toMatchObject({ status: 'succeeded', completed: 1, errorCount: 0 })",
+                "expect(codRow).toBeVisible()",
+                "expect(codBody).toMatchObject({ expectedVersion: 1, actualFees: { amount: '20000', currency: 'VND' }, feeEvidenceRef: 'FEE-INVOICE-FE015-01' })",
+                "expect((await codResponse).status()).toBe(202)",
+                "expect(codRow.getByText('matched', { exact: true })).toBeVisible()",
+                "expect(posts).toHaveLength(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE015.AC03 partial bank allocation leaves the remaining amount and debt visible",
+              "line": 442,
+              "assertions": [
+                "expect(caseRow).toBeVisible()",
+                "expect(allocationBody).toMatchObject({ allocations: [{ resource: { type: 'debt', id: 'seed-debtitem-10028' }, amount: { amount: '50000', currency: 'VND' } }] })",
+                "expect((await allocationResponse).status()).toBe(202)",
+                "expect(caseRow.getByText('suggested', { exact: true })).toBeVisible()",
+                "expect(allocationDialog).toBeHidden()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE015.AC03 unknown journal posting is not resent from the same draft",
+              "line": 467,
+              "assertions": [
+                "expect((await created).status()).toBe(201)",
+                "expect(row).toBeVisible()",
+                "expect((await postResponse).status()).toBe(202)",
+                "expect(page.getByText(/Có 1 thao tác chưa xác minh kết quả/)).toBeVisible()",
+                "expect(confirm.getByRole('alert')).toContainText(/chưa xác minh|chưa hoàn tất|unknown/i)",
+                "expect.poll(() => postCalls.length).toBe(1)",
+                "expect.poll(() => postCalls.length)",
+                "expect(postCalls).toHaveLength(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 173,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 554,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 173-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T06:37:29.347Z",
+      "finishedAt": "2026-10-08T07:30:19.236Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441445991-24436/e2e.log",
+        "sha256": "3cacad22f6067dd1457cbb612a006c0c23b5fbe412b9463eb0e9cce03e58def3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T07:34:52.342Z",
+      "finishedAt": "2026-10-08T07:37:44.467Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444892341-75160/verify.log",
+        "sha256": "dfbd8a6d477a6eecb4157cfc065af49dbd42757c5af1562dc2ef420eb54a06c9"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T06:33:11.870Z",
+      "finishedAt": "2026-10-08T06:33:20.247Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191868-26044/unit.log",
+        "sha256": "30b43fa2caed68b69a8af1d3f42966be47fb599333ec8aeabf545d4e3a06828a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T06:33:12.561Z",
+      "finishedAt": "2026-10-08T06:33:13.122Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192559-16080/source-maps.log",
+        "sha256": "5995622faa92f23d7d7aaf71389770d0c2f06620028cee851c437263d462ea95"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T07:30:53.995Z",
+      "finishedAt": "2026-10-08T07:34:07.500Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444650847-70468/built-demo.log",
+        "sha256": "7a0b4144184a753be8151839e9a6c36446ccb91e0ed149baca057f25fd9f5c9d"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "91b69ef90b5b2323632b77d6678837e1b4724a96801abb2f1120d154349fc876"
+}

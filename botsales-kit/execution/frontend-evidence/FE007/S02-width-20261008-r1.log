@@ -1,0 +1,356 @@
+{
+  "executedAt": "2026-10-08T16:21:02.765Z",
+  "taskId": "FE007",
+  "stepId": "S02",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Hoàn thiện shell/navigation/query keys principal/shop/permissionVersion/filter; auth flow dùng mock protocol theo contract.",
+      "verification": "Một Router/QueryClient/theme provider; 401/403 không giả empty success. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [],
+      "operationIds": [],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "catalog create uses the HTTP mock and successful save clears the draft guard",
+        "dirty drafts block in-app navigation and preserve input until the user decides",
+        "all canonical routes render inside the real React demo application",
+        "switching shops cancels a delayed request and loads only the new shop scope",
+        "role changes remove restricted navigation and the route guard explains denied access",
+        "deep links survive browser refresh and logout clears the mock session",
+        "logout asks before discarding a draft and retains the session when logout fails",
+        "mobile navigation opens, routes, and closes without viewport overflow",
+        "chunk loading errors use the route recovery boundary",
+        "live mode reports an unavailable session API without enabling mock data",
+        "session.revoked SSE closes the stream and clears the active shop session",
+        "UI009 delayed customer orders from the previous shop cannot leak into the new shop profile"
+      ],
+      "executions": 24,
+      "assertionInventory": [
+        {
+          "file": "tests/frontend.spec.ts",
+          "sha256": "f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5",
+          "cases": [
+            {
+              "title": "catalog create uses the HTTP mock and successful save clears the draft guard",
+              "line": 39,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Sản phẩm', exact: true })).toBeVisible()",
+                "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible()",
+                "expect(page).toHaveURL(/\\/products\\/product-/)",
+                "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' })).toHaveCount(0)",
+                "expect(page.getByText('Sản phẩm kiểm thử', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "dirty drafts block in-app navigation and preserve input until the user decides",
+              "line": 56,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(name).toHaveValue('Bản nháp chưa lưu')",
+                "expect(dialog).toBeVisible()",
+                "expect(page).toHaveURL(/\\/categories$/)",
+                "expect(page.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "all canonical routes render inside the real React demo application",
+              "line": 74,
+              "assertions": [
+                "expect(main, `${route.id} should mount the shop-scoped page`).toBeVisible()",
+                "expect(main.getByRole('heading').first(), `${route.id} should render page content`).toBeVisible()",
+                "expect(main.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }), `${route.id} should not fall through to the router error boundary`).toHaveCount(0)",
+                "expect(page.getByText('Dữ liệu mô phỏng', { exact: true }), `${route.id} should disclose the synthetic data source`).toBeVisible()",
+                "expect(heading, `${route.id} should render its public page content`).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Không thể mở màn hình', exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('heading', { name: 'Không tìm thấy trang', exact: true })).toHaveCount(0)",
+                "expect(page.getByText('Chưa khởi động được ứng dụng', { exact: true })).toHaveCount(0)",
+                "expect(errors).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "switching shops cancels a delayed request and loads only the new shop scope",
+              "line": 99,
+              "assertions": [
+                "expect(page).toHaveURL(/\\/shop-demo\\/products$/)",
+                "expect(page.getByRole('heading', { name: 'Chọn cửa hàng', exact: true })).toBeVisible()",
+                "expect(page).toHaveURL(/\\/s\\/shop-second\\/overview$/)",
+                "expect(firstProduct).toHaveAttribute('href', '/s/shop-second/products/b-p1')",
+                "expect(firstProduct).toHaveAttribute('href', '/s/shop-second/products/b-p1')",
+                "expect(page.locator('a[href=\"/s/shop-demo/products/p1\"]')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "role changes remove restricted navigation and the route guard explains denied access",
+              "line": 117,
+              "assertions": [
+                "expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Lợi nhuận' })).toHaveCount(0)",
+                "expect(page.getByText(/Bạn không có quyền truy cập màn hình này trong/)).toBeVisible()",
+                "expect(page.getByText(/Việc kiểm quyền thực thi vẫn thuộc backend/)).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "deep links survive browser refresh and logout clears the mock session",
+              "line": 130,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Đơn DH-DEMO-PAID-01' })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Đơn DH-DEMO-PAID-01' })).toBeVisible()",
+                "expect((await logoutResponse).status()).toBe(204)",
+                "expect(page.getByRole('heading', { name: 'Chào mừng trở lại' })).toBeVisible()",
+                "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "logout asks before discarding a draft and retains the session when logout fails",
+              "line": 143,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(name).toHaveValue('Bản nháp trước khi đăng xuất')",
+                "expect(dialog).toBeVisible()",
+                "expect(page.getByRole('alert').filter({ hasText: 'Chưa xác minh được đăng xuất' })).toBeVisible()",
+                "expect(name).toHaveValue('Bản nháp trước khi đăng xuất')",
+                "expect(page.getByText('API thật', { exact: true })).toBeVisible()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(page).toHaveURL(/\\/s\\/shop-demo\\/products\\/new$/)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "mobile navigation opens, routes, and closes without viewport overflow",
+              "line": 200,
+              "assertions": [
+                "expect(productLink).toBeVisible()",
+                "expect(page).toHaveURL(/\\/products$/)",
+                "expect(page.getByRole('heading', { name: 'Sản phẩm', exact: true })).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Mở menu' })).toBeVisible()",
+                "expect(width.scroll).toBeLessThanOrEqual(width.client + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "chunk loading errors use the route recovery boundary",
+              "line": 214,
+              "assertions": [
+                "expect(page).toHaveURL(/\\/notifications$/)",
+                "expect(page.getByRole('heading', { name: 'Không thể mở màn hình' })).toBeVisible()",
+                "expect(page.locator('main#main-content')).toHaveCount(1)",
+                "expect(failedChunks).toBeGreaterThan(0)",
+                "expect(page.getByText(/Bản nháp chưa gửi không được coi là đã lưu/)).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "live mode reports an unavailable session API without enabling mock data",
+              "line": 253,
+              "assertions": [
+                "expect(page.getByRole('alert').filter({ hasText: 'Không thể kết nối API phiên đăng nhập' })).toBeVisible()",
+                "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0)",
+                "expect(page.getByText(/không tự chuyển sang dữ liệu mô phỏng/)).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/session/session-revocation.spec.ts",
+          "sha256": "e9066f0af951ca3397b240c52453287bbb1c3a8119676a49f51df9b2276748c4",
+          "cases": [
+            {
+              "title": "session.revoked SSE closes the stream and clears the active shop session",
+              "line": 20,
+              "assertions": [
+                "expect(membership).toBeDefined()",
+                "expect(shop).toBeDefined()",
+                "expect(page.getByText('API thật', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: /Chào .*cửa hàng của bạn hôm nay/ })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Chào mừng trở lại', exact: true })).toBeVisible({ timeout: 15000 })",
+                "expect.poll(() => sessionReads).toBeGreaterThanOrEqual(2)",
+                "expect.poll(() => sessionReads)",
+                "expect.poll(() => eventRequests).toBeGreaterThanOrEqual(1)",
+                "expect.poll(() => eventRequests)",
+                "expect(eventRequests).toBeLessThanOrEqual(2)",
+                "expect(new URL(page.url()).pathname).toBe('/login')",
+                "expect(new URL(page.url()).searchParams.get('returnTo')).toBe('/s/shop-demo/overview')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui009-scope-regression.spec.ts",
+          "sha256": "9939f7c1d99bb903f0e333f6913f172938fa39cc986c593cb9b8c840e18b509e",
+          "cases": [
+            {
+              "title": "UI009 delayed customer orders from the previous shop cannot leak into the new shop profile",
+              "line": 23,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Khách hàng', exact: true })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible()",
+                "expect(panel(page, 'Đơn hàng gần đây').getByRole('progressbar')).toBeVisible({ timeout: 1_000 })",
+                "expect(page.getByRole('heading', { name: 'Chọn cửa hàng' })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Khách hàng', exact: true })).toBeVisible()",
+                "expect(currentResponse.status()).toBe(200)",
+                "expect.poll(() => staleRequestState, { timeout: 7000 }).not.toBe('pending')",
+                "expect.poll(() => staleRequestState, { timeout: 7000 })",
+                "expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible()",
+                "expect(ordersPanel.getByText('b-DH-1001', { exact: true })).toBeVisible()",
+                "expect(ordersPanel.getByText('DH-DEMO-PAID-01', { exact: true })).toHaveCount(0)",
+                "expect(observedOrderRequests).toEqual(expect.arrayContaining([\n        { shopId: 'shop-demo', customerId: 'c1' },\n        { shopId: 'shop-second', customerId: 'b-c1' },\n    ]))",
+                "expect.arrayContaining([\n        { shopId: 'shop-demo', customerId: 'c1' },\n        { shopId: 'shop-second', customerId: 'b-c1' },\n    ])",
+                "expect(observedOrderRequests.every(request =>\n        (request.shopId === 'shop-demo' && request.customerId === 'c1')\n        || (request.shopId === 'shop-second' && request.customerId === 'b-c1'),\n    )).toBe(true)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 175,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 600,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 175-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled width behavior",
+      "routeObservations": 216,
+      "focusedCases": 50,
+      "artifact": "built-width-review.json",
+      "limit": "Actual compiled geometry/axe/keyboard; counts remain separate from full browser suite."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T15:06:43.990Z",
+      "finishedAt": "2026-10-08T16:08:18.865Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log",
+        "sha256": "0dd13c7e0d58c6a0b233fa73b5292792d7fc9d823db36e18e2d43a7681ec7d65"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T16:17:12.833Z",
+      "finishedAt": "2026-10-08T16:20:43.383Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791476232832-77820/verify.log",
+        "sha256": "5f1a26eb82b0b3bcbfc4d877b011a2e5bf5a3d667926a7f7372ed9cf888ac533"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T15:06:19.368Z",
+      "finishedAt": "2026-10-08T15:06:27.830Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471979366-47856/unit.log",
+        "sha256": "9bdf32f670c42b6008b248bc8a31bd9c446e58ab5fbed5177ff4b9b8146e86be"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T15:06:20.146Z",
+      "finishedAt": "2026-10-08T15:06:20.494Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471980144-85744/source-maps.log",
+        "sha256": "0cd6f9893f86513b00b56e54f6b429fe50eb8ca10472bf361b88fb07e4772b26"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T16:13:48.583Z",
+      "finishedAt": "2026-10-08T16:16:53.763Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791476022925-8140/built-demo.log",
+        "sha256": "e87ef94110b0b39ed716edef9e8c3192866c234682cdbf4c0b8376c6574fb6ac"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "9f387f6ca1e8720c2af912d022ad7623ea57a4a2e078fc4996e0724125df1886"
+}

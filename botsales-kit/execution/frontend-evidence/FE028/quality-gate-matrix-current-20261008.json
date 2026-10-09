@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-08",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "sourceRevision": "HEAD 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 plus the measured current working tree; per-file SHA-256 values are recorded by FE028 receipts.",
+  "reviewKind": "Current local evidence review; no live Backend, hosted CI, staging, production runtime, independent peer review, or user acceptance claim.",
+  "trackerBeforeFE028Closeout": {
+    "verifiedSteps": 135,
+    "totalSteps": 140,
+    "blocked": [],
+    "stale": [
+      "FE028"
+    ],
+    "next": "FE028.S01",
+    "meaning": "Canonical progress.mjs snapshot before refreshing FE028; the tracker counts current checkpoint evidence, not source-code completion."
+  },
+  "rubric": {
+    "passed": 7,
+    "total": 9,
+    "ratio": "7/9",
+    "meaning": "Count of gates supported as passing within the explicitly scoped Frontend artifact. FE-G05 and FE-G09 remain unresolved; this ratio is not a code-completion or production-readiness score."
+  },
+  "gates": [
+    {
+      "id": "FE-G01",
+      "title": "Môi trường tái lập",
+      "status": "ĐẠT",
+      "basis": "Isolated clean copy used the current lockfile for npm ci, audit, setup, verify and production/demo builds. All 10 recorded command stages exited 0; source and copied lock SHA-256 match.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-current-20261008-attempt03.log",
+        "botsales-kit/execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json",
+        "botsales-kit/execution/frontend-evidence/FE026/registered-verify-current-20261008.log"
+      ],
+      "limits": [
+        "Windows local runner only; hosted CI was not run.",
+        "npm retained lifecycle-script approval notices for esbuild and MSW; no approval was inferred."
+      ]
+    },
+    {
+      "id": "FE-G02",
+      "title": "Code và kiến trúc",
+      "status": "ĐẠT",
+      "basis": "Current verify passed generated freshness, source/domain/boundary checks, lint, strict TypeScript, 138 Vitest tests and UI layout/token/composition/evidence gates. FE028 architecture review inspected the actual app, module, transport, mock and public entry boundaries.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE026/registered-verify-current-20261008.log",
+        "botsales-kit/execution/frontend-evidence/FE028/architecture-review-current-20261008.md"
+      ],
+      "limits": [
+        "Architecture review is Codex self-review; no independent peer review is claimed."
+      ]
+    },
+    {
+      "id": "FE-G03",
+      "title": "Contract và mocks",
+      "status": "ĐẠT",
+      "basis": "Canonical generated contract checks and current synthetic domain/network plus unit suites passed. FE026 clean regression contract tests passed 7/7; the app selects MSW only in demo/test mode.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-current-20261008-attempt03.log",
+        "botsales-kit/execution/frontend-evidence/FE026/registered-verify-current-20261008.log",
+        "BotSalesAI_Frontend/apps/web/src/main.tsx",
+        "BotSalesAI_Frontend/apps/web/src/mocks/service.ts"
+      ],
+      "limits": [
+        "Synthetic contract/mock behavior does not prove a live API, provider, server transaction, or persistence behavior."
+      ]
+    },
+    {
+      "id": "FE-G04",
+      "title": "Phủ chức năng",
+      "status": "ĐẠT",
+      "basis": "Current built-demo browser run passed 512/512 (256 Chromium and 256 Firefox). The source-linked matrix covers 54 routes, 64 features, 65 feature-route rows, 22 journeys, private-route roles 357/357 across 51 routes and seven roles, empty 11/11, error 51/51, and zero untested applicable state cells.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log",
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261008.json",
+        "botsales-kit/execution/frontend-evidence/FE027/S01-current-uat-20261008.log"
+      ],
+      "limits": [
+        "This is local React UI coverage with synthetic MSW. UI role cases are not server-side authorization evidence."
+      ]
+    },
+    {
+      "id": "FE-G05",
+      "title": "UI/UX và accessibility",
+      "status": "CHƯA ĐẠT",
+      "basis": "Current automated evidence includes 54-route axe runs, keyboard-only 18/18, layout/visual-token/composition gates, reflow, 200% Chromium browser zoom, 200% Firefox text-only zoom, forced-colors/reduced-motion observation and selected visual reviews.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE025/S04-current-responsive-performance-20261008.json",
+        "botsales-kit/execution/frontend-evidence/FE025/keyboard-only-current-20261008.log",
+        "botsales-kit/execution/frontend-evidence/FE025/actual-browser-zoom-current-20261008.log",
+        "botsales-kit/execution/frontend-evidence/FE025/native-text-only-current-20261008.log",
+        "botsales-kit/execution/frontend-evidence/FE027/ui-screenshots-current-20261008/manifest.json"
+      ],
+      "limits": [
+        "Narrator speech/transcript and broad human accessibility/conformance review were not run. No full WCAG conformance claim is made.",
+        "Automated spacing/token gates and selected screenshots do not prove rendered semantic spacing parity for every route and state."
+      ]
+    },
+    {
+      "id": "FE-G06",
+      "title": "An toàn Frontend",
+      "status": "ĐẠT",
+      "basis": "Isolated current npm audit found zero vulnerabilities. Current UI security/session/network tests are included in the passing verify and browser suite; production smoke showed an explicit unavailable error without automatic mock fallback.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-current-20261008-attempt03.log",
+        "botsales-kit/execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log"
+      ],
+      "limits": [
+        "Does not prove server authorization, real tenant isolation, secret handling by a live deployment, or backend security."
+      ]
+    },
+    {
+      "id": "FE-G07",
+      "title": "Hiệu năng Frontend",
+      "status": "ĐẠT",
+      "basis": "Current local demo preview measured Chromium 153 and Firefox 155 using the named 1,000-customer synthetic dataset. Initial-route gzip was 453,567 bytes; the 20-row page returned 1,004 total records in 354 ms Chromium and 433 ms Firefox. Largest production chunks were 328,326 bytes raw for MUI and 313,031 bytes raw for charts.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE025/S01-current-responsive-performance-20261008.json",
+        "botsales-kit/execution/frontend-evidence/FE025/S03-current-responsive-performance-20261008.json",
+        "botsales-kit/execution/frontend-evidence/FE025/browser-a11y-performance-current-20261008.log",
+        "botsales-kit/execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json"
+      ],
+      "limits": [
+        "Synthetic local browser measurements are not physical-device, CDN, production-user, or backend SLO evidence."
+      ]
+    },
+    {
+      "id": "FE-G08",
+      "title": "Artifact và CI",
+      "status": "ĐẠT",
+      "basis": "Clean production and demo builds passed and reproduced byte-for-byte. Production tree has 34 files, no mock worker and no inspected MSW/seed markers; demo tree has 38 files and includes its worker. Focused built-demo preview passed 8/8. The approved gate accepts this clean local equivalent.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json",
+        "botsales-kit/execution/frontend-evidence/FE026/clean-build-current-20261008-attempt03.log",
+        "botsales-kit/execution/frontend-evidence/FE027/built-demo-review-current-20261008.log"
+      ],
+      "limits": [
+        "GitHub Actions and branch protection were not run or verified; no hosted CI PASS is claimed."
+      ]
+    },
+    {
+      "id": "FE-G09",
+      "title": "UAT và bàn giao",
+      "status": "CHƯA XÁC MINH",
+      "basis": "Technical mock UAT matrix, selected screenshots/trace, commands, hashes, test results, limitations and handoff are prepared. Final owner/user acceptance has not been recorded.",
+      "evidence": [
+        "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261008.json",
+        "botsales-kit/execution/frontend-evidence/FE027/ui-screenshots-current-20261008/manifest.json",
+        "botsales-kit/execution/frontend-evidence/FE028/handoff.md"
+      ],
+      "limits": [
+        "The assistant cannot record the user's acceptance decision."
+      ]
+    }
+  ],
+  "definitionOfDone": {
+    "status": "CHƯA ĐẠT ĐẦY ĐỦ",
+    "criteria": [
+      {
+        "criterion": "Current source and canonical contracts inspected; build/test evidence tied to exact source snapshots",
+        "status": "ĐẠT",
+        "evidence": [
+          "botsales-kit/execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json",
+          "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261008.json"
+        ]
+      },
+      {
+        "criterion": "Production/demo build, isolation and reproducibility",
+        "status": "ĐẠT",
+        "evidence": [
+          "botsales-kit/execution/frontend-evidence/FE026/clean-build-current-20261008-attempt03.log",
+          "botsales-kit/execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json"
+        ]
+      },
+      {
+        "criterion": "Route, feature, state, role and journey evidence for the synthetic frontend scope",
+        "status": "ĐẠT",
+        "evidence": [
+          "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261008.json",
+          "botsales-kit/execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log"
+        ]
+      },
+      {
+        "criterion": "Accessibility and human conformance obligations fully evidenced",
+        "status": "CHƯA ĐẠT",
+        "evidence": [
+          "botsales-kit/execution/frontend-evidence/FE025/S04-current-responsive-performance-20261008.json"
+        ]
+      },
+      {
+        "criterion": "Final user acceptance decision recorded by the user",
+        "status": "CHƯA XÁC MINH",
+        "evidence": [
+          "botsales-kit/execution/frontend-evidence/FE028/handoff.md"
+        ]
+      },
+      {
+        "criterion": "Backend/provider/persistence/staging/deployment proof",
+        "status": "KHÔNG ÁP DỤNG",
+        "reason": "Explicitly outside the authorized local Frontend scope; absence is not evidence of a live integration."
+      },
+      {
+        "criterion": "Hosted CI/branch protection",
+        "status": "CHƯA XÁC MINH",
+        "reason": "Not run; the approved clean local equivalent satisfies FE-G08 without claiming hosted execution."
+      }
+    ],
+    "technicalPackageStatus": "ĐẠT",
+    "acceptanceStatus": "CHƯA XÁC MINH"
+  },
+  "openEvidence": [
+    {
+      "id": "FE-G05",
+      "status": "CHƯA ĐẠT",
+      "missing": [
+        "Narrator speech/transcript",
+        "broad human accessibility/conformance review"
+      ],
+      "effect": "Blocks a full accessibility/WCAG conformance claim."
+    },
+    {
+      "id": "FE-G09",
+      "status": "CHƯA XÁC MINH",
+      "missing": [
+        "User's final acceptance decision"
+      ],
+      "effect": "No acceptance is recorded on the user's behalf."
+    },
+    {
+      "id": "hosted-ci",
+      "status": "CHƯA XÁC MINH",
+      "missing": [
+        "Hosted GitHub Actions run and branch protection observation"
+      ],
+      "effect": "Local equivalent passes the Frontend rubric; no hosted CI claim."
+    },
+    {
+      "id": "live-services",
+      "status": "NGOÀI_PHẠM_VI_CHƯA_XÁC_MINH",
+      "missing": [
+        "Backend source/runtime, provider, server authorization, persistent store, staging and production operations"
+      ],
+      "effect": "No whole-system production readiness inference."
+    }
+  ]
+}

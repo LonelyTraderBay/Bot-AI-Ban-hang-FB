@@ -1,0 +1,14 @@
+FE018.S05 bot configuration, playground and evaluation verification.
+executedAt=2026-10-07T20:23:45.952Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+supportingCommandId=e2e; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e; exitCode=0; log=execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log; sha256=2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7
+supportingCommandId=verify-current-20261002; command=npm.cmd --script-shell=cmd.exe run verify; exitCode=0; log=execution/frontend-evidence/FE001/S03-full-verify-powershell-current-20261008.log; sha256=6a495a18b618c1a01b7df5f2c1fb23bd4afc3d12d357cbab31b95cc999cd15f3
+supportingCommandId=feature-source-maps-20261002; command=node --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs; exitCode=0; log=execution/frontend-evidence/FE012/S01-source-maps-current-20261008.log; sha256=b296b478e5c839ae34ac5034fa102311dee38f27487a78a8e4b5951167fd2051
+supplementalBrowserCommand=npm.cmd --script-shell=cmd.exe run test:e2e -- tests/fe018.spec.ts; exitCode=0; tests=26/26; log=execution/frontend-evidence/FE018/S05-e2e-focused-current-20261008.log; sha256=89a3f47d6c01b0856568886c1beea9c43f1e982b8cc2cc87f81f74eca64236db
+CASE PASS: All 13 scenarios in the FE018 shared spec file execute in Chromium and Firefox (26/26; 20 FE018, 2 shared FE027, 4 UI004 results)
+CASE PASS: Config revision, evaluation, role boundary, budget denial/approval and unknown command flows pass in browser
+CASE PASS: Current registered full React demo E2E passes in both browser projects (512/512; 256 per browser)
+TRACEABILITY_OR_CONTRACT_GAP=OpenAPI defines updateBudgetPolicy with operations.manage and the bot module uses it for versioned budget edits, but FE018 operationIds and R51 actions omit it. The implementation is visible and browser-tested, while task/route traceability remains unresolved.
+TRACEABILITY_OR_CONTRACT_GAP=BotConfig.allowedActions is absent from the canonical DTO. The UI uses canonical operation permissions, config version, and lifecycle controls; this does not establish a server-provided allowedActions contract.
+sourceSnapshotSha256=59f140121ea9b924f55efc4b6267cf4a41a96d8f23953d8580c32b1b18d24931
+Scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no external AI, real model evaluation, purchase confirmation, production budget enforcement or kill-switch execution is claimed.

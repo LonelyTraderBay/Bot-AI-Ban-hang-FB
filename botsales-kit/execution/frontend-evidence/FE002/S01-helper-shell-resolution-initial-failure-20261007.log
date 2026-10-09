@@ -1,0 +1,8 @@
+FE002.S01 diagnostic — initial helper command-resolution failure
+Date: 2026-10-07
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\botsales-kit
+Attempted command inside the Python helper: npm.cmd --script-shell=cmd.exe --version
+Exit: 1
+Observed stderr: 'npm.cmd' is not recognized as an internal or external command, operable program or batch file.
+Classification: helper invoked a cmd.exe child whose PATH did not resolve the npm.cmd PowerShell command. This did not execute npm and is not evidence of a dependency or registry failure. PowerShell Get-Command resolved npm.cmd to C:\Program Files\nodejs\npm.cmd; the actual Node executable and npm CLI are C:\Program Files\nodejs\node.exe and C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js.
+Correction: invoke the resolved Node executable and npm-cli.js directly, without a shell lookup; retain this initial diagnostic.

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "rule": "AI_RULES.md §19.6 Production Claim Gate",
+  "reviewedAt": "2026-10-08",
+  "reviewer": "Codex self-review; human owner acceptance remains pending",
+  "subject": {
+    "artifact": "BotSalesAI_Frontend React/TypeScript source and local production/demo build artifacts",
+    "revision": "HEAD 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 plus current working-tree source/docs; see SHA-256 snapshots in FE028 receipts and FE026 clean manifest.",
+    "environment": "Windows 11 local runner; Node v24.19.0/npm 11.17.0; Chromium 153 and Firefox 155 where logged; demo uses synthetic MSW.",
+    "claimScope": "Local frontend source/build/browser evidence for final user review only; no Backend/provider/staging/deployment certification."
+  },
+  "criteria": {
+    "canonicalSources": [
+      "botsales-kit/AI_RULES.md §19.6",
+      "botsales-kit/contracts/openapi.json",
+      "botsales-kit/contracts/route-manifest.json",
+      "botsales-kit/contracts/permission-catalog.json",
+      "botsales-kit/design/tokens.json",
+      "BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md v1.28, SPC-001–075",
+      "BotSalesAI_Frontend/docs/FRONTEND_SCOPE.md FE-G01..09"
+    ],
+    "requiredIdentity": "Current working tree plus HEAD 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6; production tree SHA-256 3c1642ce4cd2bbaaa57d99e46d517d0ab9f058fc41bbd1331fc4f6bb154bf145, demo tree SHA-256 2fb01aae6397b1ddfcdeb5b61db7081ae305ac526f6110f6833736b087b5e0fc.",
+    "mandatoryFrontendGates": "FE-G01..FE-G09 in quality-gate-matrix-current-20261008.json; 7 pass in scoped terms, FE-G05 not fully met and FE-G09 awaiting user decision.",
+    "acceptanceBoundary": "FRONTEND_WITH_SYNTHETIC_MOCK_API; selected source, local build and synthetic browser cases only."
+  },
+  "evidence": {
+    "cleanBuild": "PASS: isolated npm ci/audit/setup/verify and production/demo build; 10/10 command stages exit 0; clean artifact and supporting logs are hashed.",
+    "verification": "PASS: registered npm run verify exit 0, including 138 Vitest and strict layout/visual-token/composition/evidence gates.",
+    "browser": "PASS: current full local built-demo browser suite 512/512; focused built-artifact preview 8/8.",
+    "uat": "PASS within mock scope: 54 routes, 64 features, 65 feature-route rows, 22 journeys, 357/357 private route-role cases, empty 11/11, error 51/51, zero untested applicable state cells.",
+    "artifact": "PASS: production/demo outputs reproduce byte-for-byte; production excludes MSW worker and inspected fixture markers; demo includes its worker and synthetic data.",
+    "accessibility": "Partial only: route axe, keyboard, zoom/reflow and preference checks passed where measured; Narrator transcript and broad human conformance review not run.",
+    "securityAndPerformance": "Current npm audit reports zero vulnerabilities; local synthetic browser/performance data and frontend security cases are linked in FE025/FE026 evidence."
+  },
+  "exceptionsAndOpenEvidence": [
+    {"id": "FE-G05", "status": "CHƯA ĐẠT", "missing": ["Narrator speech/transcript", "broad human accessibility/conformance review"], "effect": "Blocks a full accessibility/WCAG conformance claim."},
+    {"id": "FE-G09", "status": "CHƯA XÁC MINH", "missing": ["User's final acceptance decision"], "effect": "Acceptance is not recorded by the assistant."},
+    {"id": "hosted-ci", "status": "CHƯA XÁC MINH", "missing": ["Hosted GitHub Actions execution and branch-protection evidence"], "effect": "FE-G08 uses the rubric-approved clean local equivalent; hosted CI is not claimed."},
+    {"id": "live-system", "status": "NGOÀI_PHẠM_VI_CHƯA_XÁC_MINH", "missing": ["Backend/API service, server authorization, persistent data, real providers, staging, deployment and recovery evidence"], "effect": "No whole-system production claim."},
+    {"id": "all-route-human-visual-parity", "status": "CHƯA XÁC MINH", "missing": ["Human comparison of every applicable route/profile/state"], "effect": "Automated semantic spacing gates and selected captures do not certify whole-app visual conformance."}
+  ],
+  "authority": {
+    "authorized": ["Inspect current source/docs and local evidence", "Run authorized local Frontend verification", "Prepare scoped handoff for the user's final review"],
+    "notAuthorizedOrNotClaimed": ["Record user acceptance", "Claim hosted CI PASS", "Merge/push/deploy/publish", "Certify Backend/provider/staging/production", "Waive mandatory missing evidence"]
+  },
+  "decision": {
+    "technicalRecommendation": "READY_FOR_FINAL_USER_REVIEW_WITH_EXPLICIT_LIMITS",
+    "productionReadyOrEnterpriseGradeClaim": "NOT_MADE",
+    "why": "The scoped local Frontend evidence is sufficient to present for final review, but FE-G05 is not fully met and FE-G09 has no user decision. These remain visible and prevent an unconditional conformance or production-readiness statement.",
+    "releaseAuthority": "Final acceptance and any release decision remain with the user/project authority."
+  }
+}

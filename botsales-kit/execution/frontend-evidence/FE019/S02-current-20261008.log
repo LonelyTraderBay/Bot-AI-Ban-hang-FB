@@ -1,0 +1,16 @@
+FE019.S02 integrations and notification verification.
+executedAt=2026-10-07T20:24:15.773Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+supportingCommandId=e2e; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e; exitCode=0; log=execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log; sha256=2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7
+supportingCommandId=verify-current-20261002; command=npm.cmd --script-shell=cmd.exe run verify; exitCode=0; log=execution/frontend-evidence/FE001/S03-full-verify-powershell-current-20261008.log; sha256=6a495a18b618c1a01b7df5f2c1fb23bd4afc3d12d357cbab31b95cc999cd15f3
+supportingCommandId=feature-source-maps-20261002; command=node --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs; exitCode=0; log=execution/frontend-evidence/FE012/S01-source-maps-current-20261008.log; sha256=b296b478e5c839ae34ac5034fa102311dee38f27487a78a8e4b5951167fd2051
+supportingCommandId=source; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source; exitCode=0; log=execution/frontend-evidence/FE005/S01-source-check-current-20261008.log; sha256=578aefd4a2ac07ec6f4c8dbe499740b107eee91f49aeb6e05a9b9dfdbb5fd5b5
+supplementalCommand=npm.cmd --script-shell=cmd.exe run test:e2e -- tests/fe019.spec.ts; exitCode=0; log=execution/frontend-evidence/FE019/S05-e2e-focused-current-20261008.log; sha256=8203e0fcd1f5cfcaca9f936b9ecd905882a245d3f5a2e5ee2b1fdc0ca08bee2b
+CASE PASS: AI connection create/update keeps credentials write-only and clears the form after submission
+CASE PASS: Channel connect/reconnect stays synthetic and never shows a false connected state
+CASE PASS: Device registration, Telegram pairing, PWA manifest and icons stay synthetic without requesting OS permission
+CASE PASS: Notification policy saves shop-local timezone, quiet hours, reminder bounds and active-shop order link
+SCOPE_OR_COVERAGE_LIMIT=getChannel, getJob and getAIConnection are canonical route read operations but currently have no direct callsite in the integrations/notifications React modules; the current list/action workflows remain browser-tested.
+SCOPE_OR_COVERAGE_LIMIT=No live provider, OS push permission, real Push/Telegram delivery, hardware device test or production notification deduplication/callback protection is exercised by the synthetic frontend.
+sourceSnapshotSha256=88c7c60cf7e6968fdd5a41969887323816f30b19415c3946ce6059b7301acfbf
+Scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no provider OAuth, real AI, OS push permission, external delivery or production security claim.

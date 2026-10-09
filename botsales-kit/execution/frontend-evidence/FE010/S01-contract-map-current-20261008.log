@@ -1,0 +1,14 @@
+FE010.S01 current source contract map; read-only mapping check.
+executedAt=2026-10-07T18:44:07.469Z
+status=PASS; routeCount=6; operationCount=16; checks=8; failures=0
+CHECK PASS: six canonical route IDs, paths and read permissions
+CHECK PASS: sixteen canonical and generated operation IDs
+CHECK PASS: operation permissions match OpenAPI contract
+CHECK PASS: versioned product and category updates require If-Match
+CHECK PASS: product payload requires variants and image file IDs
+CHECK PASS: variant payload uses positive money and does not expose cost
+CHECK PASS: import dry-run and commit payloads require confirmation fields
+CHECK PASS: current React source checker covers all canonical routes without findings
+TRACEABILITY GAP_RECORDED: plan feature IDs H07,H08 vs source-task feature IDs B02,D01,G02
+FE010 route/operation scope is Catalog and import (R09-R14), while FE010 lists H07/H08 and source tasks T019/T020 list G02/B02/D01. The current contract mapping is independently checked above. The canonical frontend plan is left unchanged because its migration gate requires a separate approved plan migration.
+Scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no backend/provider execution claimed.

@@ -1,0 +1,55 @@
+FE007.S02 shell/session/query identity and auth/permission evidence
+executedAt=2026-10-07T14:35:07.230Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+registered commandId=unit; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test; exitCode=0
+      Tests  138 passed (138)
+targeted browser command=node node_modules/@playwright/test/cli.js test tests/frontend.spec.ts tests/session/session-unauthorized.spec.ts tests/ui007-query-states.spec.ts --grep "role changes remove restricted navigation|live mode reports an unavailable session API|expired live session redirects to login|UI007 forbidden order query is an access state" --reporter=line; exitCode=0; tests=8/8 across Chromium and Firefox
+rootProviders={"router":1,"queryClient":1,"session":1,"theme":1}; QueryClient instances=1
+401 expiry redirects to login with allowlisted return path; 503 live API shows unavailable and never substitutes mock data.
+403 route/query renders access denied; the separate successful empty query scenario stays empty-success rather than forbidden.
+No backend/OIDC/production auth claim; behavior is local frontend tested against synthetic fixtures.
+preserved api-client.test.tsx sha256=57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379
+checks=8; failed=0
+sourceSnapshotSha256=d813a00d1eb33de1dbf8facd43f20ce448770b8a858401848756be4c340aa286
+SOURCE AGENTS.md sha256=07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222
+SOURCE AI_RULES.md sha256=1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3
+SOURCE apps/web/src/app/router.tsx sha256=24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4
+SOURCE apps/web/src/app/ScopeEvents.tsx sha256=65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219
+SOURCE apps/web/src/app/SessionProvider.tsx sha256=13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e
+SOURCE apps/web/src/app/Shell.tsx sha256=54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d
+SOURCE apps/web/src/main.tsx sha256=2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb
+SOURCE apps/web/src/shared/api/client.ts sha256=8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4
+SOURCE apps/web/src/shared/api/errors.ts sha256=dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227
+SOURCE apps/web/src/shared/api/hooks.ts sha256=05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1
+SOURCE apps/web/src/shared/model/scope.tsx sha256=76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22
+SOURCE apps/web/src/shared/ui/components.tsx sha256=0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5
+SOURCE apps/web/tests/api-client.test.tsx sha256=57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379
+SOURCE botsales-kit/contracts/permission-catalog.json sha256=58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1
+SOURCE botsales-kit/contracts/route-manifest.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE007/capture-s02-session-current-20261007.mjs sha256=149e4b5f250058d0643f43a15d4ba740c21f2c179e4f2b193c784cd44cf0fcf8
+SOURCE botsales-kit/execution/frontend-evidence/FE007/S02-session-audit-current-20261007.json sha256=6d471ee8ae8d275f951daefc8bd5ef1099b1f65ef4756a2a7c842317b2300605
+SOURCE botsales-kit/execution/frontend-evidence/FE007/S02-session-browser-current-20261007.log sha256=c5e531f68021b6e088f901d05d21eab886af3b97235511fe827b31e54e0859e8
+SOURCE botsales-kit/execution/frontend-evidence/FE007/S02-session-unit-current-20261007.log sha256=d5bd9a4d09a7f47770ffd66d34c895307c564627d4fcc0398b266d8ac57a322d
+SOURCE botsales-kit/execution/frontend-plan.json sha256=f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e
+SOURCE docs/FRONTEND_SCOPE.md sha256=959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab
+SOURCE tests/frontend.spec.ts sha256=f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5
+SOURCE tests/session/demo-server.mjs sha256=7bb5fbd500c01a503079367fef8711a9f46d3b4f118794e38c05895fe1f06cef
+SOURCE tests/session/session-unauthorized.spec.ts sha256=6895cee9923c10c572aeecf6b4e909db54886c46e06114f215cd2c2c2869c143
+SOURCE tests/ui007-query-states.spec.ts sha256=fe2775f059e9595307c171cde49c1a1d47b88c4c79b8706bd3922dbccda451b8
+Codex self-review; no independent peer review claimed
+--- registered unit command output ---
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+
+ Test Files  12 passed (12)
+      Tests  138 passed (138)
+   Start at  21:34:34
+   Duration  5.86s (tests 45%, environment 22%, import 18%, transform 8%, setup 6%)
+
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\direct-vite\38844\deps\react-dom_client.js?v=9c2d8f7f as it exceeds the max of 500KB.

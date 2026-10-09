@@ -1,0 +1,564 @@
+{
+  "executedAt": "2026-10-08T07:43:28.535Z",
+  "taskId": "FE006",
+  "stepId": "S04",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Kiểm component và gallery trên viewport docs/03, contrast thực với axe + kiểm thủ công phù hợp.",
+      "verification": "Focus/order/contrast/error label đạt; ảnh React app thật, không ảnh prototype. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [],
+      "operationIds": [],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "SPC-061/062 shared compositions own their gap and child boundaries on every canonical route",
+        "UI012 keyboard-only finance edit handles select, discard warning and focus return",
+        "UI012 keyboard validation focuses the field named by a synthetic 422 response",
+        "UI012 keyboard activates the CSV chooser and discards its selected file without upload",
+        "UI012 keyboard can reach and horizontally scroll the marketing chart data alternative",
+        "UI012 marketing chart keeps every category label visible beside its data table",
+        "UI012 inbox feedback actions identify their message and return focus after Escape",
+        "UI012 order draft does not announce an untouched required customer as invalid",
+        "UI012 long BotConfig policy literal wraps inside its alert at a 320 CSS-pixel viewport",
+        "UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible"
+      ],
+      "executions": 20,
+      "assertionInventory": [
+        {
+          "file": "tests/ui-composition-layout.spec.ts",
+          "sha256": "f6e4bca0f6df5c0d97d6af3ff83438209e2803a5f10a47a8d6e5a900c5f5d9de",
+          "cases": [
+            {
+              "title": "SPC-061/062 shared compositions own their gap and child boundaries on every canonical route",
+              "line": 13,
+              "assertions": [
+                "expect(group.rhythm, `${context} action-group rhythm`).toMatch(/^(compact|comfortable)$/)",
+                "expect(group.rhythm, `${context} section-grid rhythm`).toMatch(/^(section|content)$/)",
+                "expect(group.gap, `${context} ${group.owner}`).toBe(expected)",
+                "expect(margins, `${context} ${group.owner} child boundary`).toEqual(['0px', '0px'])",
+                "expect(result.inset, `${context} Shell main`).toEqual(['24px', '24px'])",
+                "expect(result.document[0], `${context} page overflow`).toBeLessThanOrEqual(result.document[1])",
+                "expect(errors).toEqual([])",
+                "expect(observations).toHaveLength(routes.length * 2)",
+                "expect([...observedOwners].sort()).toEqual(['action-group', 'field-group', 'form-fields', 'page-sections', 'section-grid', 'surface-content'])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui012-keyboard.spec.ts",
+          "sha256": "f780da7c5716ab6ec28844a880aab3168b1a74c9d3829bf40d26122abfc964c8",
+          "cases": [
+            {
+              "title": "UI012 keyboard-only finance edit handles select, discard warning and focus return",
+              "line": 42,
+              "assertions": [
+                "expect(page.locator('#root')).not.toBeEmpty()",
+                "expect(page.getByRole('heading', { name: 'Sổ thu chi', exact: true })).toBeVisible()",
+                "expect(main).toBeVisible()",
+                "expect(skipLink).toBeFocused()",
+                "expect(page).toHaveURL(/#main-content$/)",
+                "expect(main).toBeFocused()",
+                "expect(dialog).toBeVisible()",
+                "expect(listbox).toBeVisible()",
+                "expect(kind).toContainText('Thu tiền')",
+                "expect(kind).toBeFocused()",
+                "expect(discard).toBeVisible()",
+                "expect(discard).toHaveCount(0)",
+                "expect(dialog).toBeVisible()",
+                "expect(kind).toContainText('Thu tiền')",
+                "expect(amount).toHaveValue('1250')",
+                "expect(discard).toBeVisible()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(trigger).toBeFocused()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 keyboard validation focuses the field named by a synthetic 422 response",
+              "line": 103,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Kiến thức cửa hàng', exact: true })).toBeVisible()",
+                "expect(skipLink).toBeFocused()",
+                "expect(main).toBeFocused()",
+                "expect(dialog).toBeVisible()",
+                "expect(alert).toBeVisible()",
+                "expect(await page.evaluate(() => (window as Window & { __ui012Synthetic422: boolean }).__ui012Synthetic422)).toBe(true)",
+                "expect(content).toBeFocused()",
+                "expect(content).toHaveAttribute('aria-invalid', 'true')",
+                "expect(alert).toContainText('Nội dung: Hãy rà soát nội dung nguồn.')",
+                "expect(alert).not.toContainText('content:')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 keyboard activates the CSV chooser and discards its selected file without upload",
+              "line": 160,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD', exact: true })).toBeVisible()",
+                "expect(skipLink).toBeFocused()",
+                "expect(main).toBeFocused()",
+                "expect(dialog).toBeVisible()",
+                "expect(dialog.getByRole('button', { name: 'ui012-keyboard.csv', exact: true })).toBeVisible()",
+                "expect(discard).toBeVisible()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(trigger).toBeFocused()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 keyboard can reach and horizontally scroll the marketing chart data alternative",
+              "line": 200,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Thông tin cho marketing', exact: true })).toBeVisible()",
+                "expect(chart).toBeVisible()",
+                "expect(table.getByRole('row').nth(1)).toBeVisible()",
+                "expect(region).toBeVisible()",
+                "expect(skipLink).toBeFocused()",
+                "expect(main).toBeFocused()",
+                "expect(region).toBeFocused()",
+                "expect(await region.evaluate(element => (element as HTMLElement).scrollWidth > (element as HTMLElement).clientWidth)).toBe(true)",
+                "expect(after).toBeGreaterThan(before)",
+                "expect(await page.evaluate(() => document.documentElement.scrollLeft)).toBe(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 marketing chart keeps every category label visible beside its data table",
+              "line": 227,
+              "assertions": [
+                "expect(chart).toBeVisible()",
+                "expect(table).toBeVisible()",
+                "expect(chartLabels).toEqual(expect.arrayContaining(expectedLabels))",
+                "expect.arrayContaining(expectedLabels)",
+                "expect(table.getByRole('row')).toHaveCount(4)",
+                "expect(chartBounds).not.toBeNull()",
+                "expect(labelBounds).toHaveLength(expectedLabels.length)",
+                "expect(bounds.x).toBeGreaterThanOrEqual(chartBounds!.x)",
+                "expect(bounds.right).toBeLessThanOrEqual(chartBounds!.x + chartBounds!.width)",
+                "expect(bounds.fontSize).toBeGreaterThanOrEqual(14)",
+                "expect(labelBounds[index - 1].right).toBeLessThanOrEqual(labelBounds[index].x)",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 inbox feedback actions identify their message and return focus after Escape",
+              "line": 268,
+              "assertions": [
+                "expect(actions).toHaveCount(2)",
+                "expect(actionNames.every(name => name.startsWith('Đánh giá tin nhắn'))).toBe(true)",
+                "expect(new Set(actionNames).size).toBe(actionNames.length)",
+                "expect(actionNames).toContainEqual(expect.stringContaining('Shop ơi áo thun còn size L không?'))",
+                "expect.stringContaining('Shop ơi áo thun còn size L không?')",
+                "expect(actions.first()).toBeFocused()",
+                "expect(dialog).toBeVisible()",
+                "expect(ratingField).toBeFocused()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(actions.first()).toBeFocused()",
+                "expect(mutationRequests).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 order draft does not announce an untouched required customer as invalid",
+              "line": 301,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Tạo đơn hàng', exact: true })).toBeVisible()",
+                "expect(customer).toBeVisible()",
+                "expect(customer).not.toHaveAttribute('aria-invalid', 'true')",
+                "expect(customer).toHaveAttribute('aria-required', 'true')",
+                "expect(customer).not.toHaveClass(/Mui-error/)",
+                "expect(page.getByText('Chọn khách hàng để lưu đơn nháp.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Lưu đơn nháp' })).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 long BotConfig policy literal wraps inside its alert at a 320 CSS-pixel viewport",
+              "line": 314,
+              "assertions": [
+                "expect(alert).toBeVisible()",
+                "expect(alert.getByText('requireHumanOrderConfirmation=true', { exact: true })).toBeVisible()",
+                "expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth + 1)",
+                "expect(layout.clippedTextRects).toEqual([])",
+                "expect(layout.documentScrollWidth).toBeLessThanOrEqual(layout.documentClientWidth + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible",
+              "line": 348,
+              "assertions": [
+                "expect(action).toBeVisible()",
+                "expect(bounds).not.toBeNull()",
+                "expect(hoverColor).toBe('rgb(255, 219, 140)')",
+                "expect(pressedColor).toBe('rgb(223, 174, 79)')",
+                "expect(pressedColor).not.toBe(hoverColor)",
+                "expect(hoverContrast).toBeGreaterThanOrEqual(4.5)",
+                "expect(pressedContrast).toBeGreaterThanOrEqual(4.5)",
+                "expect(skipLink).toBeFocused()",
+                "expect(action).toBeFocused()",
+                "expect(await action.evaluate(element => element.matches(':focus-visible'))).toBe(true)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 173,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 554,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/components.test.tsx",
+          "sha256": "35187e221b903fd7c1e0434c28dcedebb817b6cfd41612c3b51d43a8055af02f",
+          "cases": [
+            "maps the approved dark tokens, typography, radii, and responsive breakpoints",
+            "keeps primary, secondary, status, and control contrast above their design thresholds",
+            "applies semantic token surfaces to standard alerts",
+            "loads canonical dark tokens and bootstrap before application JavaScript",
+            "keeps the application theme and source palette dark-only and token-owned",
+            "rejects copied HEX values and non-dark theme modes with negative fixtures",
+            "keeps copyable identifiers wrapped, spaced by the semantic role, and announces clipboard feedback",
+            "uses the canonical touch target for primary controls",
+            "uses the approved card radius rather than MUI spacing-scaled radius",
+            "renders semantic status text and a keyboard-navigable, named table region",
+            "keeps status and empty states understandable without relying on color",
+            "shows a reserved loading state and a retryable error state",
+            "uses semantic layout roles for empty, loading, and notice states",
+            "sets dialog insets and action gap explicitly instead of inheriting button margins",
+            "clears search, cursor, and returns focus while preserving other filters",
+            "binds list query fields and search controls to each OpenAPI operation",
+            "moves between cursor pages without dropping unrelated query filters",
+            "does not submit an unfinished IME composition",
+            "associates form errors with the visible label and returns focus after dialog close",
+            "has no axe violations in the shared table, status, and search states",
+            "reflows the real mock application from 320px to 1440px and passes browser axe"
+          ]
+        },
+        {
+          "file": "apps/web/tests/composition.test.tsx",
+          "sha256": "e837d20843e166e3dcd742b737c6c1ed79709e67540b4c4127bd5fea88cb6f33",
+          "cases": [
+            "keeps section headings semantic and KPI values out of the heading outline",
+            "retains native form refs, submission, labels and draft attributes",
+            "maps field, page and surface rhythms to canonical token units"
+          ]
+        },
+        {
+          "file": "apps/web/tests/shared-ui-render-contract.test.tsx",
+          "sha256": "fff8f92a38b08a54825f729e497ad85ff554f337f7f62747c9d8a120e97431ff",
+          "cases": [
+            "DraftConflict requires a two-sided choice, excludes hidden data, and applies only to the draft",
+            "PageHeader renders its eyebrow, h1, description and action slots",
+            "Panel owns title, subtitle, action and inset body without hiding its child",
+            "Stat keeps ReactNode values, icon and note in non-heading semantic slots",
+            "Stats renders all children in its responsive grid owner",
+            "Amount formats supported money and its null fallback through the shared owner",
+            "CopyableCode announces clipboard failure without losing the code slot",
+            "Status maps positive, warning and unknown values to readable text",
+            "DataTable renders a ReactNode column callback and its empty-state slot",
+            "Empty renders an optional action slot with its live status message",
+            "QueryState preserves stale children while exposing refresh feedback and retry",
+            "QueryState keeps loaded children visible during a background refresh",
+            "ErrorNotice renders the unknown-result command slot",
+            "Toolbar preserves its extra slot when search is unsupported and omits an empty form",
+            "Pager treats a missing page as absent and labels a page without total",
+            "LookupLoadMore distinguishes exhausted, complete and busy lookup states",
+            "RouteLink navigates with an accessible named link target",
+            "MutationButton respects permission, action allowlist, online and busy states",
+            "EditDialog exposes its content and actions while busy blocks closing controls",
+            "PartialDataNotice and CapabilityUnavailable render their declared message slots",
+            "ConfirmDialog validates the reason and keeps a rejected action visible",
+            "ConfirmDialog closes only after a successful confirmation",
+            "DetailLine renders its label, ReactNode value and row separator",
+            "FormFields retains the div ref and native metadata branch",
+            "FieldGroup forwards its accessible group name and owns compact control spacing",
+            "FieldGroup applies its toolbar inset only to the toolbar profile",
+            "ActionGroup header mode owns its header boundary and keeps action order",
+            "PageSections owns the boundary for conditional peer sections",
+            "SectionGrid retains responsive columns and named content rhythm"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 173-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    },
+    {
+      "name": "Strict verification and simulator/network criteria",
+      "simulatorChecks": [
+        "Full order lifecycle and purchase partial receiving use actual simulator handlers",
+        "Procurement rejects cross-shop and unapproved suppliers and unusable auto-send budgets",
+        "Stale purchase approval cannot authorize a changed resource version",
+        "Both sides of every mock journal balance",
+        "Seeded shop does not read another shop product",
+        "CSRF is required for writes",
+        "Read-only role cannot create products",
+        "Revoked shop membership never falls back to another active shop membership",
+        "Duplicate idempotency key is not duplicated",
+        "Same key with different payload is rejected",
+        "Stale inventory adjustment cannot mutate stock",
+        "Negative stock is rejected atomically",
+        "Unbalanced journal is rejected",
+        "Known failure fault is observable",
+        "Empty state fault is distinguishable",
+        "Read model reflects source amounts not current page",
+        "CSV parser preserves embedded commas",
+        "Unknown command retains the same result on idempotent retry",
+        "Read API getCsrfToken",
+        "Read API getSession",
+        "Read API listShops",
+        "Read API getShop",
+        "Read API listMembers",
+        "Read API getDashboard",
+        "Read API listProducts",
+        "Read API listCategories",
+        "Read API listCustomers",
+        "Read API listStockSnapshots",
+        "Read API listStockMovements",
+        "Read API listOrders",
+        "Read API listFinanceEntries",
+        "Read API getCashflow",
+        "Read API getProfitLoss",
+        "Read API listConversations",
+        "Read API listKnowledge",
+        "Read API listFeedback",
+        "Read API getBotConfig",
+        "Read API listEvaluations",
+        "Read API getProviderCatalog",
+        "Read API listAIConnections",
+        "Read API listChannels",
+        "Read API getReportSummary",
+        "Read API listJobs",
+        "Read API listCommands",
+        "Read API listAuditEvents",
+        "Read API getPrivacyPolicy",
+        "Read API listPrivacyRequests",
+        "Read API listBotRevisions",
+        "Read API getInboxMetadata",
+        "Read API listWorkItems",
+        "Read API listApprovals",
+        "Read API listDevices",
+        "Read API listNotifications",
+        "Read API listPrepJobs",
+        "Read API listShipments",
+        "Read API listReturnCases",
+        "Read API listSuppliers",
+        "Read API listSupplierOffers",
+        "Read API listReorderRules",
+        "Read API listPurchaseSuggestions",
+        "Read API listPurchaseOrders",
+        "Read API listGoodsReceipts",
+        "Read API listJournals",
+        "Read API listBankTransactions",
+        "Read API listReconciliationCases",
+        "Read API listCODSettlements",
+        "Read API listDebtItems",
+        "Read API listAccountingPeriods",
+        "Read API listAgentRoles",
+        "Read API listBudgetPolicies",
+        "Read API listDigests",
+        "Read API listServiceCases",
+        "Read API getNotificationPolicy",
+        "Read API getOperationsSummary",
+        "Read API getMarketingSummary"
+      ],
+      "networkChecks": [
+        "Registers every canonical HTTP operation and reports the custom SSE endpoint",
+        "Loads the service worker only in demo mode and guards production from mock activation",
+        "Covers the canonical route, feature, shop, and role catalogs",
+        "Returns schema-valid, paginated data and rejects stale cursors",
+        "Pages through a deterministic large dataset without dropping or duplicating rows",
+        "Scopes reads to the requested shop and role permissions",
+        "Maps request validation, CSRF, and missing If-Match to contract errors",
+        "Creates a product with schema-complete variants through HTTP",
+        "Preserves idempotency and exposes stale and unknown mutation outcomes over HTTP",
+        "Resets records, role, faults, idempotency keys, sequence, and fixed clock deterministically",
+        "Returns observable transient and empty states without fabricating records",
+        "Aborted delayed reads do not leak into the next request",
+        "Streams only the authorized shop and emits events matching the canonical v2 schema"
+      ],
+      "artifact": {
+        "path": "evidence/domain-tests.json",
+        "sha256": "71fcb1066be0fa871b557b20fe15db1c58deea0705dadb5d77caa6514fec3724"
+      },
+      "verifyLog": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444892341-75160/verify.log",
+        "sha256": "dfbd8a6d477a6eecb4157cfc065af49dbd42757c5af1562dc2ef420eb54a06c9"
+      },
+      "source": "Full typecheck/lint/source/boundary/negative fixtures/generator/bundle isolation are actual npm verify stages; no backend enforcement claim."
+    },
+    {
+      "name": "Actual native UI review",
+      "artifacts": [
+        {
+          "path": "evidence/frontend-corrections-20261008/actual-browser-zoom-200-current-corrections-native-20261008-final.json",
+          "sha256": "98b7788bce75b4ba370ba3c8de4c893ea4d68179a613acf9aaa2c0e077194ff0"
+        },
+        {
+          "path": "evidence/frontend-corrections-20261008/native-text-only-200-current-corrections-native-20261008-final.json",
+          "sha256": "d32c16e08bdf45532491b6816077506cc455d83b14cfe257fb85327bbfc5862a"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-current-corrections-w30-final-20261008.json",
+          "sha256": "50094272081df877195661b61b8a19f8a83905a45dd5dd10ad7932d575a42929"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-current-corrections-w30-final-20261008.json",
+          "sha256": "19c8b78d2a08d767ec7e6828795ff857003734bb1e6f536d19240baa59ebaba7"
+        }
+      ],
+      "limit": "Keyboard/axe/reflow/native zoom observed; screen-reader speech and broad human conformance NOT_RUN."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T06:37:29.347Z",
+      "finishedAt": "2026-10-08T07:30:19.236Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441445991-24436/e2e.log",
+        "sha256": "3cacad22f6067dd1457cbb612a006c0c23b5fbe412b9463eb0e9cce03e58def3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T07:34:52.342Z",
+      "finishedAt": "2026-10-08T07:37:44.467Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444892341-75160/verify.log",
+        "sha256": "dfbd8a6d477a6eecb4157cfc065af49dbd42757c5af1562dc2ef420eb54a06c9"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T06:33:11.870Z",
+      "finishedAt": "2026-10-08T06:33:20.247Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191868-26044/unit.log",
+        "sha256": "30b43fa2caed68b69a8af1d3f42966be47fb599333ec8aeabf545d4e3a06828a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T06:33:12.561Z",
+      "finishedAt": "2026-10-08T06:33:13.122Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192559-16080/source-maps.log",
+        "sha256": "5995622faa92f23d7d7aaf71389770d0c2f06620028cee851c437263d462ea95"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T07:30:53.995Z",
+      "finishedAt": "2026-10-08T07:34:07.500Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444650847-70468/built-demo.log",
+        "sha256": "7a0b4144184a753be8151839e9a6c36446ccb91e0ed149baca057f25fd9f5c9d"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "01eb0de30ea99bcdda397d36f78baf95093eb494bffce449a4907f954ed5178d"
+}

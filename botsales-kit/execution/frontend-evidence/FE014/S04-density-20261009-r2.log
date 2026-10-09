@@ -1,0 +1,573 @@
+{
+  "executedAt": "2026-10-09T05:25:58.074Z",
+  "taskId": "FE014",
+  "stepId": "S04",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+      "verification": "Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R44",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "SuppliersPage"
+        },
+        {
+          "id": "R45",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "ReplenishmentPage"
+        },
+        {
+          "id": "R46",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "PurchasesPage"
+        },
+        {
+          "id": "R47",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "ReceiptsPage"
+        }
+      ],
+      "operationIds": [
+        "confirmPurchaseOrder",
+        "createGoodsReceipt",
+        "createPurchaseOrder",
+        "createReorderRule",
+        "createSupplier",
+        "createSupplierOffer",
+        "evaluateReorder",
+        "getGoodsReceipt",
+        "getPurchaseOrder",
+        "getSupplier",
+        "listGoodsReceipts",
+        "listPurchaseOrders",
+        "listPurchaseSuggestions",
+        "listReorderRules",
+        "listSupplierOffers",
+        "listSuppliers",
+        "postGoodsReceipt",
+        "requestPurchaseApproval",
+        "sendPurchaseOrder",
+        "setSupplierStatus",
+        "updateReorderRule",
+        "updateSupplier"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent",
+        "FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers",
+        "FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry",
+        "FE014.S03 auto-send cannot be configured without an enabled procurement budget",
+        "FE014.S03 manager without procurement.receive cannot open receipt actions",
+        "FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once",
+        "FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals",
+        "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+        "A02 product editors align category and status faces independently from lookup metadata",
+        "Shared outlined labels focus empty and populated native controls",
+        "A02 variant fields retain readable widths when text doubles",
+        "A03 import mapping preserves natural remove actions and editable mappings",
+        "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+        "A05 status height follows its own label while long labels remain fully readable",
+        "A06 Empty wraps unbroken reference text and retains its keyboard action",
+        "A07 locked order addresses expose full text and edit lines retain intrinsic actions"
+      ],
+      "executions": 32,
+      "assertionInventory": [
+        {
+          "file": "tests/fe014.spec.ts",
+          "sha256": "c0f41e1c2e6b39d61eee49e1d33aadb82b71d82bd0d80fcf961a6834cf4980e2",
+          "cases": [
+            {
+              "title": "FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent",
+              "line": 27,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Đơn mua hàng', exact: true })).toBeVisible()",
+                "expect(firstQuantity).toHaveAttribute('aria-invalid', 'true')",
+                "expect(draft.getByRole('button', { name: 'Lưu đơn nháp' })).toBeDisabled()",
+                "expect(response.status()).toBe(201)",
+                "expect(request.headers()['idempotency-key']).toBeTruthy()",
+                "expect(body).toMatchObject({ supplierId: 'supplier-01', warehouseId: 'warehouse-01', suggestionId: null })",
+                "expect(body.lines).toEqual([\n        { variantId: 'v-p1', supplierOfferId: 'offer-p1', quantity: 10 },\n        { variantId: 'v-p2', supplierOfferId: 'offer-p2', quantity: 5 },\n    ])",
+                "expect(purchaseId).toBeTruthy()",
+                "expect(page.getByRole('dialog', { name: `Đơn mua ${purchaseId}` })).toBeVisible()",
+                "expect(page.getByRole('dialog', { name: `Đơn mua ${purchaseId}` }).getByText('1.675.000', { exact: false })).toBeVisible()",
+                "expect(JSON.parse(approvalReq.postData() || 'null')).toEqual({ expectedVersion: 1 })",
+                "expect((await approvalResponse).status()).toBe(200)",
+                "expect(requests).toHaveLength(2)",
+                "expect(requests[1].headers['idempotency-key']).toBeTruthy()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers",
+              "line": 79,
+              "assertions": [
+                "expect(supplierRow).toBeVisible()",
+                "expect(page.getByRole('columnheader', { name: 'Tối thiểu / Quy cách' })).toBeVisible()",
+                "expect(dialog.getByLabel('Tên nhà cung cấp')).toHaveValue('Xưởng hàng mẫu')",
+                "expect(updateResponse.status(), await updateResponse.text()).toBe(200)",
+                "expect(page.getByRole('table').first().getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' }).getByText('FE027 · đầu mối mô phỏng')).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry",
+              "line": 97,
+              "assertions": [
+                "expect((await requestedApproval).status()).toBe(200)",
+                "expect(approvalRow).toBeVisible()",
+                "expect(JSON.parse(decision.postData() || 'null')).toMatchObject({ decision: 'approve', reason: 'Duyệt đúng hash và số lượng đơn mua FE014.' })",
+                "expect((await decisionResponse).status()).toBe(200)",
+                "expect(purchaseRow).toBeVisible()",
+                "expect(approvedDialog.getByText('Đã duyệt', { exact: true })).toBeVisible()",
+                "expect(JSON.parse(sendReq.postData() || 'null')).toMatchObject({ expectedVersion: 3 })",
+                "expect(JSON.parse(sendReq.postData() || 'null').intentHash).toBeTruthy()",
+                "expect((await sentResponse).status()).toBe(202)",
+                "expect(approvedAfterFaultDialog.getByRole('alert').filter({ hasText: 'Mã lệnh cần kiểm tra' })).toBeVisible()",
+                "expect(sendDialog).toHaveCount(0)",
+                "expect(approvedAfterFaultDialog.getByRole('button', { name: 'Gửi đơn mua' })).toHaveCount(0)",
+                "expect(approvedAfterFaultDialog.getByRole('alert').filter({ hasText: 'Chưa xác minh kết quả gửi' })).toBeVisible()",
+                "expect(sendCalls).toHaveLength(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.S03 auto-send cannot be configured without an enabled procurement budget",
+              "line": 156,
+              "assertions": [
+                "expect(rule.getByText('Không có chính sách ngân sách mua hàng đang bật và có hạn mức.', { exact: true })).toBeVisible()",
+                "expect(rule.getByRole('combobox', { name: 'Ngân sách mua hàng đã duyệt' })).toHaveCount(0)",
+                "expect(rule.getByRole('button', { name: 'Lưu quy tắc' })).toBeDisabled()",
+                "expect(rule.getByText(/Backend phải kiểm nhà cung cấp, giá, lượng, ngân sách/)).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.S03 manager without procurement.receive cannot open receipt actions",
+              "line": 169,
+              "assertions": [
+                "expect((await createResponse).status()).toBe(201)",
+                "expect(JSON.parse(created.postData() || 'null')).toMatchObject({ sourceDocumentRef: 'FE014-GR-PERMISSION-01', lines: [{ acceptedQuantity: 1, rejectedQuantity: 0 }] })",
+                "expect(receipt).toBeVisible()",
+                "expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true })).toBeVisible()",
+                "expect(receipt.getByRole('button', { name: 'Xem / ghi nhận phiếu' })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once",
+              "line": 189,
+              "assertions": [
+                "expect(draft.getByText('Đặt 10 · đã nhận 4 · bị từ chối 0 · còn 6')).toBeVisible()",
+                "expect(draft.getByRole('button', { name: 'Tạo phiếu nháp' })).toBeDisabled()",
+                "expect(JSON.parse(createReq.postData() || 'null')).toMatchObject({ purchaseOrderId: 'seed-purchaseorder-10046', expectedPurchaseVersion: 6, sourceDocumentRef: 'FE014-GR-PARTIAL-01', lines: [{ purchaseLineId: 'seed-purchase-line-10045', acceptedQuantity: 3, rejectedQuantity: 3, reason: 'Ba sản phẩm lỗi bao bì, từ chối theo kiểm nhận.' }] })",
+                "expect(createResp.status()).toBe(201)",
+                "expect(createdReceiptCall?.headers['idempotency-key']).toBeTruthy()",
+                "expect(receiptRow).toBeVisible()",
+                "expect(receiptDialog.getByRole('button', { name: 'Kiểm & ghi nhận vào kho' })).toBeVisible()",
+                "expect(JSON.parse(postReq.postData() || 'null')).toEqual({ expectedVersion: 1 })",
+                "expect((await postResponse).status()).toBe(202)",
+                "expect(postedReceipt.getByText('Đã ghi sổ', { exact: true })).toBeVisible()",
+                "expect(postedReceipt.getByRole('button', { name: 'Kiểm & ghi nhận vào kho' })).toHaveCount(0)",
+                "expect(receiptCalls.filter(call => call.method === 'POST' && /\\/post$/.test(call.path))).toHaveLength(1)",
+                "expect(stockRow).toBeVisible()",
+                "expect(stockRow.getByRole('cell').nth(1)).toHaveText('3')",
+                "expect(page.getByRole('heading', { name: 'Công nợ & khóa kỳ', exact: true })).toBeVisible()",
+                "expect(matchingDebts).toHaveLength(1)",
+                "expect(matchingDebts[0].originalAmount.amount).toBe('195000')",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBeTruthy()",
+                "expect(audit.violations.map(issue => issue.id)).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals",
+              "line": 260,
+              "assertions": [
+                "expect(ruleDialog.getByRole('spinbutton', { name: 'Ngưỡng nhập' })).toHaveValue('2')",
+                "expect(ruleDialog.getByRole('spinbutton', { name: 'Nhập tới' })).toHaveValue('20')",
+                "expect(ruleDialog.getByRole('spinbutton', { name: 'Tồn an toàn' })).toHaveValue('2')",
+                "expect(ruleDialog.getByRole('combobox', { name: 'Mức tự động' })).toContainText('2 · Lập nháp chờ duyệt')",
+                "expect((await evaluateWait).status()).toBe(202)",
+                "expect(p6).toContainText('Quy tắc min-max; đã trừ hàng đang đặt. Không phải dự báo AI.')",
+                "expect(p6.getByRole('button', { name: 'Lập đơn nháp' })).toBeDisabled()",
+                "expect(p8.getByRole('button', { name: 'Lập đơn nháp' })).toBeEnabled()",
+                "expect((await createWait).status()).toBe(201)",
+                "expect(page).toHaveURL(/\\/s\\/shop-demo\\/purchases$/)",
+                "expect((await reevaluateWait).status()).toBe(202)",
+                "expect(refreshedP8.getByRole('button', { name: 'Lập đơn nháp' })).toBeDisabled()",
+                "expect(refreshedP8.getByRole('cell').nth(4)).toHaveText('20')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-component-layout.spec.ts",
+          "sha256": "ed0f76f9f902a593d991c50bba9163d0d2a66a9df07478643779c09b83041e67",
+          "cases": [
+            {
+              "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+              "line": 40,
+              "assertions": [
+                "expect(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true })).toBeVisible()",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 product editors align category and status faces independently from lookup metadata",
+              "line": 61,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1)",
+                "expect(geometry.status.y).toBeGreaterThan(geometry.category.y)",
+                "expect(page.getByText('Không tìm thấy danh mục phù hợp.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('textbox', { name: 'Tên sản phẩm', exact: true })).toHaveValue('Bản nháp cần giữ')",
+                "expect(Math.abs(category!.y - status!.y)).toBeLessThanOrEqual(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Shared outlined labels focus empty and populated native controls",
+              "line": 84,
+              "assertions": [
+                "expect(control).toBeFocused()",
+                "expect(control).toHaveValue(value)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 variant fields retain readable widths when text doubles",
+              "line": 99,
+              "assertions": [
+                "expect(name).toBeVisible()",
+                "expect(labels.length).toBeGreaterThanOrEqual(3)",
+                "expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([])",
+                "expect(label.fieldBounds.right - label.fieldBounds.left).toBeGreaterThanOrEqual(120)",
+                "expect(name).toHaveValue('Bản nháp biến thể cần giữ')",
+                "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial + 1)",
+                "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial)",
+                "expect(name).toHaveValue('Bản nháp biến thể cần giữ')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A03 import mapping preserves natural remove actions and editable mappings",
+              "line": 130,
+              "assertions": [
+                "expect(remove).toHaveCount(5)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(remove).toHaveCount(4)",
+                "expect(remove).toHaveCount(5)",
+                "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('Mã SKU đã sửa')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+              "line": 150,
+              "assertions": [
+                "expect(amount).toHaveCount(2)",
+                "expect(page.getByText(expected.negative, { exact: true })).toBeVisible()",
+                "expect(await amount.first().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('normal')",
+                "expect(await amount.last().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('nowrap')",
+                "expect(clipping).toBe(false)",
+                "expect(overflow).toBe(true)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft))",
+                "expect(await table.evaluate(node => node.scrollLeft)).toBe(before)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A05 status height follows its own label while long labels remain fully readable",
+              "line": 176,
+              "assertions": [
+                "expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1)",
+                "expect(geometry.actual).toBeLessThanOrEqual(intrinsicSize.natural + 1)",
+                "expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120))",
+                "expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+              "line": 195,
+              "assertions": [
+                "expect(page.getByRole('status')).toContainText('Mã tham chiếu: ' + 'A'.repeat(120))",
+                "expect(await text.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect(action).toBeFocused()",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A07 locked order addresses expose full text and edit lines retain intrinsic actions",
+              "line": 208,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(address).toBeVisible()",
+                "expect(dialog.getByRole('combobox', { name: /^Địa chỉ giao hàng/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('combobox', { name: /^Thanh toán/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('group', { name: 'Thanh toán', exact: true })).toContainText('Thu khi giao (COD)')",
+                "expect(addressText).toHaveText(expected)",
+                "expect(await addressText.evaluate(node => node.scrollWidth <= node.clientWidth + 1 && getComputedStyle(node).textOverflow !== 'ellipsis')).toBe(true)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(addressText).toHaveText(original!)",
+                "expect((await new AxeBuilder({ page }).include('[role=\"dialog\"]').analyze()).violations).toEqual([])",
+                "expect(option).toBeVisible()",
+                "expect(await option.evaluate(node => {\n            const paper = node.closest('.MuiPaper-root')!.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node);\n            return getComputedStyle(node).whiteSpace === 'normal' && [...range.getClientRects()].every(rect => rect.left >= paper.left - 1 && rect.right <= paper.right + 1);\n        })).toBe(true)",
+                "expect(page.getByRole('listbox')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 181,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 624,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 181-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled width behavior",
+      "routeObservations": 216,
+      "focusedCases": 70,
+      "artifact": "built-shared-review.json",
+      "limit": "Actual compiled geometry/axe/keyboard; counts remain separate from full browser suite."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "composer-stability",
+      "startedAt": "2026-10-09T05:07:15.134Z",
+      "finishedAt": "2026-10-09T05:08:10.178Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522425617-76720/composer-stability.log",
+        "sha256": "c079a393ffdf279c19f59e441cbf4ff5dab6167a5476fbc4d1bfaad7d793da56"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "imports-clearance-regression",
+      "startedAt": "2026-10-09T05:08:19.164Z",
+      "finishedAt": "2026-10-09T05:08:39.156Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522490344-8672/imports-clearance-regression.log",
+        "sha256": "950791e791deafe07d84a64fcbecb6479f91ee1dcd33b86f6eb82521d196ae2a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-09T03:47:09.137Z",
+      "finishedAt": "2026-10-09T04:47:48.711Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
+        "sha256": "8c35ba10b993a303946c89addd4dcb04c7fc718f5cff8daa5a74f2e3fd8fe85d"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-09T03:44:04.675Z",
+      "finishedAt": "2026-10-09T03:47:01.145Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517444670-94456/verify.log",
+        "sha256": "fe34adfd7fbd0931c58b87f7e5405aa833e13009571d6cc92d5517e9b15ab0f0"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-09T03:42:18.472Z",
+      "finishedAt": "2026-10-09T03:42:24.862Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517338471-44912/unit.log",
+        "sha256": "d1928a0902ebc21f0c0780bc9467ca4e0f52beb179b91314a6cf1533aee097a8"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-09T03:47:01.271Z",
+      "finishedAt": "2026-10-09T03:47:01.452Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621270-95168/source-maps.log",
+        "sha256": "a7dc3557124f4394e17cdb8a7a42cd23a7ee839ade15529024a2fa2d7cb76e33"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-09T04:48:06.078Z",
+      "finishedAt": "2026-10-09T04:51:16.462Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791521277863-27488/built-demo.log",
+        "sha256": "4c4a6c6fdcbbd0bfa0e5344760595a858ad7e5df5662cdcfbdb32c0d8380db58"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "startup-cache-regression",
+      "startedAt": "2026-10-09T05:11:14.912Z",
+      "finishedAt": "2026-10-09T05:11:36.059Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522665730-96308/startup-cache-regression.log",
+        "sha256": "b78941e75dca7664227a303ce9bbb0e70d77c3957ae994adfbd112ae2be241d3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-regression",
+      "startedAt": "2026-10-09T05:10:37.682Z",
+      "finishedAt": "2026-10-09T05:11:05.627Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522628388-90736/label-regression.log",
+        "sha256": "f28164351bc45da0b3df30632d3557484bc591686832bb955d35119531c55684"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "variant-regression",
+      "startedAt": "2026-10-09T05:09:47.479Z",
+      "finishedAt": "2026-10-09T05:10:28.292Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522578658-74300/variant-regression.log",
+        "sha256": "62f3d31abc4f6d7965fb2f70604b46342b5b0d978064d34f335264ad9171c42f"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-focus-regression",
+      "startedAt": "2026-10-09T05:09:17.882Z",
+      "finishedAt": "2026-10-09T05:09:38.570Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522549023-26236/label-focus-regression.log",
+        "sha256": "6891aae72dc105e22e42f974e8faf94492ed251b3c7f67146a0a2ae6335e96ab"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "composer-regression",
+      "startedAt": "2026-10-09T05:08:48.237Z",
+      "finishedAt": "2026-10-09T05:09:08.934Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522519245-33232/composer-regression.log",
+        "sha256": "1fcc0bfd08e59012b4cf1aad212270969d3f68a497ceac5c02e2e27a5995a176"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "613fc7de3254138ff4fe9200b5980de1c5b11386f8d2ef7af90ef8ee8ec994e1"
+}

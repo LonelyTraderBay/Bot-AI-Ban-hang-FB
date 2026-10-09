@@ -1,0 +1,47 @@
+FE002.S04 actual setup and doctor result
+Scope: FRONTEND_WITH_SYNTHETIC_MOCK_API
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Command: npm.cmd --script-shell=powershell.exe run setup; exit=0; log=botsales-kit/execution/frontend-evidence/FE002/S04-setup-output-current-20261007.log
+  
+  > botsales-frontend@0.1.0 setup
+  > node scripts/setup.mjs
+  
+  {"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+  Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+  
+  Worker script successfully copied!
+    - public
+  
+  Continue by describing the network in your application:
+  
+  
+  https://mswjs.io/docs/quick-start
+  
+  Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+  
+  COMMAND_EXIT_CODE=0
+Command: npm.cmd --script-shell=powershell.exe run doctor; exit=0; log=botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output-current-20261007.log
+  
+  > botsales-frontend@0.1.0 doctor
+  > node scripts/doctor.mjs
+  
+  ┌─────────┬─────────────────────────┬────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ (index) │ name                    │ status │ detail                                                                                                                                              │
+  ├─────────┼─────────────────────────┼────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ 0       │ 'Node.js 24'            │ 'PASS' │ 'v24.19.0'                                                                                                                                          │
+  │ 1       │ 'typescript'            │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\typescript\\lib\\typescript.js'                   │
+  │ 2       │ 'vite'                  │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\vite\\dist\\node\\index.js'                       │
+  │ 3       │ 'react'                 │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\react\\index.js'                                  │
+  │ 4       │ '@mui/material'         │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\@mui\\material\\index.js'                         │
+  │ 5       │ '@tanstack/react-query' │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\@tanstack\\react-query\\build\\modern\\index.cjs' │
+  │ 6       │ 'msw'                   │ 'PASS' │ 'C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\node_modules\\msw\\lib\\core\\index.mjs'                        │
+  │ 7       │ 'MSW browser worker'    │ 'PASS' │ 'Chạy npm run setup sau khi cài thư viện.'                                                                                                          │
+  │ 8       │ 'Lockfile'              │ 'PASS' │ 'Tạo bằng npm install; không có lockfile giả trong bản nguồn.'                                                                                      │
+  └─────────┴─────────────────────────┴────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+  
+  COMMAND_EXIT_CODE=0
+Doctor checks: 9/9 PASS; Node 24, local TS/Vite/React/MUI/Query/MSW, MSW worker and lockfile all resolved.
+Setup generator: 11 outputs / 283 schemas / 210 operations / 54 routes PASS.
+Pre/post setup generated/package targets changed: (none).
+Existing .env.local preserved: True; worker exists after setup: True; worker content hash unchanged: True.
+No provider/backend connection was attempted; npm run setup explicitly identifies demo simulation and does not connect to customers/providers.

@@ -1,0 +1,32 @@
+FE001.S03 current report / known gaps / package reconciliation
+Scope: FRONTEND_WITH_SYNTHETIC_MOCK_API
+Current HEAD: 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6
+Package scripts: verify has 11 local code/evidence gates; browser E2E is a separate test:e2e command.
+Latest verify record: doc-sync-1791370210392-39896 exit=0 started=2026-10-07T10:50:10.392Z finished=2026-10-07T10:53:08.656Z
+Latest E2E record: doc-sync-1791366881068-56212 exit=0 started=2026-10-07T09:54:41.068Z finished=2026-10-07T10:46:54.385Z result=504/504
+Runtime source fingerprints checked against current checkout: 162; mismatches: 0.
+Top-level REPORT points to the 07/10 current evidence report; KNOWN_GAPS explicitly labels older dated content historical and keeps hosted CI, screen-reader speech, owner acceptance, and backend/provider proof unclaimed.
+Environment observed from captured records: local Windows Frontend workspace; `verify` and built-demo browser E2E both exit 0 at current HEAD. No live backend/provider/staging/production execution is represented.
+Current verify log success lines:
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+"status": "PASS"
+ℹ pass 3
+"negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+"status": "PASS",
+{"status":"PASS","simulatorChecks":75,"networkChecks":13,"networkHandlers":210,"passed":88,"operations":89,"node":"v24.19.0","typescript":"5.9.2"}
+Test Files  12 passed (12)
+Tests  136 passed (136)
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+✔ report mode inventories migration debt without turning findings into PASS (998.2938ms)
+✔ React JSX runtime factories cannot bypass MUI or native style checks (1041.5485ms)
+✔ HTML parsing and runtime stylesheet mutation cannot bypass the imported CSS boundary (1976.5888ms)
+ℹ pass 82
+layout-check PASS: 76 source files, 0 finding(s), 1 exception(s) used
+ℹ pass 5
+visual-token-check PASS: 75 source files, 0 finding(s)
+ℹ pass 38
+ui-composition PASS: 74 source files, 0 finding(s)
+✔ rejects unrun, missing, duplicate, and nonzero command results marked PASS (3.6845ms)
+✔ rejects PASS when expected and observed results differ (3.4457ms)
+ℹ pass 11
+ui-evidence PASS: S17; 3 command/log record(s), 3 coverage row(s), 21 current fingerprint(s); status=COMPLETE

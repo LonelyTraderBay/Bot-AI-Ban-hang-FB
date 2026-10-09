@@ -1,0 +1,81 @@
+{
+  "taskId": "FE002",
+  "stepId": "S02",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T12:09:23.063116+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working tree snapshot)",
+  "expected": "Inspect setup/doctor/install effects, current cache/registry/cwd and write conditions; distinguish observed environment issues from code behavior before running mutating setup/install commands.",
+  "observed": "setup/doctor effects and seven-path baseline were inspected; .env.local exists and exactly matches the example, generated worker exists, npm cache/registry configuration resolves, and ACL lists current user access. No registry connectivity claim is made before npm install; no npm PATH/registry failure observed. The prior npm.cmd child-shell issue is documented as a helper-only failure.",
+  "command": "python execution/frontend-evidence/FE002/inspect-setup-constraints.py",
+  "reviewer": "Codex",
+  "environment": {
+    "name": "Local Windows Frontend workspace",
+    "details": "Read-only script/config/npm cache/registry/ACL inspection; npm install and setup not run yet.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 17,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": ".env.example",
+      "sha256": "4c84f5adbfd1214e497f7a0712695dbd48f9e4da2933ce69a8277a64a347f149"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "104f5354a63e43a684711c3be75c405df0fcf311d07439f75fc771a156086ac8"
+    },
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/public/mockServiceWorker.js",
+      "sha256": "3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S01-helper-shell-resolution-initial-failure-20261007.log",
+      "sha256": "1be61f372c2d8e757900194a7ee860b9f9fea8ffa7cdaf3043a886f642eafa11"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/inspect-setup-constraints.py",
+      "sha256": "b153d9bcd34de818dfae129f58df1d0e2d333a614f354c8d2e11d5aae39f679d"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "scripts/doctor.mjs",
+      "sha256": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e"
+    },
+    {
+      "path": "scripts/generate.mjs",
+      "sha256": "02867fe31f4686636c9af095dbf975cc23ddcaea6a82ba320999e25900b2e4e6"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    },
+    {
+      "path": "scripts/tools.mjs",
+      "sha256": "df9bb454ec2a12f2cee7729187df9e244836132ff21c39e3b69767fc313db2ef"
+    }
+  ],
+  "sourceSnapshotSha256": "99be22df4971f16168bb6bbca49f6ab34937b022b7f75dfbfc4a860e0fd8b243",
+  "logFile": "execution/frontend-evidence/FE002/S02-setup-doctor-install-constraints-current-20261007.log",
+  "logSha256": "65f8abd0741e1e8d6fb402d70fdad94545f42c0d5fe3c98125f02ee7c95aaa3d"
+}

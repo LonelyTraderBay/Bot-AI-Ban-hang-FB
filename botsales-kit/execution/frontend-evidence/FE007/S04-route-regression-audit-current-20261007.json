@@ -1,0 +1,35 @@
+{
+  "executedAt": "2026-10-07T14:54:05.119Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "registeredUnit": {
+    "status": "PASS",
+    "summary": "      Tests  138 passed (138)"
+  },
+  "browser": {
+    "status": "PASS",
+    "testsPassed": 16,
+    "projects": [
+      "chromium",
+      "firefox"
+    ],
+    "roleMatrixPerProject": {
+      "privateRoutes": 51,
+      "roles": 7,
+      "combinations": 357
+    },
+    "totalRoleRouteAssertions": 714,
+    "logFile": "execution/frontend-evidence/FE007/S04-route-regression-browser-current-20261007.log",
+    "logSha256": "0daf09dc1c0eb5ce6c9508e2b4f0c289c34a53fd16724ffd454fe9a64763d30b"
+  },
+  "verifiedScenarios": [
+    "shop switch while a delayed old-shop request is active",
+    "deep link direct load and refresh",
+    "revoked-session SSE refresh, stream close and login redirect",
+    "router chunk-load error boundary",
+    "mobile navigation opens, routes, closes and fits 390px viewport",
+    "role read access across all 51 private routes and 7 demo roles",
+    "concurrent demo servers isolate their Vite caches"
+  ],
+  "diagnostic": "The first combined run passed 15/16 tests. Firefox opened two initial SSE requests under React StrictMode, so the exact-one-request assertion was too strict. The test now bounds that initial dev replay to at most two while still requiring session refresh to 401/login. First-run log SHA256: D46B54D6241E07B393874DFB4E3A7A8BBDB1A071E26557D8A5CBD4E13D8D109F.",
+  "limitations": "App/browser evidence uses synthetic MSW/local fixtures. Route role checks demonstrate frontend behavior only, not backend authorization; no live backend/provider/production deployment was exercised."
+}

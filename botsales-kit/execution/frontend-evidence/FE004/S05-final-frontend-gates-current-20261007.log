@@ -1,0 +1,178 @@
+FE004.S05 final full-source Frontend gates
+Git HEAD: 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working-tree snapshot)
+Runtime: Node v24.19.0 / npm 11.17.0
+Order: source checker → boundaries and negative fixtures → full-source lint → strict TypeScript typecheck
+Pre-existing source-check report restored: True; sha256=e3de166c849408120566060c0238871aba26f184a4cf7b5198bf01841dc55b33
+Pre-existing boundary report restored: True; sha256=f1b2d2b0db9847726bbb30b2ec0ec21773349579d686a128f980f2cc0e3de5c6
+Source report: status=PASS; files=68; operationCalls=220; routes=54; issues=0
+Boundary report: status=PASS; files=68; imports=504; issues=0; fixtures=Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).
+
+=== source | exit=0 ===
+Command: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs
+
+{
+  "checkedAt": "2026-10-07T13:17:50.028Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 68,
+  "operationCalls": 220,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (1.0246ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (147.0047ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (146.9513ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 344.8244
+
+
+
+=== boundaries | exit=0 ===
+Command: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-07T13:17:52.328Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 68,
+  "imports": 504,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+
+
+=== lint | exit=0 ===
+Command: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run lint
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+
+
+
+=== types | exit=0 ===
+Command: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+
+
+Source snapshot sha256=df5f747e214b7bd116ba9d5f9c82633f3cecc7249713047f00b3de20e156a870
+CHECK PASS: registered source checker exits 0 over current route, permission, operation, and token data
+CHECK PASS: registered AST boundaries checker exits 0 over the complete frontend source graph
+CHECK PASS: 10/10 boundary fixtures pass, including alias/relative/type-only/dynamic/cycle/parser cases
+CHECK PASS: registered full-source ESLint exits 0 with zero warnings
+CHECK PASS: registered TypeScript strict typecheck exits 0
+CHECK PASS: source-check and boundaries evidence reports are restored byte-for-byte
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE apps/web/public/manifest.webmanifest sha256=ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53
+SOURCE apps/web/src/app/CommandRecovery.tsx sha256=79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac
+SOURCE apps/web/src/app/ScopeEvents.tsx sha256=65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219
+SOURCE apps/web/src/app/SessionProvider.tsx sha256=13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e
+SOURCE apps/web/src/app/Shell.tsx sha256=54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d
+SOURCE apps/web/src/app/dirty-drafts.ts sha256=3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13
+SOURCE apps/web/src/app/feedback.tsx sha256=449b8f38b670784f4b99c91b007ca6a90949b6dab1acc69fd8f93a22e11b2a22
+SOURCE apps/web/src/app/i18n.ts sha256=535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340
+SOURCE apps/web/src/app/locales/vi/customers.ts sha256=a2a880bc7aad48e156e0fe8d6cafd63a453a91187af62b398ae5c8247312e97b
+SOURCE apps/web/src/app/locales/vi/knowledge.ts sha256=a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9
+SOURCE apps/web/src/app/navigation.ts sha256=96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7
+SOURCE apps/web/src/app/router.tsx sha256=24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4
+SOURCE apps/web/src/main.tsx sha256=2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb
+SOURCE apps/web/src/mocks/auxiliary.ts sha256=3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c
+SOURCE apps/web/src/mocks/browser.ts sha256=91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9
+SOURCE apps/web/src/mocks/catalog.ts sha256=48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56
+SOURCE apps/web/src/mocks/control.ts sha256=2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541
+SOURCE apps/web/src/mocks/database.ts sha256=093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c
+SOURCE apps/web/src/mocks/files.ts sha256=21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd
+SOURCE apps/web/src/mocks/finance.ts sha256=c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d
+SOURCE apps/web/src/mocks/fulfillment.ts sha256=0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40
+SOURCE apps/web/src/mocks/handlers.ts sha256=e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608
+SOURCE apps/web/src/mocks/marketing-fixture.ts sha256=e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb
+SOURCE apps/web/src/mocks/orders.ts sha256=c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4
+SOURCE apps/web/src/mocks/procurement.ts sha256=3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0
+SOURCE apps/web/src/mocks/service.ts sha256=e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69
+SOURCE apps/web/src/modules/bot/index.tsx sha256=cbca27471ea771f325b3577095a6ff30f66b29c711c0138b3678a8dc4c1d40af
+SOURCE apps/web/src/modules/catalog/import-file.ts sha256=27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f
+SOURCE apps/web/src/modules/catalog/imports.tsx sha256=daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da
+SOURCE apps/web/src/modules/catalog/index.tsx sha256=98e8ac7e9600837171d4e9a2d36a7d03978071c4dfc7d87fcc2617655c8c1639
+SOURCE apps/web/src/modules/customers/index.tsx sha256=1f6d62a562b6ec124fb3029fdce8eeb9937d09323abb5a523aad496343a4531b
+SOURCE apps/web/src/modules/dashboard/index.tsx sha256=a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef
+SOURCE apps/web/src/modules/finance/demo-account-preview.ts sha256=4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60
+SOURCE apps/web/src/modules/finance/index.tsx sha256=b232374ed17759d105022cc29d87205de9414b7d2b5327f0bf9135243248134c
+SOURCE apps/web/src/modules/finance/report-explanations.ts sha256=39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020
+SOURCE apps/web/src/modules/fulfillment/index.tsx sha256=e906c5574670111cd6198ea77484284cc3d3b503a3268c8fdb4bd26e15bf1fc4
+SOURCE apps/web/src/modules/inbox/conversation-components.tsx sha256=9611c21db12bdac47fbead422c4fe047902a5df0e6359b73e81ea813ba26177d
+SOURCE apps/web/src/modules/inbox/index.tsx sha256=f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b
+SOURCE apps/web/src/modules/integrations/index.tsx sha256=21c786a8280031a029af35e434f7f755b6c81acbab59ca3098d87028aab7aa65
+SOURCE apps/web/src/modules/inventory/index.tsx sha256=7b5d0a356390cba43b8bf16c162dd499150bee37d353945d552504a1eee2bd1b
+SOURCE apps/web/src/modules/knowledge/index.tsx sha256=7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b
+SOURCE apps/web/src/modules/notifications/index.tsx sha256=f3c4f450a411703bf605153eee7a9bb3f555882b276b191cd15ce1df26b8dd7d
+SOURCE apps/web/src/modules/notifications/push-capabilities.ts sha256=5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a
+SOURCE apps/web/src/modules/operations/index.tsx sha256=608bdffd80bc3b3bc0bd2a6b49a3591b38262f797c195de09ee566a34db5518b
+SOURCE apps/web/src/modules/orders/demo-address-preview.ts sha256=7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a
+SOURCE apps/web/src/modules/orders/index.tsx sha256=d1cad2cb0dbbfa618dc6cd5c7096711354feaecb977807037b8c6a2748ed6da7
+SOURCE apps/web/src/modules/procurement/index.tsx sha256=137c535a1c086c6e998281e3e9d4620adf9f3d6b41a0e775add49339b6f82bc1
+SOURCE apps/web/src/modules/reports/index.tsx sha256=fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754
+SOURCE apps/web/src/modules/reports/report-utils.ts sha256=d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0
+SOURCE apps/web/src/modules/workspace/index.tsx sha256=2ea39976473d8dfc2a0da5f0ea8b3e7912d098e4e427487fde5b59479091c269
+SOURCE apps/web/src/shared/api/client.ts sha256=8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4
+SOURCE apps/web/src/shared/api/client.type-contracts.ts sha256=7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e
+SOURCE apps/web/src/shared/api/errors.ts sha256=dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227
+SOURCE apps/web/src/shared/api/hooks.ts sha256=05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1
+SOURCE apps/web/src/shared/api/intents.ts sha256=3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b
+SOURCE apps/web/src/shared/api/validation.ts sha256=5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1
+SOURCE apps/web/src/shared/model/auth.ts sha256=7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4
+SOURCE apps/web/src/shared/model/dirty-drafts.ts sha256=87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc
+SOURCE apps/web/src/shared/model/download.ts sha256=ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c
+SOURCE apps/web/src/shared/model/filters.ts sha256=393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d
+SOURCE apps/web/src/shared/model/format.ts sha256=32d13ed518870d525b857a8be711b24b7d56b0f5c7eff4699ba4f572e958b223
+SOURCE apps/web/src/shared/model/labels.ts sha256=7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2
+SOURCE apps/web/src/shared/model/scope.tsx sha256=76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22
+SOURCE apps/web/src/shared/ui/components.tsx sha256=0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5
+SOURCE apps/web/src/shared/ui/composition.tsx sha256=15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b
+SOURCE apps/web/src/shared/ui/layout.ts sha256=ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a
+SOURCE apps/web/src/shared/ui/theme.ts sha256=dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532
+SOURCE apps/web/src/shared/ui/visual.ts sha256=ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d
+SOURCE apps/web/src/vite-env.d.ts sha256=b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc
+SOURCE apps/web/tsconfig.json sha256=da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1
+SOURCE docs/route-implementation.json sha256=381b4091300ee542bfc7033b88249259cb716ac43f8a61789288fe61f9dd63ae
+SOURCE eslint.config.mjs sha256=4c8329d64fd7e8ec9cc65d9bbea66585fdfa3775104f7087345ebdc5a870ab25
+SOURCE package-lock.json sha256=a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a
+SOURCE package.json sha256=3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138
+SOURCE packages/contracts/src/operations.json sha256=1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88
+SOURCE packages/contracts/src/permissions.json sha256=58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1
+SOURCE packages/contracts/src/routes.json sha256=360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2
+SOURCE packages/design-tokens/src/tokens.json sha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0
+SOURCE scripts/check-boundaries.mjs sha256=64e2453c1b4186bf86a6c74e3917ecb0d9d5b73e9d77195be3e401e97aec7d0f
+SOURCE scripts/check-source.mjs sha256=593b95de828d54edfd04e0dd847007a71d36175b7fe7b9bc1cb83bea88af6fd3
+SOURCE scripts/source-policy.mjs sha256=254e9c4a86d2a01adb27c4eada9d03306c159dda684cdc5eb7162d073a804e3f
+SOURCE tests/architecture/check-boundaries.mjs sha256=c2e90eea61c7a8e6198b89f15236726b527f1a9ad8de80e2935b34a908279849
+SOURCE tests/source-checker.test.mjs sha256=bdc53b8f7d154e9b4126d7f0b7670198c85a0686b9b616598b2583f195f9df7e
+SOURCE botsales-kit/docs/02_ARCHITECTURE.md sha256=8fd3805498d179f638ac0256af5ea61bfb9cd0a39db2108e3fcb670b44a49a04
+SOURCE botsales-kit/docs/18_CODING_STANDARDS.md sha256=98e1f9e6b561264445ae2115289edffad35310d5161d58dc662eca7026547866
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE004/S05-boundaries-report-current-20261007.json sha256=867aae19c674cc3dfc844bbbc0e22855e3643bde69e4bab13f07ed2cb53d5df2
+SOURCE botsales-kit/execution/frontend-evidence/FE004/S05-source-check-report-current-20261007.json sha256=363b2d636793a96d4a7491e139f4176f70ddc3fdadafa7646fc3ac51e75e1dc1
+SOURCE botsales-kit/execution/frontend-evidence/FE004/capture-s05-final-frontend-gates-current-20261007.py sha256=48b0a4c434901693a91c84e43bb2dc948c403c4164cb04eb8860d19fafd4abaa
+SOURCE botsales-kit/execution/frontend-plan.json sha256=f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e

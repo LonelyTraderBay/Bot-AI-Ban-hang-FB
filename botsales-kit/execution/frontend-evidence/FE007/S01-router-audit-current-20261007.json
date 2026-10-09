@@ -1,0 +1,39 @@
+{
+  "executedAt": "2026-10-07T14:30:18.537Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "canonicalRoutes": 54,
+  "generatedRoutes": 54,
+  "routePathsUnique": true,
+  "generatedIdPathPermissionMatches": true,
+  "routerPageEntries": 54,
+  "publicR01WithoutGlobalGate": true,
+  "otherPublicRoutesBehindGlobalGate": true,
+  "shopRoutesUnderScopedShell": true,
+  "shopRoutesHavePermissionGateAndLazyLoading": true,
+  "routeErrorAndNotFoundFallbacks": true,
+  "featureAndEventQueryScope": [
+    "user.id",
+    "shop.id",
+    "permissionVersion"
+  ],
+  "sessionRefreshAndLogoutClearScopeCaches": true,
+  "sourceChecker": {
+    "status": "PASS",
+    "routeCount": 54,
+    "issues": 0,
+    "restoredUserEvidenceSha256": "e3de166c849408120566060c0238871aba26f184a4cf7b5198bf01841dc55b33"
+  },
+  "browserRouteRender": {
+    "status": "PASS",
+    "browsers": [
+      "chromium",
+      "firefox"
+    ],
+    "tests": 2,
+    "routesPerTest": 54,
+    "command": "node node_modules/@playwright/test/cli.js test tests/frontend.spec.ts --grep \"all canonical routes render inside the real React demo application\" --reporter=line",
+    "logFile": "execution/frontend-evidence/FE007/S01-router-routes-browser-current-20261007.log",
+    "logSha256": "3298e445422a30c38202e5d21a6a063807539cd1d6a877eaa39d15dc9fe1b310"
+  },
+  "limits": "All route rendering used the current React app in local demo mode and synthetic MSW data. No backend/provider/auth service or production hosting was tested."
+}

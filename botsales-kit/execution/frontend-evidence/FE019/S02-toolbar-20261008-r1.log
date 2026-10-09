@@ -1,0 +1,441 @@
+{
+  "executedAt": "2026-10-08T10:02:06.254Z",
+  "taskId": "FE019",
+  "stepId": "S02",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Hoàn thiện integrations/credentials write-only/capability status, notification history/preferences/device screens và Push/Telegram pairing mock theo contract.",
+      "verification": "Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R29",
+          "source": "apps/web/src/modules/integrations/index.tsx",
+          "component": "ChannelsPage"
+        },
+        {
+          "id": "R30",
+          "source": "apps/web/src/modules/integrations/index.tsx",
+          "component": "AIProvidersPage"
+        },
+        {
+          "id": "R39",
+          "source": "apps/web/src/modules/notifications/index.tsx",
+          "component": "NotificationsPage"
+        },
+        {
+          "id": "R40",
+          "source": "apps/web/src/modules/notifications/index.tsx",
+          "component": "DevicesPage"
+        }
+      ],
+      "operationIds": [
+        "acknowledgeNotification",
+        "beginChannelConnect",
+        "beginTelegramPairing",
+        "checkChannelHealth",
+        "createAIConnection",
+        "createDevice",
+        "deleteAIConnection",
+        "disconnectChannel",
+        "getAIConnection",
+        "getChannel",
+        "getJob",
+        "getNotification",
+        "getNotificationPolicy",
+        "getProviderCatalog",
+        "listAIConnections",
+        "listChannels",
+        "listDevices",
+        "listNotifications",
+        "reconnectChannel",
+        "revokeDevice",
+        "testAIConnection",
+        "testDevice",
+        "updateAIConnection",
+        "updateNotificationPolicy"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries",
+        "FE019.AC01 AI secret is write-only, cleared after submit, and absent from stored/read data",
+        "FE019.AC01 invalid mock credential is rejected, cleared from the form, and not submitted",
+        "FE019.AC02 channel OAuth failure stays on the page and never marks a channel connected",
+        "FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not request OS permission",
+        "FE019.AC05 notification policy validates canonical numeric bounds before sending and acknowledges only allowed work",
+        "FE019.A03 notification order link stays within the active shop scope",
+        "FE019.A05 reminder policy saves shop-local schedule and quiet hours through the synthetic API",
+        "FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states",
+        "FE027.A08 notification settings disclose server-only deduplication and callback safeguards"
+      ],
+      "executions": 20,
+      "assertionInventory": [
+        {
+          "file": "tests/fe019.spec.ts",
+          "sha256": "3165aa76a09669914518aba9462af3afdab524924f3764dbaf15acc29f193b3c",
+          "cases": [
+            {
+              "title": "FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries",
+              "line": 21,
+              "assertions": [
+                "expect(route, `${id} exists in the canonical route manifest`).toBeTruthy()",
+                "expect(route).toMatchObject({ module, path, readPermission: permission })",
+                "expect(byId.has(action.operationId), `${action.operationId} exists in OpenAPI`).toBe(true)",
+                "expect(byId.get(action.operationId)?.['x-permission']).toBe(action.permission)",
+                "expect(openapi.components.schemas.AIConnectionWrite?.properties?.credential?.writeOnly).toBe(true)",
+                "expect(openapi.components.schemas.AIConnectionPatch?.properties?.credential?.writeOnly).toBe(true)",
+                "expect(openapi.components.schemas.NotificationPolicyWrite?.properties?.remindAfterMinutes?.anyOf?.some(schema => schema.minimum === 1)).toBe(true)",
+                "expect(openapi.components.schemas.NotificationPolicyWrite?.properties?.maxReminders?.minimum).toBe(0)",
+                "expect(openapi.components.schemas.DeviceSubscription?.properties?.status?.enum).toContain('pending')",
+                "expect(integrations).toContain(`'${operationId}'`)",
+                "expect(notifications).toContain(`'${operationId}'`)",
+                "expect(mock).toMatch(/case 'beginChannelConnect':[\\s\\S]*?throw new MockFailure\\(409, 'MOCK_ONLY'/)",
+                "expect(mock).toMatch(/case 'createAIConnection':[\\s\\S]*?const \\{ credential, \\.\\.\\.data \\} = body/)",
+                "expect(mock).toContain(\"status: 'pending'\")",
+                "expect(mock).toContain('DEMO-NOT-A-REAL-PAIRING')",
+                "expect(pushCapabilities).toContain(\"permission !== 'granted'\")",
+                "expect(notifications.indexOf('assertPushPermissionGranted(await Notification.requestPermission())')).toBeLessThan(notifications.indexOf('endpoint: json.endpoint'))"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE019.AC01 AI secret is write-only, cleared after submit, and absent from stored/read data",
+              "line": 70,
+              "assertions": [
+                "expect(request.postDataJSON()).toMatchObject({ providerId: 'mock', modelId: 'synthetic-model', credential: secret })",
+                "expect(response.status()).toBe(201)",
+                "expect(responseText).not.toContain(secret)",
+                "expect(responseText).toContain('\"hasCredential\":false')",
+                "expect(responseText).toContain('\"status\":\"unconfigured\"')",
+                "expect(dialog).not.toBeVisible()",
+                "expect(page.getByText('FE019 kết nối giả', { exact: true })).toBeVisible()",
+                "expect(clientStorage).not.toContain(secret)",
+                "expect(consoleMessages.join('\\n')).not.toContain(secret)",
+                "expect(JSON.stringify(listed)).not.toContain(secret)",
+                "expect(JSON.stringify(listed)).not.toContain('credential')",
+                "expect(updateRequest.postDataJSON()).toEqual({ name: 'FE019 cấu hình cập nhật', modelId: 'synthetic-model' })",
+                "expect(updateResponse.status()).toBe(200)",
+                "expect(await updateResponse.text()).not.toContain(secret)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE019.AC01 invalid mock credential is rejected, cleared from the form, and not submitted",
+              "line": 117,
+              "assertions": [
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Chỉ nhập khóa giả' })).toBeVisible()",
+                "expect(credentialInput).toHaveValue('')",
+                "expect(createRequests).toBe(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE019.AC02 channel OAuth failure stays on the page and never marks a channel connected",
+              "line": 138,
+              "assertions": [
+                "expect(page.getByText('Mô phỏng, chưa liên kết thật', { exact: true })).toBeVisible()",
+                "expect(page.getByText('Đã kết nối', { exact: true })).toHaveCount(0)",
+                "expect(response.status()).toBe(409)",
+                "expect((await response.json()).code).toBe('MOCK_ONLY')",
+                "expect(page.getByRole('alert').filter({ hasText: 'không mở OAuth hoặc kết nối Page thật' })).toBeVisible()",
+                "expect(page.url()).toBe(startUrl)",
+                "expect(after).toEqual(before)",
+                "expect(externalRequests).toEqual([])",
+                "expect(reconnectResponse.status()).toBe(409)",
+                "expect((await reconnectResponse.json()).code).toBe('MOCK_ONLY')",
+                "expect(afterReconnect).toEqual(before)",
+                "expect(externalRequests).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not request OS permission",
+              "line": 172,
+              "assertions": [
+                "expect(page.getByText('Mô phỏng không yêu cầu quyền hệ điều hành', { exact: false })).toBeVisible()",
+                "expect(manifest.ok()).toBe(true)",
+                "expect(manifestJson.icons).toEqual(expect.arrayContaining([expect.objectContaining({ src: '/app-icon.svg' })]))",
+                "expect.arrayContaining([expect.objectContaining({ src: '/app-icon.svg' })])",
+                "expect.objectContaining({ src: '/app-icon.svg' })",
+                "expect((await page.request.get(new URL('/app-icon.svg', demoUrl).toString())).ok()).toBe(true)",
+                "expect(deviceRequest.postDataJSON()).toMatchObject({ deviceName: 'Thiết bị FE019', endpoint: 'https://example.test/mock-push' })",
+                "expect(deviceResponse.status()).toBe(201)",
+                "expect(device).toMatchObject({ deviceName: 'Thiết bị FE019', channel: 'web_push', status: 'pending', lastVerifiedAt: null })",
+                "expect(device).not.toHaveProperty('endpoint')",
+                "expect(device).not.toHaveProperty('p256dh')",
+                "expect(page.getByRole('row').filter({ hasText: 'Thiết bị FE019' }).getByText('Đang chờ')).toBeVisible()",
+                "expect(await page.evaluate(() => (window as Window & { __fe019PermissionCalls: number }).__fe019PermissionCalls)).toBe(0)",
+                "expect(pairing.pairingCode).toBe('DEMO-NOT-A-REAL-PAIRING')",
+                "expect(pairingAlert).toContainText('DEMO-NOT-A-REAL-PAIRING')",
+                "expect(telegramOption).toHaveAttribute('aria-disabled', 'true')",
+                "expect(testRequest.postDataJSON()).toMatchObject({ expectedVersion: device.version })",
+                "expect(testResponse.status()).toBe(202)",
+                "expect(testResult).toMatchObject({ status: 'failed', problem: { code: 'MOCK_ONLY' } })",
+                "expect(page.getByText('Mô phỏng: không gửi Push thật; kiểm tra bị từ chối và trạng thái thiết bị không đổi.')).toBeVisible()",
+                "expect(page.getByRole('row').filter({ hasText: 'Thiết bị FE019' }).getByText('Đang chờ')).toBeVisible()",
+                "expect(revokeResponse.status()).toBe(200)",
+                "expect((await revokeResponse.json()).data).toMatchObject({ id: device.id, status: 'revoked' })",
+                "expect(page.getByRole('row').filter({ hasText: 'Thiết bị FE019' }).getByText('Đã thu hồi')).toBeVisible()",
+                "expect(page.getByRole('row').filter({ hasText: 'Thiết bị FE019' }).getByRole('button', { name: 'Kiểm tra mô phỏng' })).toBeDisabled()",
+                "expect(page.getByRole('heading', { name: 'Điện thoại & lịch trực' })).toBeVisible()",
+                "expect(documentWidth).toBeLessThanOrEqual(viewportWidth + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE019.AC05 notification policy validates canonical numeric bounds before sending and acknowledges only allowed work",
+              "line": 251,
+              "assertions": [
+                "expect(page.getByRole('alert').filter({ hasText: 'số nguyên từ 0 trở lên' })).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Lưu quy tắc' })).toBeDisabled()",
+                "expect(page.getByRole('alert').filter({ hasText: 'Số lần nhắc tối đa' })).toHaveCount(0)",
+                "expect(policyRequest.postDataJSON()).toMatchObject({ maxReminders: 2, remindAfterMinutes: null, fallbackChannel: 'none' })",
+                "expect((await policyResponseWait).status()).toBe(200)",
+                "expect(page.getByText('Có ghi nhận mở thông báo; chưa nhận việc.', { exact: true })).toHaveCount(0)",
+                "expect(page.getByText(/Đã nhận việc lúc/)).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toHaveCount(0)",
+                "expect(page.getByText('Đã gửi', { exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE019.A03 notification order link stays within the active shop scope",
+              "line": 273,
+              "assertions": [
+                "expect(orderLink).toHaveAttribute('href', '/s/shop-demo/orders/DH-DEMO-PAID-01')",
+                "expect(page).toHaveURL(/\\/s\\/shop-demo\\/orders\\/DH-DEMO-PAID-01$/)",
+                "expect(page.getByRole('heading', { name: 'Đơn DH-DEMO-PAID-01', exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE019.A05 reminder policy saves shop-local schedule and quiet hours through the synthetic API",
+              "line": 282,
+              "assertions": [
+                "expect(page.getByText('Theo múi giờ Asia/Vientiane', { exact: true })).toBeVisible()",
+                "expect(response.status()).toBe(200)",
+                "expect(request.postDataJSON()).toMatchObject({\n        enabled: true,\n        timezone: 'Asia/Vientiane',\n        remindAfterMinutes: 30,\n        maxReminders: 3,\n        quietHours: { start: '21:00', end: '08:00' },\n        fallbackChannel: 'none',\n    })",
+                "expect(page.getByText('Theo múi giờ Asia/Vientiane', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states",
+              "line": 309,
+              "assertions": [
+                "expect(response.status()).toBe(200)",
+                "expect(notice).toMatchObject({\n        title: 'Đơn DH-DEMO-PAID-01 cần chuẩn bị',\n        deliveryStatus: 'queued',\n        openedAt: expect.any(String),\n        acknowledgedAt: expect.any(String),\n        source: { type: 'order', id: 'DH-DEMO-PAID-01' },\n    })",
+                "expect.any(String)",
+                "expect.any(String)",
+                "expect(notice?.workItemId).toBeTruthy()",
+                "expect(page.getByText(notice!.title, { exact: true })).toBeVisible()",
+                "expect(page.getByText(notice!.safeBody, { exact: true })).toBeVisible()",
+                "expect(page.getByText('Đang chờ', { exact: true })).toBeVisible()",
+                "expect(page.getByText(/Đã nhận việc lúc/)).toBeVisible()",
+                "expect(page.getByText('Đã gửi', { exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('link', { name: 'Xem đơn', exact: true })).toHaveAttribute('href', '/s/shop-demo/orders/DH-DEMO-PAID-01')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.A08 notification settings disclose server-only deduplication and callback safeguards",
+              "line": 334,
+              "assertions": [
+                "expect(note).toContainText('Chống gửi lặp theo sự kiện')",
+                "expect(note).toContainText('thời hạn token và giới hạn tốc độ')",
+                "expect(note).toContainText('không xác minh các lớp bảo vệ phía máy chủ')",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 174,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 566,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 174-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T08:56:56.838Z",
+      "finishedAt": "2026-10-08T09:50:46.607Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791449812941-81044/e2e.log",
+        "sha256": "3b1b0bade750acc0a043bbd99be26e0c3c72693c69e0ca74f15374af451ee58f"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T09:57:51.888Z",
+      "finishedAt": "2026-10-08T10:00:41.306Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791453471887-70896/verify.log",
+        "sha256": "3877b10727e1de723f0dbf97ce18477f2bffb84edd0c81b4d0d005123630fbef"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T09:13:19.120Z",
+      "finishedAt": "2026-10-08T09:13:27.706Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791450799118-6420/unit.log",
+        "sha256": "898190d1ec5c44618d85c25870ad388d2f2a7c39770b169f7913d5bf9daa6e7d"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T09:21:37.909Z",
+      "finishedAt": "2026-10-08T09:21:38.103Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791451297907-9880/source-maps.log",
+        "sha256": "c3f32dabe032ef1c8bfd06f9816d663f370d8e23e11ca44eb5a06787dc9f3446"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T09:54:16.588Z",
+      "finishedAt": "2026-10-08T09:57:14.696Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791453253022-85404/built-demo.log",
+        "sha256": "058394b7482ff9da610e47a95975543940501510cc85469399f0995b6861c470"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "1ae286e50ab44e130c92dca2ceb1ff065f7b5a3d7921d7d9e82287d5de4736cd"
+}

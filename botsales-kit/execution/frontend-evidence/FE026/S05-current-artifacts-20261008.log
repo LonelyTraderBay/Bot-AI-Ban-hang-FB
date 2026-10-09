@@ -1,0 +1,48 @@
+FE026.S05 current isolated artifact/build evidence
+executedAt=2026-10-07T21:51:45.709Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+commandId=verify-current-20261002
+command=npm.cmd --script-shell=cmd.exe run verify
+additionalCleanRunCommand=node execution/frontend-evidence/FE026/run-clean-build-current-20261008.mjs --remove-temp-after-pass
+exitCode=0
+checksTotal=4; failed=0
+CHECK 1: PASS Production and demo file-by-file manifests, per-file SHA-256 values, tree hashes and lockfile SHA-256 are recorded.
+CHECK 2: PASS README and handoff identify local install/run/build/preview commands, same-origin API configuration and the dev-only API_PROXY_TARGET boundary.
+CHECK 3: PASS The rollback scope is a local artifact/workspace restore or rebuild from the recorded lock/source; no hosted artifact promotion or deployment occurred.
+CHECK 4: PASS All evidence is bounded to React Frontend with synthetic MSW; hosted CI and human/owner acceptance remain separate.
+lockSha256=a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a; copiedLockSha256=a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a
+rootWorkflowSha256=238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2
+productionTreeSha256=3c1642ce4cd2bbaaa57d99e46d517d0ab9f058fc41bbd1331fc4f6bb154bf145; productionFiles=34; mswWorker=false
+demoTreeSha256=2fb01aae6397b1ddfcdeb5b61db7081ae305ac526f6110f6833736b087b5e0fc; demoFiles=38; mswWorker=true
+productionUnavailableSmoke=[production-unavailable-smoke] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist","route":"/s/shop-demo/overview","apiUnavailable":true,"explicitErrorVisible":true,"automaticMockFallback":false,"sessionRequests":1,"mockWorkerRequests":0}
+currentFocusedBuiltDemoE2e=8/8; currentFullE2e=512/512
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no hosted CI, Backend/provider, staging, production hosting, or owner-acceptance claim.
+sourceSnapshotSha256=34542badba4e6dea1962349af3808ebca750a78dfb6a2e7b51025feca97e9264
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE apps/web/src/app/SessionProvider.tsx sha256=13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e
+SOURCE apps/web/src/app/Shell.tsx sha256=54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d
+SOURCE apps/web/src/main.tsx sha256=2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb
+SOURCE apps/web/src/mocks/browser.ts sha256=91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9
+SOURCE apps/web/src/mocks/seed.json sha256=fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d
+SOURCE apps/web/src/shared/api/client.ts sha256=8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4
+SOURCE apps/web/vite.config.ts sha256=5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE026/capture-current-evidence-20261008.mjs sha256=5ac4a09212386b01f3430bb9b41ea0559309ed91a504b30a828a3bc3b95ef9cd
+SOURCE botsales-kit/execution/frontend-evidence/FE026/frontend-workflow-config-current-20261008-attempt03.yml sha256=238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2
+SOURCE botsales-kit/execution/frontend-evidence/FE026/run-clean-build-current-20261008.mjs sha256=e1e733d669ae0138f270e80024d491b6d8976fb599c1b01eed3078e757088beb
+SOURCE botsales-kit/execution/frontend-plan.json sha256=f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e
+SOURCE package-lock.json sha256=a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a
+SOURCE package.json sha256=3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138
+SOURCE playwright.config.ts sha256=4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e
+SOURCE README.md sha256=61ee1effe2c690e9ed04d74b101c9567379fbafc36b592e57126d2b958f85369
+SOURCE scripts/run-e2e.mjs sha256=b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891
+SOURCE scripts/setup.mjs sha256=fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa
+SOURCE tests/artifacts/demo-preview.spec.ts sha256=97177073bb270a69a49ad0e3e2aee4ea5474370b05f409955d33971727e7b1c3
+SOURCE tests/frontend.spec.ts sha256=f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5
+LOG execution/frontend-evidence/FE026/clean-build-current-20261008-attempt03.log sha256=638e0ca3b9bb728bf2f38d2e235c1a25fa37ffcaef1a6025770cf334e32a722f
+LOG execution/frontend-evidence/FE026/registered-verify-current-20261008.log sha256=4e70f9044019803c6621a779de9b848c50d57958755018d8f16d5ded686158f2
+LOG execution/frontend-evidence/FE025/browser-a11y-performance-current-20261008.log sha256=b1f074b41640d375f1d323510a5c4dbbc508a468722fa4ba0cceb5647084c48e
+LOG execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log sha256=2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7
+LOG execution/frontend-evidence/FE001/S03-full-verify-powershell-current-20261008.log sha256=6a495a18b618c1a01b7df5f2c1fb23bd4afc3d12d357cbab31b95cc999cd15f3
+ARTIFACT execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json sha256=946a0dc97124b72cd04ea1c46f8634ae8a88c4555e2af6a7a2c20523f6caaa01
+ARTIFACT execution/frontend-evidence/FE026/frontend-workflow-config-current-20261008-attempt03.yml sha256=238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2

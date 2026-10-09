@@ -1,0 +1,32 @@
+HEAD=53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 plus current working tree
+CWD=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+
+=== generate exit=0 ===
+Command: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run generate:check
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+
+
+=== contract-tests exit=0 ===
+Command: & 'C:\Program Files\nodejs\node.exe' --test tests/contracts/generator.test.mjs
+✔ canonical contracts validate and generate the API base path from OpenAPI (48.0515ms)
+✔ rejects drift in OpenAPI YAML and operation index projections (84.7993ms)
+✔ generated operation registry preserves required and optional query parameter metadata (22.6845ms)
+✔ rejects unresolved schema references before generation (34.7758ms)
+✔ rejects missing API version and a server URL outside same-origin path form (33.0825ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (38.1108ms)
+✔ detects a stale generated file and accepts it after regeneration (3.6688ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 334.498
+
+

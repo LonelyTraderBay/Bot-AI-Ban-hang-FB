@@ -1,0 +1,248 @@
+{
+  "taskId": "FE009",
+  "stepId": "S01",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T16:20:41.045Z",
+  "sourceRevision": "HEAD 53c0ba8 on main + current working tree; documentation-only source fingerprints refreshed on 2026-10-08; original command was not rerun by this review.",
+  "expected": "Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+  "observed": "Current static source audit mapped 11/11 routes and 29/29 planned operations to OpenAPI/generated DTO descriptors and actual React page bindings. 25 operations are directly invoked; getMember/getServiceCase have no separate detail flow, while stepUp/approvePrivacyRequest remain deliberately uncalled pending the OIDC re-auth contract. An unrelated-to-auth frontend completeness gap remains: customer profile derives case/shipment relationships from only the first 10/100 shop-wide rows because listServiceCases/listShipments lack a customerId query.",
+  "commandId": "source",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex documentation-only evidence freshness review; original run retained; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0",
+    "details": "Read-only contract/source map assertions; current FE009 built-demo browser run is separately recorded in S04.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 114,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "All planned FE009 route IDs exist and resolve to the current React page component",
+      "count": 11,
+      "status": "PASS"
+    },
+    {
+      "name": "All planned operation IDs resolve to OpenAPI and generated descriptors with matching method/path/DTOs",
+      "count": 29,
+      "status": "PASS"
+    },
+    {
+      "name": "All route permissions exist in the permission catalog and action permissions match operation descriptors",
+      "count": 22,
+      "status": "PASS"
+    },
+    {
+      "name": "Direct API operation uses are located in actual React source",
+      "count": 25,
+      "status": "PASS"
+    },
+    {
+      "name": "Expected non-invoked operations are classified by current page/protocol scope",
+      "count": 4,
+      "status": "PASS"
+    },
+    {
+      "name": "All FE009 feature IDs and named browser scenarios are present in canonical sources",
+      "count": 20,
+      "status": "PASS"
+    },
+    {
+      "name": "Customer relationship query limits and absent API filters are recorded from contract and source",
+      "count": 3,
+      "status": "PASS"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "1f6d62a562b6ec124fb3029fdce8eeb9937d09323abb5a523aad496343a4531b"
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b"
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "2ea39976473d8dfc2a0da5f0ea8b3e7912d098e4e427487fde5b59479091c269"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "botsales-kit/AGENTS.md",
+      "sha256": "eebc9cc5f02e76190193a4be3aa9c3526490da9eecacfcbdffe5f8929d40a488"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/docs/02_ARCHITECTURE.md",
+      "sha256": "8fd3805498d179f638ac0256af5ea61bfb9cd0a39db2108e3fcb670b44a49a04"
+    },
+    {
+      "path": "botsales-kit/docs/06_API_AND_REALTIME.md",
+      "sha256": "0ea1fddc67a9e1aa5de1865efa937a1d1e12a680236482a992ae1ec830997da5"
+    },
+    {
+      "path": "botsales-kit/docs/08_SECURITY_TENANCY_RBAC.md",
+      "sha256": "ee0c6fc7c44a1907c150b9b30e1f14de324a3a8cae68b3e7eeffd51a4a37cf00"
+    },
+    {
+      "path": "botsales-kit/docs/18_CODING_STANDARDS.md",
+      "sha256": "98e1f9e6b561264445ae2115289edffad35310d5161d58dc662eca7026547866"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/capture-s01-route-map-current-20261007.mjs",
+      "sha256": "49d8d84b968d02b92605dde6588937b25e3a3c256e9512d09e946c43746d1495"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S01-source-current-20261007.log",
+      "sha256": "2a5159d05ab85baefa92b74b98b118b4cc5227e2b8ed3de2df770503b082b67c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S02-domain-current-20261007.log",
+      "sha256": "fcd5c5943da3e4a57e7711dd4085519b36a39431f8d53ee0d147c9e46156b563"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S02-e2e-current-20261007.log",
+      "sha256": "bcf5d2baa09ffa365ab4ad8b2a82b76941f3b15613955349dd006d223c619513"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "497d5239577de2b1daaf3a1a1aec1eaea678955289fa6a7562fa06890f4e9ddc"
+    },
+    {
+      "path": "docs/PROJECT_CONTEXT.md",
+      "sha256": "a39c707a80df486f7f4ad7c69c03847ac0b650331e54b13853431a9ac4f6b71e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e"
+    },
+    {
+      "path": "tests/fe009.spec.ts",
+      "sha256": "6f374bbf2ff9d91e8f286e14a13681dc17192ea4f1ebe5ea8b56e3cf11f2b0a3"
+    }
+  ],
+  "sourceSnapshotSha256": "90ded07850ecf9aade1fbee1e9f68d122b5386ba4ea08970f4a6bc025894f5b9",
+  "logFile": "execution/frontend-evidence/FE009/S01-docs-refresh-current-20261008.log",
+  "logSha256": "76235a497b0aab095f90cea5c3bbe7154123975f3d78d6ec8bcb1da9ef6df17d",
+  "commandResults": [
+    {
+      "commandId": "source",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source",
+      "exitCode": 0,
+      "checksPassed": 114,
+      "logFile": "execution/frontend-evidence/FE009/S01-route-map-current-20261007.log",
+      "logSha256": "11c03ed48155f63ae595dae99b8cebcdc5066503d5579ff6e3af9b50cc8c8fc1"
+    }
+  ],
+  "audit": {
+    "result": "PASS_WITH_DOCUMENTED_GAP",
+    "captureCommand": "node ../botsales-kit/execution/frontend-evidence/FE009/capture-s01-route-map-current-20261007.mjs",
+    "captureExitCode": 0,
+    "caseResults": [
+      {
+        "name": "FE009 routes and components are mapped to actual source",
+        "status": "PASS",
+        "count": 11
+      },
+      {
+        "name": "Canonical operation method/path/DTO/permission mapping is checked",
+        "status": "PASS",
+        "count": 29
+      },
+      {
+        "name": "Customer case/shipment list limitations are identified without inventing an endpoint",
+        "status": "OPEN_GAP",
+        "count": 2
+      },
+      {
+        "name": "Privacy step-up and approval stay uncalled until the supported OIDC re-auth protocol exists",
+        "status": "PASS",
+        "count": 2
+      }
+    ],
+    "reportFile": "execution/frontend-evidence/FE009/S01-route-map-current-20261007-report.json",
+    "reportSha256": "d0883c1efe676a89a8e3c28d25930bb733d1c5c2422cd0f73e1f11c75faf70d8"
+  },
+  "revalidation": {
+    "reviewedAt": "2026-10-07T21:54:10.036Z",
+    "kind": "documentation-only source freshness review",
+    "originalEvidence": {
+      "path": "execution/frontend-evidence/FE009/S01-route-map-current-20261007.json",
+      "sha256": "ab696b2ce7b3209f167f3456e69a24c51bd3c772549ff606c3e2f0c24ccea6fc",
+      "executedAt": "2026-10-07T16:20:41.045Z",
+      "logFile": "execution/frontend-evidence/FE009/S01-route-map-current-20261007.log",
+      "logSha256": "11c03ed48155f63ae595dae99b8cebcdc5066503d5579ff6e3af9b50cc8c8fc1"
+    },
+    "changedDocumentationSources": [
+      "docs/KNOWN_GAPS.md",
+      "docs/PROJECT_CONTEXT.md"
+    ],
+    "runtimeTestsRerun": false,
+    "note": "No product source, test, contract, configuration, generated output, or command-map input changed in this refresh. Original execution logs remain preserved and are not represented as rerun."
+  }
+}

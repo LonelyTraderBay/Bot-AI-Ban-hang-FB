@@ -1,0 +1,185 @@
+{
+  "taskId": "FE007",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T14:51:49.469Z",
+  "sourceRevision": "HEAD 53c0ba8 on main plus current frontend working tree",
+  "expected": "Shop switch, logout and revoked sessions cancel stale requests/streams; no prior-shop data crosses scope; logout and navigation preserve dirty drafts until confirmed; credentials are not stored in web storage.",
+  "observed": "Registered unit suite and four dirty-draft unit cases passed. Twelve targeted Chromium/Firefox cases passed, covering shop switch races, old-shop response isolation, deep-link reload, logout success/failure with dirty draft preservation, and session.revoked SSE with stream closure and login redirect. Current code increments the request-scope epoch, aborts outstanding requests, removes scoped cache, and closes EventSource on scope change.",
+  "commandId": "unit",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows Node 24.19.0 / npm / Playwright Chromium+Firefox",
+    "details": "Registered Vitest ran in the frontend workspace. Playwright used local Vite servers with synthetic session/shop/event responses and MSW demo fixtures; current target test files are fingerprinted. No external service was contacted.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 9,
+  "failed": 0,
+  "checks": [
+    "registered current unit tests pass",
+    "dirty-draft guard unit tests pass 4/4",
+    "shop switch cancels delayed old-shop request and prevents stale-shop data in both browsers",
+    "deep link survives refresh and successful logout clears the mock session in both browsers",
+    "logout draft confirmation preserves input; failed logout retains current session and input in both browsers",
+    "session.revoked SSE refreshes to 401, navigates to login and closes the stream in both browsers",
+    "scope cleanup closes prior-shop event streams and concurrent demo servers remain isolated in both browsers",
+    "request cancellation increments scope epoch and aborts outstanding API controllers",
+    "no localStorage/sessionStorage API calls persist credentials or session state"
+  ],
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/src/app/ScopeEvents.tsx",
+      "sha256": "65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/model/dirty-drafts.ts",
+      "sha256": "87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/capture-s03-scope-lifecycle-current-20261007.mjs",
+      "sha256": "9b2b1c50fbad331671631ca18552c388e0bd6d8893506c00d74a46f76baa97c0"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/S03-dirty-drafts-current-20261007.log",
+      "sha256": "6ad4556c9713708523443e39a98e133ad5d7e6b858a504b21bd7cbd5821c8645"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/S03-scope-lifecycle-browser-current-20261007.log",
+      "sha256": "01d5004183c4c707e70323c1b69058bfe556d5e048f580b7dc24ba35c61fa728"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/S03-unit-current-20261007.log",
+      "sha256": "e3466eeb0e9a1d3d6c80b598098b18ccd38489d57dc518fe6e616a13b731f2a3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-isolation-current-20261007.json",
+      "sha256": "879b814f8da8b7b096e9cdcfdff6971d14b8afdd2635202e045d57e74309817d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-isolation-current-20261007.log",
+      "sha256": "a3752f57ef9d17ee4cb694d684a50ab7cd425bc27e3359d775029c339792f5ad"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5"
+    },
+    {
+      "path": "tests/session/demo-server-cache-isolation.spec.ts",
+      "sha256": "8cbbfdc37f5a32c1a228be78b0875652660b10b4ad64c41139753dcd51e7c385"
+    },
+    {
+      "path": "tests/session/demo-server.mjs",
+      "sha256": "7bb5fbd500c01a503079367fef8711a9f46d3b4f118794e38c05895fe1f06cef"
+    },
+    {
+      "path": "tests/session/dirty-drafts.check.mjs",
+      "sha256": "3ba09b2563ab095a9525ff5e555459c0c18969e36eafd64a3b713eb2edd811ff"
+    },
+    {
+      "path": "tests/session/session-revocation.spec.ts",
+      "sha256": "e9066f0af951ca3397b240c52453287bbb1c3a8119676a49f51df9b2276748c4"
+    },
+    {
+      "path": "tests/ui009-scope-regression.spec.ts",
+      "sha256": "9939f7c1d99bb903f0e333f6913f172938fa39cc986c593cb9b8c840e18b509e"
+    }
+  ],
+  "sourceSnapshotSha256": "69077a6b1cf3a13cec8e811dd60933e1f21cbffa8c345385bd53475bf0cea2ad",
+  "logFile": "execution/frontend-evidence/FE007/S03-scope-lifecycle-current-20261007.log",
+  "logSha256": "9e0ffffcfdb96c7c56d7af880c8a4c27385381630e2af3f76d9e965b25bc39d2",
+  "commandResults": [
+    {
+      "commandId": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE007/S03-unit-current-20261007.log",
+      "logSha256": "e3466eeb0e9a1d3d6c80b598098b18ccd38489d57dc518fe6e616a13b731f2a3"
+    },
+    {
+      "commandId": "supplemental-dirty-draft-unit",
+      "command": "node --test tests/session/dirty-drafts.check.mjs",
+      "exitCode": 0,
+      "testsPassed": 4,
+      "logFile": "execution/frontend-evidence/FE007/S03-dirty-drafts-current-20261007.log",
+      "logSha256": "6ad4556c9713708523443e39a98e133ad5d7e6b858a504b21bd7cbd5821c8645"
+    },
+    {
+      "commandId": "supplemental-current-app-scope-lifecycle",
+      "command": "node node_modules/@playwright/test/cli.js test tests/frontend.spec.ts tests/session/session-revocation.spec.ts tests/ui009-scope-regression.spec.ts tests/session/demo-server-cache-isolation.spec.ts --grep \"switching shops cancels a delayed request|deep links survive browser refresh|logout asks before discarding|session.revoked SSE|UI009 delayed customer orders from the previous shop|concurrent demo servers use isolated Vite caches\" --reporter=line",
+      "exitCode": 0,
+      "testsPassed": 12,
+      "projects": [
+        "chromium",
+        "firefox"
+      ],
+      "logFile": "execution/frontend-evidence/FE007/S03-scope-lifecycle-browser-current-20261007.log",
+      "logSha256": "01d5004183c4c707e70323c1b69058bfe556d5e048f580b7dc24ba35c61fa728"
+    }
+  ],
+  "audit": {
+    "executedAt": "2026-10-07T14:51:49.469Z",
+    "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+    "outcomes": {
+      "registeredUnit": "PASS",
+      "dirtyDraftUnit": "4/4 PASS",
+      "targetedBrowser": "12/12 PASS across Chromium and Firefox",
+      "supportingFE008Isolation": "4/4 PASS across Chromium and Firefox"
+    },
+    "lifecycle": {
+      "shopChange": "Shell cleanup aborts all active API controllers, increments scope epoch, cancels/removes scope queries, and uses user/shop/permissionVersion query identity.",
+      "stream": "ScopeEvents closes EventSource on session.revoked and on effect cleanup; browser test confirmed revoked SSE triggers session refresh and login redirect. React StrictMode can start up to two initial dev connections, and the test bounds that replay.",
+      "logout": "Successful logout waits for API confirmation before clearing cache; failed logout leaves session and typed draft visible.",
+      "drafts": "Dirty forms/dialogs block navigation and logout until the user decides; successful submission rebases the baseline.",
+      "credentials": {
+        "browserStorageApiCalls": false,
+        "csrfToken": "Held in module memory; cleared on logout/session failure."
+      }
+    },
+    "diagnostics": "Initial SSE test fixture returned 401 on a background session refresh before the event was delivered. The fixture was corrected to keep the synthetic session valid until the gated session.revoked event, then return 401; both browser runs passed. No product code change was needed for this fixture-order issue.",
+    "limits": "Session, membership, shops, API and event responses are synthetic/local. Backend session revocation delivery, server-side authorization, OIDC, and production behavior remain unverified."
+  }
+}

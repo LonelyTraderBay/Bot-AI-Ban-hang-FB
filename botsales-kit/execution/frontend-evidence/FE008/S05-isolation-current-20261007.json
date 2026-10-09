@@ -1,0 +1,463 @@
+{
+  "taskId": "FE008",
+  "stepId": "S05",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T14:23:41.271Z",
+  "sourceRevision": "HEAD 53c0ba8 on main plus current frontend working tree",
+  "expected": "Two concurrent shops/tests do not leak state; the live production artifact excludes the mock service worker, demo includes it, and a production build rejects VITE_ENABLE_MOCKS=true. Synthetic data and runtime limits are explicit.",
+  "observed": "Chromium and Firefox isolation tests passed 4/4. The registered production build command exited nonzero with the exact configured Vite guard when VITE_ENABLE_MOCKS=true. Existing production artifact contains no mockServiceWorker.js; demo artifact contains it. Both artifact manifests remained byte-identical through the expected guard failure. Current domain evidence covers deterministic reset and two-shop fixtures; all results are synthetic frontend evidence only.",
+  "commandId": "build",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows Node 24.19.0 / npm build and Playwright Chromium+Firefox",
+    "details": "Build guard ran with VITE_ENABLE_MOCKS=true; browser tests used isolated local demo servers. Existing production/demo artifacts were fingerprinted before and after. Data is synthetic MSW/simulator only; no live backend, provider, staging, or deployed production was exercised.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 7,
+  "failed": 0,
+  "checks": [
+    "registered build command matches frontend-command-map.json",
+    "build command includes generate:check, typecheck and production app build",
+    "production VITE_ENABLE_MOCKS=true rejected by exact Vite guard",
+    "current live build omits mockServiceWorker.js",
+    "current demo build contains mockServiceWorker.js",
+    "production and demo artifact manifests unchanged by expected guard failure",
+    "Chromium and Firefox shop/server isolation run reports 4 passed"
+  ],
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/capture-s05-isolation-current-20261007.mjs",
+      "sha256": "b35103ace8e880b310c516e8a3d29931b5095a59bae6f0db3e0cbef776284d95"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-domain-current-20261007.log",
+      "sha256": "14a0a7cc34f429e7108e90a40ad47b872cbbd463fbc1bf638104db1147056a9a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-domain-report-current-20261007.json",
+      "sha256": "92dda4303ae4059018ff2481ffa59f399e73a72a860573d117b34e09c13dfd2c"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-transport-current-20261007.json",
+      "sha256": "3708c918f33b68f943b52c165ee7188ac50593cfe9424d6eafac464c3529b184"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S02-unit-current-20261007.log",
+      "sha256": "efde00b9af573cf5a771e8fa188b43f5767e184355296d516ae513f28ce36fc4"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S04-schema-current-20261007.json",
+      "sha256": "29d4993ed1b3ce419b154e8a974afa14bcda95208d5f53a8e85c13af611b6e9d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-build-artifact-audit-current-20261007.json",
+      "sha256": "6b63260bafc8fff211a4452823af7a174dcf22220fe9eb55b2f8b4b98c1ae1b0"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S05-isolation-browser-current-20261007.log",
+      "sha256": "7d308db1804b5e906e0fd70f258fd07297bf63d74b44648879e7cb5cdcc7e4cd"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+    },
+    {
+      "path": "tests/domain-scenarios.cjs",
+      "sha256": "ac65e916a6433de60f96292ac03381b625aece42a04f6ac37085eb1243766245"
+    },
+    {
+      "path": "tests/session/demo-server-cache-isolation.spec.ts",
+      "sha256": "8cbbfdc37f5a32c1a228be78b0875652660b10b4ad64c41139753dcd51e7c385"
+    },
+    {
+      "path": "tests/ui009-scope-regression.spec.ts",
+      "sha256": "9939f7c1d99bb903f0e333f6913f172938fa39cc986c593cb9b8c840e18b509e"
+    }
+  ],
+  "sourceSnapshotSha256": "2154e1698bce32c4ec359d7224744061fd08cc591b5797d327c25b64178378a1",
+  "logFile": "execution/frontend-evidence/FE008/S05-isolation-current-20261007.log",
+  "logSha256": "a3752f57ef9d17ee4cb694d684a50ab7cd425bc27e3359d775029c339792f5ad",
+  "commandResults": [
+    {
+      "commandId": "build",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build",
+      "exitCode": 1,
+      "expectedExitCode": "nonzero",
+      "expectedGuard": "Production không được bật mô phỏng. Dùng build:demo cho bản review.",
+      "observedGuard": true
+    },
+    {
+      "commandId": "test-e2e",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui009-scope-regression.spec.ts tests/session/demo-server-cache-isolation.spec.ts --reporter=line",
+      "exitCode": 0,
+      "testsPassed": 4,
+      "logFile": "execution/frontend-evidence/FE008/S05-isolation-browser-current-20261007.log",
+      "logSha256": "7d308db1804b5e906e0fd70f258fd07297bf63d74b44648879e7cb5cdcc7e4cd"
+    }
+  ],
+  "artifacts": {
+    "checkedAt": "2026-10-07T14:23:41.271Z",
+    "scope": "Current local build artifacts only; not deployed production evidence.",
+    "production": {
+      "root": "apps/web/dist",
+      "files": 34,
+      "mockServiceWorkerPresent": false,
+      "manifest": [
+        {
+          "path": "app-icon.svg",
+          "sha256": "d0ed30dd4410fde97ebac0d7be8f2a6329cde38effdd109dd219036b85fdab27"
+        },
+        {
+          "path": "app-sw.js",
+          "sha256": "9080a6f5bfdd8753d64bc3a5632ee626517a79bd9d989edb3cc54f089e721936"
+        },
+        {
+          "path": "assets/charts-CQ4oecFO.js",
+          "sha256": "441ffc9804f390e596000259d9097f8f983b7414a5ea769cf115f3cc2cc45d25"
+        },
+        {
+          "path": "assets/contract-data-BIzYYkc1.js",
+          "sha256": "eefcaed6dd2aa9c9a486754efe19af940cfb9a4e45756f4929a3ae5523892ac8"
+        },
+        {
+          "path": "assets/download-8lJFmiSZ.js",
+          "sha256": "9a8e735d740169508ef12c9df76e70df3df3c2d783fdb88d301cd422e8cd426e"
+        },
+        {
+          "path": "assets/filters-CVitQAxr.js",
+          "sha256": "0c31488c9c1bfdfbcf0c4407aeb5164f9ac034e2dc571cd2553f8a976afd78a8"
+        },
+        {
+          "path": "assets/hooks-CBDxsWZl.js",
+          "sha256": "6221d30b9e3942c543fb55459a4e228167405897d11969f10b7638af79d90d12"
+        },
+        {
+          "path": "assets/i18n-xB0mQYCC.js",
+          "sha256": "13644fbf7cd7df2f1f5dbf8d9d8b4e67124bcb1c28b64855469888db1f87ad24"
+        },
+        {
+          "path": "assets/index-5VaCK5KI.js",
+          "sha256": "3b2c56b9cdd7629697c69907616a676e189cee8e7f22f31aecb15a85942733f2"
+        },
+        {
+          "path": "assets/index-6x8HVE-S.js",
+          "sha256": "1fe9edd0a1477ab6d6cfc40f94a20929054d477755b3bcb3b750a6f36aa56224"
+        },
+        {
+          "path": "assets/index-9BtJMVCU.js",
+          "sha256": "f53f7c1d6a0033404f51aeff1e711e691275d3df84e8ec4579f6c0d99e8f4789"
+        },
+        {
+          "path": "assets/index-B5svGCaS.js",
+          "sha256": "d015ccbc37fab24d846a35a3a59662650f6911b9fdbe13aad95b21ec49bb77fd"
+        },
+        {
+          "path": "assets/index-Bks9rNSx.js",
+          "sha256": "38708b58d229ed25d28fd0618d11bcd10eb60b0c973a9c21b27c4aa625d92866"
+        },
+        {
+          "path": "assets/index-BQPx7lJM.css",
+          "sha256": "a4ec85dc6c7b5fb62000019591a8aa24b0eeec962674aedf375462a82563b305"
+        },
+        {
+          "path": "assets/index-Bwgmy1zt.js",
+          "sha256": "717430028959bcd507c2261e68d2f8549529e4d87e86533d4492201c836c55f2"
+        },
+        {
+          "path": "assets/index-C3Kf44d7.js",
+          "sha256": "7bc939abf4a321e555a772512d66b1c5a809ad82da5b339b60d5ba342249cd94"
+        },
+        {
+          "path": "assets/index-C5lWfmsM.js",
+          "sha256": "b704f101a68f17ff5b0c682036e2b1eafbd4ba974649aafd5b67bc198fd88451"
+        },
+        {
+          "path": "assets/index-C9AgEiGR.js",
+          "sha256": "39aa9d44cddbdaa17fbaedf004951a31911b074f84e8d9a380fb73ad7d6e31f6"
+        },
+        {
+          "path": "assets/index-CiQzCbiY.js",
+          "sha256": "1fee2c95f25935219c2f347a3af40da0f6bb9a1cfaa3b6db500ee9eb5998f85c"
+        },
+        {
+          "path": "assets/index-CPdfFEJ_.js",
+          "sha256": "ec94604c3e5d19eed8f47fd9c2b8a589f99fde962e40b7d8eca7736ccc6d5a62"
+        },
+        {
+          "path": "assets/index-CvElWXHx.js",
+          "sha256": "2d1ea0a54c0937c68709db5844286e8a188f14db937db183f42e2cde20b20474"
+        },
+        {
+          "path": "assets/index-DCvRshdR.js",
+          "sha256": "d5e94dc26db4de33b87335c936ec94731c3133b6a8c797587757220c0e617f16"
+        },
+        {
+          "path": "assets/index-DitEZlo5.js",
+          "sha256": "6277be9613dd0ce4fd1091ab5d79f2735b05f4358dcbe86a36af2fdee4d3bd30"
+        },
+        {
+          "path": "assets/index-DrG-q_e5.js",
+          "sha256": "e5c8a0d5d78eb9e71ebe0c0c84b8c931a4051c156da7511733aa757e24724c34"
+        },
+        {
+          "path": "assets/index-Dt4AXT1m.js",
+          "sha256": "23ac4e03167232cec9ddad2cdbafd401061be5efa7b90c825065a9adab3cabd1"
+        },
+        {
+          "path": "assets/index-FjkcWVPW.js",
+          "sha256": "08323403ee25a1d36f10ae6d541ff8a3960cafddf93c254fbc2353614055d709"
+        },
+        {
+          "path": "assets/mui-Bz_aCSm2.js",
+          "sha256": "f5e8d31741fcfacabe2e870a463acd5276073e9b78250aedc9b36cb40bcbcd1d"
+        },
+        {
+          "path": "assets/query-5vm9EU1C.js",
+          "sha256": "59fc23875862ba142b1e9059d7a4ace925c491196d120b34a9c80b9b2744f83d"
+        },
+        {
+          "path": "assets/react-runtime-D0NtfbPC.js",
+          "sha256": "cf962651294a083f09b7bb7e480d6094fcf60c8d1e0f68d93cf11e11edd45118"
+        },
+        {
+          "path": "assets/schema-validation-Bhr7oAQE.js",
+          "sha256": "d15d3ecd00c25627b4b9c7e8a55997b20fd8a0480e3a3269b55473cff83b3647"
+        },
+        {
+          "path": "assets/schemas-jpQ0XMzw.js",
+          "sha256": "3384ec925e599aba354aa0742e4e3721d7bae91746b0d94caa96a0662c39c2f3"
+        },
+        {
+          "path": "index.html",
+          "sha256": "d27ca3cea1a319d5f569246a90a390d4982eb9a669d10979c6cdc6c4190e70cf"
+        },
+        {
+          "path": "manifest.webmanifest",
+          "sha256": "ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53"
+        },
+        {
+          "path": "samples/products.csv",
+          "sha256": "51b4eabb0beb11d93e7b86fd5ef252fa3c1dc4b20782f8eaf4cbac783e3109d5"
+        }
+      ]
+    },
+    "demo": {
+      "root": "apps/web/dist-demo",
+      "files": 38,
+      "mockServiceWorkerPresent": true,
+      "manifest": [
+        {
+          "path": "app-icon.svg",
+          "sha256": "d0ed30dd4410fde97ebac0d7be8f2a6329cde38effdd109dd219036b85fdab27"
+        },
+        {
+          "path": "app-sw.js",
+          "sha256": "9080a6f5bfdd8753d64bc3a5632ee626517a79bd9d989edb3cc54f089e721936"
+        },
+        {
+          "path": "assets/browser-BmJvqrDj.js",
+          "sha256": "a7f9946ce538d90391314ff2545f1b8690441e78f836849d370b40438982c9c6"
+        },
+        {
+          "path": "assets/charts-RcpaDpmM.js",
+          "sha256": "902a10c7526d03091b8d6a53a4217b3714eb6319488abe363b789606eee71118"
+        },
+        {
+          "path": "assets/contract-data-D-QqiNa-.js",
+          "sha256": "eaafc38117364ea7ab02b292c0f829c660f9e10401b8e042df0802cfd413b01b"
+        },
+        {
+          "path": "assets/control-6gq2NE8L.js",
+          "sha256": "d1b3243f08a4ffcda96aae0a55271275193cb754a547f55ed134e731b7a13c14"
+        },
+        {
+          "path": "assets/download-CWiaXb8A.js",
+          "sha256": "0e78970ab1b31fdcc54910e92fb351800f24b3a3a54e3f00ddf5a46b0ee2aefb"
+        },
+        {
+          "path": "assets/filters-Bi-qlnQp.js",
+          "sha256": "7b1e552ef7622a318c73d10894d594b097d77641707a17a20479df96c593d44e"
+        },
+        {
+          "path": "assets/hooks-CfgBtLfw.js",
+          "sha256": "ff4c972724d89b21375298f7a49ed70e61a8aaf3896f5d86f14c680980b1e424"
+        },
+        {
+          "path": "assets/i18n-xB0mQYCC.js",
+          "sha256": "13644fbf7cd7df2f1f5dbf8d9d8b4e67124bcb1c28b64855469888db1f87ad24"
+        },
+        {
+          "path": "assets/index-2e6O5J2Y.js",
+          "sha256": "410aa2b2bbc695dedf0c117b1c2eb62ded03e8f11b8b5d99dee021dd4acf2ceb"
+        },
+        {
+          "path": "assets/index-5vUHDzqU.js",
+          "sha256": "f26f17fca602dac1b14d9a748c6a0dbc2875c6b7899739dad24701a64cf9196d"
+        },
+        {
+          "path": "assets/index-B14mYDvE.js",
+          "sha256": "8abd9c99c653181aa1e59279081e54e49e436817e368104e15b3bfda4b28b9d4"
+        },
+        {
+          "path": "assets/index-BgH-bgCL.js",
+          "sha256": "82b1e4b29c3345c6e8d320621d6e454a139dcccee34adbbb42a918eba1d3ed6e"
+        },
+        {
+          "path": "assets/index-BQPx7lJM.css",
+          "sha256": "a4ec85dc6c7b5fb62000019591a8aa24b0eeec962674aedf375462a82563b305"
+        },
+        {
+          "path": "assets/index-BrET1yGr.js",
+          "sha256": "203beed7dfd6aadfbfc022f2990b959c788f5f3632d95fd1b5e7bf0970c4527c"
+        },
+        {
+          "path": "assets/index-BVy9FJF5.js",
+          "sha256": "a7008537a7b0ac1536fd2f5c445a0f2a883ca5421885fce7fc89cc837531708c"
+        },
+        {
+          "path": "assets/index-ByPokguO.js",
+          "sha256": "34c261691f6f90996ba5de99a1b79be3aed34b34220124cc80522fbe880db314"
+        },
+        {
+          "path": "assets/index-CAYOA1ry.js",
+          "sha256": "cd462a90a77699eaba70581abdcf2e72be4d51e2fb004e4f8871eb6f4fe02a9b"
+        },
+        {
+          "path": "assets/index-CLrGh_Ba.js",
+          "sha256": "966975cd9da1eb39d93e2d52e4a5a8af4979ef164b94f80882b8582c987750c2"
+        },
+        {
+          "path": "assets/index-CqBBOSKs.js",
+          "sha256": "d20d20b2f453bd1621861b5ca26e19d81ca067ca184ae028129b5e5528a0c617"
+        },
+        {
+          "path": "assets/index-CqNsJVHo.js",
+          "sha256": "0ed91048f960e53fadf74acb4a6778fc5ad8760a52685a313f03299e6a458183"
+        },
+        {
+          "path": "assets/index-CsCeMRSS.js",
+          "sha256": "f7ce907f5c8213a62a3756ade43309783e21c628a455172f31579da4d49c7fe3"
+        },
+        {
+          "path": "assets/index-CvZhFJu8.js",
+          "sha256": "257413a6d0d32a24f0e1a783bff1f7e84f8e5dc6e65fccfad92142fbb54b122d"
+        },
+        {
+          "path": "assets/index-D0CJ-99J.js",
+          "sha256": "cc414e389bb9f9c91edef6487c09c16e606ec3b9c469fda027aa5ada6a60e72b"
+        },
+        {
+          "path": "assets/index-DHnyyXSn.js",
+          "sha256": "afb9db066b6fcd8505380e53947d318ef40f078a4fba6dfbf5e7e701a81c59f8"
+        },
+        {
+          "path": "assets/index-DjQYVQBN.js",
+          "sha256": "320b58d499edd1af903ccb32276192549c57e39dc465edf85538f51bf324971b"
+        },
+        {
+          "path": "assets/index-DSOP2yCc.js",
+          "sha256": "0abba60a1da4a3ad733eedc94d90860f914d9fc8366d669c19969ca19fdc3e03"
+        },
+        {
+          "path": "assets/mui-azn9KfGV.js",
+          "sha256": "23033088ba6e83e3b1b82eb11daf38061fab58b98a5c997b98d81ea0cbdbbc72"
+        },
+        {
+          "path": "assets/query-5vm9EU1C.js",
+          "sha256": "59fc23875862ba142b1e9059d7a4ace925c491196d120b34a9c80b9b2744f83d"
+        },
+        {
+          "path": "assets/react-runtime-D0NtfbPC.js",
+          "sha256": "cf962651294a083f09b7bb7e480d6094fcf60c8d1e0f68d93cf11e11edd45118"
+        },
+        {
+          "path": "assets/schema-validation-Bhr7oAQE.js",
+          "sha256": "d15d3ecd00c25627b4b9c7e8a55997b20fd8a0480e3a3269b55473cff83b3647"
+        },
+        {
+          "path": "assets/schemas-jpQ0XMzw.js",
+          "sha256": "3384ec925e599aba354aa0742e4e3721d7bae91746b0d94caa96a0662c39c2f3"
+        },
+        {
+          "path": "assets/service-BepI4YXI.js",
+          "sha256": "f34691f2561486f583155b602875b48510743be69750efd5877958382c12dbf1"
+        },
+        {
+          "path": "index.html",
+          "sha256": "d08896942dd5b62711f4c4787e74f414a7812f2157a0b8e869b7ee90c7cf540f"
+        },
+        {
+          "path": "manifest.webmanifest",
+          "sha256": "ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53"
+        },
+        {
+          "path": "mockServiceWorker.js",
+          "sha256": "3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc"
+        },
+        {
+          "path": "samples/products.csv",
+          "sha256": "51b4eabb0beb11d93e7b86fd5ef252fa3c1dc4b20782f8eaf4cbac783e3109d5"
+        }
+      ]
+    },
+    "expectedProductionGuard": {
+      "commandId": "build",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build",
+      "environment": {
+        "VITE_ENABLE_MOCKS": "true"
+      },
+      "exitCode": 1,
+      "expectedError": "Production không được bật mô phỏng. Dùng build:demo cho bản review.",
+      "observed": "Production không được bật mô phỏng. Dùng build:demo cho bản review."
+    },
+    "beforeAfterUnchanged": true
+  }
+}

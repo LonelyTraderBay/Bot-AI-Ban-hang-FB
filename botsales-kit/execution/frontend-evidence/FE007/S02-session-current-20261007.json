@@ -1,0 +1,217 @@
+{
+  "taskId": "FE007",
+  "stepId": "S02",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T14:35:07.230Z",
+  "sourceRevision": "HEAD 53c0ba8 on main plus current frontend working tree",
+  "expected": "One app provider set and current session/query identities prevent tenant-free feature cache; expired 401 returns to login with its safe return path; 403 stays an access error instead of an empty success.",
+  "observed": "Registered Vitest unit command passed. 8 checks were satisfied; 8 targeted browser cases passed across Chromium and Firefox, including expired-session 401, live unavailable session, role route denial, and the 403-versus-empty distinction. Feature/shop query keys carry user, shop, and permissionVersion.",
+  "commandId": "unit",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows Node 24.19.0 / npm / Playwright Chromium+Firefox",
+    "details": "Registered Vitest ran from the frontend workspace; selected real React route/auth scenarios ran on local Vite servers. Request fixtures and demo session are synthetic. Existing edited api-client.test.tsx was fingerprinted before and after.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 8,
+  "failed": 0,
+  "checks": [
+    "exactly one root router, query client/provider, session provider and theme provider",
+    "registered current Vitest unit command passed",
+    "expired session HTTP 401 redirected to login and retained requested return route in both browsers",
+    "live session API unavailable state does not fall back to mock data in both browsers",
+    "role-restricted route shows explicit access-denied state in both browsers",
+    "HTTP 403 query state is distinct from a successful empty list in both browsers",
+    "shop and feature query keys include user, shop and permission version",
+    "pre-existing edited API client test file remained byte-identical through the unit run"
+  ],
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4"
+    },
+    {
+      "path": "apps/web/src/app/ScopeEvents.tsx",
+      "sha256": "65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/src/shared/api/errors.ts",
+      "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/capture-s02-session-current-20261007.mjs",
+      "sha256": "149e4b5f250058d0643f43a15d4ba740c21f2c179e4f2b193c784cd44cf0fcf8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/S02-session-audit-current-20261007.json",
+      "sha256": "6d471ee8ae8d275f951daefc8bd5ef1099b1f65ef4756a2a7c842317b2300605"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/S02-session-browser-current-20261007.log",
+      "sha256": "c5e531f68021b6e088f901d05d21eab886af3b97235511fe827b31e54e0859e8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE007/S02-session-unit-current-20261007.log",
+      "sha256": "d5bd9a4d09a7f47770ffd66d34c895307c564627d4fcc0398b266d8ac57a322d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5"
+    },
+    {
+      "path": "tests/session/demo-server.mjs",
+      "sha256": "7bb5fbd500c01a503079367fef8711a9f46d3b4f118794e38c05895fe1f06cef"
+    },
+    {
+      "path": "tests/session/session-unauthorized.spec.ts",
+      "sha256": "6895cee9923c10c572aeecf6b4e909db54886c46e06114f215cd2c2c2869c143"
+    },
+    {
+      "path": "tests/ui007-query-states.spec.ts",
+      "sha256": "fe2775f059e9595307c171cde49c1a1d47b88c4c79b8706bd3922dbccda451b8"
+    }
+  ],
+  "sourceSnapshotSha256": "d813a00d1eb33de1dbf8facd43f20ce448770b8a858401848756be4c340aa286",
+  "logFile": "execution/frontend-evidence/FE007/S02-session-current-20261007.log",
+  "logSha256": "308dd25c12a5cbf314580ed278f0441a885d2bfbbaf4ff99680c3b2f113f276d",
+  "commandResults": [
+    {
+      "commandId": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "exitCode": 0,
+      "logFile": "execution/frontend-evidence/FE007/S02-session-unit-current-20261007.log",
+      "logSha256": "d5bd9a4d09a7f47770ffd66d34c895307c564627d4fcc0398b266d8ac57a322d"
+    },
+    {
+      "commandId": "supplemental-current-app-session-access",
+      "command": "node node_modules/@playwright/test/cli.js test tests/frontend.spec.ts tests/session/session-unauthorized.spec.ts tests/ui007-query-states.spec.ts --grep \"role changes remove restricted navigation|live mode reports an unavailable session API|expired live session redirects to login|UI007 forbidden order query is an access state\" --reporter=line",
+      "exitCode": 0,
+      "testsPassed": 8,
+      "projects": [
+        "chromium",
+        "firefox"
+      ],
+      "logFile": "execution/frontend-evidence/FE007/S02-session-browser-current-20261007.log",
+      "logSha256": "c5e531f68021b6e088f901d05d21eab886af3b97235511fe827b31e54e0859e8"
+    }
+  ],
+  "audit": {
+    "executedAt": "2026-10-07T14:35:07.230Z",
+    "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+    "rootProviders": {
+      "router": 1,
+      "queryClient": 1,
+      "session": 1,
+      "theme": 1
+    },
+    "queryClientInstances": 1,
+    "sessionQuery": [
+      "session"
+    ],
+    "shopQuery": [
+      "shop",
+      "session.user.id",
+      "shopId",
+      "membership.permissionVersion"
+    ],
+    "featureQuery": [
+      "scope",
+      "user.id",
+      "shop.id",
+      "membership.permissionVersion",
+      "operation",
+      "path",
+      "filters"
+    ],
+    "auth": {
+      "expiredSession401": "Redirects to /login and preserves the requested shop path in returnTo; browser asserted in Chromium and Firefox.",
+      "unavailableLiveSession": "Shows an API unavailable message and no mock data; browser asserted in Chromium and Firefox."
+    },
+    "authorization": {
+      "roleRouteGuard": "Viewer role sees an explicit denied state for a restricted route; browser asserted in Chromium and Firefox.",
+      "forbiddenRead": "403 appears as an access error; successful empty list remains a different state; browser asserted in Chromium and Firefox.",
+      "serverAuthorization": "Not proved. Role behavior comes from synthetic MSW/local fixtures."
+    },
+    "tests": {
+      "unitSummary": "      Tests  138 passed (138)",
+      "browserTests": 8,
+      "browserProjects": [
+        "chromium",
+        "firefox"
+      ],
+      "browserLog": "execution/frontend-evidence/FE007/S02-session-browser-current-20261007.log",
+      "browserLogSha256": "c5e531f68021b6e088f901d05d21eab886af3b97235511fe827b31e54e0859e8"
+    },
+    "preservedUserSource": {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256Before": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
+      "sha256After": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
+      "unchanged": true
+    },
+    "limits": "Session/auth/role cases use local frontend and synthetic fixtures; no OIDC server, real backend authorization, hosting, or provider integration was exercised."
+  }
+}

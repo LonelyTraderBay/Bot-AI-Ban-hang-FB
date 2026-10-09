@@ -1,0 +1,791 @@
+ M BotSalesAI_Frontend/apps/web/src/shared/api/client.ts
+ M BotSalesAI_Frontend/apps/web/tests/api-client.test.tsx
+ M BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md
+ M BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md
+ M BotSalesAI_Frontend/docs/route-implementation.json
+ M BotSalesAI_Frontend/docs/route-state-role-matrix.json
+ M BotSalesAI_Frontend/evidence/boundaries.json
+ M BotSalesAI_Frontend/evidence/domain-tests.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/REPORT.md
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/S19-current-evidence.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/built-demo-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/built-demo.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/contracts-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/contracts.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/documents-current.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/e2e-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/e2e.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/evidence-validator-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/evidence-validator.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/finalize-evidence.mjs
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/finance-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/finance.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/inventory-current.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/layout-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/layout.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/route-generator-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/route-implementation-generator.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/route-state-generator.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/unit-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/unit.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/update-live-status.py
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/verify-record.json
+ M BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/verify.log
+ M BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/capture-actual-browser-zoom-200-current-20261006.mjs
+ M BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/capture-native-text-only-200-current-20261006.mjs
+ M BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json
+ M BotSalesAI_Frontend/evidence/source-check.json
+ M BotSalesAI_Frontend/tests/fe009.spec.ts
+ M BotSalesAI_Frontend/tests/fe021.spec.ts
+ M BotSalesAI_Frontend/tests/states/route-error-composition.spec.ts
+ M BotSalesAI_Frontend/tests/ui028-w30-stress.spec.ts
+ M BotSalesAI_Frontend/tests/vertical-slices/generate-fe022-evidence.mjs
+ M botsales-kit/IMPLEMENTATION_PLAN.md
+ M botsales-kit/evidence/tracker-tests.json
+ M botsales-kit/execution/FRONTEND_PROGRESS.md
+ M botsales-kit/execution/SESSION_HANDOFF.md
+ M botsales-kit/execution/frontend-evidence/FE001/handoff.md
+ M botsales-kit/execution/frontend-evidence/FE003/handoff.md
+ M botsales-kit/execution/frontend-evidence/FE010/S01-contract-map.json
+ M botsales-kit/execution/frontend-evidence/FE010/S01-contract-map.mjs
+ M botsales-kit/execution/frontend-evidence/FE019/S01-contract-source-map-current-20261004.mjs
+ M botsales-kit/execution/frontend-evidence/FE022/handoff.md
+ M botsales-kit/execution/frontend-progress-report.json
+ M botsales-kit/execution/frontend-progress.json
+ M botsales-kit/execution/frontend-tasks/FE001.md
+ M botsales-kit/execution/frontend-tasks/FE002.md
+ M botsales-kit/execution/frontend-tasks/FE003.md
+ M botsales-kit/execution/frontend-tasks/FE004.md
+ M botsales-kit/execution/frontend-tasks/FE005.md
+ M botsales-kit/execution/frontend-tasks/FE006.md
+ M botsales-kit/execution/frontend-tasks/FE007.md
+ M botsales-kit/execution/frontend-tasks/FE008.md
+ M botsales-kit/execution/frontend-tasks/FE009.md
+ M botsales-kit/execution/frontend-tasks/FE010.md
+ M botsales-kit/execution/frontend-tasks/FE011.md
+ M botsales-kit/execution/frontend-tasks/FE012.md
+ M botsales-kit/execution/frontend-tasks/FE013.md
+ M botsales-kit/execution/frontend-tasks/FE014.md
+ M botsales-kit/execution/frontend-tasks/FE015.md
+ M botsales-kit/execution/frontend-tasks/FE016.md
+ M botsales-kit/execution/frontend-tasks/FE017.md
+ M botsales-kit/execution/frontend-tasks/FE018.md
+ M botsales-kit/execution/frontend-tasks/FE019.md
+ M botsales-kit/execution/frontend-tasks/FE020.md
+ M botsales-kit/execution/frontend-tasks/FE021.md
+ M botsales-kit/execution/frontend-tasks/FE026.md
+ M botsales-kit/scripts/progress.mjs
+ M botsales-kit/scripts/test_progress.py
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S02-final-list-25-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S02-final-list-25-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S02-final-list-25-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S02-final-list-25-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S02-final-list-25-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S02-final-list-25-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S03-final-list-105-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S03-final-list-105-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S03-final-list-105-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S03-final-list-105-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S03-final-list-105-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI004/S03-final-list-105-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S02-create-selected-last-category-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S02-create-selected-last-category-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S02-create-selected-last-category-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S02-create-selected-last-category-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S02-create-selected-last-category-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S02-create-selected-last-category-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-acceptance-chromium-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-acceptance-chromium-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-acceptance-chromium-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-acceptance-firefox-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-acceptance-firefox-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-acceptance-firefox-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-mobile-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-mobile-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-mobile-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-mobile-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-mobile-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-mobile-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-selected-outside-first-page-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-selected-outside-first-page-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-selected-outside-first-page-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-selected-outside-first-page-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-selected-outside-first-page-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-edit-selected-outside-first-page-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-request-trace-chromium-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-request-trace-chromium-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-request-trace-chromium-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-request-trace-firefox-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-request-trace-firefox-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S03-request-trace-firefox-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S04-edit-lookup-403-preserves-product-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S04-edit-lookup-403-preserves-product-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S04-edit-lookup-403-preserves-product-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S04-edit-lookup-403-preserves-product-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S04-edit-lookup-403-preserves-product-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI005/S04-edit-lookup-403-preserves-product-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R29-empty-after-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R29-empty-after-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R29-empty-after-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R29-empty-after-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R29-empty-after-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R29-empty-after-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R30-empty-after-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R30-empty-after-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R30-empty-after-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R30-empty-after-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R30-empty-after-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI008/S04-R30-empty-after-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-1440-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-1440-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-1440-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-390-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-390-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-chromium-390-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-firefox-1440-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-firefox-1440-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-firefox-1440-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-firefox-390-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-firefox-390-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W28/route-geometry-firefox-390-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1024-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1024-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1024-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1279-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1279-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1279-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1280-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1280-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1280-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1440-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1440-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1440-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1920-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1920-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-1920-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-320-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-320-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-320-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-390-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-390-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-390-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-767-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-767-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-767-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-768-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-768-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-chromium-768-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1024-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1024-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1024-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1279-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1279-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1279-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1280-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1280-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1280-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1440-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1440-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1440-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1920-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1920-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-1920-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-320-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-320-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-320-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-390-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-390-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-390-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-767-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-767-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-767-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-768-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-768-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W29/responsive-profile-firefox-768-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-current-20261007-152310-6352.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-current-20261007-153408-38412.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-current-20261007-203856-70824.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-current-20261007-203930-63308.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-dialog-long-reason-after-tab-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-dialog-long-reason-after-tab-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-dialog-long-reason-after-tab-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-dialog-long-reason-focused-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-dialog-long-reason-focused-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-dialog-long-reason-focused-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-form-error-short-after-tab-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-form-error-short-after-tab-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-form-error-short-after-tab-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-form-error-short-focused-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-form-error-short-focused-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-form-error-short-focused-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-inbox-long-composer-after-tab-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-inbox-long-composer-after-tab-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-inbox-long-composer-after-tab-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-inbox-long-composer-focused-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-inbox-long-composer-focused-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-inbox-long-composer-focused-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-mobile-menu-long-label-after-tab-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-mobile-menu-long-label-after-tab-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-mobile-menu-long-label-after-tab-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-mobile-menu-long-label-focused-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-mobile-menu-long-label-focused-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-mobile-menu-long-label-focused-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-report-long-id-after-tab-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-report-long-id-after-tab-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-report-long-id-after-tab-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-report-long-id-focused-20261007-153408-38412.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-report-long-id-focused-20261007-203856-70824.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-report-long-id-focused-20261007-203930-63308.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-current-20261007-152543-37008.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-current-20261007-152802-20260.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-current-20261007-153342-35120.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-dialog-long-reason-current-20261007-152543-37008.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-dialog-long-reason-current-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-dialog-long-reason-current-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-dialog-long-reason-focused-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-dialog-long-reason-focused-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-form-error-short-current-20261007-152543-37008.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-form-error-short-current-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-form-error-short-current-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-form-error-short-focused-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-form-error-short-focused-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-inbox-long-composer-current-20261007-152543-37008.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-inbox-long-composer-current-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-inbox-long-composer-current-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-inbox-long-composer-focused-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-inbox-long-composer-focused-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-mobile-menu-long-label-current-20261007-152543-37008.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-mobile-menu-long-label-current-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-mobile-menu-long-label-current-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-mobile-menu-long-label-focused-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-mobile-menu-long-label-focused-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-report-long-id-current-20261007-152543-37008.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-report-long-id-current-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-report-long-id-current-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-report-long-id-focused-20261007-152802-20260.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-report-long-id-focused-20261007-153342-35120.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-zoom-followup-current-20261007.md
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-dialog-long-reason-current-20261007-153117-2608.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-dialog-long-reason-current-20261007-153805-23404.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-dialog-long-reason-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-dialog-long-reason-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-dialog-long-reason-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-form-error-short-current-20261007-153117-2608.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-form-error-short-current-20261007-153805-23404.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-form-error-short-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-form-error-short-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-form-error-short-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-inbox-long-composer-current-20261007-153117-2608.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-inbox-long-composer-current-20261007-153805-23404.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-inbox-long-composer-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-inbox-long-composer-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-inbox-long-composer-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-mobile-menu-long-label-current-20261007-153117-2608.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-mobile-menu-long-label-current-20261007-153805-23404.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-mobile-menu-long-label-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-mobile-menu-long-label-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-mobile-menu-long-label-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-report-long-id-current-20261007-153117-2608.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-report-long-id-current-20261007-153805-23404.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-report-long-id-current-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-report-long-id-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-chromium-report-long-id-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-dialog-long-reason-current-20261007-153126-36052.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-dialog-long-reason-current-20261007-153814-40540.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-dialog-long-reason-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-dialog-long-reason-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-dialog-long-reason-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-form-error-short-current-20261007-153126-36052.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-form-error-short-current-20261007-153814-40540.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-form-error-short-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-form-error-short-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-form-error-short-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-inbox-long-composer-current-20261007-153126-36052.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-inbox-long-composer-current-20261007-153814-40540.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-inbox-long-composer-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-inbox-long-composer-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-inbox-long-composer-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-mobile-menu-long-label-current-20261007-153126-36052.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-mobile-menu-long-label-current-20261007-153814-40540.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-mobile-menu-long-label-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-mobile-menu-long-label-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-mobile-menu-long-label-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-report-long-id-current-20261007-153126-36052.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-report-long-id-current-20261007-153814-40540.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-report-long-id-current-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-report-long-id-current-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/stress-firefox-report-long-id-current-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R09-chromium-after-profile-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R09-chromium-after-profile-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R09-chromium-after-profile-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R09-firefox-after-profile-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R09-firefox-after-profile-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R09-firefox-after-profile-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R11-chromium-after-profile-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R11-chromium-after-profile-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R11-chromium-after-profile-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R11-firefox-after-profile-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R11-firefox-after-profile-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-R11-firefox-after-profile-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-catalog-query-fragment-chromium-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-catalog-query-fragment-chromium-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-catalog-query-fragment-chromium-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-catalog-query-fragment-firefox-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-catalog-query-fragment-firefox-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-catalog-query-fragment-firefox-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-dashboard-nested-surface-chromium-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-dashboard-nested-surface-chromium-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-dashboard-nested-surface-chromium-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-dashboard-nested-surface-firefox-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-dashboard-nested-surface-firefox-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-dashboard-nested-surface-firefox-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-knowledge-wrapped-actions-chromium-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-knowledge-wrapped-actions-chromium-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-knowledge-wrapped-actions-chromium-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-knowledge-wrapped-actions-firefox-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-knowledge-wrapped-actions-firefox-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S15-positive-knowledge-wrapped-actions-firefox-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-large-dataset-chromium-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-large-dataset-chromium-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-large-dataset-chromium-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-large-dataset-firefox-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-large-dataset-firefox-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-large-dataset-firefox-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-20261007-223150-39676.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-FE007-S05-46820.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-20261007-225349-35856.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-FE007-S05-46820.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-doc-sync-1791362807390-42484.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-doc-sync-1791366881068-56212.json
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-overview-chromium-20261007-223150-39676.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-overview-chromium-FE007-S05-46820.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-overview-chromium-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-overview-chromium-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-overview-firefox-20261007-225349-35856.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-overview-firefox-FE007-S05-46820.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-overview-firefox-doc-sync-1791362807390-42484.png
+?? BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-overview-firefox-doc-sync-1791366881068-56212.png
+?? BotSalesAI_Frontend/tests/session/demo-worker-startup.spec.ts
+?? BotSalesAI_Frontend/tests/session/session-revocation.spec.ts
+?? BotSalesAI_Frontend/tests/session/session-unauthorized.spec.ts
+?? botsales-kit/evidence/tracker-tests-initial-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE001/S01-git-status-raw-current-20261008.txt
+?? botsales-kit/execution/frontend-evidence/FE001/S01-intake-baseline-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE001/S01-intake-baseline-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE001/S01-intake-current-20261008.log
+?? botsales-kit/execution/frontend-evidence/FE001/S02-route-map-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE001/S02-route-map-audit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE001/S03-current-report-package-reconciliation-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE001/S03-current-report-package-reconciliation-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE001/S03-current-runtime-docs-after-api-change-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE001/S03-current-runtime-docs-after-api-change-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE001/S04-first-target-change-budget-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE001/S04-first-target-change-budget-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE001/S05-frontend-ledger-isolation-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE001/S05-frontend-ledger-isolation-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE001/audit-ledger-isolation.py
+?? botsales-kit/execution/frontend-evidence/FE001/audit-report-vs-runtime.py
+?? botsales-kit/execution/frontend-evidence/FE001/audit-route-map.py
+?? botsales-kit/execution/frontend-evidence/FE001/capture-intake-baseline-current-20261008.mjs
+?? botsales-kit/execution/frontend-evidence/FE001/capture-intake-baseline.py
+?? botsales-kit/execution/frontend-evidence/FE001/capture-s04-change-budget.py
+?? botsales-kit/execution/frontend-evidence/FE001/reconcile-s03-current-runtime-docs-20261007.py
+?? botsales-kit/execution/frontend-evidence/FE002/S01-helper-shell-resolution-initial-failure-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S01-toolchain-and-peers-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE002/S01-toolchain-and-peers-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S02-setup-doctor-install-constraints-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE002/S02-setup-doctor-install-constraints-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S03-before-install-snapshot-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-capture-initial-failure-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-output-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-verified-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-verified-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S04-before-setup-snapshot-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S04-setup-doctor-verified-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE002/S04-setup-doctor-verified-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S04-setup-output-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-retry-verified-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-retry-verified-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-verified-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S05-npm-ci-output-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S05-npm-ci-retry-output-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/S05-path-resolution-diagnosis-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE002/finalize-install-check.py
+?? botsales-kit/execution/frontend-evidence/FE002/finalize-setup-doctor-check.py
+?? botsales-kit/execution/frontend-evidence/FE002/handoff-current-20261007.md
+?? botsales-kit/execution/frontend-evidence/FE002/inspect-setup-constraints.py
+?? botsales-kit/execution/frontend-evidence/FE002/inspect-toolchain.py
+?? botsales-kit/execution/frontend-evidence/FE002/run-clean-install-retry.py
+?? botsales-kit/execution/frontend-evidence/FE002/run-clean-install.py
+?? botsales-kit/execution/frontend-evidence/FE002/snapshot-install-targets.py
+?? botsales-kit/execution/frontend-evidence/FE002/snapshot-setup-targets.py
+?? botsales-kit/execution/frontend-evidence/FE003/S01-command-map-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE003/S01-command-map-audit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S02-fe-task-gate-matrix-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE003/S02-verification-ladder-matrix-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE003/S02-verification-ladder-matrix-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-built-demo-targeted-discovery-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-built-demo-targeted-discovery-final-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-domain-msw-baseline-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-domain-msw-baseline-final-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-domain-msw-baseline-retry-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-playwright-full-discovery-resource-stop-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-playwright-targeted-discovery-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-playwright-targeted-discovery-final-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-runner-config-baseline-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE003/S03-runner-config-baseline-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-runner-config-baseline-final-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE003/S03-runner-config-baseline-final-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-vitest-rtl-baseline-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-vitest-rtl-baseline-final-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S03-vitest-rtl-baseline-retry-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S04-fixture-tests-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S04-next-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S04-status-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S04-tracker-validation-evidence-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE003/S04-tracker-validation-evidence-audit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S04-validate-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S05-capture-attempt-initial-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/S05-current-runner-documentation-audit-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE003/S05-current-runner-documentation-audit-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE003/capture-s01-command-map.py
+?? botsales-kit/execution/frontend-evidence/FE003/capture-s02-gate-matrix.py
+?? botsales-kit/execution/frontend-evidence/FE003/capture-s03-runner-baseline.py
+?? botsales-kit/execution/frontend-evidence/FE003/capture-s04-progress-audit.py
+?? botsales-kit/execution/frontend-evidence/FE003/capture-s05-current-runner-docs.py
+?? botsales-kit/execution/frontend-evidence/FE004/S01-boundaries-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S01-boundaries-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S01-type-graph-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S01-type-graph-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S01-typecheck-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S02-lint-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S02-strict-lint-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S02-strict-lint-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S02-type-suppression-scan-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S03-boundaries-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S03-boundaries-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S03-layer-architecture-map-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S03-layer-audit-run-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S03-layer-ownership-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S03-layer-ownership-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S04-boundaries-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S04-negative-boundary-fixtures-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S04-negative-boundary-fixtures-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S05-boundaries-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S05-final-frontend-gates-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/S05-final-frontend-gates-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE004/S05-source-check-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE004/audit-s03-layer-ownership.mjs
+?? botsales-kit/execution/frontend-evidence/FE004/capture-s01-type-graph-current-20261007.py
+?? botsales-kit/execution/frontend-evidence/FE004/capture-s02-strict-lint-current-20261007.py
+?? botsales-kit/execution/frontend-evidence/FE004/capture-s03-layer-ownership-current-20261007.py
+?? botsales-kit/execution/frontend-evidence/FE004/capture-s04-negative-boundaries-current-20261007.py
+?? botsales-kit/execution/frontend-evidence/FE004/capture-s05-final-frontend-gates-current-20261007.py
+?? botsales-kit/execution/frontend-evidence/FE005/S01-contract-crosswalk-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE005/S01-contract-crosswalk-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S01-contract-crosswalk-current-20261007.receipt.json
+?? botsales-kit/execution/frontend-evidence/FE005/S01-source-check-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S01-source-check-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE005/S02-generator-commands-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S02-generator-freshness-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S02-generator-freshness-current-20261007.receipt.json
+?? botsales-kit/execution/frontend-evidence/FE005/S02-generator-output-inventory-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE005/S03-api-client-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S03-api-client-current-20261007.receipt.json
+?? botsales-kit/execution/frontend-evidence/FE005/S03-types-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S03-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S04-api-client-focused-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S04-fe017-validation-chromium-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S04-transport-fixture-matrix-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE005/S04-transport-fixture-matrix-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S05-contract-tests-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S05-contract-transport-gates-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE005/S05-contract-transport-gates-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S05-generate-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S05-staged-diff-check-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S05-types-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S05-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/S05-unstaged-diff-check-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE005/capture-s01-contract-crosswalk-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE005/capture-s02-generator-freshness-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE005/capture-s03-api-client-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE005/capture-s04-transport-fixture-matrix-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE005/capture-s05-contract-transport-gates-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE006/S01-design-system-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE006/S01-design-system-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S01-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S02-shared-primitives-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE006/S02-shared-primitives-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S02-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S03-accessibility-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE006/S03-accessibility-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S03-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S03-browser-evidence-20261007/S04-browser-audit.json
+?? botsales-kit/execution/frontend-evidence/FE006/S03-browser-evidence-20261007/S04-dashboard-1440.png
+?? botsales-kit/execution/frontend-evidence/FE006/S03-browser-evidence-20261007/S04-dashboard-320.png
+?? botsales-kit/execution/frontend-evidence/FE006/S03-browser-evidence-20261007/S04-dashboard-390.png
+?? botsales-kit/execution/frontend-evidence/FE006/S03-browser-evidence-20261007/S04-dashboard-768.png
+?? botsales-kit/execution/frontend-evidence/FE006/S03-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S03-zoom-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S04-contrast-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE006/S04-contrast-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S04-route-contrast-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE006/S04-route-contrast-run-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S04-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S05-generate-check-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S05-layout-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S05-token-gates-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE006/S05-token-gates-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S05-typecheck-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S05-ui-composition-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/S05-visual-tokens-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE006/capture-s01-design-system-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE006/capture-s02-shared-primitives-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE006/capture-s03-accessibility-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE006/capture-s04-contrast-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE006/capture-s05-token-gates-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE007/S01-router-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S01-router-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S01-router-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S01-router-routes-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S01-source-check-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S02-session-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S02-session-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S02-session-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S02-session-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S02-session-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S03-dirty-drafts-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S03-scope-lifecycle-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S03-scope-lifecycle-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S03-scope-lifecycle-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S03-scope-lifecycle-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S03-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S04-route-regression-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S04-route-regression-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S04-route-regression-browser-first-attempt-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S04-route-regression-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S04-route-regression-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S04-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S05-build-build-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S05-build-demo-build-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S05-shell-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S05-shell-build-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S05-shell-build-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE007/S05-shell-build-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/S05-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE007/capture-s01-router-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE007/capture-s02-session-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE007/capture-s03-scope-lifecycle-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE007/capture-s04-route-regression-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE007/capture-s05-build-shell-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE008/S01-dataset-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S01-dataset-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S01-domain-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S01-domain-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S01-seed-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S01-seed-audit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S02-domain-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S02-domain-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S02-transport-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S02-transport-audit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S02-transport-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S02-transport-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S02-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S03-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S03-browser-empty-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S03-browser-error-current-20261007-after-toast-assertion.log
+?? botsales-kit/execution/frontend-evidence/FE008/S03-browser-error-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S03-interaction-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S03-interaction-audit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S03-interaction-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S03-interaction-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S04-ajv-schema-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S04-ajv-schema-audit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S04-ajv-schema-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S04-ajv-schema-run-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S04-schema-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S04-schema-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S04-schema-report-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S04-schema-run-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S05-build-artifact-audit-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S05-isolation-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/S05-isolation-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE008/S05-isolation-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE008/capture-s01-dataset-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE008/capture-s02-transport-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE008/capture-s03-interaction-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE008/capture-s04-ajv-schema-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE008/capture-s04-schema-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE008/capture-s05-isolation-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE009/S01-route-map-current-20261007-report.json
+?? botsales-kit/execution/frontend-evidence/FE009/S01-route-map-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE009/S01-route-map-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE009/S01-source-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE009/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE009/S02-domain-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE009/S02-e2e-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE009/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE009/S04-browser-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE009/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE009/S04-unit-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE009/S04-unit-passed-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE009/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE009/capture-fe009-checkpoints-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE009/capture-s01-route-map-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE010/S01-contract-map-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE010/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE010/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE010/S01-source-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE010/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE010/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE010/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE010/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE010/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE010/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE010/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE010/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE010/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE011/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE011/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/S01-source-map-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/S01-source-map-passed-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/S01-source-map-powershell-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/S01-source-map-registered-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE011/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE011/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE011/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE011/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE011/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE012/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE012/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE012/S01-source-maps-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE012/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE012/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE012/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE012/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE012/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE012/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE012/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE012/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE012/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE013/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE013/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE013/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE013/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE013/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE013/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE013/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE013/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE013/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE013/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE013/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE014/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE014/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE014/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE014/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE014/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE014/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE014/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE014/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE014/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE014/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE014/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE015/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE015/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE015/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE015/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE015/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE015/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE015/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE015/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE015/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE015/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE015/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE016/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE016/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE016/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE016/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE016/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE016/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE016/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE016/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE016/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE016/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE016/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE017/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE017/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE017/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE017/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE017/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE017/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE017/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE017/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE017/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE017/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE017/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE018/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE018/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE018/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE018/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE018/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE018/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE018/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE018/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE018/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE018/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE018/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE019/S01-contract-source-map-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE019/S01-contract-source-map-passed-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE019/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE019/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE019/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE019/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE019/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE019/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE019/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE019/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE019/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE019/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE019/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE020/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE020/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE020/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE020/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE020/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE020/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE020/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE020/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE020/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE020/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE020/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE021/S01-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE021/S01-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE021/S01-route-operation-map-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE021/S01-route-operation-map-current-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE021/S02-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE021/S02-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE021/S03-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE021/S03-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE021/S04-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE021/S04-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE021/S05-current-20261007.json
+?? botsales-kit/execution/frontend-evidence/FE021/S05-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE021/capture-current-evidence-20261007.mjs
+?? botsales-kit/execution/frontend-evidence/FE022/S01-current-20261008.json
+?? botsales-kit/execution/frontend-evidence/FE022/S01-route-matrix-current-20261008.log
+?? botsales-kit/execution/frontend-evidence/FE022/S02-current-20261008.json
+?? botsales-kit/execution/frontend-evidence/FE022/S03-current-20261008.json
+?? botsales-kit/execution/frontend-evidence/FE022/S04-current-20261008.json
+?? botsales-kit/execution/frontend-evidence/FE022/S04-evidence-generation-current-20261008.log
+?? botsales-kit/execution/frontend-evidence/FE022/S04-evidence-generation-passed-current-20261008.log
+?? botsales-kit/execution/frontend-evidence/FE022/S04-focused-vertical-slices-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE022/S04-focused-vertical-slices-current-20261008.log
+?? botsales-kit/execution/frontend-evidence/FE022/S04-focused-vertical-slices-powershell-failed-current-20261007.log
+?? botsales-kit/execution/frontend-evidence/FE022/S05-current-20261008.json

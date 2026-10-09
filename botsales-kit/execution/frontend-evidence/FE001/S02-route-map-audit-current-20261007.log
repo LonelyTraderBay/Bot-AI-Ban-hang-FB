@@ -1,0 +1,67 @@
+FE001.S02 canonical route and module map audit
+Scope: FRONTEND_WITH_SYNTHETIC_MOCK_API
+Current HEAD: 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6
+Canonical manifest routes: 54
+Route map rows: 54
+Feature catalog entries: 64
+Mapped frontend modules: 16 (bot, catalog, customers, dashboard, finance, fulfillment, inbox, integrations, inventory, knowledge, notifications, operations, orders, procurement, reports, workspace)
+Distinct source files referenced by routes: 17
+Explicit feature scope/gap descriptions reviewed: 65
+Current E2E record: doc-sync-1791366881068-56212 exit=0 started=2026-10-07T09:54:41.068Z finished=2026-10-07T10:46:54.385Z
+Current E2E result: 504 passed; canonical route browser case PASS on Chromium and Firefox.
+Route map rows: routeId | canonicalPath | module | component | source | recorded state
+R01	/login	workspace	LoginPage	apps/web/src/modules/workspace/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R02	/workspaces	workspace	WorkspacesPage	apps/web/src/modules/workspace/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R03	/onboarding	workspace	OnboardingPage	apps/web/src/modules/workspace/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R04	/s/:shopId/overview	dashboard	DashboardPage	apps/web/src/modules/dashboard/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R05	/s/:shopId/inbox	inbox	InboxPage	apps/web/src/modules/inbox/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R06	/s/:shopId/inbox/:conversationId	inbox	InboxPage	apps/web/src/modules/inbox/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R07	/s/:shopId/customers	customers	CustomersPage	apps/web/src/modules/customers/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R08	/s/:shopId/customers/:customerId	customers	CustomerPage	apps/web/src/modules/customers/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R09	/s/:shopId/products	catalog	ProductsPage	apps/web/src/modules/catalog/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R10	/s/:shopId/products/new	catalog	ProductEditorPage	apps/web/src/modules/catalog/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R11	/s/:shopId/products/:productId	catalog	ProductEditorPage	apps/web/src/modules/catalog/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R12	/s/:shopId/categories	catalog	CategoriesPage	apps/web/src/modules/catalog/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R13	/s/:shopId/imports	catalog	ImportsPage	apps/web/src/modules/catalog/imports.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R14	/s/:shopId/imports/:jobId	catalog	ImportResultPage	apps/web/src/modules/catalog/imports.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R15	/s/:shopId/inventory	inventory	InventoryPage	apps/web/src/modules/inventory/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R16	/s/:shopId/inventory/movements	inventory	MovementsPage	apps/web/src/modules/inventory/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R17	/s/:shopId/orders	orders	OrdersPage	apps/web/src/modules/orders/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R18	/s/:shopId/orders/new	orders	NewOrderPage	apps/web/src/modules/orders/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R19	/s/:shopId/orders/:orderId	orders	OrderDetailPage	apps/web/src/modules/orders/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R20	/s/:shopId/finance	finance	CashflowPage	apps/web/src/modules/finance/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R21	/s/:shopId/finance/entries	finance	EntriesPage	apps/web/src/modules/finance/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R22	/s/:shopId/finance/profit-loss	finance	ProfitLossPage	apps/web/src/modules/finance/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R23	/s/:shopId/knowledge	knowledge	KnowledgePage	apps/web/src/modules/knowledge/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R24	/s/:shopId/knowledge/:knowledgeId	knowledge	KnowledgeDetailPage	apps/web/src/modules/knowledge/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R25	/s/:shopId/knowledge/review	knowledge	FeedbackPage	apps/web/src/modules/knowledge/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R26	/s/:shopId/bot	bot	BotConfigPage	apps/web/src/modules/bot/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R27	/s/:shopId/bot/playground	bot	PlaygroundPage	apps/web/src/modules/bot/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R28	/s/:shopId/bot/evaluations	bot	EvaluationsPage	apps/web/src/modules/bot/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R29	/s/:shopId/integrations/channels	integrations	ChannelsPage	apps/web/src/modules/integrations/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R30	/s/:shopId/integrations/ai	integrations	AIProvidersPage	apps/web/src/modules/integrations/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R31	/s/:shopId/reports	reports	ReportsPage	apps/web/src/modules/reports/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R32	/s/:shopId/settings/team	workspace	TeamPage	apps/web/src/modules/workspace/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R33	/s/:shopId/settings/shop	workspace	ShopSettingsPage	apps/web/src/modules/workspace/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R34	/s/:shopId/settings/audit	workspace	AuditPage	apps/web/src/modules/workspace/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R35	/s/:shopId/settings/privacy	workspace	PrivacyPage	apps/web/src/modules/workspace/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R36	/s/:shopId/jobs/:jobId	workspace	JobPage	apps/web/src/modules/workspace/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R37	/s/:shopId/operations	operations	OperationsPage	apps/web/src/modules/operations/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R38	/s/:shopId/approvals	operations	ApprovalsPage	apps/web/src/modules/operations/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R39	/s/:shopId/notifications	notifications	NotificationsPage	apps/web/src/modules/notifications/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R40	/s/:shopId/notifications/devices	notifications	DevicesPage	apps/web/src/modules/notifications/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R41	/s/:shopId/fulfillment	fulfillment	FulfillmentPage	apps/web/src/modules/fulfillment/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R42	/s/:shopId/shipments	fulfillment	ShipmentsPage	apps/web/src/modules/fulfillment/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R43	/s/:shopId/returns	orders	ReturnsPage	apps/web/src/modules/orders/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R44	/s/:shopId/suppliers	procurement	SuppliersPage	apps/web/src/modules/procurement/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R45	/s/:shopId/replenishment	procurement	ReplenishmentPage	apps/web/src/modules/procurement/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R46	/s/:shopId/purchases	procurement	PurchasesPage	apps/web/src/modules/procurement/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R47	/s/:shopId/receipts	procurement	ReceiptsPage	apps/web/src/modules/procurement/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R48	/s/:shopId/finance/journals	finance	JournalsPage	apps/web/src/modules/finance/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R49	/s/:shopId/finance/reconciliation	finance	ReconciliationPage	apps/web/src/modules/finance/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R50	/s/:shopId/finance/debts-periods	finance	DebtsPage	apps/web/src/modules/finance/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R51	/s/:shopId/bot/team	bot	AgentTeamPage	apps/web/src/modules/bot/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R52	/s/:shopId/operations/digests	operations	DigestsPage	apps/web/src/modules/operations/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R53	/s/:shopId/reports/marketing	reports	MarketingPage	apps/web/src/modules/reports/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+R54	/s/:shopId/service-cases	customers	ServiceCasesPage	apps/web/src/modules/customers/index.tsx	BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API
+Conclusion: every route has a current manifest path, source file, component symbol, route test/log pointer, and current E2E source fingerprint. This is React demo + synthetic API evidence; it does not establish backend/provider behavior or every feature acceptance case.

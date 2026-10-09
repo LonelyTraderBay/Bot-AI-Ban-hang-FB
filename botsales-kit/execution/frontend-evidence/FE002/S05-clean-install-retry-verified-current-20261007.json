@@ -1,0 +1,62 @@
+{
+  "taskId": "FE002",
+  "stepId": "S05",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T12:21:31.517138+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working tree snapshot)",
+  "expected": "Run cold npm ci from exact current manifests/lock in a new isolated clean temp workspace, retain toolchain evidence, and leave the shared checkout untouched.",
+  "observed": "npm.cmd --script-shell=cmd.exe ci exited 0 in a new temp copy with minimal child PATH; npm ls --depth=0 exited 0; 412 package paths recorded; manifest/lock/config hashes and matching shared workspace hashes stayed exact.",
+  "commandId": "clean-ci-20261002",
+  "command": "npm.cmd --script-shell=cmd.exe ci",
+  "reviewer": "Codex",
+  "environment": {
+    "name": "Isolated Windows temp workspace",
+    "details": "Node v24.19.0/npm 11.17.0; copied current root/app manifests, lockfile, .npmrc and .node-version; child PATH restricted to Windows system and Node directories; no project source or existing node_modules.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 12,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-npm-ci-retry-output-current-20261007.log",
+      "sha256": "3a4e99b993e3ced1a3fbc865edbecbb50744c7a81d38e15466c8a2a4d83434b3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-path-resolution-diagnosis-current-20261007.log",
+      "sha256": "b32e608beed92ea7e7c787395c1a13d9451b56ee89737f075393ddcb6d752cd6"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/run-clean-install-retry.py",
+      "sha256": "fca4a48f022f880af2bf2be208fc27cebbda716b4053b63105410fd843531e3e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    }
+  ],
+  "sourceSnapshotSha256": "017c01b9939af4284c3daeb236fa72dd7967a223d44b0f4000939dce4000a0af",
+  "logFile": "execution/frontend-evidence/FE002/S05-clean-install-retry-verified-current-20261007.log",
+  "logSha256": "2bd9f4c22cb0bb64f7f6851c9fa6ef5c5081ff5dbbf41b112cf2ab53816a8643"
+}

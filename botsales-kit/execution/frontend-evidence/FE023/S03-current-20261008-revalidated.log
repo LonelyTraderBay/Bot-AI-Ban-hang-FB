@@ -1,0 +1,21 @@
+FE023.S03 — current states/forms/i18n verification.
+executedAt=2026-10-07T20:06:53.953Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+commandId=e2e
+registeredCommand=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e
+actualUnitInvocation=npm.cmd --script-shell=cmd.exe test -- --reporter=verbose; exit=0; tests=138
+unitLog=execution/frontend-evidence/FE023/unit-verbose-current-20261008-revalidated.log; sha256=df618eebf09665ec3914730eea9fdfcab636ec6daef8c97076da9300d84173e8
+actualBrowserInvocation=npm.cmd --script-shell=cmd.exe run test:e2e -- tests/states/fe023.spec.ts tests/states/route-empty-composition.spec.ts tests/states/route-error-composition.spec.ts tests/route-role-matrix.spec.ts tests/frontend.spec.ts; exit=0; tests=36
+browserLog=execution/frontend-evidence/FE023/browser-state-current-20261008-revalidated.log; sha256=df414d30ae97a625d5c3ed94d478b1c02a241b2582640880eebcc2d2342d4a79
+matrixInvocation=node tests/states/generate-route-state-roles.mjs --unit-log <current-unit-log> --browser-log <current-browser-log> --role-log <current-browser-log>; exit=0
+matrixLog=execution/frontend-evidence/FE023/route-state-role-matrix-current-20261008-revalidated.log; sha256=64e475c76995893b8612240d0b44d876c136f471b89b5511a56c351d130fcf17
+generatedMatrix=botsales-kit/execution/frontend-evidence/FE023/route-state-role-matrix-current-20261008-revalidated.json
+matrixCounts=54 routes; 7 roles; 357 route-role cases; 19 global states; 432 route-state cells; 163 route-specific; 204 shared; 65 not applicable; 0 not tested
+translationKeys=78; language=vi only
+CHECK: Browser kiểm dirty dialog, shop navigation khi còn draft, reset baseline sau save, cursor lookup giữ lựa chọn cũ; unit kiểm 422 focus/giữ input, 412/428/404 recovery và unknown command state.
+LIMIT: Ứng dụng chỉ bật ngôn ngữ vi; 78 key đã đăng ký được test, nhưng điều này không khẳng định mọi chuỗi hard-coded đều đi qua i18next.
+LIMIT: Permission matrix chứng minh hành vi route phía frontend với mock/catalog, không chứng minh server RBAC.
+LIMIT: Shared-state test không chứng minh mọi biến thể trạng thái đã được chạy trực tiếp ở từng route; 65 ô được đánh dấu NOT_APPLICABLE theo contract và 0 ô NOT_TESTED.
+LIMIT: Không có screen-reader UAT, browser zoom thủ công, backend/provider thật, hosted CI hoặc owner acceptance trong phạm vi này.
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; không xác nhận server RBAC/backend/provider/staging/production hoặc owner acceptance.
+reviewer=Codex tự rà soát; không tuyên bố có peer review độc lập

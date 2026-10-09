@@ -1,0 +1,167 @@
+FE004.S05 scoped diff review (working tree; changes preserved)
+Git HEAD: 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6
+Canonical write scope: BotSalesAI_Frontend/apps/web/tsconfig.json, BotSalesAI_Frontend/eslint.config.mjs, BotSalesAI_Frontend/scripts/check-boundaries.mjs, BotSalesAI_Frontend/apps/web/src/app, BotSalesAI_Frontend/apps/web/src/shared, BotSalesAI_Frontend/apps/web/src/modules, BotSalesAI_Frontend/tests/architecture
+Scoped status exit=0: M BotSalesAI_Frontend/apps/web/src/shared/api/client.ts
+Tracked in-scope diff exit=0: BotSalesAI_Frontend/apps/web/src/shared/api/client.ts
+Staged in-scope diff exit=0: (none)
+Untracked in-scope paths exit=0: (none)
+Diff stat:
+ BotSalesAI_Frontend/apps/web/src/shared/api/client.ts | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+Reviewed source diff:
+diff --git a/BotSalesAI_Frontend/apps/web/src/shared/api/client.ts b/BotSalesAI_Frontend/apps/web/src/shared/api/client.ts
+index b6fe732..d7a41a3 100644
+--- a/BotSalesAI_Frontend/apps/web/src/shared/api/client.ts
++++ b/BotSalesAI_Frontend/apps/web/src/shared/api/client.ts
+@@ -123,129 +123,134 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
+         throw new DOMException('Yêu cầu đã bị hủy trước khi gửi.', 'AbortError');
+     for (const parameter of spec.queryParameters) {
+         const value = options.query?.[parameter.name];
+         if (parameter.required && (value === undefined || value === null || value === ''))
+             throw new ApiError(400, 'QUERY_PARAMETER_REQUIRED', `Thiếu tham số ${parameter.name} cho ${op}.`);
+     }
+     if (spec.requestSchema && options.body === undefined)
+         throw new ApiError(400, 'REQUEST_BODY_REQUIRED', 'Thao tác này cần dữ liệu theo hợp đồng API.');
+     if (spec.bodyType === 'multipart' && !options.form && !(options.body instanceof FormData))
+         throw new ApiError(400, 'REQUEST_BODY_REQUIRED', 'Thao tác tải tệp cần biểu mẫu multipart.');
+     if (spec.bodyType !== 'multipart' && (options.form || options.body instanceof FormData))
+         throw new ApiError(400, 'REQUEST_BODY_INVALID', 'Biểu mẫu multipart không được hỗ trợ cho thao tác này.');
+     if (spec.headers.some(header => header.name === 'If-Match' && header.required) && options.version === undefined)
+         throw new ApiError(428, 'VERSION_REQUIRED', 'Thao tác này cần phiên bản hiện tại của dữ liệu.');
+     if (spec.headers.some(header => header.name === 'If-Match' && header.required) && (!Number.isSafeInteger(options.version) || (options.version || 0) < 1))
+         throw new ApiError(400, 'VERSION_INVALID', 'Phiên bản dữ liệu phải là số nguyên dương an toàn.');
+     if (mutation && !csrfToken)
+         throw new ApiError(0, 'CSRF_TOKEN_MISSING', 'Phiên chưa sẵn sàng để gửi thay đổi. Hãy tải lại phiên rồi thử lại.');
+     const idempotencyParameter = spec.headers.find(header => header.name === 'Idempotency-Key');
+     if (options.idempotencyKey && !idempotencyParameter)
+         throw new ApiError(400, 'IDEMPOTENCY_KEY_UNSUPPORTED', `Thao tác ${op} không khai báo Idempotency-Key trong hợp đồng.`);
+     const intent = options.idempotencyKey || (idempotencyParameter ? crypto.randomUUID() : undefined);
+     if (mutation) {
+         const csrfParameter = spec.headers.find(header => header.name === 'X-CSRF-Token');
+         if (!csrfParameter?.required || !csrfParameter.schema)
+             throw new ApiError(0, 'REQUEST_CONTRACT_INVALID', 'Thiếu schema bắt buộc cho header X-CSRF-Token trong hợp đồng API.');
+         try {
+             assertParameterSchema(csrfParameter.schema, csrfToken, 'X-CSRF-Token');
+         }
+         catch {
+             throw new ApiError(400, 'CSRF_TOKEN_INVALID', 'Header X-CSRF-Token không đúng hợp đồng API.');
+         }
+         if (idempotencyParameter?.required) {
+             if (!idempotencyParameter.schema || !intent)
+                 throw new ApiError(0, 'REQUEST_CONTRACT_INVALID', 'Thiếu schema bắt buộc cho header Idempotency-Key trong hợp đồng API.');
+             try {
+                 assertParameterSchema(idempotencyParameter.schema, intent, 'Idempotency-Key');
+             }
+             catch {
+                 throw new ApiError(400, 'IDEMPOTENCY_KEY_INVALID', 'Header Idempotency-Key không đúng hợp đồng API.');
+             }
+         }
+     }
+     const url = operationUrl(op, options.path, options.query);
+     const epoch = scopeEpoch;
+     const controller = new AbortController();
+     activeRequests.add(controller);
+     const cancel = () => controller.abort();
+     options.signal?.addEventListener('abort', cancel, { once: true });
+     if (options.signal?.aborted)
+         controller.abort();
+     let timedOut = false;
+     const timeout = setTimeout(() => { timedOut = true; controller.abort('timeout'); }, 25000);
+     const headers: Record<string, string> = { Accept: 'application/json', 'X-Request-ID': crypto.randomUUID() };
+     if (mutation) {
+         headers['X-CSRF-Token'] = csrfToken;
+         if (idempotencyParameter && intent)
+             headers['Idempotency-Key'] = intent;
+     }
+     if (options.version !== undefined)
+         headers['If-Match'] = '"' + options.version + '"';
+     let sent = false;
+     try {
+         let body: BodyInit | undefined;
+         if (options.form)
+             body = options.form;
+         else if (options.body instanceof FormData)
+             body = options.body;
+         else if (options.body !== undefined) {
+             if (spec.requestSchema)
+                 assertSchema<RequestOf<K>>(spec.requestSchema, options.body);
+             headers['Content-Type'] = 'application/json';
+             body = JSON.stringify(options.body);
+         }
+         if (controller.signal.aborted)
+             throw new DOMException('Yêu cầu đã bị hủy trước khi gửi.', 'AbortError');
+         sent = true;
+         const response = await fetch(url, { method: spec.method, credentials: 'same-origin', cache: 'no-store', headers, body, signal: controller.signal });
+         if (epoch !== scopeEpoch)
+             throw new DOMException('Đã chuyển cửa hàng hoặc phiên', 'AbortError');
+-        if (response.status === 204 && response.ok)
+-            return undefined as ResponseOf<K>;
+         let raw: unknown;
++        if (response.status === 204 && response.ok) {
++            if (response.status !== spec.status)
++                throw new ApiError(response.status, 'UNEXPECTED_STATUS', 'Mã trạng thái phản hồi không đúng hợp đồng API.');
++            return undefined as ResponseOf<K>;
++        }
+         try {
+             raw = await response.json();
+         }
+         catch {
+             if (!response.ok)
+                 throw new ApiError(response.status, 'HTTP_ERROR', `Yêu cầu thất bại (${response.status}).`);
+             throw new ApiError(response.status, 'INVALID_RESPONSE', 'API trả về dữ liệu không hợp lệ.');
+         }
+         if (epoch !== scopeEpoch)
+             throw new DOMException('Đã chuyển cửa hàng hoặc phiên', 'AbortError');
+         if (!response.ok) {
+             let problem: Problem | undefined;
+             try {
+                 assertSchema<Problem>('Problem', raw);
+                 problem = raw;
+             }
+             catch { /* Unknown server payload stays untrusted. */ }
+             throw new ApiError(response.status, problem?.code || 'HTTP_ERROR', problem?.detail || problem?.title || `Yêu cầu thất bại (${response.status})`, problem);
+         }
++        if (response.status !== spec.status)
++            throw new ApiError(response.status, 'UNEXPECTED_STATUS', 'Mã trạng thái phản hồi không đúng hợp đồng API.');
+         const contentType = response.headers?.get('content-type');
+         if (contentType && !/^(application\/json|[\w.+-]+\/[\w.+-]+\+json)(?:\s*;|$)/i.test(contentType))
+             throw new ApiError(response.status, 'UNEXPECTED_CONTENT_TYPE', 'Kiểu dữ liệu phản hồi không đúng hợp đồng.');
+         if (spec.responseSchema)
+             assertSchema<ResponseOf<K>>(spec.responseSchema, raw);
+         return raw as ResponseOf<K>; // sole decoded boundary; runtime schema validated immediately above
+     }
+     catch (error) {
+         if (mutation && sent && idempotencyParameter?.required && intent && (!(error instanceof ApiError) || error.status >= 500 || error.status < 300)) {
+             const commandId = error instanceof ApiError ? error.problem?.commandId : undefined;
+             rememberUnknown({ intentId: intent, shopId: options.path?.shopId || '', operation: op, commandId: commandId || null });
+             throw new UnknownResultError(intent, commandId);
+         }
+         if (error instanceof ApiError)
+             throw error;
+         if (epoch !== scopeEpoch || options.signal?.aborted)
+             throw new DOMException('Yêu cầu đã hủy theo phạm vi', 'AbortError');
+         if (timedOut)
+             throw new ApiError(0, 'REQUEST_TIMEOUT', 'Yêu cầu đã quá thời gian chờ. Hãy kiểm tra trạng thái trước khi gửi lại.');
+         throw error;
+     }
+     finally {
+         clearTimeout(timeout);
+         options.signal?.removeEventListener('abort', cancel);
+         activeRequests.delete(controller);
+     }
+ }
+Review result: one 7-addition/2-deletion change in shared/api/client.ts validates both 204 and ordinary successful response status against the operation contract; the related API-client tests are outside FE004 write scope and were run by the full npm test gate.
+
+FE004.S05 current full gates and Change Budget review (2026-10-08)
+Registered test command: verify-current-20261002 — npm.cmd --script-shell=cmd.exe run verify
+Audit command: python botsales-kit/execution/frontend-evidence/FE004/capture-s05-full-gates-current-20261008.py
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB
+Exit: 0; Git HEAD=53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working-tree snapshot)
+Scope: FRONTEND_WITH_SYNTHETIC_MOCK_API; full typecheck/lint/boundaries/source checker are required by FE004.S05.
+Tracker before checkpoint: 19/140 verified, next FE004.S05, blocked=0.
+npm run verify: exit 0; required gates found=4/4; log SHA-256=6a495a18b618c1a01b7df5f2c1fb23bd4afc3d12d357cbab31b95cc999cd15f3.
+npm run doctor: exit 0; Node/package/worker/lockfile diagnostics recorded in execution/frontend-evidence/FE003/S05-doctor-current-20261008.log.
+Full current-source E2E: 512/512 local Chromium+Firefox; log is a concise session summary, not raw Playwright stdout; SHA-256=2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7.
+Change Budget review: exactly one unstaged tracked file in scope (apps/web/src/shared/api/client.ts); 7 insertions/2 deletions; no staged or untracked in-scope changes. Its two response-status checks were reviewed; full npm test passed, including related API-client tests outside FE004's write scope.
+Current local evidence only; GitHub-hosted CI, live backend/provider, staging, production and owner acceptance are not established.
+Source snapshot files: 18; full verify log and E2E session summary fingerprints match.

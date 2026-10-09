@@ -1,0 +1,470 @@
+{
+  "executedAt": "2026-10-08T07:40:52.614Z",
+  "taskId": "FE010",
+  "stepId": "S04",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+      "verification": "Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R09",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductsPage"
+        },
+        {
+          "id": "R10",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductEditorPage"
+        },
+        {
+          "id": "R11",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductEditorPage"
+        },
+        {
+          "id": "R12",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "CategoriesPage"
+        },
+        {
+          "id": "R13",
+          "source": "apps/web/src/modules/catalog/imports.tsx",
+          "component": "ImportsPage"
+        },
+        {
+          "id": "R14",
+          "source": "apps/web/src/modules/catalog/imports.tsx",
+          "component": "ImportResultPage"
+        }
+      ],
+      "operationIds": [
+        "archiveCategory",
+        "archiveProduct",
+        "commitProductImport",
+        "createCategory",
+        "createProduct",
+        "createProductImport",
+        "getCategory",
+        "getFile",
+        "getJob",
+        "getProduct",
+        "listCategories",
+        "listJobs",
+        "listProducts",
+        "updateCategory",
+        "updateProduct",
+        "uploadFile"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP",
+        "product update sends If-Match and keeps edits visible after a 412 conflict",
+        "warehouse role can read catalog products but cannot edit product fields or price cost data",
+        "categories create, search, update with a version, and render cursor pagination",
+        "CSV preview reports row-level errors and commits only valid product rows",
+        "import validation token is rejected with 412 after catalog changes and the preview remains visible",
+        "CSV demo row limit is explained and rejects more than 1000 data rows before preview",
+        "demo upload rejects files over 5 MB before making an upload request",
+        "product category lookup pages the full collection and preserves the selected category while editing"
+      ],
+      "executions": 18,
+      "assertionInventory": [
+        {
+          "file": "tests/fe010.spec.ts",
+          "sha256": "bbb42c602be4a7bba82f04675f2ca9e1434a60e42e4da6421c89f57903563d35",
+          "cases": [
+            {
+              "title": "product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP",
+              "line": 38,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Thêm sản phẩm',exact:true})).toBeVisible()",
+                "expect(prices.first()).toHaveValue('')",
+                "expect(page.getByText('Nhập giá bán',{exact:true})).toBeVisible()",
+                "expect(calls.filter(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/products'))).toHaveLength(0)",
+                "expect(page.getByText('Giá phải lớn hơn 0',{exact:true})).toBeVisible()",
+                "expect(calls.filter(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/products'))).toHaveLength(0)",
+                "expect(page.getByText('1 tệp được gắn với sản phẩm',{exact:true})).toBeVisible()",
+                "expect(guard).toBeVisible()",
+                "expect(name).toHaveValue('Sản phẩm FE010')",
+                "expect(skus.nth(1)).toHaveValue('FE010-PRODUCT-L')",
+                "expect(page.getByText('1 tệp được gắn với sản phẩm',{exact:true})).toBeVisible()",
+                "expect(page).toHaveURL(/\\/products\\/product-/)",
+                "expect(payload).toMatchObject({name:'Sản phẩm FE010',categoryId:'cat-0',status:'draft'})",
+                "expect(payload.variants.map((v:{sku:string;name:string;price:{amount:string;currency:string}})=>({sku:v.sku,name:v.name,price:v.price}))).toEqual([\n        {sku:'FE010-PRODUCT-M',name:'Mặc định',price:{amount:'249000',currency:'VND'}},\n        {sku:'FE010-PRODUCT-L',name:'Size L',price:{amount:'259000',currency:'VND'}}\n    ])",
+                "expect(payload.imageFileIds).toHaveLength(1)",
+                "expect(payload).not.toHaveProperty('unitCost')",
+                "expect(payload.variants[0]).not.toHaveProperty('unitCost')",
+                "expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible()",
+                "expect(page.getByText('Sản phẩm FE010',{exact:true})).toHaveCount(0)",
+                "expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "product update sends If-Match and keeps edits visible after a 412 conflict",
+              "line": 108,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Thông tin sản phẩm',exact:true})).toBeVisible()",
+                "expect((await staleSave).status()).toBe(412)",
+                "expect(comparison).toBeVisible()",
+                "expect(comparison.getByText('Áo cập nhật FE010',{exact:true})).toBeVisible()",
+                "expect(calls.filter(call=>call.method==='PATCH'&&call.path.endsWith('/shops/shop-demo/products/p1'))).toHaveLength(1)",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo cập nhật FE010')",
+                "expect(page.getByLabel('Giá bán (VND)').first()).toHaveValue('71000')",
+                "expect(patch).toBeDefined()",
+                "expect(patch?.headers['if-match']).toBeTruthy()",
+                "expect(JSON.parse(patch?.body||'null')).toMatchObject({name:'Áo cập nhật FE010'})",
+                "expect(JSON.parse(patch?.body||'null')).not.toHaveProperty('unitCost')",
+                "expect((await saved).status()).toBe(200)",
+                "expect(patches).toHaveLength(2)",
+                "expect(patches[1].headers['if-match']).toBe(`\"${latestVersion}\"`)",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo cập nhật FE010')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "warehouse role can read catalog products but cannot edit product fields or price cost data",
+              "line": 140,
+              "assertions": [
+                "expect(page.getByLabel('Tên sản phẩm')).toBeDisabled()",
+                "expect(page.getByLabel('Giá bán (VND)').first()).toBeDisabled()",
+                "expect(page.getByRole('button',{name:'Lưu sản phẩm',exact:true})).toHaveCount(0)",
+                "expect(page.getByText(/giá vốn|unitCost/i)).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "categories create, search, update with a version, and render cursor pagination",
+              "line": 149,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Danh mục',exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(JSON.parse(create?.body||'null')).toMatchObject({name:'Danh mục FE010',parentId:null})",
+                "expect(row).toBeVisible()",
+                "expect(edit).toHaveCount(0)",
+                "expect(update?.headers['if-match']).toBeTruthy()",
+                "expect(JSON.parse(update?.body||'null')).toMatchObject({name:'Danh mục FE010 đã sửa'})",
+                "expect(page.getByText('Danh mục FE010 đã sửa',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "CSV preview reports row-level errors and commits only valid product rows",
+              "line": 178,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Nhập dữ liệu sản phẩm',exact:true})).toBeVisible()",
+                "expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('5 MB')",
+                "expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('1.000 dòng')",
+                "expect(sampleLink).toHaveAttribute('download','botsales-products.csv')",
+                "expect(sampleResponse.ok()).toBe(true)",
+                "expect(await sampleResponse.text()).toBe(await readFile(resolve(process.cwd(),'samples/products.csv'),'utf8'))",
+                "expect(page).toHaveURL(/\\/imports\\/job-/)",
+                "expect(page.getByText('3 / 3',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('row').filter({hasText:'Thiếu SKU/tên hoặc giá không hợp lệ.'})).toBeVisible()",
+                "expect(page.getByRole('row').filter({hasText:'SKU đã có trong cửa hàng.'})).toBeVisible()",
+                "expect(JSON.parse(dryRun?.body||'null')).toMatchObject({dryRun:true,duplicateStrategy:'reject'})",
+                "expect(JSON.parse(dryRun?.body||'null').mapping).toEqual(expect.arrayContaining([\n        {sourceColumn:'sku',targetField:'sku'},\n        {sourceColumn:'price',targetField:'price'}\n    ]))",
+                "expect.arrayContaining([\n        {sourceColumn:'sku',targetField:'sku'},\n        {sourceColumn:'price',targetField:'price'}\n    ])",
+                "expect(page.getByText('1 / 3',{exact:true})).toBeVisible()",
+                "expect(JSON.parse(commit?.body||'null')).toMatchObject({confirmValidRowsOnly:true})",
+                "expect(importedJobId).toBeTruthy()",
+                "expect(recentJob).toBeVisible()",
+                "expect(recentJob.getByRole('link',{name:'Xem kết quả',exact:true})).toHaveAttribute('href', `/s/shop-demo/imports/${importedJobId}`)",
+                "expect(page.getByText('Sản phẩm nhập FE010',{exact:true})).toBeVisible()",
+                "expect(page.getByText('Sản phẩm nhập FE010',{exact:true})).toHaveCount(0)",
+                "expect(page.getByText('Sản phẩm SKU trùng',{exact:true})).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "import validation token is rejected with 412 after catalog changes and the preview remains visible",
+              "line": 250,
+              "assertions": [
+                "expect(page).toHaveURL(/\\/imports\\/job-/)",
+                "expect(page.getByText('1 / 1',{exact:true})).toBeVisible()",
+                "expect(page).toHaveURL(/\\/products\\/product-/)",
+                "expect(page).toHaveURL(/\\/products$/)",
+                "expect(page).toHaveURL(/\\/imports\\/job-/)",
+                "expect(page.getByRole('alert').filter({hasText:'Danh mục đã đổi sau dry-run'})).toBeVisible()",
+                "expect(page.getByText('Chờ xác nhận',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Xác nhận nhập các dòng hợp lệ',exact:true})).toBeVisible()",
+                "expect(JSON.parse(commit?.body||'null')).toMatchObject({confirmValidRowsOnly:true})"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "CSV demo row limit is explained and rejects more than 1000 data rows before preview",
+              "line": 282,
+              "assertions": [
+                "expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('1.000 dòng')",
+                "expect((await dryRun).status()).toBe(422)",
+                "expect(page).toHaveURL(/\\/imports$/)",
+                "expect(page.getByRole('alert').filter({hasText:'CSV cần 1–1000 dòng dữ liệu.'})).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "demo upload rejects files over 5 MB before making an upload request",
+              "line": 295,
+              "assertions": [
+                "expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('5 MB')",
+                "expect(page.locator('#product-import-file-error')).toContainText('vượt giới hạn 5 MB')",
+                "expect(page.getByRole('button',{name:'Kiểm tra trước khi nhập',exact:true})).toBeDisabled()",
+                "expect(uploadRequests).toBe(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "product category lookup pages the full collection and preserves the selected category while editing",
+              "line": 306,
+              "assertions": [
+                "expect(page.getByRole('navigation',{name:'Điều hướng chính'})).toBeVisible()",
+                "expect(firstDataset).toMatchObject({total:105,firstPageCount:100,hasMore:true,target:{id:'cat-2',name:'Phụ kiện'},targetCount:5})",
+                "expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Thêm sản phẩm',exact:true})).toBeVisible()",
+                "expect(firstListResponse.status()).toBe(200)",
+                "expect(firstListBody.page).toMatchObject({total:105,limit:20,hasMore:true})",
+                "expect(firstListBody.data).toHaveLength(20)",
+                "expect(page.getByLabel('Tìm danh mục')).toBeVisible()",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled()",
+                "expect(categoryCount(count)).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Tải thêm danh mục'})).toHaveCount(0)",
+                "expect(targetOption).toHaveCount(1)",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện')",
+                "expect(page.getByRole('listbox')).toHaveCount(0)",
+                "expect(categoryCount(1)).toBeVisible()",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện')",
+                "expect(page).toHaveURL(/\\/products\\/product-/)",
+                "expect(createPayload).toMatchObject({name:'Sản phẩm UI005 cuối danh mục',categoryId:'cat-2'})",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện')",
+                "expect(page.getByRole('navigation',{name:'Điều hướng chính'})).toBeVisible()",
+                "expect(freshSeed.total).toBe(3)",
+                "expect(freshSeed.p1.data.categoryId).toBe('cat-0')",
+                "expect(editDataset.total).toBe(105)",
+                "expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible()",
+                "expect(p1Row).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Thông tin sản phẩm',exact:true})).toBeVisible()",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo')",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled()",
+                "expect(desktopCategoryBox?.width||0).toBeGreaterThan(350)",
+                "expect(desktopStatusBox?.width||0).toBeGreaterThan(350)",
+                "expect(Math.abs((desktopCategoryBox?.width||0)-(desktopStatusBox?.width||0))).toBeLessThan(100)",
+                "expect(mobileCategoryBox?.width||0).toBeGreaterThan(300)",
+                "expect(mobileStatusBox?.width||0).toBeGreaterThan(300)",
+                "expect((mobileStatusBox?.y||0)).toBeGreaterThan((mobileCategoryBox?.y||0))",
+                "expect(categoryCount(1)).toBeVisible()",
+                "expect((await p1Search).status()).toBe(200)",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo')",
+                "expect(categoryCount(20)).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Tải thêm danh mục'})).toHaveText('Đang tải…')",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect(categoryCount(40)).toBeVisible()",
+                "expect(forbiddenResponse.status()).toBe(403)",
+                "expect(lookupError).toContainText('HTTP 403')",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo')",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled()",
+                "expect(retryResponse.status()).toBe(200)",
+                "expect(new URL(retryResponse.url()).searchParams.get('cursor')).toBe(forbiddenCursor)",
+                "expect(categoryCount(60)).toBeVisible()",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect((await updateResponse).status()).toBe(200)",
+                "expect(JSON.parse(editCall?.body||'null')).toEqual({name:'Áo mẫu A UI005'})",
+                "expect(savedProduct).toMatchObject({name:'Áo mẫu A UI005',categoryId:'cat-0'})"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 173,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 554,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 173-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T06:37:29.347Z",
+      "finishedAt": "2026-10-08T07:30:19.236Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441445991-24436/e2e.log",
+        "sha256": "3cacad22f6067dd1457cbb612a006c0c23b5fbe412b9463eb0e9cce03e58def3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T07:34:52.342Z",
+      "finishedAt": "2026-10-08T07:37:44.467Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444892341-75160/verify.log",
+        "sha256": "dfbd8a6d477a6eecb4157cfc065af49dbd42757c5af1562dc2ef420eb54a06c9"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T06:33:11.870Z",
+      "finishedAt": "2026-10-08T06:33:20.247Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191868-26044/unit.log",
+        "sha256": "30b43fa2caed68b69a8af1d3f42966be47fb599333ec8aeabf545d4e3a06828a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T06:33:12.561Z",
+      "finishedAt": "2026-10-08T06:33:13.122Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192559-16080/source-maps.log",
+        "sha256": "5995622faa92f23d7d7aaf71389770d0c2f06620028cee851c437263d462ea95"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T07:30:53.995Z",
+      "finishedAt": "2026-10-08T07:34:07.500Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444650847-70468/built-demo.log",
+        "sha256": "7a0b4144184a753be8151839e9a6c36446ccb91e0ed149baca057f25fd9f5c9d"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "10ac3ab135bb95771aa388656fc031e84c1df9a1d726df0b5041ccdc8e6c1be9"
+}

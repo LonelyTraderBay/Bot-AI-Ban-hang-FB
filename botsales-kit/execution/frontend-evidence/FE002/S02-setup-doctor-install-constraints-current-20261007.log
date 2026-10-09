@@ -1,0 +1,21 @@
+FE002.S02 setup/doctor/install side-effect and environment baseline
+Scope: FRONTEND_WITH_SYNTHETIC_MOCK_API
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Scripts read, not executed in S02: scripts/setup.mjs, scripts/doctor.mjs, scripts/generate.mjs.
+setup.mjs effects: runs the generator in write mode for 11 generated contract outputs; resolves the installed MSW package binary and runs `init public --save` in apps/web; copies .env.example to .env.local only if .env.local is absent.
+Existing .env.local: present; SHA equals .env.example: True. Values were not printed. Setup's existence guard means this existing file should not be overwritten.
+Existing package-owned MSW worker: present at apps/web/public/mockServiceWorker.js; .gitignore ignores its generated path.
+doctor.mjs checks Node major 24, local resolution of TypeScript/Vite/React/MUI/Query/MSW beneath root node_modules, worker existence and package-lock existence; it writes no files.
+generator.mjs has a check-only path and a write path; setup calls the write path. Before S04, capture generated-output, worker, env, manifest and lock hashes and compare after execution.
+npm config cache (exit 0): C:\Users\Joker-PC\AppData\Local\npm-cache
+npm config registry (exit 0): https://registry.npmjs.org/
+Registry URL is configuration only; network/registry reachability is not claimed until the install step executes.
+Windows account (exit 0): desktop-488rj2h\joker-pc
+ACL query (exit 0): C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend DESKTOP-488RJ2H\CodexSandboxUsers:(I)(OI)(CI)(RX)
+                                                                            NT AUTHORITY\SYSTEM:(I)(OI)(CI)(F)
+                                                                            BUILTIN\Administrators:(I)(OI)(CI)(F)
+                                                                            DESKTOP-488RJ2H\Joker-PC:(I)(OI)(CI)(F)
+
+Successfully processed 1 files; Failed processing 0 files
+The current checkout's seven FE002 change-budget paths were clean before this task. The full worktree is not clean; unrelated changes remain outside budget.
+No current npm PATH/registry failure was observed in the actual toolchain commands. The earlier cmd.exe npm lookup error was confined to the Python helper and remains separately logged under S01.

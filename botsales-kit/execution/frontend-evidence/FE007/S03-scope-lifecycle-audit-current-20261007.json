@@ -1,0 +1,22 @@
+{
+  "executedAt": "2026-10-07T14:51:49.469Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "outcomes": {
+    "registeredUnit": "PASS",
+    "dirtyDraftUnit": "4/4 PASS",
+    "targetedBrowser": "12/12 PASS across Chromium and Firefox",
+    "supportingFE008Isolation": "4/4 PASS across Chromium and Firefox"
+  },
+  "lifecycle": {
+    "shopChange": "Shell cleanup aborts all active API controllers, increments scope epoch, cancels/removes scope queries, and uses user/shop/permissionVersion query identity.",
+    "stream": "ScopeEvents closes EventSource on session.revoked and on effect cleanup; browser test confirmed revoked SSE triggers session refresh and login redirect. React StrictMode can start up to two initial dev connections, and the test bounds that replay.",
+    "logout": "Successful logout waits for API confirmation before clearing cache; failed logout leaves session and typed draft visible.",
+    "drafts": "Dirty forms/dialogs block navigation and logout until the user decides; successful submission rebases the baseline.",
+    "credentials": {
+      "browserStorageApiCalls": false,
+      "csrfToken": "Held in module memory; cleared on logout/session failure."
+    }
+  },
+  "diagnostics": "Initial SSE test fixture returned 401 on a background session refresh before the event was delivered. The fixture was corrected to keep the synthetic session valid until the gated session.revoked event, then return 401; both browser runs passed. No product code change was needed for this fixture-order issue.",
+  "limits": "Session, membership, shops, API and event responses are synthetic/local. Backend session revocation delivery, server-side authorization, OIDC, and production behavior remain unverified."
+}

@@ -1,0 +1,19 @@
+FE022.S05 — xác minh hiện tại trên mã nguồn frontend.
+executedAt=2026-10-07T19:44:41.609Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+commandId=e2e
+registeredCommand=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e
+fullE2E=execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log
+fullE2E_sha256=2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7
+focusedCommand=npm.cmd --script-shell=cmd.exe run test:e2e -- tests/vertical-slices/fe022-flows.spec.ts
+focusedLog=execution/frontend-evidence/FE022/S04-focused-vertical-slices-current-20261008-revalidated.log
+focusedLog_sha256=7a102fbd71e69d8cb5ebdf827a152959ea7ee5b7430170ff39bff0f444eb22b1
+focusedObserved=10 passed; Chromium=5; Firefox=5; EXIT_CODE=0
+fullObserved=512 passed; Chromium=256; Firefox=256; EXIT_CODE=0
+verifyObserved=unit 138/138; domain/network 88/88; source 68 files/54 routes/220 calls; build/typecheck pass; EXIT_CODE=0
+routeMatrixObserved=54 routes; 64 feature IDs; 65 feature-route pairs; 189 operations; all 65 entries have direct synthetic UI evidence.
+routeManifestFeaturePairs=49/65; missing=R06:B01, R06:B02, R06:B03, R06:B04, R06:B05, R06:B07, R06:B08, R22:E08, R33:G01, R33:G02, R33:G03, R33:G05, R33:G06, R34:H05, R34:H06, R34:H07
+CHECK: Ma trận 54 route / 64 feature / 65 feature-route entries được generator và browser assertion kiểm tra; mọi feature có source test, run record và gap synthetic/backend riêng.
+CHECK: acceptanceScenarioIds là liên kết về route contract; kết quả ở đây chứng minh tương tác feature UI đã chạy, không chứng minh từng backend acceptance scenario hoặc live integration. Contract trace gap (not a UI PASS): feature-catalog.json contains 65 route-feature links, while route-manifest.json contains 49 featureIds links; the 16 absent pairs are R06:B01, R06:B02, R06:B03, R06:B04, R06:B05, R06:B07, R06:B08, R22:E08, R33:G01, R33:G02, R33:G03, R33:G05, R33:G06, R34:H05, R34:H06, R34:H07. The route matrix uses feature-catalog routeIds, validates every referenced route and executed UI case, and does not establish that the two source contracts agree. Contract data remains unchanged pending owner confirmation of featureIds semantics.
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; không xác nhận backend/provider thật, staging, production hoặc owner acceptance.
+reviewer=Codex tự rà soát; không tuyên bố đã có peer review độc lập

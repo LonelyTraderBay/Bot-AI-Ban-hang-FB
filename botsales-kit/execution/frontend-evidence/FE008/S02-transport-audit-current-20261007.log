@@ -1,0 +1,19 @@
+FE008.S02 current contract-derived MSW and API-client verification
+domain exit=0; simulator=75/75; network=13/13; handlers=210/210
+unit exit=0; API client tests included by apps/web/vitest.config.ts
+contract operations=210; feature module direct mock imports=0
+NETWORK PASS: Registers every canonical HTTP operation and reports the custom SSE endpoint
+NETWORK PASS: Loads the service worker only in demo mode and guards production from mock activation
+NETWORK PASS: Covers the canonical route, feature, shop, and role catalogs
+NETWORK PASS: Returns schema-valid, paginated data and rejects stale cursors
+NETWORK PASS: Pages through a deterministic large dataset without dropping or duplicating rows
+NETWORK PASS: Scopes reads to the requested shop and role permissions
+NETWORK PASS: Maps request validation, CSRF, and missing If-Match to contract errors
+NETWORK PASS: Creates a product with schema-complete variants through HTTP
+NETWORK PASS: Preserves idempotency and exposes stale and unknown mutation outcomes over HTTP
+NETWORK PASS: Resets records, role, faults, idempotency keys, sequence, and fixed clock deterministically
+NETWORK PASS: Returns observable transient and empty states without fabricating records
+NETWORK PASS: Aborted delayed reads do not leak into the next request
+NETWORK PASS: Streams only the authorized shop and emits events matching the canonical v2 schema
+Static review: contract-derived handler paths/methods; request/response schemas; filters/cursors; version/CSRF; shop-scoped SSE; shared client; allowed actions; command polling/unknown recovery; demo/live/prod boundary.
+Scope: local frontend and synthetic MSW only. No backend, provider, staging or production integration is claimed.

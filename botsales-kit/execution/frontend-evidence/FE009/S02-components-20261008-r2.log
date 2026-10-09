@@ -1,0 +1,612 @@
+{
+  "executedAt": "2026-10-08T13:13:32.186Z",
+  "taskId": "FE009",
+  "stepId": "S02",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Hoàn thiện shop/membership/onboarding/customer list-detail/forms/jobs/privacy UI theo contract; lookup/search/pagination, field visibility và draft lifecycle.",
+      "verification": "Luồng happy path có payload/request và thay đổi state mock quan sát được; dữ liệu trả đúng schema và totals từ API. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R01",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "LoginPage"
+        },
+        {
+          "id": "R02",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "WorkspacesPage"
+        },
+        {
+          "id": "R03",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "OnboardingPage"
+        },
+        {
+          "id": "R07",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "CustomersPage"
+        },
+        {
+          "id": "R08",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "CustomerPage"
+        },
+        {
+          "id": "R32",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "TeamPage"
+        },
+        {
+          "id": "R33",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "ShopSettingsPage"
+        },
+        {
+          "id": "R34",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "AuditPage"
+        },
+        {
+          "id": "R35",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "PrivacyPage"
+        },
+        {
+          "id": "R36",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "JobPage"
+        },
+        {
+          "id": "R54",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "ServiceCasesPage"
+        }
+      ],
+      "operationIds": [
+        "approvePrivacyRequest",
+        "beginLogin",
+        "createCustomer",
+        "createPrivacyRequest",
+        "createServiceCase",
+        "createShop",
+        "getCommand",
+        "getCsrfToken",
+        "getCustomer",
+        "getJob",
+        "getMember",
+        "getPrivacyPolicy",
+        "getServiceCase",
+        "getSession",
+        "getShop",
+        "inviteMember",
+        "listAuditEvents",
+        "listCustomers",
+        "listMembers",
+        "listPrivacyRequests",
+        "listServiceCases",
+        "listShops",
+        "revokeMembership",
+        "setServiceCaseStatus",
+        "stepUp",
+        "updateCustomer",
+        "updateMemberRoles",
+        "updatePrivacyPolicy",
+        "updateShop"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "workspace onboarding creates a shop with an active membership and returns to its scoped route",
+        "customer create validates fields, submits through mock HTTP, and preserves edits after a stale version",
+        "customer detail keeps redacted contact fields read-only and does not overwrite them on save",
+        "job detail follows an export created in the current synthetic shop and can refetch it",
+        "FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified",
+        "FE009.G05 marketing consent preview is interactive but never claims server opt-out",
+        "FE009.H06 audit screen distinguishes available fields from missing contract detail",
+        "FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment",
+        "team invitation and membership revoke stay shop-scoped and protect the active owner",
+        "privacy delete requests remain pending approval with no frontend step-up shortcut",
+        "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+        "A02 product editors align category and status faces independently from lookup metadata",
+        "A03 import mapping preserves natural remove actions and editable mappings",
+        "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+        "A05 status height follows its own label while long labels remain fully readable",
+        "A06 Empty wraps unbroken reference text and retains its keyboard action",
+        "A07 locked order addresses expose full text and edit lines retain intrinsic actions"
+      ],
+      "executions": 34,
+      "assertionInventory": [
+        {
+          "file": "tests/fe009.spec.ts",
+          "sha256": "9376dbfca4cfd30cf2e374b6f177cc6dae646ac0f0feaef305a29f43ca2c9325",
+          "cases": [
+            {
+              "title": "workspace onboarding creates a shop with an active membership and returns to its scoped route",
+              "line": 35,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Chọn cửa hàng',exact:true})).toBeVisible()",
+                "expect(page.getByText('Joker Studio · Shop mẫu',{exact:true})).toBeVisible()",
+                "expect(page.getByText('Cửa hàng mẫu thứ hai',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Tạo cửa hàng',exact:true})).toBeVisible()",
+                "expect(page).toHaveURL(/\\/s\\/shop-[^/]+\\/overview$/)",
+                "expect(JSON.parse(createCall?.body||'null')).toMatchObject({name:'Workspace kiểm thử FE009',currency:'LAK',timezone:'Asia/Vientiane',locale:'vi-VN'})",
+                "expect(page.getByRole('navigation',{name:'Điều hướng chính'}).getByRole('link',{name:/Workspace kiểm thử FE009/})).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Workspace kiểm thử FE009',exact:true})).toBeVisible()",
+                "expect(page.getByText('LAK · Asia/Vientiane',{exact:true})).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "customer create validates fields, submits through mock HTTP, and preserves edits after a stale version",
+              "line": 57,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Khách hàng',exact:true})).toBeVisible()",
+                "expect(page.getByRole('table',{name:'Danh sách khách hàng'})).toBeVisible()",
+                "expect(page.getByRole('columnheader',{name:'Liên hệ'})).toBeVisible()",
+                "expect(dialog.getByText('Nhập email đúng định dạng.',{exact:true})).toBeVisible()",
+                "expect(name).toHaveValue('Khách FE009 mới')",
+                "expect(calls.filter(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/customers'))).toHaveLength(0)",
+                "expect(dialog.getByLabel('Số điện thoại (không bắt buộc)')).toBeVisible()",
+                "expect(dialog.getByLabel('Ghi chú (không bắt buộc)')).toBeVisible()",
+                "expect(page).toHaveURL(/\\/customers\\/customer-/)",
+                "expect(page.getByRole('heading',{name:'Khách FE009 mới',exact:true})).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Thông tin khách hàng'})).toBeVisible()",
+                "expect(JSON.parse(createCall?.body||'null')).toMatchObject({displayName:'Khách FE009 mới',phone:'02012345678',email:'fe009@example.test'})",
+                "expect(page.getByLabel('Số điện thoại (không bắt buộc)')).toHaveValue('02012345678')",
+                "expect((await staleSave).status()).toBe(412)",
+                "expect(comparison).toBeVisible()",
+                "expect(comparison.getByText(updatedName,{exact:true})).toBeVisible()",
+                "expect(calls.filter(call=>call.method==='PATCH'&&call.path.includes('/shops/shop-demo/customers/'))).toHaveLength(1)",
+                "expect(page.getByLabel('Tên khách hàng')).toHaveValue(updatedName)",
+                "expect(calls.filter(call=>call.method==='PATCH'&&call.path.includes('/shops/shop-demo/customers/'))).toHaveLength(1)",
+                "expect(page.getByRole('heading',{name:updatedName,exact:true})).toBeVisible()",
+                "expect(customerPatches).toHaveLength(2)",
+                "expect(customerPatches.every(call=>Boolean(call.headers['if-match']))).toBe(true)",
+                "expect(customerPatches[1].headers['if-match']).toBe(`\"${latestVersion}\"`)",
+                "expect(JSON.parse(customerPatches[1].body||'null')).toMatchObject({displayName:updatedName})",
+                "expect(page).toHaveURL(/\\/customers$/)",
+                "expect(page.getByRole('link',{name:'Hồ sơ',exact:true})).toHaveCount(1)",
+                "expect(page.getByText(updatedName,{exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled()",
+                "expect(page.getByRole('link',{name:'Hồ sơ',exact:true})).toHaveCount(0)",
+                "expect(page.getByText(updatedName,{exact:true})).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "customer detail keeps redacted contact fields read-only and does not overwrite them on save",
+              "line": 125,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Linh (khách mẫu)',exact:true})).toBeVisible()",
+                "expect(phone).toBeDisabled()",
+                "expect(page.getByText(/Một số trường bị ẩn theo quyền/)).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Yêu cầu hỗ trợ'})).toBeVisible()",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)",
+                "expect(page.getByRole('heading',{name:'Linh đã cập nhật',exact:true})).toBeVisible()",
+                "expect(phone).toBeDisabled()",
+                "expect(phone).toHaveValue('09•• ••• 121')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "job detail follows an export created in the current synthetic shop and can refetch it",
+              "line": 142,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Báo cáo & xuất dữ liệu',exact:true})).toBeVisible()",
+                "expect(exportButton).toBeEnabled()",
+                "expect(jobLink).toBeVisible()",
+                "expect(jobId).toMatch(/^job-/)",
+                "expect(JSON.parse(exportRequest?.body||'null')).toMatchObject({reportType:'orders',format:'csv',timezone:'Asia/Vientiane'})",
+                "expect(page).toHaveURL(new RegExp(`/s/shop-demo/jobs/${jobId}$`))",
+                "expect(page.getByRole('heading',{name:`Công việc ${jobId}`,exact:true})).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Kết quả xử lý',exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Mở kết quả xuất',exact:true})).toBeVisible()",
+                "expect(requests.some(request=>request.method==='GET'&&request.path===`/api/v2/shops/shop-demo/jobs/${jobId}`)).toBe(true)",
+                "expect.poll(jobGetCount).toBe(beforeRefetch+1)",
+                "expect.poll(jobGetCount)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified",
+              "line": 177,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Checklist thiết lập vận hành',exact:true})).toBeVisible()",
+                "expect(page.getByText(/Quốc gia kinh doanh không được suy ra từ múi giờ/)).toBeVisible()",
+                "expect(page.getByText('Quốc gia và giờ kinh doanh',{exact:true})).toBeVisible()",
+                "expect(page.getByText('Chưa có trường cấu hình trong contract',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('link',{name:'Xem preview phí giao',exact:true})).toHaveAttribute('href','/s/shop-demo/shipments')",
+                "expect(page.getByRole('link',{name:'Quản lý thành viên',exact:true})).toHaveAttribute('href','/s/shop-demo/settings/team')",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE009.G05 marketing consent preview is interactive but never claims server opt-out",
+              "line": 190,
+              "assertions": [
+                "expect(page).toHaveURL(/\\/settings\\/privacy$/)",
+                "expect(page.getByRole('heading',{name:'Xem thử consent marketing',exact:true})).toBeVisible()",
+                "expect(preview).toContainText('Chưa xác minh từ API')",
+                "expect(preview).toContainText('Opt-out mô phỏng; chưa ghi server')",
+                "expect(preview).toContainText('Số khách opt-out trong preview: 1')",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE009.H06 audit screen distinguishes available fields from missing contract detail",
+              "line": 205,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Nhật ký hoạt động',exact:true})).toBeVisible()",
+                "expect(auditTable.getByRole('columnheader',{name:header,exact:true})).toBeVisible()",
+                "expect(page.getByRole('alert').filter({hasText:'Loại actor, phiên bản policy/config và snapshot chi tiết chưa có trong DTO'})).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment",
+              "line": 214,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Chăm sóc sau bán',exact:true})).toBeVisible()",
+                "expect(relatedOrder).toBeEnabled()",
+                "expect(relatedOrder).not.toContainText('DH-DEMO-PAID-01')",
+                "expect(dialog).toHaveCount(0)",
+                "expect(page.getByText('Khách muốn kiểm tra tình trạng yêu cầu trả một phần đơn.',{exact:true})).toBeVisible()",
+                "expect(JSON.parse(createCall?.body||'null')).toMatchObject({customerId:'c1',orderId:'DH-DEMO-PAID-01',kind:'return_request'})",
+                "expect(page.getByRole('link',{name:'DH-DEMO-PAID-01',exact:true})).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Linh (khách mẫu)',exact:true})).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Vận đơn liên quan',exact:true})).toBeVisible()",
+                "expect(page.getByText('seed-shipment-10021',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('link',{name:'DH-DEMO-PAID-01',exact:true})).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "team invitation and membership revoke stay shop-scoped and protect the active owner",
+              "line": 246,
+              "assertions": [
+                "expect(rows.first()).toBeVisible()",
+                "expect(initialMemberCount).toBeGreaterThan(1)",
+                "expect(ownerRow.getByRole('button',{name:'Thu hồi'})).toBeDisabled()",
+                "expect(invite).toHaveCount(0)",
+                "expect(rows).toHaveCount(initialMemberCount+1)",
+                "expect(JSON.parse(inviteCall?.body||'null')).toMatchObject({email:'fe009-member@example.test',roles:['viewer']})",
+                "expect(confirm).toBeVisible()",
+                "expect(warehouseRow.getByText('Đã thu hồi',{exact:true})).toBeVisible()",
+                "expect(ownerRow.getByText('Đang hoạt động',{exact:true})).toBeVisible()",
+                "expect(revokeCall).toBeDefined()",
+                "expect(revokeCall?.headers['if-match']).toBeTruthy()",
+                "expect(page.getByRole('alert').filter({hasText:'Bạn không có quyền truy cập màn hình này'})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Mời nhân viên',exact:true})).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "privacy delete requests remain pending approval with no frontend step-up shortcut",
+              "line": 282,
+              "assertions": [
+                "expect(page.getByText(/Phê duyệt yêu cầu xóa cần xác thực nâng cao của backend/)).toBeVisible()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(page.getByText('Chờ phê duyệt',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:/duyệt ngay|xóa ngay|xác nhận xóa/i})).toHaveCount(0)",
+                "expect(JSON.parse(privacyCall?.body||'null')).toMatchObject({customerId:'c1',kind:'delete',reason:'Khách gửi yêu cầu xóa, chờ xác minh theo chính sách lưu giữ.'})"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-component-layout.spec.ts",
+          "sha256": "b35ed966ca888b45ee30bdc4a40cf1c155e5e8b43440684179462b6928f0153a",
+          "cases": [
+            {
+              "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+              "line": 39,
+              "assertions": [
+                "expect(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true })).toBeVisible()",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 product editors align category and status faces independently from lookup metadata",
+              "line": 60,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1)",
+                "expect(geometry.status.y).toBeGreaterThan(geometry.category.y)",
+                "expect(page.getByText('Không tìm thấy danh mục phù hợp.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('textbox', { name: 'Tên sản phẩm', exact: true })).toHaveValue('Bản nháp cần giữ')",
+                "expect(Math.abs(category!.y - status!.y)).toBeLessThanOrEqual(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A03 import mapping preserves natural remove actions and editable mappings",
+              "line": 83,
+              "assertions": [
+                "expect(remove).toHaveCount(5)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(remove).toHaveCount(4)",
+                "expect(remove).toHaveCount(5)",
+                "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('Mã SKU đã sửa')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+              "line": 103,
+              "assertions": [
+                "expect(amount).toHaveCount(2)",
+                "expect(page.getByText(expected.negative, { exact: true })).toBeVisible()",
+                "expect(await amount.first().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('normal')",
+                "expect(await amount.last().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('nowrap')",
+                "expect(clipping).toBe(false)",
+                "expect(overflow).toBe(true)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft))",
+                "expect(await table.evaluate(node => node.scrollLeft)).toBe(before)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A05 status height follows its own label while long labels remain fully readable",
+              "line": 129,
+              "assertions": [
+                "expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1)",
+                "expect(geometry.actual).toBeLessThanOrEqual(intrinsicSize.natural + 1)",
+                "expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120))",
+                "expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+              "line": 148,
+              "assertions": [
+                "expect(page.getByRole('status')).toContainText('Mã tham chiếu: ' + 'A'.repeat(120))",
+                "expect(await text.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect(action).toBeFocused()",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A07 locked order addresses expose full text and edit lines retain intrinsic actions",
+              "line": 161,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(address).toBeVisible()",
+                "expect(dialog.getByRole('combobox', { name: /^Địa chỉ giao hàng/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('combobox', { name: /^Thanh toán/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('group', { name: 'Thanh toán', exact: true })).toContainText('Thu khi giao (COD)')",
+                "expect(addressText).toHaveText(expected)",
+                "expect(await addressText.evaluate(node => node.scrollWidth <= node.clientWidth + 1 && getComputedStyle(node).textOverflow !== 'ellipsis')).toBe(true)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(addressText).toHaveText(original!)",
+                "expect((await new AxeBuilder({ page }).include('[role=\"dialog\"]').analyze()).violations).toEqual([])",
+                "expect(option).toBeVisible()",
+                "expect(await option.evaluate(node => {\n            const paper = node.closest('.MuiPaper-root')!.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node);\n            return getComputedStyle(node).whiteSpace === 'normal' && [...range.getClientRects()].every(rect => rect.left >= paper.left - 1 && rect.right <= paper.right + 1);\n        })).toBe(true)",
+                "expect(page.getByRole('listbox')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 174,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 580,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 174-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T12:04:15.857Z",
+      "finishedAt": "2026-10-08T13:01:24.980Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791461051112-24880/e2e.log",
+        "sha256": "0d615324b9e8f61d00996ad9b00103b60815d0af16b223d888ab9308a626c966"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T12:00:38.731Z",
+      "finishedAt": "2026-10-08T12:03:41.371Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460838729-35556/verify.log",
+        "sha256": "2bf03ff3a3789667568cf2e52b9b4d8f32d4d2b03ecbe2333462f8ef93245d0c"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T11:58:37.260Z",
+      "finishedAt": "2026-10-08T11:58:44.713Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460717257-83008/unit.log",
+        "sha256": "6a52939fd24f06a2700c7aec5b45e73a63495140cc7be6b6b42fa6d5878c2612"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T11:58:44.810Z",
+      "finishedAt": "2026-10-08T11:58:45.052Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460724809-86548/source-maps.log",
+        "sha256": "031e77043d35d92181bc7a3975bb04f8ea186bb5cc3aa41325ac9637064e0fd9"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T12:05:42.238Z",
+      "finishedAt": "2026-10-08T12:08:56.218Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791461137424-54940/built-demo.log",
+        "sha256": "3f1000af3cd493c20b1b28030fe48f1bd9b992f40597ad178e1418ac9e418de6"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "7217f6d561ee2490c7bd4a2bb955d787138e1a50e295d4559005469bb87f84a5"
+}

@@ -1,0 +1,42 @@
+FE004.S04 negative architecture-boundary fixtures
+Command: set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Registered command status: VERIFIED_AVAILABLE
+Exit: 0
+Pre-existing evidence/boundaries.json restored byte-for-byte: True; sha256=f1b2d2b0db9847726bbb30b2ec0ec21773349579d686a128f980f2cc0e3de5c6
+Current boundary report: status=PASS; files=68; imports=504; issues=0
+Fixture result: Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).
+Required negative scenarios observed: alias cross-feature import, relative cross-feature import, type-only cross-feature import, dynamic cross-feature import, unresolved local alias, module cycle, unparseable TypeScript file
+The command exercises TypeScript AST import parsing/resolution and checks rejected alias, relative, type-only, dynamic, unresolved, cycle, and parse-error cases; this does not claim hosted CI execution.
+No checker, fixture, package manifest, lockfile, or product source was modified for this step.
+
+[registered command output]
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-07T13:17:41.118Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 68,
+  "imports": 504,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+Source snapshot sha256=78ae8e0d7ffba05ea83c613b3e1ce93b31856f2a9c6eb1567ea513125f298b36
+CHECK PASS: registered full-source boundaries command exits 0
+CHECK PASS: checker reports PASS for 68 TypeScript/TSX source files and 504 imports with zero issues
+CHECK PASS: 10/10 fixtures pass, including allowed imports and alias/relative/type-only/dynamic violations
+CHECK PASS: unresolved alias, cycle, and unparseable TypeScript fixtures are rejected
+CHECK PASS: pre-existing evidence/boundaries.json restored byte-for-byte
+CHECK PASS: no checker, fixture, package manifest, lockfile, or product source changes were needed
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE package.json sha256=3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138
+SOURCE scripts/check-boundaries.mjs sha256=64e2453c1b4186bf86a6c74e3917ecb0d9d5b73e9d77195be3e401e97aec7d0f
+SOURCE tests/architecture/check-boundaries.mjs sha256=c2e90eea61c7a8e6198b89f15236726b527f1a9ad8de80e2935b34a908279849
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE004/S04-boundaries-report-current-20261007.json sha256=2ccf0099cc98448b285a032601c2f987f692bb058504cf73cfcdf826f630f3ca
+SOURCE botsales-kit/execution/frontend-evidence/FE004/capture-s04-negative-boundaries-current-20261007.py sha256=5c67d2a59d75f1755e9b359f36fe4c7a4e9699e256cdcb485c6a1de589d69fe9
+SOURCE botsales-kit/execution/frontend-plan.json sha256=f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e

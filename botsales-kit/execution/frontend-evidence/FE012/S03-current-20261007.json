@@ -1,0 +1,356 @@
+{
+  "taskId": "FE012",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T16:35:53.545Z",
+  "sourceRevision": "HEAD 53c0ba8 on main + current working tree",
+  "expected": "Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+  "observed": "Fractional quantities, offline state, expired quote/consent, and stale-version 412 prevent false success while retaining data; Unknown confirm result prevents a duplicate write until shared recovery resolves the command; Handed-over orders expose return flow and no ordinary cancel action; Return rejects fractional/over-original quantities and preserves data after cumulative mock rejection. Full browser E2E passed 512/512 across Chromium and Firefox, with eleven FE012 tests in both projects (22/22); domain/network checks passed 88/88; unit/component checks passed 138/138; current route/operation source-map suite passed 16/16, including the FE012 35-assertion map. Synthetic address/order/return state only; no live payment, shipping or backend behavior is claimed.",
+  "commandId": "e2e",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / Chromium + Firefox",
+    "details": "Built React demo uses deterministic MSW order, quote, confirmation, command and returns fixtures.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 600,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Fractional quantities, offline state, expired quote/consent, and stale-version 412 prevent false success while retaining data",
+      "status": "PASS"
+    },
+    {
+      "name": "Unknown confirm result prevents a duplicate write until shared recovery resolves the command",
+      "status": "PASS"
+    },
+    {
+      "name": "Handed-over orders expose return flow and no ordinary cancel action",
+      "status": "PASS"
+    },
+    {
+      "name": "Return rejects fractional/over-original quantities and preserves data after cumulative mock rejection",
+      "status": "PASS"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/src/app/CommandRecovery.tsx",
+      "sha256": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4"
+    },
+    {
+      "path": "apps/web/src/mocks/fulfillment.ts",
+      "sha256": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "e906c5574670111cd6198ea77484284cc3d3b503a3268c8fdb4bd26e15bf1fc4"
+    },
+    {
+      "path": "apps/web/src/modules/orders/demo-address-preview.ts",
+      "sha256": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "d1cad2cb0dbbfa618dc6cd5c7096711354feaecb977807037b8c6a2748ed6da7"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/model/auth.ts",
+      "sha256": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a"
+    },
+    {
+      "path": "botsales-kit/AGENTS.md",
+      "sha256": "eebc9cc5f02e76190193a4be3aa9c3526490da9eecacfcbdffe5f8929d40a488"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/docs/08_SECURITY_TENANCY_RBAC.md",
+      "sha256": "ee0c6fc7c44a1907c150b9b30e1f14de324a3a8cae68b3e7eeffd51a4a37cf00"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S02-domain-current-20261007.log",
+      "sha256": "fcd5c5943da3e4a57e7711dd4085519b36a39431f8d53ee0d147c9e46156b563"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S02-e2e-current-20261007.log",
+      "sha256": "bcf5d2baa09ffa365ab4ad8b2a82b76941f3b15613955349dd006d223c619513"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE009/S04-unit-passed-current-20261007.log",
+      "sha256": "200fdf670d86da122bc8b6dce0da588e78b6fc6caf093776b5f839e0602448a7"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE010/S01-source-current-20261007.log",
+      "sha256": "9a2575025ffa6b47b592b0c49ccdfa98dce015b248da631d3d4506dfc4289639"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE012/S01-source-maps-current-20261007.log",
+      "sha256": "914112cb100ff0a98d24635bcd9971d70411cfb64035f7e3dc17d13dac37c585"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE012/capture-current-evidence-20261007.mjs",
+      "sha256": "1e5a9aa229803e553860fc991bbce63ab06d0ecbee370e45eb37e552e03223c9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "ae8c64d17b14f5a73e3b65f076ec6dc4eadbcc39e5c4b20fc3d7b9de88ecbd53"
+    },
+    {
+      "path": "evidence/source-check.json",
+      "sha256": "8bc9d2047523df68b8c96d488607bd9b7feeb131789a1399acebd89835e2e4ad"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88"
+    },
+    {
+      "path": "packages/contracts/src/routes.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "packages/contracts/src/schemas.json",
+      "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e"
+    },
+    {
+      "path": "scripts/run-e2e.mjs",
+      "sha256": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+    },
+    {
+      "path": "tests/accessibility/routes.spec.ts",
+      "sha256": "9ec199807f025335a2ff6ea90f69cea6a737adfbf5311abedf7bbf4f9766577c"
+    },
+    {
+      "path": "tests/fe011-source-map.test.mjs",
+      "sha256": "422db817da901192ee2a80924aebef3115ddf7c00b45ae4297e58ce782e9fef9"
+    },
+    {
+      "path": "tests/fe012-source-map.test.mjs",
+      "sha256": "e5bbe2bf29ab6eab70661a75a40fc5c225328e59e9dc5c0493f5f429bf2b5cf9"
+    },
+    {
+      "path": "tests/fe012.spec.ts",
+      "sha256": "14c2d4f065fdf2c2aa8f80debcb45153c041b33ae25f0984f0cdd6cda2a53fd8"
+    },
+    {
+      "path": "tests/fe013-source-map.test.mjs",
+      "sha256": "2f3086d0beee91d8890cfd352ce09df8034d0071e1516ca14e23e7565fa24260"
+    },
+    {
+      "path": "tests/fe014-source-map.test.mjs",
+      "sha256": "1c090f6f03dee833a1ab1e116eef77a420ae3d563b5aaac295aa4aa610fddb0d"
+    },
+    {
+      "path": "tests/fe015-source-map.test.mjs",
+      "sha256": "9e1cb4e6a7e0209a73b88fb3b088a88f79327893f2704e3f2e558993a6c3cacd"
+    },
+    {
+      "path": "tests/fe016-source-map.test.mjs",
+      "sha256": "d0dde372f5c0d8a9a9ba9d076f9a1ae9a19f7761e6beb1b1d7f283c17f10a89e"
+    },
+    {
+      "path": "tests/fe017-source-map.test.mjs",
+      "sha256": "c6b5cca99c48eca7accd8f83cc8474d67f17b14d5d6ade9b397c03429fa56e99"
+    },
+    {
+      "path": "tests/fe018-source-map.test.mjs",
+      "sha256": "f4bf77135fddc7b141a598e184cf7569c0fdafeca3d4c050f86671c40f4d3fc8"
+    },
+    {
+      "path": "tests/fe020-source-map.test.mjs",
+      "sha256": "89d244277f25a2d15cb93ca3836a53b0811c09ce6f7544fb1dbabbcd9cef7b5e"
+    },
+    {
+      "path": "tests/fixtures/mock-network.mjs",
+      "sha256": "a074b777328e7aae5d81f6f2b60ea0653c674fcd80b1c146820e94daffdad6e6"
+    },
+    {
+      "path": "tests/states/route-error-composition.spec.ts",
+      "sha256": "e51d2f45a5831596923654d4cab64642688ae311f40a69b6c966a2b9893f86d1"
+    }
+  ],
+  "sourceSnapshotSha256": "357e906cfecedc116562f61654fde833513f829e79719033b7b176a031e1985e",
+  "logFile": "execution/frontend-evidence/FE012/S03-current-20261007.log",
+  "logSha256": "d5e2caed786d133cb194428065c685989f843a25fd0ce964a0d50981b57413fa",
+  "commandResults": [
+    {
+      "commandId": "e2e",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+      "exitCode": 0,
+      "testsPassed": 512,
+      "browserProjects": [
+        "chromium",
+        "firefox"
+      ],
+      "logFile": "execution/frontend-evidence/FE009/S02-e2e-current-20261007.log",
+      "logSha256": "bcf5d2baa09ffa365ab4ad8b2a82b76941f3b15613955349dd006d223c619513"
+    },
+    {
+      "commandId": "domain",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+      "exitCode": 0,
+      "simulatorChecks": 75,
+      "networkChecks": 13,
+      "passed": 88,
+      "logFile": "execution/frontend-evidence/FE009/S02-domain-current-20261007.log",
+      "logSha256": "fcd5c5943da3e4a57e7711dd4085519b36a39431f8d53ee0d147c9e46156b563"
+    },
+    {
+      "commandId": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "exitCode": 0,
+      "testsPassed": 138,
+      "logFile": "execution/frontend-evidence/FE009/S04-unit-passed-current-20261007.log",
+      "logSha256": "200fdf670d86da122bc8b6dce0da588e78b6fc6caf093776b5f839e0602448a7"
+    },
+    {
+      "commandId": "source",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source",
+      "exitCode": 0,
+      "sourceStatus": "PASS",
+      "files": 68,
+      "routes": 54,
+      "operationCalls": 220,
+      "logFile": "execution/frontend-evidence/FE010/S01-source-current-20261007.log",
+      "logSha256": "9a2575025ffa6b47b592b0c49ccdfa98dce015b248da631d3d4506dfc4289639"
+    },
+    {
+      "commandId": "feature-source-maps-20261002",
+      "command": "node --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "exitCode": 0,
+      "testsPassed": 16,
+      "fe012Assertions": 35,
+      "logFile": "execution/frontend-evidence/FE012/S01-source-maps-current-20261007.log",
+      "logSha256": "914112cb100ff0a98d24635bcd9971d70411cfb64035f7e3dc17d13dac37c585"
+    }
+  ],
+  "audit": {
+    "result": "PASS",
+    "routeIds": [
+      "R17",
+      "R18",
+      "R19",
+      "R43"
+    ],
+    "operationIds": [
+      "cancelOrder",
+      "confirmOrder",
+      "createOrder",
+      "createReturnCase",
+      "getCommand",
+      "getOrder",
+      "getReturnCase",
+      "getShop",
+      "handoverShipment",
+      "inspectReturn",
+      "listCustomers",
+      "listOrders",
+      "listProducts",
+      "listReturnCases",
+      "payOrder",
+      "quoteOrder",
+      "refundOrder",
+      "updateOrderDraft"
+    ],
+    "cases": [
+      {
+        "name": "Fractional quantities, offline state, expired quote/consent, and stale-version 412 prevent false success while retaining data",
+        "status": "PASS"
+      },
+      {
+        "name": "Unknown confirm result prevents a duplicate write until shared recovery resolves the command",
+        "status": "PASS"
+      },
+      {
+        "name": "Handed-over orders expose return flow and no ordinary cancel action",
+        "status": "PASS"
+      },
+      {
+        "name": "Return rejects fractional/over-original quantities and preserves data after cumulative mock rejection",
+        "status": "PASS"
+      }
+    ]
+  }
+}

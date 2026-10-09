@@ -1,0 +1,8 @@
+FE002.S03 initial installer-output capture diagnostic
+Date: 2026-10-07
+CWD: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+Command attempted: npm.cmd --script-shell=powershell.exe install 2>&1 | Tee-Object -FilePath execution/frontend-evidence/FE002/S03-npm-install-output-current-20261007.log
+Observed PowerShell error: Tee-Object could not open C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\execution\frontend-evidence\FE002\S03-npm-install-output-current-20261007.log because that relative path does not exist under the Frontend workspace.
+Observed terminal exit code: 0. Installer stdout was not captured, so this attempt is not counted as S03 install evidence.
+Read-only before/after hash comparison: all 18 manifest/config/generated outputs in S03-before-install-snapshot-current-20261007.json are unchanged; node_modules/.package-lock.json hash is unchanged.
+Correction: rerun the exact mapped npm install command with Tee-Object target relative to the Frontend root as ../botsales-kit/execution/frontend-evidence/FE002/.

@@ -1,0 +1,67 @@
+FE001.S02 canonical route and module map audit (current 2026-10-08)
+Scope: FRONTEND_WITH_SYNTHETIC_MOCK_API
+Repository HEAD: 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6; browser receipt HEAD prefix: HEAD 53c0ba8 on main + current working tree
+Command: python botsales-kit/execution/frontend-evidence/FE001/audit-route-map-current-20261008.py
+Canonical manifest routes: 54; mapped route rows: 54
+Canonical feature IDs: 64; feature-route entries: 65
+Mapped frontend modules: 16 (bot, catalog, customers, dashboard, finance, fulfillment, inbox, integrations, inventory, knowledge, notifications, operations, orders, procurement, reports, workspace)
+Distinct route source files: 17; feature evidence test files: 14
+Captured browser suite: 512/512; route smoke passed on Chromium and Firefox; FE022.S05 matrix case passed.
+Named feature evidence cases found in the full browser log: 56 unique titles.
+FE022 source snapshot compared with current source: 40/40 hashes match.
+This proves the recorded React demo and synthetic API route/interaction checks only; it does not establish live backend/provider behavior or remaining product acceptance.
+Route rows: routeId | canonicalPath | module | component | source
+R01	/login	workspace	LoginPage	apps/web/src/modules/workspace/index.tsx
+R02	/workspaces	workspace	WorkspacesPage	apps/web/src/modules/workspace/index.tsx
+R03	/onboarding	workspace	OnboardingPage	apps/web/src/modules/workspace/index.tsx
+R04	/s/:shopId/overview	dashboard	DashboardPage	apps/web/src/modules/dashboard/index.tsx
+R05	/s/:shopId/inbox	inbox	InboxPage	apps/web/src/modules/inbox/index.tsx
+R06	/s/:shopId/inbox/:conversationId	inbox	InboxPage	apps/web/src/modules/inbox/index.tsx
+R07	/s/:shopId/customers	customers	CustomersPage	apps/web/src/modules/customers/index.tsx
+R08	/s/:shopId/customers/:customerId	customers	CustomerPage	apps/web/src/modules/customers/index.tsx
+R09	/s/:shopId/products	catalog	ProductsPage	apps/web/src/modules/catalog/index.tsx
+R10	/s/:shopId/products/new	catalog	ProductEditorPage	apps/web/src/modules/catalog/index.tsx
+R11	/s/:shopId/products/:productId	catalog	ProductEditorPage	apps/web/src/modules/catalog/index.tsx
+R12	/s/:shopId/categories	catalog	CategoriesPage	apps/web/src/modules/catalog/index.tsx
+R13	/s/:shopId/imports	catalog	ImportsPage	apps/web/src/modules/catalog/imports.tsx
+R14	/s/:shopId/imports/:jobId	catalog	ImportResultPage	apps/web/src/modules/catalog/imports.tsx
+R15	/s/:shopId/inventory	inventory	InventoryPage	apps/web/src/modules/inventory/index.tsx
+R16	/s/:shopId/inventory/movements	inventory	MovementsPage	apps/web/src/modules/inventory/index.tsx
+R17	/s/:shopId/orders	orders	OrdersPage	apps/web/src/modules/orders/index.tsx
+R18	/s/:shopId/orders/new	orders	NewOrderPage	apps/web/src/modules/orders/index.tsx
+R19	/s/:shopId/orders/:orderId	orders	OrderDetailPage	apps/web/src/modules/orders/index.tsx
+R20	/s/:shopId/finance	finance	CashflowPage	apps/web/src/modules/finance/index.tsx
+R21	/s/:shopId/finance/entries	finance	EntriesPage	apps/web/src/modules/finance/index.tsx
+R22	/s/:shopId/finance/profit-loss	finance	ProfitLossPage	apps/web/src/modules/finance/index.tsx
+R23	/s/:shopId/knowledge	knowledge	KnowledgePage	apps/web/src/modules/knowledge/index.tsx
+R24	/s/:shopId/knowledge/:knowledgeId	knowledge	KnowledgeDetailPage	apps/web/src/modules/knowledge/index.tsx
+R25	/s/:shopId/knowledge/review	knowledge	FeedbackPage	apps/web/src/modules/knowledge/index.tsx
+R26	/s/:shopId/bot	bot	BotConfigPage	apps/web/src/modules/bot/index.tsx
+R27	/s/:shopId/bot/playground	bot	PlaygroundPage	apps/web/src/modules/bot/index.tsx
+R28	/s/:shopId/bot/evaluations	bot	EvaluationsPage	apps/web/src/modules/bot/index.tsx
+R29	/s/:shopId/integrations/channels	integrations	ChannelsPage	apps/web/src/modules/integrations/index.tsx
+R30	/s/:shopId/integrations/ai	integrations	AIProvidersPage	apps/web/src/modules/integrations/index.tsx
+R31	/s/:shopId/reports	reports	ReportsPage	apps/web/src/modules/reports/index.tsx
+R32	/s/:shopId/settings/team	workspace	TeamPage	apps/web/src/modules/workspace/index.tsx
+R33	/s/:shopId/settings/shop	workspace	ShopSettingsPage	apps/web/src/modules/workspace/index.tsx
+R34	/s/:shopId/settings/audit	workspace	AuditPage	apps/web/src/modules/workspace/index.tsx
+R35	/s/:shopId/settings/privacy	workspace	PrivacyPage	apps/web/src/modules/workspace/index.tsx
+R36	/s/:shopId/jobs/:jobId	workspace	JobPage	apps/web/src/modules/workspace/index.tsx
+R37	/s/:shopId/operations	operations	OperationsPage	apps/web/src/modules/operations/index.tsx
+R38	/s/:shopId/approvals	operations	ApprovalsPage	apps/web/src/modules/operations/index.tsx
+R39	/s/:shopId/notifications	notifications	NotificationsPage	apps/web/src/modules/notifications/index.tsx
+R40	/s/:shopId/notifications/devices	notifications	DevicesPage	apps/web/src/modules/notifications/index.tsx
+R41	/s/:shopId/fulfillment	fulfillment	FulfillmentPage	apps/web/src/modules/fulfillment/index.tsx
+R42	/s/:shopId/shipments	fulfillment	ShipmentsPage	apps/web/src/modules/fulfillment/index.tsx
+R43	/s/:shopId/returns	orders	ReturnsPage	apps/web/src/modules/orders/index.tsx
+R44	/s/:shopId/suppliers	procurement	SuppliersPage	apps/web/src/modules/procurement/index.tsx
+R45	/s/:shopId/replenishment	procurement	ReplenishmentPage	apps/web/src/modules/procurement/index.tsx
+R46	/s/:shopId/purchases	procurement	PurchasesPage	apps/web/src/modules/procurement/index.tsx
+R47	/s/:shopId/receipts	procurement	ReceiptsPage	apps/web/src/modules/procurement/index.tsx
+R48	/s/:shopId/finance/journals	finance	JournalsPage	apps/web/src/modules/finance/index.tsx
+R49	/s/:shopId/finance/reconciliation	finance	ReconciliationPage	apps/web/src/modules/finance/index.tsx
+R50	/s/:shopId/finance/debts-periods	finance	DebtsPage	apps/web/src/modules/finance/index.tsx
+R51	/s/:shopId/bot/team	bot	AgentTeamPage	apps/web/src/modules/bot/index.tsx
+R52	/s/:shopId/operations/digests	operations	DigestsPage	apps/web/src/modules/operations/index.tsx
+R53	/s/:shopId/reports/marketing	reports	MarketingPage	apps/web/src/modules/reports/index.tsx
+R54	/s/:shopId/service-cases	customers	ServiceCasesPage	apps/web/src/modules/customers/index.tsx

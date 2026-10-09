@@ -1,0 +1,16 @@
+FE019.S04 mock integrations and notification verification.
+executedAt=2026-10-07T16:52:44.417Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+commandId=e2e; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e; exitCode=0; log=execution/frontend-evidence/FE009/S02-e2e-current-20261007.log
+commandId=domain; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain; exitCode=0; log=execution/frontend-evidence/FE009/S02-domain-current-20261007.log
+commandId=unit; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test; exitCode=0; log=execution/frontend-evidence/FE009/S04-unit-passed-current-20261007.log
+commandId=source; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source; exitCode=0; log=execution/frontend-evidence/FE010/S01-source-current-20261007.log
+commandId=FE019-source-map; command=node execution/frontend-evidence/FE019/S01-contract-source-map-current-20261004.mjs; cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\botsales-kit; exitCode=0; log=execution/frontend-evidence/FE019/S01-contract-source-map-passed-current-20261007.log
+E2E=512/512; FE019 browser=20/20; domain=88/88; unit=138/138; FE019 source-map=53 checks; exit codes=0.
+CASE PASS: Current FE019 canonical route/operation/permission source map (53 checks; exit 0)
+CASE PASS: Current component and unit regression (138/138)
+CASE PASS: Synthetic API/domain network regression (88/88)
+CASE PASS: Full cross-browser React demo regression (512/512)
+SOURCE GAP REVIEW: getAIConnection/getChannel/getJob are planned detail reads without direct callsites in FE019 feature modules; list and shared job details cover present UI actions. Revisit only if detail-page requirements are added.
+sourceSnapshotSha256=9be7d8b909d4a4198f4657eae6a5cf93edb99ca7e1458b601c5a1e8313e4611c
+Scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; all connection, notification, device, Telegram and PWA checks are mock-only and do not contact providers.

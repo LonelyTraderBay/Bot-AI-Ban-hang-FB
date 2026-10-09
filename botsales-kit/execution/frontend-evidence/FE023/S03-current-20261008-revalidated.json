@@ -1,0 +1,637 @@
+{
+  "taskId": "FE023",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T20:06:53.953Z",
+  "sourceRevision": "HEAD 53c0ba8 on main plus current hashed working tree",
+  "expected": "Giữ input, focus error và lựa chọn xử lý; không chỉ lookup 100 dòng cho mọi dữ liệu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+  "observed": "Browser kiểm dirty dialog, shop navigation khi còn draft, reset baseline sau save, cursor lookup giữ lựa chọn cũ; unit kiểm 422 focus/giữ input, 412/428/404 recovery và unknown command state. Bằng chứng hiện tại: Vitest 138/138, browser 36/36, matrix 54×7, route-role 357/357; Ứng dụng chỉ bật ngôn ngữ vi; 78 key đã đăng ký được test, nhưng điều này không khẳng định mọi chuỗi hard-coded đều đi qua i18next. Permission matrix chứng minh hành vi route phía frontend với mock/catalog, không chứng minh server RBAC. Shared-state test không chứng minh mọi biến thể trạng thái đã được chạy trực tiếp ở từng route; 65 ô được đánh dấu NOT_APPLICABLE theo contract và 0 ô NOT_TESTED. Không có screen-reader UAT, browser zoom thủ công, backend/provider thật, hosted CI hoặc owner acceptance trong phạm vi này.",
+  "commandId": "e2e",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex tự rà soát; không tuyên bố có peer review độc lập",
+  "environment": {
+    "name": "Windows / Node 24.19.0 / Chromium + Firefox",
+    "details": "React demo state/forms flows and deterministic MSW API; route and role browser assertions use synthetic fixtures.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 12,
+  "failed": 0,
+  "logFile": "execution/frontend-evidence/FE023/S03-current-20261008-revalidated.log",
+  "logSha256": "6813203e6d3dbb4c3794efd6d0e870317675f6e6c690c48f5649a201b1cc729d",
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/src/app/CommandRecovery.tsx",
+      "sha256": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac"
+    },
+    {
+      "path": "apps/web/src/app/ScopeEvents.tsx",
+      "sha256": "65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d"
+    },
+    {
+      "path": "apps/web/src/app/bootstrap.css",
+      "sha256": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89"
+    },
+    {
+      "path": "apps/web/src/app/dirty-drafts.ts",
+      "sha256": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13"
+    },
+    {
+      "path": "apps/web/src/app/feedback.tsx",
+      "sha256": "449b8f38b670784f4b99c91b007ca6a90949b6dab1acc69fd8f93a22e11b2a22"
+    },
+    {
+      "path": "apps/web/src/app/i18n.ts",
+      "sha256": "535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340"
+    },
+    {
+      "path": "apps/web/src/app/locales/vi/customers.ts",
+      "sha256": "a2a880bc7aad48e156e0fe8d6cafd63a453a91187af62b398ae5c8247312e97b"
+    },
+    {
+      "path": "apps/web/src/app/locales/vi/knowledge.ts",
+      "sha256": "a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9"
+    },
+    {
+      "path": "apps/web/src/app/navigation.ts",
+      "sha256": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7"
+    },
+    {
+      "path": "apps/web/src/app/router.tsx",
+      "sha256": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4"
+    },
+    {
+      "path": "apps/web/src/app/tokens.css",
+      "sha256": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca"
+    },
+    {
+      "path": "apps/web/src/mocks/auxiliary.ts",
+      "sha256": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/src/mocks/catalog.ts",
+      "sha256": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56"
+    },
+    {
+      "path": "apps/web/src/mocks/collections.json",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "path": "apps/web/src/mocks/control.ts",
+      "sha256": "2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "apps/web/src/mocks/files.ts",
+      "sha256": "21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd"
+    },
+    {
+      "path": "apps/web/src/mocks/finance.ts",
+      "sha256": "c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d"
+    },
+    {
+      "path": "apps/web/src/mocks/fulfillment.ts",
+      "sha256": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40"
+    },
+    {
+      "path": "apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "apps/web/src/mocks/marketing-fixture.ts",
+      "sha256": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb"
+    },
+    {
+      "path": "apps/web/src/mocks/orders.ts",
+      "sha256": "c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4"
+    },
+    {
+      "path": "apps/web/src/mocks/procurement.ts",
+      "sha256": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+    },
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "sha256": "cbca27471ea771f325b3577095a6ff30f66b29c711c0138b3678a8dc4c1d40af"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/import-file.ts",
+      "sha256": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "98e8ac7e9600837171d4e9a2d36a7d03978071c4dfc7d87fcc2617655c8c1639"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "1f6d62a562b6ec124fb3029fdce8eeb9937d09323abb5a523aad496343a4531b"
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef"
+    },
+    {
+      "path": "apps/web/src/modules/finance/demo-account-preview.ts",
+      "sha256": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60"
+    },
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "sha256": "b232374ed17759d105022cc29d87205de9414b7d2b5327f0bf9135243248134c"
+    },
+    {
+      "path": "apps/web/src/modules/finance/report-explanations.ts",
+      "sha256": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020"
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "e906c5574670111cd6198ea77484284cc3d3b503a3268c8fdb4bd26e15bf1fc4"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "sha256": "9611c21db12bdac47fbead422c4fe047902a5df0e6359b73e81ea813ba26177d"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "sha256": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b"
+    },
+    {
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "sha256": "21c786a8280031a029af35e434f7f755b6c81acbab59ca3098d87028aab7aa65"
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "sha256": "7b5d0a356390cba43b8bf16c162dd499150bee37d353945d552504a1eee2bd1b"
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b"
+    },
+    {
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "sha256": "f3c4f450a411703bf605153eee7a9bb3f555882b276b191cd15ce1df26b8dd7d"
+    },
+    {
+      "path": "apps/web/src/modules/notifications/push-capabilities.ts",
+      "sha256": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a"
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "sha256": "608bdffd80bc3b3bc0bd2a6b49a3591b38262f797c195de09ee566a34db5518b"
+    },
+    {
+      "path": "apps/web/src/modules/orders/demo-address-preview.ts",
+      "sha256": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "d1cad2cb0dbbfa618dc6cd5c7096711354feaecb977807037b8c6a2748ed6da7"
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "sha256": "137c535a1c086c6e998281e3e9d4620adf9f3d6b41a0e775add49339b6f82bc1"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754"
+    },
+    {
+      "path": "apps/web/src/modules/reports/report-utils.ts",
+      "sha256": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0"
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "2ea39976473d8dfc2a0da5f0ea8b3e7912d098e4e427487fde5b59479091c269"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.type-contracts.ts",
+      "sha256": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e"
+    },
+    {
+      "path": "apps/web/src/shared/api/errors.ts",
+      "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+    },
+    {
+      "path": "apps/web/src/shared/api/hooks.ts",
+      "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+    },
+    {
+      "path": "apps/web/src/shared/api/intents.ts",
+      "sha256": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b"
+    },
+    {
+      "path": "apps/web/src/shared/api/validation.ts",
+      "sha256": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1"
+    },
+    {
+      "path": "apps/web/src/shared/model/auth.ts",
+      "sha256": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4"
+    },
+    {
+      "path": "apps/web/src/shared/model/dirty-drafts.ts",
+      "sha256": "87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc"
+    },
+    {
+      "path": "apps/web/src/shared/model/download.ts",
+      "sha256": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c"
+    },
+    {
+      "path": "apps/web/src/shared/model/filters.ts",
+      "sha256": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d"
+    },
+    {
+      "path": "apps/web/src/shared/model/format.ts",
+      "sha256": "32d13ed518870d525b857a8be711b24b7d56b0f5c7eff4699ba4f572e958b223"
+    },
+    {
+      "path": "apps/web/src/shared/model/labels.ts",
+      "sha256": "7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2"
+    },
+    {
+      "path": "apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "apps/web/src/shared/ui/components.tsx",
+      "sha256": "0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5"
+    },
+    {
+      "path": "apps/web/src/shared/ui/composition.tsx",
+      "sha256": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b"
+    },
+    {
+      "path": "apps/web/src/shared/ui/layout.ts",
+      "sha256": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a"
+    },
+    {
+      "path": "apps/web/src/shared/ui/theme.ts",
+      "sha256": "dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532"
+    },
+    {
+      "path": "apps/web/src/shared/ui/visual.ts",
+      "sha256": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d"
+    },
+    {
+      "path": "apps/web/tests/components.test.tsx",
+      "sha256": "35187e221b903fd7c1e0434c28dcedebb817b6cfd41612c3b51d43a8055af02f"
+    },
+    {
+      "path": "apps/web/tests/states/fe023-state.test.tsx",
+      "sha256": "15a3815aaaea1bfd726d2d7ada8d867f6695b3531d1ca90c513ad3798944661b"
+    },
+    {
+      "path": "botsales-kit/AGENTS.md",
+      "sha256": "eebc9cc5f02e76190193a4be3aa9c3526490da9eecacfcbdffe5f8929d40a488"
+    },
+    {
+      "path": "botsales-kit/contracts/openapi.json",
+      "sha256": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/docs/02_ARCHITECTURE.md",
+      "sha256": "8fd3805498d179f638ac0256af5ea61bfb9cd0a39db2108e3fcb670b44a49a04"
+    },
+    {
+      "path": "botsales-kit/docs/04_SCREENS_AND_FLOWS.md",
+      "sha256": "ac46214ebd7c0cf293f63a979fce89273c80c3cb5c7e565752b9d2111fdd1e8f"
+    },
+    {
+      "path": "botsales-kit/docs/06_API_AND_REALTIME.md",
+      "sha256": "0ea1fddc67a9e1aa5de1865efa937a1d1e12a680236482a992ae1ec830997da5"
+    },
+    {
+      "path": "botsales-kit/docs/09_STATE_AND_DATA_ACCESS.md",
+      "sha256": "9279561702670366325d7dbdee8a74f7f3601ce1d66b8ae87b07ba71590949c8"
+    },
+    {
+      "path": "botsales-kit/docs/18_CODING_STANDARDS.md",
+      "sha256": "98e1f9e6b561264445ae2115289edffad35310d5161d58dc662eca7026547866"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log",
+      "sha256": "2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S03-full-verify-powershell-current-20261008.log",
+      "sha256": "6a495a18b618c1a01b7df5f2c1fb23bd4afc3d12d357cbab31b95cc999cd15f3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/browser-state-current-20261008-revalidated.log",
+      "sha256": "df414d30ae97a625d5c3ed94d478b1c02a241b2582640880eebcc2d2342d4a79"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/capture-current-evidence-20261008-revalidated.mjs",
+      "sha256": "aa5e154cc2c1530422d4d93b6dd8cadcdeb5ed8541479c26527cc73adaf5bcc9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/handoff.md",
+      "sha256": "ec6205c434557ab53cb2c6f38e11ce25e212db5c0dd3be054e3f27711f6b493e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/route-state-role-matrix-current-20261008-revalidated.json",
+      "sha256": "fcecad155dbd113282097c21cd93594ba5c05cbcad618c01f418382e263a910a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/route-state-role-matrix-current-20261008-revalidated.log",
+      "sha256": "64e475c76995893b8612240d0b44d876c136f471b89b5511a56c351d130fcf17"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE023/unit-verbose-current-20261008-revalidated.log",
+      "sha256": "df618eebf09665ec3914730eea9fdfcab636ec6daef8c97076da9300d84173e8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "ae8c64d17b14f5a73e3b65f076ec6dc4eadbcc39e5c4b20fc3d7b9de88ecbd53"
+    },
+    {
+      "path": "docs/PROJECT_CONTEXT.md",
+      "sha256": "a62ddcbaf636fe4ac87a455b593f61fc573ce4b157330095b7d3c08d46059985"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e"
+    },
+    {
+      "path": "scripts/check-boundaries.mjs",
+      "sha256": "64e2453c1b4186bf86a6c74e3917ecb0d9d5b73e9d77195be3e401e97aec7d0f"
+    },
+    {
+      "path": "scripts/run-e2e.mjs",
+      "sha256": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5"
+    },
+    {
+      "path": "tests/route-role-matrix.spec.ts",
+      "sha256": "56e590890be436d0116241975ffb2fb10eeddab0ff3b2a13b7dbc6b833850a9e"
+    },
+    {
+      "path": "tests/states/fe023.spec.ts",
+      "sha256": "24324d01e83939a7674ca32a7030c140057a094a19c003eb3fd51e77f1e403d0"
+    },
+    {
+      "path": "tests/states/generate-fe023-evidence.mjs",
+      "sha256": "aeb5b08269e5722e55e87508abeec2bdbebb7baf255fc1c15788a1e3a2bb1a3e"
+    },
+    {
+      "path": "tests/states/generate-route-state-roles.mjs",
+      "sha256": "a9be4c94a6db11167f48bd7bcba817e84f0a5358bfe4a47bad21f725d559a798"
+    },
+    {
+      "path": "tests/states/route-empty-composition.spec.ts",
+      "sha256": "729a36c4c2572b8cfa8ddcd1ba2eb246e9b2c54e49886ade0374772897891630"
+    },
+    {
+      "path": "tests/states/route-error-composition.spec.ts",
+      "sha256": "e51d2f45a5831596923654d4cab64642688ae311f40a69b6c966a2b9893f86d1"
+    }
+  ],
+  "sourceSnapshotSha256": "d5e59baedf39d1603611466f7c8ea36a21162ed438ceab340a53d34e568ec61d",
+  "commandResults": [
+    {
+      "commandId": "unit",
+      "command": "npm.cmd --script-shell=cmd.exe test -- --reporter=verbose",
+      "exitCode": 0,
+      "testsPassed": 138,
+      "filesPassed": 12,
+      "logFile": "execution/frontend-evidence/FE023/unit-verbose-current-20261008-revalidated.log",
+      "logSha256": "df618eebf09665ec3914730eea9fdfcab636ec6daef8c97076da9300d84173e8"
+    },
+    {
+      "commandId": "e2e",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e -- tests/states/fe023.spec.ts tests/states/route-empty-composition.spec.ts tests/states/route-error-composition.spec.ts tests/route-role-matrix.spec.ts tests/frontend.spec.ts",
+      "exitCode": 0,
+      "testsPassed": 36,
+      "chromiumCases": 18,
+      "firefoxCases": 18,
+      "logFile": "execution/frontend-evidence/FE023/browser-state-current-20261008-revalidated.log",
+      "logSha256": "df414d30ae97a625d5c3ed94d478b1c02a241b2582640880eebcc2d2342d4a79"
+    },
+    {
+      "commandId": "route-state-role-matrix",
+      "command": "node tests/states/generate-route-state-roles.mjs --unit-log <unit-log> --browser-log <browser-log> --role-log <browser-log>",
+      "exitCode": 0,
+      "routes": 54,
+      "roles": 7,
+      "routeRoleCases": 357,
+      "globalStates": 19,
+      "stateCells": {
+        "NOT_APPLICABLE": 65,
+        "SHARED_UI_TESTED": 204,
+        "ROUTE_SPECIFIC_TESTED": 163
+      },
+      "logFile": "execution/frontend-evidence/FE023/route-state-role-matrix-current-20261008-revalidated.log",
+      "logSha256": "64e475c76995893b8612240d0b44d876c136f471b89b5511a56c351d130fcf17"
+    }
+  ],
+  "audit": {
+    "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+    "result": "PASS",
+    "routeIds": [
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R16",
+      "R17",
+      "R18",
+      "R19",
+      "R20",
+      "R21",
+      "R22",
+      "R23",
+      "R24",
+      "R25",
+      "R26",
+      "R27",
+      "R28",
+      "R29",
+      "R30",
+      "R31",
+      "R32",
+      "R33",
+      "R34",
+      "R35",
+      "R36",
+      "R37",
+      "R38",
+      "R39",
+      "R40",
+      "R41",
+      "R42",
+      "R43",
+      "R44",
+      "R45",
+      "R46",
+      "R47",
+      "R48",
+      "R49",
+      "R50",
+      "R51",
+      "R52",
+      "R53",
+      "R54"
+    ],
+    "featureIds": [
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A05",
+      "A06",
+      "A07",
+      "A08",
+      "B01",
+      "B02",
+      "B03",
+      "B04",
+      "B05",
+      "B06",
+      "B07",
+      "B08",
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08",
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D05",
+      "D06",
+      "D07",
+      "D08",
+      "E01",
+      "E02",
+      "E03",
+      "E04",
+      "E05",
+      "E06",
+      "E07",
+      "E08",
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05",
+      "G06",
+      "G07",
+      "G08",
+      "H01",
+      "H02",
+      "H03",
+      "H04",
+      "H05",
+      "H06",
+      "H07",
+      "H08"
+    ],
+    "operations": 189,
+    "routes": 54,
+    "roles": 7,
+    "stateCounts": {
+      "NOT_APPLICABLE": 65,
+      "SHARED_UI_TESTED": 204,
+      "ROUTE_SPECIFIC_TESTED": 163
+    },
+    "requiredVietnameseKeys": 78
+  },
+  "limitations": [
+    "Ứng dụng chỉ bật ngôn ngữ vi; 78 key đã đăng ký được test, nhưng điều này không khẳng định mọi chuỗi hard-coded đều đi qua i18next.",
+    "Permission matrix chứng minh hành vi route phía frontend với mock/catalog, không chứng minh server RBAC.",
+    "Shared-state test không chứng minh mọi biến thể trạng thái đã được chạy trực tiếp ở từng route; 65 ô được đánh dấu NOT_APPLICABLE theo contract và 0 ô NOT_TESTED.",
+    "Không có screen-reader UAT, browser zoom thủ công, backend/provider thật, hosted CI hoặc owner acceptance trong phạm vi này."
+  ]
+}

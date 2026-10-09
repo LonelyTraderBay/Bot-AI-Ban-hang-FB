@@ -1,0 +1,1534 @@
+{
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "sourceOfTruth": {
+    "taskPlan": "botsales-kit/execution/frontend-plan.json",
+    "gateCriteria": "botsales-kit/execution/FRONTEND_PLAN_GUIDE.md",
+    "verificationScopePolicy": "BotSalesAI_Frontend/docs/FRONTEND_SCOPE.md"
+  },
+  "verificationLadder": {
+    "V0": "source/docs/plan review",
+    "V1": "lint/type/unit/component for changed code",
+    "V2": "contract/schema/import/boundary/transport",
+    "V3": "React/browser flow with synthetic MSW",
+    "V4": "frontend risk probes such as XSS, stale scope, unknown command, races and performance"
+  },
+  "tasks": [
+    {
+      "taskId": "FE001",
+      "title": "Tiếp nhận source và khóa phạm vi frontend",
+      "dependsOn": [],
+      "verificationLevels": [
+        "V0",
+        "V3"
+      ],
+      "applicableGates": [
+        "FE-G01",
+        "FE-G04",
+        "FE-G08"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Đọc hướng dẫn có hiệu lực, xác minh cwd/Git root/revision/diff và quyền docs/implement của lượt hiện tại.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S02",
+          "action": "Map 54 route và 16 module hiện có qua route-implementation.json; phân biệt source có sẵn với browser chưa xác minh.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S03",
+          "action": "Đối chiếu REPORT/KNOWN_GAPS/package.json; ghi kiểm đã chạy, chưa chạy và lỗi nền theo môi trường.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S04",
+          "action": "Chọn mục tiêu frontend đầu tiên, scope file, API/route và các mức V0–V4 cần chạy; ghi Change Budget.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S05",
+          "action": "Bàn giao hiện trạng và xác nhận ledger frontend riêng; đọc validate/status/next, không nhận task toàn sản phẩm.",
+          "evidenceKind": "artifact_review"
+        }
+      ]
+    },
+    {
+      "taskId": "FE002",
+      "title": "Toolchain và dependencies tái lập",
+      "dependsOn": [
+        "FE001"
+      ],
+      "verificationLevels": [
+        "V0",
+        "V1",
+        "V2"
+      ],
+      "applicableGates": [
+        "FE-G01",
+        "FE-G08"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Kiểm Node24/npm và exact package versions/peer requirements; giữ stack đang được chọn, ghi patch/nguồn thực.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S02",
+          "action": "Khảo sát setup/doctor/install scripts và quyền ghi/cache/network; ghi baseline lỗi PATH hay registry nếu xảy ra thực.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S03",
+          "action": "Cài dependencies bằng npm install để tạo lockfile thật; xử lý peer issue có căn cứ và ghi quyết định.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Chạy npm setup và doctor với target thực; dùng worker MSW từ package, không tự viết worker giả.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Kiểm npm ci trên thư mục thử sạch chứa đúng manifest/lock, giữ workspace đang làm; ghi toolchain hashes.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE003",
+      "title": "Lệnh kiểm tra và hợp đồng bằng chứng",
+      "dependsOn": [
+        "FE002"
+      ],
+      "verificationLevels": [
+        "V0",
+        "V1",
+        "V2",
+        "V3"
+      ],
+      "applicableGates": [
+        "FE-G01",
+        "FE-G02",
+        "FE-G08"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Ánh xạ npm scripts hiện có: generate/source/boundaries/types/lint/domain/unit/build/demo/e2e; không dùng pnpm giả.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S02",
+          "action": "Chọn gate FE-G01..09, môi trường, fixture/scenario và bằng chứng cần cho từng task theo Verification Ladder.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm cấu hình Vitest/RTL/MSW/Playwright/axe thực; thu baseline có lỗi mà không tắt suite.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S04",
+          "action": "Kiểm tracker frontend validate/status/next và mẫu evidence; đăng ký lệnh đã chạy đúng có log.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S05",
+          "action": "Đồng bộ hướng dẫn chạy lại Windows/CI; ghi revision/environment và đường dẫn log, phân biệt lịch sử với lượt mới.",
+          "evidenceKind": "artifact_review"
+        }
+      ]
+    },
+    {
+      "taskId": "FE004",
+      "title": "TypeScript và ranh giới module",
+      "dependsOn": [
+        "FE003"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2"
+      ],
+      "applicableGates": [
+        "FE-G02"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Đọc graph/import và full typecheck hiện tại; chọn lỗi cần sửa, map module/api/model/ui/public entry.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Sửa type/lint/boundary theo schema thư viện thật, giữ strict/noUncheckedIndexedAccess và config đã chọn.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Tách trách nhiệm phần đang sửa: app composition, module local logic và shared không nghiệp vụ.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Kiểm negative fixtures alias/relative/type-only/dynamic imports và file không parse; sửa checker nếu có lỗi thực.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy full typecheck/lint/boundaries và source checker; review diff theo Change Budget.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE005",
+      "title": "Contracts và HTTP transport có kiểu",
+      "dependsOn": [
+        "FE004"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G02",
+        "FE-G03",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Đọc OpenAPI/routes/permissions/events; map operationId và DTO dùng thật, ghi gaps không tự sửa canonical.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Kiểm generator từ kit sang packages/CSS/manifest và sửa lỗi generator có bằng chứng, không edit output bằng tay.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Hoàn thiện client credential/CSRF/version/idempotency/AbortSignal/Problem; validate request/response.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Test transport với fixture HTTP success/202/409/412/422/428/429/timeout/schema-invalid và optional/null.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy generator/contract/helper tests/typecheck; ghi negative case missing schema/version và drift.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE006",
+      "title": "Design system Graphite Gold và UI nền",
+      "dependsOn": [
+        "FE004"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G02",
+        "FE-G05"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Đối chiếu decision/tokens và MUI bridge hiện có; map typography/spacing/breakpoint/semantic colors.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện primitive/shared behavior cần dùng: form/error/table/dialog/loading/status và pre-JS background.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Hoàn thiện label/error association/focus return/touch target/reduced-motion/forced-colors phù hợp docs/03.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Kiểm component và gallery trên viewport docs/03, contrast thực với axe + kiểm thủ công phù hợp.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy token drift/component/type checks và negative palette/copy HEX test; review API shared component.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE007",
+      "title": "Shell, phiên và scope dữ liệu",
+      "dependsOn": [
+        "FE005",
+        "FE006",
+        "FE008"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Đọc route manifest và scope/session/query/SSE hiện có; map auth/forbidden/loading và deep links.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện shell/navigation/query keys principal/shop/permissionVersion/filter; auth flow dùng mock protocol theo contract.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Đổi shop/logout/revoke hủy queries/stream, loại response cũ và xử lý dirty draft trước rời route/dialog.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Test switch-shop race/late response/revoke/deep-link refresh/chunk-error/mobile menu với mock network.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy shell E2E + helpers/component checks; kiểm nhãn demo và lỗi startup khi chọn transport sai.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE008",
+      "title": "Mock API và bộ dữ liệu nghiệm thu",
+      "dependsOn": [
+        "FE005",
+        "FE006"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Lập dataset/scenario theo 54 routes/feature-catalog và canonical schema; dùng hai shops và role presets thật.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện MSW HTTP handlers và mock service theo operationId, cursor/filter/version/allowedActions/command lifecycle.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Bổ sung nhiều dòng/dữ liệu lớn, empty/partial, permission denied, stale/422/unknown, delayed/late response và SSE cases.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Chạy simulator/schema checks và network tests; kiểm request/response/seed/collections mới cùng fixture quan hệ.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Test reset/isolation và activation demo/test-only; ghi nhãn synthetic, limitations và nguồn fixture.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE009",
+      "title": "Workspace, membership và khách hàng",
+      "dependsOn": [
+        "FE007",
+        "FE008"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện shop/membership/onboarding/customer list-detail/forms/jobs/privacy UI theo contract; lookup/search/pagination, field visibility và draft lifecycle.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm role/read-only/revoke/422/412/not-found, shop switch và privacy capability unavailable; không tạo password step-up trái OIDC contract.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE010",
+      "title": "Catalog, biến thể và import",
+      "dependsOn": [
+        "FE009"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06",
+        "FE-G07"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện product/category/variant/editor/image/import UI, nhiều dòng/SKU và tìm kiếm/phân trang theo operation đã có; export mẫu tổng hợp.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm duplicate SKU/invalid fields/upload/import partial/412 và permission cost; dirty input không bị refetch hoặc navigation ghi đè.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE011",
+      "title": "Tồn kho và biến động",
+      "dependsOn": [
+        "FE010"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06",
+        "FE-G07"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện stock positions/reservations/movements/adjustment UI và liên kết catalog bằng app/public props; filter/lookup có cursor.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm stock unavailable/version conflict/permission denied/negative quantity/unknown command; không trừ kho optimistic hoặc áp stale SSE delta.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE012",
+      "title": "Báo giá, xác nhận và đơn hàng",
+      "dependsOn": [
+        "FE009",
+        "FE010",
+        "FE011"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06",
+        "FE-G07"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện order list/detail/editor nhiều dòng, quote/confirmation/cancel/return và nguồn customer/inbox refs qua app composition; totals từ API.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm quote expired/address ID thiếu/422/412/428/202/unknown/double click/offline và allowedActions; draft không mất hoặc tự resend.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE013",
+      "title": "Chuẩn bị, giao và trả hàng",
+      "dependsOn": [
+        "FE012"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06",
+        "FE-G07"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện work-item claim/pick/pack/dispatch/delivery/return UI theo states và allowedActions; dữ liệu mock nối order/reservation/history.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm claim stale/already-assigned, partial stock, pack validation, dispatch unknown, không gộp packed/delivered hoặc tự giải phóng reservation.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE014",
+      "title": "Mua hàng, phê duyệt và nhận hàng",
+      "dependsOn": [
+        "FE010",
+        "FE011"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện supplier/reorder/proposal/approval/purchase/receipt nhiều dòng và nhận một phần; dữ liệu fake về MOQ/packSize/budget/history.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm supplier khác shop/chưa duyệt, thay giá/qty làm approval stale, thiếu budget, send unknown, receipt replay và permission.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE015",
+      "title": "Finance, COD và đối soát",
+      "dependsOn": [
+        "FE012",
+        "FE013",
+        "FE014"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06",
+        "FE-G07"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện cashflow/journal nhiều dòng/COD/statements/matching/receivables/period UI; amount decimal string/currency, dữ liệu snapshot từ mock.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm unbalanced journal/duplicate source/locked period/partial match/unknown posting/422/permission field và timezone filters.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE016",
+      "title": "Inbox và takeover",
+      "dependsOn": [
+        "FE009",
+        "FE012"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06",
+        "FE-G07"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện conversation/message/media/contact refs/takeover/handoff UI; compose create-order tại app layer; delivery/command status từ mock.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm takeover version/revoke/late event/untrusted message HTML/send timeout/capability unavailable; không gửi Meta hoặc nhận delivered giả.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE017",
+      "title": "Tri thức và vòng duyệt",
+      "dependsOn": [
+        "FE016"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện source/document/version/review/publish/feedback UI với dữ liệu tổng hợp; state/capability/visibility từ API mock.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm thiếu dữ liệu bắt buộc/upload invalid/review stale/publish denied/422 và tài liệu không tin cậy; không tự đổi chat thành tri thức.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE018",
+      "title": "Cấu hình bot, phòng thử và evals",
+      "dependsOn": [
+        "FE017"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện bot/team/tool-permission/budget/kill-switch/sandbox/eval UI; model capability từ API; câu trả lời/evals tổng hợp có nhãn.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm expired approval/limit exceeded/tool denied/kill switch/unknown/config conflict và requireHumanOrderConfirmation legacy gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE019",
+      "title": "Kết nối và thông báo mô phỏng",
+      "dependsOn": [
+        "FE007",
+        "FE008"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện integrations/credentials write-only/capability status, notification history/preferences/device screens và Push/Telegram pairing mock theo contract.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm consent denied/revoked subscription/unavailable browser/device/error reconnect/secret lifecycle; không gửi mạng provider thật hoặc nhận connected giả.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE020",
+      "title": "Operations, phê duyệt và điều phối",
+      "dependsOn": [
+        "FE014",
+        "FE015",
+        "FE018"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện approval queue/tasks/briefing/team-policy/runtime readiness UI; các quyết định/bản tin mock có ID/version/source/timestamps.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm stale approval/role denied/partial data/kill switch/budget unavailable và command unknown; không tạo scheduler/worker nền trong frontend.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE021",
+      "title": "Dashboard, báo cáo và xuất dữ liệu",
+      "dependsOn": [
+        "FE015",
+        "FE020"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G07"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện dashboard/report/marketing filters/charts/data table/export UI; KPI và explanation từ fixture API định danh, timezone/money format nhất quán.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm empty/partial/redacted/stale/large pagination/export denied/error và missing cost; không KPI random hoặc suy toàn bộ từ một trang.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE022",
+      "title": "Luồng xuyên module qua app composition",
+      "dependsOn": [
+        "FE013",
+        "FE014",
+        "FE015",
+        "FE016",
+        "FE017",
+        "FE018",
+        "FE019",
+        "FE020",
+        "FE021"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map feature-catalog/routes vào các luồng catalog→stock→order→prep, procurement→approval→receipt, finance→reconcile và inbox→knowledge/bot.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Ghép public entries qua app props/router/intents; bổ sung scenario quan hệ dữ liệu xuyên module trong mock service.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm dữ liệu sau mutation/refetch/SSE và source refs; giữ unknown/draft/permission state khi điều hướng giữa luồng.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Chạy E2E các luồng happy/unhappy, edit/replay/partial/forbidden/version/timeout theo scenario định danh.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Sinh ma trận route/feature/scenario từ kết quả test; ghi scope/gaps và regressions.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE023",
+      "title": "States, forms, i18n và khôi phục UI",
+      "dependsOn": [
+        "FE022"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G02",
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Lập route×states×roles theo state có ý nghĩa, inventory text/i18n keys và forms cần dirty-draft protection.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện loading/empty/partial/error/forbidden/not-found/offline/stale/submitting/conflict/unknown/capability-unavailable.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Hoàn thiện 422 field mapping/412 conflict/428 missing version, URL filters, lookup phân trang và navigation/dialog/shop dirty guards.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Chạy browser/component tests state/focus/refetch/dirty forms với fixtures delayed/error và i18n không missing keys.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Sinh coverage từ test results, review exception/gap và kiểm public API component phù hợp.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE024",
+      "title": "An toàn và phân quyền frontend",
+      "dependsOn": [
+        "FE023"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G02",
+        "FE-G03",
+        "FE-G04",
+        "FE-G06"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Đọc trust boundaries UI/transport/upload/export/PII và permission catalog; chọn threat cases có căn cứ, không nhận backend auth proof.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Sửa raw HTML/URL/file/secret lifecycle/cached sensitive data trong phần có lỗi thật; giữ validation và least privilege UI.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Kiểm stale response/revoke/shop switch/hidden fields và mutation idempotency/unknown recovery qua mock HTTP.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Chạy negative browser/transport tests với XSS payload, unsafe URL/export, unauthorized/redacted/late-response scenarios.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Review dependency advisory trên lockfile và diff/bundle; ghi phát hiện/lý do hoặc remediation có bằng chứng.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE025",
+      "title": "Responsive, accessibility và hiệu năng frontend",
+      "dependsOn": [
+        "FE023",
+        "FE024"
+      ],
+      "verificationLevels": [
+        "V1",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G04",
+        "FE-G05",
+        "FE-G07"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Chọn viewport/browser matrix theo docs/03, dataset lớn có ID và baseline bundle/render; ghi budget có nguồn hoặc đề xuất cần review.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Sửa overflow/touch/keyboard/focus/zoom/reduced-motion/forced-colors và semantics trong source bị ảnh hưởng.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Đo route loading/chunk/bundle/table-large-data; tối ưu theo bottleneck thật và Complexity Gate.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Chạy Playwright/axe và kiểm thủ công keyboard/focus/screenreader phù hợp, ghi browser/platform thật.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Kiểm lại artifact sau sửa và bàn giao số đo/budget/scope supported browsers cùng phần chưa kiểm.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE026",
+      "title": "Artifact demo/production và kiểm tái lập",
+      "dependsOn": [
+        "FE025"
+      ],
+      "verificationLevels": [
+        "V0",
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G01",
+        "FE-G03",
+        "FE-G07",
+        "FE-G08"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Map build/build:demo/preview/dev modes và biến môi trường; phân biệt mock artifact với transport production.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Hoàn thiện build isolation để production không chứa MSW/seed/mockServiceWorker/fallback; demo có nhãn mô phỏng và fixtures đúng.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Chạy clean install/type/lint/unit/contract/build và demo build trên target/lock; kiểm bundle và network smoke.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Nối gate frontend vào CI phù hợp repo và chạy E2E trên artifact preview, không chỉ dev server.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Ghi manifest/checksums/cách chạy/cấu hình API/rollback artifact frontend và báo cáo scope.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE027",
+      "title": "Nghiệm thu frontend với mock data",
+      "dependsOn": [
+        "FE026"
+      ],
+      "verificationLevels": [
+        "V0",
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G04",
+        "FE-G05",
+        "FE-G08",
+        "FE-G09"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Lập UAT matrix route/feature/state/role từ nguồn canonical và coverage FE022/23, xác định artifact demo/revision/hash.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S02",
+          "action": "Chạy 54 routes và các luồng chính với dataset đủ, hai shops/roles và mock HTTP lỗi/quyền/version/unknown.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S03",
+          "action": "Thu screenshot/trace/request evidence từ React artifact thật và review scenarios/gaps/giới hạn integrations.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S04",
+          "action": "Sửa lỗi UAT trong scope, viết regression phù hợp và chạy lại gate ảnh hưởng trên cùng artifact mới.",
+          "evidenceKind": "test_run"
+        },
+        {
+          "stepId": "S05",
+          "action": "Bàn giao kết quả UAT cho người dùng; ghi người chấp thuận khi có thật, không tự giả owner approval.",
+          "evidenceKind": "test_run"
+        }
+      ]
+    },
+    {
+      "taskId": "FE028",
+      "title": "Cổng chất lượng frontend và bàn giao mở rộng",
+      "dependsOn": [
+        "FE027"
+      ],
+      "verificationLevels": [
+        "V0",
+        "V1",
+        "V2",
+        "V3",
+        "V4"
+      ],
+      "applicableGates": [
+        "FE-G01",
+        "FE-G02",
+        "FE-G03",
+        "FE-G04",
+        "FE-G05",
+        "FE-G06",
+        "FE-G07",
+        "FE-G08",
+        "FE-G09"
+      ],
+      "planActions": [
+        {
+          "stepId": "S01",
+          "action": "Đối chiếu FE-G01..09 và Definition of Done với log/artifact/source diff thực; ghi ĐẠT/CHƯA ĐẠT/CHƯA XÁC MINH/N/A có lý do.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S02",
+          "action": "Review kiến trúc app/module/shared/transport/mock/public entry và cách thêm module/operation; ghi review thực.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S03",
+          "action": "Đồng bộ tài liệu cách run/build/reset fixture/thay base API, gaps và giới hạn backend integration.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S04",
+          "action": "Áp dụng Production Claim Gate 19.6: artifact/revision/environment/criteria/evidence/exceptions/quyền, đề nghị nghiệm thu đúng frontend mock scope.",
+          "evidenceKind": "artifact_review"
+        },
+        {
+          "stepId": "S05",
+          "action": "Bàn giao source/diff/artifact/checksums/test summary/risks/next và cập nhật ledger frontend chỉ bằng evidence.",
+          "evidenceKind": "artifact_review"
+        }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "gateId": "FE-G01",
+      "criterion": "Môi trường tái lập: đúng Node/dependency; npm install, npm ci và build clean.",
+      "disposition": "ĐẠT_TRONG_SCOPE_LOCAL",
+      "evidence": [
+        {
+          "path": "botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-verified-current-20261007.json",
+          "sha256": "cb72741308964c662ed1ea0a0697671344ecc68fdeafeea4bc3ecf872003073b"
+        },
+        {
+          "path": "botsales-kit/execution/frontend-evidence/FE002/S04-setup-doctor-verified-current-20261007.json",
+          "sha256": "21c04ac6960fdb99f246ad54144cfb9bf863a51e7ca268fef3229a46322bdc33"
+        },
+        {
+          "path": "botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-retry-verified-current-20261007.json",
+          "sha256": "3f121a47ebe43947b7034808f89c8930c8f38b53cc2bc1264938e7e40a6d18ff"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/verify-record.json",
+          "sha256": "e3d583317deb9ab3fead2f46105aaaf502d3d2d3478bd9481624077ba948f82b"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/built-demo-record.json",
+          "sha256": "c4380a93df26f5c5a908b996a98caba37f4b6a71a338b3b8ab157d0f52274afc"
+        }
+      ],
+      "remaining": "No claim about a hosted runner; local environment and clean temporary install only."
+    },
+    {
+      "gateId": "FE-G02",
+      "criterion": "Code/kiến trúc: generated freshness, type/lint, import boundaries/cycles và negative fixtures.",
+      "disposition": "ĐẠT_LOCAL_SELF_REVIEW",
+      "evidence": [
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/verify-record.json",
+          "sha256": "e3d583317deb9ab3fead2f46105aaaf502d3d2d3478bd9481624077ba948f82b"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-current-evidence.json",
+          "sha256": "3a086e9556677bc5bf75a52d54594c2aa76c71d5778fcf301e9256f7a4db6b03"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-verify-final-reconciled-current-20261007.log",
+          "sha256": "e3f64af92318e05053b73d802b51f14f49b94eae793004124dcfe97320653a81"
+        }
+      ],
+      "remaining": "This is automated verification plus Codex self-review, not independent peer review."
+    },
+    {
+      "gateId": "FE-G03",
+      "criterion": "Contract/mock: schema request/response/fixtures, simulator/domain, transport/component negative cases.",
+      "disposition": "ĐẠT_VỚI_SYNTHETIC_MOCK",
+      "evidence": [
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/contracts-record.json",
+          "sha256": "ce0fa6e932dc158e3f3bb7ab900fcddffb446c12955b5605ada9a7ca9fc8548e"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/contracts.log",
+          "sha256": "7035ee7401c6d639d9ea446115cddf14cbc0ba9ebbaa747585d16a2286641fa2"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/verify-record.json",
+          "sha256": "e3d583317deb9ab3fead2f46105aaaf502d3d2d3478bd9481624077ba948f82b"
+        }
+      ],
+      "remaining": "MSW/simulator evidence does not prove a live API or backend persistence."
+    },
+    {
+      "gateId": "FE-G04",
+      "criterion": "Chức năng: route × state × role, feature/operation và luồng gắn test/result.",
+      "disposition": "ĐẠT_VỚI_SYNTHETIC_MOCK",
+      "evidence": [
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/e2e-record.json",
+          "sha256": "20e982ab894dc4a9494d01218ab230776c84295f9cf6a1289007ba271c9bb9d5"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/e2e.log",
+          "sha256": "f0aed15b41fd27767829f897603f2d435f1e37674500d9563d43ae1b09b31b55"
+        },
+        {
+          "path": "docs/route-state-role-matrix.json",
+          "sha256": "f602689724c96cd48403856cb48c735515432c8d5134624aa4c3d1e71c21f72a"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-current-evidence.json",
+          "sha256": "3a086e9556677bc5bf75a52d54594c2aa76c71d5778fcf301e9256f7a4db6b03"
+        }
+      ],
+      "remaining": "Route/state/role coverage is browser-tested with synthetic MSW, not server authorization."
+    },
+    {
+      "gateId": "FE-G05",
+      "criterion": "UI/UX: browser viewport, keyboard/focus/form/i18n/a11y; phần axe không chứng minh cần review riêng.",
+      "disposition": "CHƯA_XÁC_MINH_ĐẦY_ĐỦ",
+      "evidence": [
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/e2e-record.json",
+          "sha256": "20e982ab894dc4a9494d01218ab230776c84295f9cf6a1289007ba271c9bb9d5"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/UI028/W30/native-zoom-followup-current-20261007.md",
+          "sha256": "5b62d41c046dc721578c077a6299b4aa9b29e26dca0cfbe08cd952cdd06bc91e"
+        },
+        {
+          "path": "docs/KNOWN_GAPS.md",
+          "sha256": "ae8c64d17b14f5a73e3b65f076ec6dc4eadbcc39e5c4b20fc3d7b9de88ecbd53"
+        }
+      ],
+      "remaining": "Keyboard/axe/contrast/zoom/text-flow have automated evidence; Narrator speech/transcript and broad human conformance are NOT_RUN."
+    },
+    {
+      "gateId": "FE-G06",
+      "criterion": "An toàn Frontend: secret/raw HTML/cross-shop stale data/unknown-command handling; không suy ra server auth.",
+      "disposition": "ĐẠT_TRONG_SCOPE_FRONTEND",
+      "evidence": [
+        {
+          "path": "botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-output-current-20261007.log",
+          "sha256": "250f9d5cd24bd9e2176c71248f0338c6fac75d3b8031d84260ed4c984e141499"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/verify-record.json",
+          "sha256": "e3d583317deb9ab3fead2f46105aaaf502d3d2d3478bd9481624077ba948f82b"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-current-evidence.json",
+          "sha256": "3a086e9556677bc5bf75a52d54594c2aa76c71d5778fcf301e9256f7a4db6b03"
+        }
+      ],
+      "remaining": "npm allowScripts warnings for esbuild/MSW remain; UI security checks do not establish server-side authorization."
+    },
+    {
+      "gateId": "FE-G07",
+      "criterion": "Hiệu năng Frontend: đo bundle và browser flow trên dataset mock định danh; không suy ra backend SLO.",
+      "disposition": "ĐẠT_TRONG_PHÉP_ĐO_LOCAL",
+      "evidence": [
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-s19-final-20261007-a.json",
+          "sha256": "5cb00297116ae3f10465e825e5aa1a4128213e32a5335a80783eab0f3644cdb2"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-s19-final-20261007-a.json",
+          "sha256": "38bcc8e929a6b63e5e4cbd3beb006a987c4562390c07d56cea958ba1c04db52d"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-full-e2e-post-fix-20261007.log",
+          "sha256": "9ccc9cee2c00ff7016431602b07fe000be1a502bffbf43f4ed817b4ff96ec25c"
+        }
+      ],
+      "remaining": "Synthetic browser/device profile only; no field-user, CDN or backend SLO claim."
+    },
+    {
+      "gateId": "FE-G08",
+      "criterion": "Artifact: production/demo build, mock isolation, CI hoặc clean local equivalent có log.",
+      "disposition": "ĐẠT_THEO_LOCAL_EQUIVALENT",
+      "evidence": [
+        {
+          "path": "botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-retry-verified-current-20261007.json",
+          "sha256": "3f121a47ebe43947b7034808f89c8930c8f38b53cc2bc1264938e7e40a6d18ff"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/verify-record.json",
+          "sha256": "e3d583317deb9ab3fead2f46105aaaf502d3d2d3478bd9481624077ba948f82b"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/e2e-record.json",
+          "sha256": "20e982ab894dc4a9494d01218ab230776c84295f9cf6a1289007ba271c9bb9d5"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-current-evidence.json",
+          "sha256": "3a086e9556677bc5bf75a52d54594c2aa76c71d5778fcf301e9256f7a4db6b03"
+        }
+      ],
+      "remaining": "Hosted GitHub Actions has no run evidence in this checkout; workflow configuration alone is not a run."
+    },
+    {
+      "gateId": "FE-G09",
+      "criterion": "UAT/bàn giao: mock UAT, gaps, giới hạn, run/build/API handoff; user acceptance chỉ khi thực sự có.",
+      "disposition": "CHƯA_XÁC_MINH_USER_ACCEPTANCE",
+      "evidence": [
+        {
+          "path": "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json",
+          "sha256": "3c36fe7fada793fe2303dd757a208ab1804f8150414938538f1c41c93769df10"
+        },
+        {
+          "path": "evidence/frontend-ui-document-sync-20261007/REPORT.md",
+          "sha256": "e95be4d5831e343b5bfe1aa76e79c05d1d126d75063e66709c88118e3ec80f77"
+        },
+        {
+          "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-current-evidence.json",
+          "sha256": "3a086e9556677bc5bf75a52d54594c2aa76c71d5778fcf301e9256f7a4db6b03"
+        }
+      ],
+      "remaining": "Technical UAT/handoff is reviewable; user acceptance has not been recorded and cannot be inferred."
+    }
+  ],
+  "workflowConfig": {
+    "path": ".github/workflows/frontend.yml",
+    "currentSha256": "238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2",
+    "s19ReferenceSha256": "d80c5ba0d651375b45c6775625e00f5e4c7553190c2ce7139008baf60a095ab2",
+    "matchesS19Reference": false,
+    "meaning": "Root workflow exists; current local hash is recorded independently. Its S19 relative-path fingerprint differs, so that historical fingerprint is not used to certify this current external workflow; no hosted run is claimed."
+  },
+  "explicitScopeExclusions": [
+    "live database/Meta/provider",
+    "backend authorization/persistence",
+    "staging/production",
+    "hosted CI run",
+    "Narrator speech/human conformance",
+    "owner acceptance"
+  ]
+}

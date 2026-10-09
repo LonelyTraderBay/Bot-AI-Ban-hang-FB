@@ -2,8 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
-const read = relative => JSON.parse(fs.readFileSync(path.join(repo, relative), 'utf8'));
+const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../BotSalesAI_Frontend');
+const read = relative => {
+  const kitRelative = relative.startsWith('botsales-kit/');
+  const base = kitRelative ? path.resolve(repo, '..', 'botsales-kit') : repo;
+  const file = kitRelative ? relative.slice('botsales-kit/'.length) : relative;
+  return JSON.parse(fs.readFileSync(path.join(base, file), 'utf8'));
+};
 const api = read('botsales-kit/contracts/openapi.json');
 const routes = read('botsales-kit/contracts/route-manifest.json');
 const generated = read('packages/contracts/src/operations.json');

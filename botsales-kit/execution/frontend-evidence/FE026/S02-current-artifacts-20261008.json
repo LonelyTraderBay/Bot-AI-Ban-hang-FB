@@ -1,0 +1,144 @@
+{
+  "taskId": "FE026",
+  "stepId": "S02",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T21:51:45.384Z",
+  "sourceRevision": "HEAD 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 plus the current source snapshot; isolated clean run and all supporting artifact/log hashes are attached.",
+  "expected": "Build thiếu API thật vẫn hoàn thành artifact frontend; runtime unavailable rõ, không tự fallback. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+  "observed": "A lock-installed isolated build generated separate deterministic dist and dist-demo trees. Production contains no mock worker or fixture markers. The browser smoke deliberately failed /api/v2/session and showed the explicit live API unavailable alert without enabling mock data or requesting the MSW worker. Demo includes the MSW worker and synthetic shop fixtures.",
+  "command": "npm.cmd --script-shell=cmd.exe run verify",
+  "commandId": "verify-current-20261002",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review",
+  "environment": {
+    "name": "Windows 11 / Node v24.19.0 / npm 11.17.0",
+    "details": "Fresh npm ci in a temporary multi-project copy; no source .env.local or source .git metadata copied. Browser artifact checks use Chromium/Firefox with synthetic MSW only.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 4,
+  "failed": 0,
+  "exitCode": 0,
+  "logFile": "execution/frontend-evidence/FE026/S02-current-artifacts-20261008.log",
+  "logSha256": "14376245e2910836b27de8309b01f2a2289b6271bd0274416d58494832354e24",
+  "sourceFiles": [
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "path": "apps/web/src/app/Shell.tsx",
+      "sha256": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "sha256": "5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE026/capture-current-evidence-20261008.mjs",
+      "sha256": "5ac4a09212386b01f3430bb9b41ea0559309ed91a504b30a828a3bc3b95ef9cd"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE026/frontend-workflow-config-current-20261008-attempt03.yml",
+      "sha256": "238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE026/run-clean-build-current-20261008.mjs",
+      "sha256": "e1e733d669ae0138f270e80024d491b6d8976fb599c1b01eed3078e757088beb"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e"
+    },
+    {
+      "path": "README.md",
+      "sha256": "61ee1effe2c690e9ed04d74b101c9567379fbafc36b592e57126d2b958f85369"
+    },
+    {
+      "path": "scripts/run-e2e.mjs",
+      "sha256": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891"
+    },
+    {
+      "path": "scripts/setup.mjs",
+      "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+    },
+    {
+      "path": "tests/artifacts/demo-preview.spec.ts",
+      "sha256": "97177073bb270a69a49ad0e3e2aee4ea5474370b05f409955d33971727e7b1c3"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5"
+    }
+  ],
+  "sourceSnapshotSha256": "34542badba4e6dea1962349af3808ebca750a78dfb6a2e7b51025feca97e9264",
+  "supportingLogs": [
+    {
+      "file": "execution/frontend-evidence/FE026/clean-build-current-20261008-attempt03.log",
+      "sha256": "638e0ca3b9bb728bf2f38d2e235c1a25fa37ffcaef1a6025770cf334e32a722f"
+    },
+    {
+      "file": "execution/frontend-evidence/FE026/registered-verify-current-20261008.log",
+      "sha256": "4e70f9044019803c6621a779de9b848c50d57958755018d8f16d5ded686158f2"
+    },
+    {
+      "file": "execution/frontend-evidence/FE025/browser-a11y-performance-current-20261008.log",
+      "sha256": "b1f074b41640d375f1d323510a5c4dbbc508a468722fa4ba0cceb5647084c48e"
+    },
+    {
+      "file": "execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log",
+      "sha256": "2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7"
+    },
+    {
+      "file": "execution/frontend-evidence/FE001/S03-full-verify-powershell-current-20261008.log",
+      "sha256": "6a495a18b618c1a01b7df5f2c1fb23bd4afc3d12d357cbab31b95cc999cd15f3"
+    }
+  ],
+  "supportingArtifacts": [
+    {
+      "file": "execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json",
+      "sha256": "946a0dc97124b72cd04ea1c46f8634ae8a88c4555e2af6a7a2c20523f6caaa01"
+    },
+    {
+      "file": "execution/frontend-evidence/FE026/frontend-workflow-config-current-20261008-attempt03.yml",
+      "sha256": "238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2"
+    }
+  ]
+}

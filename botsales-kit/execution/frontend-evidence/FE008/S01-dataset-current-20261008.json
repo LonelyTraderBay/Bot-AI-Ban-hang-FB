@@ -1,0 +1,190 @@
+{
+  "taskId": "FE008",
+  "stepId": "S01",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T18:31:08.435Z",
+  "sourceRevision": "HEAD 53c0ba8 plus current frontend working tree",
+  "expected": "A deterministic synthetic dataset covers canonical routes/features, two shops and approved member roles; same-shop ID/relationship and money invariants hold.",
+  "observed": "Current registered domain command passed 75/75 simulator checks and 13/13 MSW network scenarios over 210 handlers. Read-only seed audit covers 54 canonical routes, 64 features, 2 shops, 9 memberships, 231 synthetic records in 51 collections, 229 shop-scoped records, seven relationship families, exact VND integer strings, and zero orphan shop references. Mock seed, sequence, clock, fault/delay/file/idempotency reset are deterministic. No live customer/shop data.",
+  "commandId": "domain",
+  "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+  "reviewer": "Codex self-review; no independent peer review claimed",
+  "environment": {
+    "name": "Windows Node 24.19.0 / TypeScript / Vite and MSW local test toolchain",
+    "details": "Simulator and in-process MSW only; temporary generated reports were captured outside the frontend and original evidence outputs restored byte-for-byte.",
+    "dataSource": "synthetic-msw"
+  },
+  "checksTotal": 18,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/src/mocks/collections.json",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "path": "apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "apps/web/src/mocks/service.ts",
+      "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/permission-catalog.json",
+      "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/capture-s01-dataset-current-20261008.mjs",
+      "sha256": "d4b27fa51faf909bf8e67aaa89e91f437356227952bc56ba32f0f99d64bc452a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S01-domain-current-20261008.log",
+      "sha256": "1ffefed57ea71910ac62ae7bd1c00e6df56bd64fb2ec88b872d5e0b29a7dfe51"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S01-domain-report-current-20261008.json",
+      "sha256": "41aa3fbb3535550504ecc6fae17cef8ad61aea4a91d2b001e5a685a49a76dfdd"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S01-seed-audit-current-20261008.json",
+      "sha256": "504a5cc40c158242a7ff1f926c3872f1cd1d14fff3da77a1d9a090ce3633dda2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE008/S01-seed-audit-current-20261008.log",
+      "sha256": "f646f720099b34c647cb8d36bd4c7db6d9ff568cb3f09afb0f4c003c2cf29283"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "docs/route-implementation.json",
+      "sha256": "737d18c5f221dfcb728027b30d58809e4bce1e951e0a7c34c401547a111d14f5"
+    },
+    {
+      "path": "packages/contracts/src/operations.json",
+      "sha256": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+    },
+    {
+      "path": "tests/domain-scenarios.cjs",
+      "sha256": "ac65e916a6433de60f96292ac03381b625aece42a04f6ac37085eb1243766245"
+    },
+    {
+      "path": "tests/fixtures/mock-network.mjs",
+      "sha256": "a074b777328e7aae5d81f6f2b60ea0653c674fcd80b1c146820e94daffdad6e6"
+    }
+  ],
+  "sourceSnapshotSha256": "c2253e841e9292d95d2863aa5b97c789917f37f58f64950c11d06d91c56e7ce0",
+  "commandResults": [
+    {
+      "commandId": "domain",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+      "exitCode": 0,
+      "simulatorChecks": 75,
+      "networkChecks": 13,
+      "networkHandlers": 210,
+      "logFile": "execution/frontend-evidence/FE008/S01-domain-current-20261008.log",
+      "logSha256": "1ffefed57ea71910ac62ae7bd1c00e6df56bd64fb2ec88b872d5e0b29a7dfe51"
+    }
+  ],
+  "audit": {
+    "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+    "result": "PASS",
+    "routeAndFeatureCoverage": {
+      "routes": 54,
+      "uniqueRoutes": true,
+      "features": 64,
+      "featuresWithValidRouteIds": 64,
+      "sourceComponentMappings": 54
+    },
+    "seed": {
+      "shops": 2,
+      "members": 9,
+      "rolePresets": 7,
+      "rolesCovered": [
+        "accountant",
+        "bot_admin",
+        "manager",
+        "owner",
+        "sales",
+        "viewer",
+        "warehouse"
+      ],
+      "collections": 51,
+      "records": 231,
+      "shopScopedRecords": 229,
+      "orphanShopReferences": 0,
+      "relationshipChecks": [
+        "product-category",
+        "variant-product",
+        "category-parent",
+        "stock-variant-and-available",
+        "order-customer-conversation-variant-and-money",
+        "conversation-customer-channel",
+        "message-conversation"
+      ],
+      "exactIntegerVndAmounts": true
+    },
+    "deterministicMock": {
+      "canonicalSeedClonedOnReset": true,
+      "sequenceReset": 10000,
+      "fixedClock": "2026-09-29T14:00:00.000Z",
+      "serviceResetClearsFileFaultDelayAndIdempotencyState": true
+    },
+    "simulator": {
+      "checks": 75,
+      "passed": 75
+    },
+    "network": {
+      "handlers": 210,
+      "checks": 13,
+      "passed": 13
+    },
+    "generatedAt": "2026-10-07T18:31:08.435Z"
+  },
+  "protectedOutputRestoration": [
+    {
+      "path": "evidence/domain-tests.json",
+      "restored": true,
+      "sha256": "37a48727e7ec2d3e78cfbb0ac04bdbd970e3a41783c879e8de00bd263b893959"
+    },
+    {
+      "path": "evidence/logs/mock-typecheck.log",
+      "restored": true,
+      "sha256": "a3a17eff2606b9273041f34e07776a74dd5c700fc8546a0405ecd803c4e6b467"
+    }
+  ],
+  "logFile": "execution/frontend-evidence/FE008/S01-dataset-current-20261008.log",
+  "logSha256": "18a9039d98a651db114e7b7eee4217c8448b63820150cc01489416c1aefd6771"
+}

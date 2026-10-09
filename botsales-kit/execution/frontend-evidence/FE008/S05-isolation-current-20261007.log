@@ -1,0 +1,72 @@
+FE008.S05 reset/isolation and demo-only mock activation evidence
+executedAt=2026-10-07T14:23:41.271Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+registered commandId=build; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build
+VITE_ENABLE_MOCKS=true; expected production guard exit is nonzero; observed exitCode=1
+guardError=Production không được bật mô phỏng. Dùng build:demo cho bản review.
+productionWorkerPresent=false; demoWorkerPresent=true
+productionFiles=34; demoFiles=38; beforeAfterUnchanged=true
+Browser isolation command: node node_modules/@playwright/test/cli.js test tests/ui009-scope-regression.spec.ts tests/session/demo-server-cache-isolation.spec.ts --reporter=line
+browserLogSha256=7d308db1804b5e906e0fd70f258fd07297bf63d74b44648879e7cb5cdcc7e4cd
+current domain reset/isolation support: simulator=75 checks; network=13 scenarios; handlers=210
+Data source: synthetic MSW/simulator fixtures; no backend/provider/staging/production integration is claimed.
+S02 seed uses two shops and deterministic reset; tests isolate a delayed old-shop response and concurrent demo-server caches.
+checks=7; failed=0
+sourceSnapshotSha256=2154e1698bce32c4ec359d7224744061fd08cc591b5797d327c25b64178378a1
+SOURCE AGENTS.md sha256=07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222
+SOURCE AI_RULES.md sha256=1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3
+SOURCE apps/web/package.json sha256=1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a
+SOURCE apps/web/src/main.tsx sha256=2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb
+SOURCE apps/web/src/mocks/browser.ts sha256=91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9
+SOURCE apps/web/src/mocks/service.ts sha256=e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69
+SOURCE apps/web/vite.config.ts sha256=5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE008/capture-s05-isolation-current-20261007.mjs sha256=b35103ace8e880b310c516e8a3d29931b5095a59bae6f0db3e0cbef776284d95
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S02-domain-current-20261007.log sha256=14a0a7cc34f429e7108e90a40ad47b872cbbd463fbc1bf638104db1147056a9a
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S02-domain-report-current-20261007.json sha256=92dda4303ae4059018ff2481ffa59f399e73a72a860573d117b34e09c13dfd2c
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S02-transport-current-20261007.json sha256=3708c918f33b68f943b52c165ee7188ac50593cfe9424d6eafac464c3529b184
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S02-unit-current-20261007.log sha256=efde00b9af573cf5a771e8fa188b43f5767e184355296d516ae513f28ce36fc4
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S04-schema-current-20261007.json sha256=29d4993ed1b3ce419b154e8a974afa14bcda95208d5f53a8e85c13af611b6e9d
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S05-build-artifact-audit-current-20261007.json sha256=6b63260bafc8fff211a4452823af7a174dcf22220fe9eb55b2f8b4b98c1ae1b0
+SOURCE botsales-kit/execution/frontend-evidence/FE008/S05-isolation-browser-current-20261007.log sha256=7d308db1804b5e906e0fd70f258fd07297bf63d74b44648879e7cb5cdcc7e4cd
+SOURCE botsales-kit/execution/frontend-plan.json sha256=f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e
+SOURCE docs/FRONTEND_SCOPE.md sha256=959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab
+SOURCE package.json sha256=3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138
+SOURCE scripts/test-domain.mjs sha256=6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a
+SOURCE tests/domain-scenarios.cjs sha256=ac65e916a6433de60f96292ac03381b625aece42a04f6ac37085eb1243766245
+SOURCE tests/session/demo-server-cache-isolation.spec.ts sha256=8cbbfdc37f5a32c1a228be78b0875652660b10b4ad64c41139753dcd51e7c385
+SOURCE tests/ui009-scope-regression.spec.ts sha256=9939f7c1d99bb903f0e333f6913f172938fa39cc986c593cb9b8c840e18b509e
+Codex self-review; no independent peer review claimed
+--- expected negative production build output ---
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+failed to load config from C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\vite.config.ts
+error during build:
+Error: Production không được bật mô phỏng. Dùng build:demo cho bản review.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/apps/web/node_modules/.vite-temp/vite.config.ts.timestamp-1791383025555-cc910d90c6a2f.mjs:30:11
+    at loadConfigFromFile (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/node_modules/vite/dist/node/chunks/config.js:35853:64)
+    at async resolveConfig (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/node_modules/vite/dist/node/chunks/config.js:35500:22)
+    at async createBuilder (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/node_modules/vite/dist/node/chunks/config.js:33955:19)
+    at async CAC.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/node_modules/vite/dist/node/cli.js:629:10)
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web
+npm error workspace @botsales/web@0.1.0
+npm error location C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web
+npm error command failed
+npm error command cmd.exe /d /s /c vite build --mode production

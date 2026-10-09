@@ -1,0 +1,355 @@
+{
+  "executedAt": "2026-10-08T07:43:35.940Z",
+  "taskId": "FE011",
+  "stepId": "S05",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+      "verification": "Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R15",
+          "source": "apps/web/src/modules/inventory/index.tsx",
+          "component": "InventoryPage"
+        },
+        {
+          "id": "R16",
+          "source": "apps/web/src/modules/inventory/index.tsx",
+          "component": "MovementsPage"
+        }
+      ],
+      "operationIds": [
+        "createInventoryAdjustment",
+        "getShop",
+        "listStockMovements",
+        "listStockSnapshots"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result",
+        "FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once",
+        "FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically",
+        "FE011.AC03 forbidden adjustment retains user input and shows no success state",
+        "FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it",
+        "FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source",
+        "FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog",
+        "FE011.AC03 unknown shop scope shows no stock from another shop"
+      ],
+      "executions": 16,
+      "assertionInventory": [
+        {
+          "file": "tests/fe011.spec.ts",
+          "sha256": "62c14c8ed89669e6b35ebc49b96444171950093c80f8a1d6f90a8d674a3304d5",
+          "cases": [
+            {
+              "title": "FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result",
+              "line": 35,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Tồn kho', exact: true })).toBeVisible()",
+                "expect(page.getByRole('alert').filter({ hasText: 'Kho mặc định: warehouse-01' })).toBeVisible()",
+                "expect(row.getByRole('cell').nth(1)).toHaveText('8')",
+                "expect(row.getByRole('cell').nth(2)).toHaveText('0')",
+                "expect(row.getByRole('cell').nth(3)).toHaveText('8')",
+                "expect(row).toContainText('snapshot')",
+                "expect(row.getByRole('link', { name: 'Mở sản phẩm' })).toHaveAttribute('href', '/s/shop-demo/products?q=DEMO-001')",
+                "expect(calls.some(call => call.method === 'GET' && call.path === '/api/v2/shops/shop-demo')).toBeTruthy()",
+                "expect(calls.some(call => call.method === 'GET' && call.path.startsWith('/api/v2/shops/shop-demo/inventory?'))).toBeTruthy()",
+                "expect(page).toHaveURL(/\\/s\\/shop-demo\\/products\\?q=DEMO-001/)",
+                "expect(page.getByText('Áo mẫu A', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once",
+              "line": 54,
+              "assertions": [
+                "expect(dialog.getByText('Số điều chỉnh phải khác 0 và nằm trong giới hạn hợp đồng.')).toBeVisible()",
+                "expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/inventory/adjustments'))).toHaveLength(0)",
+                "expect(submit).toBeDisabled()",
+                "expect(page.getByRole('status').filter({ hasText: 'Điều chỉnh đã được xác nhận' })).toHaveCount(0)",
+                "expect(page.getByRole('status').filter({ hasText: 'Điều chỉnh đã được xác nhận' })).toBeVisible({ timeout: 15000 })",
+                "expect(row.getByRole('cell').nth(1)).toHaveText('10')",
+                "expect(adjustmentCalls).toHaveLength(1)",
+                "expect(adjustmentCalls[0].headers['idempotency-key']).toBeTruthy()",
+                "expect(adjustmentCalls[0].headers['x-csrf-token']).toBeTruthy()",
+                "expect(JSON.parse(adjustmentCalls[0].body || 'null')).toMatchObject({ variantId: 'v-p1', warehouseId: 'warehouse-01', quantityDelta: 2, reason: 'Kiểm kê FE011', expectedVersion: 1, unitCost: { amount: '100000', currency: 'VND' } })",
+                "expect(page.getByRole('heading', { name: 'Lịch sử kho', exact: true })).toBeVisible()",
+                "expect(movement).toContainText('adjustment')",
+                "expect(movement).toContainText('2')",
+                "expect(movement).toContainText('user-demo')",
+                "expect(calls.some(call => call.method === 'GET' && call.path.startsWith('/api/v2/shops/shop-demo/inventory/movements'))).toBeTruthy()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically",
+              "line": 92,
+              "assertions": [
+                "expect(dialog.getByRole('alert').filter({ hasText: 'dữ liệu bị thay đổi bởi người khác' })).toBeVisible()",
+                "expect(dialog.getByLabel('Thay đổi số lượng')).toHaveValue('1')",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Không đủ hàng bán được' })).toBeVisible()",
+                "expect(dialog.getByLabel('Thay đổi số lượng')).toHaveValue('-100')",
+                "expect(dialog).toHaveAttribute('data-draft-dirty', 'true')",
+                "expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/inventory/adjustments'))).toHaveLength(2)",
+                "expect(discardDialog).toBeVisible()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(row.getByRole('cell').nth(1)).toHaveText('8')",
+                "expect(page.getByText('Kiểm kê xung đột', { exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE011.AC03 forbidden adjustment retains user input and shows no success state",
+              "line": 120,
+              "assertions": [
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Mô phỏng mất quyền' })).toBeVisible()",
+                "expect(dialog.getByLabel('Lý do điều chỉnh')).toHaveValue('Thử mất quyền')",
+                "expect(page.getByRole('status').filter({ hasText: 'Điều chỉnh đã được xác nhận' })).toHaveCount(0)",
+                "expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/inventory/adjustments'))).toHaveLength(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it",
+              "line": 136,
+              "assertions": [
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Chưa xác minh được kết quả' })).toBeVisible({ timeout: 15000 })",
+                "expect(page.getByText(/thao tác chưa xác minh kết quả/)).toBeVisible()",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Chưa xác minh được kết quả' })).toBeVisible()",
+                "expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/inventory/adjustments'))).toHaveLength(1)",
+                "expect(page.getByRole('status').filter({ hasText: 'Điều chỉnh đã được xác nhận' })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source",
+              "line": 154,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Lịch sử kho', exact: true })).toBeVisible()",
+                "expect(page.getByRole('alert').filter({ hasText: 'Cursor không còn phù hợp' })).toBeVisible()",
+                "expect(page.getByLabel('Loại biến động')).toHaveCount(0)",
+                "expect(page).toHaveURL(/warehouseId=warehouse-01/)",
+                "expect(page).toHaveURL(/variantId=v-p1/)",
+                "expect(page).toHaveURL(/preserve=keep/)",
+                "expect(page).not.toHaveURL(/cursor=/)",
+                "expect(page).not.toHaveURL(/kind=/)",
+                "expect(page.getByRole('row').filter({ hasText: 'user-demo' }).first()).toBeVisible()",
+                "expect(filtered.searchParams.get('warehouseId')).toBe('warehouse-01')",
+                "expect(filtered.searchParams.get('variantId')).toBe('v-p1')",
+                "expect(filtered.searchParams.has('kind')).toBe(false)",
+                "expect(filtered.searchParams.has('cursor')).toBe(false)",
+                "expect(page.getByRole('button', { name: 'Xóa bộ lọc' })).toBeVisible()",
+                "expect(calls.some(call => call.method === 'GET' && call.path.includes('/inventory/movements') && new URLSearchParams(call.path.split('?')[1]).has('kind'))).toBe(false)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog",
+              "line": 182,
+              "assertions": [
+                "expect(page.getByRole('region', { name: 'Tồn kho theo vị trí' })).toBeVisible()",
+                "expect(overflowsViewport, `inventory page overflows at ${width}px`).toBe(false)",
+                "expect(audit.violations).toEqual([])",
+                "expect(dialog).toBeVisible()",
+                "expect.poll(() => page.evaluate(() => Boolean(document.activeElement?.closest('[role=\"dialog\"]'))), { timeout: 3000 }).toBe(true)",
+                "expect.poll(() => page.evaluate(() => Boolean(document.activeElement?.closest('[role=\"dialog\"]'))), { timeout: 3000 })",
+                "expect(dialog).toHaveCount(0)",
+                "expect(trigger).toBeFocused()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE011.AC03 unknown shop scope shows no stock from another shop",
+              "line": 205,
+              "assertions": [
+                "expect(page.getByText('Bạn không có quyền truy cập cửa hàng này.', { exact: true })).toBeVisible()",
+                "expect(page.getByText('DEMO-001', { exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 173,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 554,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 173-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T06:37:29.347Z",
+      "finishedAt": "2026-10-08T07:30:19.236Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441445991-24436/e2e.log",
+        "sha256": "3cacad22f6067dd1457cbb612a006c0c23b5fbe412b9463eb0e9cce03e58def3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T07:34:52.342Z",
+      "finishedAt": "2026-10-08T07:37:44.467Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444892341-75160/verify.log",
+        "sha256": "dfbd8a6d477a6eecb4157cfc065af49dbd42757c5af1562dc2ef420eb54a06c9"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T06:33:11.870Z",
+      "finishedAt": "2026-10-08T06:33:20.247Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191868-26044/unit.log",
+        "sha256": "30b43fa2caed68b69a8af1d3f42966be47fb599333ec8aeabf545d4e3a06828a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T06:33:12.561Z",
+      "finishedAt": "2026-10-08T06:33:13.122Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192559-16080/source-maps.log",
+        "sha256": "5995622faa92f23d7d7aaf71389770d0c2f06620028cee851c437263d462ea95"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T07:30:53.995Z",
+      "finishedAt": "2026-10-08T07:34:07.500Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444650847-70468/built-demo.log",
+        "sha256": "7a0b4144184a753be8151839e9a6c36446ccb91e0ed149baca057f25fd9f5c9d"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "001d670a97e520928269d72440b0126ab66e566af813b52899e1ddba8055322a"
+}

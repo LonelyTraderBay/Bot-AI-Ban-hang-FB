@@ -1,0 +1,17 @@
+FE001.S04 next target and Change Budget
+Scope: FRONTEND_WITH_SYNTHETIC_MOCK_API
+Current HEAD: 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6
+Selected next target: FE002 — Toolchain và dependencies tái lập (priority 2; dependency FE001).
+Routes/operations: none; feature references H07/H08 only; no product API or backend task is introduced.
+Verification levels: V0–V3 for toolchain/source/install/setup/doctor evidence; V4 only if a concrete dependency or environment risk appears.
+Allowed write budget from canonical FE002 plan:
+  - package.json
+  - apps/web/package.json
+  - package-lock.json
+  - .node-version
+  - scripts/setup.mjs
+  - scripts/doctor.mjs
+  - docs/PROJECT_CONTEXT.md
+Execution controls: record exact Node/npm and pre-run manifest/lock hashes; inspect setup/doctor write/cache/network behavior; if npm install changes an in-scope manifest/lock, preserve both before/after hashes and explain the diff; never overwrite existing .env or unrelated working-tree edits; cold npm ci must use an isolated copy.
+Out of budget: Backend, provider/live API, full-product T ledger, shared canonical contracts/tokens/generated outputs, unrelated FE modules/tests/evidence, commit/push/deploy.
+No source change is authorized by this planning checkpoint; FE002 starts only after FE001.S05 closes the dependency.

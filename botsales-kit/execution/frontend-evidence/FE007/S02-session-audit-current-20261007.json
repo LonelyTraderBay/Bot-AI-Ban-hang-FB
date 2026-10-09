@@ -1,0 +1,55 @@
+{
+  "executedAt": "2026-10-07T14:35:07.230Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "rootProviders": {
+    "router": 1,
+    "queryClient": 1,
+    "session": 1,
+    "theme": 1
+  },
+  "queryClientInstances": 1,
+  "sessionQuery": [
+    "session"
+  ],
+  "shopQuery": [
+    "shop",
+    "session.user.id",
+    "shopId",
+    "membership.permissionVersion"
+  ],
+  "featureQuery": [
+    "scope",
+    "user.id",
+    "shop.id",
+    "membership.permissionVersion",
+    "operation",
+    "path",
+    "filters"
+  ],
+  "auth": {
+    "expiredSession401": "Redirects to /login and preserves the requested shop path in returnTo; browser asserted in Chromium and Firefox.",
+    "unavailableLiveSession": "Shows an API unavailable message and no mock data; browser asserted in Chromium and Firefox."
+  },
+  "authorization": {
+    "roleRouteGuard": "Viewer role sees an explicit denied state for a restricted route; browser asserted in Chromium and Firefox.",
+    "forbiddenRead": "403 appears as an access error; successful empty list remains a different state; browser asserted in Chromium and Firefox.",
+    "serverAuthorization": "Not proved. Role behavior comes from synthetic MSW/local fixtures."
+  },
+  "tests": {
+    "unitSummary": "      Tests  138 passed (138)",
+    "browserTests": 8,
+    "browserProjects": [
+      "chromium",
+      "firefox"
+    ],
+    "browserLog": "execution/frontend-evidence/FE007/S02-session-browser-current-20261007.log",
+    "browserLogSha256": "c5e531f68021b6e088f901d05d21eab886af3b97235511fe827b31e54e0859e8"
+  },
+  "preservedUserSource": {
+    "path": "apps/web/tests/api-client.test.tsx",
+    "sha256Before": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
+    "sha256After": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
+    "unchanged": true
+  },
+  "limits": "Session/auth/role cases use local frontend and synthetic fixtures; no OIDC server, real backend authorization, hosting, or provider integration was exercised."
+}

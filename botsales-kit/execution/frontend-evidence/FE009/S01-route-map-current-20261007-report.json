@@ -1,0 +1,912 @@
+{
+  "taskId": "FE009",
+  "stepId": "S01",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "canonicalSources": {
+    "plan": "botsales-kit/execution/frontend-plan.json",
+    "routeManifest": "botsales-kit/contracts/route-manifest.json",
+    "openapi": "botsales-kit/contracts/openapi.json",
+    "permissionCatalog": "botsales-kit/contracts/permission-catalog.json",
+    "featureCatalog": "botsales-kit/contracts/feature-catalog.json",
+    "generatedOperationIndex": "packages/contracts/src/operations.json"
+  },
+  "routeCount": 11,
+  "operationCount": 29,
+  "featureIds": [
+    "B06",
+    "G01",
+    "G02",
+    "G03",
+    "G04",
+    "G05",
+    "G06",
+    "H05",
+    "H06",
+    "H07"
+  ],
+  "routeOperationIds": [
+    "getCsrfToken",
+    "beginLogin",
+    "listShops",
+    "getSession",
+    "createShop",
+    "listCustomers",
+    "createCustomer",
+    "getCustomer",
+    "updateCustomer",
+    "listMembers",
+    "getMember",
+    "inviteMember",
+    "updateMemberRoles",
+    "revokeMembership",
+    "getShop",
+    "updateShop",
+    "listAuditEvents",
+    "getPrivacyPolicy",
+    "listPrivacyRequests",
+    "getCommand",
+    "updatePrivacyPolicy",
+    "createPrivacyRequest",
+    "stepUp",
+    "approvePrivacyRequest",
+    "getJob",
+    "listServiceCases",
+    "getServiceCase",
+    "createServiceCase",
+    "setServiceCaseStatus"
+  ],
+  "routeComponentMap": [
+    {
+      "id": "R01",
+      "path": "/login",
+      "module": "workspace",
+      "component": "LoginPage",
+      "readPermission": null,
+      "readOperations": [
+        "getCsrfToken"
+      ],
+      "actions": [
+        {
+          "label": "Đăng nhập qua hệ thống nhận dạng",
+          "operationId": "beginLogin",
+          "permission": null
+        }
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R02",
+      "path": "/workspaces",
+      "module": "workspace",
+      "component": "WorkspacesPage",
+      "readPermission": null,
+      "readOperations": [
+        "listShops",
+        "getSession"
+      ],
+      "actions": [],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R03",
+      "path": "/onboarding",
+      "module": "workspace",
+      "component": "OnboardingPage",
+      "readPermission": null,
+      "readOperations": [
+        "getSession"
+      ],
+      "actions": [
+        {
+          "label": "Tạo cửa hàng",
+          "operationId": "createShop",
+          "permission": null
+        }
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R07",
+      "path": "/s/:shopId/customers",
+      "module": "customers",
+      "component": "CustomersPage",
+      "readPermission": "customers.read",
+      "readOperations": [
+        "listCustomers"
+      ],
+      "actions": [
+        {
+          "label": "Thêm khách",
+          "operationId": "createCustomer",
+          "permission": "customers.write"
+        }
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-038"
+      ]
+    },
+    {
+      "id": "R08",
+      "path": "/s/:shopId/customers/:customerId",
+      "module": "customers",
+      "component": "CustomerPage",
+      "readPermission": "customers.read",
+      "readOperations": [
+        "getCustomer"
+      ],
+      "actions": [
+        {
+          "label": "Lưu hồ sơ",
+          "operationId": "updateCustomer",
+          "permission": "customers.write"
+        }
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-038"
+      ]
+    },
+    {
+      "id": "R32",
+      "path": "/s/:shopId/settings/team",
+      "module": "workspace",
+      "component": "TeamPage",
+      "readPermission": "members.manage",
+      "readOperations": [
+        "listMembers",
+        "getMember"
+      ],
+      "actions": [
+        {
+          "label": "Mời nhân viên",
+          "operationId": "inviteMember",
+          "permission": "members.manage"
+        },
+        {
+          "label": "Đổi vai trò",
+          "operationId": "updateMemberRoles",
+          "permission": "members.manage"
+        },
+        {
+          "label": "Thu hồi quyền",
+          "operationId": "revokeMembership",
+          "permission": "members.manage"
+        }
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R33",
+      "path": "/s/:shopId/settings/shop",
+      "module": "workspace",
+      "component": "ShopSettingsPage",
+      "readPermission": "shop.manage",
+      "readOperations": [
+        "getShop"
+      ],
+      "actions": [
+        {
+          "label": "Lưu thiết lập",
+          "operationId": "updateShop",
+          "permission": "shop.manage"
+        }
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R34",
+      "path": "/s/:shopId/settings/audit",
+      "module": "workspace",
+      "component": "AuditPage",
+      "readPermission": "audit.read",
+      "readOperations": [
+        "listAuditEvents"
+      ],
+      "actions": [],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R35",
+      "path": "/s/:shopId/settings/privacy",
+      "module": "workspace",
+      "component": "PrivacyPage",
+      "readPermission": "privacy.manage",
+      "readOperations": [
+        "getPrivacyPolicy",
+        "listPrivacyRequests",
+        "getCommand"
+      ],
+      "actions": [
+        {
+          "label": "Lưu policy",
+          "operationId": "updatePrivacyPolicy",
+          "permission": "privacy.manage"
+        },
+        {
+          "label": "Tạo yêu cầu dữ liệu",
+          "operationId": "createPrivacyRequest",
+          "permission": "privacy.manage"
+        },
+        {
+          "label": "Xác thực lại",
+          "operationId": "stepUp",
+          "permission": null
+        },
+        {
+          "label": "Phê duyệt yêu cầu",
+          "operationId": "approvePrivacyRequest",
+          "permission": "privacy.manage"
+        }
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R36",
+      "path": "/s/:shopId/jobs/:jobId",
+      "module": "workspace",
+      "component": "JobPage",
+      "readPermission": "jobs.read",
+      "readOperations": [
+        "getJob"
+      ],
+      "actions": [],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R54",
+      "path": "/s/:shopId/service-cases",
+      "module": "customers",
+      "component": "ServiceCasesPage",
+      "readPermission": "customers.read",
+      "readOperations": [
+        "listServiceCases",
+        "getServiceCase"
+      ],
+      "actions": [
+        {
+          "label": "createServiceCase",
+          "operationId": "createServiceCase",
+          "permission": "customers.write"
+        },
+        {
+          "label": "setServiceCaseStatus",
+          "operationId": "setServiceCaseStatus",
+          "permission": "customers.write"
+        }
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-B06",
+        "SC2-G04"
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "id": "approvePrivacyRequest",
+      "method": "POST",
+      "path": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+      "permission": "privacy.manage",
+      "requestSchema": "ReauthApproval",
+      "responseSchema": "CommandResponse",
+      "versionRequired": false,
+      "directSourceUse": false,
+      "sourcePaths": [],
+      "notInvokedReason": "Privacy deletion requests remain pending; the frontend has no approved re-authentication protocol to call this destructive approval operation."
+    },
+    {
+      "id": "beginLogin",
+      "method": "POST",
+      "path": "/auth/start",
+      "permission": null,
+      "requestSchema": "AuthStart",
+      "responseSchema": "AuthRedirectResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "createCustomer",
+      "method": "POST",
+      "path": "/shops/{shopId}/customers",
+      "permission": "customers.write",
+      "requestSchema": "CustomerWrite",
+      "responseSchema": "CustomerResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/customers/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "createPrivacyRequest",
+      "method": "POST",
+      "path": "/shops/{shopId}/privacy/requests",
+      "permission": "privacy.manage",
+      "requestSchema": "PrivacyRequestWrite",
+      "responseSchema": "PrivacyRequestResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "createServiceCase",
+      "method": "POST",
+      "path": "/shops/{shopId}/service-cases",
+      "permission": "customers.write",
+      "requestSchema": "ServiceCaseWrite",
+      "responseSchema": "ServiceCaseResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/customers/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "createShop",
+      "method": "POST",
+      "path": "/shops",
+      "permission": null,
+      "requestSchema": "ShopWrite",
+      "responseSchema": "ShopResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "getCommand",
+      "method": "GET",
+      "path": "/shops/{shopId}/commands/{commandId}",
+      "permission": "jobs.read",
+      "requestSchema": null,
+      "responseSchema": "CommandResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/app/CommandRecovery.tsx",
+        "apps/web/src/shared/api/hooks.ts"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "getCsrfToken",
+      "method": "GET",
+      "path": "/auth/csrf",
+      "permission": null,
+      "requestSchema": null,
+      "responseSchema": "CsrfResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "getCustomer",
+      "method": "GET",
+      "path": "/shops/{shopId}/customers/{customerId}",
+      "permission": "customers.read",
+      "requestSchema": null,
+      "responseSchema": "CustomerResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/customers/index.tsx",
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "getJob",
+      "method": "GET",
+      "path": "/shops/{shopId}/jobs/{jobId}",
+      "permission": "jobs.read",
+      "requestSchema": null,
+      "responseSchema": "JobResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/catalog/imports.tsx",
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "getMember",
+      "method": "GET",
+      "path": "/shops/{shopId}/members/{memberId}",
+      "permission": "members.manage",
+      "requestSchema": null,
+      "responseSchema": "MembershipResponse",
+      "versionRequired": false,
+      "directSourceUse": false,
+      "sourcePaths": [],
+      "notInvokedReason": "TeamPage edits the membership returned by listMembers; FE009 has no member-detail route or separate detail action."
+    },
+    {
+      "id": "getPrivacyPolicy",
+      "method": "GET",
+      "path": "/shops/{shopId}/privacy/policy",
+      "permission": "privacy.manage",
+      "requestSchema": null,
+      "responseSchema": "PrivacyPolicyResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "getServiceCase",
+      "method": "GET",
+      "path": "/shops/{shopId}/service-cases/{resourceId}",
+      "permission": "customers.read",
+      "requestSchema": null,
+      "responseSchema": "ServiceCaseResponse",
+      "versionRequired": false,
+      "directSourceUse": false,
+      "sourcePaths": [],
+      "notInvokedReason": "ServiceCasesPage is a collection route; FE009 has no service-case-detail route."
+    },
+    {
+      "id": "getSession",
+      "method": "GET",
+      "path": "/session",
+      "permission": null,
+      "requestSchema": null,
+      "responseSchema": "SessionResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/app/SessionProvider.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "getShop",
+      "method": "GET",
+      "path": "/shops/{shopId}",
+      "permission": null,
+      "requestSchema": null,
+      "responseSchema": "ShopResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/app/Shell.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "inviteMember",
+      "method": "POST",
+      "path": "/shops/{shopId}/members",
+      "permission": "members.manage",
+      "requestSchema": "MemberInvite",
+      "responseSchema": "MembershipResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "listAuditEvents",
+      "method": "GET",
+      "path": "/shops/{shopId}/audit",
+      "permission": "audit.read",
+      "requestSchema": null,
+      "responseSchema": "AuditEventListResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "listCustomers",
+      "method": "GET",
+      "path": "/shops/{shopId}/customers",
+      "permission": "customers.read",
+      "requestSchema": null,
+      "responseSchema": "CustomerListResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/customers/index.tsx",
+        "apps/web/src/modules/orders/index.tsx",
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "listMembers",
+      "method": "GET",
+      "path": "/shops/{shopId}/members",
+      "permission": "members.manage",
+      "requestSchema": null,
+      "responseSchema": "MembershipListResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/notifications/index.tsx",
+        "apps/web/src/modules/operations/index.tsx",
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "listPrivacyRequests",
+      "method": "GET",
+      "path": "/shops/{shopId}/privacy/requests",
+      "permission": "privacy.manage",
+      "requestSchema": null,
+      "responseSchema": "PrivacyRequestListResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "listServiceCases",
+      "method": "GET",
+      "path": "/shops/{shopId}/service-cases",
+      "permission": "customers.read",
+      "requestSchema": null,
+      "responseSchema": "ServiceCaseListResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/customers/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "listShops",
+      "method": "GET",
+      "path": "/shops",
+      "permission": null,
+      "requestSchema": null,
+      "responseSchema": "ShopListResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "revokeMembership",
+      "method": "DELETE",
+      "path": "/shops/{shopId}/members/{memberId}",
+      "permission": "members.manage",
+      "requestSchema": null,
+      "responseSchema": null,
+      "versionRequired": true,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "setServiceCaseStatus",
+      "method": "POST",
+      "path": "/shops/{shopId}/service-cases/{resourceId}/status",
+      "permission": "customers.write",
+      "requestSchema": "CaseStatusWrite",
+      "responseSchema": "ServiceCaseResponse",
+      "versionRequired": false,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/customers/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "stepUp",
+      "method": "POST",
+      "path": "/auth/step-up",
+      "permission": null,
+      "requestSchema": "StepUpRequest",
+      "responseSchema": "StepUpResultResponse",
+      "versionRequired": false,
+      "directSourceUse": false,
+      "sourcePaths": [],
+      "notInvokedReason": "The current product gap records that password step-up cannot be substituted for the OIDC re-authentication protocol."
+    },
+    {
+      "id": "updateCustomer",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/customers/{customerId}",
+      "permission": "customers.write",
+      "requestSchema": "CustomerWritePatch",
+      "responseSchema": "CustomerResponse",
+      "versionRequired": true,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/customers/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "updateMemberRoles",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/members/{memberId}",
+      "permission": "members.manage",
+      "requestSchema": "MemberRolePatch",
+      "responseSchema": "MembershipResponse",
+      "versionRequired": true,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "updatePrivacyPolicy",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/privacy/policy",
+      "permission": "privacy.manage",
+      "requestSchema": "PrivacyPolicyWritePatch",
+      "responseSchema": "PrivacyPolicyResponse",
+      "versionRequired": true,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    },
+    {
+      "id": "updateShop",
+      "method": "PATCH",
+      "path": "/shops/{shopId}",
+      "permission": "shop.manage",
+      "requestSchema": "ShopPatch",
+      "responseSchema": "ShopResponse",
+      "versionRequired": true,
+      "directSourceUse": true,
+      "sourcePaths": [
+        "apps/web/src/modules/workspace/index.tsx"
+      ],
+      "notInvokedReason": null
+    }
+  ],
+  "directOperationUseCount": 25,
+  "notInvokedOperationIds": [
+    {
+      "id": "approvePrivacyRequest",
+      "reason": "Privacy deletion requests remain pending; the frontend has no approved re-authentication protocol to call this destructive approval operation."
+    },
+    {
+      "id": "getMember",
+      "reason": "TeamPage edits the membership returned by listMembers; FE009 has no member-detail route or separate detail action."
+    },
+    {
+      "id": "getServiceCase",
+      "reason": "ServiceCasesPage is a collection route; FE009 has no service-case-detail route."
+    },
+    {
+      "id": "stepUp",
+      "reason": "The current product gap records that password step-up cannot be substituted for the OIDC re-authentication protocol."
+    }
+  ],
+  "featureScopeNotes": [
+    {
+      "ids": [
+        "G02",
+        "G03",
+        "G06"
+      ],
+      "observed": "Workspace setup checklist links to the Knowledge pages; the FE009 write scope does not own the Knowledge module."
+    },
+    {
+      "ids": [
+        "G01"
+      ],
+      "observed": "Setup checklist marks missing business country, delivery policy, approval policy, and provider grants as unconfigured."
+    },
+    {
+      "ids": [
+        "G05"
+      ],
+      "observed": "Marketing opt-out is preview-only; the current contract exposes no server opt-out operation."
+    },
+    {
+      "ids": [
+        "H05",
+        "H07"
+      ],
+      "observed": "Frontend role/scope and mock isolation are validated in FE007/FE008; that does not prove server authorization or real integrations."
+    }
+  ],
+  "customerRelationshipGap": {
+    "severity": "P1 user-visible completeness gap; not a demonstrated authorization bypass",
+    "contractEvidence": [
+      {
+        "id": "listOrders",
+        "queryParameters": [
+          "limit",
+          "cursor",
+          "q",
+          "status",
+          "sort",
+          "customerId"
+        ]
+      },
+      {
+        "id": "listShipments",
+        "queryParameters": [
+          "limit",
+          "cursor"
+        ]
+      },
+      {
+        "id": "listServiceCases",
+        "queryParameters": [
+          "limit",
+          "cursor"
+        ]
+      }
+    ],
+    "implementation": {
+      "serviceCases": {
+        "query": "listServiceCases(limit: 10)",
+        "filter": "client-side customerId after response",
+        "completeness": "first page only"
+      },
+      "shipments": {
+        "query": "listShipments(limit: 100)",
+        "filter": "client-side by order IDs from customer-filtered listOrders",
+        "completeness": "first page only"
+      }
+    },
+    "impact": "A related case/shipment outside the fetched page can be omitted from the customer profile. The API has no customerId filter for cases or shipments, so the frontend cannot claim a complete customer-specific list without an API contract change.",
+    "disposition": "Record as contract-bound open gap; do not invent a query parameter. The service-cases and shipments collection routes remain usable."
+  },
+  "sourceSnapshotSha256": "b4df1b3794d7033e7f523a14a0f4f83ec03180597a2a704919b2201030a64a7b"
+}

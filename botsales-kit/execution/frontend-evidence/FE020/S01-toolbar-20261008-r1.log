@@ -1,0 +1,354 @@
+{
+  "executedAt": "2026-10-08T10:02:07.387Z",
+  "taskId": "FE020",
+  "stepId": "S01",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+      "verification": "Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R37",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "OperationsPage"
+        },
+        {
+          "id": "R38",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "ApprovalsPage"
+        },
+        {
+          "id": "R52",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "DigestsPage"
+        }
+      ],
+      "operationIds": [
+        "claimWorkItem",
+        "controlAutomation",
+        "decideApproval",
+        "getApproval",
+        "getOperationsSummary",
+        "listApprovals",
+        "listDigests",
+        "listWorkItems",
+        "updateWorkItem"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE020.AC01 approval detail is fetched and a changed source resource rejects the stale decision",
+        "FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic",
+        "FE020.AC03 role pause control uses the canonical versioned mock and never claims readiness",
+        "FE020.F03 operations exception filter groups overdue, blocked, and unclaimed synthetic work",
+        "FE020.F05 delegation rule preview stays local and grants no API approval capability",
+        "FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready",
+        "FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate"
+      ],
+      "executions": 14,
+      "assertionInventory": [
+        {
+          "file": "tests/fe020.spec.ts",
+          "sha256": "8ab1a7f289aae644ad84783eccb196d3f3f22453d8fd69dd6d4caf874105591c",
+          "cases": [
+            {
+              "title": "FE020.AC01 approval detail is fetched and a changed source resource rejects the stale decision",
+              "line": 41,
+              "assertions": [
+                "expect(row).toBeVisible()",
+                "expect(detailResponse.status()).toBe(200)",
+                "expect(detail).toMatchObject({ id: approval.id, status: 'pending', intentHash: approval.intentHash, resourceVersion: approval.resourceVersion })",
+                "expect(dialog.getByText('synthetic-policy-1', { exact: true })).toBeVisible()",
+                "expect(dialog.getByText(new RegExp(`phiên bản ${approval.resourceVersion}`, 'i'))).toBeVisible()",
+                "expect(mutations.wrongIntentStatus).toBe(409)",
+                "expect(mutations.wrongIntentProblem.detail).toBe('Nội dung phê duyệt đã đổi.')",
+                "expect(mutations.cancelStatus).toBe(202)",
+                "expect(body).toMatchObject({ expectedVersion: approval.version, intentHash: approval.intentHash, decision: 'approve' })",
+                "expect((await decisionResponse).status()).toBe(409)",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Đơn mua đã thay đổi sau khi xin duyệt.' })).toBeVisible()",
+                "expect(dialog.getByRole('textbox', { name: 'Lý do quyết định' })).toHaveValue('Không duyệt vì nguồn đã thay đổi sau khi xin duyệt.')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic",
+              "line": 87,
+              "assertions": [
+                "expect(page.getByText('Dữ liệu vận hành và trạng thái dịch vụ đang được mô phỏng', { exact: false })).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Cập nhật', exact: true })).toHaveCount(0)",
+                "expect(page.getByText('Được phép: Không có hành động', { exact: true }).first()).toBeVisible()",
+                "expect(attempt.status).toBe(409)",
+                "expect(attempt.problem.code).toBe('CAPABILITY_UNAVAILABLE')",
+                "expect(attempt.claimStatus).toBe(409)",
+                "expect(attempt.claimProblem.code).toBe('CAPABILITY_UNAVAILABLE')",
+                "expect(page.getByText('Bản tin mẫu', { exact: false })).toBeVisible()",
+                "expect(page.getByText('Đây là dữ liệu mô phỏng.', { exact: false })).toBeVisible()",
+                "expect(page.getByText('digest-01 · phiên bản 1', { exact: true })).toBeVisible()",
+                "expect(page.getByText('Không có mục công việc được tham chiếu', { exact: true })).toBeVisible()",
+                "expect(page.getByText(/Chưa có API tạo\\/sửa lịch bản tin/)).toBeVisible()",
+                "expect(page.getByText('Chưa kiểm tra thực tế', { exact: true }).first()).toBeVisible()",
+                "expect(page.getByRole('button', { name: /Tạo lịch bản tin|Lưu lịch bản tin/ })).toHaveCount(0)",
+                "expect(page.getByRole('button', { name: 'Tạm dừng vai trò' })).toHaveCount(0)",
+                "expect(page.getByRole('button', { name: 'Kiểm tra điều kiện tiếp tục' })).toHaveCount(0)",
+                "expect(denied.status).toBe(403)",
+                "expect(denied.problem.code).toBe('FORBIDDEN')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE020.AC03 role pause control uses the canonical versioned mock and never claims readiness",
+              "line": 137,
+              "assertions": [
+                "expect(body).toMatchObject({ expectedVersion: 1, scope: 'role', action: 'resume', reason: 'Kiểm tra mô phỏng policy và version hiện tại.' })",
+                "expect(body.resourceId).toBeTruthy()",
+                "expect((await responseWait).status()).toBe(202)",
+                "expect(dialog).toHaveCount(0)",
+                "expect(page.getByText(/Thế hệ 2 · Chưa cấu hình/).first()).toBeVisible()",
+                "expect(page.getByText(/healthy|Đã sẵn sàng/)).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE020.F03 operations exception filter groups overdue, blocked, and unclaimed synthetic work",
+              "line": 154,
+              "assertions": [
+                "expect(panel).toContainText('Chỉ lọc trang dữ liệu hiện đang tải')",
+                "expect(table.getByRole('row').filter({ hasText: sourceRef })).toBeVisible()",
+                "expect(table.getByRole('row').filter({ hasText: 'DH-DEMO-PAID-01' })).toHaveCount(0)",
+                "expect(table.getByRole('row')).toHaveCount(4)",
+                "expect(table.getByRole('row').filter({ hasText: 'DH-DEMO-PAID-01' })).toBeVisible()",
+                "expect(table.getByRole('row')).toHaveCount(5)",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE020.F05 delegation rule preview stays local and grants no API approval capability",
+              "line": 175,
+              "assertions": [
+                "expect(preview).toContainText('Kho & mua hàng')",
+                "expect(preview).toContainText('450.000 VND')",
+                "expect(preview).toContainText('không nâng scope')",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready",
+              "line": 192,
+              "assertions": [
+                "expect(digestsResponse.status()).toBe(200)",
+                "expect(healthResponse.status()).toBe(200)",
+                "expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe hệ thống', exact: true })).toBeVisible()",
+                "expect(page.getByText('Đây là dữ liệu mô phỏng.', { exact: false })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Bản tin điều hành', exact: true })).toBeVisible()",
+                "expect(page.getByText(digest.id, { exact: false })).toBeVisible()",
+                "expect(page.getByText(digest.text, { exact: true })).toBeVisible()",
+                "expect(digest.status).toBe('draft')",
+                "expect(check.status).toBe('unknown')",
+                "expect(check.checkedAt).toBeNull()",
+                "expect(page.getByText(check.component, { exact: true })).toBeVisible()",
+                "expect(page.getByText(check.reason, { exact: true })).toHaveCount(summary.health.filter(candidate => candidate.reason === check.reason).length)",
+                "expect(page.getByText('Chưa kiểm tra thực tế', { exact: true })).toHaveCount(summary.health.length)",
+                "expect(page.getByText(/Chưa có API tạo\\/sửa lịch bản tin/)).toBeVisible()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate",
+              "line": 225,
+              "assertions": [
+                "expect(preview).toContainText('Diễn tập khôi phục bản sao lưu')",
+                "expect(preview).toContainText('Kiểm tra freshness của artifact và revision')",
+                "expect(preview).toContainText('Gates triển khai và kết quả CI')",
+                "expect(preview).toContainText('Môi trường/provider sau khi khôi phục')",
+                "expect(preview.getByText('Chưa xác minh', { exact: true })).toHaveCount(4)",
+                "expect(preview).toContainText('không thể cấp tín hiệu cho phép phát hành')",
+                "expect(readinessCalls).toEqual([])",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 174,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 566,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 174-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T08:56:56.838Z",
+      "finishedAt": "2026-10-08T09:50:46.607Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791449812941-81044/e2e.log",
+        "sha256": "3b1b0bade750acc0a043bbd99be26e0c3c72693c69e0ca74f15374af451ee58f"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T09:57:51.888Z",
+      "finishedAt": "2026-10-08T10:00:41.306Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791453471887-70896/verify.log",
+        "sha256": "3877b10727e1de723f0dbf97ce18477f2bffb84edd0c81b4d0d005123630fbef"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T09:13:19.120Z",
+      "finishedAt": "2026-10-08T09:13:27.706Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791450799118-6420/unit.log",
+        "sha256": "898190d1ec5c44618d85c25870ad388d2f2a7c39770b169f7913d5bf9daa6e7d"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T09:21:37.909Z",
+      "finishedAt": "2026-10-08T09:21:38.103Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791451297907-9880/source-maps.log",
+        "sha256": "c3f32dabe032ef1c8bfd06f9816d663f370d8e23e11ca44eb5a06787dc9f3446"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T09:54:16.588Z",
+      "finishedAt": "2026-10-08T09:57:14.696Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791453253022-85404/built-demo.log",
+        "sha256": "058394b7482ff9da610e47a95975543940501510cc85469399f0995b6861c470"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "5dccffa46755fd32e6dda8aae7623c6e53f0d9ae4332fc1bb14c08ffd1a75881"
+}

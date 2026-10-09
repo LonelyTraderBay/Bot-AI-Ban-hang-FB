@@ -1,0 +1,1285 @@
+{
+  "executedAt": "2026-10-09T05:14:02.498Z",
+  "taskId": "FE006",
+  "stepId": "S02",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Hoàn thiện primitive/shared behavior cần dùng: form/error/table/dialog/loading/status và pre-JS background.",
+      "verification": "Các trạng thái/layout dùng theme/token; không wrapper từng primitive vô nghĩa hoặc flash nền trắng. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [],
+      "operationIds": [],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "SPC-061/062 shared compositions own their gap and child boundaries on every canonical route",
+        "UI012 keyboard-only finance edit handles select, discard warning and focus return",
+        "UI012 keyboard validation focuses the field named by a synthetic 422 response",
+        "UI012 keyboard activates the CSV chooser and discards its selected file without upload",
+        "UI012 keyboard can reach and horizontally scroll the marketing chart data alternative",
+        "UI012 marketing chart keeps every category label visible beside its data table",
+        "UI012 inbox feedback actions identify their message and return focus after Escape",
+        "UI012 order draft does not announce an untouched required customer as invalid",
+        "UI012 long BotConfig policy literal wraps inside its alert at a 320 CSS-pixel viewport",
+        "UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible",
+        "Shared Toolbar and demo tools keep labels clear when text doubles",
+        "Toolbar geometry: multiline category lookup cannot stretch the search button",
+        "Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths",
+        "Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow",
+        "Toolbar public extra slot cannot stretch a single-line submit action",
+        "Toolbar preserves Products URL filters, search submit, clear and independent category lookup",
+        "Toolbar keeps Inventory apply/reset separate from search submission",
+        "Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination",
+        "Shell keeps header, banner, main and footer on one responsive gutter",
+        "demo controls stay discoverable on mobile and usable on desktop",
+        "SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer",
+        "unmatched route fallback owns its page gutter without horizontal overflow",
+        "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+        "A02 product editors align category and status faces independently from lookup metadata",
+        "Shared outlined labels focus empty and populated native controls",
+        "A02 variant fields retain readable widths when text doubles",
+        "A03 import mapping preserves natural remove actions and editable mappings",
+        "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+        "A05 status height follows its own label while long labels remain fully readable",
+        "A06 Empty wraps unbroken reference text and retains its keyboard action",
+        "A07 locked order addresses expose full text and edit lines retain intrinsic actions",
+        "W01 AI single connection fills its collection at breakpoint edges and wide viewports",
+        "W01 AI keeps two-column collection for two/three items and refetch preserves the new count",
+        "W01 AI empty result keeps one accessible create action and no empty grid",
+        "W02 full-width form groups fill their panel and retain input/mapping/shipping behavior",
+        "W03 notification protection notice occupies the full page row after the two panes",
+        "W04 detail rows stay atomic in divided rhythm and plain containers",
+        "Shared consolidation Dashboard primary link respects all eight permission tuples and native anchor interactions",
+        "dashboard hierarchy, CTA targets, and page width hold across supported breakpoints",
+        "density table saves row space while preserving action target and data",
+        "density divided facts list has one row inset and no additional inter-row gap",
+        "density demo disclosure retains state and always shows the synthetic warning",
+        "density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm",
+        "density simple category editor keeps labels, errors and keyboard reflow usable"
+      ],
+      "executions": 88,
+      "assertionInventory": [
+        {
+          "file": "tests/ui-composition-layout.spec.ts",
+          "sha256": "ad9ff1b93c869b73a81b17deea26496570e30f2e55d04c112f3df87213e98fe7",
+          "cases": [
+            {
+              "title": "SPC-061/062 shared compositions own their gap and child boundaries on every canonical route",
+              "line": 13,
+              "assertions": [
+                "expect(group.rhythm, context).toMatch(/^(compact|comfortable)$/)",
+                "expect(group.rhythm, context).toMatch(/^(content|dividedRows)$/)",
+                "expect(group.rhythm, context).toMatch(/^(section|major)$/)",
+                "expect(group.rhythm, `${context} action-group rhythm`).toMatch(/^(compact|comfortable)$/)",
+                "expect(group.rhythm, `${context} section-grid rhythm`).toMatch(/^(section|content)$/)",
+                "expect(group.gap, `${context} ${group.owner}`).toBe(expected)",
+                "expect(margins, `${context} ${group.owner} child boundary`).toEqual(['0px', '0px'])",
+                "expect(result.inset, `${context} Shell main`).toEqual(['16px', '16px'])",
+                "expect(result.document[0], `${context} page overflow`).toBeLessThanOrEqual(result.document[1])",
+                "expect(errors).toEqual([])",
+                "expect(observations).toHaveLength(routes.length * 2)",
+                "expect([...observedOwners].sort()).toEqual(['action-group', 'field-group', 'form-fields', 'page-sections', 'section-grid', 'surface-content'])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui012-keyboard.spec.ts",
+          "sha256": "f780da7c5716ab6ec28844a880aab3168b1a74c9d3829bf40d26122abfc964c8",
+          "cases": [
+            {
+              "title": "UI012 keyboard-only finance edit handles select, discard warning and focus return",
+              "line": 42,
+              "assertions": [
+                "expect(page.locator('#root')).not.toBeEmpty()",
+                "expect(page.getByRole('heading', { name: 'Sổ thu chi', exact: true })).toBeVisible()",
+                "expect(main).toBeVisible()",
+                "expect(skipLink).toBeFocused()",
+                "expect(page).toHaveURL(/#main-content$/)",
+                "expect(main).toBeFocused()",
+                "expect(dialog).toBeVisible()",
+                "expect(listbox).toBeVisible()",
+                "expect(kind).toContainText('Thu tiền')",
+                "expect(kind).toBeFocused()",
+                "expect(discard).toBeVisible()",
+                "expect(discard).toHaveCount(0)",
+                "expect(dialog).toBeVisible()",
+                "expect(kind).toContainText('Thu tiền')",
+                "expect(amount).toHaveValue('1250')",
+                "expect(discard).toBeVisible()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(trigger).toBeFocused()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 keyboard validation focuses the field named by a synthetic 422 response",
+              "line": 103,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Kiến thức cửa hàng', exact: true })).toBeVisible()",
+                "expect(skipLink).toBeFocused()",
+                "expect(main).toBeFocused()",
+                "expect(dialog).toBeVisible()",
+                "expect(alert).toBeVisible()",
+                "expect(await page.evaluate(() => (window as Window & { __ui012Synthetic422: boolean }).__ui012Synthetic422)).toBe(true)",
+                "expect(content).toBeFocused()",
+                "expect(content).toHaveAttribute('aria-invalid', 'true')",
+                "expect(alert).toContainText('Nội dung: Hãy rà soát nội dung nguồn.')",
+                "expect(alert).not.toContainText('content:')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 keyboard activates the CSV chooser and discards its selected file without upload",
+              "line": 160,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD', exact: true })).toBeVisible()",
+                "expect(skipLink).toBeFocused()",
+                "expect(main).toBeFocused()",
+                "expect(dialog).toBeVisible()",
+                "expect(dialog.getByRole('button', { name: 'ui012-keyboard.csv', exact: true })).toBeVisible()",
+                "expect(discard).toBeVisible()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(trigger).toBeFocused()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 keyboard can reach and horizontally scroll the marketing chart data alternative",
+              "line": 200,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Thông tin cho marketing', exact: true })).toBeVisible()",
+                "expect(chart).toBeVisible()",
+                "expect(table.getByRole('row').nth(1)).toBeVisible()",
+                "expect(region).toBeVisible()",
+                "expect(skipLink).toBeFocused()",
+                "expect(main).toBeFocused()",
+                "expect(region).toBeFocused()",
+                "expect(await region.evaluate(element => (element as HTMLElement).scrollWidth > (element as HTMLElement).clientWidth)).toBe(true)",
+                "expect(after).toBeGreaterThan(before)",
+                "expect(await page.evaluate(() => document.documentElement.scrollLeft)).toBe(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 marketing chart keeps every category label visible beside its data table",
+              "line": 227,
+              "assertions": [
+                "expect(chart).toBeVisible()",
+                "expect(table).toBeVisible()",
+                "expect(chartLabels).toEqual(expect.arrayContaining(expectedLabels))",
+                "expect.arrayContaining(expectedLabels)",
+                "expect(table.getByRole('row')).toHaveCount(4)",
+                "expect(chartBounds).not.toBeNull()",
+                "expect(labelBounds).toHaveLength(expectedLabels.length)",
+                "expect(bounds.x).toBeGreaterThanOrEqual(chartBounds!.x)",
+                "expect(bounds.right).toBeLessThanOrEqual(chartBounds!.x + chartBounds!.width)",
+                "expect(bounds.fontSize).toBeGreaterThanOrEqual(14)",
+                "expect(labelBounds[index - 1].right).toBeLessThanOrEqual(labelBounds[index].x)",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 inbox feedback actions identify their message and return focus after Escape",
+              "line": 268,
+              "assertions": [
+                "expect(actions).toHaveCount(2)",
+                "expect(actionNames.every(name => name.startsWith('Đánh giá tin nhắn'))).toBe(true)",
+                "expect(new Set(actionNames).size).toBe(actionNames.length)",
+                "expect(actionNames).toContainEqual(expect.stringContaining('Shop ơi áo thun còn size L không?'))",
+                "expect.stringContaining('Shop ơi áo thun còn size L không?')",
+                "expect(actions.first()).toBeFocused()",
+                "expect(dialog).toBeVisible()",
+                "expect(ratingField).toBeFocused()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(actions.first()).toBeFocused()",
+                "expect(mutationRequests).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 order draft does not announce an untouched required customer as invalid",
+              "line": 301,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Tạo đơn hàng', exact: true })).toBeVisible()",
+                "expect(customer).toBeVisible()",
+                "expect(customer).not.toHaveAttribute('aria-invalid', 'true')",
+                "expect(customer).toHaveAttribute('aria-required', 'true')",
+                "expect(customer).not.toHaveClass(/Mui-error/)",
+                "expect(page.getByText('Chọn khách hàng để lưu đơn nháp.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Lưu đơn nháp' })).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 long BotConfig policy literal wraps inside its alert at a 320 CSS-pixel viewport",
+              "line": 314,
+              "assertions": [
+                "expect(alert).toBeVisible()",
+                "expect(alert.getByText('requireHumanOrderConfirmation=true', { exact: true })).toBeVisible()",
+                "expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth + 1)",
+                "expect(layout.clippedTextRects).toEqual([])",
+                "expect(layout.documentScrollWidth).toBeLessThanOrEqual(layout.documentClientWidth + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible",
+              "line": 348,
+              "assertions": [
+                "expect(action).toBeVisible()",
+                "expect(bounds).not.toBeNull()",
+                "expect(hoverColor).toBe('rgb(255, 219, 140)')",
+                "expect(pressedColor).toBe('rgb(223, 174, 79)')",
+                "expect(pressedColor).not.toBe(hoverColor)",
+                "expect(hoverContrast).toBeGreaterThanOrEqual(4.5)",
+                "expect(pressedContrast).toBeGreaterThanOrEqual(4.5)",
+                "expect(skipLink).toBeFocused()",
+                "expect(action).toBeFocused()",
+                "expect(await action.evaluate(element => element.matches(':focus-visible'))).toBe(true)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-toolbar-layout.spec.ts",
+          "sha256": "79265b2f67d982421f152e74fceae27193be5911bdf54f866f497f0fcc217bf1",
+          "cases": [
+            {
+              "title": "Shared Toolbar and demo tools keep labels clear when text doubles",
+              "line": 33,
+              "assertions": [
+                "expect(labels.filter(label => label.owner === 'demo-tools')).toHaveLength(3)",
+                "expect(labels.filter(label => label.owner === 'toolbar')).toHaveLength(1)",
+                "expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([])",
+                "expect(label.labelPosition).toBe('static')",
+                "expect(label.labelTransform).toBe('none')",
+                "expect(label.fieldBounds.height).toBeLessThanOrEqual(label.naturalHeight + 1)",
+                "expect(label.legends.every(width => width <= 1)).toBe(true)",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar geometry: multiline category lookup cannot stretch the search button",
+              "line": 61,
+              "assertions": [
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1)",
+                "expect(primary.getByRole('combobox', { name: 'Trạng thái', exact: true })).toBeVisible()",
+                "expect(primary.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toHaveCount(0)",
+                "expect(filters).toBeVisible()",
+                "expect(secondary!.y).toBeGreaterThanOrEqual(search!.y + search!.height)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths",
+              "line": 78,
+              "assertions": [
+                "expect(filters).toHaveAttribute('data-ui-composition', 'field-group')",
+                "expect(filters).toHaveAttribute('role', 'group')",
+                "expect(filters.getByRole('combobox', { includeHidden: true })).toHaveCount(4)",
+                "expect(filters).toBeHidden()",
+                "expect(filters).toBeVisible()",
+                "expect(geometry.outsideForm).toBe(true)",
+                "expect(geometry.sharedParent).toBe(true)",
+                "expect(geometry.inset).toEqual({ left: 0, top: 0 })",
+                "expect(Math.abs(geometry.filter.left - geometry.form.left)).toBeLessThanOrEqual(0.5)",
+                "expect(Math.abs(geometry.filter.right - geometry.form.right)).toBeLessThanOrEqual(0.5)",
+                "expect(Math.abs(geometry.filter.top - geometry.form.bottom - geometry.gap)).toBeLessThanOrEqual(0.5)",
+                "expect(control.left).toBeGreaterThanOrEqual(geometry.filter.left - 0.5)",
+                "expect(control.right).toBeLessThanOrEqual(geometry.filter.right + 0.5)",
+                "expect(geometry.scrollWidth).toBeLessThanOrEqual(width)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow",
+              "line": 121,
+              "assertions": [
+                "expect(search).toHaveCount(Number(route.supportsSearch))",
+                "expect(search).toBeVisible()",
+                "expect(geometry.buttonHeight, `${route.id} ${width}px`).toBeLessThanOrEqual(geometry.naturalHeight + 1)",
+                "expect(search).toBeHidden()",
+                "expect(documentWidth, `${route.id} document at ${width}px`).toBeLessThanOrEqual(width)",
+                "expect(observations).toHaveLength(impact.routes.length * 2)",
+                "expect(errors).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar public extra slot cannot stretch a single-line submit action",
+              "line": 146,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Lọc hai' })).toBeVisible()",
+                "expect(geometry.formHeight).toBeGreaterThan(geometry.buttonHeight * 2)",
+                "expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar preserves Products URL filters, search submit, clear and independent category lookup",
+              "line": 163,
+              "assertions": [
+                "expect(page).toHaveURL(/status=active/)",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(search).toHaveValue('')",
+                "expect(search).toHaveValue('Áo')",
+                "expect(page).toHaveURL(/q=/)",
+                "expect(new URL(page.url()).searchParams.get('q')).toBe('Áo')",
+                "expect(search).toBeFocused()",
+                "expect(new URL(page.url()).searchParams.get('status')).toBe('active')",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0)",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(selected).toBeTruthy()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('combobox', { name: /^Danh mục(?: |$)/ })).toContainText('Quần')",
+                "expect(new URL(page.url()).searchParams.get('categoryId')).toBe(selected)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar keeps Inventory apply/reset separate from search submission",
+              "line": 199,
+              "assertions": [
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false)",
+                "expect(new URL(page.url()).searchParams.get('warehouseId')).toBe('wh1')",
+                "expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false)",
+                "expect(warehouse).toHaveValue('')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination",
+              "line": 215,
+              "assertions": [
+                "expect(more).toBeEnabled()",
+                "expect(page.getByText('Đã tải 20 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(more).toBeEnabled()",
+                "expect(more).toBeDisabled()",
+                "expect(more).toHaveText('Đang tải…')",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)",
+                "expect(page.getByText(`Đã tải ${count} lựa chọn`, { exact: true })).toBeVisible()",
+                "expect(more).toHaveCount(0)",
+                "expect(retry).toBeVisible()",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)",
+                "expect(retry).toHaveCount(0)",
+                "expect(lookup).toHaveValue('toolbar-lookup-error')",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-shell-layout.spec.ts",
+          "sha256": "2d2432a3d36079af8903c381ccd864f2e88087e4aee25a34ab83845518559079",
+          "cases": [
+            {
+              "title": "Shell keeps header, banner, main and footer on one responsive gutter",
+              "line": 45,
+              "assertions": [
+                "expect(page.locator('main#main-content')).toBeVisible()",
+                "expect(metrics.headerHeight).toBe(viewport.header)",
+                "expect(metrics.headerContentLeft).toBe(metrics.navigationWidth + viewport.gutter)",
+                "expect(metrics.headerContentRight).toBe(viewport.width - viewport.gutter)",
+                "expect(metrics.mainLeft).toBe(metrics.navigationWidth + viewport.gutter)",
+                "expect(metrics.mainRight).toBe(viewport.width - viewport.gutter)",
+                "expect(metrics.bannerLeft).toBe(metrics.navigationWidth + viewport.gutter)",
+                "expect(metrics.bannerRight).toBe(viewport.width - viewport.gutter)",
+                "expect(metrics.footerLeft).toBe(metrics.navigationWidth + viewport.gutter)",
+                "expect(metrics.footerRight).toBe(viewport.width - viewport.gutter)",
+                "expect(metrics.footerBlockInset).toBe('8px')",
+                "expect(metrics.mainFlexGrow).toBe('1')",
+                "expect(metrics.mainBlockInset).toEqual(['16px', '16px'])",
+                "expect(metrics.contentColumn).toEqual({ display: 'flex', direction: 'column' })",
+                "expect(metrics.document.scrollWidth).toBe(metrics.document.clientWidth)",
+                "expect(metrics.accountName.whiteSpace).toBe('normal')",
+                "expect(metrics.accountName.overflowWrap).toBe('anywhere')",
+                "expect(metrics.accountName.scrollWidth).toBeLessThanOrEqual(metrics.accountName.clientWidth + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "demo controls stay discoverable on mobile and usable on desktop",
+              "line": 106,
+              "assertions": [
+                "expect(toggle).toBeVisible()",
+                "expect(controls).toBeHidden()",
+                "expect(page.getByRole('button', { name: 'Ẩn công cụ demo' })).toHaveAttribute('aria-expanded', 'true')",
+                "expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Dataset mô phỏng' })).toBeVisible()",
+                "expect(toggle).toBeVisible()",
+                "expect(controls).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer",
+              "line": 124,
+              "assertions": [
+                "expect(alert).toBeVisible()",
+                "expect(controls).toBeVisible()",
+                "expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).not.toBeNull()",
+                "expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).toBeGreaterThanOrEqual(8)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "unmatched route fallback owns its page gutter without horizontal overflow",
+              "line": 149,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Không tìm thấy trang' })).toBeVisible()",
+                "expect(fallback).toHaveCSS('padding-left', '16px')",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-component-layout.spec.ts",
+          "sha256": "ed0f76f9f902a593d991c50bba9163d0d2a66a9df07478643779c09b83041e67",
+          "cases": [
+            {
+              "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+              "line": 40,
+              "assertions": [
+                "expect(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true })).toBeVisible()",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 product editors align category and status faces independently from lookup metadata",
+              "line": 61,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1)",
+                "expect(geometry.status.y).toBeGreaterThan(geometry.category.y)",
+                "expect(page.getByText('Không tìm thấy danh mục phù hợp.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('textbox', { name: 'Tên sản phẩm', exact: true })).toHaveValue('Bản nháp cần giữ')",
+                "expect(Math.abs(category!.y - status!.y)).toBeLessThanOrEqual(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Shared outlined labels focus empty and populated native controls",
+              "line": 84,
+              "assertions": [
+                "expect(control).toBeFocused()",
+                "expect(control).toHaveValue(value)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 variant fields retain readable widths when text doubles",
+              "line": 99,
+              "assertions": [
+                "expect(name).toBeVisible()",
+                "expect(labels.length).toBeGreaterThanOrEqual(3)",
+                "expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([])",
+                "expect(label.fieldBounds.right - label.fieldBounds.left).toBeGreaterThanOrEqual(120)",
+                "expect(name).toHaveValue('Bản nháp biến thể cần giữ')",
+                "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial + 1)",
+                "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial)",
+                "expect(name).toHaveValue('Bản nháp biến thể cần giữ')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A03 import mapping preserves natural remove actions and editable mappings",
+              "line": 130,
+              "assertions": [
+                "expect(remove).toHaveCount(5)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(remove).toHaveCount(4)",
+                "expect(remove).toHaveCount(5)",
+                "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('Mã SKU đã sửa')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+              "line": 150,
+              "assertions": [
+                "expect(amount).toHaveCount(2)",
+                "expect(page.getByText(expected.negative, { exact: true })).toBeVisible()",
+                "expect(await amount.first().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('normal')",
+                "expect(await amount.last().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('nowrap')",
+                "expect(clipping).toBe(false)",
+                "expect(overflow).toBe(true)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft))",
+                "expect(await table.evaluate(node => node.scrollLeft)).toBe(before)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A05 status height follows its own label while long labels remain fully readable",
+              "line": 176,
+              "assertions": [
+                "expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1)",
+                "expect(geometry.actual).toBeLessThanOrEqual(intrinsicSize.natural + 1)",
+                "expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120))",
+                "expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+              "line": 195,
+              "assertions": [
+                "expect(page.getByRole('status')).toContainText('Mã tham chiếu: ' + 'A'.repeat(120))",
+                "expect(await text.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect(action).toBeFocused()",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A07 locked order addresses expose full text and edit lines retain intrinsic actions",
+              "line": 208,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(address).toBeVisible()",
+                "expect(dialog.getByRole('combobox', { name: /^Địa chỉ giao hàng/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('combobox', { name: /^Thanh toán/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('group', { name: 'Thanh toán', exact: true })).toContainText('Thu khi giao (COD)')",
+                "expect(addressText).toHaveText(expected)",
+                "expect(await addressText.evaluate(node => node.scrollWidth <= node.clientWidth + 1 && getComputedStyle(node).textOverflow !== 'ellipsis')).toBe(true)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(addressText).toHaveText(original!)",
+                "expect((await new AxeBuilder({ page }).include('[role=\"dialog\"]').analyze()).violations).toEqual([])",
+                "expect(option).toBeVisible()",
+                "expect(await option.evaluate(node => {\n            const paper = node.closest('.MuiPaper-root')!.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node);\n            return getComputedStyle(node).whiteSpace === 'normal' && [...range.getClientRects()].every(rect => rect.left >= paper.left - 1 && rect.right <= paper.right + 1);\n        })).toBe(true)",
+                "expect(page.getByRole('listbox')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-width-layout.spec.ts",
+          "sha256": "e9de7310dfad681c62b9dfb5f9bb1d0f65dc8f5f8079e2fe2275507cea3790e8",
+          "cases": [
+            {
+              "title": "W01 AI single connection fills its collection at breakpoint edges and wide viewports",
+              "line": 29,
+              "assertions": [
+                "expect(geometry.children).toHaveLength(1)",
+                "expect(geometry.children[0].width).toBeCloseTo(geometry.width, 0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W01 AI keeps two-column collection for two/three items and refetch preserves the new count",
+              "line": 42,
+              "assertions": [
+                "expect(dialog).not.toBeVisible()",
+                "expect(page.locator('main [data-ui-composition=\"section-grid\"] > .MuiPaper-root')).toHaveCount(count)",
+                "expect(geometry.children[0].width * 2 + geometry.gap).toBeCloseTo(geometry.width, 0)",
+                "expect(geometry.children[1].y).toBeCloseTo(geometry.children[0].y, 0)",
+                "expect(geometry.children[2].y).toBeGreaterThan(geometry.children[0].y)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W01 AI empty result keeps one accessible create action and no empty grid",
+              "line": 63,
+              "assertions": [
+                "expect(page.locator('main').getByRole('status').filter({ hasText: 'Chưa có kết nối AI.' })).toBeVisible()",
+                "expect(page.locator('main').getByRole('button', { name: 'Thêm kết nối AI', exact: true })).toHaveCount(1)",
+                "expect(page.locator('main [data-ui-composition=\"section-grid\"]')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W02 full-width form groups fill their panel and retain input/mapping/shipping behavior",
+              "line": 104,
+              "assertions": [
+                "expect(geometry.width).toBeCloseTo(geometry.available, 0)",
+                "expect(geometry.maxWidth).toBe('none')",
+                "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible()",
+                "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toHaveCount(0)",
+                "expect(page.locator('.MuiDrawer-modal')).toHaveCount(0)",
+                "expect(page.getByRole('textbox', { name: 'Tên cửa hàng', exact: true })).toHaveValue('Tên cửa hàng cần giữ')",
+                "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('sku-width')",
+                "expect(page.getByText('Thiếu địa chỉ giao hàng; chưa thể xác định vùng hoặc hiển thị phí.', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W03 notification protection notice occupies the full page row after the two panes",
+              "line": 143,
+              "assertions": [
+                "expect(geometry.insideGrid).toBe(false)",
+                "expect(geometry.noticeWidth).toBeCloseTo(geometry.gridWidth, 0)",
+                "expect(geometry.rhythm).toBe('section')",
+                "expect(geometry.gap).toBeCloseTo(16, 0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W04 detail rows stay atomic in divided rhythm and plain containers",
+              "line": 162,
+              "assertions": [
+                "expect(geometry.childCount).toBe(7)",
+                "expect(geometry.rhythm).toBe('dividedRows')",
+                "expect(geometry.gap).toBe(0)",
+                "expect(geometry.slots[index].separators).toBe(1)",
+                "expect(geometry.slots[index].y - geometry.slots[index - 1].y - geometry.slots[index - 1].height).toBeCloseTo(0, 0)",
+                "expect(geometry.plain).toHaveLength(4)",
+                "expect(row.height).toBeCloseTo(row.rowHeight + row.separatorHeight, 0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-dashboard-layout.spec.ts",
+          "sha256": "647702611dace86cd1eadc214d28899b8b9c9e84babaeaeb035a63a621da3701",
+          "cases": [
+            {
+              "title": "Shared consolidation Dashboard primary link respects all eight permission tuples and native anchor interactions",
+              "line": 17,
+              "assertions": [
+                "expect(page.locator('main h1')).toBeVisible()",
+                "expect(response.status()).toBe(200)",
+                "expect(membership.permissions.includes('operations.read')).toBe(ops)",
+                "expect(membership.permissions.includes('orders.read')).toBe(orders)",
+                "expect(membership.permissions.includes('orders.write')).toBe(create)",
+                "expect(primary).toHaveCount(Number(ops || orders))",
+                "expect(createLink).toHaveCount(Number(create))",
+                "expect(primary).toHaveText(label)",
+                "expect(primary).toHaveAttribute('href', href)",
+                "expect(primary).toBeFocused()",
+                "expect(style.tag).toBe('A')",
+                "expect(style.height).toBeGreaterThanOrEqual(44)",
+                "expect(style.outline).not.toBe('none')",
+                "expect(style.outlineWidth).toBeGreaterThanOrEqual(2)",
+                "expect.poll(() => primary.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(style.background)",
+                "expect.poll(() => primary.evaluate(element => getComputedStyle(element).backgroundColor))",
+                "expect(createLink).toBeFocused()",
+                "expect(new URL(page.url()).pathname).toBe('/s/shop-demo/overview')",
+                "expect(createLink).toHaveAttribute('href', '/s/shop-demo/orders/new')",
+                "expect((await createLink.boundingBox())!.height).toBeGreaterThanOrEqual(44)",
+                "expect(observations).toHaveLength(8)",
+                "expect((await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "dashboard hierarchy, CTA targets, and page width hold across supported breakpoints",
+              "line": 69,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Tình hình hiện tại', exact: true })).toBeVisible()",
+                "expect(page.getByText('Dữ liệu cập nhật', { exact: false })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Tình hình hiện tại', exact: true })).toBeVisible()",
+                "expect(page.getByText('Hội thoại đang mở', { exact: true })).toBeVisible()",
+                "expect(page.getByText('Đơn chờ xử lý', { exact: true })).toBeVisible()",
+                "expect(page.getByText('Sản phẩm gần hết', { exact: true })).toBeVisible()",
+                "expect(page.getByText('Trợ lý bán hàng', { exact: true })).toBeVisible()",
+                "expect(action).toBeVisible()",
+                "expect(target).not.toBeNull()",
+                "expect(target!.height).toBeGreaterThanOrEqual(44)",
+                "expect(statusBounds).not.toBeNull()",
+                "expect(roleCardBounds).not.toBeNull()",
+                "expect(statusBounds!.width).toBeLessThan(roleCardBounds!.width / 2)",
+                "expect(dimensions.clientWidth).toBe(width)",
+                "expect(dimensions.scrollWidth).toBeLessThanOrEqual(width + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-density-layout.spec.ts",
+          "sha256": "80e4d3589fc957ff047c97b4689d268f76f013f4f01ea3db622edbeced1aea3d",
+          "cases": [
+            {
+              "title": "density table saves row space while preserving action target and data",
+              "line": 10,
+              "assertions": [
+                "expect(cells.first()).toHaveCSS('padding-top','8px')",
+                "expect(cells.first()).toHaveCSS('padding-left','12px')",
+                "expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44)",
+                "expect(page.getByText('DEMO-001',{exact:true})).toBeVisible()",
+                "expect(page.getByText('150.000 ₫',{exact:true})).toBeVisible()",
+                "expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width)",
+                "expect(link).toBeFocused()",
+                "expect(height).toBeGreaterThanOrEqual(60)",
+                "expect(height).toBeLessThanOrEqual(63)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "density divided facts list has one row inset and no additional inter-row gap",
+              "line": 22,
+              "assertions": [
+                "expect(facts).toHaveCount(1)",
+                "expect(facts).toHaveCSS('gap','0px')",
+                "expect(facts.locator(':scope > [data-ui-detail-line]')).toHaveCount(7)",
+                "expect(row.locator(':scope > .MuiStack-root')).toHaveCSS('padding-top','8px')",
+                "expect(row.locator('.MuiDivider-root')).toHaveCount(1)",
+                "expect((await facts.boundingBox())!.height).toBeCloseTo(266,0)",
+                "expect((await panel.boundingBox())!.width).toBeGreaterThan(1100)",
+                "expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "density demo disclosure retains state and always shows the synthetic warning",
+              "line": 33,
+              "assertions": [
+                "expect(tools).toBeHidden()",
+                "expect(toggle).toHaveAttribute('aria-expanded','false')",
+                "expect(page.getByRole('alert').filter({hasText:'Frontend review: API được mô phỏng'})).toBeVisible()",
+                "expect(tools).toBeVisible()",
+                "expect(page.getByText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.')).toBeVisible()",
+                "expect(tools).toBeHidden()",
+                "expect(page.locator('[data-testid=\"mock-tools-summary\"]')).toContainText('1.000 khách hàng')",
+                "expect(page.getByRole('combobox',{name:'Dataset mô phỏng'})).toContainText('1.000 khách hàng')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm",
+              "line": 48,
+              "assertions": [
+                "expect(page.locator('main')).toHaveCSS('padding-top','16px')",
+                "expect(geometry.gap).toBeCloseTo(12,0)",
+                "expect(geometry.bodyTop).toBe('0px')",
+                "expect(geometry.bodyInline).toBe(width<768?'12px':'16px')",
+                "expect(page.locator('[data-ui-composition=\"form-fields\"]').first()).toHaveCSS('gap','16px')",
+                "expect(reading).toHaveAttribute('data-ui-density','comfortable')",
+                "expect(reading.locator(':scope > :last-child')).toHaveCSS('padding-left',width<768?'16px':'24px')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "density simple category editor keeps labels, errors and keyboard reflow usable",
+              "line": 60,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(dialog.locator('[data-ui-composition=\"form-fields\"]')).toHaveCSS('gap','12px')",
+                "expect(dialog.locator('.MuiDialogContent-root')).toHaveCSS('padding-left','16px')",
+                "expect(name).toBeFocused()",
+                "expect((await new AxeBuilder({page}).include('[role=\"dialog\"]').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([])",
+                "expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width)",
+                "expect(warning).toBeVisible()",
+                "expect(warning.locator(selector)).toHaveCSS('padding-left',width<768?'16px':'24px')",
+                "expect(warning.locator('.MuiDialogActions-root')).toHaveCSS('padding','12px')",
+                "expect(warning.locator('.MuiDialogActions-root')).toHaveCSS('gap','8px')",
+                "expect(name).toHaveValue('Bản nháp phải được giữ')",
+                "expect(dialog).toBeHidden()",
+                "expect(navigation).toBeVisible()",
+                "expect(navigation.locator(selector)).toHaveCSS('padding-left',width<768?'16px':'24px')",
+                "expect(navigation.locator('.MuiDialogActions-root')).toHaveCSS('padding','12px')",
+                "expect(navigation.locator('.MuiDialogActions-root')).toHaveCSS('gap','8px')",
+                "expect(page.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Giữ nháp điều hướng')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 181,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 624,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/components.test.tsx",
+          "sha256": "8b21c0dc4864dbc8155fe91fd2b012a7eae3f1b22aeeb0b167431786b58654c6",
+          "cases": [
+            "maps the approved dark tokens, typography, radii, and responsive breakpoints",
+            "keeps primary, secondary, status, and control contrast above their design thresholds",
+            "applies semantic token surfaces to standard alerts",
+            "loads canonical dark tokens and bootstrap before application JavaScript",
+            "keeps the application theme and source palette dark-only and token-owned",
+            "rejects copied HEX values and non-dark theme modes with negative fixtures",
+            "keeps copyable identifiers wrapped, spaced by the semantic role, and announces clipboard feedback",
+            "uses the canonical touch target for primary controls",
+            "uses the approved card radius rather than MUI spacing-scaled radius",
+            "renders semantic status text and a keyboard-navigable, named table region",
+            "keeps status and empty states understandable without relying on color",
+            "shows a reserved loading state and a retryable error state",
+            "uses semantic layout roles for empty, loading, and notice states",
+            "sets dialog insets and action gap explicitly instead of inheriting button margins",
+            "clears search, cursor, and returns focus while preserving other filters",
+            "binds list query fields and search controls to each OpenAPI operation",
+            "moves between cursor pages without dropping unrelated query filters",
+            "does not submit an unfinished IME composition",
+            "associates form errors with the visible label and returns focus after dialog close",
+            "has no axe violations in the shared table, status, and search states",
+            "reflows the real mock application from 320px to 1440px and passes browser axe"
+          ]
+        },
+        {
+          "file": "apps/web/tests/composition.test.tsx",
+          "sha256": "004123081c81aab3a0262e4c85363a8dc3c874cc5a8ea9150a2c2fca01d1f786",
+          "cases": [
+            "keeps section headings semantic and KPI values out of the heading outline",
+            "retains native form refs, submission, labels and draft attributes",
+            "maps field, page and surface rhythms to canonical token units"
+          ]
+        },
+        {
+          "file": "apps/web/tests/shared-ui-render-contract.test.tsx",
+          "sha256": "f25dd904e4a0b9dbbf675891fb732b31e7436c7b40e5bc7d292cab3e870f32b9",
+          "cases": [
+            "DraftConflict requires a two-sided choice, excludes hidden data, and applies only to the draft",
+            "PageHeader renders its eyebrow, h1, description and action slots",
+            "Panel owns title, subtitle, action and inset body without hiding its child",
+            "Stat keeps ReactNode values, icon and note in non-heading semantic slots",
+            "Stats renders all children in its responsive grid owner",
+            "Amount formats supported money and its null fallback through the shared owner",
+            "CopyableCode announces clipboard failure without losing the code slot",
+            "Status maps positive, warning and unknown values to readable text",
+            "DataTable renders a ReactNode column callback and its empty-state slot",
+            "Empty renders an optional action slot with its live status message",
+            "QueryState preserves stale children while exposing refresh feedback and retry",
+            "QueryState keeps loaded children visible during a background refresh",
+            "ErrorNotice renders the unknown-result command slot",
+            "Toolbar preserves extra and filters when search is unsupported and omits an empty form",
+            "Toolbar places independent filters outside the search form and retains inline extra",
+            "Pager treats a missing page as absent and labels a page without total",
+            "LookupLoadMore distinguishes exhausted, complete and busy lookup states",
+            "RouteLink navigates with an accessible named link target",
+            "MutationButton respects permission, action allowlist, online and busy states",
+            "EditDialog exposes its content and actions while busy blocks closing controls",
+            "PartialDataNotice and CapabilityUnavailable render their declared message slots",
+            "ConfirmDialog validates the reason and keeps a rejected action visible",
+            "ConfirmDialog closes only after a successful confirmation",
+            "DetailLine renders its label, ReactNode value and row separator",
+            "W04 DetailLine occupies one logical child including its divider in flow and plain containers",
+            "FormFields retains the div ref and native metadata branch",
+            "FieldGroup forwards its accessible group name and owns compact control spacing",
+            "FieldGroup applies its toolbar inset only to the toolbar profile",
+            "ActionGroup header mode owns its header boundary and keeps action order",
+            "PageSections owns the boundary for conditional peer sections",
+            "SectionGrid retains responsive columns and named content rhythm"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 181-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled width behavior",
+      "routeObservations": 216,
+      "focusedCases": 70,
+      "artifact": "built-shared-review.json",
+      "limit": "Actual compiled geometry/axe/keyboard; counts remain separate from full browser suite."
+    },
+    {
+      "name": "Strict verification and simulator/network criteria",
+      "simulatorChecks": [
+        "Full order lifecycle and purchase partial receiving use actual simulator handlers",
+        "Procurement rejects cross-shop and unapproved suppliers and unusable auto-send budgets",
+        "Stale purchase approval cannot authorize a changed resource version",
+        "Both sides of every mock journal balance",
+        "Seeded shop does not read another shop product",
+        "CSRF is required for writes",
+        "Read-only role cannot create products",
+        "Revoked shop membership never falls back to another active shop membership",
+        "Duplicate idempotency key is not duplicated",
+        "Same key with different payload is rejected",
+        "Stale inventory adjustment cannot mutate stock",
+        "Negative stock is rejected atomically",
+        "Unbalanced journal is rejected",
+        "Known failure fault is observable",
+        "Empty state fault is distinguishable",
+        "Read model reflects source amounts not current page",
+        "CSV parser preserves embedded commas",
+        "Unknown command retains the same result on idempotent retry",
+        "Read API getCsrfToken",
+        "Read API getSession",
+        "Read API listShops",
+        "Read API getShop",
+        "Read API listMembers",
+        "Read API getDashboard",
+        "Read API listProducts",
+        "Read API listCategories",
+        "Read API listCustomers",
+        "Read API listStockSnapshots",
+        "Read API listStockMovements",
+        "Read API listOrders",
+        "Read API listFinanceEntries",
+        "Read API getCashflow",
+        "Read API getProfitLoss",
+        "Read API listConversations",
+        "Read API listKnowledge",
+        "Read API listFeedback",
+        "Read API getBotConfig",
+        "Read API listEvaluations",
+        "Read API getProviderCatalog",
+        "Read API listAIConnections",
+        "Read API listChannels",
+        "Read API getReportSummary",
+        "Read API listJobs",
+        "Read API listCommands",
+        "Read API listAuditEvents",
+        "Read API getPrivacyPolicy",
+        "Read API listPrivacyRequests",
+        "Read API listBotRevisions",
+        "Read API getInboxMetadata",
+        "Read API listWorkItems",
+        "Read API listApprovals",
+        "Read API listDevices",
+        "Read API listNotifications",
+        "Read API listPrepJobs",
+        "Read API listShipments",
+        "Read API listReturnCases",
+        "Read API listSuppliers",
+        "Read API listSupplierOffers",
+        "Read API listReorderRules",
+        "Read API listPurchaseSuggestions",
+        "Read API listPurchaseOrders",
+        "Read API listGoodsReceipts",
+        "Read API listJournals",
+        "Read API listBankTransactions",
+        "Read API listReconciliationCases",
+        "Read API listCODSettlements",
+        "Read API listDebtItems",
+        "Read API listAccountingPeriods",
+        "Read API listAgentRoles",
+        "Read API listBudgetPolicies",
+        "Read API listDigests",
+        "Read API listServiceCases",
+        "Read API getNotificationPolicy",
+        "Read API getOperationsSummary",
+        "Read API getMarketingSummary"
+      ],
+      "networkChecks": [
+        "Registers every canonical HTTP operation and reports the custom SSE endpoint",
+        "Loads the service worker only in demo mode and guards production from mock activation",
+        "Covers the canonical route, feature, shop, and role catalogs",
+        "Returns schema-valid, paginated data and rejects stale cursors",
+        "Pages through a deterministic large dataset without dropping or duplicating rows",
+        "Scopes reads to the requested shop and role permissions",
+        "Maps request validation, CSRF, and missing If-Match to contract errors",
+        "Creates a product with schema-complete variants through HTTP",
+        "Preserves idempotency and exposes stale and unknown mutation outcomes over HTTP",
+        "Resets records, role, faults, idempotency keys, sequence, and fixed clock deterministically",
+        "Returns observable transient and empty states without fabricating records",
+        "Aborted delayed reads do not leak into the next request",
+        "Streams only the authorized shop and emits events matching the canonical v2 schema"
+      ],
+      "artifact": {
+        "path": "evidence/domain-tests.json",
+        "sha256": "b6df9ec50bb5312ca07929df71d17518843258ca5d74419f6c6d0677d8844ae3"
+      },
+      "verifyLog": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517444670-94456/verify.log",
+        "sha256": "fe34adfd7fbd0931c58b87f7e5405aa833e13009571d6cc92d5517e9b15ab0f0"
+      },
+      "source": "Full typecheck/lint/source/boundary/negative fixtures/generator/bundle isolation are actual npm verify stages; no backend enforcement claim."
+    },
+    {
+      "name": "Actual native UI review",
+      "artifacts": [
+        {
+          "path": "evidence/frontend-spacing-density-20261009/actual-browser-zoom-200-current-20261009-115626-49536.json",
+          "sha256": "16cb8bacdec4efe91b28aec1dbf3286064912d85f71de4da1fe9ef57e36d782f"
+        },
+        {
+          "path": "evidence/frontend-spacing-density-20261009/native-text-only-200-current-20261009-115644-46424.json",
+          "sha256": "e4ea988cfd12bd248c12d4ad28e8a0a67ef305c59535a6d8ad4c7921a841b0b1"
+        }
+      ],
+      "limit": "Keyboard/axe/reflow/native zoom observed; screen-reader speech and broad human conformance NOT_RUN."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "composer-stability",
+      "startedAt": "2026-10-09T05:07:15.134Z",
+      "finishedAt": "2026-10-09T05:08:10.178Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522425617-76720/composer-stability.log",
+        "sha256": "c079a393ffdf279c19f59e441cbf4ff5dab6167a5476fbc4d1bfaad7d793da56"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "imports-clearance-regression",
+      "startedAt": "2026-10-09T05:08:19.164Z",
+      "finishedAt": "2026-10-09T05:08:39.156Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522490344-8672/imports-clearance-regression.log",
+        "sha256": "950791e791deafe07d84a64fcbecb6479f91ee1dcd33b86f6eb82521d196ae2a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-09T03:47:09.137Z",
+      "finishedAt": "2026-10-09T04:47:48.711Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
+        "sha256": "8c35ba10b993a303946c89addd4dcb04c7fc718f5cff8daa5a74f2e3fd8fe85d"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-09T03:44:04.675Z",
+      "finishedAt": "2026-10-09T03:47:01.145Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517444670-94456/verify.log",
+        "sha256": "fe34adfd7fbd0931c58b87f7e5405aa833e13009571d6cc92d5517e9b15ab0f0"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-09T03:42:18.472Z",
+      "finishedAt": "2026-10-09T03:42:24.862Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517338471-44912/unit.log",
+        "sha256": "d1928a0902ebc21f0c0780bc9467ca4e0f52beb179b91314a6cf1533aee097a8"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-09T03:47:01.271Z",
+      "finishedAt": "2026-10-09T03:47:01.452Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621270-95168/source-maps.log",
+        "sha256": "a7dc3557124f4394e17cdb8a7a42cd23a7ee839ade15529024a2fa2d7cb76e33"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-09T04:48:06.078Z",
+      "finishedAt": "2026-10-09T04:51:16.462Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791521277863-27488/built-demo.log",
+        "sha256": "4c4a6c6fdcbbd0bfa0e5344760595a858ad7e5df5662cdcfbdb32c0d8380db58"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "startup-cache-regression",
+      "startedAt": "2026-10-09T05:11:14.912Z",
+      "finishedAt": "2026-10-09T05:11:36.059Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522665730-96308/startup-cache-regression.log",
+        "sha256": "b78941e75dca7664227a303ce9bbb0e70d77c3957ae994adfbd112ae2be241d3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-regression",
+      "startedAt": "2026-10-09T05:10:37.682Z",
+      "finishedAt": "2026-10-09T05:11:05.627Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522628388-90736/label-regression.log",
+        "sha256": "f28164351bc45da0b3df30632d3557484bc591686832bb955d35119531c55684"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "variant-regression",
+      "startedAt": "2026-10-09T05:09:47.479Z",
+      "finishedAt": "2026-10-09T05:10:28.292Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522578658-74300/variant-regression.log",
+        "sha256": "62f3d31abc4f6d7965fb2f70604b46342b5b0d978064d34f335264ad9171c42f"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-focus-regression",
+      "startedAt": "2026-10-09T05:09:17.882Z",
+      "finishedAt": "2026-10-09T05:09:38.570Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522549023-26236/label-focus-regression.log",
+        "sha256": "6891aae72dc105e22e42f974e8faf94492ed251b3c7f67146a0a2ae6335e96ab"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "composer-regression",
+      "startedAt": "2026-10-09T05:08:48.237Z",
+      "finishedAt": "2026-10-09T05:09:08.934Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522519245-33232/composer-regression.log",
+        "sha256": "1fcc0bfd08e59012b4cf1aad212270969d3f68a497ceac5c02e2e27a5995a176"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "0f58c4b2dda90ec60d6d7e0ce30a66ecb8fa3183ba3eadd4f18752d79dd51fa7"
+}

@@ -1,0 +1,504 @@
+{
+  "taskId": "FE003",
+  "stepId": "S04",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T13:22:01.877472+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working tree snapshot)",
+  "expected": "Run frontend validate/status/next, verify sample receipt scope/log/source hashes, and exercise tracker acceptance/rejection fixtures without modifying the full-product ledger or command map.",
+  "observed": "validate=True for 28/140; status reports 13/140, next FE003.S04, FE005 explicitly blocked pending source-hash refresh in FE001-FE004; next exits 0; tracker fixture suite passes 26/26; 9 current receipts pass direct scope/log/source hash rechecks; full-product ledgers and command map hashes unchanged.",
+  "command": "python botsales-kit/execution/frontend-evidence/FE003/capture-s04-progress-audit.py",
+  "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB",
+  "reviewer": "Codex",
+  "environment": {
+    "name": "Windows frontend tracker and evidence audit",
+    "details": "Node v24.19.0, Python 3.12.10; read-only frontend CLI calls and isolated fixture harness at revision 53c0ba8f413b1f1e0fa16a747ed27f728b861dd6.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 27,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": "botsales-kit/execution/frontend-plan.json",
+      "sha256": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/scripts/progress.mjs",
+      "sha256": "e8ec5daefa29d9770cf18caf592043fe74f98dc2d5e000ee7f0c5f8267a6f228"
+    },
+    {
+      "path": "botsales-kit/scripts/test_progress.py",
+      "sha256": "e65dde923eb6fdc6818aed05e5dd4dfb759d5cf3dd3f425c6839d794a39b1b42"
+    },
+    {
+      "path": "botsales-kit/evidence/tracker-tests.json",
+      "sha256": "5eb37b3d0ccb6db9936ea60fa07a5651dd0073c55e13aec85025c8974dfeb45c"
+    },
+    {
+      "path": "botsales-kit/execution/plan.json",
+      "sha256": "c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16"
+    },
+    {
+      "path": "botsales-kit/execution/progress.json",
+      "sha256": "23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/capture-s04-progress-audit.py",
+      "sha256": "27e7caf4411ff22954d8edde4d556feaedc3c5da3bbc64c136ebc899c17852a6"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-validate-current-20261007.log",
+      "sha256": "c9a7d3704d10e392d404fe567b285c77298633b0c3218aa56337aafabb01cf57"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-status-current-20261007.log",
+      "sha256": "0cfa76a026013e27e92eda3e2c052d19da9a9dce2382324215672f2a765f3f31"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-next-current-20261007.log",
+      "sha256": "8ee18f10a14e18d82edff9139aea099f0c2de076e0eb0545fe6c6708d68d6502"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S04-fixture-tests-current-20261007.log",
+      "sha256": "7408038670948654c02c2af146f25782b22995fd840f0b7fac9a83d00d43ab72"
+    },
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222"
+    },
+    {
+      "path": "AI_RULES.md",
+      "sha256": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "apps/web/src/mocks/browser.ts",
+      "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+    },
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "sha256": "cbca27471ea771f325b3577095a6ff30f66b29c711c0138b3678a8dc4c1d40af"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da"
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "98e8ac7e9600837171d4e9a2d36a7d03978071c4dfc7d87fcc2617655c8c1639"
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "1f6d62a562b6ec124fb3029fdce8eeb9937d09323abb5a523aad496343a4531b"
+    },
+    {
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef"
+    },
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "sha256": "b232374ed17759d105022cc29d87205de9414b7d2b5327f0bf9135243248134c"
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "e906c5574670111cd6198ea77484284cc3d3b503a3268c8fdb4bd26e15bf1fc4"
+    },
+    {
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "sha256": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b"
+    },
+    {
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "sha256": "21c786a8280031a029af35e434f7f755b6c81acbab59ca3098d87028aab7aa65"
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "sha256": "7b5d0a356390cba43b8bf16c162dd499150bee37d353945d552504a1eee2bd1b"
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b"
+    },
+    {
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "sha256": "f3c4f450a411703bf605153eee7a9bb3f555882b276b191cd15ce1df26b8dd7d"
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "sha256": "608bdffd80bc3b3bc0bd2a6b49a3591b38262f797c195de09ee566a34db5518b"
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "d1cad2cb0dbbfa618dc6cd5c7096711354feaecb977807037b8c6a2748ed6da7"
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "sha256": "137c535a1c086c6e998281e3e9d4620adf9f3d6b41a0e775add49339b6f82bc1"
+    },
+    {
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754"
+    },
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "2ea39976473d8dfc2a0da5f0ea8b3e7912d098e4e427487fde5b59479091c269"
+    },
+    {
+      "path": "apps/web/src/shared/api/client.ts",
+      "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+    },
+    {
+      "path": "apps/web/tests/api-client.test.tsx",
+      "sha256": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379"
+    },
+    {
+      "path": "apps/web/tests/setup.ts",
+      "sha256": "0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5"
+    },
+    {
+      "path": "apps/web/vitest.config.ts",
+      "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+    },
+    {
+      "path": "botsales-kit/AGENTS.md",
+      "sha256": "eebc9cc5f02e76190193a4be3aa9c3526490da9eecacfcbdffe5f8929d40a488"
+    },
+    {
+      "path": "botsales-kit/AI_RULES_PROJECT.md",
+      "sha256": "62f1f5ae65bfea17be16c8c2734826478d7f45e7bc35ae5f8dd169ea1e62de59"
+    },
+    {
+      "path": "botsales-kit/START_HERE.md",
+      "sha256": "06965f437a85262452d75039358be4b4bb3fe368cf7f732e76d8815786b44a0c"
+    },
+    {
+      "path": "botsales-kit/contracts/feature-catalog.json",
+      "sha256": "7c08400704112767224a27c7b1ffb3a81154f94045ae6b8ab0f9e9a68212b37d"
+    },
+    {
+      "path": "botsales-kit/contracts/route-manifest.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    },
+    {
+      "path": "botsales-kit/execution/FRONTEND_PLAN_GUIDE.md",
+      "sha256": "eeb2c1566acdd3ebb528aa181a53ad946bc725b779e8f9d88ea0af1667a24614"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S01-intake-baseline-current-20261007.json",
+      "sha256": "467e858875fad5f4ea13d3b38c880046d32f682b65d0bfef580c2f7ca18d7b97"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S02-route-map-audit-current-20261007.json",
+      "sha256": "be09a499f1cf7b44b51ebcdaddf3401f00b9c8a36c5e2210231c33ca83ddf504"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S03-current-report-package-reconciliation-20261007.json",
+      "sha256": "8ac9add24ef371c956e665df1f87f6927a818718ca434ae9840b6bcda1d43be0"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S04-first-target-change-budget-current-20261007.json",
+      "sha256": "299461aa3bf08e8335dfa2ea88a2b1b3690f5a872fd753249573349d225baefa"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/audit-ledger-isolation.py",
+      "sha256": "1d7dc664f6a0a1845206605f1cdf393b68497968a3154ae4d10967a30c53ed1d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/audit-route-map.py",
+      "sha256": "806b2412f61b24fa01955d34d9fae5652537fcbada3826ca9639d62541c7f1ea"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/capture-intake-baseline.py",
+      "sha256": "f0937d4412e04b1a01840f857c31186a6a2ff0745e23ebc5c139435c3e660ee2"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/capture-s04-change-budget.py",
+      "sha256": "50d65000228b2cb7726af74dbcc8fe6d29734ffc802d41795881f174829ec5f8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/reconcile-s03-current-runtime-docs-20261007.py",
+      "sha256": "5efc5ab113f545268c00c9e5289d250907c6ccd4567fe68db00d9a86cbd9b1fa"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-output-current-20261007.log",
+      "sha256": "250f9d5cd24bd9e2176c71248f0338c6fac75d3b8031d84260ed4c984e141499"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-verified-current-20261007.json",
+      "sha256": "cb72741308964c662ed1ea0a0697671344ecc68fdeafeea4bc3ecf872003073b"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S04-setup-doctor-verified-current-20261007.json",
+      "sha256": "21c04ac6960fdb99f246ad54144cfb9bf863a51e7ca268fef3229a46322bdc33"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-retry-verified-current-20261007.json",
+      "sha256": "3f121a47ebe43947b7034808f89c8930c8f38b53cc2bc1264938e7e40a6d18ff"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-npm-ci-retry-output-current-20261007.log",
+      "sha256": "3a4e99b993e3ced1a3fbc865edbecbb50744c7a81d38e15466c8a2a4d83434b3"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-path-resolution-diagnosis-current-20261007.log",
+      "sha256": "b32e608beed92ea7e7c787395c1a13d9451b56ee89737f075393ddcb6d752cd6"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/run-clean-install-retry.py",
+      "sha256": "fca4a48f022f880af2bf2be208fc27cebbda716b4053b63105410fd843531e3e"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S02-fe-task-gate-matrix-current-20261007.json",
+      "sha256": "843c372d8d9ecfbe22110e4210a2912ec7521a567c1445323ae11271bb56034d"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-built-demo-targeted-discovery-final-current-20261007.log",
+      "sha256": "55da848cf72f6234f12eae8fa693af2969c5da7682b9d1a018abe002509e8af0"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-domain-msw-baseline-final-current-20261007.log",
+      "sha256": "7260e9ef02481c757731749fa858b0758c63b17d01fa64f2347238699c47db3b"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-playwright-full-discovery-resource-stop-current-20261007.log",
+      "sha256": "85cc26d0ef2640d57b94c7bdcd4d3249951791c88ee99b91edd11432929eb243"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-playwright-targeted-discovery-final-current-20261007.log",
+      "sha256": "0421d26988194d58c51ce66b8bd19eb1acdf35994348aa3cf7c1b0025116c383"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-vitest-rtl-baseline-final-current-20261007.log",
+      "sha256": "680b0d3ae9eace6e3d292ace1e014cfcae07a1bbe98d5f6f15b0f9ad8de4a1d0"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/capture-s01-command-map.py",
+      "sha256": "ceb23c61a7c0066f2980beead1d37a60776be0f60c2c50ec65eb8b6765a77a6f"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/capture-s02-gate-matrix.py",
+      "sha256": "9dbc421341302dfd94261511a7c0e7931c383a0edbee893af64337868cc85608"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/capture-s03-runner-baseline.py",
+      "sha256": "6c5f875176b7d199e92a23cd2a00daedc3bcecc6439805326f8cf67e321f7550"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-client-current-20261007.log",
+      "sha256": "dc5c7aab574fce53e0984511ec29ae49cef78b39a5179cf8a0a487d3c72c1cdc"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE005/S03-api-client-current-20261007.receipt.json",
+      "sha256": "9a086458ad39943942fdd44fb815cb8b0b6606a63f08b8189e5f7a5af905cd16"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261004.json",
+      "sha256": "3c36fe7fada793fe2303dd757a208ab1804f8150414938538f1c41c93769df10"
+    },
+    {
+      "path": "docs/FRONTEND_SCOPE.md",
+      "sha256": "959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab"
+    },
+    {
+      "path": "docs/KNOWN_GAPS.md",
+      "sha256": "ae8c64d17b14f5a73e3b65f076ec6dc4eadbcc39e5c4b20fc3d7b9de88ecbd53"
+    },
+    {
+      "path": "docs/PROJECT_CONTEXT.md",
+      "sha256": "a62ddcbaf636fe4ac87a455b593f61fc573ce4b157330095b7d3c08d46059985"
+    },
+    {
+      "path": "docs/route-implementation.json",
+      "sha256": "381b4091300ee542bfc7033b88249259cb716ac43f8a61789288fe61f9dd63ae"
+    },
+    {
+      "path": "docs/route-state-role-matrix.json",
+      "sha256": "f602689724c96cd48403856cb48c735515432c8d5134624aa4c3d1e71c21f72a"
+    },
+    {
+      "path": "evidence/REPORT.md",
+      "sha256": "d126ec152336691f35111a5ceb895fa6be71efd023bf659385b1d32fb35ad268"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/REPORT.md",
+      "sha256": "e95be4d5831e343b5bfe1aa76e79c05d1d126d75063e66709c88118e3ec80f77"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/built-demo-record.json",
+      "sha256": "c4380a93df26f5c5a908b996a98caba37f4b6a71a338b3b8ab157d0f52274afc"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/contracts-record.json",
+      "sha256": "ce0fa6e932dc158e3f3bb7ab900fcddffb446c12955b5605ada9a7ca9fc8548e"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/contracts.log",
+      "sha256": "7035ee7401c6d639d9ea446115cddf14cbc0ba9ebbaa747585d16a2286641fa2"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/e2e-record.json",
+      "sha256": "20e982ab894dc4a9494d01218ab230776c84295f9cf6a1289007ba271c9bb9d5"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/e2e.log",
+      "sha256": "f0aed15b41fd27767829f897603f2d435f1e37674500d9563d43ae1b09b31b55"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/verify-record.json",
+      "sha256": "e3d583317deb9ab3fead2f46105aaaf502d3d2d3478bd9481624077ba948f82b"
+    },
+    {
+      "path": "evidence/frontend-ui-document-sync-20261007/verify.log",
+      "sha256": "5917f7a430275e426297307fbc8e10f90961dd9e99405bdf2ca90e707fcfe123"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/UI028/W30/native-zoom-followup-current-20261007.md",
+      "sha256": "5b62d41c046dc721578c077a6299b4aa9b29e26dca0cfbe08cd952cdd06bc91e"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-current-evidence.json",
+      "sha256": "3a086e9556677bc5bf75a52d54594c2aa76c71d5778fcf301e9256f7a4db6b03"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-s19-final-20261007-a.json",
+      "sha256": "5cb00297116ae3f10465e825e5aa1a4128213e32a5335a80783eab0f3644cdb2"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-s19-final-20261007-a.json",
+      "sha256": "38bcc8e929a6b63e5e4cbd3beb006a987c4562390c07d56cea958ba1c04db52d"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-full-e2e-post-fix-20261007.log",
+      "sha256": "9ccc9cee2c00ff7016431602b07fe000be1a502bffbf43f4ed817b4ff96ec25c"
+    },
+    {
+      "path": "evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S19-verify-final-reconciled-current-20261007.log",
+      "sha256": "e3f64af92318e05053b73d802b51f14f49b94eae793004124dcfe97320653a81"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    },
+    {
+      "path": "playwright.built-demo.config.ts",
+      "sha256": "1141ea054c988f9547f975bd0d41613d71e85ce5470b13aa76d0b7d66aa7f7e0"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e"
+    },
+    {
+      "path": "scripts/run-e2e.mjs",
+      "sha256": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891"
+    },
+    {
+      "path": "scripts/test-domain.mjs",
+      "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+    },
+    {
+      "path": "tests/accessibility/routes.spec.ts",
+      "sha256": "9ec199807f025335a2ff6ea90f69cea6a737adfbf5311abedf7bbf4f9766577c"
+    },
+    {
+      "path": "tests/frontend.spec.ts",
+      "sha256": "f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5"
+    }
+  ],
+  "sourceSnapshotSha256": "46318fa2d672d4b7826581c107961dc5b2976da6c7793fd8988e67d805a67dea",
+  "logFile": "execution/frontend-evidence/FE003/S04-tracker-validation-evidence-audit-current-20261007.log",
+  "logSha256": "43786843498650cb93e150a5dfe642b084e2daf20f6b2390299f6c6d2c0d9998",
+  "sampleReceipts": [
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S01-intake-baseline-current-20261007.json",
+      "sha256": "467e858875fad5f4ea13d3b38c880046d32f682b65d0bfef580c2f7ca18d7b97",
+      "task": "FE001",
+      "step": "S01",
+      "sourceCount": 8,
+      "logSha256": "47303b4d34ee0016a0e5acb7afaf8d188a0c5fb1fb05c5240cb7e283acfbef42"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S02-route-map-audit-current-20261007.json",
+      "sha256": "be09a499f1cf7b44b51ebcdaddf3401f00b9c8a36c5e2210231c33ca83ddf504",
+      "task": "FE001",
+      "step": "S02",
+      "sourceCount": 24,
+      "logSha256": "95f3374709c433d313a6b82434cfcdacbc269245f5cd893ce27e28bef26308ac"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S03-current-runtime-docs-after-api-change-20261007.json",
+      "sha256": "afefb49dae535a223e3c2588a42ac177a0b803f4d12a47abd7dcb1f6354fac99",
+      "task": "FE001",
+      "step": "S03",
+      "sourceCount": 16,
+      "logSha256": "0035cea3c1098a32d7089be8c39995a62bcd1db04e0271450e03598f820758e9"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S04-first-target-change-budget-current-20261007.json",
+      "sha256": "299461aa3bf08e8335dfa2ea88a2b1b3690f5a872fd753249573349d225baefa",
+      "task": "FE001",
+      "step": "S04",
+      "sourceCount": 3,
+      "logSha256": "8fdb227a3a57225307efb53644066e76ba10e6ef40a7ccd2c80d95b023c562d8"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE001/S05-frontend-ledger-isolation-current-20261007.json",
+      "sha256": "6d6f65eb8a69f4ad061f30633d5634a4933c1b179b4321925775d51f01ab79c5",
+      "task": "FE001",
+      "step": "S05",
+      "sourceCount": 12,
+      "logSha256": "0258d7c394c2bd52ea8792524f629a83baf5a6a510fd5eeaf279737e9aa210d0"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S01-command-map-audit-current-20261007.json",
+      "sha256": "59339f3f011ce6ffd9b7750b1782666163cc3c044f8f1899708573d86c9f3f60",
+      "task": "FE003",
+      "step": "S01",
+      "sourceCount": 4,
+      "logSha256": "54229a638b050ee6731bd5cc69ab3d5a8037f1e906448f2a5c2bb4959c4cd0cd"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S02-verification-ladder-matrix-current-20261007.json",
+      "sha256": "f17c6028889f14c749e6b25958f423072e91b6522f3ed61f3e818008745b2e81",
+      "task": "FE003",
+      "step": "S02",
+      "sourceCount": 25,
+      "logSha256": "1ca8139851c27b52170f41aa01512e09a1016b15167a773bba7a2180b81ff9aa"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE003/S03-runner-config-baseline-final-current-20261007.json",
+      "sha256": "a13091bc293b8200968175a5857aa8def8867e3b7fa5d4ded853026b90546199",
+      "task": "FE003",
+      "step": "S03",
+      "sourceCount": 21,
+      "logSha256": "38f2b7deb2fe305c2f62e049b7c3c213db266c9614345dce82655761fec2fb4b"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S05-clean-install-retry-verified-current-20261007.json",
+      "sha256": "3f121a47ebe43947b7034808f89c8930c8f38b53cc2bc1264938e7e40a6d18ff",
+      "task": "FE002",
+      "step": "S05",
+      "sourceCount": 9,
+      "logSha256": "2bd9f4c22cb0bb64f7f6851c9fa6ef5c5081ff5dbbf41b112cf2ab53816a8643"
+    }
+  ]
+}

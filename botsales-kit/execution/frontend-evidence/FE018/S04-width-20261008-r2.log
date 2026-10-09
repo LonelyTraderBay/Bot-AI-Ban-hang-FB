@@ -1,0 +1,593 @@
+{
+  "executedAt": "2026-10-08T16:24:59.119Z",
+  "taskId": "FE018",
+  "stepId": "S04",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+      "verification": "Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R26",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "BotConfigPage"
+        },
+        {
+          "id": "R27",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "PlaygroundPage"
+        },
+        {
+          "id": "R28",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "EvaluationsPage"
+        },
+        {
+          "id": "R51",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "AgentTeamPage"
+        }
+      ],
+      "operationIds": [
+        "controlAutomation",
+        "createEvaluation",
+        "getBotConfig",
+        "getBotRevision",
+        "getEvaluation",
+        "getJob",
+        "listAIConnections",
+        "listAgentRoles",
+        "listBotRevisions",
+        "listBudgetPolicies",
+        "listEvaluations",
+        "listKnowledge",
+        "pauseBot",
+        "publishBotConfig",
+        "restoreBotRevision",
+        "runPlayground",
+        "updateAgentRole",
+        "updateBotDraft"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE018.S01 maps routes and operations to the canonical OpenAPI permissions",
+        "FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict",
+        "FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft",
+        "FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary",
+        "FE018.AC03 playground sends no external message and preserves unknown cost and token values",
+        "FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer",
+        "FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion",
+        "FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot",
+        "FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results",
+        "FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions",
+        "FE018.AC05 unknown role command stays unresolved and does not claim successful resumption",
+        "UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state",
+        "UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry",
+        "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+        "A02 product editors align category and status faces independently from lookup metadata",
+        "A03 import mapping preserves natural remove actions and editable mappings",
+        "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+        "A05 status height follows its own label while long labels remain fully readable",
+        "A06 Empty wraps unbroken reference text and retains its keyboard action",
+        "A07 locked order addresses expose full text and edit lines retain intrinsic actions"
+      ],
+      "executions": 40,
+      "assertionInventory": [
+        {
+          "file": "tests/fe018.spec.ts",
+          "sha256": "215394c04d3c1e0a9344282645960b51646d04e708c4df55c3736045542e40fc",
+          "cases": [
+            {
+              "title": "FE018.S01 maps routes and operations to the canonical OpenAPI permissions",
+              "line": 128,
+              "assertions": [
+                "expect(route?.module).toBe('bot')",
+                "expect(byId.get(action.operationId)?.['x-permission']).toBe(action.permission)",
+                "expect(byId.get('updateBudgetPolicy')?.['x-permission']).toBe('operations.manage')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict",
+              "line": 145,
+              "assertions": [
+                "expect(page.getByText('Hợp đồng BotConfigWrite hiện khóa requireHumanOrderConfirmation=true.')).toBeVisible()",
+                "expect(request.headers()['if-match']).toBe('\"1\"')",
+                "expect(request.postDataJSON()).toMatchObject({ instructions, requireHumanOrderConfirmation: true })",
+                "expect(response.status()).toBe(200)",
+                "expect((await response.json()).data).toMatchObject({ draftRevision: 2, version: 2, instructions, requireHumanOrderConfirmation: true })",
+                "expect(staleResponse.status()).toBe(412)",
+                "expect(staleDialog.getByRole('alert').filter({ hasText: 'Mô phỏng dữ liệu bị thay đổi bởi người khác.' })).toBeVisible()",
+                "expect(staleDialog.getByLabel('Chỉ dẫn tư vấn đã duyệt')).toHaveValue(edited)",
+                "expect(await readApi<{ instructions: string; draftRevision: number }>(page, '/api/v2/shops/shop-demo/bot/config')).toMatchObject({ instructions, draftRevision: 2 })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft",
+              "line": 176,
+              "assertions": [
+                "expect(changed.response.status()).toBe(200)",
+                "expect(changed.request.postDataJSON()).toMatchObject({ requireHumanOrderConfirmation: true })",
+                "expect(request.postDataJSON()).toMatchObject({ expectedVersion: 2, draftRevision: 2, evaluationRunId: evaluationId, reason: 'Đánh giá cũ không áp dụng' })",
+                "expect(response.status()).toBe(409)",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Đánh giá không khớp bản nháp.' })).toBeVisible()",
+                "expect(dialog.getByLabel('Mã lần đánh giá đúng bản nháp')).toHaveValue(evaluationId)",
+                "expect(await readApi<{ status: string; draftRevision: number; liveRevision: number | null }>(page, '/api/v2/shops/shop-demo/bot/config')).toMatchObject({ status: 'paused', draftRevision: 2, liveRevision: null })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary",
+              "line": 200,
+              "assertions": [
+                "expect(publishRequest.postDataJSON()).toEqual({ expectedVersion: 1, draftRevision: 1, evaluationRunId: evaluationId, reason: 'Đã kiểm tra bản nháp' })",
+                "expect(publishResponse.status()).toBe(202)",
+                "expect.poll(async () => (await readApi<{ status: string; liveRevision: number | null; requireHumanOrderConfirmation: boolean }>(page, '/api/v2/shops/shop-demo/bot/config'))).toMatchObject({ status: 'active', liveRevision: 1, requireHumanOrderConfirmation: true })",
+                "expect.poll(async () => (await readApi<{ status: string; liveRevision: number | null; requireHumanOrderConfirmation: boolean }>(page, '/api/v2/shops/shop-demo/bot/config')))",
+                "expect(pauseDialog).toContainText('Tin nhắn đã được nhà cung cấp nhận không thể thu hồi')",
+                "expect(pauseRequest.postDataJSON()).toEqual({ expectedVersion: 2, reason: 'Dừng kiểm thử' })",
+                "expect(pauseResponse.status()).toBe(202)",
+                "expect.poll(async () => (await readApi<{ status: string; liveRevision: number | null }>(page, '/api/v2/shops/shop-demo/bot/config'))).toMatchObject({ status: 'paused', liveRevision: 1 })",
+                "expect.poll(async () => (await readApi<{ status: string; liveRevision: number | null }>(page, '/api/v2/shops/shop-demo/bot/config')))"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.AC03 playground sends no external message and preserves unknown cost and token values",
+              "line": 230,
+              "assertions": [
+                "expect(response.status()).toBe(200)",
+                "expect(request.postDataJSON()).toEqual({ configRevision: 1, text: prompt, customerContextId: null })",
+                "expect(result).toMatchObject({ configRevision: 1, estimatedCost: null, inputTokens: null, outputTokens: null, externalMessageSent: false })",
+                "expect(result.text).toContain('[Mô phỏng, không gọi AI]')",
+                "expect(result.warnings).toContain('Đây là kiểm tra giao diện, không đo chất lượng mô hình AI.')",
+                "expect(page.getByText('[Mô phỏng, không gọi AI]', { exact: false })).toBeVisible()",
+                "expect(page.getByText('Gửi ra ngoài', { exact: true }).locator('..')).toContainText('Không')",
+                "expect(page.getByRole('alert').filter({ hasText: 'không đo chất lượng mô hình AI' })).toBeVisible()",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(await page.evaluate(() => document.documentElement.clientWidth) + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer",
+              "line": 252,
+              "assertions": [
+                "expect(budgetResponse.status()).toBe(429)",
+                "expect(await budgetResponse.json()).toMatchObject({ code: 'BUDGET_EXCEEDED', status: 429 })",
+                "expect(page.getByRole('alert').filter({ hasText: 'Hạn mức AI mô phỏng đã đạt giới hạn' })).toBeVisible()",
+                "expect(input).toHaveValue(prompt)",
+                "expect(page.getByText('Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.')).toBeVisible()",
+                "expect(toolResponse.status()).toBe(403)",
+                "expect(await toolResponse.json()).toMatchObject({ code: 'TOOL_NOT_ALLOWED', status: 403 })",
+                "expect(page.getByRole('alert').filter({ hasText: 'không thuộc allowedToolIds' })).toBeVisible()",
+                "expect(input).toHaveValue(prompt)",
+                "expect(page.getByText('Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.')).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion",
+              "line": 278,
+              "assertions": [
+                "expect(preview).toContainText('Chi phí trong phòng thử là ước tính mô phỏng')",
+                "expect(preview).toContainText('Provider dự phòng')",
+                "expect(preview).toContainText('Chưa có trạng thái failover được xác minh')",
+                "expect(preview).toContainText('không âm thầm đổi provider')",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot",
+              "line": 292,
+              "assertions": [
+                "expect((await publishResponseWait).status()).toBe(202)",
+                "expect(before[0]).toMatchObject({ id: 'agent-0', status: 'paused', allowedToolIds: ['catalog.read', 'quote.create', 'order.draft'] })",
+                "expect(before[0].allowedToolIds).not.toContain('orders.confirm')",
+                "expect(resumeRequest.postDataJSON()).toMatchObject({ expectedVersion: 1, scope: 'role', resourceId: 'agent-0', action: 'resume', reason: 'Kiểm thử tiếp tục' })",
+                "expect((await resumeResponseWait).status()).toBe(202)",
+                "expect(page.getByRole('button', { name: 'Tạm dừng' }).first()).toBeVisible()",
+                "expect(pauseRequest.postDataJSON()).toMatchObject({ expectedVersion: 2, scope: 'role', resourceId: 'agent-0', action: 'pause', reason: 'Dừng riêng vai trò' })",
+                "expect((await pauseResponseWait).status()).toBe(202)",
+                "expect(afterRoles[0]).toMatchObject({ id: 'agent-0', status: 'paused', allowedToolIds: before[0].allowedToolIds })",
+                "expect(afterBot).toMatchObject({ status: 'active', liveRevision: 1 })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results",
+              "line": 333,
+              "assertions": [
+                "expect(wrongScope.request.postDataJSON()).toMatchObject({ expectedVersion: 1, limitAmount: { amount: '350000', currency: 'VND' }, approvalId: 'seed-approval-10049' })",
+                "expect(wrongScope.response.status()).toBe(409)",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Phê duyệt đã hết hạn, sai phiên bản hoặc không thuộc hạn mức này.' })).toBeVisible()",
+                "expect(expired.response.status()).toBe(409)",
+                "expect(unchanged.find(item => item.id === 'budget-0')).toMatchObject({ limitAmount: { amount: '300000' } })",
+                "expect(amount).toHaveValue('350000')",
+                "expect(valid.response.status()).toBe(200)",
+                "expect((await valid.response.json()).data).toMatchObject({ id: 'budget-0', version: 2, limitAmount: { amount: '350000', currency: 'VND' } })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions",
+              "line": 361,
+              "assertions": [
+                "expect(page.getByRole('button', { name: 'Sửa bản nháp' })).toHaveCount(0)",
+                "expect(page.getByRole('button', { name: 'Duyệt & xuất bản' })).toHaveCount(0)",
+                "expect(deniedDraft).toBe(403)",
+                "expect(await readApi<{ instructions: string; draftRevision: number }>(page, '/api/v2/shops/shop-demo/bot/config')).toMatchObject({ draftRevision: 1 })",
+                "expect(page.getByRole('button', { name: 'Đổi có phê duyệt' })).toHaveCount(0)",
+                "expect(deniedBudget).toBe(403)",
+                "expect(unchanged.find(item => item.id === 'budget-0')).toMatchObject({ limitAmount: { amount: '300000' } })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE018.AC05 unknown role command stays unresolved and does not claim successful resumption",
+              "line": 393,
+              "assertions": [
+                "expect(response.status()).toBe(202)",
+                "expect((await response.json()).data.status).toBe('unknown')",
+                "expect(dialog.getByRole('alert')).toContainText('Chưa xác minh được kết quả')",
+                "expect(dialog).toBeVisible()",
+                "expect(await readApi<Array<{ id: string; status: string }>>(page, '/api/v2/shops/shop-demo/agent-roles')).toContainEqual(expect.objectContaining({ id: 'agent-0', status: 'not_configured' }))",
+                "expect.objectContaining({ id: 'agent-0', status: 'not_configured' })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state",
+              "line": 409,
+              "assertions": [
+                "expect(firstPage).toMatchObject({ page: { limit: 20, total: 25, hasMore: true } })",
+                "expect(firstPage.data).toHaveLength(20)",
+                "expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(0, 20))",
+                "expect(page.getByText('25 kết quả', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeEnabled()",
+                "expect(second.response.status()).toBe(200)",
+                "expect(second.envelope).toMatchObject({ page: { total: 25, hasMore: false, nextCursor: null } })",
+                "expect(second.envelope.data.map(row => row.id)).toEqual([...createdIds].reverse().slice(20))",
+                "expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20))",
+                "expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeDisabled()",
+                "expect(page.getByRole('button', { name: 'Đầu danh sách', exact: true })).toBeEnabled()",
+                "expect(detail).toBeVisible()",
+                "expect(detail).toBeHidden()",
+                "expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(firstPage.page.nextCursor)",
+                "expect.poll(() => new URL(page.url()).searchParams.get('cursor'))",
+                "expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20))",
+                "expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBeNull()",
+                "expect.poll(() => new URL(page.url()).searchParams.get('cursor'))",
+                "expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(0, 20))",
+                "expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(firstPage.page.nextCursor)",
+                "expect.poll(() => new URL(page.url()).searchParams.get('cursor'))",
+                "expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20))",
+                "expect(new URL(page.url()).searchParams.get('cursor')).toBeNull()",
+                "expect(searchEnvelope).toMatchObject({ page: { total: 1, hasMore: false } })",
+                "expect(await visibleEvaluationIds(page)).toEqual([createdIds[0]])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry",
+              "line": 455,
+              "assertions": [
+                "expect(firstPage).toMatchObject({ page: { limit: 20, total: 105, hasMore: true } })",
+                "expect(firstPage.data).toHaveLength(20)",
+                "expect(await visibleEvaluationIds(page)).toEqual(current.data.map(row => row.id))",
+                "expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.')",
+                "expect(failedResponse.status()).toBe(503)",
+                "expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(failedCursor)",
+                "expect.poll(() => new URL(page.url()).searchParams.get('cursor'))",
+                "expect(page.getByRole('alert').filter({ hasText: 'API mô phỏng đang lỗi liên tục.' })).toBeVisible({ timeout: 15_000 })",
+                "expect(page.getByRole('row')).toHaveCount(0)",
+                "expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.')",
+                "expect(retryResponse.status()).toBe(200)",
+                "expect(current.data).toHaveLength(20)",
+                "expect.poll(() => visibleEvaluationIds(page)).toEqual(current.data.map(row => row.id))",
+                "expect.poll(() => visibleEvaluationIds(page))",
+                "expect(cursor).toBeTruthy()",
+                "expect(next.response.status()).toBe(200)",
+                "expect(next.envelope.page.total).toBe(105)",
+                "expect(next.envelope.data.map(row => row.id)).toEqual(await visibleEvaluationIds(page))",
+                "expect(allVisible).toEqual(orderedExpected)",
+                "expect(new Set(allVisible).size).toBe(105)",
+                "expect(current.data).toHaveLength(5)",
+                "expect(current.page).toMatchObject({ total: 105, hasMore: false, nextCursor: null })",
+                "expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeDisabled()",
+                "expect(page.getByRole('button', { name: createdIds[0], exact: true })).toBeVisible()",
+                "expect(page.getByRole('dialog', { name: 'Chi tiết đánh giá' })).toBeVisible()",
+                "expect(page.getByRole('button', { name: createdIds[0], exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-component-layout.spec.ts",
+          "sha256": "b35ed966ca888b45ee30bdc4a40cf1c155e5e8b43440684179462b6928f0153a",
+          "cases": [
+            {
+              "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+              "line": 39,
+              "assertions": [
+                "expect(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true })).toBeVisible()",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 product editors align category and status faces independently from lookup metadata",
+              "line": 60,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1)",
+                "expect(geometry.status.y).toBeGreaterThan(geometry.category.y)",
+                "expect(page.getByText('Không tìm thấy danh mục phù hợp.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('textbox', { name: 'Tên sản phẩm', exact: true })).toHaveValue('Bản nháp cần giữ')",
+                "expect(Math.abs(category!.y - status!.y)).toBeLessThanOrEqual(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A03 import mapping preserves natural remove actions and editable mappings",
+              "line": 83,
+              "assertions": [
+                "expect(remove).toHaveCount(5)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(remove).toHaveCount(4)",
+                "expect(remove).toHaveCount(5)",
+                "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('Mã SKU đã sửa')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+              "line": 103,
+              "assertions": [
+                "expect(amount).toHaveCount(2)",
+                "expect(page.getByText(expected.negative, { exact: true })).toBeVisible()",
+                "expect(await amount.first().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('normal')",
+                "expect(await amount.last().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('nowrap')",
+                "expect(clipping).toBe(false)",
+                "expect(overflow).toBe(true)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft))",
+                "expect(await table.evaluate(node => node.scrollLeft)).toBe(before)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A05 status height follows its own label while long labels remain fully readable",
+              "line": 129,
+              "assertions": [
+                "expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1)",
+                "expect(geometry.actual).toBeLessThanOrEqual(intrinsicSize.natural + 1)",
+                "expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120))",
+                "expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+              "line": 148,
+              "assertions": [
+                "expect(page.getByRole('status')).toContainText('Mã tham chiếu: ' + 'A'.repeat(120))",
+                "expect(await text.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect(action).toBeFocused()",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A07 locked order addresses expose full text and edit lines retain intrinsic actions",
+              "line": 161,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(address).toBeVisible()",
+                "expect(dialog.getByRole('combobox', { name: /^Địa chỉ giao hàng/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('combobox', { name: /^Thanh toán/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('group', { name: 'Thanh toán', exact: true })).toContainText('Thu khi giao (COD)')",
+                "expect(addressText).toHaveText(expected)",
+                "expect(await addressText.evaluate(node => node.scrollWidth <= node.clientWidth + 1 && getComputedStyle(node).textOverflow !== 'ellipsis')).toBe(true)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(addressText).toHaveText(original!)",
+                "expect((await new AxeBuilder({ page }).include('[role=\"dialog\"]').analyze()).violations).toEqual([])",
+                "expect(option).toBeVisible()",
+                "expect(await option.evaluate(node => {\n            const paper = node.closest('.MuiPaper-root')!.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node);\n            return getComputedStyle(node).whiteSpace === 'normal' && [...range.getClientRects()].every(rect => rect.left >= paper.left - 1 && rect.right <= paper.right + 1);\n        })).toBe(true)",
+                "expect(page.getByRole('listbox')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 175,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 600,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 175-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled width behavior",
+      "routeObservations": 216,
+      "focusedCases": 50,
+      "artifact": "built-width-review.json",
+      "limit": "Actual compiled geometry/axe/keyboard; counts remain separate from full browser suite."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T15:06:43.990Z",
+      "finishedAt": "2026-10-08T16:08:18.865Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log",
+        "sha256": "0dd13c7e0d58c6a0b233fa73b5292792d7fc9d823db36e18e2d43a7681ec7d65"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T16:17:12.833Z",
+      "finishedAt": "2026-10-08T16:20:43.383Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791476232832-77820/verify.log",
+        "sha256": "5f1a26eb82b0b3bcbfc4d877b011a2e5bf5a3d667926a7f7372ed9cf888ac533"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T15:06:19.368Z",
+      "finishedAt": "2026-10-08T15:06:27.830Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471979366-47856/unit.log",
+        "sha256": "9bdf32f670c42b6008b248bc8a31bd9c446e58ab5fbed5177ff4b9b8146e86be"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T15:06:20.146Z",
+      "finishedAt": "2026-10-08T15:06:20.494Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471980144-85744/source-maps.log",
+        "sha256": "0cd6f9893f86513b00b56e54f6b429fe50eb8ca10472bf361b88fb07e4772b26"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T16:13:48.583Z",
+      "finishedAt": "2026-10-08T16:16:53.763Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791476022925-8140/built-demo.log",
+        "sha256": "e87ef94110b0b39ed716edef9e8c3192866c234682cdbf4c0b8376c6574fb6ac"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "40bc6225a4fc4e780438f17a0b57eafc0471f34345ddd2646e15d0134ddad782"
+}

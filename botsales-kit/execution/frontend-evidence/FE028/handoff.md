@@ -1,5 +1,27 @@
 # FE028 — Bàn giao frontend local/mock
 
+<!-- CORRECTIONS_CURRENT -->
+## Kết quả hiện hành — component A01–A07 sau F01–F09 và Toolbar/Shell
+
+[Báo cáo source/gates](../../../../BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/REPORT.md) và [ca nghiệm thu](../../../../BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/ACCEPTANCE_GUIDE.md): READY_FOR_ACCEPTANCE_LOCAL_SCOPE; full E2E580/580,174 unit,39 contracts,built-demo6/6,native33/33 trên source mới. Thứ tự UI chỉ ở plan §16.6; FE freshness đọc canonical CLI, giữ mẫu số140. Counts554/173,566/174 và các manifest cũ bên dưới là snapshot lịch sử, không thay lần chạy mới.
+
+Local React/TypeScript + HTTP MSW tổng hợp. Speech, hosted CI, Backend/provider thật và quyết định người dùng giữ trạng thái quan sát riêng; không tự điền PASS.
+<!-- END_CORRECTIONS_CURRENT -->
+
+## HISTORICAL_SNAPSHOT — hồ sơ trước đợt F01–F09
+
+**Cập nhật hiện hành:** 08/10/2026 · **Phạm vi:** `FRONTEND_WITH_SYNTHETIC_MOCK_API` · **Quyết định:** hồ sơ kỹ thuật local sẵn sàng cho người dùng review có giới hạn; không tự ghi nhận acceptance.
+
+## Handoff hiện hành
+
+- Đọc [handoff chi tiết 08/10](handoff-current-20261008.md), [quality gates](quality-gate-matrix-current-20261008.json), [architecture self-review](architecture-review-current-20261008.md) và [Production Claim Gate §19.6](production-claim-review-current-20261008.json).
+- FE026 clean install/verify/build/audit đạt; production/demo tree hash, command logs và lock hash ở [clean artifact manifest](../FE026/clean-artifacts-current-20261008-attempt03.json). FE027 có [UAT matrix 54 route/64 feature/65 interaction rows/22 journey](../FE027/uat-matrix-current-20261008.json) và full browser run 512/512.
+- Source/run/docs xác nhận demo fixture reset qua `Dataset mô phỏng → Dataset mặc định` trong toolbar hoặc reload; cả hai khởi tạo lại in-memory seed. API base same-origin `/api/v2`; `API_PROXY_TARGET` chỉ cấu hình proxy `dev:live`; không có `VITE_API_BASE_URL`.
+- FE-G05 vẫn **CHƯA ĐẠT ĐẦY ĐỦ** (Narrator transcript và broad human conformance chưa chạy); FE-G09 **CHƯA XÁC MINH** (chờ người dùng quyết định). Hosted CI chưa chạy; backend/provider/staging/production không thuộc bằng chứng local này.
+- Đọc FE tracker sau checkpoint qua `node scripts/progress.mjs validate`, `status` và `report` trong `botsales-kit`. Đây là độ mới của checkpoint evidence; không phải phần trăm source-code completion. Full-product ledger vẫn read-only.
+
+## Historical handoff snapshot — 06/10/2026
+
 **Cập nhật:** 06/10/2026 · **Phạm vi:** `FRONTEND_WITH_SYNTHETIC_MOCK_API` · **Mục đích:** đưa ứng dụng Frontend và hồ sơ kỹ thuật ra nghiệm thu cuối của người dùng.
 
 ## Đánh giá và ranh giới
@@ -13,15 +35,15 @@ FE plan có 28 task/140 checkpoint. Trạng thái hiện hành chỉ đọc bằ
 - [Quality gate matrix sau SPC-060](quality-gate-matrix-spc060-current-20261006.json) đối chiếu chín FE gates và nêu rõ 7/9, các giới hạn, quyền và ý nghĩa.
 - [Architecture review](architecture-review-spc060-current-20261006.md) ghi composition/boundary, source counts, checker outcomes và điều gì chưa được source scan chứng minh.
 - [Production Claim Gate review](production-claim-review-spc060-current-20261006.json) áp dụng `AI_RULES.md §19.6`; đề nghị nghiệm thu Frontend local/mock, không tuyên bố Production-Ready/Enterprise-Grade toàn hệ thống.
-- [W26 verify/build](../../../../evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log): generator 11/283/210/54; source 67/220/54; boundaries 475 imports/10 negative fixtures; lint/typecheck; domain/MSW 88/88; Vitest 93/93; production build; layout/visual-token gates.
-- [Strict SPC-060 layout/token evidence](../../../../evidence/frontend-spacing-audit-20261005/policy-spc060-current-20261006/): layout fixtures 10/10, strict scan 68 files/0 findings; visual-token fixtures 5/5, strict scan 68 files/0 findings; generator check 11/283/210/54.
+- [W26 verify/build](../../../../BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W26/verify-with-visual-gate-current-20261006.log): generator 11/283/210/54; source 67/220/54; boundaries 475 imports/10 negative fixtures; lint/typecheck; domain/MSW 88/88; Vitest 93/93; production build; layout/visual-token gates.
+- [Strict SPC-060 layout/token evidence](../../../../BotSalesAI_Frontend/evidence/frontend-spacing-audit-20261005/policy-spc060-current-20261006/): layout fixtures 10/10, strict scan 68 files/0 findings; visual-token fixtures 5/5, strict scan 68 files/0 findings; generator check 11/283/210/54.
 - [Built-demo browser run](../FE008/S03-e2e-spc059-current-20261006.log): 484/484 Chromium + Firefox. [UAT matrix](../FE027/uat-matrix-spc059-current-20261006.json): 54 routes, 64 features, 65 feature-route interaction rows, 22 journeys, 357/357 route-role cases, empty 11/11, error 51/51, zero untested applicable state cells.
-- [W32 artifact review](../../../../evidence/frontend-ui-improvements/UI028/W32/summary-current-20261006.json): built demo SHA-256 `6f4120d693536fd4f9ca8d417604c9d4cc16cfc2bcc46ccddbbec25405d978f2`, smoke 2/2 and route matrix 216/216.
+- [W32 artifact review](../../../../BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W32/summary-current-20261006.json): built demo SHA-256 `6f4120d693536fd4f9ca8d417604c9d4cc16cfc2bcc46ccddbbec25405d978f2`, smoke 2/2 and route matrix 216/216.
 - [Dependency audit](../FE024/npm-audit-spc059-current-20261006.json): zero reported vulnerabilities across 463 audited entries. npm `allowScripts` notices for esbuild/MSW remain visible; scripts were not automatically approved.
 
 ## Quy định cho mọi UI tạo mới
 
-Áp dụng [FRONTEND_SPACING_STANDARD.md SPC-001–060](../../../../docs/FRONTEND_SPACING_STANDARD.md). Trước JSX/CSS, ghi vào design contract hiện có: route và layout profile; vùng page/section/surface/field-list/control; semantic spacing role và owner; reference cùng profile; viewport/state cần so; typography/token và hành vi cần giữ. Parent/child inset owner phải rõ để tránh cộng padding.
+Áp dụng [FRONTEND_SPACING_STANDARD.md SPC-001–060](../../../../BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md). Trước JSX/CSS, ghi vào design contract hiện có: route và layout profile; vùng page/section/surface/field-list/control; semantic spacing role và owner; reference cùng profile; viewport/state cần so; typography/token và hành vi cần giữ. Parent/child inset owner phải rõ để tránh cộng padding.
 
 Dùng token/preset/role chuẩn. Các route cùng profile dùng cùng spacing rhythm; sai khác chỉ khi workflow/dữ liệu/responsive behavior cần và phải có rationale cùng shared named variant có consumer thật. Sau render, so cùng viewport/state và regression mọi consumer bị ảnh hưởng; chạy `test:layout`, `test:visual-tokens`, generator freshness cùng hành vi/reflow checks liên quan. Finding mới, `UNKNOWN` hoặc case cần kiểm nhưng chưa chạy thì ghi đúng trạng thái và chưa đóng task. Không bù bằng route-local px, số MUI factor, spacer, override hoặc exception rộng. SPC-060 là quy định thiết kế/check cho UI mới; checker không tự chứng nhận toàn bộ route hiện hữu đã đồng nhất trực quan.
 

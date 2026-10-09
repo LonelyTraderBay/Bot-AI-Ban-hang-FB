@@ -1,0 +1,357 @@
+{
+  "executedAt": "2026-10-08T07:41:07.994Z",
+  "taskId": "FE021",
+  "stepId": "S01",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+      "verification": "Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R04",
+          "source": "apps/web/src/modules/dashboard/index.tsx",
+          "component": "DashboardPage"
+        },
+        {
+          "id": "R31",
+          "source": "apps/web/src/modules/reports/index.tsx",
+          "component": "ReportsPage"
+        },
+        {
+          "id": "R53",
+          "source": "apps/web/src/modules/reports/index.tsx",
+          "component": "MarketingPage"
+        }
+      ],
+      "operationIds": [
+        "createExport",
+        "getDashboard",
+        "getMarketingSummary",
+        "getReportSummary",
+        "getShop",
+        "listJobs",
+        "pauseBot"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE021 dashboard keeps independent panels usable and hides finance fields without finance.read",
+        "FE021 marketing chart and table match the same synthetic API fixture and preserve missing actual spend",
+        "FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination",
+        "FE021 mock rejects an export when reports.export lacks the source permission",
+        "FE021 mock rejects an invalid report timezone before creating an export job",
+        "FE021 ambiguous export result preserves the selected dates and never exposes a download",
+        "FE021 empty report and marketing payloads render explicit empty states",
+        "FE021 stale export conflict preserves dates and never exposes a download"
+      ],
+      "executions": 16,
+      "assertionInventory": [
+        {
+          "file": "tests/fe021.spec.ts",
+          "sha256": "1744ec561e277dc8c6ebc69c5420dfe560658a20432e44ad0453f3f0c3426880",
+          "cases": [
+            {
+              "title": "FE021 dashboard keeps independent panels usable and hides finance fields without finance.read",
+              "line": 29,
+              "assertions": [
+                "expect(page.getByText('Chỉ hiển thị khi vai trò có finance.read.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('link', { name: 'Xem lợi nhuận' })).toHaveCount(0)",
+                "expect(page.getByRole('heading', { name: 'Tình hình hiện tại' })).toBeVisible()",
+                "expect(page.getByRole('link', { name: 'Xem việc cần làm', exact: true })).toBeVisible()",
+                "expect(page.getByRole('link', { name: 'Tạo đơn hàng', exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('link', { name: 'Tất cả đơn', exact: true })).toBeVisible()",
+                "expect(page.getByText('Dữ liệu cập nhật', { exact: false })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE021 marketing chart and table match the same synthetic API fixture and preserve missing actual spend",
+              "line": 41,
+              "assertions": [
+                "expect(response.status()).toBe(200)",
+                "expect(reasons.length).toBeGreaterThan(0)",
+                "expect(page.getByTestId('marketing-loss-chart')).toBeVisible()",
+                "expect(table.getByRole('row')).toHaveCount(reasons.length + 1)",
+                "expect(table.getByText(reason.reason, { exact: true })).toBeVisible()",
+                "expect(table.getByText(String(reason.count), { exact: true })).toBeVisible()",
+                "expect(envelope.data.actualSpend).toBeNull()",
+                "expect(page.getByText('Chưa có số thực tế từ API', { exact: true })).toBeVisible()",
+                "expect(page.getByText('Ước tính không phải số ghi sổ', { exact: true })).toBeVisible()",
+                "expect(page.getByText('getMarketingSummary không nhận bộ lọc ngày;', { exact: false })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination",
+              "line": 64,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Tạo tệp báo cáo' })).toBeVisible()",
+                "expect(exportResponse.status()).toBe(202)",
+                "expect(exportBody).toMatchObject({ reportType: 'orders', format: 'csv', timezone: 'Asia/Vientiane', from: '2026-09-28T17:00:00.000Z', to: '2026-09-29T16:59:59.999Z', snapshotAsOf: '2026-09-29T14:00:00.000Z' })",
+                "expect(exportEnvelope.data).toMatchObject({ kind: 'export', status: 'succeeded', total: expect.any(Number) })",
+                "expect.any(Number)",
+                "expect(page.getByRole('link', { name: `Theo dõi công việc ${exportEnvelope.data.id}` })).toBeVisible()",
+                "expect(csvText).toContain('\"orderId\",\"createdAt\",\"orderState\",\"fulfillmentState\",\"paymentState\",\"totalAmount\",\"currency\"')",
+                "expect(csvText).toContain('DH-DEMO-RETURN-02')",
+                "expect(csvText).not.toContain('customerId')",
+                "expect(csvText).not.toContain('shippingAddressId')",
+                "expect(page.getByRole('link', { name: 'Tải CSV' })).toBeVisible()",
+                "expect((await downloadPromise).suggestedFilename()).toBe('botsales-orders-2026-09-29-2026-09-29.csv')",
+                "expect(page.getByRole('row').filter({ hasText: exportEnvelope.data.id })).toBeVisible()",
+                "expect(status).toBe(202)",
+                "expect(pages.first.data.length).toBe(10)",
+                "expect(pages.first.page.total).toBeGreaterThanOrEqual(12)",
+                "expect(pages.first.page.hasMore).toBe(true)",
+                "expect(pages.second.data.length).toBeGreaterThanOrEqual(2)",
+                "expect(pages.second.page.hasMore).toBe(false)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE021 mock rejects an export when reports.export lacks the source permission",
+              "line": 119,
+              "assertions": [
+                "expect(denied.status).toBe(403)",
+                "expect(denied.contentType).toContain('application/json')",
+                "expect(JSON.parse(denied.body).code).toBe('SOURCE_PERMISSION_REQUIRED')",
+                "expect(page.getByRole('combobox', { name: 'Báo cáo' })).toBeVisible()",
+                "expect(page.getByRole('option', { name: 'Tồn kho', exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE021 mock rejects an invalid report timezone before creating an export job",
+              "line": 139,
+              "assertions": [
+                "expect(page.getByRole('combobox', { name: 'Báo cáo' })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Công việc gần đây' })).toBeVisible()",
+                "expect(result.status).toBe(422)",
+                "expect(result.body.code).toBe('INVALID_REPORT_TIMEZONE')",
+                "expect(result.afterTotal).toBe(result.beforeTotal)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE021 ambiguous export result preserves the selected dates and never exposes a download",
+              "line": 159,
+              "assertions": [
+                "expect(page.getByRole('combobox', { name: 'Báo cáo' })).toBeVisible()",
+                "expect(page.getByRole('alert').filter({ hasText: 'Chưa xác minh được kết quả' })).toBeVisible()",
+                "expect(page.getByRole('link', { name: 'Tải CSV' })).toHaveCount(0)",
+                "expect(page.getByLabel('Từ ngày')).toHaveValue('2026-09-28')",
+                "expect(page.getByLabel('Đến ngày')).toHaveValue('2026-09-28')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE021 empty report and marketing payloads render explicit empty states",
+              "line": 172,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Tạo cửa hàng' })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Tình hình hiện tại' })).toBeVisible()",
+                "expect(shopId).toMatch(/^shop-/)",
+                "expect(page).toHaveURL(new RegExp(`/s/${shopId}/reports/marketing$`))",
+                "expect(page.getByText('API chưa cung cấp nhóm lý do để vẽ biểu đồ.', { exact: true })).toBeVisible()",
+                "expect(page.getByText('Chưa có lý do mất đơn trong payload API.', { exact: true })).toBeVisible()",
+                "expect(page).toHaveURL(new RegExp(`/s/${shopId}/reports$`))",
+                "expect(page.getByText('Chưa có công việc trong trang này.', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE021 stale export conflict preserves dates and never exposes a download",
+              "line": 191,
+              "assertions": [
+                "expect(page.getByRole('combobox', { name: 'Báo cáo' })).toBeVisible()",
+                "expect(page.getByRole('alert').filter({ hasText: 'Mô phỏng dữ liệu bị thay đổi bởi người khác' })).toBeVisible()",
+                "expect(page.getByRole('link', { name: 'Tải CSV' })).toHaveCount(0)",
+                "expect(page.getByLabel('Từ ngày')).toHaveValue('2026-09-27')",
+                "expect(page.getByLabel('Đến ngày')).toHaveValue('2026-09-28')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 173,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 554,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 173-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled comparison behavior",
+      "browsers": [
+        {
+          "browser": "chromium",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        },
+        {
+          "browser": "firefox",
+          "writes": [
+            {
+              "version": "\"1\"",
+              "body": {
+                "notes": "Built concurrent server note"
+              }
+            },
+            {
+              "version": "\"2\"",
+              "body": {
+                "displayName": "Built local draft"
+              }
+            }
+          ],
+          "result": "PASS"
+        }
+      ],
+      "artifact": "built-comparison-review-current.json",
+      "limit": "Additional built-artifact observation; not added into full browser or six-case built-suite counts."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T06:37:29.347Z",
+      "finishedAt": "2026-10-08T07:30:19.236Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441445991-24436/e2e.log",
+        "sha256": "3cacad22f6067dd1457cbb612a006c0c23b5fbe412b9463eb0e9cce03e58def3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T07:34:52.342Z",
+      "finishedAt": "2026-10-08T07:37:44.467Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444892341-75160/verify.log",
+        "sha256": "dfbd8a6d477a6eecb4157cfc065af49dbd42757c5af1562dc2ef420eb54a06c9"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T06:33:11.870Z",
+      "finishedAt": "2026-10-08T06:33:20.247Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191868-26044/unit.log",
+        "sha256": "30b43fa2caed68b69a8af1d3f42966be47fb599333ec8aeabf545d4e3a06828a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T06:33:12.561Z",
+      "finishedAt": "2026-10-08T06:33:13.122Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192559-16080/source-maps.log",
+        "sha256": "5995622faa92f23d7d7aaf71389770d0c2f06620028cee851c437263d462ea95"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T07:30:53.995Z",
+      "finishedAt": "2026-10-08T07:34:07.500Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444650847-70468/built-demo.log",
+        "sha256": "7a0b4144184a753be8151839e9a6c36446ccb91e0ed149baca057f25fd9f5c9d"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "e582fb2e272b90e1616b207bbe0d150d9bb7d219e85319b31d97d14740a0cbac"
+}

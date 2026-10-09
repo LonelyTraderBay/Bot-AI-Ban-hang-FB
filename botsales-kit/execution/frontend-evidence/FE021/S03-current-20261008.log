@@ -1,0 +1,16 @@
+FE021.S03 dashboard, reports and export verification.
+executedAt=2026-10-07T20:25:28.069Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+supportingCommandId=e2e; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e; exitCode=0; log=execution/frontend-evidence/FE001/S03-e2e-current-source-session-20261008.log; sha256=2e621efe0dda03a7d1c3657cc81fac8a74163967e139645f316e592c60470cc7
+supportingCommandId=verify-current-20261002; command=npm.cmd --script-shell=cmd.exe run verify; exitCode=0; log=execution/frontend-evidence/FE001/S03-full-verify-powershell-current-20261008.log; sha256=6a495a18b618c1a01b7df5f2c1fb23bd4afc3d12d357cbab31b95cc999cd15f3
+supportingCommandId=source; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source; exitCode=0; log=execution/frontend-evidence/FE005/S01-source-check-current-20261008.log; sha256=578aefd4a2ac07ec6f4c8dbe499740b107eee91f49aeb6e05a9b9dfdbb5fd5b5
+supplementalCommand=npm.cmd --script-shell=cmd.exe run test:e2e -- tests/fe021.spec.ts; exitCode=0; log=execution/frontend-evidence/FE021/S05-e2e-focused-current-20261008.log; sha256=2f93047d997a78d20bb98d755687edaf4633b762bc128d1bcc9962c14b19f0ab
+CASE PASS: Missing reports.export source permission returns 403 and hides the report option
+CASE PASS: Invalid timezone returns 422 without creating an export job
+CASE PASS: Ambiguous and stale export results retain dates and expose no download
+CASE PASS: Empty report/marketing payloads render explicit empty states and do not fabricate actual spend
+API_OR_DATA_BOUNDARY=getMarketingSummary has no date-filter input; the UI states that the displayed summary is the API snapshot and does not claim a filtered or live advertising-attribution result.
+API_OR_DATA_BOUNDARY=Marketing actual spend may be null and remains visibly missing instead of being reported as zero or accounting data.
+API_OR_DATA_BOUNDARY=Dashboard, P&L explanation, report job and CSV download behaviors are local synthetic API results, not proof of a live finance ledger or production export service.
+sourceSnapshotSha256=0158b30ebd915b4b1a97850f291bb908f8b7f3472e5cf0669f3a4abac65db78f
+Scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no live finance ledger, ad attribution, production CSV service or backend authorization is claimed.

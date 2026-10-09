@@ -1,0 +1,15 @@
+FE014.S03 procurement, approval and receipt verification.
+executedAt=2026-10-07T16:39:42.778Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+commandId=e2e; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e; exitCode=0; log=execution/frontend-evidence/FE009/S02-e2e-current-20261007.log
+commandId=domain; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain; exitCode=0; log=execution/frontend-evidence/FE009/S02-domain-current-20261007.log
+commandId=unit; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test; exitCode=0; log=execution/frontend-evidence/FE009/S04-unit-passed-current-20261007.log
+commandId=source; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source; exitCode=0; log=execution/frontend-evidence/FE010/S01-source-current-20261007.log
+commandId=feature-source-maps-20261002; command=node --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs; exitCode=0; log=execution/frontend-evidence/FE012/S01-source-maps-current-20261007.log
+E2E=512/512; FE014 browser=14/14; domain=88/88; unit=138/138; source-maps=16/16; FE014 assertions=95.
+CASE PASS: Changed purchase intent makes approval stale; unknown send blocks blind retry
+CASE PASS: Auto-send requires enabled procurement budget; receive actions respect permission
+CASE PASS: Duplicate replenishment proposals and receipt replay do not repeat effects
+CASE PASS: Domain simulator rejects cross-shop/unapproved suppliers and unusable auto-send budgets; UI preserves permission boundaries
+sourceSnapshotSha256=5456e3154d750f44fa9401ca9e3bedbce29e5ba380d7c2ef0420041c486f4bd0
+Scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; purchase, approval, budget and supplier communication are not real-world transactions.

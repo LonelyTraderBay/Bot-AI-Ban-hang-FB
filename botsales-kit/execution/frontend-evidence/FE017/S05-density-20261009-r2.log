@@ -1,0 +1,593 @@
+{
+  "executedAt": "2026-10-09T05:26:04.429Z",
+  "taskId": "FE017",
+  "stepId": "S05",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+      "verification": "Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R23",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "KnowledgePage"
+        },
+        {
+          "id": "R24",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "KnowledgeDetailPage"
+        },
+        {
+          "id": "R25",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "FeedbackPage"
+        }
+      ],
+      "operationIds": [
+        "createKnowledge",
+        "createKnowledgeRevision",
+        "getFile",
+        "getKnowledge",
+        "getKnowledgeRevision",
+        "listFeedback",
+        "listKnowledge",
+        "listKnowledgeRevisions",
+        "publishKnowledge",
+        "restoreKnowledgeRevision",
+        "retireKnowledge",
+        "reviewFeedback",
+        "submitKnowledgeReview",
+        "updateKnowledge",
+        "uploadFile"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field",
+        "FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status",
+        "FE017 price and stock source preview uses canonical product and timestamped inventory APIs",
+        "FE017.AC03 missing content, unsupported and oversized files keep creation unavailable",
+        "FE017.AC04 feedback approval creates inert draft content and its first revision only",
+        "FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish",
+        "FE017.AC06 stale review preserves the reason and explains the conflict",
+        "FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally",
+        "FE027.G03 policy revisions keep the published snapshot immutable when a draft changes",
+        "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+        "A02 product editors align category and status faces independently from lookup metadata",
+        "Shared outlined labels focus empty and populated native controls",
+        "A02 variant fields retain readable widths when text doubles",
+        "A03 import mapping preserves natural remove actions and editable mappings",
+        "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+        "A05 status height follows its own label while long labels remain fully readable",
+        "A06 Empty wraps unbroken reference text and retains its keyboard action",
+        "A07 locked order addresses expose full text and edit lines retain intrinsic actions"
+      ],
+      "executions": 36,
+      "assertionInventory": [
+        {
+          "file": "tests/fe017.spec.ts",
+          "sha256": "d000fd8414573a3db63cfe6ff5c0583c9963bc59fa7dc3ea3e7a9e9ea0055573",
+          "cases": [
+            {
+              "title": "FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field",
+              "line": 26,
+              "assertions": [
+                "expect(initial).toMatchObject({ status: 'draft', publishedRevisionId: null, draftRevisionId: 'kr3' })",
+                "expect(initial).not.toHaveProperty('allowedActions')",
+                "expect(page.getByRole('button', { name: 'Gửi duyệt', exact: true })).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Xuất bản bản đã đánh giá', exact: true })).toBeDisabled()",
+                "expect(JSON.parse(reviewRequest.postData() || 'null')).toEqual({ expectedVersion: initial.version, reason: 'Kiểm tra bản nháp FE017 trước khi đánh giá.' })",
+                "expect((await reviewResponseWait).status()).toBe(202)",
+                "expect(page.getByText('Chờ duyệt', { exact: true })).toBeVisible()",
+                "expect(page).toHaveURL(/\\/bot\\/evaluations$/)",
+                "expect(page.getByText(/không đánh giá chất lượng mô hình AI thật/)).toBeVisible()",
+                "expect(JSON.parse(evaluationRequest.postData() || 'null')).toMatchObject({ knowledgeRevisionId: initial.draftRevisionId, datasetVersion: 'FE017-synthetic-dataset-v1' })",
+                "expect(evaluationResponse.status()).toBe(202)",
+                "expect(evaluation).toMatchObject({ status: 'passed', knowledgeRevisionId: initial.draftRevisionId, mockOnly: true })",
+                "expect(page.getByText('Chờ duyệt', { exact: true })).toBeVisible()",
+                "expect(current.draftRevisionId).toBe(initial.draftRevisionId)",
+                "expect(JSON.parse(publishRequest.postData() || 'null')).toEqual({ expectedVersion: current.version, evaluationRunId: evaluation.id, revisionId: initial.draftRevisionId, reason: 'Đánh giá đạt trên đúng bản kiến thức đã duyệt.' })",
+                "expect((await publishResponseWait).status()).toBe(202)",
+                "expect(page.getByText('Đã xuất bản', { exact: true })).toBeVisible()",
+                "expect(published).toMatchObject({ status: 'published', publishedRevisionId: initial.draftRevisionId, draftRevisionId: initial.draftRevisionId })",
+                "expect((await createRevisionWait).status()).toBe(201)",
+                "expect(afterEdit.status).toBe('draft')",
+                "expect(afterEdit.publishedRevisionId).toBe(initial.draftRevisionId)",
+                "expect(afterEdit.draftRevisionId).not.toBe(initial.draftRevisionId)",
+                "expect(restoreDialog.getByText('Bản bổ sung mới; bản đã xuất bản vẫn được giữ nguyên.')).toBeVisible()",
+                "expect(restoreDialog.getByRole('button', { name: 'Khôi phục thành nháp' })).toBeDisabled()",
+                "expect(JSON.parse(restoreRequest.postData() || 'null')).toEqual({ expectedVersion: afterEdit.version, reason: 'Quay lại phiên bản đã kiểm soát.' })",
+                "expect((await restoreResponseWait).status()).toBe(201)",
+                "expect(restored).toMatchObject({ status: 'draft', publishedRevisionId: initial.draftRevisionId })",
+                "expect(restored.draftRevisionId).not.toBe(restored.publishedRevisionId)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status",
+              "line": 117,
+              "assertions": [
+                "expect(new URL(uploadRequest.url()).pathname).toMatch(/\\/uploads$/)",
+                "expect(multipartFields).toContainEqual(['purpose', 'knowledge_source'])",
+                "expect(uploadResponse.status()).toBe(201)",
+                "expect(knowledgeResponse.status()).toBe(201)",
+                "expect(knowledge).toMatchObject({ sourceKind: 'file', fileId: file.id, status: 'draft', publishedRevisionId: null })",
+                "expect(page).toHaveURL(/\\/s\\/shop-demo\\/knowledge$/)",
+                "expect(page).toHaveURL(new RegExp(`/knowledge/${knowledge.id}$`))",
+                "expect(page.getByText(/policy\\.pdf/)).toBeVisible()",
+                "expect(page.getByText('Sẵn sàng', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE017 price and stock source preview uses canonical product and timestamped inventory APIs",
+              "line": 156,
+              "assertions": [
+                "expect(productsResponse.status()).toBe(200)",
+                "expect(snapshotsResponse.status()).toBe(200)",
+                "expect(new URL(productsResponse.url()).searchParams.get('limit')).toBe('100')",
+                "expect(new URL(snapshotsResponse.url()).searchParams.get('limit')).toBe('100')",
+                "expect(source).toBeTruthy()",
+                "expect(row).toContainText(`${groupedAmount} ${symbol}`)",
+                "expect(row).toContainText(String(source.snapshot.available))",
+                "expect(row).toContainText(expectedSnapshotTime)",
+                "expect(page.getByText(/được truy vấn riêng với nội dung tri thức/)).toBeVisible()",
+                "expect(sourceTable).toBeVisible()",
+                "expect(sourceRegion).toBeFocused()",
+                "expect(pageWidth.content).toBeLessThanOrEqual(pageWidth.viewport)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE017.AC03 missing content, unsupported and oversized files keep creation unavailable",
+              "line": 189,
+              "assertions": [
+                "expect(dialog.getByRole('button', { name: 'Lưu bản nháp', exact: true })).toBeDisabled()",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'Chỉ nhận PDF, TXT hoặc CSV' })).toBeVisible()",
+                "expect(dialog.getByRole('button', { name: 'Lưu bản nháp', exact: true })).toBeDisabled()",
+                "expect(dialog.getByRole('alert').filter({ hasText: 'vượt giới hạn 5 MB' })).toBeVisible()",
+                "expect(dialog.getByRole('button', { name: 'Lưu bản nháp', exact: true })).toBeDisabled()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE017.AC04 feedback approval creates inert draft content and its first revision only",
+              "line": 211,
+              "assertions": [
+                "expect(feedbackResponse.status()).toBe(201)",
+                "expect(feedback.status).toBe('pending')",
+                "expect(reviewResponse.status()).toBe(200)",
+                "expect((await reviewResponse.json()).data).toMatchObject({ status: 'approved', knowledgeDraftId: expect.any(String) })",
+                "expect.any(String)",
+                "expect(proposedRow).toBeVisible()",
+                "expect(page.getByText(inertMarkup, { exact: true })).toBeVisible()",
+                "expect(page.locator('img[src=\"x\"]')).toHaveCount(0)",
+                "expect(page.getByRole('main').getByText('Bản nháp', { exact: true }).first()).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Xuất bản bản đã đánh giá', exact: true })).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish",
+              "line": 244,
+              "assertions": [
+                "expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('button', { name: 'Sửa bản nháp', exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('button', { name: 'Gửi duyệt', exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('button', { name: 'Xuất bản bản đã đánh giá', exact: true })).toHaveCount(0)",
+                "expect(denied).toEqual({ upload: 403, publish: 403 })"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE017.AC06 stale review preserves the reason and explains the conflict",
+              "line": 265,
+              "assertions": [
+                "expect(response.status()).toBe(412)",
+                "expect(dialog.getByRole('textbox', { name: /Lý do/ })).toHaveValue(reason)",
+                "expect(dialog.getByRole('alert')).toContainText('Mô phỏng dữ liệu bị thay đổi bởi người khác')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally",
+              "line": 280,
+              "assertions": [
+                "expect(preview).toContainText('Cotton pha mẫu; kiểm tra nhãn trước khi tư vấn thành phần.')",
+                "expect(preview).toContainText('Đo theo bảng kích cỡ đã duyệt, chưa tự chọn size.')",
+                "expect(preview).toContainText('Điều không được cam kết')",
+                "expect(preview).toContainText('Bản xem trước chưa được duyệt')",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.G03 policy revisions keep the published snapshot immutable when a draft changes",
+              "line": 298,
+              "assertions": [
+                "expect(original.publishedRevisionId).toBeTruthy()",
+                "expect(response.status()).toBe(201)",
+                "expect(revised).toMatchObject({ status: 'draft', publishedRevisionId: original.publishedRevisionId })",
+                "expect(revised.draftRevisionId).not.toBe(original.draftRevisionId)",
+                "expect(page.getByText('Bản nháp', { exact: true }).first()).toBeVisible()",
+                "expect(page.getByText('Bản đã xuất bản', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-component-layout.spec.ts",
+          "sha256": "ed0f76f9f902a593d991c50bba9163d0d2a66a9df07478643779c09b83041e67",
+          "cases": [
+            {
+              "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+              "line": 40,
+              "assertions": [
+                "expect(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true })).toBeVisible()",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 product editors align category and status faces independently from lookup metadata",
+              "line": 61,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1)",
+                "expect(geometry.status.y).toBeGreaterThan(geometry.category.y)",
+                "expect(page.getByText('Không tìm thấy danh mục phù hợp.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('textbox', { name: 'Tên sản phẩm', exact: true })).toHaveValue('Bản nháp cần giữ')",
+                "expect(Math.abs(category!.y - status!.y)).toBeLessThanOrEqual(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Shared outlined labels focus empty and populated native controls",
+              "line": 84,
+              "assertions": [
+                "expect(control).toBeFocused()",
+                "expect(control).toHaveValue(value)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 variant fields retain readable widths when text doubles",
+              "line": 99,
+              "assertions": [
+                "expect(name).toBeVisible()",
+                "expect(labels.length).toBeGreaterThanOrEqual(3)",
+                "expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([])",
+                "expect(label.fieldBounds.right - label.fieldBounds.left).toBeGreaterThanOrEqual(120)",
+                "expect(name).toHaveValue('Bản nháp biến thể cần giữ')",
+                "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial + 1)",
+                "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial)",
+                "expect(name).toHaveValue('Bản nháp biến thể cần giữ')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A03 import mapping preserves natural remove actions and editable mappings",
+              "line": 130,
+              "assertions": [
+                "expect(remove).toHaveCount(5)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(remove).toHaveCount(4)",
+                "expect(remove).toHaveCount(5)",
+                "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('Mã SKU đã sửa')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+              "line": 150,
+              "assertions": [
+                "expect(amount).toHaveCount(2)",
+                "expect(page.getByText(expected.negative, { exact: true })).toBeVisible()",
+                "expect(await amount.first().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('normal')",
+                "expect(await amount.last().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('nowrap')",
+                "expect(clipping).toBe(false)",
+                "expect(overflow).toBe(true)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft))",
+                "expect(await table.evaluate(node => node.scrollLeft)).toBe(before)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A05 status height follows its own label while long labels remain fully readable",
+              "line": 176,
+              "assertions": [
+                "expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1)",
+                "expect(geometry.actual).toBeLessThanOrEqual(intrinsicSize.natural + 1)",
+                "expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120))",
+                "expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+              "line": 195,
+              "assertions": [
+                "expect(page.getByRole('status')).toContainText('Mã tham chiếu: ' + 'A'.repeat(120))",
+                "expect(await text.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect(action).toBeFocused()",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A07 locked order addresses expose full text and edit lines retain intrinsic actions",
+              "line": 208,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(address).toBeVisible()",
+                "expect(dialog.getByRole('combobox', { name: /^Địa chỉ giao hàng/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('combobox', { name: /^Thanh toán/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('group', { name: 'Thanh toán', exact: true })).toContainText('Thu khi giao (COD)')",
+                "expect(addressText).toHaveText(expected)",
+                "expect(await addressText.evaluate(node => node.scrollWidth <= node.clientWidth + 1 && getComputedStyle(node).textOverflow !== 'ellipsis')).toBe(true)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(addressText).toHaveText(original!)",
+                "expect((await new AxeBuilder({ page }).include('[role=\"dialog\"]').analyze()).violations).toEqual([])",
+                "expect(option).toBeVisible()",
+                "expect(await option.evaluate(node => {\n            const paper = node.closest('.MuiPaper-root')!.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node);\n            return getComputedStyle(node).whiteSpace === 'normal' && [...range.getClientRects()].every(rect => rect.left >= paper.left - 1 && rect.right <= paper.right + 1);\n        })).toBe(true)",
+                "expect(page.getByRole('listbox')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 181,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 624,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 181-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled width behavior",
+      "routeObservations": 216,
+      "focusedCases": 70,
+      "artifact": "built-shared-review.json",
+      "limit": "Actual compiled geometry/axe/keyboard; counts remain separate from full browser suite."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "composer-stability",
+      "startedAt": "2026-10-09T05:07:15.134Z",
+      "finishedAt": "2026-10-09T05:08:10.178Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522425617-76720/composer-stability.log",
+        "sha256": "c079a393ffdf279c19f59e441cbf4ff5dab6167a5476fbc4d1bfaad7d793da56"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "imports-clearance-regression",
+      "startedAt": "2026-10-09T05:08:19.164Z",
+      "finishedAt": "2026-10-09T05:08:39.156Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522490344-8672/imports-clearance-regression.log",
+        "sha256": "950791e791deafe07d84a64fcbecb6479f91ee1dcd33b86f6eb82521d196ae2a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-09T03:47:09.137Z",
+      "finishedAt": "2026-10-09T04:47:48.711Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
+        "sha256": "8c35ba10b993a303946c89addd4dcb04c7fc718f5cff8daa5a74f2e3fd8fe85d"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-09T03:44:04.675Z",
+      "finishedAt": "2026-10-09T03:47:01.145Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517444670-94456/verify.log",
+        "sha256": "fe34adfd7fbd0931c58b87f7e5405aa833e13009571d6cc92d5517e9b15ab0f0"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-09T03:42:18.472Z",
+      "finishedAt": "2026-10-09T03:42:24.862Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517338471-44912/unit.log",
+        "sha256": "d1928a0902ebc21f0c0780bc9467ca4e0f52beb179b91314a6cf1533aee097a8"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-09T03:47:01.271Z",
+      "finishedAt": "2026-10-09T03:47:01.452Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621270-95168/source-maps.log",
+        "sha256": "a7dc3557124f4394e17cdb8a7a42cd23a7ee839ade15529024a2fa2d7cb76e33"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-09T04:48:06.078Z",
+      "finishedAt": "2026-10-09T04:51:16.462Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791521277863-27488/built-demo.log",
+        "sha256": "4c4a6c6fdcbbd0bfa0e5344760595a858ad7e5df5662cdcfbdb32c0d8380db58"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "startup-cache-regression",
+      "startedAt": "2026-10-09T05:11:14.912Z",
+      "finishedAt": "2026-10-09T05:11:36.059Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522665730-96308/startup-cache-regression.log",
+        "sha256": "b78941e75dca7664227a303ce9bbb0e70d77c3957ae994adfbd112ae2be241d3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-regression",
+      "startedAt": "2026-10-09T05:10:37.682Z",
+      "finishedAt": "2026-10-09T05:11:05.627Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522628388-90736/label-regression.log",
+        "sha256": "f28164351bc45da0b3df30632d3557484bc591686832bb955d35119531c55684"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "variant-regression",
+      "startedAt": "2026-10-09T05:09:47.479Z",
+      "finishedAt": "2026-10-09T05:10:28.292Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522578658-74300/variant-regression.log",
+        "sha256": "62f3d31abc4f6d7965fb2f70604b46342b5b0d978064d34f335264ad9171c42f"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-focus-regression",
+      "startedAt": "2026-10-09T05:09:17.882Z",
+      "finishedAt": "2026-10-09T05:09:38.570Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522549023-26236/label-focus-regression.log",
+        "sha256": "6891aae72dc105e22e42f974e8faf94492ed251b3c7f67146a0a2ae6335e96ab"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "composer-regression",
+      "startedAt": "2026-10-09T05:08:48.237Z",
+      "finishedAt": "2026-10-09T05:09:08.934Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522519245-33232/composer-regression.log",
+        "sha256": "1fcc0bfd08e59012b4cf1aad212270969d3f68a497ceac5c02e2e27a5995a176"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "9e219ec3e18bde1bbc1464bf23ad68def9da3c5417b28b8552eecb28627832b4"
+}

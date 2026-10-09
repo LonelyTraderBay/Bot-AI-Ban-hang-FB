@@ -1,0 +1,124 @@
+{
+  "taskId": "FE019",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "status": "PASS",
+  "routes": [
+    {
+      "id": "R29",
+      "path": "/s/:shopId/integrations/channels",
+      "module": "integrations",
+      "readPermission": "integrations.read",
+      "reads": [
+        "listChannels",
+        "getChannel",
+        "getJob"
+      ],
+      "actions": [
+        {
+          "operationId": "beginChannelConnect",
+          "permission": "integrations.manage"
+        },
+        {
+          "operationId": "reconnectChannel",
+          "permission": "integrations.manage"
+        },
+        {
+          "operationId": "disconnectChannel",
+          "permission": "integrations.manage"
+        },
+        {
+          "operationId": "checkChannelHealth",
+          "permission": "integrations.manage"
+        }
+      ]
+    },
+    {
+      "id": "R30",
+      "path": "/s/:shopId/integrations/ai",
+      "module": "integrations",
+      "readPermission": "integrations.read",
+      "reads": [
+        "listAIConnections",
+        "getAIConnection",
+        "getProviderCatalog",
+        "getJob"
+      ],
+      "actions": [
+        {
+          "operationId": "createAIConnection",
+          "permission": "integrations.manage"
+        },
+        {
+          "operationId": "updateAIConnection",
+          "permission": "integrations.manage"
+        },
+        {
+          "operationId": "testAIConnection",
+          "permission": "integrations.manage"
+        },
+        {
+          "operationId": "deleteAIConnection",
+          "permission": "integrations.manage"
+        }
+      ]
+    },
+    {
+      "id": "R39",
+      "path": "/s/:shopId/notifications",
+      "module": "notifications",
+      "readPermission": "notifications.read",
+      "reads": [
+        "listNotifications",
+        "getNotification"
+      ],
+      "actions": [
+        {
+          "operationId": "acknowledgeNotification",
+          "permission": "operations.claim"
+        }
+      ]
+    },
+    {
+      "id": "R40",
+      "path": "/s/:shopId/notifications/devices",
+      "module": "notifications",
+      "readPermission": "notifications.manage",
+      "reads": [
+        "listDevices",
+        "getNotificationPolicy"
+      ],
+      "actions": [
+        {
+          "operationId": "createDevice",
+          "permission": "notifications.manage"
+        },
+        {
+          "operationId": "revokeDevice",
+          "permission": "notifications.manage"
+        },
+        {
+          "operationId": "testDevice",
+          "permission": "notifications.manage"
+        },
+        {
+          "operationId": "beginTelegramPairing",
+          "permission": "notifications.manage"
+        },
+        {
+          "operationId": "updateNotificationPolicy",
+          "permission": "notifications.manage"
+        }
+      ]
+    }
+  ],
+  "plannedOperations": 24,
+  "wiredWriteOperations": 14,
+  "canonicalContracts": "All planned and route-linked operations exist in OpenAPI and generated operation metadata; route mutation permissions match OpenAPI.",
+  "readOperationsWithoutDirectCallsite": [
+    "getChannel",
+    "getJob",
+    "getAIConnection"
+  ],
+  "interpretation": "Unused detail reads are recorded for scope review; the list and notification workflows remain exercised by React browser tests. No API or permission is fabricated.",
+  "checks": 53
+}

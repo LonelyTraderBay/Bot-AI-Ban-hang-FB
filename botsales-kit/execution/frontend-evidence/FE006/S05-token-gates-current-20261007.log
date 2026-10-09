@@ -1,0 +1,49 @@
+FE006.S05 current token drift, component API, and type gates
+HEAD=53c0ba8 plus current frontend working tree; scope=FRONTEND_WITH_SYNTHETIC_MOCK_API
+COMMAND typecheck: exit=0; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck; log=botsales-kit/execution/frontend-evidence/FE006/S05-typecheck-current-20261007.log; sha256=9e04ec511f174b9d4160e2a73b9e7deaa50a87d0045932132de4484abfe4278b
+COMMAND generate-check: exit=0; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run generate:check; log=botsales-kit/execution/frontend-evidence/FE006/S05-generate-check-current-20261007.log; sha256=13e4fb97ec6218b858a275569c459e6f585ffde5ce01eab61f7bec092831e7fc
+COMMAND visual-tokens: exit=0; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:visual-tokens; log=botsales-kit/execution/frontend-evidence/FE006/S05-visual-tokens-current-20261007.log; sha256=f2a167f03352f1cbeac9f70cf7932abab0b95318056250e1d6066bae98c04102
+COMMAND layout: exit=0; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:layout; log=botsales-kit/execution/frontend-evidence/FE006/S05-layout-current-20261007.log; sha256=676c70c4930021a5d9cf3471f26ae3e1c805e635361d56e9663da8a0dbc80323
+COMMAND ui-composition: exit=0; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:ui-composition; log=botsales-kit/execution/frontend-evidence/FE006/S05-ui-composition-current-20261007.log; sha256=28e3819206b8954f184751c5ae82f242fe9f2018a4559bb1d435c46779469f84
+CHECK PASS: registered strict TypeScript check passed
+CHECK PASS: generated outputs are current against canonical source
+CHECK PASS: visual token fixture and live source gates passed
+CHECK PASS: layout role fixture and live source gates passed
+CHECK PASS: shared composition ancestry/API regressions and scanner passed
+CHECK PASS: published token package is byte-identical to kit canonical tokens
+CHECK PASS: generated CSS and MUI theme/layout bridge use the canonical token package
+CHECK PASS: negative source fixtures reject raw colors, copied HEX, and light/system theme modes
+CHECK PASS: shared API TypeScript review is current and exposes no generic style props
+CHECK PASS: typed table and six explicit semantic compositions remain exported
+canonicalTokenSha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0; packageTokenSha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0; byteEqual=true
+API REVIEW {"tokenParity":{"canonicalBytesEqualPublishedPackage":true,"generatedCssMarker":true,"themeUsesCanonicalTokenPackage":true,"layoutUsesCanonicalTokenPackage":true},"negativeFixtures":{"rawVisualLiteralRejected":true,"copiedHexAndLightPaletteRejected":true},"typedApi":{"priorTypeScriptPublicSignatureReviewCurrent":true,"genericStyleProps":false,"primitiveFunctions":21,"compositionFunctions":6,"tableRemainsTypedPresenter":true,"compositionsHaveNamedOwners":true},"limits":["API assessment is static TypeScript/source review plus local frontend gates; no independent design review, backend integration, staging, or production acceptance."]}
+Strict typecheck, generator freshness, visual-token, spacing-layout, and shared UI composition/API checks passed. Kit and published token JSON are byte-identical; negative fixtures reject raw color literals, copied HEX, and non-dark/system modes. Current TypeScript public API remains finite: 21 shared primitives and six semantic compositions, no generic style props. Local React frontend with synthetic MSW only.
+sourceSnapshotSha256=0044695ecad2bca57ae9cb4eabe855153768eb19334dcf7d452a44f295de6dec
+SOURCE AGENTS.md sha256=07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222
+SOURCE AI_RULES.md sha256=1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3
+SOURCE apps/web/src/app/tokens.css sha256=f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca
+SOURCE apps/web/src/shared/ui/components.tsx sha256=0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5
+SOURCE apps/web/src/shared/ui/composition.tsx sha256=15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b
+SOURCE apps/web/src/shared/ui/layout.ts sha256=ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a
+SOURCE apps/web/src/shared/ui/theme.ts sha256=dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532
+SOURCE apps/web/src/shared/ui/visual.ts sha256=ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d
+SOURCE apps/web/tests/components.test.tsx sha256=35187e221b903fd7c1e0434c28dcedebb817b6cfd41612c3b51d43a8055af02f
+SOURCE botsales-kit/design/tokens.json sha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0
+SOURCE botsales-kit/execution/frontend-command-map.json sha256=48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744
+SOURCE botsales-kit/execution/frontend-evidence/FE006/capture-s05-token-gates-current-20261007.mjs sha256=6c7f95e2ad5a1b52ef84d0f63f8499c13f96270c9dd19a075c71f0e85d586a09
+SOURCE botsales-kit/execution/frontend-evidence/FE006/S02-shared-primitives-current-20261007.json sha256=791725171404209b0b5e6888fa7a70e1217fef9ad53df4a64903fad917c7ae10
+SOURCE botsales-kit/execution/frontend-evidence/FE006/S05-generate-check-current-20261007.log sha256=13e4fb97ec6218b858a275569c459e6f585ffde5ce01eab61f7bec092831e7fc
+SOURCE botsales-kit/execution/frontend-evidence/FE006/S05-layout-current-20261007.log sha256=676c70c4930021a5d9cf3471f26ae3e1c805e635361d56e9663da8a0dbc80323
+SOURCE botsales-kit/execution/frontend-evidence/FE006/S05-typecheck-current-20261007.log sha256=9e04ec511f174b9d4160e2a73b9e7deaa50a87d0045932132de4484abfe4278b
+SOURCE botsales-kit/execution/frontend-evidence/FE006/S05-ui-composition-current-20261007.log sha256=28e3819206b8954f184751c5ae82f242fe9f2018a4559bb1d435c46779469f84
+SOURCE botsales-kit/execution/frontend-evidence/FE006/S05-visual-tokens-current-20261007.log sha256=f2a167f03352f1cbeac9f70cf7932abab0b95318056250e1d6066bae98c04102
+SOURCE botsales-kit/execution/frontend-plan.json sha256=f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e
+SOURCE package.json sha256=3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138
+SOURCE packages/design-tokens/src/tokens.json sha256=95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0
+SOURCE scripts/check-layout.mjs sha256=d1fb4346896bcce7d22395d8c128ad946005f5e3baadea250ce9b4cc3bcbf3fb
+SOURCE scripts/check-ui-composition.mjs sha256=c39d3465ee936858f1393b251de5e9f54febd2efd0b508887d5550beaafaf97c
+SOURCE scripts/check-visual-tokens.mjs sha256=144f844c7ae2447136580054abde6b07610623a6ba3b3e25db887d8d378a61d6
+SOURCE tests/ui-composition-ancestry.test.mjs sha256=cdbb012fff52ae65b448a1cfc4062328c826719cf86fc6154fa5c93b9a66c2d8
+SOURCE tests/ui-composition-checker.test.mjs sha256=13e24fd54e50601016a3ec7289c66811ffbe9f46958cacae13100950b08c228c
+SOURCE tests/ui-shared-api-contract.test.mjs sha256=59799ddd79c265300efd5ba82cf9530d5c7d8a645a7bc065227b2a2806ea907b
+SOURCE tests/visual-token-checker.test.mjs sha256=35b8c496508d754f820e53782d729ef5330fd88897dd2150a205800a3a5bceae

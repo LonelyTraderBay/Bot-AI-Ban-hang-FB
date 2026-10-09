@@ -1,0 +1,61 @@
+{
+  "taskId": "FE021",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "status": "PASS",
+  "routes": [
+    {
+      "id": "R04",
+      "path": "/s/:shopId/overview",
+      "module": "dashboard",
+      "readPermission": "dashboard.read",
+      "reads": [
+        "getDashboard",
+        "getShop"
+      ],
+      "actions": [
+        {
+          "label": "Tạm dừng bot",
+          "operationId": "pauseBot",
+          "permission": "bot.publish"
+        }
+      ]
+    },
+    {
+      "id": "R31",
+      "path": "/s/:shopId/reports",
+      "module": "reports",
+      "readPermission": "reports.read",
+      "reads": [
+        "getReportSummary",
+        "listJobs"
+      ],
+      "actions": [
+        {
+          "label": "Xuất báo cáo",
+          "operationId": "createExport",
+          "permission": "reports.export"
+        }
+      ]
+    },
+    {
+      "id": "R53",
+      "path": "/s/:shopId/reports/marketing",
+      "module": "reports",
+      "readPermission": "reports.read",
+      "reads": [
+        "getMarketingSummary"
+      ],
+      "actions": []
+    }
+  ],
+  "plannedOperations": 7,
+  "canonicalContracts": "All seven task operations exist in OpenAPI and generated metadata; route reads/actions and export/pause permissions resolve to current React callsites.",
+  "boundaries": [
+    "report values come from API snapshots",
+    "marketing actual spend may be null",
+    "export dates are shop-timezone boundaries",
+    "download URL is authorized before rendering"
+  ],
+  "checks": 25
+}
+EXIT_CODE=0

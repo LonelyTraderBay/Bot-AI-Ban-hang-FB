@@ -1,0 +1,49 @@
+{
+  "taskId": "FE002",
+  "stepId": "S01",
+  "kind": "artifact_review",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T12:07:00.888054+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working tree snapshot)",
+  "expected": "Verify pinned Node/npm and exact dependency/peer compatibility from the actual Frontend manifests, lockfile and installed tree; retain the selected stack unless concrete incompatibility is observed.",
+  "observed": "Actual Node v24.19.0 matches .node-version 24.19.0; npm 11.17.0 matches packageManager pin; root/web manifest dependency maps match npm lockfile v3; npm ls --depth=0 exits 0. React 19 and TypeScript 5 satisfy selected library peer ranges. No dependency/stack change is justified.",
+  "command": "python execution/frontend-evidence/FE002/inspect-toolchain.py",
+  "reviewer": "Codex",
+  "environment": {
+    "name": "Local Windows Frontend workspace",
+    "details": "Actual Node/npm CLIs and installed npm workspace; package peer ranges read from the lockfile.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 26,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S01-helper-shell-resolution-initial-failure-20261007.log",
+      "sha256": "1be61f372c2d8e757900194a7ee860b9f9fea8ffa7cdaf3043a886f642eafa11"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/inspect-toolchain.py",
+      "sha256": "eed4797dbf5809c8581b512032eca8bff5379c551b878fa83264a54da4dc33f2"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    }
+  ],
+  "sourceSnapshotSha256": "f1b9a619c376de698026d4d6a2616a532e6c6e5b6afe7d36ad64a51b2963707a",
+  "logFile": "execution/frontend-evidence/FE002/S01-toolchain-and-peers-current-20261007.log",
+  "logSha256": "9f4076d10e5921ae895e67a82190861b778a81964027474f2365c74438ada96d"
+}

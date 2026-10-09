@@ -1,0 +1,66 @@
+{
+  "taskId": "FE002",
+  "stepId": "S03",
+  "kind": "test_run",
+  "result": "PASS",
+  "verificationScope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "executedAt": "2026-10-07T12:12:30.968035+00:00",
+  "sourceRevision": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6 (working tree snapshot)",
+  "expected": "Run the registered npm install in the Frontend workspace; verify exact manifest/lock synchronization and retain actual output and any package-manager warnings.",
+  "observed": "npm.cmd --script-shell=powershell.exe install exited 0 (`up to date`, npm reported 0 vulnerabilities); post-install `npm ls --depth=0` exited 0; lockfile v3 exactly matches root/app manifests. Only npm install's optional package-lock target may change; actual changed targets=none. Existing .env.local and MSW worker hashes are unchanged. npm allowScripts warnings for esbuild/MSW remain unapproved and visible.",
+  "commandId": "install",
+  "command": "npm.cmd --script-shell=powershell.exe install",
+  "reviewer": "Codex",
+  "environment": {
+    "name": "Local Windows Frontend workspace",
+    "details": "Actual npm 11.17.0 install with existing Node modules; no clean-install claim is made by this step.",
+    "dataSource": "source-only"
+  },
+  "checksTotal": 28,
+  "failed": 0,
+  "sourceFiles": [
+    {
+      "path": ".node-version",
+      "sha256": "474505894c819df312c25285f3f15f9200f04b072dcb70cbea3ad42e9f5b6f35"
+    },
+    {
+      "path": ".npmrc",
+      "sha256": "cde76ca04e048c3eba070a2c0dfcf5b723cf6014eab177157096b924f24ec4ca"
+    },
+    {
+      "path": "apps/web/package.json",
+      "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-command-map.json",
+      "sha256": "48cf675d36b3c99d5fe6147a08531a1e1aecd1ee5e6136b62d787dd833d98744"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S03-before-install-snapshot-current-20261007.json",
+      "sha256": "9e0f1cb8113cbdfcdf116b42051ebce3c84c5fbb47b1e2b0d04942c6efdeb1f5"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-capture-initial-failure-20261007.log",
+      "sha256": "55fc0aebcfe25c3709604c0a7bdbfbc5539d606f9d8e2a801d51eed85534dbba"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/S03-npm-install-output-current-20261007.log",
+      "sha256": "250f9d5cd24bd9e2176c71248f0338c6fac75d3b8031d84260ed4c984e141499"
+    },
+    {
+      "path": "botsales-kit/execution/frontend-evidence/FE002/finalize-install-check.py",
+      "sha256": "9d9ea247bdaa1c181dc5f56df07fe6b9296b853f1ed6dad0f6243df7e3020cfd"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+    }
+  ],
+  "sourceSnapshotSha256": "a3e541dfcedab529e7c2e716f3087ff91c7759a2eea8d638447306b42934e7a6",
+  "logFile": "execution/frontend-evidence/FE002/S03-npm-install-verified-current-20261007.log",
+  "logSha256": "63c1c99521902b552ff92db0e9cd9e7d6236a9795350cf30076530364aa71066"
+}

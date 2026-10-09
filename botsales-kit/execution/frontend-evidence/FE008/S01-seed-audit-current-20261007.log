@@ -1,0 +1,56 @@
+Read-only seed and canonical catalog audit
+{
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "result": "PASS",
+  "routeAndFeatureCoverage": {
+    "routes": 54,
+    "uniqueRoutes": true,
+    "features": 64,
+    "featuresWithValidRouteIds": 64,
+    "sourceComponentMappings": 54
+  },
+  "seed": {
+    "shops": 2,
+    "members": 9,
+    "rolePresets": 7,
+    "rolesCovered": [
+      "accountant",
+      "bot_admin",
+      "manager",
+      "owner",
+      "sales",
+      "viewer",
+      "warehouse"
+    ],
+    "collections": 51,
+    "records": 231,
+    "shopScopedRecords": 229,
+    "orphanShopReferences": 0,
+    "relationshipChecks": [
+      "product-category",
+      "variant-product",
+      "category-parent",
+      "stock-variant-and-available",
+      "order-customer-conversation-variant-and-money",
+      "conversation-customer-channel",
+      "message-conversation"
+    ],
+    "exactIntegerVndAmounts": true
+  },
+  "deterministicMock": {
+    "canonicalSeedClonedOnReset": true,
+    "sequenceReset": 10000,
+    "fixedClock": "2026-09-29T14:00:00.000Z",
+    "serviceResetClearsFileFaultDelayAndIdempotencyState": true
+  },
+  "simulator": {
+    "checks": 75,
+    "passed": 75
+  },
+  "network": {
+    "handlers": 210,
+    "checks": 13,
+    "passed": 13
+  },
+  "generatedAt": "2026-10-07T13:53:39.304Z"
+}

@@ -1,0 +1,1019 @@
+{
+  "executedAt": "2026-10-09T05:14:09.932Z",
+  "taskId": "FE010",
+  "stepId": "S01",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Map routeId/operationId/permissions/feature scenarios bên dưới với source hiện có; chọn public api/model/ui cần sửa và ghi gap.",
+      "verification": "Mọi action có operation/capability rõ, DTO dùng source chuẩn; không sửa module ngoài mục tiêu. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R09",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductsPage"
+        },
+        {
+          "id": "R10",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductEditorPage"
+        },
+        {
+          "id": "R11",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductEditorPage"
+        },
+        {
+          "id": "R12",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "CategoriesPage"
+        },
+        {
+          "id": "R13",
+          "source": "apps/web/src/modules/catalog/imports.tsx",
+          "component": "ImportsPage"
+        },
+        {
+          "id": "R14",
+          "source": "apps/web/src/modules/catalog/imports.tsx",
+          "component": "ImportResultPage"
+        }
+      ],
+      "operationIds": [
+        "archiveCategory",
+        "archiveProduct",
+        "commitProductImport",
+        "createCategory",
+        "createProduct",
+        "createProductImport",
+        "getCategory",
+        "getFile",
+        "getJob",
+        "getProduct",
+        "listCategories",
+        "listJobs",
+        "listProducts",
+        "updateCategory",
+        "updateProduct",
+        "uploadFile"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP",
+        "product update sends If-Match and keeps edits visible after a 412 conflict",
+        "warehouse role can read catalog products but cannot edit product fields or price cost data",
+        "categories create, search, update with a version, and render cursor pagination",
+        "CSV preview reports row-level errors and commits only valid product rows",
+        "import validation token is rejected with 412 after catalog changes and the preview remains visible",
+        "CSV demo row limit is explained and rejects more than 1000 data rows before preview",
+        "demo upload rejects files over 5 MB before making an upload request",
+        "product category lookup pages the full collection and preserves the selected category while editing",
+        "Shared Toolbar and demo tools keep labels clear when text doubles",
+        "Toolbar geometry: multiline category lookup cannot stretch the search button",
+        "Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths",
+        "Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow",
+        "Toolbar public extra slot cannot stretch a single-line submit action",
+        "Toolbar preserves Products URL filters, search submit, clear and independent category lookup",
+        "Toolbar keeps Inventory apply/reset separate from search submission",
+        "Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination",
+        "Shell keeps header, banner, main and footer on one responsive gutter",
+        "demo controls stay discoverable on mobile and usable on desktop",
+        "SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer",
+        "unmatched route fallback owns its page gutter without horizontal overflow",
+        "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+        "A02 product editors align category and status faces independently from lookup metadata",
+        "Shared outlined labels focus empty and populated native controls",
+        "A02 variant fields retain readable widths when text doubles",
+        "A03 import mapping preserves natural remove actions and editable mappings",
+        "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+        "A05 status height follows its own label while long labels remain fully readable",
+        "A06 Empty wraps unbroken reference text and retains its keyboard action",
+        "A07 locked order addresses expose full text and edit lines retain intrinsic actions",
+        "W01 AI single connection fills its collection at breakpoint edges and wide viewports",
+        "W01 AI keeps two-column collection for two/three items and refetch preserves the new count",
+        "W01 AI empty result keeps one accessible create action and no empty grid",
+        "W02 full-width form groups fill their panel and retain input/mapping/shipping behavior",
+        "W03 notification protection notice occupies the full page row after the two panes",
+        "W04 detail rows stay atomic in divided rhythm and plain containers"
+      ],
+      "executions": 72,
+      "assertionInventory": [
+        {
+          "file": "tests/fe010.spec.ts",
+          "sha256": "6a9a229f2d607ee38bfea25aeb820a9cf53009e1a7eaa8bda6c0483d988a01e7",
+          "cases": [
+            {
+              "title": "product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP",
+              "line": 40,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Thêm sản phẩm',exact:true})).toBeVisible()",
+                "expect(prices.first()).toHaveValue('')",
+                "expect(page.getByText('Nhập giá bán',{exact:true})).toBeVisible()",
+                "expect(calls.filter(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/products'))).toHaveLength(0)",
+                "expect(page.getByText('Giá phải lớn hơn 0',{exact:true})).toBeVisible()",
+                "expect(calls.filter(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/products'))).toHaveLength(0)",
+                "expect(page.getByText('1 tệp được gắn với sản phẩm',{exact:true})).toBeVisible()",
+                "expect(guard).toBeVisible()",
+                "expect(name).toHaveValue('Sản phẩm FE010')",
+                "expect(skus.nth(1)).toHaveValue('FE010-PRODUCT-L')",
+                "expect(page.getByText('1 tệp được gắn với sản phẩm',{exact:true})).toBeVisible()",
+                "expect(page).toHaveURL(/\\/products\\/product-/)",
+                "expect(payload).toMatchObject({name:'Sản phẩm FE010',categoryId:'cat-0',status:'draft'})",
+                "expect(payload.variants.map((v:{sku:string;name:string;price:{amount:string;currency:string}})=>({sku:v.sku,name:v.name,price:v.price}))).toEqual([\n        {sku:'FE010-PRODUCT-M',name:'Mặc định',price:{amount:'249000',currency:'VND'}},\n        {sku:'FE010-PRODUCT-L',name:'Size L',price:{amount:'259000',currency:'VND'}}\n    ])",
+                "expect(payload.imageFileIds).toHaveLength(1)",
+                "expect(payload).not.toHaveProperty('unitCost')",
+                "expect(payload.variants[0]).not.toHaveProperty('unitCost')",
+                "expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible()",
+                "expect(page.getByText('Sản phẩm FE010',{exact:true})).toHaveCount(0)",
+                "expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "product update sends If-Match and keeps edits visible after a 412 conflict",
+              "line": 110,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Thông tin sản phẩm',exact:true})).toBeVisible()",
+                "expect((await staleSave).status()).toBe(412)",
+                "expect(comparison).toBeVisible()",
+                "expect(comparison.getByText('Áo cập nhật FE010',{exact:true})).toBeVisible()",
+                "expect(calls.filter(call=>call.method==='PATCH'&&call.path.endsWith('/shops/shop-demo/products/p1'))).toHaveLength(1)",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo cập nhật FE010')",
+                "expect(page.getByLabel('Giá bán (VND)').first()).toHaveValue('71000')",
+                "expect(patch).toBeDefined()",
+                "expect(patch?.headers['if-match']).toBeTruthy()",
+                "expect(JSON.parse(patch?.body||'null')).toMatchObject({name:'Áo cập nhật FE010'})",
+                "expect(JSON.parse(patch?.body||'null')).not.toHaveProperty('unitCost')",
+                "expect((await saved).status()).toBe(200)",
+                "expect(patches).toHaveLength(2)",
+                "expect(patches[1].headers['if-match']).toBe(`\"${latestVersion}\"`)",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo cập nhật FE010')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "warehouse role can read catalog products but cannot edit product fields or price cost data",
+              "line": 142,
+              "assertions": [
+                "expect(page.getByLabel('Tên sản phẩm')).toBeDisabled()",
+                "expect(page.getByLabel('Giá bán (VND)').first()).toBeDisabled()",
+                "expect(page.getByRole('button',{name:'Lưu sản phẩm',exact:true})).toHaveCount(0)",
+                "expect(page.getByText(/giá vốn|unitCost/i)).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "categories create, search, update with a version, and render cursor pagination",
+              "line": 151,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Danh mục',exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled()",
+                "expect(dialog).toHaveCount(0)",
+                "expect(JSON.parse(create?.body||'null')).toMatchObject({name:'Danh mục FE010',parentId:null})",
+                "expect(row).toBeVisible()",
+                "expect(edit).toHaveCount(0)",
+                "expect(update?.headers['if-match']).toBeTruthy()",
+                "expect(JSON.parse(update?.body||'null')).toMatchObject({name:'Danh mục FE010 đã sửa'})",
+                "expect(page.getByText('Danh mục FE010 đã sửa',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "CSV preview reports row-level errors and commits only valid product rows",
+              "line": 180,
+              "assertions": [
+                "expect(page.getByRole('heading',{name:'Nhập dữ liệu sản phẩm',exact:true})).toBeVisible()",
+                "expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('5 MB')",
+                "expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('1.000 dòng')",
+                "expect(sampleLink).toHaveAttribute('download','botsales-products.csv')",
+                "expect(sampleResponse.ok()).toBe(true)",
+                "expect(await sampleResponse.text()).toBe(await readFile(resolve(process.cwd(),'samples/products.csv'),'utf8'))",
+                "expect(page).toHaveURL(/\\/imports\\/job-/)",
+                "expect(page.getByText('3 / 3',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('row').filter({hasText:'Thiếu SKU/tên hoặc giá không hợp lệ.'})).toBeVisible()",
+                "expect(page.getByRole('row').filter({hasText:'SKU đã có trong cửa hàng.'})).toBeVisible()",
+                "expect(JSON.parse(dryRun?.body||'null')).toMatchObject({dryRun:true,duplicateStrategy:'reject'})",
+                "expect(JSON.parse(dryRun?.body||'null').mapping).toEqual(expect.arrayContaining([\n        {sourceColumn:'sku',targetField:'sku'},\n        {sourceColumn:'price',targetField:'price'}\n    ]))",
+                "expect.arrayContaining([\n        {sourceColumn:'sku',targetField:'sku'},\n        {sourceColumn:'price',targetField:'price'}\n    ])",
+                "expect(page.getByText('1 / 3',{exact:true})).toBeVisible()",
+                "expect(JSON.parse(commit?.body||'null')).toMatchObject({confirmValidRowsOnly:true})",
+                "expect(importedJobId).toBeTruthy()",
+                "expect(recentJob).toBeVisible()",
+                "expect(recentJob.getByRole('link',{name:'Xem kết quả',exact:true})).toHaveAttribute('href', `/s/shop-demo/imports/${importedJobId}`)",
+                "expect(page.getByText('Sản phẩm nhập FE010',{exact:true})).toBeVisible()",
+                "expect(page.getByText('Sản phẩm nhập FE010',{exact:true})).toHaveCount(0)",
+                "expect(page.getByText('Sản phẩm SKU trùng',{exact:true})).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "import validation token is rejected with 412 after catalog changes and the preview remains visible",
+              "line": 252,
+              "assertions": [
+                "expect(page).toHaveURL(/\\/imports\\/job-/)",
+                "expect(page.getByText('1 / 1',{exact:true})).toBeVisible()",
+                "expect(page).toHaveURL(/\\/products\\/product-/)",
+                "expect(page).toHaveURL(/\\/products$/)",
+                "expect(page).toHaveURL(/\\/imports\\/job-/)",
+                "expect(page.getByRole('alert').filter({hasText:'Danh mục đã đổi sau dry-run'})).toBeVisible()",
+                "expect(page.getByText('Chờ xác nhận',{exact:true})).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Xác nhận nhập các dòng hợp lệ',exact:true})).toBeVisible()",
+                "expect(JSON.parse(commit?.body||'null')).toMatchObject({confirmValidRowsOnly:true})"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "CSV demo row limit is explained and rejects more than 1000 data rows before preview",
+              "line": 284,
+              "assertions": [
+                "expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('1.000 dòng')",
+                "expect((await dryRun).status()).toBe(422)",
+                "expect(page).toHaveURL(/\\/imports$/)",
+                "expect(page.getByRole('alert').filter({hasText:'CSV cần 1–1000 dòng dữ liệu.'})).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "demo upload rejects files over 5 MB before making an upload request",
+              "line": 297,
+              "assertions": [
+                "expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('5 MB')",
+                "expect(page.locator('#product-import-file-error')).toContainText('vượt giới hạn 5 MB')",
+                "expect(page.getByRole('button',{name:'Kiểm tra trước khi nhập',exact:true})).toBeDisabled()",
+                "expect(uploadRequests).toBe(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "product category lookup pages the full collection and preserves the selected category while editing",
+              "line": 308,
+              "assertions": [
+                "expect(page.getByRole('navigation',{name:'Điều hướng chính'})).toBeVisible()",
+                "expect(firstDataset).toMatchObject({total:105,firstPageCount:100,hasMore:true,target:{id:'cat-2',name:'Phụ kiện'},targetCount:5})",
+                "expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Thêm sản phẩm',exact:true})).toBeVisible()",
+                "expect(firstListResponse.status()).toBe(200)",
+                "expect(firstListBody.page).toMatchObject({total:105,limit:20,hasMore:true})",
+                "expect(firstListBody.data).toHaveLength(20)",
+                "expect(page.getByLabel('Tìm danh mục')).toBeVisible()",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled()",
+                "expect(categoryCount(count)).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Tải thêm danh mục'})).toHaveCount(0)",
+                "expect(targetOption).toHaveCount(1)",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện')",
+                "expect(page.getByRole('listbox')).toHaveCount(0)",
+                "expect(categoryCount(1)).toBeVisible()",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện')",
+                "expect(page).toHaveURL(/\\/products\\/product-/)",
+                "expect(createPayload).toMatchObject({name:'Sản phẩm UI005 cuối danh mục',categoryId:'cat-2'})",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Phụ kiện')",
+                "expect(page.getByRole('navigation',{name:'Điều hướng chính'})).toBeVisible()",
+                "expect(freshSeed.total).toBe(3)",
+                "expect(freshSeed.p1.data.categoryId).toBe('cat-0')",
+                "expect(editDataset.total).toBe(105)",
+                "expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible()",
+                "expect(p1Row).toBeVisible()",
+                "expect(page.getByRole('heading',{name:'Thông tin sản phẩm',exact:true})).toBeVisible()",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo')",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled()",
+                "expect(desktopCategoryBox?.width||0).toBeGreaterThan(350)",
+                "expect(desktopStatusBox?.width||0).toBeGreaterThan(350)",
+                "expect(Math.abs((desktopCategoryBox?.width||0)-(desktopStatusBox?.width||0))).toBeLessThan(100)",
+                "expect(mobileCategoryBox?.width||0).toBeGreaterThan(300)",
+                "expect(mobileStatusBox?.width||0).toBeGreaterThan(300)",
+                "expect((mobileStatusBox?.y||0)).toBeGreaterThan((mobileCategoryBox?.y||0))",
+                "expect(categoryCount(1)).toBeVisible()",
+                "expect((await p1Search).status()).toBe(200)",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo')",
+                "expect(categoryCount(20)).toBeVisible()",
+                "expect(page.getByRole('button',{name:'Tải thêm danh mục'})).toHaveText('Đang tải…')",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect(categoryCount(40)).toBeVisible()",
+                "expect(forbiddenResponse.status()).toBe(403)",
+                "expect(lookupError).toContainText('HTTP 403')",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toContainText('Áo')",
+                "expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled()",
+                "expect(retryResponse.status()).toBe(200)",
+                "expect(new URL(retryResponse.url()).searchParams.get('cursor')).toBe(forbiddenCursor)",
+                "expect(categoryCount(60)).toBeVisible()",
+                "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')",
+                "expect((await updateResponse).status()).toBe(200)",
+                "expect(JSON.parse(editCall?.body||'null')).toEqual({name:'Áo mẫu A UI005'})",
+                "expect(savedProduct).toMatchObject({name:'Áo mẫu A UI005',categoryId:'cat-0'})"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-toolbar-layout.spec.ts",
+          "sha256": "79265b2f67d982421f152e74fceae27193be5911bdf54f866f497f0fcc217bf1",
+          "cases": [
+            {
+              "title": "Shared Toolbar and demo tools keep labels clear when text doubles",
+              "line": 33,
+              "assertions": [
+                "expect(labels.filter(label => label.owner === 'demo-tools')).toHaveLength(3)",
+                "expect(labels.filter(label => label.owner === 'toolbar')).toHaveLength(1)",
+                "expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([])",
+                "expect(label.labelPosition).toBe('static')",
+                "expect(label.labelTransform).toBe('none')",
+                "expect(label.fieldBounds.height).toBeLessThanOrEqual(label.naturalHeight + 1)",
+                "expect(label.legends.every(width => width <= 1)).toBe(true)",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar geometry: multiline category lookup cannot stretch the search button",
+              "line": 61,
+              "assertions": [
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1)",
+                "expect(primary.getByRole('combobox', { name: 'Trạng thái', exact: true })).toBeVisible()",
+                "expect(primary.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toHaveCount(0)",
+                "expect(filters).toBeVisible()",
+                "expect(secondary!.y).toBeGreaterThanOrEqual(search!.y + search!.height)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths",
+              "line": 78,
+              "assertions": [
+                "expect(filters).toHaveAttribute('data-ui-composition', 'field-group')",
+                "expect(filters).toHaveAttribute('role', 'group')",
+                "expect(filters.getByRole('combobox', { includeHidden: true })).toHaveCount(4)",
+                "expect(filters).toBeHidden()",
+                "expect(filters).toBeVisible()",
+                "expect(geometry.outsideForm).toBe(true)",
+                "expect(geometry.sharedParent).toBe(true)",
+                "expect(geometry.inset).toEqual({ left: 0, top: 0 })",
+                "expect(Math.abs(geometry.filter.left - geometry.form.left)).toBeLessThanOrEqual(0.5)",
+                "expect(Math.abs(geometry.filter.right - geometry.form.right)).toBeLessThanOrEqual(0.5)",
+                "expect(Math.abs(geometry.filter.top - geometry.form.bottom - geometry.gap)).toBeLessThanOrEqual(0.5)",
+                "expect(control.left).toBeGreaterThanOrEqual(geometry.filter.left - 0.5)",
+                "expect(control.right).toBeLessThanOrEqual(geometry.filter.right + 0.5)",
+                "expect(geometry.scrollWidth).toBeLessThanOrEqual(width)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow",
+              "line": 121,
+              "assertions": [
+                "expect(search).toHaveCount(Number(route.supportsSearch))",
+                "expect(search).toBeVisible()",
+                "expect(geometry.buttonHeight, `${route.id} ${width}px`).toBeLessThanOrEqual(geometry.naturalHeight + 1)",
+                "expect(search).toBeHidden()",
+                "expect(documentWidth, `${route.id} document at ${width}px`).toBeLessThanOrEqual(width)",
+                "expect(observations).toHaveLength(impact.routes.length * 2)",
+                "expect(errors).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar public extra slot cannot stretch a single-line submit action",
+              "line": 146,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Lọc hai' })).toBeVisible()",
+                "expect(geometry.formHeight).toBeGreaterThan(geometry.buttonHeight * 2)",
+                "expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar preserves Products URL filters, search submit, clear and independent category lookup",
+              "line": 163,
+              "assertions": [
+                "expect(page).toHaveURL(/status=active/)",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(search).toHaveValue('')",
+                "expect(search).toHaveValue('Áo')",
+                "expect(page).toHaveURL(/q=/)",
+                "expect(new URL(page.url()).searchParams.get('q')).toBe('Áo')",
+                "expect(search).toBeFocused()",
+                "expect(new URL(page.url()).searchParams.get('status')).toBe('active')",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0)",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(selected).toBeTruthy()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('combobox', { name: /^Danh mục(?: |$)/ })).toContainText('Quần')",
+                "expect(new URL(page.url()).searchParams.get('categoryId')).toBe(selected)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar keeps Inventory apply/reset separate from search submission",
+              "line": 199,
+              "assertions": [
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false)",
+                "expect(new URL(page.url()).searchParams.get('warehouseId')).toBe('wh1')",
+                "expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false)",
+                "expect(warehouse).toHaveValue('')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination",
+              "line": 215,
+              "assertions": [
+                "expect(more).toBeEnabled()",
+                "expect(page.getByText('Đã tải 20 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(more).toBeEnabled()",
+                "expect(more).toBeDisabled()",
+                "expect(more).toHaveText('Đang tải…')",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)",
+                "expect(page.getByText(`Đã tải ${count} lựa chọn`, { exact: true })).toBeVisible()",
+                "expect(more).toHaveCount(0)",
+                "expect(retry).toBeVisible()",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)",
+                "expect(retry).toHaveCount(0)",
+                "expect(lookup).toHaveValue('toolbar-lookup-error')",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-shell-layout.spec.ts",
+          "sha256": "2d2432a3d36079af8903c381ccd864f2e88087e4aee25a34ab83845518559079",
+          "cases": [
+            {
+              "title": "Shell keeps header, banner, main and footer on one responsive gutter",
+              "line": 45,
+              "assertions": [
+                "expect(page.locator('main#main-content')).toBeVisible()",
+                "expect(metrics.headerHeight).toBe(viewport.header)",
+                "expect(metrics.headerContentLeft).toBe(metrics.navigationWidth + viewport.gutter)",
+                "expect(metrics.headerContentRight).toBe(viewport.width - viewport.gutter)",
+                "expect(metrics.mainLeft).toBe(metrics.navigationWidth + viewport.gutter)",
+                "expect(metrics.mainRight).toBe(viewport.width - viewport.gutter)",
+                "expect(metrics.bannerLeft).toBe(metrics.navigationWidth + viewport.gutter)",
+                "expect(metrics.bannerRight).toBe(viewport.width - viewport.gutter)",
+                "expect(metrics.footerLeft).toBe(metrics.navigationWidth + viewport.gutter)",
+                "expect(metrics.footerRight).toBe(viewport.width - viewport.gutter)",
+                "expect(metrics.footerBlockInset).toBe('8px')",
+                "expect(metrics.mainFlexGrow).toBe('1')",
+                "expect(metrics.mainBlockInset).toEqual(['16px', '16px'])",
+                "expect(metrics.contentColumn).toEqual({ display: 'flex', direction: 'column' })",
+                "expect(metrics.document.scrollWidth).toBe(metrics.document.clientWidth)",
+                "expect(metrics.accountName.whiteSpace).toBe('normal')",
+                "expect(metrics.accountName.overflowWrap).toBe('anywhere')",
+                "expect(metrics.accountName.scrollWidth).toBeLessThanOrEqual(metrics.accountName.clientWidth + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "demo controls stay discoverable on mobile and usable on desktop",
+              "line": 106,
+              "assertions": [
+                "expect(toggle).toBeVisible()",
+                "expect(controls).toBeHidden()",
+                "expect(page.getByRole('button', { name: 'Ẩn công cụ demo' })).toHaveAttribute('aria-expanded', 'true')",
+                "expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Dataset mô phỏng' })).toBeVisible()",
+                "expect(toggle).toBeVisible()",
+                "expect(controls).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer",
+              "line": 124,
+              "assertions": [
+                "expect(alert).toBeVisible()",
+                "expect(controls).toBeVisible()",
+                "expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).not.toBeNull()",
+                "expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).toBeGreaterThanOrEqual(8)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "unmatched route fallback owns its page gutter without horizontal overflow",
+              "line": 149,
+              "assertions": [
+                "expect(page.getByRole('heading', { name: 'Không tìm thấy trang' })).toBeVisible()",
+                "expect(fallback).toHaveCSS('padding-left', '16px')",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-component-layout.spec.ts",
+          "sha256": "ed0f76f9f902a593d991c50bba9163d0d2a66a9df07478643779c09b83041e67",
+          "cases": [
+            {
+              "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+              "line": 40,
+              "assertions": [
+                "expect(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true })).toBeVisible()",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toBeVisible()",
+                "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 product editors align category and status faces independently from lookup metadata",
+              "line": 61,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1)",
+                "expect(geometry.status.y).toBeGreaterThan(geometry.category.y)",
+                "expect(page.getByText('Không tìm thấy danh mục phù hợp.', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('textbox', { name: 'Tên sản phẩm', exact: true })).toHaveValue('Bản nháp cần giữ')",
+                "expect(Math.abs(category!.y - status!.y)).toBeLessThanOrEqual(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Shared outlined labels focus empty and populated native controls",
+              "line": 84,
+              "assertions": [
+                "expect(control).toBeFocused()",
+                "expect(control).toHaveValue(value)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A02 variant fields retain readable widths when text doubles",
+              "line": 99,
+              "assertions": [
+                "expect(name).toBeVisible()",
+                "expect(labels.length).toBeGreaterThanOrEqual(3)",
+                "expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([])",
+                "expect(label.fieldBounds.right - label.fieldBounds.left).toBeGreaterThanOrEqual(120)",
+                "expect(name).toHaveValue('Bản nháp biến thể cần giữ')",
+                "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial + 1)",
+                "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial)",
+                "expect(name).toHaveValue('Bản nháp biến thể cần giữ')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A03 import mapping preserves natural remove actions and editable mappings",
+              "line": 130,
+              "assertions": [
+                "expect(remove).toHaveCount(5)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(remove).toHaveCount(4)",
+                "expect(remove).toHaveCount(5)",
+                "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('Mã SKU đã sửa')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+              "line": 150,
+              "assertions": [
+                "expect(amount).toHaveCount(2)",
+                "expect(page.getByText(expected.negative, { exact: true })).toBeVisible()",
+                "expect(await amount.first().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('normal')",
+                "expect(await amount.last().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('nowrap')",
+                "expect(clipping).toBe(false)",
+                "expect(overflow).toBe(true)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before)",
+                "expect.poll(() => table.evaluate(node => node.scrollLeft))",
+                "expect(await table.evaluate(node => node.scrollLeft)).toBe(before)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A05 status height follows its own label while long labels remain fully readable",
+              "line": 176,
+              "assertions": [
+                "expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1)",
+                "expect(geometry.actual).toBeLessThanOrEqual(intrinsicSize.natural + 1)",
+                "expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120))",
+                "expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+              "line": 195,
+              "assertions": [
+                "expect(page.getByRole('status')).toContainText('Mã tham chiếu: ' + 'A'.repeat(120))",
+                "expect(await text.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)",
+                "expect(action).toBeFocused()",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "A07 locked order addresses expose full text and edit lines retain intrinsic actions",
+              "line": 208,
+              "assertions": [
+                "expect(dialog).toBeVisible()",
+                "expect(address).toBeVisible()",
+                "expect(dialog.getByRole('combobox', { name: /^Địa chỉ giao hàng/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('combobox', { name: /^Thanh toán/ })).toHaveCount(0)",
+                "expect(dialog.getByRole('group', { name: 'Thanh toán', exact: true })).toContainText('Thu khi giao (COD)')",
+                "expect(addressText).toHaveText(expected)",
+                "expect(await addressText.evaluate(node => node.scrollWidth <= node.clientWidth + 1 && getComputedStyle(node).textOverflow !== 'ellipsis')).toBe(true)",
+                "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)",
+                "expect(addressText).toHaveText(original!)",
+                "expect((await new AxeBuilder({ page }).include('[role=\"dialog\"]').analyze()).violations).toEqual([])",
+                "expect(option).toBeVisible()",
+                "expect(await option.evaluate(node => {\n            const paper = node.closest('.MuiPaper-root')!.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node);\n            return getComputedStyle(node).whiteSpace === 'normal' && [...range.getClientRects()].every(rect => rect.left >= paper.left - 1 && rect.right <= paper.right + 1);\n        })).toBe(true)",
+                "expect(page.getByRole('listbox')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-width-layout.spec.ts",
+          "sha256": "e9de7310dfad681c62b9dfb5f9bb1d0f65dc8f5f8079e2fe2275507cea3790e8",
+          "cases": [
+            {
+              "title": "W01 AI single connection fills its collection at breakpoint edges and wide viewports",
+              "line": 29,
+              "assertions": [
+                "expect(geometry.children).toHaveLength(1)",
+                "expect(geometry.children[0].width).toBeCloseTo(geometry.width, 0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W01 AI keeps two-column collection for two/three items and refetch preserves the new count",
+              "line": 42,
+              "assertions": [
+                "expect(dialog).not.toBeVisible()",
+                "expect(page.locator('main [data-ui-composition=\"section-grid\"] > .MuiPaper-root')).toHaveCount(count)",
+                "expect(geometry.children[0].width * 2 + geometry.gap).toBeCloseTo(geometry.width, 0)",
+                "expect(geometry.children[1].y).toBeCloseTo(geometry.children[0].y, 0)",
+                "expect(geometry.children[2].y).toBeGreaterThan(geometry.children[0].y)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W01 AI empty result keeps one accessible create action and no empty grid",
+              "line": 63,
+              "assertions": [
+                "expect(page.locator('main').getByRole('status').filter({ hasText: 'Chưa có kết nối AI.' })).toBeVisible()",
+                "expect(page.locator('main').getByRole('button', { name: 'Thêm kết nối AI', exact: true })).toHaveCount(1)",
+                "expect(page.locator('main [data-ui-composition=\"section-grid\"]')).toHaveCount(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W02 full-width form groups fill their panel and retain input/mapping/shipping behavior",
+              "line": 104,
+              "assertions": [
+                "expect(geometry.width).toBeCloseTo(geometry.available, 0)",
+                "expect(geometry.maxWidth).toBe('none')",
+                "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible()",
+                "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toHaveCount(0)",
+                "expect(page.locator('.MuiDrawer-modal')).toHaveCount(0)",
+                "expect(page.getByRole('textbox', { name: 'Tên cửa hàng', exact: true })).toHaveValue('Tên cửa hàng cần giữ')",
+                "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('sku-width')",
+                "expect(page.getByText('Thiếu địa chỉ giao hàng; chưa thể xác định vùng hoặc hiển thị phí.', { exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W03 notification protection notice occupies the full page row after the two panes",
+              "line": 143,
+              "assertions": [
+                "expect(geometry.insideGrid).toBe(false)",
+                "expect(geometry.noticeWidth).toBeCloseTo(geometry.gridWidth, 0)",
+                "expect(geometry.rhythm).toBe('section')",
+                "expect(geometry.gap).toBeCloseTo(16, 0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "W04 detail rows stay atomic in divided rhythm and plain containers",
+              "line": 162,
+              "assertions": [
+                "expect(geometry.childCount).toBe(7)",
+                "expect(geometry.rhythm).toBe('dividedRows')",
+                "expect(geometry.gap).toBe(0)",
+                "expect(geometry.slots[index].separators).toBe(1)",
+                "expect(geometry.slots[index].y - geometry.slots[index - 1].y - geometry.slots[index - 1].height).toBeCloseTo(0, 0)",
+                "expect(geometry.plain).toHaveLength(4)",
+                "expect(row.height).toBeCloseTo(row.rowHeight + row.separatorHeight, 0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 181,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 624,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 181-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled width behavior",
+      "routeObservations": 216,
+      "focusedCases": 70,
+      "artifact": "built-shared-review.json",
+      "limit": "Actual compiled geometry/axe/keyboard; counts remain separate from full browser suite."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "composer-stability",
+      "startedAt": "2026-10-09T05:07:15.134Z",
+      "finishedAt": "2026-10-09T05:08:10.178Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522425617-76720/composer-stability.log",
+        "sha256": "c079a393ffdf279c19f59e441cbf4ff5dab6167a5476fbc4d1bfaad7d793da56"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "imports-clearance-regression",
+      "startedAt": "2026-10-09T05:08:19.164Z",
+      "finishedAt": "2026-10-09T05:08:39.156Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522490344-8672/imports-clearance-regression.log",
+        "sha256": "950791e791deafe07d84a64fcbecb6479f91ee1dcd33b86f6eb82521d196ae2a"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-09T03:47:09.137Z",
+      "finishedAt": "2026-10-09T04:47:48.711Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
+        "sha256": "8c35ba10b993a303946c89addd4dcb04c7fc718f5cff8daa5a74f2e3fd8fe85d"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-09T03:44:04.675Z",
+      "finishedAt": "2026-10-09T03:47:01.145Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517444670-94456/verify.log",
+        "sha256": "fe34adfd7fbd0931c58b87f7e5405aa833e13009571d6cc92d5517e9b15ab0f0"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-09T03:42:18.472Z",
+      "finishedAt": "2026-10-09T03:42:24.862Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517338471-44912/unit.log",
+        "sha256": "d1928a0902ebc21f0c0780bc9467ca4e0f52beb179b91314a6cf1533aee097a8"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-09T03:47:01.271Z",
+      "finishedAt": "2026-10-09T03:47:01.452Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621270-95168/source-maps.log",
+        "sha256": "a7dc3557124f4394e17cdb8a7a42cd23a7ee839ade15529024a2fa2d7cb76e33"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-09T04:48:06.078Z",
+      "finishedAt": "2026-10-09T04:51:16.462Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791521277863-27488/built-demo.log",
+        "sha256": "4c4a6c6fdcbbd0bfa0e5344760595a858ad7e5df5662cdcfbdb32c0d8380db58"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "startup-cache-regression",
+      "startedAt": "2026-10-09T05:11:14.912Z",
+      "finishedAt": "2026-10-09T05:11:36.059Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522665730-96308/startup-cache-regression.log",
+        "sha256": "b78941e75dca7664227a303ce9bbb0e70d77c3957ae994adfbd112ae2be241d3"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-regression",
+      "startedAt": "2026-10-09T05:10:37.682Z",
+      "finishedAt": "2026-10-09T05:11:05.627Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522628388-90736/label-regression.log",
+        "sha256": "f28164351bc45da0b3df30632d3557484bc591686832bb955d35119531c55684"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "variant-regression",
+      "startedAt": "2026-10-09T05:09:47.479Z",
+      "finishedAt": "2026-10-09T05:10:28.292Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522578658-74300/variant-regression.log",
+        "sha256": "62f3d31abc4f6d7965fb2f70604b46342b5b0d978064d34f335264ad9171c42f"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-focus-regression",
+      "startedAt": "2026-10-09T05:09:17.882Z",
+      "finishedAt": "2026-10-09T05:09:38.570Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522549023-26236/label-focus-regression.log",
+        "sha256": "6891aae72dc105e22e42f974e8faf94492ed251b3c7f67146a0a2ae6335e96ab"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "composer-regression",
+      "startedAt": "2026-10-09T05:08:48.237Z",
+      "finishedAt": "2026-10-09T05:09:08.934Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791522519245-33232/composer-regression.log",
+        "sha256": "1fcc0bfd08e59012b4cf1aad212270969d3f68a497ceac5c02e2e27a5995a176"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "484a437a439ccc3d506376f59780534bf87be34ed3b28d8fd0938d86190658ed"
+}

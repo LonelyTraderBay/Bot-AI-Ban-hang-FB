@@ -1,0 +1,49 @@
+{
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "result": "PASS",
+  "generatedAt": "2026-10-07T14:14:08.421Z",
+  "currentSupportingRuns": {
+    "domain": "75/75 simulator + 13/13 MSW scenarios + 210/210 handlers",
+    "unit": "138/138",
+    "domainLogSha256": "14a0a7cc34f429e7108e90a40ad47b872cbbd463fbc1bf638104db1147056a9a",
+    "unitLogSha256": "efde00b9af573cf5a771e8fa188b43f5767e184355296d516ae513f28ce36fc4"
+  },
+  "browser": {
+    "projects": [
+      "chromium",
+      "firefox"
+    ],
+    "errorRetry": {
+      "testsPassed": 2,
+      "route": "R10 /s/:shopId/products/new",
+      "routeMatchesPerProject": 1,
+      "successToastWhileReadFails": 0,
+      "logFile": "execution/frontend-evidence/FE008/S03-browser-error-current-20261007-after-toast-assertion.log",
+      "logSha256": "679e3db27640963351b5060b660a85de6d57800b964050a424c62f5b0cb461ce",
+      "command": "cmd.exe /d /c set \"PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH%\" && set \"ROUTE_ERROR_TEST_ID=R10\" && node node_modules/@playwright/test/cli.js test tests/states/route-error-composition.spec.ts --reporter=line"
+    },
+    "emptyState": {
+      "testsPassed": 2,
+      "routesPerProject": 11,
+      "accessibleAnnouncements": true,
+      "logFile": "execution/frontend-evidence/FE008/S03-browser-empty-current-20261007.log",
+      "logSha256": "d1804d50b8b3b9df6e555d0a29ef8088dfc7107f545c304cd5a3977417e85c05",
+      "command": "cmd.exe /d /c set \"PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH%\" && node node_modules/@playwright/test/cli.js test tests/states/route-empty-composition.spec.ts --reporter=line"
+    },
+    "diagnosticRun": {
+      "exitCode": 1,
+      "productFailure": false,
+      "reason": "The initial CMD set ROUTE_ERROR_TEST_ID=R10 retained a trailing space, so the route filter stopped at its expected-count precondition. The corrected quoted environment command above passed both browser projects.",
+      "logFile": "execution/frontend-evidence/FE008/S03-browser-current-20261007.log",
+      "logSha256": "f07260ae9595d3c1f4c3a4df2f4b150a5d3d696bed824ff5c47911aa5cbefefe"
+    }
+  },
+  "routesInManifest": 54,
+  "behavior": {
+    "failureStateVisibleAndRetryable": true,
+    "successToastOnFailedRead": false,
+    "emptyStateRoutesPerBrowser": 11,
+    "noRealApiFallbackInDemoMode": true,
+    "noBackendOrProviderIntegrationClaimed": true
+  }
+}

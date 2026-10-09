@@ -1,0 +1,864 @@
+{
+  "executedAt": "2026-10-08T23:16:37.709Z",
+  "taskId": "FE016",
+  "stepId": "S04",
+  "facts": [
+    {
+      "name": "Canonical task criteria",
+      "action": "Viết/chạy component + network/contract regression cho acceptance của task; dùng seed/reset/clock để tái hiện ca lỗi.",
+      "verification": "Ca hợp lệ/không hợp lệ kiểm behavior thực, không chỉ snapshots; action gửi đúng operation/body/version và scope. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy."
+    },
+    {
+      "name": "Current task contract/source ownership",
+      "routes": [
+        {
+          "id": "R05",
+          "source": "apps/web/src/modules/inbox/index.tsx",
+          "component": "InboxPage"
+        },
+        {
+          "id": "R06",
+          "source": "apps/web/src/modules/inbox/index.tsx",
+          "component": "InboxPage"
+        }
+      ],
+      "operationIds": [
+        "addInternalNote",
+        "assignConversation",
+        "createFeedback",
+        "getCommand",
+        "getConversation",
+        "getInboxMetadata",
+        "listConversations",
+        "listMessages",
+        "releaseConversation",
+        "resolveConversation",
+        "sendMessage",
+        "takeoverConversation"
+      ],
+      "crosswalk": {
+        "operations": 210,
+        "files": 71,
+        "calls": 222,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "Named executed owner behavior",
+      "scope": "owner suite",
+      "cases": [
+        "UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports",
+        "FE016 conversation keeps its composer visible while long demo context scrolls independently",
+        "FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details",
+        "Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery",
+        "FE016.AC01 list cursor is isolated from message cursor and restored on back navigation",
+        "UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change",
+        "UI002 mobile keeps the list page while messages page and Back restores it",
+        "UI002 Inbox search resets only the list cursor while a message page is open",
+        "UI002 deep link, refresh and mobile Back preserve their own cursors",
+        "UI002 list and message panel errors remain isolated",
+        "UI002 send, invalidation and resync keep both cursors and send only once",
+        "FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery",
+        "FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft",
+        "FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends",
+        "FE016.AC04 role without customer/order permissions cannot open those cross-module references",
+        "FE016.S03 stale takeover preserves reason and reports the version conflict",
+        "FE016.B05 cross-sell promotion preview shows sample rules without applying a discount",
+        "FE016.B08 image and voice preview is synthetic and stays local",
+        "FE027.B01 industry sales script preview asks for missing facts and stays a local draft",
+        "FE027.B02 inbox price and available stock preview uses current canonical mock reads",
+        "FE027.B03 order capture links the active customer and conversation into the manual order form",
+        "FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist",
+        "Shared Toolbar and demo tools keep labels clear when text doubles",
+        "Toolbar geometry: multiline category lookup cannot stretch the search button",
+        "Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths",
+        "Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow",
+        "Toolbar public extra slot cannot stretch a single-line submit action",
+        "Toolbar preserves Products URL filters, search submit, clear and independent category lookup",
+        "Toolbar keeps Inventory apply/reset separate from search submission",
+        "Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination"
+      ],
+      "executions": 60,
+      "assertionInventory": [
+        {
+          "file": "tests/fe016.spec.ts",
+          "sha256": "67cc4d1e27acb2df49777d7ed20d2d0cec98c8d23de0fe1b26adc1bc26802b11",
+          "cases": [
+            {
+              "title": "UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports",
+              "line": 68,
+              "assertions": [
+                "expect(page.getByText('Demo', { exact: true })).toBeVisible()",
+                "expect(page.locator('[aria-label=\"Dữ liệu mô phỏng\"]')).toBeVisible()",
+                "expect(disclosure).toBeVisible()",
+                "expect(disclosure).toHaveAttribute('aria-expanded', 'false')",
+                "expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toBeHidden()",
+                "expect(page.getByRole('button', { name: 'Ẩn công cụ demo', exact: true })).toHaveAttribute('aria-expanded', 'true')",
+                "expect(roleControl).toBeVisible()",
+                "expect(roleControl).toBeFocused()",
+                "expect(roleControl).toBeHidden()",
+                "expect(composer).toBeVisible()",
+                "expect(page.getByRole('link', { name: 'Danh sách hội thoại' })).toBeVisible()",
+                "expect(page.getByTestId('inbox-context-panel')).toBeAttached()",
+                "expect(documentWidth, `document overflow at ${width}px`).toBeLessThanOrEqual(width)",
+                "expect(composer).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016 conversation keeps its composer visible while long demo context scrolls independently",
+              "line": 101,
+              "assertions": [
+                "expect(thread.getByRole('textbox', { name: 'Nội dung trả lời khách' })).toBeVisible()",
+                "expect(context.getByRole('heading', { name: 'Bối cảnh khách hàng' })).toBeVisible()",
+                "expect(context).toHaveAttribute('tabindex', '0')",
+                "expect(layout.threadHeight).toBe(650)",
+                "expect(layout.contextHeight).toBeLessThanOrEqual(650)",
+                "expect(layout.contextScrollHeight).toBeGreaterThan(layout.contextHeight)",
+                "expect(layout.messageHeight).toBeLessThanOrEqual(550)",
+                "expect(layout.composerBottom).toBeLessThanOrEqual(layout.threadBottom + 1)",
+                "expect(enlarged.composerBottom).toBeLessThanOrEqual(enlarged.threadBottom + 1)",
+                "expect(enlarged.messageBottom).toBeLessThanOrEqual(enlarged.composerTop + 1)",
+                "expect(enlarged.messageContentHeight).toBeGreaterThanOrEqual(enlarged.messageLineHeight)",
+                "expect(draft).toHaveValue(value)",
+                "expect(boundedComposer.bodyOverflow).toBe('auto')",
+                "expect(boundedComposer.bodyHeight).toBeGreaterThanOrEqual(boundedComposer.lineHeight)",
+                "expect(boundedComposer.body.bottom).toBeLessThanOrEqual(boundedComposer.button.top)",
+                "expect(boundedComposer.button.bottom).toBeLessThanOrEqual(boundedComposer.form.bottom + 1)",
+                "expect(submit).toBeFocused()",
+                "expect.poll(async () => {\n        const reachable = await submit.boundingBox();\n        const form = await thread.locator('form').boundingBox();\n        return reachable!.y + reachable!.height - form!.y - form!.height;\n    }).toBeLessThanOrEqual(1)",
+                "expect.poll(async () => {\n        const reachable = await submit.boundingBox();\n        const form = await thread.locator('form').boundingBox();\n        return reachable!.y + reachable!.height - form!.y - form!.height;\n    })",
+                "expect(await submit.evaluate(button => {\n        const rect = button.getBoundingClientRect();\n        return document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)?.closest('button') === button;\n    })).toBe(true)",
+                "expect(draft).toBeFocused()",
+                "expect(draft).toHaveValue(value)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details",
+              "line": 208,
+              "assertions": [
+                "expect(url.searchParams.get('q')).toBe('Minh')",
+                "expect(url.searchParams.get('status')).toBe('open')",
+                "expect(url.searchParams.get('channelId')).toBe('fb-01')",
+                "expect(url.searchParams.get('assignedUserId')).toBe('user-demo')",
+                "expect((await response.json()).data.map((conversation: { id: string }) => conversation.id)).toEqual(['cv2'])",
+                "expect(page.getByRole('link', { name: /Minh \\(khách mẫu\\)/ })).toBeVisible()",
+                "expect(page).toHaveURL(/status=resolved/)",
+                "expect(page.getByText('Chưa có hội thoại phù hợp.')).toBeVisible()",
+                "expect(page).toHaveURL(/q=Minh.*status=open.*mode=human.*channelId=fb-01.*assignedUserId=user-demo/)",
+                "expect(page.getByRole('heading', { name: 'Minh (khách mẫu)' })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery",
+              "line": 236,
+              "assertions": [
+                "expect(draft).toBeVisible()",
+                "expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().reads, fixtureUrl)).toBeGreaterThan(before)",
+                "expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().reads, fixtureUrl))",
+                "expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().pending, fixtureUrl)).toBe(true)",
+                "expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().pending, fixtureUrl))",
+                "expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi')",
+                "expect(response.status()).toBe(mode === 'error' ? 422 : 200)",
+                "expect(payload.data).toEqual({ channels: [], assignees: [] })",
+                "expect(payload.data.channels.length).toBeGreaterThan(0)",
+                "expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi')",
+                "expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01')",
+                "expect(new URL(page.url()).searchParams.get('assignedUserId')).toBe('user-demo')",
+                "expect(new URL(page.url()).searchParams.has('status')).toBe(false)",
+                "expect(status).toBeFocused()",
+                "expect(new URL(page.url()).searchParams.get('q')).toBe('Linh')",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01')",
+                "expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.AC01 list cursor is isolated from message cursor and restored on back navigation",
+              "line": 296,
+              "assertions": [
+                "expect((await listResponse.json()).data.map((conversation: { id: string }) => conversation.id)).not.toContain('cv1')",
+                "expect(page).toHaveURL(/listCursor=cv1/)",
+                "expect(new URL(messageResponse.url()).searchParams.has('cursor')).toBe(false)",
+                "expect(page).toHaveURL(/cursor=cv1/)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change",
+              "line": 315,
+              "assertions": [
+                "expect(fixture.seededConversationCount).toBe(fixture.conversationCount)",
+                "expect(page.getByRole('textbox', { name: 'Tìm kiếm' })).toBeVisible()",
+                "expect(firstList.status()).toBe(200)",
+                "expect((await firstList.json()).page.total).toBe(fixture.conversationCount)",
+                "expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeEnabled()",
+                "expect((await secondListResponse).status()).toBe(200)",
+                "expect(page.getByRole('link', { name: /UI002 Conversation 41/ })).toBeVisible()",
+                "expect(page).toHaveURL(/listCursor=ui002-conversation-40/)",
+                "expect(new URL(page.url()).searchParams.has('cursor')).toBe(false)",
+                "expect((await firstMessageResponse).status()).toBe(200)",
+                "expect(pageTwoConversation).toBeVisible()",
+                "expect(firstPageRequest).toBeDefined()",
+                "expect((await messagePageTwoResponse).status()).toBe(200)",
+                "expect(page).toHaveURL(/listCursor=ui002-conversation-40.*cursor=ui002-message-100|cursor=ui002-message-100.*listCursor=ui002-conversation-40/)",
+                "expect(requests.slice(requestCountBeforeMessagePaging).filter(request => request.shopId === 'shop-demo' && request.resource === 'conversations')).toEqual([])",
+                "expect(page.getByTestId('inbox-message-list')).toContainText('UI002 message 105')",
+                "expect(invalidCursorResponses).toEqual([])",
+                "expect(page).toHaveURL(/listCursor=ui002-conversation-40/)",
+                "expect(new URL(page.url()).searchParams.has('cursor')).toBe(false)",
+                "expect((await nextConversationMessageResponse).status()).toBe(200)",
+                "expect(page.getByRole('heading', { name: 'UI002 Conversation 42', exact: true })).toBeVisible()",
+                "expect(invalidCursorResponses).toEqual([])",
+                "expect(page.getByRole('heading', { name: 'Chọn cửa hàng', exact: true })).toBeVisible()",
+                "expect(page.getByRole('link', { name: /Linh \\(khách mẫu\\)/ })).toBeVisible()",
+                "expect((await secondShopMessages).status()).toBe(200)",
+                "expect(page.getByTestId('inbox-thread')).toContainText('b-cv1')",
+                "expect(requests.slice(beforeOtherShopDetail).filter(request => request.shopId === 'shop-second').every(request => request.cursor === null)).toBe(true)",
+                "expect(page.getByText(/UI002 message/)).toHaveCount(0)",
+                "expect(invalidCursorResponses).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI002 mobile keeps the list page while messages page and Back restores it",
+              "line": 404,
+              "assertions": [
+                "expect((await firstList).status()).toBe(200)",
+                "expect((await pageTwoList).status()).toBe(200)",
+                "expect(page).toHaveURL(/listCursor=ui002-conversation-40/)",
+                "expect(page.getByRole('heading', { name: 'UI002 Conversation 41', exact: true })).toBeVisible()",
+                "expect((await pageTwoMessages).status()).toBe(200)",
+                "expect(page).toHaveURL(/listCursor=ui002-conversation-40.*cursor=ui002-message-100|cursor=ui002-message-100.*listCursor=ui002-conversation-40/)",
+                "expect(composer).toHaveValue(draft)",
+                "expect(leaveDraft).toBeVisible()",
+                "expect(page).toHaveURL(/cursor=ui002-conversation-40/)",
+                "expect(url.searchParams.get('cursor')).toBe('ui002-conversation-40')",
+                "expect(url.searchParams.has('listCursor')).toBe(false)",
+                "expect(page.getByRole('link', { name: /UI002 Conversation 41/ })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI002 Inbox search resets only the list cursor while a message page is open",
+              "line": 448,
+              "assertions": [
+                "expect((await firstList).status()).toBe(200)",
+                "expect((await pageTwoList).status()).toBe(200)",
+                "expect((await pageTwoMessages).status()).toBe(200)",
+                "expect(page.getByTestId('inbox-message-list')).toContainText('UI002 message 105')",
+                "expect((await filteredList).status()).toBe(200)",
+                "expect(url.searchParams.has('listCursor')).toBe(false)",
+                "expect(url.searchParams.get('cursor')).toBe('ui002-message-100')",
+                "expect(requests.find(request => request.path.endsWith('/conversations') && request.q === 'UI002 Conversation')?.cursor).toBeNull()",
+                "expect(requests.slice(requestsBeforeFilter).filter(request => request.path.endsWith('/ui002-conversation-41/messages')).every(request => request.cursor === 'ui002-message-100')).toBe(true)",
+                "expect(invalidCursorResponses).toEqual([])",
+                "expect(page.getByTestId('inbox-message-list')).toContainText('UI002 message 105')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI002 deep link, refresh and mobile Back preserve their own cursors",
+              "line": 505,
+              "assertions": [
+                "expect((await list).status()).toBe(200)",
+                "expect((await messages).status()).toBe(200)",
+                "expect(page.getByRole('heading', { name: 'Minh (khách mẫu)', exact: true })).toBeVisible()",
+                "expect((await refreshList).status()).toBe(200)",
+                "expect((await refreshMessages).status()).toBe(200)",
+                "expect(observed.length).toBeGreaterThan(priorRequests)",
+                "expect(page).toHaveURL(/listCursor=cv1.*cursor=m2|cursor=m2.*listCursor=cv1/)",
+                "expect(page).toHaveURL(/\\/inbox\\?cursor=cv1/)",
+                "expect(page.getByRole('link', { name: 'Minh (khách mẫu)' })).toBeVisible()",
+                "expect(listUrl.searchParams.get('cursor')).toBe('cv1')",
+                "expect(listUrl.searchParams.has('listCursor')).toBe(false)",
+                "expect(invalid).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI002 list and message panel errors remain isolated",
+              "line": 559,
+              "assertions": [
+                "expect(page.getByRole('alert').filter({ hasText: 'UI002_LIST_FAILURE' })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Minh (khách mẫu)', exact: true })).toBeVisible()",
+                "expect(page.getByTestId('inbox-message-list')).toContainText('Mình muốn đổi size của đơn hàng.')",
+                "expect(page.getByRole('alert').filter({ hasText: 'UI002_MESSAGE_FAILURE' })).toBeVisible()",
+                "expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible()",
+                "expect(page.getByRole('listitem').filter({ hasText: 'Minh (khách mẫu)' })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "UI002 send, invalidation and resync keep both cursors and send only once",
+              "line": 583,
+              "assertions": [
+                "expect((await firstList).status()).toBe(200)",
+                "expect((await pageTwoList).status()).toBe(200)",
+                "expect(page).toHaveURL(/listCursor=ui002-conversation-40/)",
+                "expect((await pageTwoMessages).status()).toBe(200)",
+                "expect(composer).toHaveValue(draft)",
+                "expect(JSON.parse(posted.postData() || 'null')).toMatchObject({ text: draft, expectedConversationVersion: 1 })",
+                "expect((await sendResponse).status()).toBe(202)",
+                "expect(sendCount).toBe(1)",
+                "expect(composer).toHaveValue('')",
+                "expect(page).toHaveURL(/listCursor=ui002-conversation-40.*cursor=ui002-message-100|cursor=ui002-message-100.*listCursor=ui002-conversation-40/)",
+                "expect.poll(() => calls.slice(requestStart).some(call => call.method === 'GET' && call.path.endsWith('/conversations') && call.cursor === 'ui002-conversation-40')).toBe(true)",
+                "expect.poll(() => calls.slice(requestStart).some(call => call.method === 'GET' && call.path.endsWith('/conversations') && call.cursor === 'ui002-conversation-40'))",
+                "expect.poll(() => calls.slice(requestStart).some(call => call.method === 'GET' && call.path.endsWith('/ui002-conversation-41/messages') && call.cursor === 'ui002-message-100')).toBe(true)",
+                "expect.poll(() => calls.slice(requestStart).some(call => call.method === 'GET' && call.path.endsWith('/ui002-conversation-41/messages') && call.cursor === 'ui002-message-100'))",
+                "expect(calls.filter(call => call.method === 'POST').length).toBe(1)",
+                "expect(invalidCursorResponses).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery",
+              "line": 643,
+              "assertions": [
+                "expect(JSON.parse(takeoverRequest.postData() || 'null')).toMatchObject({ expectedVersion: 1, reason: 'Khách cần nhân viên hỗ trợ trực tiếp.' })",
+                "expect((await takeoverResponseWait).status()).toBe(202)",
+                "expect(page.getByText(/Nhân viên đang tiếp quản/)).toBeVisible()",
+                "expect(sendBody).toMatchObject({ text: reply, expectedConversationVersion: 2 })",
+                "expect(sendBody.clientMessageId).toBeTruthy()",
+                "expect((await sendResponseWait).status()).toBe(202)",
+                "expect(page.locator('main').getByText(reply, { exact: true }).last()).toBeVisible()",
+                "expect(page.getByText(/· sent$/)).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft",
+              "line": 670,
+              "assertions": [
+                "expect(JSON.parse(noteRequest.postData() || 'null')).toEqual({ text: payload })",
+                "expect((await noteResponseWait).status()).toBe(201)",
+                "expect(page.getByText(payload, { exact: true })).toBeVisible()",
+                "expect(page.locator('img[src=\"x\"]')).toHaveCount(0)",
+                "expect(page.getByText('Ghi chú nội bộ', { exact: true }).last()).toBeVisible()",
+                "expect(page.getByText(/Ảnh\\/tin thoại chỉ bật khi hợp đồng/)).toBeVisible()",
+                "expect(feedbackResponse.status()).toBe(201)",
+                "expect((await feedbackResponse.json()).data).toMatchObject({ status: 'pending', knowledgeDraftId: null })",
+                "expect(publishedWrites).toHaveLength(0)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends",
+              "line": 701,
+              "assertions": [
+                "expect((await responseWait).status()).toBe(202)",
+                "expect(page.getByText('Có 1 thao tác chưa xác minh kết quả')).toBeVisible()",
+                "expect(textbox).toHaveValue(reply)",
+                "expect(page.getByText(/Mã lệnh cần kiểm tra/)).toBeVisible()",
+                "expect(sendAgain).toBeDisabled()",
+                "expect(page.getByRole('alert').filter({ hasText: /chưa xác minh kết quả/ })).toBeVisible()",
+                "expect(sends).toHaveLength(1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.AC04 role without customer/order permissions cannot open those cross-module references",
+              "line": 724,
+              "assertions": [
+                "expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('bot_admin', { exact: true })).toBeVisible()",
+                "expect(page.getByRole('link', { name: 'Hồ sơ khách' })).toHaveCount(0)",
+                "expect(page.getByRole('link', { name: 'Tạo đơn từ hội thoại' })).toHaveCount(0)",
+                "expect(page.getByRole('button', { name: 'Tiếp quản', exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('button', { name: 'Gửi trả lời', exact: true })).toBeDisabled()",
+                "expect(page.getByText('Thông tin khách bị ẩn theo quyền hiện tại.')).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.S03 stale takeover preserves reason and reports the version conflict",
+              "line": 735,
+              "assertions": [
+                "expect((await responseWait).status()).toBe(412)",
+                "expect(dialog).toBeVisible()",
+                "expect(dialog.getByRole('textbox', { name: /Lý do/ })).toHaveValue(reason)",
+                "expect(dialog.getByRole('alert').filter({ hasText: /Mô phỏng dữ liệu bị thay đổi/ })).toBeVisible()",
+                "expect(page.getByText('Trợ lý tự động')).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.B05 cross-sell promotion preview shows sample rules without applying a discount",
+              "line": 751,
+              "assertions": [
+                "expect(preview).toContainText('DEMO-PROMO-01')",
+                "expect(preview).toContainText('Không áp dụng giảm giá')",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE016.B08 image and voice preview is synthetic and stays local",
+              "line": 765,
+              "assertions": [
+                "expect(preview).toContainText('DEMO-MEDIA-IMAGE-01')",
+                "expect(preview).toContainText('Tin thoại mẫu · 00:08 · chưa phát âm thanh')",
+                "expect(page.getByRole('textbox', { name: 'Nội dung trả lời khách' })).toBeVisible()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.B01 industry sales script preview asks for missing facts and stays a local draft",
+              "line": 780,
+              "assertions": [
+                "expect(preview).toContainText('Bạn đang tìm kiểu dáng và dịp sử dụng nào?')",
+                "expect(preview).toContainText(/thiếu thông tin thì hỏi lại hoặc chuyển nhân viên/i)",
+                "expect(preview).toContainText('Bạn có dị ứng hoặc thành phần cần tránh không?')",
+                "expect(page.getByText(/không gọi AI và không gửi tin cho khách/)).toBeVisible()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.B02 inbox price and available stock preview uses current canonical mock reads",
+              "line": 796,
+              "assertions": [
+                "expect(productResponse.status()).toBe(200)",
+                "expect(stockResponse.status()).toBe(200)",
+                "expect(source).toBeTruthy()",
+                "expect(page.getByText('Dữ liệu chỉ là mock; cần truy vấn lại trước khi xác nhận đơn.', { exact: false })).toBeVisible()",
+                "expect(table).toBeVisible()",
+                "expect(table).toContainText(source.product.name)",
+                "expect(table).toContainText(source.variant.sku)",
+                "expect(table).toContainText(String(source.snapshot.available))"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.B03 order capture links the active customer and conversation into the manual order form",
+              "line": 817,
+              "assertions": [
+                "expect(orderLink).toHaveAttribute('href', '/s/shop-demo/orders/new?customerId=c1&conversationId=cv1')",
+                "expect(page).toHaveURL(/\\/s\\/shop-demo\\/orders\\/new\\?customerId=c1&conversationId=cv1$/)",
+                "expect(page.getByRole('heading', { name: 'Tạo đơn hàng', exact: true })).toBeVisible()"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist",
+              "line": 827,
+              "assertions": [
+                "expect(page.getByRole('tabpanel', { name: 'Điều kiện xác nhận đơn' })).toContainText('Bằng chứng xác nhận của khách')",
+                "expect(page.getByRole('button', { name: 'Tự động xác nhận đơn chưa được hỗ trợ' })).toBeDisabled()",
+                "expect(writes).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-toolbar-layout.spec.ts",
+          "sha256": "b7e70dd59ecfe96701bc830a134e1b1184256d59a69f94132d4ceb12a5dd6ea9",
+          "cases": [
+            {
+              "title": "Shared Toolbar and demo tools keep labels clear when text doubles",
+              "line": 33,
+              "assertions": [
+                "expect(labels.filter(label => label.owner === 'demo-tools')).toHaveLength(3)",
+                "expect(labels.filter(label => label.owner === 'toolbar')).toHaveLength(1)",
+                "expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([])",
+                "expect(label.labelPosition).toBe('static')",
+                "expect(label.labelTransform).toBe('none')",
+                "expect(label.fieldBounds.height).toBeLessThanOrEqual(label.naturalHeight + 1)",
+                "expect(label.legends.every(width => width <= 1)).toBe(true)",
+                "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar geometry: multiline category lookup cannot stretch the search button",
+              "line": 61,
+              "assertions": [
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1)",
+                "expect(primary.getByRole('combobox', { name: 'Trạng thái', exact: true })).toBeVisible()",
+                "expect(primary.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toHaveCount(0)",
+                "expect(filters).toBeVisible()",
+                "expect(secondary!.y).toBeGreaterThanOrEqual(search!.y + search!.height)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths",
+              "line": 78,
+              "assertions": [
+                "expect(filters).toHaveAttribute('data-ui-composition', 'field-group')",
+                "expect(filters).toHaveAttribute('role', 'group')",
+                "expect(filters.getByRole('combobox', { includeHidden: true })).toHaveCount(4)",
+                "expect(filters).toBeHidden()",
+                "expect(filters).toBeVisible()",
+                "expect(geometry.outsideForm).toBe(true)",
+                "expect(geometry.sharedParent).toBe(true)",
+                "expect(geometry.inset).toEqual({ left: 0, top: 0 })",
+                "expect(Math.abs(geometry.filter.left - geometry.form.left)).toBeLessThanOrEqual(0.5)",
+                "expect(Math.abs(geometry.filter.right - geometry.form.right)).toBeLessThanOrEqual(0.5)",
+                "expect(Math.abs(geometry.filter.top - geometry.form.bottom - geometry.gap)).toBeLessThanOrEqual(0.5)",
+                "expect(control.left).toBeGreaterThanOrEqual(geometry.filter.left - 0.5)",
+                "expect(control.right).toBeLessThanOrEqual(geometry.filter.right + 0.5)",
+                "expect(geometry.scrollWidth).toBeLessThanOrEqual(width)",
+                "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow",
+              "line": 121,
+              "assertions": [
+                "expect(search).toHaveCount(Number(route.supportsSearch))",
+                "expect(search).toBeVisible()",
+                "expect(geometry.buttonHeight, `${route.id} ${width}px`).toBeLessThanOrEqual(geometry.naturalHeight + 1)",
+                "expect(search).toBeHidden()",
+                "expect(documentWidth, `${route.id} document at ${width}px`).toBeLessThanOrEqual(width)",
+                "expect(observations).toHaveLength(impact.routes.length * 2)",
+                "expect(errors).toEqual([])"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar public extra slot cannot stretch a single-line submit action",
+              "line": 146,
+              "assertions": [
+                "expect(page.getByRole('textbox', { name: 'Lọc hai' })).toBeVisible()",
+                "expect(geometry.formHeight).toBeGreaterThan(geometry.buttonHeight * 2)",
+                "expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar preserves Products URL filters, search submit, clear and independent category lookup",
+              "line": 163,
+              "assertions": [
+                "expect(page).toHaveURL(/status=active/)",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(search).toHaveValue('')",
+                "expect(search).toHaveValue('Áo')",
+                "expect(page).toHaveURL(/q=/)",
+                "expect(new URL(page.url()).searchParams.get('q')).toBe('Áo')",
+                "expect(search).toBeFocused()",
+                "expect(new URL(page.url()).searchParams.get('status')).toBe('active')",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0)",
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(selected).toBeTruthy()",
+                "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0)",
+                "expect(page.getByRole('combobox', { name: /^Danh mục(?: |$)/ })).toContainText('Quần')",
+                "expect(new URL(page.url()).searchParams.get('categoryId')).toBe(selected)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar keeps Inventory apply/reset separate from search submission",
+              "line": 199,
+              "assertions": [
+                "expect(new URL(page.url()).searchParams.has('q')).toBe(false)",
+                "expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false)",
+                "expect(new URL(page.url()).searchParams.get('warehouseId')).toBe('wh1')",
+                "expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false)",
+                "expect(warehouse).toHaveValue('')"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            },
+            {
+              "title": "Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination",
+              "line": 215,
+              "assertions": [
+                "expect(more).toBeEnabled()",
+                "expect(page.getByText('Đã tải 20 lựa chọn', { exact: true })).toBeVisible()",
+                "expect(more).toBeEnabled()",
+                "expect(more).toBeDisabled()",
+                "expect(more).toHaveText('Đang tải…')",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)",
+                "expect(page.getByText(`Đã tải ${count} lựa chọn`, { exact: true })).toBeVisible()",
+                "expect(more).toHaveCount(0)",
+                "expect(retry).toBeVisible()",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)",
+                "expect(retry).toHaveCount(0)",
+                "expect(lookup).toHaveValue('toolbar-lookup-error')",
+                "expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight)"
+              ],
+              "projects": [
+                "chromium",
+                "firefox"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current shared dependency regressions",
+      "unit": 175,
+      "domain": 88,
+      "sourceMap": 16,
+      "browser": 614,
+      "builtArtifact": 6,
+      "limits": "Counts describe distinct suites; they are not added into a checkpoint percentage. Owner case and source checks above are required independently."
+    },
+    {
+      "name": "Executed unit owners",
+      "owners": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ],
+      "limit": "Literal owner titles bind actual verbose output; parameterized cases remain covered by the whole 175-case run, without inventing separate executions."
+    },
+    {
+      "name": "Compiled width behavior",
+      "routeObservations": 216,
+      "focusedCases": 30,
+      "artifact": "built-shared-review.json",
+      "limit": "Actual compiled geometry/axe/keyboard; counts remain separate from full browser suite."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "composer-stability",
+      "startedAt": "2026-10-08T22:04:51.889Z",
+      "finishedAt": "2026-10-08T22:05:45.243Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791497086991-68376/composer-stability.log",
+        "sha256": "fa81aec433d11ecb23320a190321673579591590693cbfd704d319a39b8660d8"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "imports-clearance-regression",
+      "startedAt": "2026-10-08T22:02:21.334Z",
+      "finishedAt": "2026-10-08T22:02:39.379Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496936285-58828/imports-clearance-regression.log",
+        "sha256": "7d2e16cc4c11461e3296218078efc0bf0ba2d0e93ea30ec5956c3b760ebe4871"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "e2e",
+      "startedAt": "2026-10-08T22:11:38.622Z",
+      "finishedAt": "2026-10-08T23:11:25.849Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791497493248-49984/e2e.log",
+        "sha256": "6fd084377cbd0e7a76ad5b770d18b7f0972253de81bd08fa5a45f88afd21f4b4"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "verify",
+      "startedAt": "2026-10-08T22:06:05.023Z",
+      "finishedAt": "2026-10-08T22:09:18.030Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791497165022-11008/verify.log",
+        "sha256": "66c0700c579b8351b264a281a593b6eff11ec995dde473ba4dae7c30a19794e7"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "unit",
+      "startedAt": "2026-10-08T21:59:56.125Z",
+      "finishedAt": "2026-10-08T22:00:04.585Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496796123-33904/unit.log",
+        "sha256": "04c3f089347abe026dde44d521d08f622159956f409bd70ec43b328cfd3f8c5c"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "source-maps",
+      "startedAt": "2026-10-08T21:59:56.190Z",
+      "finishedAt": "2026-10-08T21:59:56.428Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496796189-65096/source-maps.log",
+        "sha256": "088c9148a0b6218ab388252154db0806095d725e2ed5323714b6318bb7e3ca2b"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "built-demo",
+      "startedAt": "2026-10-08T23:11:37.759Z",
+      "finishedAt": "2026-10-08T23:14:51.054Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791501092771-85932/built-demo.log",
+        "sha256": "c4c97f6b06c5d750966fd536c524f0f58a09e39f56d8e1891198facf0689a4e0"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "startup-cache-regression",
+      "startedAt": "2026-10-08T22:02:44.491Z",
+      "finishedAt": "2026-10-08T22:03:04.849Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496959473-24216/startup-cache-regression.log",
+        "sha256": "9004892a42123b1fa16a7047cec6d68057259593767d75762ff9a96547219d19"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-regression",
+      "startedAt": "2026-10-08T22:03:10.257Z",
+      "finishedAt": "2026-10-08T22:03:37.271Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496984953-80724/label-regression.log",
+        "sha256": "c62aeda4db51ef709c08b7b981c921f2070e2f670d835fae186bf557271d04ae"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "variant-regression",
+      "startedAt": "2026-10-08T22:03:42.336Z",
+      "finishedAt": "2026-10-08T22:04:21.603Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791497017357-92224/variant-regression.log",
+        "sha256": "7c76de255e9abb25a769266a7c55041d2ca03f6b8944655f037f20b854c67469"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "label-focus-regression",
+      "startedAt": "2026-10-08T22:04:27.114Z",
+      "finishedAt": "2026-10-08T22:04:46.907Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791497061691-27108/label-focus-regression.log",
+        "sha256": "562ed7ba43eb709ca28883c539abd30e41ef4338daec4ddcd430a6f8ffa9af56"
+      },
+      "sourceDrift": []
+    },
+    {
+      "stage": "composer-regression",
+      "startedAt": "2026-10-08T21:58:02.730Z",
+      "finishedAt": "2026-10-08T21:58:21.823Z",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496677776-86172/composer-regression.log",
+        "sha256": "990822a2322386a19e5a56654d532b6852062f120996e32210b0b8d3d60028e7"
+      },
+      "sourceDrift": []
+    }
+  ],
+  "sourceSnapshotSha256": "fcad194c8240509cf746f1cf6b4808ae5e3bccddff5709b899775a38e926f7b3"
+}

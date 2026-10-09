@@ -1,5 +1,15 @@
 # Bàn giao FE003 — runner và hợp đồng bằng chứng
 
+<!-- CORRECTIONS_CURRENT -->
+## Kết quả hiện hành — component A01–A07 sau F01–F09 và Toolbar/Shell
+
+[Báo cáo source/gates](../../../../BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/REPORT.md) và [ca nghiệm thu](../../../../BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/ACCEPTANCE_GUIDE.md): READY_FOR_ACCEPTANCE_LOCAL_SCOPE; full E2E580/580,174 unit,39 contracts,built-demo6/6,native33/33 trên source mới. Thứ tự UI chỉ ở plan §16.6; FE freshness đọc canonical CLI, giữ mẫu số140. Counts554/173,566/174 và các manifest cũ bên dưới là snapshot lịch sử, không thay lần chạy mới.
+
+Local React/TypeScript + HTTP MSW tổng hợp. Speech, hosted CI, Backend/provider thật và quyết định người dùng giữ trạng thái quan sát riêng; không tự điền PASS.
+<!-- END_CORRECTIONS_CURRENT -->
+
+## HISTORICAL_SNAPSHOT — hồ sơ trước đợt F01–F09
+
 ## FE003 evidence snapshot — 01/10/2026 (historical)
 
 Phạm vi là giao diện React/TypeScript với synthetic mock API (`FRONTEND_WITH_SYNTHETIC_MOCK_API`). Revision nền là `18be3c6c75ed66ced592b2d58f36ffbdbd8ae221` trên `main`, kèm working tree có thay đổi frontend chưa commit. Không sửa ledger toàn sản phẩm.
@@ -54,3 +64,28 @@ FE003.S04 was already valid and current once S01–S03 were restored. The additi
 At the FE003/FE004 refresh point the effective frontend ledger was **20/140 checkpoints**, FE001–FE004 DONE and FE005.S01 next. That snapshot and its document review were later superseded by FE005–FE028 and the final audit at `docs/FRONTEND_PLAN_DOCUMENT_AUDIT_2026-10-04.md`.
 
 The PowerShell/native-runner PATH issue is environment-specific and did not require changing global settings. At this dated snapshot an older npm audit showed 9 high advisories; FE024 later updated the toolchain and measured zero current vulnerabilities. This FE003 refresh did not run a production/demo build or hosted CI. Backend/provider/staging and owner acceptance remain outside this runner evidence; no result in this handoff is Backend or production-runtime proof.
+
+## Current Windows runner and documentation closeout — 07/10/2026 (FE003.S05)
+
+This section records the FE003.S05 review on the Windows working tree at Git HEAD `53c0ba8f413b1f1e0fa16a747ed27f728b861dd6` plus uncommitted source changes. Environment: Node `v24.19.0`, npm `11.17.0`. At the start of S05, the canonical FE tracker reported 14/140 evidence checkpoints (9.33%), no blocked task, and FE003.S05 next; treat that as the start-of-step snapshot only. Query the CLI for the live count and next task. The FE tracker measures valid evidence fingerprints, not the percent of UI code implemented.
+
+The current Windows rerun instructions are in [CONTINUE_FRONTEND.md](../../../../BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md). They invoke existing package scripts from `BotSalesAI_Frontend`, scope the temporary PATH change to the current PowerShell process, and restore the original value in `finally`. `npm ci` is limited to an isolated checkout because it replaces `node_modules`.
+
+### Rechecked evidence and command results
+
+| Check | Command / cwd | Result and evidence |
+|---|---|---|
+| Toolchain | `node --version`; `npm.cmd --version` / repository root | Node `v24.19.0`; npm `11.17.0`; Git HEAD above. |
+| Local verify | `npm run verify` / `BotSalesAI_Frontend` | Exit 0; [log](../../../../BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/verify.log), SHA-256 `5917f7a430275e426297307fbc8e10f90961dd9e99405bdf2ca90e707fcfe123`. |
+| Local full browser E2E | `npm run test:e2e` / `BotSalesAI_Frontend` | Exit 0, Chromium + Firefox, 504/504; [log](../../../../BotSalesAI_Frontend/evidence/frontend-ui-document-sync-20261007/e2e.log), SHA-256 `f0aed15b41fd27767829f897603f2d435f1e37674500d9563d43ae1b09b31b55`. Synthetic MSW demo only. |
+| Unit baseline | Vitest/RTL / `BotSalesAI_Frontend` | 136/136 across 12 files; [log](S03-vitest-rtl-baseline-final-current-20261007.log), SHA-256 `680b0d3ae9eace6e3d292ace1e014cfcae07a1bbe98d5f6f15b0f9ad8de4a1d0`. |
+| Domain/MSW baseline | `npm run test:domain` / `BotSalesAI_Frontend` | 88/88 (75 simulator + 13 network); [log](S03-domain-msw-baseline-final-current-20261007.log), SHA-256 `7260e9ef02481c757731749fa858b0758c63b17d01fa64f2347238699c47db3b`. |
+| Cold install | `npm.cmd --script-shell=cmd.exe ci` / isolated temp copy | Exit 0; `npm ls --depth=0` exit 0; see [FE002.S05 receipt](../FE002/S05-clean-install-retry-verified-current-20261007.json). The first disposable attempt's failure is preserved and is not a product failure. |
+
+The inherited shell PATH was too long for a child CMD lookup of `node`; a reduced process-only PATH resolved it. No machine/user PATH was edited. npm still reports `allowScripts` notices for esbuild/MSW; no script approval was added. A full Playwright `--list` discovery probe was stopped after the Node process reached about 3.5 GB RSS; its log is diagnostic and is not counted as a test result. Targeted config discovery and the independent 504/504 E2E run are recorded separately.
+
+### Workflow and evidence boundaries
+
+The inspected repository-root workflow is [`../../../../.github/workflows/frontend.yml`](../../../../.github/workflows/frontend.yml), SHA-256 `238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2`. It configures Ubuntu, Node 24, npm 11.17.0, clean install, audit, setup, verify, Chromium/Firefox installation and E2E artifact upload. **GitHub-hosted workflow run: NOT_RUN** in this evidence; workflow configuration and equivalent local checks do not establish a CI run. The S02 crosswalk also records that an older S19 relative-path fingerprint does not match this current root workflow file, so that historical fingerprint is not used as proof of current workflow content or execution.
+
+FE-G05 still lacks complete human screen-reader/speech and conformance review; FE-G09 still requires product-owner acceptance. No evidence here proves Backend/provider, staging, production runtime or release approval. Keep older dated snapshots above as history; use `node botsales-kit/scripts/progress.mjs validate`, `node botsales-kit/scripts/progress.mjs status`, and `node botsales-kit/scripts/progress.mjs next` from repository root for live FE progress.

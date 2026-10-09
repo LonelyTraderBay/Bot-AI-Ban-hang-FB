@@ -6,18 +6,20 @@ import { fileURLToPath } from 'node:url';
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const kit = path.resolve(directory, '../../../');
 const repo = path.resolve(kit, '..');
-const readJson = relative => JSON.parse(fs.readFileSync(path.join(repo, relative), 'utf8'));
-const plan = readJson('botsales-kit/execution/frontend-plan.json');
+const frontend = path.join(repo, 'BotSalesAI_Frontend');
+const readRepoJson = relative => JSON.parse(fs.readFileSync(path.join(repo, relative), 'utf8'));
+const readFrontendJson = relative => JSON.parse(fs.readFileSync(path.join(frontend, relative), 'utf8'));
+const plan = readRepoJson('botsales-kit/execution/frontend-plan.json');
 const task = plan.tasks.find(item => item.id === 'FE019');
-const manifest = readJson('botsales-kit/contracts/route-manifest.json');
-const openapi = readJson('botsales-kit/contracts/openapi.json');
-const generated = readJson('packages/contracts/src/operations.json');
+const manifest = readRepoJson('botsales-kit/contracts/route-manifest.json');
+const openapi = readRepoJson('botsales-kit/contracts/openapi.json');
+const generated = readFrontendJson('packages/contracts/src/operations.json');
 const routeIds = ['R29', 'R30', 'R39', 'R40'];
 const routes = new Map(manifest.routes.map(route => [route.id, route]));
 const operations = new Map(Object.values(openapi.paths).flatMap(pathItem => Object.values(pathItem))
   .filter(operation => operation.operationId).map(operation => [operation.operationId, operation]));
 const modules = ['integrations', 'notifications'].map(name => {
-  const root = path.join(repo, `apps/web/src/modules/${name}`);
+  const root = path.join(frontend, `apps/web/src/modules/${name}`);
   const files = [];
   const walk = directoryPath => {
     for (const entry of fs.readdirSync(directoryPath, { withFileTypes: true })) {

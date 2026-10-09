@@ -1,0 +1,185 @@
+{
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "apiVersion": "2.0.0",
+  "routeManifestVersion": "2.0",
+  "status": "PASS",
+  "routes": 6,
+  "operations": 16,
+  "checks": [
+    {
+      "name": "six canonical route IDs, paths and read permissions",
+      "status": "PASS",
+      "details": {
+        "R09": "/s/:shopId/products",
+        "R10": "/s/:shopId/products/new",
+        "R11": "/s/:shopId/products/:productId",
+        "R12": "/s/:shopId/categories",
+        "R13": "/s/:shopId/imports",
+        "R14": "/s/:shopId/imports/:jobId"
+      }
+    },
+    {
+      "name": "sixteen canonical and generated operation IDs",
+      "status": "PASS",
+      "details": [
+        "listProducts",
+        "createProduct",
+        "updateProduct",
+        "archiveProduct",
+        "listCategories",
+        "getCategory",
+        "createCategory",
+        "updateCategory",
+        "archiveCategory",
+        "uploadFile",
+        "getFile",
+        "createProductImport",
+        "commitProductImport",
+        "getProduct",
+        "listJobs",
+        "getJob"
+      ]
+    },
+    {
+      "name": "operation permissions match OpenAPI contract",
+      "status": "PASS",
+      "details": {
+        "listProducts": "catalog.read",
+        "createProduct": "catalog.write",
+        "updateProduct": "catalog.write",
+        "archiveProduct": "catalog.write",
+        "listCategories": "catalog.read",
+        "getCategory": "catalog.read",
+        "createCategory": "catalog.write",
+        "updateCategory": "catalog.write",
+        "archiveCategory": "catalog.write",
+        "uploadFile": null,
+        "getFile": null,
+        "createProductImport": "catalog.import",
+        "commitProductImport": "catalog.import",
+        "getProduct": "catalog.read",
+        "listJobs": "jobs.read",
+        "getJob": "jobs.read"
+      }
+    },
+    {
+      "name": "versioned product and category updates require If-Match",
+      "status": "PASS",
+      "details": [
+        "updateProduct",
+        "updateCategory"
+      ]
+    },
+    {
+      "name": "product payload requires variants and image file IDs",
+      "status": "PASS",
+      "details": [
+        "name",
+        "description",
+        "categoryId",
+        "status",
+        "variants",
+        "imageFileIds"
+      ]
+    },
+    {
+      "name": "variant payload uses positive money and does not expose cost",
+      "status": "PASS",
+      "details": [
+        "id",
+        "sku",
+        "name",
+        "options",
+        "price",
+        "active"
+      ]
+    },
+    {
+      "name": "import dry-run and commit payloads require confirmation fields",
+      "status": "PASS",
+      "details": {
+        "request": [
+          "fileId",
+          "mapping",
+          "duplicateStrategy",
+          "dryRun"
+        ],
+        "commit": [
+          "validationToken",
+          "confirmValidRowsOnly"
+        ]
+      }
+    },
+    {
+      "name": "current React source checker covers all canonical routes without findings",
+      "status": "PASS",
+      "details": {
+        "files": 68,
+        "operationCalls": 220,
+        "routes": 54,
+        "canonicalRoutes": 54,
+        "status": "PASS"
+      }
+    }
+  ],
+  "issues": [],
+  "traceability": {
+    "status": "GAP_RECORDED",
+    "frontendPlanFeatureIds": [
+      "H07",
+      "H08"
+    ],
+    "sourceTaskIds": [
+      "T019",
+      "T020"
+    ],
+    "sourceTaskFeatureIds": [
+      "B02",
+      "D01",
+      "G02"
+    ],
+    "frontendPlanFeatureRoutes": [
+      {
+        "id": "H07",
+        "routeIds": [
+          "R34"
+        ]
+      },
+      {
+        "id": "H08",
+        "routeIds": [
+          "R52"
+        ]
+      }
+    ],
+    "sourceTaskFeatureRoutes": [
+      {
+        "id": "B02",
+        "routeIds": [
+          "R06"
+        ]
+      },
+      {
+        "id": "D01",
+        "routeIds": [
+          "R47"
+        ]
+      },
+      {
+        "id": "G02",
+        "routeIds": [
+          "R33"
+        ]
+      }
+    ],
+    "targetRouteIds": [
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14"
+    ],
+    "reason": "FE010 route/operation scope is Catalog and import (R09-R14), while FE010 lists H07/H08 and source tasks T019/T020 list G02/B02/D01. The current contract mapping is independently checked above. The canonical frontend plan is left unchanged because its migration gate requires a separate approved plan migration."
+  }
+}

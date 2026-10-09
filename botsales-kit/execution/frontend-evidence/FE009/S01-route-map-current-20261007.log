@@ -1,0 +1,20 @@
+FE009.S01 canonical route/operation/source map audit
+executedAt=2026-10-07T16:20:41.045Z
+cwd=C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend
+commandId=source; command=set PATH=C:\Windows\System32;C:\Program Files\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source; exitCode=0
+routes=11/11; operations=29/29; directSourceUses=25; nonInvoked=approvePrivacyRequest,getMember,getServiceCase,stepUp
+featureIds=B06,G01,G02,G03,G04,G05,G06,H05,H06,H07; browserScenarios=10
+SOURCE_COMMAND=command-map source; exitCode=0; sourceLog=execution/frontend-evidence/FE009/S01-source-current-20261007.log; sha256=2a5159d05ab85baefa92b74b98b118b4cc5227e2b8ed3de2df770503b082b67c
+CHECK PASS: All planned FE009 route IDs exist and resolve to the current React page component (11)
+CHECK PASS: All planned operation IDs resolve to OpenAPI and generated descriptors with matching method/path/DTOs (29)
+CHECK PASS: All route permissions exist in the permission catalog and action permissions match operation descriptors (22)
+CHECK PASS: Direct API operation uses are located in actual React source (25)
+CHECK PASS: Expected non-invoked operations are classified by current page/protocol scope (4)
+CHECK PASS: All FE009 feature IDs and named browser scenarios are present in canonical sources (20)
+CHECK PASS: Customer relationship query limits and absent API filters are recorded from contract and source (3)
+OPEN_GAP P1: listServiceCases and listShipments have no customerId query; profile filters only the first 10/100 shop-wide rows in the client.
+OPEN_GAP: stepUp and approvePrivacyRequest are not invoked because current contract documentation has no frontend-safe OIDC re-auth flow.
+sourceSnapshotSha256=b4df1b3794d7033e7f523a14a0f4f83ec03180597a2a704919b2201030a64a7b
+Supporting current browser run: botsales-kit/execution/frontend-evidence/FE009/S02-e2e-current-20261007.log (512/512 Chromium + Firefox; includes 20/20 FE009 browser cases).
+Supporting current API/domain run: botsales-kit/execution/frontend-evidence/FE009/S02-domain-current-20261007.log (88/88 synthetic simulator/network checks passed).
+Scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no real backend, OIDC provider, tenant enforcement, or production behavior is claimed.
