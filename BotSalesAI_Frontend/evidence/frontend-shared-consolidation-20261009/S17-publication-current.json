@@ -1,0 +1,45 @@
+{
+  "publishedAt": "2026-10-08T22:06:03.462Z",
+  "target": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json",
+  "previousSha256": "847a56a47cbc22af5339c7caf4c34b1cb6b3491e0d0998a0187716b1ba580fc6",
+  "currentSha256": "de258df03392dfaa5aa46e176c1859f87c6a933b8d6e289d74138f0a0eec39b2",
+  "checks": [
+    {
+      "id": "contracts",
+      "command": "C:\\Program Files\\nodejs\\node.exe --test tests/ui-composition-checker.test.mjs tests/ui-composition-ancestry.test.mjs tests/ui-shared-api-contract.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "40/40 fixtures PASS",
+      "observed": "40/40 fixtures PASS",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496796120-85424/contracts.log",
+        "sha256": "e02838847882e81c16309f3326d5ff933e97636f1a17ad8b02a89b39cab35e19"
+      }
+    },
+    {
+      "id": "layout",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run test:layout",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "86/86 fixtures PASS",
+      "observed": "86/86 fixtures PASS",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496796121-77480/layout.log",
+        "sha256": "818afd41b969f5c67eda22333718b6412164ada96f30469ef5d2db1492cda4b3"
+      }
+    },
+    {
+      "id": "evidence-validator",
+      "command": "C:\\Program Files\\nodejs\\node.exe --test tests/ui-evidence-validator.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "11/11 fixtures PASS",
+      "observed": "11/11 fixtures PASS",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496796120-44072/evidence-validator.log",
+        "sha256": "74cef478168425e19be06c1a9d4860ca335329c64bb0c0d6f56416551bb923e3"
+      }
+    }
+  ],
+  "reason": "Intentional current S17 publication from actual fresh contract/layout/evidence-validator executions after scoped browser wrappers close, before final verify/full. Exact browser byte preservation is checked after the final full and built-demo wrappers close."
+}

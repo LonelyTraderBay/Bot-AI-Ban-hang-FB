@@ -1,0 +1,83 @@
+{
+  "capturedAt": "2026-10-08T19:48:44.171Z",
+  "status": "PASS",
+  "routeLabelProbeCount": 108,
+  "proofCounts": {
+    "evidence/frontend-shared-consolidation-20261009/actual-browser-zoom-200-current-20261009-024627-57836.json": 3,
+    "evidence/frontend-shared-consolidation-20261009/native-text-only-200-current-20261009-024617-58876.json": 4
+  },
+  "proofs": [
+    {
+      "routeLabelProbes": 0,
+      "path": "evidence/frontend-shared-consolidation-20261009/actual-browser-zoom-200-current-20261009-024627-57836.json",
+      "sha256": "d084dcdce9001dc5416f046ada1f26363c4161097900f6100eb0e846dfded37f",
+      "scenarios": 3,
+      "recoverableEllipsis": 0,
+      "method": {
+        "browser": "Playwright-bundled Chromium, headed, fresh temporary profile",
+        "mechanism": "Temporary Manifest V3 extension calls chrome.tabs.setZoom(tabId, 2) and independently reads chrome.tabs.getZoom(tabId)",
+        "baselineViewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "targetZoomFactor": 2,
+        "note": "The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2.",
+        "browserVersion": "153.0.8010.12"
+      }
+    },
+    {
+      "routeLabelProbes": 108,
+      "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-current-20261009-024617-58876.json",
+      "sha256": "40b76516c3c1700bbc52bff214d97f02dbb08dfd9ceedbf6773502082af1213a",
+      "scenarios": 4,
+      "recoverableEllipsis": 13,
+      "method": {
+        "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+        "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+        "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+        "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+        "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+        "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+        "baseZoomFactor": 1,
+        "targetZoomFactor": 2,
+        "scenarios": [
+          {
+            "id": "inbox-list",
+            "route": "/s/shop-demo/inbox",
+            "viewport": {
+              "width": 390,
+              "height": 800
+            }
+          },
+          {
+            "id": "inbox-detail",
+            "route": "/s/shop-demo/inbox/cv1",
+            "viewport": {
+              "width": 390,
+              "height": 800
+            }
+          },
+          {
+            "id": "dashboard",
+            "route": "/s/shop-demo/overview",
+            "viewport": {
+              "width": 390,
+              "height": 800
+            }
+          },
+          {
+            "id": "inbox-list-desktop",
+            "route": "/s/shop-demo/inbox",
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            }
+          }
+        ],
+        "browserVersion": "155.0",
+        "webdriverBuildId": "20260902192955"
+      }
+    }
+  ],
+  "limits": "Affected R04/R05/R06 profiles only; separate native browser and native text methods. No CSS zoom substitution or screen-reader speech claim."
+}

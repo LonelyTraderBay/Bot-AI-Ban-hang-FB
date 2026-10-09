@@ -1,0 +1,831 @@
+
+> botsales-frontend@0.1.0 test:layout
+> node --test tests/layout-checker.test.mjs tests/ui-layout-binding-gates.test.mjs && node scripts/check-layout.mjs
+
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (1351.8982ms)
+✔ rejects a CSS spacing role without a declared shared owner (1413.3722ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (1118.5701ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (1115.8189ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (1035.5034ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (2995.6117ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (2942.8531ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (3874.4765ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (2009.9565ms)
+✔ report mode inventories migration debt without turning findings into PASS (977.3016ms)
+✔ canonical writes through casts and aliases fail outside style expressions (1401.6729ms)
+✖ Object.assign cannot mutate canonical data but can copy to a fresh object (2527.1165ms)
+✔ layout gate rejects raw spacing on const alias of MUI component (1105.9444ms)
+✔ canonical mutation gate follows global mutator aliases and reflection (1061.294ms)
+✖ local mutator names do not acquire global mutation identity (1086.4748ms)
+✔ destructured mutators and call/apply retain canonical mutation checks (1020.0993ms)
+✖ global mutator call/apply can copy canonical values into fresh objects (1058.0165ms)
+✔ mutable aliases with possible canonical destinations fail closed (1012.2988ms)
+✖ opaque apply arguments fail closed while unrelated mutable data stays valid (2006.013ms)
+✔ canonical references inside containers and destructured aliases cannot be mutated (1023.9445ms)
+✖ independent shallow copies of scalar canonical fields remain mutable (1007.8492ms)
+✔ array references and nested destructuring preserve canonical write provenance (989.9042ms)
+✖ array destinations distinguish independent elements from canonical references (1033.2217ms)
+✔ array destructuring, dynamic indices and spread cannot hide canonical references (1043.0525ms)
+✖ dynamic indices and destructuring of independent arrays stay mutable (1035.9504ms)
+✔ function parameters cannot hide canonical mutation across source files (1054.488ms)
+✖ read-only helpers and mutations of unrelated arguments remain valid (1008.789ms)
+✔ returned canonical references remain protected across helper boundaries (1034.7335ms)
+✖ helper returns of fresh scalar copies do not retain canonical destination identity (981.9726ms)
+✔ destructured object parameters cannot mutate canonical arguments (999.165ms)
+✖ destructured object parameters retain independent argument mutability (990.0894ms)
+✔ default parameter and binding initializers cannot hide canonical mutations (986.8794ms)
+✖ fresh default parameter and binding copies remain mutable (1056.5236ms)
+✔ rest parameters retain canonical argument write provenance (997.7479ms)
+✖ rest parameters distinguish independent positions from canonical siblings (1015.215ms)
+✔ finite spread arguments preserve shifted positional and rest destinations (1019.8955ms)
+✖ finite spread expansion keeps independent argument positions mutable (1024.1668ms)
+✔ opaque spreads keep positional mutation destinations unknown (987.6828ms)
+✖ opaque spreads into read-only helpers do not invent mutation findings (924.597ms)
+✔ array parameter patterns retain canonical positions including nested object arrays (952.7063ms)
+✖ array parameter patterns retain independent bound element mutability (960.9508ms)
+✔ layout gate rejects parameter shadow of canonical layout name (980.1336ms)
+✔ layout gate follows genuine renamed styled factory (1082.3347ms)
+✖ layout gate accepts canonical namespace, element access and barrel alias (942.5566ms)
+✖ layout gate does not mistake local component named Stack for MUI (943.6991ms)
+✔ layout gate inspects renamed installed Emotion css tag (948.0216ms)
+✖ layout gate preserves genuine aliased Controller field forwarding (941.4773ms)
+✔ a same-named local Controller cannot exempt an unknown prop spread (946.6045ms)
+✖ genuine useForm registration survives property and destructured aliases (943.5762ms)
+✔ a function named register cannot exempt injected style props (942.2565ms)
+✔ a bridge callback parameter cannot impersonate its private factor binding (937.3905ms)
+✔ opaque namespace component selection remains a strict binding failure (932.0573ms)
+✔ opaque namespace factory cannot hide style arguments (930.0259ms)
+✔ MUI re-export cannot hide raw spacing behind a first-party barrel (947.0278ms)
+✔ destructuring assignments cannot hide canonical write targets (942.0848ms)
+✖ destructuring assignments can update independent copied destinations (939.525ms)
+✔ object rest retains nested canonical references while copying the outer object (927.8388ms)
+✖ rest scalar copies and replacement of container references stay mutable (968.0028ms)
+✔ shallow object spread preserves canonical child references and last-writer order (938.4835ms)
+✖ shallow spread with a later independent override stays mutable (926.0077ms)
+✔ exported mutable aliases retain assignments from their declaring file (925.1337ms)
+✖ exported independent mutable data does not acquire canonical provenance (916.5609ms)
+✔ literal computed keys retain canonical container and parameter provenance (932.3718ms)
+✖ literal computed keys do not taint independent selected properties (936.3056ms)
+✔ Object.assign shallow copies retain canonical nested reference provenance (952.9335ms)
+✖ Object.assign later independent overrides and scalar copies stay mutable (1065.2267ms)
+✔ union and dynamic property selections retain possible canonical destinations (988.2319ms)
+✖ finite union property selections exclude canonical siblings not in the key set (938.414ms)
+✔ union selection over Object.assign output retains canonical child provenance (921.1281ms)
+✖ union selection over independent Object.assign output remains mutable (938.1622ms)
+✖ Reflect.set call/apply checks the target argument rather than the assigned value (2814.3855ms)
+✔ aliased React createElement checks MUI and native style objects (921.4983ms)
+✖ GlobalStyles.styles is checked and local createElement names stay local (1852.6891ms)
+✔ React JSX runtime factories cannot bypass MUI or native style checks (922.336ms)
+✖ React cloneElement checks the cloned MUI element and preserves native props (1868.089ms)
+✖ Emotion css props and object factories are inspected with native CSS semantics (1861.3182ms)
+✖ Inline style elements in JSX, React factories, DOM and the HTML entry fail closed (7400.5237ms)
+✖ DOM CSSOM spacing writes use semantic roles and reject opaque style strings (1921.8351ms)
+✔ HTML parsing and runtime stylesheet mutation cannot bypass the imported CSS boundary (1998.965ms)
+✖ spacing shorthand values and responsive breakpoints preserve token and unit provenance (1071.0472ms)
+✔ function return producers cannot hide canonical children behind spreads (1042.1965ms)
+✖ producer spreads keep later independent child overrides writable (1032.3634ms)
+ℹ tests 82
+ℹ suites 0
+ℹ pass 47
+ℹ fail 35
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 86800.9716
+
+✖ failing tests:
+
+test at tests\ui-layout-binding-gates.test.mjs:47:1
+✖ Object.assign cannot mutate canonical data but can copy to a fresh object (2527.1165ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:52:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:64:1
+✖ local mutator names do not acquire global mutation identity (1086.4748ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:66:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:73:1
+✖ global mutator call/apply can copy canonical values into fresh objects (1058.0165ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:75:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:82:1
+✖ opaque apply arguments fail closed while unrelated mutable data stays valid (2006.013ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:87:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:94:1
+✖ independent shallow copies of scalar canonical fields remain mutable (1007.8492ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:96:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:103:1
+✖ array destinations distinguish independent elements from canonical references (1033.2217ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:105:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:112:1
+✖ dynamic indices and destructuring of independent arrays stay mutable (1035.9504ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:114:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:123:1
+✖ read-only helpers and mutations of unrelated arguments remain valid (1008.789ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:125:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:134:1
+✖ helper returns of fresh scalar copies do not retain canonical destination identity (981.9726ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:136:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:143:1
+✖ destructured object parameters retain independent argument mutability (990.0894ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:145:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:152:1
+✖ fresh default parameter and binding copies remain mutable (1056.5236ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:154:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:161:1
+✖ rest parameters distinguish independent positions from canonical siblings (1015.215ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:163:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:170:1
+✖ finite spread expansion keeps independent argument positions mutable (1024.1668ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:172:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:179:1
+✖ opaque spreads into read-only helpers do not invent mutation findings (924.597ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:181:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:188:1
+✖ array parameter patterns retain independent bound element mutability (960.9508ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:190:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:202:1
+✖ layout gate accepts canonical namespace, element access and barrel alias (942.5566ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'FAIL' !== 'PASS'
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:204:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'FAIL',
+    expected: 'PASS',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:207:1
+✖ layout gate does not mistake local component named Stack for MUI (943.6991ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'FAIL' !== 'PASS'
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:209:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'FAIL',
+    expected: 'PASS',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:219:1
+✖ layout gate preserves genuine aliased Controller field forwarding (941.4773ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'FAIL' !== 'PASS'
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:221:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'FAIL',
+    expected: 'PASS',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:228:1
+✖ genuine useForm registration survives property and destructured aliases (943.5762ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'FAIL' !== 'PASS'
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:230:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'FAIL',
+    expected: 'PASS',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:263:1
+✖ destructuring assignments can update independent copied destinations (939.525ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:265:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:272:1
+✖ rest scalar copies and replacement of container references stay mutable (968.0028ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:274:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:281:1
+✖ shallow spread with a later independent override stays mutable (926.0077ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:283:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:292:1
+✖ exported independent mutable data does not acquire canonical provenance (916.5609ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:296:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:303:1
+✖ literal computed keys do not taint independent selected properties (936.3056ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:305:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:312:1
+✖ Object.assign later independent overrides and scalar copies stay mutable (1065.2267ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:314:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:321:1
+✖ finite union property selections exclude canonical siblings not in the key set (938.414ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:323:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:330:1
+✖ union selection over independent Object.assign output remains mutable (938.1622ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:332:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:334:1
+✖ Reflect.set call/apply checks the target argument rather than the assigned value (2814.3855ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:341:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:349:1
+✖ GlobalStyles.styles is checked and local createElement names stay local (1852.6891ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:353:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:362:1
+✖ React cloneElement checks the cloned MUI element and preserves native props (1868.089ms)
+  AssertionError [ERR_ASSERTION]: [{"file":"apps/web/src/shared/ui/layout.ts","line":208,"column":28,"property":"labelAfterGap","value":"cssPixel(tokens.space.xs)","code":"BRIDGE_CSS_TOKEN_INVALID","message":"Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references"},{"file":"apps/web/src/shared/ui/theme.ts","line":32,"column":269,"property":"marginBottom","value":"layoutCss.form.labelAfterGap","code":"SEMANTIC_ROLE_MISMATCH","message":"CSS role labelAfterGap does not match spacing property marginBottom"}]
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:368:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:376:1
+✖ Emotion css props and object factories are inspected with native CSS semantics (1861.3182ms)
+  AssertionError [ERR_ASSERTION]: [{"file":"apps/web/src/shared/ui/layout.ts","line":208,"column":28,"property":"labelAfterGap","value":"cssPixel(tokens.space.xs)","code":"BRIDGE_CSS_TOKEN_INVALID","message":"Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references"},{"file":"apps/web/src/shared/ui/theme.ts","line":32,"column":269,"property":"marginBottom","value":"layoutCss.form.labelAfterGap","code":"SEMANTIC_ROLE_MISMATCH","message":"CSS role labelAfterGap does not match spacing property marginBottom"}]
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:382:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:387:1
+✖ Inline style elements in JSX, React factories, DOM and the HTML entry fail closed (7400.5237ms)
+  AssertionError [ERR_ASSERTION]: [{"file":"apps/web/src/shared/ui/layout.ts","line":208,"column":28,"property":"labelAfterGap","value":"cssPixel(tokens.space.xs)","code":"BRIDGE_CSS_TOKEN_INVALID","message":"Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references"},{"file":"apps/web/src/shared/ui/theme.ts","line":32,"column":269,"property":"marginBottom","value":"layoutCss.form.labelAfterGap","code":"SEMANTIC_ROLE_MISMATCH","message":"CSS role labelAfterGap does not match spacing property marginBottom"}]
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:410:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:412:1
+✖ DOM CSSOM spacing writes use semantic roles and reject opaque style strings (1921.8351ms)
+  AssertionError [ERR_ASSERTION]: [{"file":"apps/web/src/shared/ui/layout.ts","line":208,"column":28,"property":"labelAfterGap","value":"cssPixel(tokens.space.xs)","code":"BRIDGE_CSS_TOKEN_INVALID","message":"Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references"},{"file":"apps/web/src/shared/ui/theme.ts","line":32,"column":269,"property":"marginBottom","value":"layoutCss.form.labelAfterGap","code":"SEMANTIC_ROLE_MISMATCH","message":"CSS role labelAfterGap does not match spacing property marginBottom"}]
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:419:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:443:1
+✖ spacing shorthand values and responsive breakpoints preserve token and unit provenance (1071.0472ms)
+  AssertionError [ERR_ASSERTION]: [{"file":"apps/web/src/shared/ui/layout.ts","line":208,"column":28,"property":"labelAfterGap","value":"cssPixel(tokens.space.xs)","code":"BRIDGE_CSS_TOKEN_INVALID","message":"Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references"},{"file":"apps/web/src/shared/ui/theme.ts","line":32,"column":269,"property":"marginBottom","value":"layoutCss.form.labelAfterGap","code":"SEMANTIC_ROLE_MISMATCH","message":"CSS role labelAfterGap does not match spacing property marginBottom"}]
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:449:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-layout-binding-gates.test.mjs:526:1
+✖ producer spreads keep later independent child overrides writable (1032.3634ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs:528:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

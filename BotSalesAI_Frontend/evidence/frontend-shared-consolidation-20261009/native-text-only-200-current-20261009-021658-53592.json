@@ -1,0 +1,1579 @@
+{
+  "schemaVersion": 1,
+  "task": "S16.SharedConsolidation",
+  "recordedAt": "2026-10-08T19:16:58.009Z",
+  "scope": "Isolated Firefox with local React demo and synthetic MSW; no backend, user profile, persistent app writes, or system preference changes",
+  "result": "PASS",
+  "temporaryProfileCleanup": "REMOVED",
+  "method": {
+    "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+    "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+    "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+    "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+    "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+    "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+    "baseZoomFactor": 1,
+    "targetZoomFactor": 2,
+    "scenarios": [
+      {
+        "id": "inbox-list",
+        "route": "/s/shop-demo/inbox",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "inbox-detail",
+        "route": "/s/shop-demo/inbox/cv1",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "dashboard",
+        "route": "/s/shop-demo/overview",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "inbox-list-desktop",
+        "route": "/s/shop-demo/inbox",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        }
+      }
+    ],
+    "browserVersion": "155.0",
+    "webdriverBuildId": "20260902192955"
+  },
+  "sourceSha256": {
+    "apps/web/vite.config.ts": "3be2f3e6ac742a5d3ecbe9de67eb5654da8d2b0e04a0948179991497717f4f04",
+    "tests/session/demo-worker-startup.spec.ts": "3aaf76a0c4be00fbdfd18197a3981cdd05f10f3757f79c88daba486f8395cc30",
+    "apps/web/src/shared/ui/components.tsx": "f820ef65f5da75cb0fe755b0d68cf01365ea65938351404f61b3b7fea9d41b17",
+    "apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "apps/web/src/shared/ui/theme.ts": "89a903ba7638a7709f118750bdb7a165d44ff57fc949ba69dc0d5f19f29465df",
+    "apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "apps/web/src/app/Shell.tsx": "14d33f33d3cc1328e8739af23cc76eca319707a91b617b1467367a0a2571cbfb",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/inbox/index.tsx": "358aa20bb71c91a48eb59a4d3e633fd631818c5e12ae97079c38cb514b7f73cb",
+    "apps/web/src/modules/dashboard/index.tsx": "7a50a470d7f8366d77b7b6e90db12f3f3ed0a01a46b8759fc311bf69636b90f9",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "tests/ui-toolbar-layout.spec.ts": "978612f5cd80c301cd1c76f83faec8270b59df60dc2354d67ecb04b480ae5bcb",
+    "tests/ui-dashboard-layout.spec.ts": "647702611dace86cd1eadc214d28899b8b9c9e84babaeaeb035a63a621da3701",
+    "evidence/frontend-shared-consolidation-20261009/capture-shared-text-zoom.mjs": "6da2f3da4507521ec17cd504b2eb66fa4969bf70eed68287a0217cd17fc43e65"
+  },
+  "scenarios": [
+    {
+      "id": "inbox-list",
+      "route": "/s/shop-demo/inbox",
+      "routeUrl": "http://127.0.0.1:52616/s/shop-demo/inbox",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 1556,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 465.73,
+            "width": 324,
+            "height": 44,
+            "right": 357,
+            "bottom": 509.73,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          },
+          {
+            "selector": "[aria-label=\"Bộ lọc hội thoại\"]",
+            "found": true,
+            "x": 33,
+            "y": 521.73,
+            "width": 324,
+            "height": 172.53,
+            "right": 357,
+            "bottom": 694.27,
+            "scrollWidth": 324,
+            "clientWidth": 324,
+            "scrollHeight": 173,
+            "clientHeight": 173,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 73
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": 0,
+            "bottom": 1556.2666015625
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": {
+          "buttonHeight": 61,
+          "naturalHeight": 71,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2648,
+          "scrollY": 550,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 440.65,
+            "width": 324,
+            "height": 61,
+            "right": 357,
+            "bottom": 501.65,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 59,
+            "clientHeight": 59,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 8,
+            "nativeTextScaleRatio": 2
+          },
+          {
+            "selector": "[aria-label=\"Bộ lọc hội thoại\"]",
+            "found": true,
+            "x": 33,
+            "y": 513.65,
+            "width": 324,
+            "height": 253,
+            "right": 357,
+            "bottom": 766.65,
+            "scrollWidth": 324,
+            "clientWidth": 324,
+            "scrollHeight": 253,
+            "clientHeight": 253,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 73,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Linh (khách mẫu)",
+            "x": 109,
+            "y": 798.65,
+            "width": 211.07,
+            "height": 42,
+            "right": 320.07,
+            "bottom": 840.65,
+            "scrollWidth": 228,
+            "clientWidth": 211,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Shop ơi áo thun còn size L không?",
+            "x": 109,
+            "y": 844.65,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 886.65,
+            "scrollWidth": 424,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 33,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình muốn đổi size của đơn hàng.",
+            "x": 109,
+            "y": 1017.15,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1059.15,
+            "scrollWidth": 428,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 32,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Quần linen có dễ nhăn không?",
+            "x": 109,
+            "y": 1189.65,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1231.65,
+            "scrollWidth": 379,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 28,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình sẽ nhắn lại sau nhé.",
+            "x": 109,
+            "y": 1362.15,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1404.15,
+            "scrollWidth": 313,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 25,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          }
+        ],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 357,
+            "y": 440.6499938964844,
+            "bottom": 501.6499938964844
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [],
+        "recoverableEllipsis": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Linh (khách mẫu)",
+            "x": 109,
+            "y": 798.65,
+            "width": 211.07,
+            "height": 42,
+            "right": 320.07,
+            "bottom": 840.65,
+            "scrollWidth": 228,
+            "clientWidth": 211,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Linh (khách mẫu)",
+              "fontSize": "36px",
+              "width": 292.76666259765625,
+              "right": 325.76666259765625,
+              "height": 48.600006103515625,
+              "viewport": 390,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Shop ơi áo thun còn size L không?",
+            "x": 109,
+            "y": 844.65,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 886.65,
+            "scrollWidth": 424,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 33,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Shop ơi áo thun còn size L không?",
+              "fontSize": "28px",
+              "width": 261.1166687011719,
+              "right": 306.1166687011719,
+              "height": 84,
+              "viewport": 390,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình muốn đổi size của đơn hàng.",
+            "x": 109,
+            "y": 1017.15,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1059.15,
+            "scrollWidth": 428,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 32,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Mình muốn đổi size của đơn hàng.",
+              "fontSize": "28px",
+              "width": 261.1166687011719,
+              "right": 306.1166687011719,
+              "height": 84,
+              "viewport": 390,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Quần linen có dễ nhăn không?",
+            "x": 109,
+            "y": 1189.65,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1231.65,
+            "scrollWidth": 379,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 28,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Quần linen có dễ nhăn không?",
+              "fontSize": "28px",
+              "width": 261.1166687011719,
+              "right": 306.1166687011719,
+              "height": 84,
+              "viewport": 390,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình sẽ nhắn lại sau nhé.",
+            "x": 109,
+            "y": 1362.15,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1404.15,
+            "scrollWidth": 313,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 25,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Mình sẽ nhắn lại sau nhé.",
+              "fontSize": "28px",
+              "width": 261.1166687011719,
+              "right": 306.1166687011719,
+              "height": 84,
+              "viewport": 390,
+              "clipped": false
+            }
+          }
+        ],
+        "unrecoveredTextClips": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-list-focused-20261009-021658-53592.png",
+        "sha256": "273583f84695cc22a8af4d8651abe13a34d4804ec365b3ef898352f96cf282f4"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-list-current-20261009-021658-53592.png",
+        "sha256": "0372929d6a10cb4f91b4602eef2b7b563fdb75b9e972219308348155171f2c86"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "inbox-detail",
+      "route": "/s/shop-demo/inbox/cv1",
+      "routeUrl": "http://127.0.0.1:52616/s/shop-demo/inbox/cv1",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": {
+          "buttonHeight": 0,
+          "naturalHeight": 44,
+          "centerHitsButton": false
+        },
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2856,
+          "scrollY": 51,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-testid=\"inbox-thread\"]",
+            "found": true,
+            "x": 16,
+            "y": 348.6,
+            "width": 358,
+            "height": 761.3,
+            "right": 374,
+            "bottom": 1109.9,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "scrollHeight": 761,
+            "clientHeight": 761,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 410
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": -51,
+            "bottom": 2805.033447265625
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": {
+          "buttonHeight": 0,
+          "naturalHeight": 44,
+          "centerHitsButton": false
+        },
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 6325,
+          "scrollY": 1458,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-testid=\"inbox-thread\"]",
+            "found": true,
+            "x": 16,
+            "y": -553.6,
+            "width": 358,
+            "height": 1213.6,
+            "right": 374,
+            "bottom": 660,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "scrollHeight": 1214,
+            "clientHeight": 1214,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 410,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "aside",
+          "role": null,
+          "label": "Bối cảnh khách hàng",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 16,
+            "right": 374,
+            "y": 684,
+            "bottom": 4665.89990234375
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [],
+        "recoverableEllipsis": [],
+        "unrecoveredTextClips": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-detail-focused-20261009-021658-53592.png",
+        "sha256": "075d9a087902b24f2b33c0d866454b94293bb08d2a68244973a68184704601ad"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-detail-current-20261009-021658-53592.png",
+        "sha256": "f10188c2c427f62ad362482123547fd1ee4eeec3f52d47b880d9a3711121e504"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "dashboard",
+      "route": "/s/shop-demo/overview",
+      "routeUrl": "http://127.0.0.1:52616/s/shop-demo/overview",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": null,
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 3687,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main a[href=\"/s/shop-demo/operations\"]",
+            "found": true,
+            "x": 41,
+            "y": 538.47,
+            "width": 308,
+            "height": 44,
+            "right": 349,
+            "bottom": 582.47,
+            "scrollWidth": 308,
+            "clientWidth": 308,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 16
+          },
+          {
+            "selector": "main a[href=\"/s/shop-demo/orders/new\"]",
+            "found": true,
+            "x": 41,
+            "y": 594.47,
+            "width": 308,
+            "height": 44,
+            "right": 349,
+            "bottom": 638.47,
+            "scrollWidth": 306,
+            "clientWidth": 306,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 12
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": 0,
+            "bottom": 3687.2666015625
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": null,
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 6657,
+          "scrollY": 951,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main a[href=\"/s/shop-demo/operations\"]",
+            "found": true,
+            "x": 41,
+            "y": 370.75,
+            "width": 308,
+            "height": 58,
+            "right": 349,
+            "bottom": 428.75,
+            "scrollWidth": 308,
+            "clientWidth": 308,
+            "scrollHeight": 58,
+            "clientHeight": 58,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 16,
+            "nativeTextScaleRatio": 2
+          },
+          {
+            "selector": "main a[href=\"/s/shop-demo/orders/new\"]",
+            "found": true,
+            "x": 41,
+            "y": 440.75,
+            "width": 308,
+            "height": 60,
+            "right": 349,
+            "bottom": 500.75,
+            "scrollWidth": 306,
+            "clientWidth": 306,
+            "scrollHeight": 58,
+            "clientHeight": 58,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 12,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "a",
+          "role": null,
+          "label": "Tạo đơn hàng",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(255, 219, 140)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 41,
+            "right": 349,
+            "y": 440.75,
+            "bottom": 500.75
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [],
+        "recoverableEllipsis": [],
+        "unrecoveredTextClips": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-dashboard-focused-20261009-021658-53592.png",
+        "sha256": "be7e55f39ce60c73b48e89513ff1ad6984f7258b394612840f647e9d8c28f9d4"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-dashboard-current-20261009-021658-53592.png",
+        "sha256": "6a59939751ed98de0afa0249303ff7a870b18787cb127096904c29850a975dd4"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "inbox-list-desktop",
+      "route": "/s/shop-demo/inbox",
+      "routeUrl": "http://127.0.0.1:52616/s/shop-demo/inbox",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 800,
+          "clientWidth": 1280,
+          "documentWidth": 1280,
+          "pageOverflow": 0,
+          "scrollHeight": 1234,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 453.82,
+            "y": 335.6,
+            "width": 93.18,
+            "height": 44,
+            "right": 547,
+            "bottom": 379.6,
+            "scrollWidth": 91,
+            "clientWidth": 91,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          },
+          {
+            "selector": "[aria-label=\"Bộ lọc hội thoại\"]",
+            "found": true,
+            "x": 281,
+            "y": 391.6,
+            "width": 266,
+            "height": 172.53,
+            "right": 547,
+            "bottom": 564.13,
+            "scrollWidth": 266,
+            "clientWidth": 266,
+            "scrollHeight": 173,
+            "clientHeight": 173,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 73
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nBotSales AI\nĐội ngũ vận hành cửa hàng\nJoker Studio · Shop mẫu",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 1280,
+            "y": 0,
+            "bottom": 1234.13330078125
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": {
+          "buttonHeight": 61,
+          "naturalHeight": 71,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 800,
+          "clientWidth": 1280,
+          "documentWidth": 1280,
+          "pageOverflow": 0,
+          "scrollHeight": 1820,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 392.65,
+            "y": 501.45,
+            "width": 154.35,
+            "height": 61,
+            "right": 547,
+            "bottom": 562.45,
+            "scrollWidth": 152,
+            "clientWidth": 152,
+            "scrollHeight": 59,
+            "clientHeight": 59,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 8,
+            "nativeTextScaleRatio": 2
+          },
+          {
+            "selector": "[aria-label=\"Bộ lọc hội thoại\"]",
+            "found": true,
+            "x": 281,
+            "y": 574.45,
+            "width": 266,
+            "height": 253,
+            "right": 547,
+            "bottom": 827.45,
+            "scrollWidth": 266,
+            "clientWidth": 266,
+            "scrollHeight": 253,
+            "clientHeight": 253,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 73,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Linh (khách mẫu)",
+            "x": 357,
+            "y": 859.45,
+            "width": 153.07,
+            "height": 42,
+            "right": 510.07,
+            "bottom": 901.45,
+            "scrollWidth": 228,
+            "clientWidth": 153,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Shop ơi áo thun còn size L không?",
+            "x": 357,
+            "y": 905.45,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 947.45,
+            "scrollWidth": 424,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 33,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Minh (khách mẫu)",
+            "x": 357,
+            "y": 1031.95,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1073.95,
+            "scrollWidth": 240,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình muốn đổi size của đơn hàng.",
+            "x": 357,
+            "y": 1077.95,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1119.95,
+            "scrollWidth": 428,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 32,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "An (khách mẫu)",
+            "x": 357,
+            "y": 1232.95,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1274.95,
+            "scrollWidth": 208,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 14,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Quần linen có dễ nhăn không?",
+            "x": 357,
+            "y": 1278.95,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1320.95,
+            "scrollWidth": 379,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 28,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Hà (khách mẫu)",
+            "x": 357,
+            "y": 1405.45,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1447.45,
+            "scrollWidth": 208,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 14,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình sẽ nhắn lại sau nhé.",
+            "x": 357,
+            "y": 1451.45,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1493.45,
+            "scrollWidth": 313,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 25,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          }
+        ],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 392.6499938964844,
+            "right": 547,
+            "y": 501.45001220703125,
+            "bottom": 562.4500122070312
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [],
+        "recoverableEllipsis": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Linh (khách mẫu)",
+            "x": 357,
+            "y": 859.45,
+            "width": 153.07,
+            "height": 42,
+            "right": 510.07,
+            "bottom": 901.45,
+            "scrollWidth": 228,
+            "clientWidth": 153,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Linh (khách mẫu)",
+              "fontSize": "36px",
+              "width": 292.76666259765625,
+              "right": 905.7666625976562,
+              "height": 48.600006103515625,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Shop ơi áo thun còn size L không?",
+            "x": 357,
+            "y": 905.45,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 947.45,
+            "scrollWidth": 424,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 33,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Shop ơi áo thun còn size L không?",
+              "fontSize": "28px",
+              "width": 284,
+              "right": 901,
+              "height": 84,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Minh (khách mẫu)",
+            "x": 357,
+            "y": 1031.95,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1073.95,
+            "scrollWidth": 240,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Minh (khách mẫu)",
+              "fontSize": "36px",
+              "width": 329.1000061035156,
+              "right": 942.1000061035156,
+              "height": 48.600006103515625,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình muốn đổi size của đơn hàng.",
+            "x": 357,
+            "y": 1077.95,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1119.95,
+            "scrollWidth": 428,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 32,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Mình muốn đổi size của đơn hàng.",
+              "fontSize": "28px",
+              "width": 284,
+              "right": 901,
+              "height": 84,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "An (khách mẫu)",
+            "x": 357,
+            "y": 1232.95,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1274.95,
+            "scrollWidth": 208,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 14,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "An (khách mẫu)",
+              "fontSize": "36px",
+              "width": 267.7833251953125,
+              "right": 880.7833251953125,
+              "height": 48.600006103515625,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Quần linen có dễ nhăn không?",
+            "x": 357,
+            "y": 1278.95,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1320.95,
+            "scrollWidth": 379,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 28,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Quần linen có dễ nhăn không?",
+              "fontSize": "28px",
+              "width": 284,
+              "right": 901,
+              "height": 84,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Hà (khách mẫu)",
+            "x": 357,
+            "y": 1405.45,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1447.45,
+            "scrollWidth": 208,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 14,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Hà (khách mẫu)",
+              "fontSize": "36px",
+              "width": 267.6333312988281,
+              "right": 880.6333312988281,
+              "height": 48.600006103515625,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình sẽ nhắn lại sau nhé.",
+            "x": 357,
+            "y": 1451.45,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1493.45,
+            "scrollWidth": 313,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 25,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Mình sẽ nhắn lại sau nhé.",
+              "fontSize": "28px",
+              "width": 284,
+              "right": 901,
+              "height": 84,
+              "viewport": 1280,
+              "clipped": false
+            }
+          }
+        ],
+        "unrecoveredTextClips": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-list-desktop-focused-20261009-021658-53592.png",
+        "sha256": "3552567430bd04a8a98b4b6b00ab1266ffb3e310269d5f710bb0c6713892446c"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-list-desktop-current-20261009-021658-53592.png",
+        "sha256": "2ca6927d31ea415335bceb3fae9af07f01299f79d00609c7e79de7ce19d939bd"
+      },
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "noProgressLedgerWrites": true
+}

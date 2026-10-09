@@ -1,0 +1,1916 @@
+{
+  "schemaVersion": 1,
+  "task": "S16.SharedConsolidation",
+  "recordedAt": "2026-10-08T19:37:21.512Z",
+  "scope": "Isolated Firefox with local React demo and synthetic MSW; no backend, user profile, persistent app writes, or system preference changes",
+  "result": "ERROR",
+  "temporaryProfileCleanup": "REMOVED",
+  "method": {
+    "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+    "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+    "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+    "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+    "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+    "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+    "baseZoomFactor": 1,
+    "targetZoomFactor": 2,
+    "scenarios": [
+      {
+        "id": "inbox-list",
+        "route": "/s/shop-demo/inbox",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "inbox-detail",
+        "route": "/s/shop-demo/inbox/cv1",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "dashboard",
+        "route": "/s/shop-demo/overview",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "inbox-list-desktop",
+        "route": "/s/shop-demo/inbox",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        }
+      }
+    ],
+    "browserVersion": "155.0",
+    "webdriverBuildId": "20260902192955"
+  },
+  "sourceSha256": {
+    "packages/contracts/src/routes.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "apps/web/src/mocks/seed.json": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d",
+    "evidence/frontend-shared-consolidation-20261009/native-label-route-probes.mjs": "88d129b8f20552bace3c276b5b778dcfedf3cc08ceff323c0e450b2171dd9daa",
+    "tests/design/owned-label-geometry.mjs": "26e5705c808f22edd3aa3d9f55eb9b47122b8cf6442a8c78d328e9f7f9063e35",
+    "apps/web/vite.config.ts": "3be2f3e6ac742a5d3ecbe9de67eb5654da8d2b0e04a0948179991497717f4f04",
+    "tests/session/demo-worker-startup.spec.ts": "3aaf76a0c4be00fbdfd18197a3981cdd05f10f3757f79c88daba486f8395cc30",
+    "apps/web/src/shared/ui/components.tsx": "f5308ba5dee5101c9be78797d8eb88d450d6698993bd643635a514b6c8f58142",
+    "apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "apps/web/src/shared/ui/theme.ts": "87ebbf08dd1c9fee00961a7d7d9f3cb4422a18a3e95406b7ba784831713448ad",
+    "apps/web/src/shared/ui/layout.ts": "cb56d1e0d4ab0cb192a7dbcdd4b2cb406577c11b6f83b0c963d5813ffcc4e979",
+    "apps/web/src/app/Shell.tsx": "b9cf7f0658d95e97d546c04393b503f794d61c2bea799170c8ccd21626c5ea95",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/inbox/index.tsx": "358aa20bb71c91a48eb59a4d3e633fd631818c5e12ae97079c38cb514b7f73cb",
+    "apps/web/src/modules/dashboard/index.tsx": "7a50a470d7f8366d77b7b6e90db12f3f3ed0a01a46b8759fc311bf69636b90f9",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "tests/ui-toolbar-layout.spec.ts": "b7e70dd59ecfe96701bc830a134e1b1184256d59a69f94132d4ceb12a5dd6ea9",
+    "tests/ui-dashboard-layout.spec.ts": "647702611dace86cd1eadc214d28899b8b9c9e84babaeaeb035a63a621da3701",
+    "evidence/frontend-shared-consolidation-20261009/capture-shared-text-zoom.mjs": "1c9d59794f1b86da1e3dc637b1ae41f6be3f8dccbcec4dd302849d60edef8b6a"
+  },
+  "scenarios": [
+    {
+      "id": "inbox-list",
+      "route": "/s/shop-demo/inbox",
+      "routeUrl": "http://127.0.0.1:56519/s/shop-demo/inbox",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 1663,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 486.98,
+            "width": 324,
+            "height": 44,
+            "right": 357,
+            "bottom": 530.98,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          },
+          {
+            "selector": "[aria-label=\"Bộ lọc hội thoại\"]",
+            "found": true,
+            "x": 33,
+            "y": 542.98,
+            "width": 324,
+            "height": 257.53,
+            "right": 357,
+            "bottom": 800.52,
+            "scrollWidth": 324,
+            "clientWidth": 324,
+            "scrollHeight": 258,
+            "clientHeight": 258,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 73
+          }
+        ],
+        "navigationLabelLayout": null,
+        "ownedLabels": [
+          {
+            "label": "Tìm kiếm",
+            "owner": "toolbar",
+            "labelBounds": {
+              "left": 33,
+              "right": 81.46665954589844,
+              "top": 417.2166748046875,
+              "bottom": 433.2166748046875
+            },
+            "valueBounds": {
+              "left": 75,
+              "right": 343,
+              "top": 449.4166717529297,
+              "bottom": 463.4166717529297
+            },
+            "fieldBounds": {
+              "left": 33,
+              "right": 357,
+              "height": 58.383331298828125
+            },
+            "naturalHeight": 58.383331298828125,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 12,
+            "overlapX": 6.4666595458984375,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          }
+        ],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": 0,
+            "bottom": 1662.5166015625
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": {
+          "buttonHeight": 61,
+          "naturalHeight": 71,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2841,
+          "scrollY": 589,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 440.15,
+            "width": 324,
+            "height": 61,
+            "right": 357,
+            "bottom": 501.15,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 59,
+            "clientHeight": 59,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 8,
+            "nativeTextScaleRatio": 2
+          },
+          {
+            "selector": "[aria-label=\"Bộ lọc hội thoại\"]",
+            "found": true,
+            "x": 33,
+            "y": 513.15,
+            "width": 324,
+            "height": 407,
+            "right": 357,
+            "bottom": 920.15,
+            "scrollWidth": 324,
+            "clientWidth": 324,
+            "scrollHeight": 407,
+            "clientHeight": 407,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 73,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "ownedLabels": [
+          {
+            "label": "Tìm kiếm",
+            "owner": "toolbar",
+            "labelBounds": {
+              "left": 33,
+              "right": 129.9499969482422,
+              "top": 333.6499938964844,
+              "bottom": 365.6499938964844
+            },
+            "valueBounds": {
+              "left": 95,
+              "right": 343,
+              "top": 385.5249938964844,
+              "bottom": 413.5249938964844
+            },
+            "fieldBounds": {
+              "left": 33,
+              "right": 357,
+              "height": 95.75
+            },
+            "naturalHeight": 95.75,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 24,
+            "overlapX": 34.94999694824219,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          }
+        ],
+        "textClips": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Linh (khách mẫu)",
+            "x": 109,
+            "y": 952.15,
+            "width": 211.07,
+            "height": 42,
+            "right": 320.07,
+            "bottom": 994.15,
+            "scrollWidth": 228,
+            "clientWidth": 211,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Shop ơi áo thun còn size L không?",
+            "x": 109,
+            "y": 998.15,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1040.15,
+            "scrollWidth": 424,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 33,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình muốn đổi size của đơn hàng.",
+            "x": 109,
+            "y": 1170.65,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1212.65,
+            "scrollWidth": 428,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 32,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Quần linen có dễ nhăn không?",
+            "x": 109,
+            "y": 1343.15,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1385.15,
+            "scrollWidth": 379,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 28,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình sẽ nhắn lại sau nhé.",
+            "x": 109,
+            "y": 1515.65,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1557.65,
+            "scrollWidth": 313,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 25,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          }
+        ],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 357,
+            "y": 440.1499938964844,
+            "bottom": 501.1499938964844
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [],
+        "recoverableEllipsis": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Linh (khách mẫu)",
+            "x": 109,
+            "y": 952.15,
+            "width": 211.07,
+            "height": 42,
+            "right": 320.07,
+            "bottom": 994.15,
+            "scrollWidth": 228,
+            "clientWidth": 211,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Linh (khách mẫu)",
+              "fontSize": "36px",
+              "width": 292.76666259765625,
+              "right": 325.76666259765625,
+              "height": 48.600006103515625,
+              "viewport": 390,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Shop ơi áo thun còn size L không?",
+            "x": 109,
+            "y": 998.15,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1040.15,
+            "scrollWidth": 424,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 33,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Shop ơi áo thun còn size L không?",
+              "fontSize": "28px",
+              "width": 261.1166687011719,
+              "right": 306.1166687011719,
+              "height": 84,
+              "viewport": 390,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình muốn đổi size của đơn hàng.",
+            "x": 109,
+            "y": 1170.65,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1212.65,
+            "scrollWidth": 428,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 32,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Mình muốn đổi size của đơn hàng.",
+              "fontSize": "28px",
+              "width": 261.1166687011719,
+              "right": 306.1166687011719,
+              "height": 84,
+              "viewport": 390,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Quần linen có dễ nhăn không?",
+            "x": 109,
+            "y": 1343.15,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1385.15,
+            "scrollWidth": 379,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 28,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Quần linen có dễ nhăn không?",
+              "fontSize": "28px",
+              "width": 261.1166687011719,
+              "right": 306.1166687011719,
+              "height": 84,
+              "viewport": 390,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình sẽ nhắn lại sau nhé.",
+            "x": 109,
+            "y": 1515.65,
+            "width": 248,
+            "height": 42,
+            "right": 357,
+            "bottom": 1557.65,
+            "scrollWidth": 313,
+            "clientWidth": 248,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 25,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Mình sẽ nhắn lại sau nhé.",
+              "fontSize": "28px",
+              "width": 261.1166687011719,
+              "right": 306.1166687011719,
+              "height": 84,
+              "viewport": 390,
+              "clipped": false
+            }
+          }
+        ],
+        "unrecoveredTextClips": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-list-focused-20261009-023721-27348.png",
+        "sha256": "725794c091e6a402a5acf98cf1242a6f0b88fddd7294f9c1b21237093e15209a"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-list-current-20261009-023721-27348.png",
+        "sha256": "1d87fc2bfdf8469195a402a4683477802c53ecdc4cb7042fe16f9e0f9a10a9fc"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "inbox-detail",
+      "route": "/s/shop-demo/inbox/cv1",
+      "routeUrl": "http://127.0.0.1:56519/s/shop-demo/inbox/cv1",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": {
+          "buttonHeight": 0,
+          "naturalHeight": 44,
+          "centerHitsButton": false
+        },
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2920,
+          "scrollY": 51,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-testid=\"inbox-thread\"]",
+            "found": true,
+            "x": 16,
+            "y": 348.6,
+            "width": 358,
+            "height": 782.55,
+            "right": 374,
+            "bottom": 1131.15,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "scrollHeight": 783,
+            "clientHeight": 783,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 410
+          }
+        ],
+        "navigationLabelLayout": null,
+        "ownedLabels": [],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": -51,
+            "bottom": 2868.783447265625
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": {
+          "buttonHeight": 0,
+          "naturalHeight": 44,
+          "centerHitsButton": false
+        },
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 6441,
+          "scrollY": 1496,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-testid=\"inbox-thread\"]",
+            "found": true,
+            "x": 16,
+            "y": -591.6,
+            "width": 358,
+            "height": 1252.1,
+            "right": 374,
+            "bottom": 660.5,
+            "scrollWidth": 358,
+            "clientWidth": 358,
+            "scrollHeight": 1252,
+            "clientHeight": 1252,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 410,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "ownedLabels": [],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "aside",
+          "role": null,
+          "label": "Bối cảnh khách hàng",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 16,
+            "right": 374,
+            "y": 684.5,
+            "bottom": 4743.39990234375
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [],
+        "recoverableEllipsis": [],
+        "unrecoveredTextClips": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-detail-focused-20261009-023721-27348.png",
+        "sha256": "413850db38fe7fc08fab5d2735ea69d877381e308ae91fdc6d4f4cce4cd54755"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-detail-current-20261009-023721-27348.png",
+        "sha256": "b5acec813e2525146dcfafbd5b3b2c0d9025299f389b1101bd1b45cf3a3e583c"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "dashboard",
+      "route": "/s/shop-demo/overview",
+      "routeUrl": "http://127.0.0.1:56519/s/shop-demo/overview",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": null,
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 3687,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main a[href=\"/s/shop-demo/operations\"]",
+            "found": true,
+            "x": 41,
+            "y": 538.47,
+            "width": 308,
+            "height": 44,
+            "right": 349,
+            "bottom": 582.47,
+            "scrollWidth": 308,
+            "clientWidth": 308,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 16
+          },
+          {
+            "selector": "main a[href=\"/s/shop-demo/orders/new\"]",
+            "found": true,
+            "x": 41,
+            "y": 594.47,
+            "width": 308,
+            "height": 44,
+            "right": 349,
+            "bottom": 638.47,
+            "scrollWidth": 306,
+            "clientWidth": 306,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 12
+          }
+        ],
+        "navigationLabelLayout": null,
+        "ownedLabels": [],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": 0,
+            "bottom": 3687.2666015625
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": null,
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 6657,
+          "scrollY": 951,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main a[href=\"/s/shop-demo/operations\"]",
+            "found": true,
+            "x": 41,
+            "y": 370.75,
+            "width": 308,
+            "height": 58,
+            "right": 349,
+            "bottom": 428.75,
+            "scrollWidth": 308,
+            "clientWidth": 308,
+            "scrollHeight": 58,
+            "clientHeight": 58,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 16,
+            "nativeTextScaleRatio": 2
+          },
+          {
+            "selector": "main a[href=\"/s/shop-demo/orders/new\"]",
+            "found": true,
+            "x": 41,
+            "y": 440.75,
+            "width": 308,
+            "height": 60,
+            "right": 349,
+            "bottom": 500.75,
+            "scrollWidth": 306,
+            "clientWidth": 306,
+            "scrollHeight": 58,
+            "clientHeight": 58,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 12,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "ownedLabels": [],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "a",
+          "role": null,
+          "label": "Tạo đơn hàng",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(255, 219, 140)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 41,
+            "right": 349,
+            "y": 440.75,
+            "bottom": 500.75
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [],
+        "recoverableEllipsis": [],
+        "unrecoveredTextClips": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-dashboard-focused-20261009-023721-27348.png",
+        "sha256": "be7e55f39ce60c73b48e89513ff1ad6984f7258b394612840f647e9d8c28f9d4"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-dashboard-current-20261009-023721-27348.png",
+        "sha256": "5dc164fa8e5568828dcfeca13fd6c228c7c7ab39c1974671dc59929ad40ed800"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "inbox-list-desktop",
+      "route": "/s/shop-demo/inbox",
+      "routeUrl": "http://127.0.0.1:56519/s/shop-demo/inbox",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 800,
+          "clientWidth": 1280,
+          "documentWidth": 1280,
+          "pageOverflow": 0,
+          "scrollHeight": 1411,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 281,
+            "y": 427.23,
+            "width": 93.18,
+            "height": 44,
+            "right": 374.18,
+            "bottom": 471.23,
+            "scrollWidth": 91,
+            "clientWidth": 91,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          },
+          {
+            "selector": "[aria-label=\"Bộ lọc hội thoại\"]",
+            "found": true,
+            "x": 281,
+            "y": 483.23,
+            "width": 266,
+            "height": 257.53,
+            "right": 547,
+            "bottom": 740.77,
+            "scrollWidth": 266,
+            "clientWidth": 266,
+            "scrollHeight": 258,
+            "clientHeight": 258,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 73
+          }
+        ],
+        "navigationLabelLayout": null,
+        "ownedLabels": [
+          {
+            "label": "Vai trò mô phỏng",
+            "owner": "demo-tools",
+            "labelBounds": {
+              "left": 347.41668701171875,
+              "right": 440.183349609375,
+              "top": 164.61666870117188,
+              "bottom": 180.61666870117188
+            },
+            "valueBounds": {
+              "left": 361.41668701171875,
+              "right": 399.8333435058594,
+              "top": 197.75,
+              "bottom": 216.75
+            },
+            "fieldBounds": {
+              "left": 347.41668701171875,
+              "right": 644.933349609375,
+              "height": 65.25
+            },
+            "naturalHeight": 65.25,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 12,
+            "overlapX": 38.416656494140625,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          },
+          {
+            "label": "Trạng thái thử",
+            "owner": "demo-tools",
+            "labelBounds": {
+              "left": 652.933349609375,
+              "right": 726.6166839599609,
+              "top": 164.61666870117188,
+              "bottom": 180.61666870117188
+            },
+            "valueBounds": {
+              "left": 666.933349609375,
+              "right": 743.4500122070312,
+              "top": 197.75,
+              "bottom": 216.75
+            },
+            "fieldBounds": {
+              "left": 652.933349609375,
+              "right": 950.4666748046875,
+              "height": 65.25
+            },
+            "naturalHeight": 65.25,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 12,
+            "overlapX": 59.68333435058594,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          },
+          {
+            "label": "Dataset mô phỏng",
+            "owner": "demo-tools",
+            "labelBounds": {
+              "left": 958.4666748046875,
+              "right": 1057.250015258789,
+              "top": 164.61666870117188,
+              "bottom": 180.61666870117188
+            },
+            "valueBounds": {
+              "left": 972.4666748046875,
+              "right": 1080.0500183105469,
+              "top": 197.75,
+              "bottom": 216.75
+            },
+            "fieldBounds": {
+              "left": 958.4666748046875,
+              "right": 1256,
+              "height": 65.25
+            },
+            "naturalHeight": 65.25,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 12,
+            "overlapX": 84.78334045410156,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          },
+          {
+            "label": "Tìm kiếm",
+            "owner": "toolbar",
+            "labelBounds": {
+              "left": 281,
+              "right": 329.46665954589844,
+              "top": 357.4666748046875,
+              "bottom": 373.4666748046875
+            },
+            "valueBounds": {
+              "left": 323,
+              "right": 533,
+              "top": 389.6666717529297,
+              "bottom": 403.6666717529297
+            },
+            "fieldBounds": {
+              "left": 281,
+              "right": 547,
+              "height": 58.383331298828125
+            },
+            "naturalHeight": 58.383331298828125,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 12,
+            "overlapX": 6.4666595458984375,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          }
+        ],
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nBotSales AI\nĐội ngũ vận hành cửa hàng\nJoker Studio · Shop mẫu",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 1280,
+            "y": 0,
+            "bottom": 1410.7666015625
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": {
+          "buttonHeight": 61,
+          "naturalHeight": 71,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 800,
+          "clientWidth": 1280,
+          "documentWidth": 1280,
+          "pageOverflow": 0,
+          "scrollHeight": 2328,
+          "scrollY": 415,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 281,
+            "y": 440.2,
+            "width": 154.35,
+            "height": 61,
+            "right": 435.35,
+            "bottom": 501.2,
+            "scrollWidth": 152,
+            "clientWidth": 152,
+            "scrollHeight": 59,
+            "clientHeight": 59,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 8,
+            "nativeTextScaleRatio": 2
+          },
+          {
+            "selector": "[aria-label=\"Bộ lọc hội thoại\"]",
+            "found": true,
+            "x": 281,
+            "y": 513.2,
+            "width": 266,
+            "height": 407,
+            "right": 547,
+            "bottom": 920.2,
+            "scrollWidth": 266,
+            "clientWidth": 266,
+            "scrollHeight": 407,
+            "clientHeight": 407,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 73,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "ownedLabels": [
+          {
+            "label": "Vai trò mô phỏng",
+            "owner": "demo-tools",
+            "labelBounds": {
+              "left": 422.91668701171875,
+              "right": 608.5666809082031,
+              "top": -193.75,
+              "bottom": -161.75
+            },
+            "valueBounds": {
+              "left": 436.91668701171875,
+              "right": 513.7833557128906,
+              "top": -146.38333129882812,
+              "bottom": -109.38333129882812
+            },
+            "fieldBounds": {
+              "left": 422.91668701171875,
+              "right": 1256,
+              "height": 95.75
+            },
+            "naturalHeight": 95.75,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 24,
+            "overlapX": 76.86666870117188,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          },
+          {
+            "label": "Trạng thái thử",
+            "owner": "demo-tools",
+            "labelBounds": {
+              "left": 264,
+              "right": 411.48333740234375,
+              "top": -90,
+              "bottom": -58
+            },
+            "valueBounds": {
+              "left": 278,
+              "right": 431.0500030517578,
+              "top": -42.633331298828125,
+              "bottom": -5.633331298828125
+            },
+            "fieldBounds": {
+              "left": 264,
+              "right": 1256,
+              "height": 95.75
+            },
+            "naturalHeight": 95.75,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 24,
+            "overlapX": 133.48333740234375,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          },
+          {
+            "label": "Dataset mô phỏng",
+            "owner": "demo-tools",
+            "labelBounds": {
+              "left": 264,
+              "right": 461.6166687011719,
+              "top": 13.75,
+              "bottom": 45.75
+            },
+            "valueBounds": {
+              "left": 278,
+              "right": 493.23333740234375,
+              "top": 61.116668701171875,
+              "bottom": 98.11666870117188
+            },
+            "fieldBounds": {
+              "left": 264,
+              "right": 1256,
+              "height": 95.75
+            },
+            "naturalHeight": 95.75,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 24,
+            "overlapX": 183.61666870117188,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          },
+          {
+            "label": "Tìm kiếm",
+            "owner": "toolbar",
+            "labelBounds": {
+              "left": 281,
+              "right": 377.9499969482422,
+              "top": 333.70001220703125,
+              "bottom": 365.70001220703125
+            },
+            "valueBounds": {
+              "left": 343,
+              "right": 533,
+              "top": 385.57501220703125,
+              "bottom": 413.57501220703125
+            },
+            "fieldBounds": {
+              "left": 281,
+              "right": 547,
+              "height": 95.75
+            },
+            "naturalHeight": 95.75,
+            "legends": [
+              0.01
+            ],
+            "labelPosition": "static",
+            "labelTransform": "none",
+            "labelFontSize": 24,
+            "overlapX": 34.94999694824219,
+            "overlapY": 0,
+            "overlaps": false,
+            "outsideField": false
+          }
+        ],
+        "textClips": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Linh (khách mẫu)",
+            "x": 357,
+            "y": 952.2,
+            "width": 153.07,
+            "height": 42,
+            "right": 510.07,
+            "bottom": 994.2,
+            "scrollWidth": 228,
+            "clientWidth": 153,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Shop ơi áo thun còn size L không?",
+            "x": 357,
+            "y": 998.2,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1040.2,
+            "scrollWidth": 424,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 33,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Minh (khách mẫu)",
+            "x": 357,
+            "y": 1124.7,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1166.7,
+            "scrollWidth": 240,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình muốn đổi size của đơn hàng.",
+            "x": 357,
+            "y": 1170.7,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1212.7,
+            "scrollWidth": 428,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 32,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "An (khách mẫu)",
+            "x": 357,
+            "y": 1325.7,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1367.7,
+            "scrollWidth": 208,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 14,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Quần linen có dễ nhăn không?",
+            "x": 357,
+            "y": 1371.7,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1413.7,
+            "scrollWidth": 379,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 28,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Hà (khách mẫu)",
+            "x": 357,
+            "y": 1498.2,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1540.2,
+            "scrollWidth": 208,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 14,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình sẽ nhắn lại sau nhé.",
+            "x": 357,
+            "y": 1544.2,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1586.2,
+            "scrollWidth": 313,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 25,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap"
+          }
+        ],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 281,
+            "right": 435.3500061035156,
+            "y": 440.20001220703125,
+            "bottom": 501.20001220703125
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [],
+        "recoverableEllipsis": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Linh (khách mẫu)",
+            "x": 357,
+            "y": 952.2,
+            "width": 153.07,
+            "height": 42,
+            "right": 510.07,
+            "bottom": 994.2,
+            "scrollWidth": 228,
+            "clientWidth": 153,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Linh (khách mẫu)",
+              "fontSize": "36px",
+              "width": 292.76666259765625,
+              "right": 905.7666625976562,
+              "height": 48.600006103515625,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Shop ơi áo thun còn size L không?",
+            "x": 357,
+            "y": 998.2,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1040.2,
+            "scrollWidth": 424,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 33,
+            "recoveryHref": "/s/shop-demo/inbox/cv1",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Shop ơi áo thun còn size L không?",
+              "fontSize": "28px",
+              "width": 284,
+              "right": 901,
+              "height": 84,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Minh (khách mẫu)",
+            "x": 357,
+            "y": 1124.7,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1166.7,
+            "scrollWidth": 240,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 16,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Minh (khách mẫu)",
+              "fontSize": "36px",
+              "width": 329.1000061035156,
+              "right": 942.1000061035156,
+              "height": 48.600006103515625,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình muốn đổi size của đơn hàng.",
+            "x": 357,
+            "y": 1170.7,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1212.7,
+            "scrollWidth": 428,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 32,
+            "recoveryHref": "/s/shop-demo/inbox/cv2",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Mình muốn đổi size của đơn hàng.",
+              "fontSize": "28px",
+              "width": 284,
+              "right": 901,
+              "height": 84,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "An (khách mẫu)",
+            "x": 357,
+            "y": 1325.7,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1367.7,
+            "scrollWidth": 208,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 14,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "An (khách mẫu)",
+              "fontSize": "36px",
+              "width": 267.7833251953125,
+              "right": 880.7833251953125,
+              "height": 48.600006103515625,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Quần linen có dễ nhăn không?",
+            "x": 357,
+            "y": 1371.7,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1413.7,
+            "scrollWidth": 379,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 28,
+            "recoveryHref": "/s/shop-demo/inbox/cv3",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Quần linen có dễ nhăn không?",
+              "fontSize": "28px",
+              "width": 284,
+              "right": 901,
+              "height": 84,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Hà (khách mẫu)",
+            "x": 357,
+            "y": 1498.2,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1540.2,
+            "scrollWidth": 208,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 14,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Hà (khách mẫu)",
+              "fontSize": "36px",
+              "width": 267.6333312988281,
+              "right": 880.6333312988281,
+              "height": 48.600006103515625,
+              "viewport": 1280,
+              "clipped": false
+            }
+          },
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Mình sẽ nhắn lại sau nhé.",
+            "x": 357,
+            "y": 1544.2,
+            "width": 190,
+            "height": 42,
+            "right": 547,
+            "bottom": 1586.2,
+            "scrollWidth": 313,
+            "clientWidth": 190,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 25,
+            "recoveryHref": "/s/shop-demo/inbox/cv4",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "rule": "SPC-051",
+            "method": "Native Enter on list link; exact full value rendered in conversation detail",
+            "fullValue": {
+              "text": "Mình sẽ nhắn lại sau nhé.",
+              "fontSize": "28px",
+              "width": 284,
+              "right": 901,
+              "height": 84,
+              "viewport": 1280,
+              "clipped": false
+            }
+          }
+        ],
+        "unrecoveredTextClips": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-list-desktop-focused-20261009-023721-27348.png",
+        "sha256": "a0ede8d0c5b1b6b3c07229f577562b0e901f8b664203120382187deb0014cf25"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-inbox-list-desktop-current-20261009-023721-27348.png",
+        "sha256": "c1c70c657522eb27e04f0c08590f2903ec077bc1b56bd23b18f8865493956936"
+      },
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "noProgressLedgerWrites": true,
+  "error": "Error: Page evaluation failed: {\"columnNumber\":32,\"exception\":{\"type\":\"error\"},\"lineNumber\":10,\"stackTrace\":{\"callFrames\":[{\"columnNumber\":32,\"functionName\":\".labels<\",\"lineNumber\":10,\"url\":\"http://127.0.0.1:56519/s/shop-demo/inbox/cv1\"},{\"columnNumber\":17,\"functionName\":\"map\",\"lineNumber\":162,\"url\":\"self-hosted\"},{\"columnNumber\":9,\"functionName\":\"ownedLabelGeometry\",\"lineNumber\":7,\"url\":\"http://127.0.0.1:56519/s/shop-demo/inbox/cv1\"},{\"columnNumber\":2,\"functionName\":\"\",\"lineNumber\":43,\"url\":\"http://127.0.0.1:56519/s/shop-demo/inbox/cv1\"},{\"columnNumber\":11,\"functionName\":\"\",\"lineNumber\":49,\"url\":\"http://127.0.0.1:56519/s/shop-demo/inbox/cv1\"}]},\"text\":\"Error: A floating label has no field control\"}"
+}

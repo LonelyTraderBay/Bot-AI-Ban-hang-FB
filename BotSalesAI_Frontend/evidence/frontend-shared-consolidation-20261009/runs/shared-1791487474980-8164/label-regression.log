@@ -1,0 +1,279 @@
+[WebServer] (node:62860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+(node:52624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep floating labels clear when text doubles
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-52252-c330b0c2-cbbb-4c34-8ae5-c94c626f59bc\deps\react-dom_client.js?v=19f684bc as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep floating labels clear when text doubles 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 98
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "left": 16,
+    +       "right": 304,
+    +     },
+    +     "label": "Vai trò mô phỏng",
+    +     "labelBounds": Object {
+    +       "bottom": 887.5,
+    +       "left": 30,
+    +       "right": 192.43359375,
+    +       "top": 859.75,
+    +     },
+    +     "outsideField": false,
+    +     "overlapX": 76.875,
+    +     "overlapY": 10,
+    +     "overlaps": true,
+    +     "owner": "demo-tools",
+    +     "valueBounds": Object {
+    +       "bottom": 914.5,
+    +       "left": 30,
+    +       "right": 106.875,
+    +       "top": 877.5,
+    +     },
+    +   },
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "left": 16,
+    +       "right": 304,
+    +     },
+    +     "label": "Trạng thái thử",
+    +     "labelBounds": Object {
+    +       "bottom": 952.75,
+    +       "left": 30,
+    +       "right": 159.03515625,
+    +       "top": 925,
+    +     },
+    +     "outsideField": false,
+    +     "overlapX": 129.03515625,
+    +     "overlapY": 10,
+    +     "overlaps": true,
+    +     "owner": "demo-tools",
+    +     "valueBounds": Object {
+    +       "bottom": 979.75,
+    +       "left": 30,
+    +       "right": 183.046875,
+    +       "top": 942.75,
+    +     },
+    +   },
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "left": 16,
+    +       "right": 304,
+    +     },
+    +     "label": "Dataset mô phỏng",
+    +     "labelBounds": Object {
+    +       "bottom": 1018,
+    +       "left": 30,
+    +       "right": 202.91015625,
+    +       "top": 990.25,
+    +     },
+    +     "outsideField": false,
+    +     "overlapX": 172.91015625,
+    +     "overlapY": 10,
+    +     "overlaps": true,
+    +     "owner": "demo-tools",
+    +     "valueBounds": Object {
+    +       "bottom": 1045,
+    +       "left": 30,
+    +       "right": 245.234375,
+    +       "top": 1008,
+    +     },
+    +   },
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "left": 33,
+    +       "right": 287,
+    +     },
+    +     "label": "Tìm kiếm",
+    +     "labelBounds": Object {
+    +       "bottom": 1533.8125,
+    +       "left": 47,
+    +       "right": 131.83203125,
+    +       "top": 1506.0625,
+    +     },
+    +     "outsideField": false,
+    +     "overlapX": 36.83203125,
+    +     "overlapY": 4.875,
+    +     "overlaps": true,
+    +     "owner": "toolbar",
+    +     "valueBounds": Object {
+    +       "bottom": 1556.9375,
+    +       "left": 95,
+    +       "right": 273,
+    +       "top": 1528.9375,
+    +     },
+    +   },
+    + ]
+
+      47 |         expect(labels.filter(label => label.owner === 'demo-tools')).toHaveLength(3);
+      48 |         expect(labels.filter(label => label.owner === 'toolbar')).toHaveLength(1);
+    > 49 |         expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([]);
+         |                                                                              ^
+      50 |         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      51 |     }
+      52 |     await info.attach('doubled-text-label-layout', { body: JSON.stringify(observations), contentType: 'application/json' });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:49:78
+
+    Error Context: test-results\playwright-52624-5a9d253e-7709-4bac-9375-7c09f0796693\ui-toolbar-layout-Shared-T-778b4-els-clear-when-text-doubles-chromium\error-context.md
+
+    Error Context: test-results\playwright-52624-5a9d253e-7709-4bac-9375-7c09f0796693\ui-toolbar-layout-Shared-T-778b4-els-clear-when-text-doubles-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-52624-5a9d253e-7709-4bac-9375-7c09f0796693\ui-toolbar-layout-Shared-T-778b4-els-clear-when-text-doubles-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-52624-5a9d253e-7709-4bac-9375-7c09f0796693\ui-toolbar-layout-Shared-T-778b4-els-clear-when-text-doubles-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:57356) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [firefox] › tests\ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep floating labels clear when text doubles
+  2) [firefox] › tests\ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep floating labels clear when text doubles 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 98
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "left": 16,
+    +       "right": 304,
+    +     },
+    +     "label": "Vai trò mô phỏng",
+    +     "labelBounds": Object {
+    +       "bottom": 887.9666748046875,
+    +       "left": 30,
+    +       "right": 192.4166717529297,
+    +       "top": 860.2166748046875,
+    +     },
+    +     "outsideField": false,
+    +     "overlapX": 76.86666870117188,
+    +     "overlapY": 9.8499755859375,
+    +     "overlaps": true,
+    +     "owner": "demo-tools",
+    +     "valueBounds": Object {
+    +       "bottom": 915.11669921875,
+    +       "left": 30,
+    +       "right": 106.86666870117188,
+    +       "top": 878.11669921875,
+    +     },
+    +   },
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "left": 16,
+    +       "right": 304,
+    +     },
+    +     "label": "Trạng thái thử",
+    +     "labelBounds": Object {
+    +       "bottom": 953.2166748046875,
+    +       "left": 30,
+    +       "right": 159.03334045410156,
+    +       "top": 925.4666748046875,
+    +     },
+    +     "outsideField": false,
+    +     "overlapX": 129.03334045410156,
+    +     "overlapY": 9.8499755859375,
+    +     "overlaps": true,
+    +     "owner": "demo-tools",
+    +     "valueBounds": Object {
+    +       "bottom": 980.36669921875,
+    +       "left": 30,
+    +       "right": 183.0500030517578,
+    +       "top": 943.36669921875,
+    +     },
+    +   },
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "left": 16,
+    +       "right": 304,
+    +     },
+    +     "label": "Dataset mô phỏng",
+    +     "labelBounds": Object {
+    +       "bottom": 1018.4666748046875,
+    +       "left": 30,
+    +       "right": 202.89999389648438,
+    +       "top": 990.7166748046875,
+    +     },
+    +     "outsideField": false,
+    +     "overlapX": 172.89999389648438,
+    +     "overlapY": 9.8499755859375,
+    +     "overlaps": true,
+    +     "owner": "demo-tools",
+    +     "valueBounds": Object {
+    +       "bottom": 1045.61669921875,
+    +       "left": 30,
+    +       "right": 245.23333740234375,
+    +       "top": 1008.61669921875,
+    +     },
+    +   },
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "left": 33,
+    +       "right": 287,
+    +     },
+    +     "label": "Tìm kiếm",
+    +     "labelBounds": Object {
+    +       "bottom": 1534.316650390625,
+    +       "left": 47,
+    +       "right": 131.8333282470703,
+    +       "top": 1506.566650390625,
+    +     },
+    +     "outsideField": false,
+    +     "overlapX": 36.83332824707031,
+    +     "overlapY": 5.3416748046875,
+    +     "overlaps": true,
+    +     "owner": "toolbar",
+    +     "valueBounds": Object {
+    +       "bottom": 1556.9749755859375,
+    +       "left": 95,
+    +       "right": 273,
+    +       "top": 1528.9749755859375,
+    +     },
+    +   },
+    + ]
+
+      47 |         expect(labels.filter(label => label.owner === 'demo-tools')).toHaveLength(3);
+      48 |         expect(labels.filter(label => label.owner === 'toolbar')).toHaveLength(1);
+    > 49 |         expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([]);
+         |                                                                              ^
+      50 |         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      51 |     }
+      52 |     await info.attach('doubled-text-label-layout', { body: JSON.stringify(observations), contentType: 'application/json' });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:49:78
+
+    Error Context: test-results\playwright-57356-b1abc385-374c-4619-a524-b0819ca2ae33\ui-toolbar-layout-Shared-T-778b4-els-clear-when-text-doubles-firefox\error-context.md
+
+    Error Context: test-results\playwright-57356-b1abc385-374c-4619-a524-b0819ca2ae33\ui-toolbar-layout-Shared-T-778b4-els-clear-when-text-doubles-firefox\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-57356-b1abc385-374c-4619-a524-b0819ca2ae33\ui-toolbar-layout-Shared-T-778b4-els-clear-when-text-doubles-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-57356-b1abc385-374c-4619-a524-b0819ca2ae33\ui-toolbar-layout-Shared-T-778b4-els-clear-when-text-doubles-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep floating labels clear when text doubles 
+    [firefox] › tests\ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep floating labels clear when text doubles 

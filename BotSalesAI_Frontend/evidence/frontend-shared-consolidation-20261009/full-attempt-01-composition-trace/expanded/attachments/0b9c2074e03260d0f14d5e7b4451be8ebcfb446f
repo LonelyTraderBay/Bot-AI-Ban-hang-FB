@@ -1,0 +1,93 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: ui-composition-layout.spec.ts >> SPC-061/062 shared compositions own their gap and child boundaries on every canonical route
+- Location: tests\ui-composition-layout.spec.ts:13:1
+
+# Error details
+
+```
+Test timeout of 300000ms exceeded.
+```
+
+```
+Error: locator.waitFor: Test timeout of 300000ms exceeded.
+Call log:
+  - waiting for locator('main h1') to be visible
+
+```
+
+# Test source
+
+```ts
+  1  | import fs from 'node:fs';
+  2  | import { expect, test } from '@playwright/test';
+  3  | import { startDemoServer } from './session/demo-server.mjs';
+  4  | 
+  5  | type Route = { id: string; path: string };
+  6  | const routes = (JSON.parse(fs.readFileSync('../botsales-kit/contracts/route-manifest.json', 'utf8')) as { routes: Route[] }).routes;
+  7  | const ids: Record<string, string> = { conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001', knowledgeId: 'k1', jobId: 'missing-job' };
+  8  | let url = '';
+  9  | let closeDemo: (() => Promise<void>) | undefined;
+  10 | test.beforeAll(async () => { const server = await startDemoServer(); url = server.url; closeDemo = server.close; });
+  11 | test.afterAll(async () => closeDemo?.());
+  12 | 
+  13 | test('SPC-061/062 shared compositions own their gap and child boundaries on every canonical route', async ({ page }, info) => {
+  14 |     test.setTimeout(300_000);
+  15 |     const errors: string[] = [];
+  16 |     const observations: Array<Record<string, unknown>> = [];
+  17 |     const observedOwners = new Set<string>();
+  18 |     page.on('pageerror', error => errors.push(error.message));
+  19 |     for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 }]) {
+  20 |         await page.setViewportSize(viewport);
+  21 |         for (const route of routes) {
+  22 |             const pathname = route.path.replace(':shopId', 'shop-demo').replace(/:([A-Za-z]+)/g, (_, key: string) => ids[key] || 'missing');
+  23 |             await page.goto(new URL(pathname, url).toString(), { waitUntil: 'domcontentloaded' });
+> 24 |             await page.locator('main h1').waitFor({ state: 'visible' });
+     |                                           ^ Error: locator.waitFor: Test timeout of 300000ms exceeded.
+  25 |             await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
+  26 |             const result = await page.evaluate(() => {
+  27 |                 const main = document.querySelector('main') || document.getElementById('root')!;
+  28 |                 return {
+  29 |                     inset: [getComputedStyle(main).paddingTop, getComputedStyle(main).paddingBottom],
+  30 |                     document: [document.documentElement.scrollWidth, document.documentElement.clientWidth],
+  31 |                     groups: Array.from(main.querySelectorAll('[data-ui-composition]')).map(group => ({
+  32 |                         owner: group.getAttribute('data-ui-composition')!,
+  33 |                         rhythm: group.getAttribute('data-ui-rhythm'),
+  34 |                         gap: getComputedStyle(group).gap,
+  35 |                         childMargins: Array.from(group.children).map(child => [getComputedStyle(child).marginTop, getComputedStyle(child).marginBottom]),
+  36 |                     })),
+  37 |                 };
+  38 |             });
+  39 |             const context = `${route.id} ${viewport.width}px`;
+  40 |             const gaps: Record<string, string> = { 'form-fields': '16px', 'field-group': '8px', 'surface-content': '12px', 'page-sections': '24px' };
+  41 |             for (const group of result.groups) {
+  42 |                 observedOwners.add(group.owner);
+  43 |                 let expected = gaps[group.owner];
+  44 |                 if (group.owner === 'action-group') {
+  45 |                     expect(group.rhythm, `${context} action-group rhythm`).toMatch(/^(compact|comfortable)$/);
+  46 |                     expected = group.rhythm === 'comfortable' ? '12px' : '8px';
+  47 |                 } else if (group.owner === 'section-grid') {
+  48 |                     expect(group.rhythm, `${context} section-grid rhythm`).toMatch(/^(section|content)$/);
+  49 |                     expected = group.rhythm === 'content' ? '12px' : '24px';
+  50 |                 }
+  51 |                 expect(group.gap, `${context} ${group.owner}`).toBe(expected);
+  52 |                 for (const margins of group.childMargins) expect(margins, `${context} ${group.owner} child boundary`).toEqual(['0px', '0px']);
+  53 |             }
+  54 |             if (pathname.startsWith('/s/')) expect(result.inset, `${context} Shell main`).toEqual(['24px', '24px']);
+  55 |             expect(result.document[0], `${context} page overflow`).toBeLessThanOrEqual(result.document[1]);
+  56 |             observations.push({ route: route.id, pathname, viewport, ...result });
+  57 |         }
+  58 |     }
+  59 |     expect(errors).toEqual([]);
+  60 |     expect(observations).toHaveLength(routes.length * 2);
+  61 |     expect([...observedOwners].sort()).toEqual(['action-group', 'field-group', 'form-fields', 'page-sections', 'section-grid', 'surface-content']);
+  62 |     await info.attach('composition-route-matrix', { body: JSON.stringify(observations, null, 2), contentType: 'application/json' });
+  63 | });
+  64 | 
+```

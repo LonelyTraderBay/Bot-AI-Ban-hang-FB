@@ -1,0 +1,230 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: fe016.spec.ts >> Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery
+- Location: tests\fe016.spec.ts:162:1
+
+# Error details
+
+```
+Test timeout of 180000ms exceeded.
+```
+
+```
+Error: locator.focus: Test timeout of 180000ms exceeded.
+Call log:
+  - waiting for getByRole('group', { name: 'Bộ lọc hội thoại', exact: true }).getByRole('combobox', { name: 'Trạng thái', exact: true })
+
+```
+
+# Test source
+
+```ts
+  101 | test('FE016 conversation keeps its composer visible while long demo context scrolls independently', async ({ page }) => {
+  102 |     await page.setViewportSize({ width: 1600, height: 900 });
+  103 |     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+  104 | 
+  105 |     const thread = page.getByTestId('inbox-thread');
+  106 |     const context = page.getByTestId('inbox-context-panel');
+  107 |     await expect(thread.getByRole('textbox', { name: 'Nội dung trả lời khách' })).toBeVisible();
+  108 |     await expect(context.getByRole('heading', { name: 'Bối cảnh khách hàng' })).toBeVisible();
+  109 |     await expect(context).toHaveAttribute('tabindex', '0');
+  110 | 
+  111 |     const layout = await page.evaluate(() => {
+  112 |         const thread = document.querySelector<HTMLElement>('[data-testid="inbox-thread"]');
+  113 |         const context = document.querySelector<HTMLElement>('[data-testid="inbox-context-panel"]');
+  114 |         const messages = document.querySelector<HTMLElement>('[data-testid="inbox-message-list"]');
+  115 |         const composer = thread?.querySelector<HTMLElement>('form');
+  116 |         if (!thread || !context || !messages || !composer) throw new Error('Inbox layout elements are missing.');
+  117 |         return {
+  118 |             threadHeight: thread.getBoundingClientRect().height,
+  119 |             threadBottom: thread.getBoundingClientRect().bottom,
+  120 |             composerBottom: composer.getBoundingClientRect().bottom,
+  121 |             messageHeight: messages.getBoundingClientRect().height,
+  122 |             contextHeight: context.clientHeight,
+  123 |             contextScrollHeight: context.scrollHeight,
+  124 |         };
+  125 |     });
+  126 | 
+  127 |     expect(layout.threadHeight).toBe(650);
+  128 |     expect(layout.contextHeight).toBeLessThanOrEqual(650);
+  129 |     expect(layout.contextScrollHeight).toBeGreaterThan(layout.contextHeight);
+  130 |     expect(layout.messageHeight).toBeLessThanOrEqual(550);
+  131 |     expect(layout.composerBottom).toBeLessThanOrEqual(layout.threadBottom + 1);
+  132 | });
+  133 | 
+  134 | test('FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details', async ({ page }) => {
+  135 |     const responseWait = page.waitForResponse(response => {
+  136 |         const url = new URL(response.url());
+  137 |         return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('mode') === 'human';
+  138 |     });
+  139 |     await gotoDemo(page, '/s/shop-demo/inbox?q=Minh&status=open&mode=human&channelId=fb-01&assignedUserId=user-demo');
+  140 |     const response = await responseWait;
+  141 |     const url = new URL(response.url());
+  142 |     expect(url.searchParams.get('q')).toBe('Minh');
+  143 |     expect(url.searchParams.get('status')).toBe('open');
+  144 |     expect(url.searchParams.get('channelId')).toBe('fb-01');
+  145 |     expect(url.searchParams.get('assignedUserId')).toBe('user-demo');
+  146 |     expect((await response.json()).data.map((conversation: { id: string }) => conversation.id)).toEqual(['cv2']);
+  147 |     await expect(page.getByRole('link', { name: /Minh \(khách mẫu\)/ })).toBeVisible();
+  148 | 
+  149 |     const statusFilter = page.locator('[aria-label="Bộ lọc hội thoại"]').getByRole('combobox').first();
+  150 |     await statusFilter.click();
+  151 |     await page.getByRole('option', { name: 'Đã giải quyết', exact: true }).click();
+  152 |     await expect(page).toHaveURL(/status=resolved/);
+  153 |     await expect(page.getByText('Chưa có hội thoại phù hợp.')).toBeVisible();
+  154 | 
+  155 |     await statusFilter.click();
+  156 |     await page.getByRole('option', { name: 'Đang mở', exact: true }).click();
+  157 |     await page.getByRole('link', { name: /Minh \(khách mẫu\)/ }).click();
+  158 |     await expect(page).toHaveURL(/q=Minh.*status=open.*mode=human.*channelId=fb-01.*assignedUserId=user-demo/);
+  159 |     await expect(page.getByRole('heading', { name: 'Minh (khách mẫu)' })).toBeVisible();
+  160 | });
+  161 | 
+  162 | test('Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery', async ({ page }, info) => {
+  163 |     await page.addInitScript(() => {
+  164 |         const state = window as unknown as { sharedSource: EventSource; sharedSequence?: number };
+  165 |         const Original = window.EventSource;
+  166 |         window.EventSource = class extends Original {
+  167 |             constructor(url: string | URL, options?: EventSourceInit) {
+  168 |                 super(url, options); state.sharedSource = this;
+  169 |                 this.addEventListener('message', event => { try { state.sharedSequence = JSON.parse(event.data).sequence; } catch { /* Other suites own malformed events. */ } });
+  170 |             }
+  171 |         };
+  172 |     });
+  173 |     await page.setViewportSize({ width: 1440, height: 1000 });
+  174 |     await gotoDemo(page, '/s/shop-demo/inbox/cv1?status=open&channelId=fb-01&assignedUserId=user-demo');
+  175 |     const draft = page.getByRole('textbox', { name: 'Nội dung trả lời khách', exact: true });
+  176 |     await expect(draft).toBeVisible(); await draft.fill('Bản nháp giữ nguyên khi metadata thay đổi');
+  177 |     const fixtureUrl = '/@fs/' + path.resolve('tests/design/shared-consolidation-fixture.ts').replaceAll('\\', '/');
+  178 |     await page.evaluate(async url => { (await import(/* @vite-ignore */ url)).installMetadataBranches(); }, fixtureUrl);
+  179 |     const results = [];
+  180 |     for (const mode of ['pending', 'error', 'empty', 'normal'] as const) {
+  181 |         const before = await page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().reads, fixtureUrl);
+  182 |         await page.evaluate(async ({ url, mode }) => {
+  183 |             (await import(/* @vite-ignore */ url)).setMetadataMode(mode);
+  184 |             const state = window as unknown as { sharedSource: EventSource; sharedSequence?: number };
+  185 |             state.sharedSource.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ eventId: crypto.randomUUID(), type: 'resync.required', schemaVersion: 2, shopId: 'shop-demo', resourceType: 'shop', resourceId: 'shop-demo', resourceVersion: 0, occurredAt: '2030-01-01T00:00:00Z', sequence: (state.sharedSequence ?? 0) + 1 }) }));
+  186 |         }, { url: fixtureUrl, mode });
+  187 |         await expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().reads, fixtureUrl)).toBeGreaterThan(before);
+  188 |         if (mode === 'pending') {
+  189 |             await expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().pending, fixtureUrl)).toBe(true);
+  190 |             await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
+  191 |             await page.evaluate(async url => (await import(/* @vite-ignore */ url)).finishMetadata(), fixtureUrl);
+  192 |         }
+  193 |         await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
+  194 |         await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
+  195 |         expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01');
+  196 |         expect(new URL(page.url()).searchParams.get('assignedUserId')).toBe('user-demo');
+  197 |         results.push({ mode, draftPreserved: true, selectedKeysPreserved: true });
+  198 |     }
+  199 |     const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại', exact: true });
+  200 |     const status = filters.getByRole('combobox', { name: 'Trạng thái', exact: true });
+> 201 |     await status.focus(); await status.press('Enter');
+      |                  ^ Error: locator.focus: Test timeout of 180000ms exceeded.
+  202 |     await page.getByRole('option', { name: 'Tất cả trạng thái', exact: true }).press('Enter');
+  203 |     expect(new URL(page.url()).searchParams.has('status')).toBe(false);
+  204 |     await expect(status).toBeFocused();
+  205 |     const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
+  206 |     await search.fill('Linh'); await search.press('Enter');
+  207 |     expect(new URL(page.url()).searchParams.get('q')).toBe('Linh');
+  208 |     await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
+  209 |     expect(new URL(page.url()).searchParams.has('q')).toBe(false);
+  210 |     expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01');
+  211 |     await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
+  212 |     await info.attach('metadata-draft-branches', { body: JSON.stringify(results), contentType: 'application/json' });
+  213 |     await draft.fill('');
+  214 | });
+  215 | 
+  216 | test('FE016.AC01 list cursor is isolated from message cursor and restored on back navigation', async ({ page }) => {
+  217 |     await page.setViewportSize({ width: 390, height: 844 });
+  218 |     const listWait = page.waitForResponse(response => {
+  219 |         const url = new URL(response.url());
+  220 |         return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'cv1';
+  221 |     });
+  222 |     await gotoDemo(page, '/s/shop-demo/inbox?cursor=cv1');
+  223 |     const listResponse = await listWait;
+  224 |     expect((await listResponse.json()).data.map((conversation: { id: string }) => conversation.id)).not.toContain('cv1');
+  225 |     const messageWait = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/messages'));
+  226 |     await page.getByRole('link', { name: /Minh \(khách mẫu\)/ }).click();
+  227 |     await expect(page).toHaveURL(/listCursor=cv1/);
+  228 |     const messageResponse = await messageWait;
+  229 |     expect(new URL(messageResponse.url()).searchParams.has('cursor')).toBe(false);
+  230 | 
+  231 |     await page.getByRole('link', { name: 'Danh sách hội thoại' }).click();
+  232 |     await expect(page).toHaveURL(/cursor=cv1/);
+  233 | });
+  234 | 
+  235 | test('UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change', async ({ page }) => {
+  236 |     await page.setViewportSize({ width: 1440, height: 960 });
+  237 |     const requests: Array<{ shopId: string; resource: string; conversationId: string | null; cursor: string | null }> = [];
+  238 |     const invalidCursorResponses: string[] = [];
+  239 |     page.on('request', request => {
+  240 |         if (request.method() !== 'GET') return;
+  241 |         const url = new URL(request.url());
+  242 |         const match = url.pathname.match(/\/shops\/([^/]+)\/(conversations(?:\/([^/]+)\/messages)?)/);
+  243 |         if (match) requests.push({ shopId: match[1] || '', resource: match[2] || '', conversationId: match[3] || null, cursor: url.searchParams.get('cursor') });
+  244 |     });
+  245 |     page.on('response', response => {
+  246 |         if (response.status() === 422 && /\/(conversations|messages)(\/|\?|$)/.test(new URL(response.url()).pathname)) {
+  247 |             invalidCursorResponses.push(`${response.status()} ${response.url()}`);
+  248 |         }
+  249 |     });
+  250 | 
+  251 |     const fixture = await seedInboxCursorFixture(page);
+  252 |     expect(fixture.seededConversationCount).toBe(fixture.conversationCount);
+  253 |     await expect(page.getByRole('textbox', { name: 'Tìm kiếm' })).toBeVisible();
+  254 |     await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('UI002');
+  255 |     const firstListResponse = page.waitForResponse(response => {
+  256 |         const url = new URL(response.url());
+  257 |         return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('q') === 'UI002' && !url.searchParams.has('cursor');
+  258 |     });
+  259 |     await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+  260 |     const firstList = await firstListResponse;
+  261 |     expect(firstList.status()).toBe(200);
+  262 |     expect((await firstList.json()).page.total).toBe(fixture.conversationCount);
+  263 |     await expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeEnabled();
+  264 | 
+  265 |     const secondListResponse = page.waitForResponse(response => {
+  266 |         const url = new URL(response.url());
+  267 |         return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'ui002-conversation-40';
+  268 |     });
+  269 |     await page.getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+  270 |     expect((await secondListResponse).status()).toBe(200);
+  271 |     await expect(page.getByRole('link', { name: /UI002 Conversation 41/ })).toBeVisible();
+  272 |     await test.info().attach('ui002-conversation-page-2.png', { body: await page.screenshot(), contentType: 'image/png' });
+  273 | 
+  274 |     const firstMessageResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/${fixture.targetConversationId}/messages`));
+  275 |     await page.getByRole('link', { name: /UI002 Conversation 41/ }).click();
+  276 |     await expect(page).toHaveURL(/listCursor=ui002-conversation-40/);
+  277 |     expect(new URL(page.url()).searchParams.has('cursor')).toBe(false);
+  278 |     expect((await firstMessageResponse).status()).toBe(200);
+  279 |     const pageTwoConversation = page.getByRole('listitem').filter({ hasText: 'UI002 Conversation 41' });
+  280 |     await expect(pageTwoConversation).toBeVisible();
+  281 |     const firstPageRequest = requests.find(request => request.shopId === 'shop-demo' && request.resource === 'conversations' && request.cursor === 'ui002-conversation-40');
+  282 |     expect(firstPageRequest).toBeDefined();
+  283 | 
+  284 |     const requestCountBeforeMessagePaging = requests.length;
+  285 |     const messagePageTwoResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/${fixture.targetConversationId}/messages`) && new URL(response.url()).searchParams.get('cursor') === 'ui002-message-100');
+  286 |     await page.getByTestId('inbox-message-list').getByRole('button', { name: 'Trang tiếp', exact: true }).click();
+  287 |     expect((await messagePageTwoResponse).status()).toBe(200);
+  288 |     await expect(page).toHaveURL(/listCursor=ui002-conversation-40.*cursor=ui002-message-100|cursor=ui002-message-100.*listCursor=ui002-conversation-40/);
+  289 |     expect(requests.slice(requestCountBeforeMessagePaging).filter(request => request.shopId === 'shop-demo' && request.resource === 'conversations')).toEqual([]);
+  290 |     await expect(page.getByTestId('inbox-message-list')).toContainText('UI002 message 105');
+  291 |     expect(invalidCursorResponses).toEqual([]);
+  292 |     await test.info().attach('ui002-message-page-2.png', { body: await page.screenshot(), contentType: 'image/png' });
+  293 | 
+  294 |     const nextConversationMessageResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/ui002-conversation-42/messages'));
+  295 |     await page.getByRole('link', { name: /UI002 Conversation 42/ }).click();
+  296 |     await expect(page).toHaveURL(/listCursor=ui002-conversation-40/);
+  297 |     expect(new URL(page.url()).searchParams.has('cursor')).toBe(false);
+  298 |     expect((await nextConversationMessageResponse).status()).toBe(200);
+  299 |     await expect(page.getByRole('heading', { name: 'UI002 Conversation 42', exact: true })).toBeVisible();
+  300 |     expect(invalidCursorResponses).toEqual([]);
+  301 | 
+```

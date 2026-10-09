@@ -1,0 +1,79 @@
+[WebServer] (node:20476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+(node:27400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\session\demo-worker-startup.spec.ts:17:1 › demo conditional module requests return complete exports without changing live or non-asset caching
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-11796-85735c98-f432-4afd-9035-908b3e194a63\deps\react-dom_client.js?v=ccfea871 as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\session\demo-worker-startup.spec.ts:17:1 › demo conditional module requests return complete exports without changing live or non-asset caching 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 304
+
+      26 |         headers: { 'If-None-Match': etag, 'Sec-Fetch-Dest': 'script' },
+      27 |     });
+    > 28 |     expect(conditional.status()).toBe(200);
+         |                                  ^
+      29 |     expect(await conditional.text()).toContain('API_BASE_PATH');
+      30 |     const nonAsset = await request.get(moduleUrl, { headers: { 'If-None-Match': etag } });
+      31 |     expect(nonAsset.status()).toBe(304);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\session\demo-worker-startup.spec.ts:28:34
+
+    Error Context: test-results\playwright-27400-d5b7a640-2c3d-4c8e-a17a-635324157122\session-demo-worker-startu-80f4c-g-live-or-non-asset-caching-chromium\error-context.md
+
+    Error Context: test-results\playwright-27400-d5b7a640-2c3d-4c8e-a17a-635324157122\session-demo-worker-startu-80f4c-g-live-or-non-asset-caching-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-27400-d5b7a640-2c3d-4c8e-a17a-635324157122\session-demo-worker-startu-80f4c-g-live-or-non-asset-caching-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-27400-d5b7a640-2c3d-4c8e-a17a-635324157122\session-demo-worker-startu-80f4c-g-live-or-non-asset-caching-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:89148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [firefox] › tests\session\demo-worker-startup.spec.ts:17:1 › demo conditional module requests return complete exports without changing live or non-asset caching
+  2) [firefox] › tests\session\demo-worker-startup.spec.ts:17:1 › demo conditional module requests return complete exports without changing live or non-asset caching 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 304
+
+      26 |         headers: { 'If-None-Match': etag, 'Sec-Fetch-Dest': 'script' },
+      27 |     });
+    > 28 |     expect(conditional.status()).toBe(200);
+         |                                  ^
+      29 |     expect(await conditional.text()).toContain('API_BASE_PATH');
+      30 |     const nonAsset = await request.get(moduleUrl, { headers: { 'If-None-Match': etag } });
+      31 |     expect(nonAsset.status()).toBe(304);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\session\demo-worker-startup.spec.ts:28:34
+
+    Error Context: test-results\playwright-89148-34165e46-5267-4387-9179-d46df65b2847\session-demo-worker-startu-80f4c-g-live-or-non-asset-caching-firefox\error-context.md
+
+    Error Context: test-results\playwright-89148-34165e46-5267-4387-9179-d46df65b2847\session-demo-worker-startu-80f4c-g-live-or-non-asset-caching-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-89148-34165e46-5267-4387-9179-d46df65b2847\session-demo-worker-startu-80f4c-g-live-or-non-asset-caching-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-89148-34165e46-5267-4387-9179-d46df65b2847\session-demo-worker-startu-80f4c-g-live-or-non-asset-caching-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\session\demo-worker-startup.spec.ts:17:1 › demo conditional module requests return complete exports without changing live or non-asset caching 
+    [firefox] › tests\session\demo-worker-startup.spec.ts:17:1 › demo conditional module requests return complete exports without changing live or non-asset caching 

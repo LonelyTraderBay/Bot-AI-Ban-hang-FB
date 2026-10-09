@@ -1,0 +1,97 @@
+[WebServer] (node:22624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+(node:84480) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\ui-toolbar-layout.spec.ts:49:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-62992-1d54566a-151d-4851-8052-0fdfec623919\deps\react-dom_client.js?v=4a8d503b as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui-toolbar-layout.spec.ts:49:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('[aria-label="Bộ lọc hội thoại"]')
+    Expected: "field-group"
+    Received: ""
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('[aria-label="Bộ lọc hội thoại"]') with timeout 5000ms
+      - waiting for locator('[aria-label="Bộ lọc hội thoại"]')
+        14 × locator resolved to <div aria-label="Bộ lọc hội thoại" class="MuiStack-root css-v10sx8-MuiStack-root">…</div>
+           - unexpected value "null"
+
+
+      54 |         await ready(page, `/s/shop-demo/${route}`);
+      55 |         const filters = page.locator('[aria-label="Bộ lọc hội thoại"]');
+    > 56 |         await expect(filters).toHaveAttribute('data-ui-composition', 'field-group');
+         |                               ^
+      57 |         await expect(filters).toHaveAttribute('role', 'group');
+      58 |         await expect(filters.getByRole('combobox', { includeHidden: true })).toHaveCount(4);
+      59 |         const hiddenList = route.includes('/') && width < 1280;
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:56:31
+
+    Error Context: test-results\playwright-84480-05b8d820-f220-4f1f-b1c9-e6f8715be880\ui-toolbar-layout-Shared-c-e1282-e-search-across-pane-widths-chromium\error-context.md
+
+    Error Context: test-results\playwright-84480-05b8d820-f220-4f1f-b1c9-e6f8715be880\ui-toolbar-layout-Shared-c-e1282-e-search-across-pane-widths-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-84480-05b8d820-f220-4f1f-b1c9-e6f8715be880\ui-toolbar-layout-Shared-c-e1282-e-search-across-pane-widths-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-84480-05b8d820-f220-4f1f-b1c9-e6f8715be880\ui-toolbar-layout-Shared-c-e1282-e-search-across-pane-widths-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:89720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [firefox] › tests\ui-toolbar-layout.spec.ts:49:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths
+  2) [firefox] › tests\ui-toolbar-layout.spec.ts:49:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('[aria-label="Bộ lọc hội thoại"]')
+    Expected: "field-group"
+    Received: ""
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('[aria-label="Bộ lọc hội thoại"]') with timeout 5000ms
+      - waiting for locator('[aria-label="Bộ lọc hội thoại"]')
+        14 × locator resolved to <div aria-label="Bộ lọc hội thoại" class="MuiStack-root css-v10sx8-MuiStack-root">…</div>
+           - unexpected value "null"
+
+
+      54 |         await ready(page, `/s/shop-demo/${route}`);
+      55 |         const filters = page.locator('[aria-label="Bộ lọc hội thoại"]');
+    > 56 |         await expect(filters).toHaveAttribute('data-ui-composition', 'field-group');
+         |                               ^
+      57 |         await expect(filters).toHaveAttribute('role', 'group');
+      58 |         await expect(filters.getByRole('combobox', { includeHidden: true })).toHaveCount(4);
+      59 |         const hiddenList = route.includes('/') && width < 1280;
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:56:31
+
+    Error Context: test-results\playwright-89720-07e0a59d-fd46-4568-b7ea-5a5660ce3d85\ui-toolbar-layout-Shared-c-e1282-e-search-across-pane-widths-firefox\error-context.md
+
+    Error Context: test-results\playwright-89720-07e0a59d-fd46-4568-b7ea-5a5660ce3d85\ui-toolbar-layout-Shared-c-e1282-e-search-across-pane-widths-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-89720-07e0a59d-fd46-4568-b7ea-5a5660ce3d85\ui-toolbar-layout-Shared-c-e1282-e-search-across-pane-widths-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-89720-07e0a59d-fd46-4568-b7ea-5a5660ce3d85\ui-toolbar-layout-Shared-c-e1282-e-search-across-pane-widths-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-toolbar-layout.spec.ts:49:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths 
+    [firefox] › tests\ui-toolbar-layout.spec.ts:49:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths 

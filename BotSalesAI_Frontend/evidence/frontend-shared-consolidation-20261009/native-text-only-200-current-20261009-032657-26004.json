@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "task": "S16.SharedConsolidation",
+  "recordedAt": "2026-10-08T20:26:57.427Z",
+  "scope": "Isolated Firefox with local React demo and synthetic MSW; no backend, user profile, persistent app writes, or system preference changes",
+  "result": "ERROR",
+  "temporaryProfileCleanup": "REMOVED",
+  "method": {
+    "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+    "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+    "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+    "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+    "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+    "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+    "baseZoomFactor": 1,
+    "targetZoomFactor": 2,
+    "scenarios": [
+      {
+        "id": "inbox-detail-desktop",
+        "route": "/s/shop-demo/inbox/cv1",
+        "viewport": {
+          "width": 1600,
+          "height": 900
+        }
+      },
+      {
+        "id": "inbox-list",
+        "route": "/s/shop-demo/inbox",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "inbox-detail",
+        "route": "/s/shop-demo/inbox/cv1",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "dashboard",
+        "route": "/s/shop-demo/overview",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "inbox-list-desktop",
+        "route": "/s/shop-demo/inbox",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        }
+      }
+    ],
+    "browserVersion": "155.0",
+    "webdriverBuildId": "20260902192955"
+  },
+  "sourceSha256": {
+    "apps/web/src/modules/inbox/conversation-components.tsx": "45f538333cb2410d4d9bfbd42b8e1756d3f1f22e2d03dc0e6aa2ea3bd9c77aeb",
+    "tests/fe016.spec.ts": "9fc522d53097bc0fadbd86d9a8f8bfac78c7cfb94c03ad068ef29586edb4efc2",
+    "packages/contracts/src/routes.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "apps/web/src/mocks/seed.json": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d",
+    "evidence/frontend-shared-consolidation-20261009/native-label-route-probes.mjs": "88d129b8f20552bace3c276b5b778dcfedf3cc08ceff323c0e450b2171dd9daa",
+    "tests/design/owned-label-geometry.mjs": "05ad4ea1a24a0882d1736a6ada537b03a629a310875c3829a443ad325826f2d7",
+    "apps/web/vite.config.ts": "3be2f3e6ac742a5d3ecbe9de67eb5654da8d2b0e04a0948179991497717f4f04",
+    "tests/session/demo-worker-startup.spec.ts": "3aaf76a0c4be00fbdfd18197a3981cdd05f10f3757f79c88daba486f8395cc30",
+    "apps/web/src/shared/ui/components.tsx": "f5308ba5dee5101c9be78797d8eb88d450d6698993bd643635a514b6c8f58142",
+    "apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "apps/web/src/shared/ui/theme.ts": "a965a148ac61f3b6db64bfa2ca433ebd0f22263cc7527c308a3f1d605480f9d4",
+    "apps/web/src/shared/ui/layout.ts": "cb56d1e0d4ab0cb192a7dbcdd4b2cb406577c11b6f83b0c963d5813ffcc4e979",
+    "apps/web/src/app/Shell.tsx": "b9cf7f0658d95e97d546c04393b503f794d61c2bea799170c8ccd21626c5ea95",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/catalog/index.tsx": "4174ece483832f827241837a482b0e588124b530cc10edb4360174086b2c6688",
+    "tests/ui-component-layout.spec.ts": "ed0f76f9f902a593d991c50bba9163d0d2a66a9df07478643779c09b83041e67",
+    "apps/web/src/modules/inbox/index.tsx": "843c04fb12ef9ae8218eaca81cb9adf825299871542937b13ac177bfb7f12121",
+    "apps/web/src/modules/dashboard/index.tsx": "7a50a470d7f8366d77b7b6e90db12f3f3ed0a01a46b8759fc311bf69636b90f9",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "tests/ui-toolbar-layout.spec.ts": "b7e70dd59ecfe96701bc830a134e1b1184256d59a69f94132d4ceb12a5dd6ea9",
+    "tests/ui-dashboard-layout.spec.ts": "647702611dace86cd1eadc214d28899b8b9c9e84babaeaeb035a63a621da3701",
+    "evidence/frontend-shared-consolidation-20261009/capture-shared-text-zoom.mjs": "07dc6f3d0e08fba392081b32fe9cd2c4450cbc28b39f03c50af1e45337b644e8"
+  },
+  "scenarios": [],
+  "noProgressLedgerWrites": true,
+  "error": "Error: Selected full value is clipped or does not match"
+}

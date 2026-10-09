@@ -1,0 +1,139 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: ui-catalog-layout.spec.ts >> Imports review notice and demo controls keep the measured shared 24px clearance at 806x884
+- Location: tests\ui-catalog-layout.spec.ts:67:1
+
+# Error details
+
+```
+Error: {"alertBottom":150,"firstControlTop":195.25,"firstLabelTop":174,"controlClearance":45.25,"labelClearance":24,"documentWidth":806,"viewportWidth":806}
+
+expect(received).toBeCloseTo(expected, precision)
+
+Expected: 24
+Received: 45.25
+
+Expected precision:    0
+Expected difference: < 0.5
+Received difference:   21.25
+```
+
+# Test source
+
+```ts
+  8   |     const server = await startDemoServer({ cacheIsolationKey: 'ui028-w10-catalog-layout' });
+  9   |     demoUrl = server.url;
+  10  |     closeDemo = server.close;
+  11  | });
+  12  | 
+  13  | test.afterAll(async () => closeDemo?.());
+  14  | 
+  15  | test('catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at mobile and desktop', async ({ page }) => {
+  16  |     const pageErrors: string[] = [];
+  17  |     const commitRequests: string[] = [];
+  18  |     page.on('pageerror', error => pageErrors.push(error.message));
+  19  |     page.on('request', request => {
+  20  |         const url = new URL(request.url());
+  21  |         if (request.method() === 'POST' && /\/shops\/shop-demo\/imports\/job-[^/]+\/commit$/.test(url.pathname)) commitRequests.push(url.pathname);
+  22  |     });
+  23  |     const cases = [
+  24  |         { id: 'R09', path: '/s/shop-demo/products', heading: 'Sản phẩm' },
+  25  |         { id: 'R10', path: '/s/shop-demo/products/new', heading: 'Thêm sản phẩm', inset: true },
+  26  |         { id: 'R11', path: '/s/shop-demo/products/p1', heading: 'Thông tin sản phẩm', inset: true },
+  27  |         { id: 'R12', path: '/s/shop-demo/categories', heading: 'Danh mục' },
+  28  |         { id: 'R13', path: '/s/shop-demo/imports', heading: 'Nhập dữ liệu sản phẩm', inset: true },
+  29  |     ];
+  30  |     const observations = [];
+  31  | 
+  32  |     for (const viewport of [{ width: 390, height: 844, gutter: '16px' }, { width: 1280, height: 900, gutter: '24px' }]) {
+  33  |         await page.setViewportSize({ width: viewport.width, height: viewport.height });
+  34  |         for (const route of cases) {
+  35  |             await page.goto(new URL(route.path, demoUrl).toString());
+  36  |             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
+  37  |             await expect(page.locator('main#main-content')).toHaveCSS('padding-left', viewport.gutter);
+  38  |             const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  39  |             expect(scrollWidth, `${route.id} document width at ${viewport.width}`).toBe(viewport.width);
+  40  |             let panelInset: string | null = null;
+  41  |             if (route.inset) {
+  42  |                 panelInset = await page.locator('main#main-content .MuiPaper-root').first().locator(':scope > .MuiBox-root').evaluate(element => getComputedStyle(element).paddingLeft);
+  43  |                 expect(panelInset, `${route.id} surface body inset at ${viewport.width}`).toBe(viewport.gutter);
+  44  |             }
+  45  |             observations.push({ route: route.id, width: viewport.width, documentWidth: scrollWidth, panelInset });
+  46  |         }
+  47  | 
+  48  |         await page.goto(new URL('/s/shop-demo/imports', demoUrl).toString());
+  49  |         const csv = [
+  50  |             'sku,name,price,description,currency',
+  51  |             `UI028-W10-${viewport.width},Mẫu catalog ${viewport.width},123000,Kiểm tra trước commit,VND`,
+  52  |         ].join('\n');
+  53  |         await page.locator('input[type="file"]').setInputFiles({ name: `w10-${viewport.width}.csv`, mimeType: 'text/csv', buffer: Buffer.from(csv, 'utf8') });
+  54  |         await page.getByRole('button', { name: 'Kiểm tra trước khi nhập', exact: true }).click();
+  55  |         await expect(page).toHaveURL(/\/s\/shop-demo\/imports\/job-/);
+  56  |         await expect(page.getByRole('heading', { name: 'Kết quả kiểm tra tệp', exact: true })).toBeVisible();
+  57  |         await expect(page.getByRole('button', { name: 'Xác nhận nhập các dòng hợp lệ', exact: true })).toBeEnabled();
+  58  |         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(viewport.width);
+  59  |         observations.push({ route: 'R14', width: viewport.width, dryRunOnly: true, commitAvailable: true });
+  60  |     }
+  61  | 
+  62  |     expect(observations).toHaveLength(12);
+  63  |     expect(commitRequests).toEqual([]);
+  64  |     expect(pageErrors).toEqual([]);
+  65  | });
+  66  | 
+  67  | test('Imports review notice and demo controls keep the measured shared 24px clearance at 806x884', async ({ page }) => {
+  68  |     const pageErrors: string[] = [];
+  69  |     page.on('pageerror', error => pageErrors.push(error.message));
+  70  |     await page.setViewportSize({ width: 806, height: 884 });
+  71  |     const route = new URL('/s/shop-demo/imports', demoUrl);
+  72  |     await page.goto(route.toString());
+  73  |     await expect(page).toHaveURL(route.toString());
+  74  |     await expect(page.getByRole('heading', { name: 'Nhập dữ liệu sản phẩm', exact: true })).toBeVisible();
+  75  | 
+  76  |     const notice = page.getByRole('alert').filter({ hasText: 'Frontend review: API được mô phỏng trong bộ nhớ' });
+  77  |     const controls = page.locator('#mock-tools-controls');
+  78  |     await expect(notice).toBeVisible();
+  79  |     await expect(controls).toBeVisible();
+  80  |     await expect(controls.getByRole('combobox')).toHaveCount(3);
+  81  | 
+  82  |     const geometry = await page.evaluate(() => {
+  83  |         const alert = [...document.querySelectorAll('.MuiAlert-root')]
+  84  |             .find(element => element.textContent?.includes('Frontend review: API được mô phỏng trong bộ nhớ'));
+  85  |         const controls = document.querySelector('#mock-tools-controls');
+  86  |         const control = controls?.querySelector('.MuiInputBase-root');
+  87  |         const label = controls?.querySelector('.MuiInputLabel-root');
+  88  |         if (!alert || !controls || !control || !label) return null;
+  89  |         const alertRect = alert.getBoundingClientRect();
+  90  |         const controlRect = control.getBoundingClientRect();
+  91  |         const labelRect = label.getBoundingClientRect();
+  92  |         return {
+  93  |             alertBottom: alertRect.bottom,
+  94  |             firstControlTop: controlRect.top,
+  95  |             firstLabelTop: labelRect.top,
+  96  |             controlClearance: controlRect.top - alertRect.bottom,
+  97  |             labelClearance: labelRect.top - alertRect.bottom,
+  98  |             documentWidth: document.documentElement.scrollWidth,
+  99  |             viewportWidth: document.documentElement.clientWidth,
+  100 |         };
+  101 |     });
+  102 | 
+  103 |     await test.info().attach('imports-demo-controls-clearance.json', {
+  104 |         body: JSON.stringify(geometry, null, 2),
+  105 |         contentType: 'application/json',
+  106 |     });
+  107 |     expect(geometry).not.toBeNull();
+> 108 |     expect(geometry!.controlClearance, JSON.stringify(geometry)).toBeCloseTo(24, 0);
+      |                                                                  ^ Error: {"alertBottom":150,"firstControlTop":195.25,"firstLabelTop":174,"controlClearance":45.25,"labelClearance":24,"documentWidth":806,"viewportWidth":806}
+  109 |     expect(geometry!.labelClearance).toBeGreaterThanOrEqual(12);
+  110 |     expect(geometry!.labelClearance).toBeLessThanOrEqual(18);
+  111 |     expect(geometry!.documentWidth).toBe(806);
+  112 |     expect(geometry!.viewportWidth).toBe(806);
+  113 |     expect(pageErrors).toEqual([]);
+  114 | });
+  115 | 
+```

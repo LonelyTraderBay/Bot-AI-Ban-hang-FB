@@ -1,0 +1,1119 @@
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\app\\Shell.tsx" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\app\\Shell.tsx"
+index 8caa4ac..17bd420 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\app\\Shell.tsx"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\app\\Shell.tsx"
+@@ -158,8 +158,8 @@ function MockTools({ onChange }: {
+         <Button aria-controls="mock-tools-controls" aria-expanded={mobileExpanded} onClick={() => setMobileExpanded(value => !value)} sx={[layoutSx.shell.demoToggle, { display: { xs: 'inline-flex', md: 'none' } }]}>
+             {mobileExpanded ? 'Ẩn công cụ demo' : 'Công cụ demo'}
+         </Button>
+-        <Stack id="mock-tools-controls" direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'center' }} sx={[layoutSx.shell.demoControls, { display: { xs: mobileExpanded ? 'flex' : 'none', md: 'flex' } }]}><Typography variant="caption" color="text.secondary">Thử giao diện:</Typography><TextField select size="small" label="Vai trò mô phỏng" value={role} onChange={e => { setRole(e.target.value); void change('role', e.target.value); }} inputProps={{ 'aria-label': 'Vai trò mô phỏng' }} sx={[controlSx, { minWidth: 150 }]}>{['owner', 'manager', 'sales', 'warehouse', 'accountant', 'bot_admin', 'viewer'].map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField><TextField select size="small" label="Trạng thái thử" value={fault} onChange={e => { setFault(e.target.value); void change('fault', e.target.value); }} inputProps={{ 'aria-label': 'Trạng thái thử' }} sx={[controlSx, { minWidth: 190 }]}>{[
++        <Stack id="mock-tools-controls" direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'center' }} sx={[layoutSx.shell.demoControls, { display: { xs: mobileExpanded ? 'flex' : 'none', md: 'flex' } }]}><Typography variant="caption" color="text.secondary">Thử giao diện:</Typography><TextField select size="small" label="Vai trò mô phỏng" value={role} onChange={e => { setRole(e.target.value); void change('role', e.target.value); }} inputProps={{ 'aria-label': 'Vai trò mô phỏng' }} sx={controlSx}>{['owner', 'manager', 'sales', 'warehouse', 'accountant', 'bot_admin', 'viewer'].map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}</TextField><TextField select size="small" label="Trạng thái thử" value={fault} onChange={e => { setFault(e.target.value); void change('fault', e.target.value); }} inputProps={{ 'aria-label': 'Trạng thái thử' }} sx={controlSx}>{[
+         ['normal', 'Bình thường'], ['slow', 'Tải chậm'], ['error', 'Lỗi truy vấn tiếp'], ['error_persistent', 'Lỗi danh sách thiết bị'], ['error_persistent_all', 'Lỗi API kéo dài'], ['empty_persistent', 'Danh sách rỗng (demo)'], ['forbidden', 'Mất quyền truy vấn tiếp'], ['conflict', 'Xung đột lần ghi tiếp'], ['unknown', 'Kết quả ghi chưa rõ'], ['budget_exceeded', 'Hết hạn mức AI mô phỏng'], ['tool_denied', 'Công cụ bị từ chối']
+-    ].map(([v, l]) => <MenuItem key={v} value={v}>{l}</MenuItem>)}</TextField><TextField select size="small" label="Dataset mô phỏng" value={dataset} onChange={e => { setDataset(e.target.value); void change('dataset', e.target.value); }} inputProps={{ 'aria-label': 'Dataset mô phỏng' }} sx={[controlSx, { minWidth: 210 }]}><MenuItem value="seed">Dataset mặc định</MenuItem><MenuItem value="large-customers">1.000 khách hàng tổng hợp</MenuItem></TextField>{datasetStatus && <Typography role="status" variant="caption" color="text.secondary">{datasetStatus}</Typography>}</Stack>
++    ].map(([v, l]) => <MenuItem key={v} value={v}>{l}</MenuItem>)}</TextField><TextField select size="small" label="Dataset mô phỏng" value={dataset} onChange={e => { setDataset(e.target.value); void change('dataset', e.target.value); }} inputProps={{ 'aria-label': 'Dataset mô phỏng' }} sx={controlSx}><MenuItem value="seed">Dataset mặc định</MenuItem><MenuItem value="large-customers">1.000 khách hàng tổng hợp</MenuItem></TextField>{datasetStatus && <Typography role="status" variant="caption" color="text.secondary">{datasetStatus}</Typography>}</Stack>
+     </Box>;
+ }
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\modules\\catalog\\index.tsx" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\modules\\catalog\\index.tsx"
+index 1f298f3..04f5d74 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\modules\\catalog\\index.tsx"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\modules\\catalog\\index.tsx"
+@@ -141,7 +141,7 @@ export function ProductEditorPage() {
+     const pending = create.pending || update.pending || upload.pending;
+     return <><PageHeader title={productId ? 'Thông tin sản phẩm' : 'Thêm sản phẩm'} subtitle="Giá theo biến thể. Tồn kho được quản lý ở màn hình riêng." actions={<Button component={RouterLink} to={`/s/${shop.id}/products`}>Danh sách</Button>}/>{productId && product.isPending ? <QueryState query={product}>{null}</QueryState> : productId && product.isError ? <QueryState query={product}>{null}</QueryState> : <Box component="form" ref={form => { const element = form as HTMLFormElement | null; productElement.current = element; draftForm(element); }} data-draft-clean={!isDirty && !imagesDirty ? 'true' : undefined} onSubmit={save}>
+  <ErrorNotice error={create.error || update.error || upload.error}/><DraftConflict editor={editor} labels={{ name: 'Tên sản phẩm', description: 'Mô tả', categoryId: 'Danh mục', status: 'Trạng thái', variants: 'Biến thể và giá', imageFileIds: 'Ảnh sản phẩm' }} busy={pending}/><Panel title="Thông tin bán hàng" bodyMode="inset"><FormFields ><TextField label="Tên sản phẩm" {...register('name')} error={!!errors.name} helperText={errors.name?.message} disabled={!canWrite}/><TextField label="Mô tả dùng cho AI tư vấn" multiline minRows={4} {...register('description')} disabled={!canWrite}/><TextField label="Tìm danh mục" size="small" value={categorySearch} onChange={event => setCategorySearch(event.target.value)} disabled={!canWrite} helperText="Tìm trên danh sách cửa hàng; có thể tải thêm khi cần."/><FieldGroup direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'start' }}><Controller name="categoryId" control={control} render={({ field }) => <FieldGroup geometry={{flex: 1, minWidth: 0, width: '100%'}}><TextField select fullWidth label="Danh mục" {...field} disabled={!canWrite}><MenuItem value="">Chưa phân loại</MenuItem>{selectedCategoryId && !categoryOnPage && <MenuItem value={selectedCategoryId}>{retainedCategory?.name || (selectedCategory.isError ? `Danh mục hiện tại (${selectedCategoryId})` : 'Đang tải danh mục hiện tại…')}</MenuItem>}{categories.data?.data.map(c => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}</TextField><LookupLoadMore label="danh mục" loadedCount={categories.loadedCount} hasMore={categories.hasMore} busy={categories.isLoadingMore} onLoadMore={categories.loadMore}/>{categories.isPending && <Alert severity="info" role="status">Đang tải danh mục…</Alert>}{categories.isError && <Alert severity={categories.isFetchNextPageError ? 'warning' : 'error'} role="alert" action={<Button color="inherit" size="small" onClick={() => { void (categories.isFetchNextPageError ? categories.loadMore() : categories.refetch()); }}>Thử lại danh mục</Button>}>{categories.isFetchNextPageError ? `Không tải thêm được danh mục (HTTP ${categories.error instanceof ApiError ? categories.error.status : 'lỗi'}). Các lựa chọn đã tải vẫn dùng được.` : `Không tải được danh mục (HTTP ${categories.error instanceof ApiError ? categories.error.status : 'lỗi'}). Bản nháp được giữ; hãy thử lại hoặc chọn “Chưa phân loại”.`}</Alert>}{categories.data?.data.length === 0 && !categories.isFetching && <Alert severity="info" role="status">{categoryQuery ? 'Không tìm thấy danh mục phù hợp.' : 'Cửa hàng chưa có danh mục.'}</Alert>}{selectedCategory.isPending && selectedCategoryId && !categoryOnPage && <Alert severity="info" role="status">Đang tải tên danh mục đã gắn với sản phẩm…</Alert>}{selectedCategory.isError && selectedCategoryId && !categoryOnPage && <Alert severity="warning" role="alert" action={<Button color="inherit" size="small" onClick={() => { void selectedCategory.refetch(); }}>Thử lại danh mục đang chọn</Button>}>{selectedCategory.error instanceof ApiError && selectedCategory.error.status === 403 ? 'Không có quyền đọc danh mục hiện tại (403). ID đã chọn vẫn được giữ trong biểu mẫu.' : `Không tải được danh mục hiện tại (${selectedCategory.error instanceof ApiError ? selectedCategory.error.status : 'lỗi'}). ID đã chọn vẫn được giữ trong biểu mẫu.`}</Alert>}</FieldGroup>}/><Controller name="status" control={control} render={({ field }) => <TextField select fullWidth label="Trạng thái" {...field} disabled={!canWrite} sx={{ flex: 1, minWidth: 0 }}><MenuItem value="draft">Bản nháp</MenuItem><MenuItem value="active">Đang bán</MenuItem></TextField>}/></FieldGroup></FormFields></Panel>
+- <Panel title="Biến thể và giá" bodyMode="inset" beforeGap={"section"} action={<Button startIcon={<AddRounded />} disabled={!canWrite} onClick={() => fieldArray.append({ sku: '', name: '', price: '', active: true })}>Thêm biến thể</Button>}><FormFields >{fieldArray.fields.map((field, index) => <FieldGroup key={field.id} direction={{ xs: 'column', md: 'row' }}  alignItems="start"><TextField label="SKU" {...register(`variants.${index}.sku`)} error={!!errors.variants?.[index]?.sku} helperText={errors.variants?.[index]?.sku?.message} disabled={!canWrite}/><TextField label="Tên / màu / kích cỡ" {...register(`variants.${index}.name`)} disabled={!canWrite} sx={{ flex: 1 }}/><TextField label={`Giá bán (${shop.currency})`} inputProps={{ inputMode: 'decimal' }} {...register(`variants.${index}.price`)} error={!!errors.variants?.[index]?.price} helperText={errors.variants?.[index]?.price?.message} disabled={!canWrite}/><FormControlLabel label="Đang bán" control={<Checkbox defaultChecked={field.active} {...register(`variants.${index}.active`)} disabled={!canWrite}/>}/><IconButton aria-label={`Xóa biến thể ${index + 1}`} disabled={!canWrite || fieldArray.fields.length === 1} onClick={() => fieldArray.remove(index)}><DeleteOutlineRounded /></IconButton></FieldGroup>)}</FormFields></Panel>
++ <Panel title="Biến thể và giá" bodyMode="inset" beforeGap={"section"} action={<Button startIcon={<AddRounded />} disabled={!canWrite} onClick={() => fieldArray.append({ sku: '', name: '', price: '', active: true })}>Thêm biến thể</Button>}><FormFields >{fieldArray.fields.map((field, index) => <FieldGroup key={field.id} direction={{ xs: 'column', md: 'row' }}  alignItems={{ xs: 'stretch', md: 'start' }} flexWrap="wrap"><TextField label="SKU" {...register(`variants.${index}.sku`)} error={!!errors.variants?.[index]?.sku} helperText={errors.variants?.[index]?.sku?.message} disabled={!canWrite} sx={{ width: { xs: '100%', md: 'auto' }, minWidth: 'min(100%, 12em)', maxWidth: '100%', flex: { xs: '0 1 auto', md: '1 1 12em' } }}/><TextField label="Tên / màu / kích cỡ" {...register(`variants.${index}.name`)} disabled={!canWrite} sx={{ width: { xs: '100%', md: 'auto' }, minWidth: 'min(100%, 12em)', maxWidth: '100%', flex: { xs: '0 1 auto', md: '1 1 12em' } }}/><TextField label={`Giá bán (${shop.currency})`} inputProps={{ inputMode: 'decimal' }} {...register(`variants.${index}.price`)} error={!!errors.variants?.[index]?.price} helperText={errors.variants?.[index]?.price?.message} disabled={!canWrite} sx={{ width: { xs: '100%', md: 'auto' }, minWidth: 'min(100%, 12em)', maxWidth: '100%', flex: { xs: '0 1 auto', md: '1 1 12em' } }}/><FormControlLabel label="Đang bán" control={<Checkbox defaultChecked={field.active} {...register(`variants.${index}.active`)} disabled={!canWrite}/>}/><IconButton aria-label={`Xóa biến thể ${index + 1}`} disabled={!canWrite || fieldArray.fields.length === 1} onClick={() => fieldArray.remove(index)}><DeleteOutlineRounded /></IconButton></FieldGroup>)}</FormFields></Panel>
+  <Panel title="Ảnh sản phẩm" subtitle="File được kiểm soát qua API upload; không nhúng secret hoặc URL tùy ý." bodyMode="inset" beforeGap={"section"}><FormFields ><Typography variant="body2">{imageIds.length} tệp được gắn với sản phẩm</Typography><Button component="label" variant="outlined" disabled={!canWrite || pending}>Chọn ảnh<input hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={async (e) => { const input = e.currentTarget; const file = input.files?.[0] || null; const error = productImageFileError(file, __MOCK__ ? PRODUCT_IMAGE_MAX_BYTES : undefined); setImageError(error); if (error) { input.value = ''; return; } if (!file) return; const form = new FormData(); form.append('file', file); form.append('purpose', 'product_image'); try {
+             const r = await upload.execute({ form });
+             if (r.data.status === 'ready')
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\modules\\dashboard\\index.tsx" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\modules\\dashboard\\index.tsx"
+index 4dacbcd..ef267e7 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\modules\\dashboard\\index.tsx"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\modules\\dashboard\\index.tsx"
+@@ -46,6 +46,9 @@ export function DashboardPage() {
+     const data = dashboard.data?.data;
+     const botConfig = bot.data?.data;
+     const greetingName = dashboardGreetingName(session.user.displayName);
++    const primaryAction = canOps
++        ? { label: 'Xem việc cần làm', to: `/s/${shop.id}/operations` }
++        : canOrders ? { label: 'Xem đơn hàng', to: `/s/${shop.id}/orders` } : null;
+ 
+     return <>
+         <Box sx={[layoutSx.dashboard.groupInset, layoutSx.pageHeader.afterGap, { border: 1, borderColor: colors.heroBorder, borderRadius: visualSx.radius.hero, background: `linear-gradient(115deg, ${colors.heroStart}, ${colors.heroEnd})` }]}>
+@@ -56,8 +59,7 @@ export function DashboardPage() {
+                     <Typography color="text.secondary" sx={[layoutSx.dashboard.heroDescriptionGap, { maxWidth: 620 }]}>Theo dõi việc cần xử lý, tiến độ đơn hàng và đội ngũ AI — tập trung vào những quyết định quan trọng.</Typography>
+                 </Box>
+                 {(canOps || canOrders || canCreateOrder) && <ActionGroup direction="column" density="comfortable" justifyContent="center">
+-                    {canOps && <Link component={RouterLink} to={`/s/${shop.id}/operations`} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: visualSx.radius.dialog, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'primary.light', textDecoration: 'none' }, '&:active': { bgcolor: 'primary.dark' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>Xem việc cần làm <ArrowForwardRounded fontSize="small" /></Link>}
+-                    {!canOps && canOrders && <Link component={RouterLink} to={`/s/${shop.id}/orders`} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: visualSx.radius.dialog, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'primary.light', textDecoration: 'none' }, '&:active': { bgcolor: 'primary.dark' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>Xem đơn hàng <ArrowForwardRounded fontSize="small" /></Link>}
++                    {primaryAction && <Link component={RouterLink} to={primaryAction.to} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: visualSx.radius.dialog, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'primary.light', textDecoration: 'none' }, '&:active': { bgcolor: 'primary.dark' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>{primaryAction.label} <ArrowForwardRounded fontSize="small" /></Link>}
+                     {canCreateOrder && <Link component={RouterLink} to={`/s/${shop.id}/orders/new`} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: 1, borderColor: 'divider', borderRadius: visualSx.radius.dialog, color: 'text.primary', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'action.hover', textDecoration: 'none' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>Tạo đơn hàng</Link>}
+                 </ActionGroup>}
+             </Stack>
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\modules\\inbox\\conversation-components.tsx" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\modules\\inbox\\conversation-components.tsx"
+index 351ae5f..464bfae 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\modules\\inbox\\conversation-components.tsx"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\modules\\inbox\\conversation-components.tsx"
+@@ -60,8 +60,9 @@ export function ConversationComposer({ conversation }: {
+                 event.preventDefault();
+                 void submit();
+             }}
+-            sx={[layoutSx.inbox.composerInset, { borderTop: 1, borderColor: 'divider' }]}
++            sx={[layoutSx.inbox.composerInset, { borderTop: 1, borderColor: 'divider', minHeight: 0, display: 'flex', flexDirection: 'column' }]}
+         >
++            <Box data-testid="inbox-composer-body" sx={{ minHeight: 0, minWidth: 0, flex: { xl: '1 1 auto' }, overflowY: { xl: 'auto' } }}>
+             <ErrorNotice error={send.error || note.error} />
+             <FormControlLabel
+                 label="Ghi chú nội bộ (không gửi khách)"
+@@ -77,7 +78,8 @@ export function ConversationComposer({ conversation }: {
+                 onChange={event => { revision.current += 1; setText(limitCodePoints(event.target.value, internal ? 10000 : 20000)); }}
+                 disabled={!canReply}
+             />
+-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={[layoutSx.inbox.composerControlsBeforeGap, layoutSx.inbox.composerActionGap]}>
++            </Box>
++            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={[layoutSx.inbox.composerControlsBeforeGap, layoutSx.inbox.composerActionGap, { flexShrink: 0 }]}>
+                 <Typography variant="caption" color="text.secondary">
+                     {!online ? 'Đang ngoại tuyến' : !canSend ? 'Cần tiếp quản hoặc quyền gửi hợp lệ' : 'Tin gửi qua API, không dùng HTML từ AI'}
+                 </Typography>
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\modules\\inbox\\index.tsx" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\modules\\inbox\\index.tsx"
+index c1ab922..26ee0f4 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\modules\\inbox\\index.tsx"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\modules\\inbox\\index.tsx"
+@@ -1,4 +1,4 @@
+-import { ActionGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
++import { ActionGroup, FieldGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
+ import { useEffect, useRef, useState } from 'react';
+ import { visualSx } from '@/shared/ui/visual';
+ import { Link as RouterLink, useParams, useSearchParams } from 'react-router-dom';
+@@ -49,8 +49,8 @@ export function InboxPage() {
+         <PageHeader title="Hộp thư khách hàng" subtitle="AI và nhân viên tiếp quản rõ ràng; chỉ gửi khi chính sách kênh cho phép." />
+         <SectionGrid columns={{ xs: '1fr', lg: '300px minmax(0,1fr)' }} geometry={{minHeight: 650}}>
+             <Panel geometry={{ display: { xs: conversationId ? 'none' : 'block', lg: 'block' } }}>
+-                <Toolbar operation="listConversations" placeholder="Tìm hội thoại…" cursorParam={listCursorParam} />
+-                <Stack direction={{ xs: 'column', sm: 'row' }} sx={[layoutSx.toolbar.controlGap, layoutSx.surface.bodyInsetAfterHeader, { flexWrap: 'wrap' }]} aria-label="Bộ lọc hội thoại">
++                <Toolbar operation="listConversations" placeholder="Tìm hội thoại…" cursorParam={listCursorParam} filters={
++                <FieldGroup direction={{ xs: 'column', sm: 'row' }} flexWrap="wrap" role="group" aria-label="Bộ lọc hội thoại">
+                     <TextField select size="small" label="Trạng thái" value={status || ''} onChange={event => updateFilter('status', event.target.value)} sx={{ flex: 1, minWidth: 140 }}>
+                         <MenuItem value="">Tất cả trạng thái</MenuItem><MenuItem value="open">Đang mở</MenuItem><MenuItem value="resolved">Đã giải quyết</MenuItem>
+                     </TextField>
+@@ -63,7 +63,7 @@ export function InboxPage() {
+                     <TextField select size="small" label="Nhân viên" value={assignedUserId || ''} onChange={event => updateFilter('assignedUserId', event.target.value)} sx={{ flex: 1, minWidth: 160 }}>
+                         <MenuItem value="">Tất cả nhân viên</MenuItem>{metadata.data?.data.assignees.map(assignee => <MenuItem key={assignee.userId} value={assignee.userId}>{assignee.displayName}</MenuItem>)}
+                     </TextField>
+-                </Stack>
++                </FieldGroup>} />
+                 <QueryState query={list}>
+                     <List disablePadding>
+                         {list.data?.data.map(c => <ListItem key={c.id} disablePadding>
+@@ -127,14 +127,14 @@ function ConversationPanel({ conversationId }: {
+                 <SectionGrid data-testid="inbox-conversation-layout" columns={{ xs: '1fr', xl: 'minmax(0,1fr) 260px' }} geometry={{minWidth: 0}}>
+                     <Box data-testid="inbox-thread" component="section" aria-label="Nội dung hội thoại" sx={{ minWidth: 0, height: { xl: 650 } }}>
+                         <Panel geometry={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+-                            <ActionGroup direction="row" alignItems="center" justifyContent="space-between" bodyMode="header">
++                            <ActionGroup direction="row" alignItems="center" justifyContent="space-between" bodyMode="header" geometry={{ flex: '0 0 auto' }}>
+                                 <Stack direction="row" alignItems="center" sx={[layoutSx.surface.compactContentGap, { flexWrap: 'wrap' }]}>
+                                     <Button component={RouterLink} to={inboxHref()} sx={{ display: { lg: 'none' }, minWidth: 44 }} aria-label="Danh sách hội thoại">
+                                         <ArrowBackRounded />
+                                     </Button>
+                                     <Avatar sx={{ bgcolor: colors.selected, color: 'primary.main' }}>{conversation.displayName.slice(0, 1)}</Avatar>
+                                     <Box>
+-                                        <Typography variant="h6">{conversation.displayName}</Typography>
++                                        <Typography component="h2" variant="h6">{conversation.displayName}</Typography>
+                                         <Typography variant="caption" color="text.secondary">
+                                             {conversation.mode === 'human' ? 'Nhân viên đang tiếp quản' : 'Trợ lý tự động'} · {conversation.id}
+                                         </Typography>
+@@ -156,7 +156,7 @@ function ConversationPanel({ conversationId }: {
+                                     </Alert>
+                                 </Box>
+                             )}
+-                            <Box data-testid="inbox-message-list" sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: 350, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
++                            <Box data-testid="inbox-message-list" sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: { xs: 350, xl: '6em' }, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
+                                 <QueryState query={messages}>
+                                     <Stack data-testid="inbox-message-groups" sx={layoutSx.inbox.messageGroupGap}>
+                                         <ConversationMessageList
+@@ -305,7 +305,7 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
+                 <TextField select label="Ngành hàng mẫu" value={industry} onChange={event => setIndustry(event.target.value as keyof typeof sampleSalesScripts)}>
+                     {Object.entries(sampleSalesScripts).map(([key, value]) => <MenuItem key={key} value={key}>{value.label}</MenuItem>)}
+                 </TextField>
+-                <Typography variant="subtitle2">Câu hỏi gợi ý</Typography>
++                <Typography component="h3" variant="subtitle2">Câu hỏi gợi ý</Typography>
+                 {script.questions.map((question, index) => <Typography key={question} variant="body2">{index + 1}. {question}</Typography>)}
+                 <Alert severity="warning">Ranh giới mẫu: {script.boundary}</Alert>
+                 <Typography variant="caption" color="text.secondary">Bản nháp mẫu riêng với cấu hình bot đang dùng; không có thao tác xuất bản ở đây.</Typography>
+@@ -343,11 +343,11 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
+ function MockUpsellPreview() {
+     const [open, setOpen] = useState(false);
+     return <SurfaceContent beforeGap="surface">
+-        <Typography variant="subtitle2">Gợi ý bán kèm mẫu · DEMO-PROMO-01</Typography>
++        <Typography component="h3" variant="subtitle2">Gợi ý bán kèm mẫu · DEMO-PROMO-01</Typography>
+         <Alert severity="info">Combo áo thun + túi tote chỉ minh họa giao diện. Không có API khuyến mại; giá, lợi nhuận, SKU và tồn kho chưa được xác thực.</Alert>
+         <Button size="small" variant="outlined" onClick={() => setOpen(value => !value)}>{open ? 'Ẩn điều kiện mẫu' : 'Xem điều kiện combo mẫu'}</Button>
+         {open && <Stack role="status" data-testid="mock-promotion-preview" sx={[layoutSx.surface.compactContentGap, layoutSx.surface.compactInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }]}>
+-            <Typography variant="subtitle2">Combo mẫu · DEMO-PROMO-01</Typography>
++            <Typography component="h3" variant="subtitle2">Combo mẫu · DEMO-PROMO-01</Typography>
+             <Typography variant="body2">Điều kiện minh họa: có ít nhất một áo và một phụ kiện trong đơn nháp.</Typography>
+             <Typography variant="caption" color="text.secondary">Không áp dụng giảm giá, không sửa đơn và không khẳng định đạt biên lợi nhuận.</Typography>
+         </Stack>}
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\shared\\ui\\components.tsx" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\shared\\ui\\components.tsx"
+index e275111..2820dfa 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\shared\\ui\\components.tsx"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\shared\\ui\\components.tsx"
+@@ -231,11 +231,11 @@ export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filt
+     if (!supportsSearch)
+         return extra || filters ? <>{extra}{filters}</> : null;
+     return <Stack sx={[layoutSx.toolbar.inset, layoutSx.toolbar.controlGap]}>
+- <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }} direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'center' }} sx={layoutSx.toolbar.controlGap}>
++ <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }} direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-end' }} sx={[layoutSx.toolbar.controlGap, { flexWrap: 'wrap' }]}>
+  <TextField inputRef={inputRef} label="Tìm kiếm" placeholder={placeholder} size="small" value={draft} onChange={e => setDraft(e.target.value)} slotProps={{
+      htmlInput: { onKeyDown: (event: ReactKeyboardEvent<HTMLInputElement>) => { if (event.key === 'Enter' && event.nativeEvent.isComposing) event.preventDefault(); } },
+      input: { startAdornment: <InputAdornment position="start"><SearchRounded fontSize="small"/></InputAdornment>, endAdornment: draft ? <InputAdornment position="end"><IconButton aria-label="Xóa tìm kiếm" edge="end" onMouseDown={event => event.preventDefault()} onClick={clearSearch}><CloseRounded fontSize="small"/></IconButton></InputAdornment> : undefined }
+- }} sx={{ width: '100%', minWidth: 0, flex: 1 }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>
++ }} sx={{ width: '100%', minWidth: 'min(100%, 12em)', flex: { xs: '1 1 auto', md: '1 1 12em' } }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>
+  {filters}</Stack>;
+ }
+ export function Pager({ page, cursorParam = 'cursor' }: {
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\shared\\ui\\layout.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\shared\\ui\\layout.ts"
+index 6907e1d..4441014 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\shared\\ui\\layout.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\shared\\ui\\layout.ts"
+@@ -139,7 +139,7 @@ export const layoutSx = {
+         pageFallbackInset: { px: { xs: factor.lg, md: factor.xl }, py: factor.xl },
+         centeredFallback: { minHeight: '100vh', display: 'grid', placeItems: 'center', px: { xs: factor.lg, md: factor.xl }, py: factor.xl },
+         demoControls: { gap: factor.sm, flexWrap: 'wrap' },
+-        demoControl: { '& .MuiInputBase-root': { minHeight: tokens.layout.touchTarget } },
++        demoControl: { flex: { xs: '0 1 auto', sm: '1 1 18em' }, minWidth: 'min(100%, 18em)', maxWidth: '100%', '& .MuiInputBase-root': { minHeight: tokens.layout.touchTarget } },
+         demoToggle: { minHeight: tokens.layout.touchTarget, px: factor.zero },
+         searchIconInset: { mr: factor.sm },
+         footerContent: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: factor.sm },
+@@ -205,6 +205,7 @@ export const layoutSx = {
+ } as const satisfies LayoutSxContract;
+ 
+ export const layoutCss = {
++    form: { labelAfterGap: cssPixel(tokens.space.xs) },
+     table: {
+         cellInset: `${cssPixel(tokens.space.md)} ${cssPixel(tokens.space.lg)}`,
+     },
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\shared\\ui\\README.md" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\shared\\ui\\README.md"
+index 940c05d..9f67b79 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\shared\\ui\\README.md"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\shared\\ui\\README.md"
+@@ -20,6 +20,8 @@ Canonical tokens → output sinh → theme/layout/visual → shared owner → mo
+ 
+ **Một boundary chỉ có một owner.** Shell giữ mép trang; parent composition giữ gap giữa các con; Panel/dialog giữ surface inset; con giữ nhịp nội bộ. Với Panel có title, đo từ mép dưới nội dung header cuối đang hiển thị đến mép trên nội dung body đầu theo SPC-014; child không cộng top inset. Các surface có border và mục đích riêng được giữ inset riêng. Fragment/query/wrapper có thể tạo nhiều DOM siblings: kiểm quan hệ owner thực, không suy từ số React children.
+ 
++**Outlined fields hiện hành:** Shared theme đặt nhãn meta12px trong flow, không scale/float hoặc notch; layoutCss.form.labelAfterGap giữ4px từ token hiện có. Label dài/200% tự tăng chiều cao, không chồng giá trị. Toolbar giữ row wrap/min-width theo chữ và alignment cuối; shell.demoControl giữ geometry co giãn của demo selectors, không height/basis lớn trong column mobile. Primitive TextField giữ native/ref/ARIA/validation; không thêm wrapper hay API.
++
+ **Khoảng trống thị giác:** CSS gap là khoảng tối thiểu trong flow/grid; space-between, wrap, alignment và chiều cao nội dung có thể tăng khoảng giữa các mép. Contract ghi rõ quan hệ, trục, cách phân bố và điều kiện nội dung đã sẵn sàng; không ép mọi khoảng nhìn thấy bằng CSS gap. Label/helper text bên trong field do theme quản lý, không bù bằng margin/spacer cấp trang. Số cụ thể theo standard/token owner; feature không tạo thang giá trị mới.
+ 
+ Button/TextField/Select/Typography/Alert của MUI tiếp tục dùng một theme. Chỉ extract khi có cùng invariant, owner, API và consumer thật; geometry/behavior cục bộ đúng nghĩa không tự là debt. Geometry hiện có của sáu compositions gồm width/minWidth/maxWidth/height/minHeight/flex/gridColumn; responsive keys xs/sm/md/lg/xl; columns chỉ thuộc SectionGrid. Trong theme hiện hành, sm/md và lg/xl có cùng giá trị breakpoint: kiểm giá trị thật, không giả định có năm ngưỡng khác nhau.
+@@ -143,7 +145,7 @@ Khi thay default, migrate mọi consumer liên quan cùng contract; giữ form r
+ | `shell.statusBanner` | SPACING | Shell/API/session status notice boundary | `apps/web/src/app/CommandRecovery.tsx`, `apps/web/src/app/ScopeEvents.tsx`, `apps/web/src/app/Shell.tsx` |
+ | `shell.pageFallbackInset` | SPACING | Route/page fallback content | `apps/web/src/app/Shell.tsx`, `apps/web/src/app/router.tsx`, `apps/web/src/modules/workspace/index.tsx` |
+ | `shell.demoControls` | SPACING | Mock-tool sibling controls and wrapping | `apps/web/src/app/Shell.tsx` |
+-| `shell.demoControl` | GEOMETRY | Mock-tool control minimum target height | `apps/web/src/app/Shell.tsx` |
++| `shell.demoControl` | GEOMETRY | Mock-tool intrinsic height, bounded text-relative width and row-only flex basis | `apps/web/src/app/Shell.tsx` |
+ | `shell.demoToggle` | GEOMETRY | Responsive mock-tools toggle target | `apps/web/src/app/Shell.tsx` |
+ | `shell.searchIconInset` | INTERNAL | Search icon-to-input content | `apps/web/src/app/Shell.tsx` |
+ | `shell.footerContent` | SPACING | Footer content alignment/gap | `apps/web/src/app/Shell.tsx` |
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\shared\\ui\\theme.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\shared\\ui\\theme.ts"
+index b4803f4..b18cef9 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\src\\shared\\ui\\theme.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\src\\shared\\ui\\theme.ts"
+@@ -28,8 +28,8 @@ export const theme = createTheme({
+         MuiListItemButton: { styleOverrides: { root: { '&.Mui-focusVisible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.controlOffset } } } },
+         MuiPaper: { defaultProps: { elevation: tokens.elevation.flat }, styleOverrides: { root: { backgroundImage: 'none' }, outlined: { borderColor: colors.borderDecorative } } },
+         MuiAvatar: { styleOverrides: { root: { minWidth: `calc(${tokens.lineHeights.body}em + ${tokens.space.xs}px)`, minHeight: `calc(${tokens.lineHeights.body}em + ${tokens.space.xs}px)` } } },
+-        MuiOutlinedInput: { styleOverrides: { root: { background: colors.input, borderRadius: tokens.radius.control, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: colors.textSecondary }, '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: colors.accent, borderWidth: 2 } }, notchedOutline: { borderColor: colors.borderControl }, input: { fontSize: tokens.fontSizes.body, '&::placeholder': { color: colors.textMuted, opacity: 1 } } } },
+-        MuiInputLabel: { styleOverrides: { root: { color: colors.textSecondary, whiteSpace: 'normal', overflowWrap: 'anywhere', textOverflow: 'clip', maxWidth: 'calc(100% - 28px)' } } },
++        MuiOutlinedInput: { defaultProps: { notched: false }, styleOverrides: { root: { background: colors.input, borderRadius: tokens.radius.control, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: colors.textSecondary }, '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: colors.accent, borderWidth: 2 } }, notchedOutline: { borderColor: colors.borderControl, '& legend': { maxWidth: '0.01px' } }, input: { fontSize: tokens.fontSizes.body, '&::placeholder': { color: colors.textMuted, opacity: 1 } } } },
++        MuiInputLabel: { styleOverrides: { root: { color: colors.textSecondary, whiteSpace: 'normal', overflowWrap: 'anywhere', textOverflow: 'clip' }, outlined: { position: 'static', pointerEvents: 'auto', transform: 'none', maxWidth: '100%', fontSize: tokens.fontSizes.meta, marginBottom: layoutCss.form.labelAfterGap, '&.MuiInputLabel-shrink': { transform: 'none', maxWidth: '100%' } } } },
+         MuiSelect: { styleOverrides: { select: { '&:focus-visible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.controlOffset } } } },
+         MuiFormHelperText: { styleOverrides: { root: { marginLeft: 0, fontSize: tokens.fontSizes.meta, lineHeight: tokens.lineHeights.body } } },
+         MuiTableCell: { styleOverrides: { root: { borderColor: colors.borderDecorative, padding: layoutCss.table.cellInset }, head: { color: colors.textSecondary, fontSize: tokens.fontSizes.meta, fontWeight: tokens.fontWeights.strong, background: colors.input } } },
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\vite.config.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\vite.config.ts"
+index 8da6f47..12facff 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\apps\\web\\vite.config.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\apps\\web\\vite.config.ts"
+@@ -1,10 +1,26 @@
+-import { defineConfig, loadEnv } from 'vite';
++import { defineConfig, loadEnv, type Plugin } from 'vite';
+ import react from '@vitejs/plugin-react';
+ import { fileURLToPath, URL } from 'node:url';
+ import { isolatedViteCacheDir } from '../../scripts/vite-cache.mjs';
+ import { existsSync, unlinkSync } from 'node:fs';
+ import { join } from 'node:path';
+ 
++const completeDemoAssets: Plugin = {
++  name: 'complete-demo-assets',
++  apply: 'serve',
++  configureServer(server) {
++    server.middlewares.use((request, _response, next) => {
++      const destination = request.headers['sec-fetch-dest'];
++      if (request.method === 'GET' && (destination === 'script' || destination === 'style')) {
++        // MSW passthrough can expose a bodyless 304 to module loading in Firefox.
++        delete request.headers['if-none-match'];
++        delete request.headers['if-modified-since'];
++      }
++      next();
++    });
++  },
++};
++
+ export default defineConfig(({ mode }) => {
+   const repoRoot=fileURLToPath(new URL('../../',import.meta.url));
+   const env = loadEnv(mode, repoRoot, '');
+@@ -17,7 +33,7 @@ export default defineConfig(({ mode }) => {
+   return {
+     envDir: repoRoot,
+     cacheDir,
+-    plugins: [react(),{name:'exclude-mock-worker-from-live',writeBundle(options){if(mocks)return;const file=join(options.dir||'dist','mockServiceWorker.js');if(existsSync(file))unlinkSync(file);}}],
++    plugins: [react(),...(mocks ? [completeDemoAssets] : []),{name:'exclude-mock-worker-from-live',writeBundle(options){if(mocks)return;const file=join(options.dir||'dist','mockServiceWorker.js');if(existsSync(file))unlinkSync(file);}}],
+     resolve: { alias: {
+       '@': fileURLToPath(new URL('./src', import.meta.url)),
+       '@botsales/contracts': fileURLToPath(new URL('../../packages/contracts/src/index.ts', import.meta.url)),
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\docs\\FRONTEND_SPACING_STANDARD.md" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\docs\\FRONTEND_SPACING_STANDARD.md"
+index c36fd85..3937174 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\docs\\FRONTEND_SPACING_STANDARD.md"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\docs\\FRONTEND_SPACING_STANDARD.md"
+@@ -208,6 +208,7 @@ const insetCss = `${tokens.space.lg}px`; // dùng ở raw CSS override, không p
+ | `surface.titleDescriptionGap` | 4 | 4 | 4 | Header slot |
+ | `surface.headerFlowGap` | 16 | 16 | 16 | Panel title/actions, wraps on narrow width |
+ | `form.fieldGap` | 16 | 16 | 16 | Shared FormFields |
++| `form.labelAfterGap` (CSS) | 4 | 4 | 4 | Shared theme: label trong flow → input; token hiện có |
+ | `form.inlineGap` | 8 | 8 | 8 | Shared FieldGroup |
+ | `actions.inlineGap` | 8 | 8 | 8 | Shared ActionGroup |
+ | `actions.relatedLinksGap` | 12 | 12 | 12 | Shared ActionGroup with `density="comfortable"` for related sibling controls |
+@@ -329,6 +330,8 @@ Form hiện có max-width 850 là geometry giới hạn độ dài dòng, không
+ 
+ **SPC-026 — Focus không bị cắt hoặc che.** Giữ outline 2 px và offset hiện hành; container clipping/rounded overflow phải chừa đúng vùng focus. Sticky header/footer/composer phải cho focused control nhìn thấy; có thể dùng scroll-padding/scroll-margin từ geometry header + token gap. Quy định nội bộ cố gắng giữ toàn target/focus nhìn thấy; AA 2.4.11 tối thiểu yêu cầu component không bị che hoàn toàn. [W3C Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html).
+ 
++**Profile outlined hiện hành (09/10/2026):** Shared theme đặt label trong normal flow, font meta12px và CSS role form.labelAfterGap4px; không floating transform/outline notch. Nhãn nhiều dòng tự tăng chiều cao khi chữ200%. Form/ref/aria/validation vẫn do MUI và owner nghiệp vụ quản lý. Toolbar wrap theo chỗ trống và min-width theo chữ; mock-tools geometry tại shell.demoControl. Native label/value/intrinsic-height/notch probes phải kiểm mobile và desktop, không suy từ overflow-only PASS. Floating-label snapshots trước profile này giữ nguyên là lịch sử.
++
+ **SPC-027 — Độ bền khi người dùng thay cách đọc.** Kiểm text resize 200% không mất nội dung/chức năng; reflow ở 320 CSS px cho content cuộn dọc. Bảng/plot cần hai chiều có phạm vi ngoại lệ riêng; label/text/actions xung quanh vẫn phải reflow. Viewport 320 chỉ là một probe, không tự chứng minh browser zoom thật. [W3C Resize Text](https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html), [W3C Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html).
+ 
+ Test override đồng thời line-height 1.5×font, paragraph-after 2×font, letter-spacing 0.12×font và word-spacing 0.16×font, không mất nội dung/chức năng. Đây là kiểm khả năng chịu override, không bắt mọi heading/body mặc định phải dùng các giá trị đó. [W3C Text Spacing](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html).
+@@ -560,7 +563,7 @@ Triển khai đo được và kiểm chứng của lượt này được ghi t
+ 
+ **SPC-066 — Bao phủ toàn bộ đường đưa style vào UI.** Gate phải xét JSX native/MUI/shared, System props, `sx`/`style`, spread/helper/callback, `slotProps`/theme overrides/`styled`, CSS imported/selector/pseudo/media, shorthand và logical properties. Alias wrapper, `createElement`, factory và indirect dynamic styling không được làm mất kiểm tra. Tập nguồn phải được phát hiện từ workspace/import graph, đối chiếu số file; root thiếu, parse lỗi, style import ngoài scope chưa phân loại hoặc không có file để scan phải thất bại. Generated files chỉ được loại theo owner cụ thể và phải qua `generate:check`. Không phát triển interpreter JavaScript tổng quát: phần chưa resolve được giữ `UNKNOWN` và chuyển cách viết về dạng hữu hạn.
+ 
+-**SPC-067 — Khóa cả giá trị và forwarding của shared API.** Với 27 shared exports và API mới, typography/spacing/appearance chỉ do owner chuẩn quyết định. Cấm generic `sx`/`style`/`className` escape hatch, unknown props và opaque forwarding vào UI owner; Composition public API không nhận opaque spread. RHF/native field spreads có name/value/ref/event/validation được giữ khi type/source chứng minh nội dung; style hoặc nguồn chưa resolve không được coi hợp lệ. ReactNode children/actions/extra/render và nested MUI slots được kiểm tại source tạo nội dung, không miễn vì wrapper đã đóng props. Geometry chỉ gồm key/đơn vị/responsive branch hợp lệ, không CSS injection, token không resolve hoặc đổi mật độ qua geometry. Variant runtime phải nằm trong union hữu hạn và mọi branch được phân tích/kiểm; dynamic unknown thất bại. Metadata/ARIA/ref/native form props mở đúng nhu cầu thật, forward rõ, giữ accessibility/behavior; không mở arbitrary props để giảm dòng. React `key` không phải prop style. Không sửa domain/API cache/permission để phục vụ layout.
++**SPC-067 — Khóa cả giá trị và forwarding của shared API.** Với mọi public Shared API và export mới được khám phá từ source và đối chiếu [catalog hiện hành](../apps/web/src/shared/ui/README.md), typography/spacing/appearance chỉ do owner chuẩn quyết định. Cấm generic `sx`/`style`/`className` escape hatch, unknown props và opaque forwarding vào UI owner; Composition public API không nhận opaque spread. RHF/native field spreads có name/value/ref/event/validation được giữ khi type/source chứng minh nội dung; style hoặc nguồn chưa resolve không được coi hợp lệ. ReactNode children/actions/extra/render và nested MUI slots được kiểm tại source tạo nội dung, không miễn vì wrapper đã đóng props. Geometry chỉ gồm key/đơn vị/responsive branch hợp lệ, không CSS injection, token không resolve hoặc đổi mật độ qua geometry. Variant runtime phải nằm trong union hữu hạn và mọi branch được phân tích/kiểm; dynamic unknown thất bại. Metadata/ARIA/ref/native form props mở đúng nhu cầu thật, forward rõ, giữ accessibility/behavior; không mở arbitrary props để giảm dòng. React `key` không phải prop style. Không sửa domain/API cache/permission để phục vụ layout.
+ 
+ **SPC-068 — Kiểm một owner trên quan hệ render thực.** Parent giữ inter-child gap; surface giữ inset; child chỉ giữ nhịp nội bộ. Fragment, conditional child, local wrapper, component con và portal không được che double boundary/inset. Với Panel có title, header giữ gap đến nội dung đầu 16px theo SPC-014; không cộng thêm top inset của body/child để thành 32/40px. Panel không title có thể chọn body inset theo profile. Hai surface khác nhau có inset riêng hợp lệ; không nhầm nesting thực với hai owner cùng một mép. Direct-child reset không đủ cho mọi wrapper: source closure và computed geometry phải đối chiếu. Icon–label trong một control là quan hệ nội bộ, không tự dùng role nhóm hành động; nếu cần role, bổ sung ở canonical owner có consumer và test. Không bù sai bằng negative margin, `!important`, selector override hoặc thêm wrapper rỗng.
+ 
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\docs\\FRONTEND_UI_IMPROVEMENT_PLAN.md" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\docs\\FRONTEND_UI_IMPROVEMENT_PLAN.md"
+index 19bb323..58b3986 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\docs\\FRONTEND_UI_IMPROVEMENT_PLAN.md"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\docs\\FRONTEND_UI_IMPROVEMENT_PLAN.md"
+@@ -1,6 +1,6 @@
+ # Kế hoạch hoàn thiện UI và kiến trúc React Frontend, theo dõi tiến độ
+ 
+-**CURRENT PHASE:** thứ tự/trạng thái duy nhất ở [§16.6](#ui-rollout-status), bổ sung kế hoạch hợp nhất Shared UI ngày 09/10/2026 theo [audit source](../evidence/frontend-shared-adoption-audit-20261008/REPORT.md). Chi tiết thực hiện ở [§16.19](#shared-consolidation-20261009). Kết quả WIDTH.W01–W04 ngày 08/10 giữ snapshot và giới hạn trong [report](../evidence/frontend-width-fixes-20261008/REPORT.md), không thay bằng chứng triển khai của batch mới.
++**CURRENT PHASE — READY_FOR_ACCEPTANCE_LOCAL_SCOPE Shared consolidation (09/10/2026):** [report](../evidence/frontend-shared-consolidation-20261009/REPORT.md), [ca nghiệm thu](../evidence/frontend-shared-consolidation-20261009/ACCEPTANCE_GUIDE.md). Thứ tự/trạng thái duy nhất tại §16.6; local mock và giới hạn nghiệm thu riêng.
+ 
+ **Mã kế hoạch:** FE-UI-FOLLOWUP-20261002 · **Phiên bản:** 16.0 · **Lập / cập nhật ngày:** 09/10/2026.
+ 
+@@ -85,7 +85,7 @@ Phiên bản 10.8 ghi W23 Dashboard DONE: 36→0 owner findings, strict source d
+ 
+ **Trạng thái UI migration trước policy rollout:** UI001–UI028 có technical handoff; UI checkpoints 140/140, UI028 C01–C05 `DONE 5/5` và W01–W36 `DONE 36/36` theo snapshot evidence được liên kết. Các số FE/UI này là tracker riêng, không phải S01–S20. Giới hạn giữ nguyên: W08 Empty thiếu paired pre-code baseline nên `DIAGNOSTIC_ONLY`; FE-G05 human/Narrator review `NOT_RUN`; FE-G09 chờ nghiệm thu người dùng. Kết quả thuộc Frontend local với synthetic MSW. Trạng thái rollout quy định hiện hành nằm tại đầu tài liệu và §16.6.
+ 
+-Các log run cũ FAIL/interrupted, strict scanner exit 1, warnings và giới hạn speech/hosted được giữ đúng. Các số 100% trong snapshot UI001–UI027 là tiến độ checkpoint ở phạm vi/ngày cũ; backlog hiện hành là 27/28 task và 137/140 checkpoint, không phải phần trăm chất lượng kiến trúc hoặc 9/9 gate. Đọc [mục 12.8](#128-audit-tài-liệu-và-bàn-giao-cuối--04102026) cho lịch sử và §14 cho phạm vi spacing mới.
++Các log run cũ FAIL/interrupted, strict scanner exit 1, warnings và giới hạn speech/hosted được giữ đúng. Các số 100% trong snapshot UI001–UI027 là tiến độ checkpoint ở phạm vi/ngày cũ; snapshot backlog trước rollout là 27/28 task và 137/140 checkpoint; trạng thái hiện hành chỉ ở §16.6 và CLI canonical, không phải phần trăm chất lượng kiến trúc hoặc 9/9 gate. Đọc [mục 12.8](#128-audit-tài-liệu-và-bàn-giao-cuối--04102026) cho lịch sử và §14 cho phạm vi spacing mới.
+ 
+ ## 2. Nguồn, phạm vi và nguyên tắc giữ kiến trúc
+ 
+@@ -2162,7 +2162,7 @@ Audit không chạy lại build/full E2E/native zoom/speech review/hosted CI. Ru
+ 
+ ### 16.3. Inventory và quyết định cho toàn bộ 27 shared exports
+ 
+-Số JSX/consumer files bên dưới lấy từ audit hiện hành; số consumer files không tính file định nghĩa của chính component. Nội bộ shared vẫn có thể là consumer. Không dùng tỷ lệ sử dụng để đánh giá readiness. Catalog ghi CURRENT/TARGET props/slots/semantics/acceptance của đủ 27 API; [shared contract review](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/shared-contract-review.md) là evidence nguồn, không phải policy thứ hai.
++**HISTORICAL_SNAPSHOT — inventory 27 API của lượt audit được liên kết bên dưới.** Số JSX/consumer files không tính file định nghĩa của chính component; nội bộ shared vẫn có thể là consumer. Không dùng tỷ lệ sử dụng để đánh giá readiness. Số symbol và consumer hiện hành lấy từ [catalog CURRENT/TARGET](../apps/web/src/shared/ui/README.md) và export discovery; [shared contract review](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/shared-contract-review.md) giữ bằng chứng snapshot, không phải policy thứ hai.
+ 
+ | Component | JSX / files | Owner/invariant cần giữ | Hướng xử lý |
+ |---|---:|---|---|
+@@ -2248,19 +2248,19 @@ Component nhận children vẫn phải kiểm nội dung được truyền; sour
+ 
+ ### 16.6. Kế hoạch triển khai chi tiết, dependency và tiến độ
+ 
+-**09/10/2026 — bổ sung hợp nhất Shared UI: PLANNED_NOT_IMPLEMENTED.** Nguồn finding là [audit Shared adoption](../evidence/frontend-shared-adoption-audit-20261008/REPORT.md#8-những-điểm-chưa-hợp-nhất-và-mức-ưu-tiên); yêu cầu hiện tại là lập kế hoạch. Ba điểm là cải tiến P2/P3, chưa được xác nhận thành lỗi geometry/runtime mới. Công việc thuộc S11/S12/S14 và chốt S19/S20 hiện có; tên nhóm bên dưới dùng truy vết batch, không tạo task/ledger hoặc đổi mẫu số FE140. [Chi tiết công việc, kiểm thử và bàn giao §16.19](#shared-consolidation-20261009).
++**09/10/2026 — hợp nhất Shared UI: READY_FOR_ACCEPTANCE_LOCAL_SCOPE.** P2 Inbox → P3 Dashboard → P3 tài liệu đã thực hiện tuần tự, full614/614 và required source gates đạt. Các lỗi xác nhận trong gate đã sửa tại owner: demo conditional304, Shared label overlap/click focus, Toolbar/demo geometry và variant row R10/R11 width0 và phân chia chiều cao composer Inbox. Regression trước/sau được giữ; native8 deep/108 all-route probes đạt. Canonical FE140/140,0 stale/blocked sau dependency revalidation; local technical scope hoàn tất, người dùng PENDING. Ba finding P2/P3 và các root fix bổ sung thuộc S11/S12/S14, chốt S19/S20 hiện có; không tạo ledger/mẫu số mới. [Chi tiết §16.19](#shared-consolidation-20261009), [report](../evidence/frontend-shared-consolidation-20261009/REPORT.md), [ca nghiệm thu](../evidence/frontend-shared-consolidation-20261009/ACCEPTANCE_GUIDE.md).
+ 
+ | Thứ tự / ưu tiên | Công việc | Dependency và owner | Trạng thái | Điều kiện đóng |
+ |---|---|---|---|---|
+-| 0 — chuẩn bị | Chốt baseline/impact của batch hợp nhất | Git/source, audit, UX/layout contract theo workflow chuẩn | PLANNED_NOT_IMPLEMENTED | Snapshot trước UI source edit; xác định owner/consumer/state và harness thực tế; giữ dirty work |
+-| 1 — P2 | Hợp nhất filter Inbox vào Toolbar.filters | Bước0; S11/S12, R05/R06; module Inbox dùng API Shared hiện có | PLANNED_NOT_IMPLEMENTED | Một owner inset/filter rhythm; URL/cursor/query/draft giữ đúng; regression/render/native ảnh hưởng đạt |
+-| 2 — P3 | Gộp hai CTA Dashboard trùng khai báo | Bước1 đã kiểm liên quan; S12, R04; local Dashboard owner | PLANNED_NOT_IMPLEMENTED | Một primary CTA declaration; đủ matrix quyền; labels/đích/focus/target giữ đúng |
+-| 3 — P3 | Đồng bộ mô tả số Shared APIs | Bước2 đã kiểm liên quan; S14; standard/catalog/current plan | PLANNED_NOT_IMPLEMENTED | Count từ export thực; cập nhật current wording, giữ historical snapshots và conditional notices |
+-| 4 — chốt | Kiểm toàn source cuối, evidence và demo | Bước1–3; S19/S20, canonical validators/generators | PLANNED_NOT_IMPLEMENTED | Required gates và full run đạt; hashes/coverage/dependency fresh; hướng dẫn nghiệm thu R04/R05/R06 đầy đủ |
++| 0 — chuẩn bị | Chốt baseline/impact | Git/source, audit và workflow contract | COMPLETE_SCOPED | Before6 renders, source hashes/dirty paths/owner impact được giữ |
++| 1 — P2 | Inbox Toolbar.filters + FieldGroup | Bước0; S11/S12, R05/R06 | COMPLETE_REGRESSION_ON_FINAL_SOURCE | URL/cursor/query/draft/metadata, responsive, axe/keyboard/native đạt |
++| 2 — P3 | Một primary CTA Dashboard | Bước1 đã kiểm; S12, R04 | COMPLETE_REGRESSION_ON_FINAL_SOURCE |8 tuples quyền, label/href, độc lập create, focus/hover/active/modifier/target đạt |
++| 3 — P3 | Wording Shared API discovery | Bước2 đã kiểm; S14, standard/catalog/current plan | COMPLETE_REGRESSION_ON_FINAL_SOURCE |40 contracts đạt; current export28, không pin count; snapshot lịch sử giữ nguyên |
++| 4 — chốt | Full source/evidence/demo | Bước1–3; S19/S20/canonical owners | READY_FOR_ACCEPTANCE_LOCAL_SCOPE |Full run/gates, compiled/native/baseline/hash; FE dependency receipts; nghiệm thu người dùng riêng |
+ 
+ **Giới hạn hồ sơ ở lượt lập kế hoạch:** [planning record](../evidence/frontend-shared-consolidation-20261009/PLANNING_RECORD.json) chỉ ghi baseline trước/sau chỉnh tài liệu. Không sửa React/API/theme/tokens/tests, không chạy mới unit/E2E/build và không đóng công việc source. Thay đổi file plan làm fingerprint tài liệu của các manifest trước trở thành snapshot lịch sử; giữ nguyên logs/hashes cũ, tái xác minh closure bằng công cụ canonical trong bước4, không sửa hash để nhận PASS.
+ 
+-**08/10/2026 — WIDTH.W01–W04: READY_FOR_ACCEPTANCE_LOCAL_SCOPE.** Người dùng yêu cầu triển khai các finding đã đo, sửa tận gốc theo ưu tiên. [Contract/baseline](../evidence/frontend-width-fixes-20261008/CONTRACT.md); snapshot phân tích trước sửa giữ nguyên. Các dòng WIDTH dưới đây thuộc nguồn trạng thái §16.6, không tạo tracker thứ hai hoặc tăng mẫu số FE.
++**HISTORICAL_SNAPSHOT — 08/10/2026 — WIDTH.W01–W04: READY_FOR_ACCEPTANCE_LOCAL_SCOPE tại source trước Shared consolidation.** Người dùng yêu cầu triển khai các finding đã đo, sửa tận gốc theo ưu tiên. [Contract/baseline](../evidence/frontend-width-fixes-20261008/CONTRACT.md); snapshot phân tích trước sửa giữ nguyên. Các dòng WIDTH dưới đây thuộc nguồn trạng thái §16.6, không tạo tracker thứ hai hoặc tăng mẫu số FE.
+ 
+ | Thứ tự | Công việc | Owner/phạm vi | Trạng thái | Điều kiện đóng |
+ |---|---|---|---|---|
+@@ -2300,21 +2300,21 @@ Chỉ chuyển các hàng batch sang COMPLETE khi đúng regression và final so
+ | S03 | P0 /S01,S02 | Refresh inventory/hashes và design/evidence scope contract; xác minh pinned TypeScript resolution, gồm fallback tooling | Resolve import/style/tooling inputs hoặc ghi rõ unsupported FAIL; làm rõ originals/generated/ledgers bất biến; chụp baseline đã tải xong trước mỗi source batch | DONE_INTAKE — [proof](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/status.json); render before vẫn bắt buộc trước UI edit |
+ | S04 | P0 /S03 | Ba gates hiện có: root/parser/scope fail-closed; discovery JSX/native/CSS/HTML/assets/packages/slots và xác định gate áp dụng | Reject empty/missing root/import/new file/parse failure; expected inventory = scan coverage; generated/library paths có gate riêng | DONE_DISCOVERY_SCOPED — [coverage proof](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S04-coverage.json); final semantic/source acceptance vẫn qua S05–S10/S19 |
+ | S05 | P0 /S04 | Resolver/binding/provenance nhỏ qua TypeScript Program/tsconfig/realpath/alias/barrel/namespace/element-access/shadow | P01/02/08/19/20 không lọt; canonical aliases PASS; module public entry/boundary đúng; không tin dựa vào tên | DONE_BINDING_CAPABILITY_SCOPED — [proof](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S05-status.json), [review](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S05-binding-review.md); S05 prerequisite đóng, trạng thái S06–S08 theo các hàng tiếp theo; final acceptance còn mở |
+-| S06 | P0 /S05 | Public canonical values readonly; quét consumer writes tại layout/visual/token owners | P09 mutation/alias/Object.assign FAIL; reads/generator/types đúng; consumer không sửa runtime canonical data | DONE_GUARD_CAPABILITY_SCOPED — canonical values readonly và consumer-write guards đã implement; current source/gate revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). Không dùng counts của closeout cũ làm current acceptance. |
+-| S07 | P0 /S05 | Mọi style entry: native/MUI spread, styled/GlobalStyles/style-tag/createElement, ReactNode creators, slotProps/CSS | Gate kiểm JSX/DOM/CSS entry và producer; positive ref/name/event/native props PASS; negative bypass FAIL; unresolved style path UNKNOWN/strict FAIL | DONE_STYLE_PRODUCER_COVERAGE — style entry discovery/binding đã implement; giữ [closeout lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S07-final.md). Current source/build và negative regressions theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). |
+-| S08 | P0 /S05,S07 | Value/unit provenance: shorthand/logical vars/calc/aliases/computed arithmetic/theme/breakpoint; metadata input của generated assets | Chặn P03–07/19/21–25 tại đúng gate; canonical/system/forced-color/intrinsic geometry PASS theo scope, không làm tròn mọi số | DONE_VALUE_UNIT_PROVENANCE — finite value/unit/source provenance đã implement; [closeout lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S08-final.md) giữ ngày/scope riêng. Current checks theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). |
+-| S09 | P0 /S05,S07 | Role/ancestry ownership theo binding; wrappers/fragments/conditionals/QueryState/portals/native render | P10–15/20 FAIL; distinct nested surfaces PASS; ownership chưa resolve không được coi sạch; affected action/control edges nhìn thấy phải đúng | DONE_OWNERSHIP_SCOPED — checker xử lý finite wrappers/fragments/conditional roots, shared gap owners và ActionGroup; các sửa spacing ở Approvals, Devices, P&L và Shipments được giữ. Current composition/route measurements theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md); không suy mọi dynamic branch đã render. |
+-| S10 | P1 /S05,S09 | Khóa đủ 28 public API và value/slot closure; normalize safe as const/satisfies; flow/geometry/columns/variant/responsive | F01 PASS; unknown override/keys/values/branches FAIL; giữ valid native form/ref/ARIA/data/RHF; source/types/catalog khớp mọi export | COMPLETE_LOCAL_CONTRACT — 22 components + 6 compositions có source/types/catalog và named direct-render cases; `Column<T>` là supporting type. Catalog line references và JSX counts có regression đối chiếu TypeScript symbols. Hai conditional notices giữ lifecycle rationale, không tạo consumer giả. Current checks/limits theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). |
+-| S11 | P0 /S03,S09,S15 | Fresh baseline → sửa owner ở ba titled Panel cases của Finance → rà toàn bộ Panel/page/shell consumers theo §16.11 | Header last visible → first body 16±0.5 CSS px ở affected small/large; không double inset; giữ h2/actions/bottom inset/behavior | DONE_OWNER_FIX_SCOPED — existing shared Panel owns header/body boundary; giữ [paired before/after lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S11-shared-panel-after-fix-20261007.json). WIDTH giữ owner boundary của Panel; DetailLine chuyển sang atomic slot theo W04. Test Finance đo first Alert thật và atomic DetailLine wrapper/inner row riêng, giữ header gap 16±0.5px, body top 0px và responsive inline/bottom 16/24px; revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). |
+-| S12 | P1 /S03,S08,S09,S10,S15 | Inventory 86 QueryState placements; state geometry/variant nhỏ nhất cần thiết; intrinsic link role; Pager regression; rollout toàn bộ 16 modules/24 feature files, gồm Imports clearance đã được người dùng đánh dấu nếu S15 tái hiện | Không dùng universal 240 cho inline; giữ pending/stale/error/refetch/draft/URL/permission; safe malformed-page behavior sau repro; mọi file/route/slot được EDIT/KEEP_VERIFY | DONE_CONSUMER_PROFILES_SCOPED — QueryState section/inline profiles và Pager malformed-cursor handling đã implement; giữ [migration/dispositions lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-profile-migration-20261007.json). Current consumer symbols, source gates và browser route/state verification theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). |
++| S06 | P0 /S05 | Public canonical values readonly; quét consumer writes tại layout/visual/token owners | P09 mutation/alias/Object.assign FAIL; reads/generator/types đúng; consumer không sửa runtime canonical data | DONE_GUARD_CAPABILITY_SCOPED — canonical values readonly và consumer-write guards đã implement; current source/gate revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). Không dùng counts của closeout cũ làm current acceptance. |
++| S07 | P0 /S05 | Mọi style entry: native/MUI spread, styled/GlobalStyles/style-tag/createElement, ReactNode creators, slotProps/CSS | Gate kiểm JSX/DOM/CSS entry và producer; positive ref/name/event/native props PASS; negative bypass FAIL; unresolved style path UNKNOWN/strict FAIL | DONE_STYLE_PRODUCER_COVERAGE — style entry discovery/binding đã implement; giữ [closeout lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S07-final.md). Current source/build và negative regressions theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
++| S08 | P0 /S05,S07 | Value/unit provenance: shorthand/logical vars/calc/aliases/computed arithmetic/theme/breakpoint; metadata input của generated assets | Chặn P03–07/19/21–25 tại đúng gate; canonical/system/forced-color/intrinsic geometry PASS theo scope, không làm tròn mọi số | DONE_VALUE_UNIT_PROVENANCE — finite value/unit/source provenance đã implement; [closeout lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261006/S08-final.md) giữ ngày/scope riêng. Current checks theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
++| S09 | P0 /S05,S07 | Role/ancestry ownership theo binding; wrappers/fragments/conditionals/QueryState/portals/native render | P10–15/20 FAIL; distinct nested surfaces PASS; ownership chưa resolve không được coi sạch; affected action/control edges nhìn thấy phải đúng | DONE_OWNERSHIP_SCOPED — checker xử lý finite wrappers/fragments/conditional roots, shared gap owners và ActionGroup; các sửa spacing ở Approvals, Devices, P&L và Shipments được giữ. Current composition/route measurements theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md); không suy mọi dynamic branch đã render. |
++| S10 | P1 /S05,S09 | Khóa đủ 28 public API và value/slot closure; normalize safe as const/satisfies; flow/geometry/columns/variant/responsive | F01 PASS; unknown override/keys/values/branches FAIL; giữ valid native form/ref/ARIA/data/RHF; source/types/catalog khớp mọi export | COMPLETE_LOCAL_CONTRACT — 22 components + 6 compositions có source/types/catalog và named direct-render cases; `Column<T>` là supporting type. Catalog line references và JSX counts có regression đối chiếu TypeScript symbols. Hai conditional notices giữ lifecycle rationale, không tạo consumer giả. Current checks/limits theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
++| S11 | P0 /S03,S09,S15 | Fresh baseline → sửa owner ở ba titled Panel cases của Finance → rà toàn bộ Panel/page/shell consumers theo §16.11 | Header last visible → first body 16±0.5 CSS px ở affected small/large; không double inset; giữ h2/actions/bottom inset/behavior | DONE_OWNER_FIX_SCOPED — existing shared Panel owns header/body boundary; giữ [paired before/after lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S11-shared-panel-after-fix-20261007.json). Shared batch giữ owner boundary của Panel, Inbox dùng Toolbar.filters + FieldGroup flush; WIDTH DetailLine chuyển sang atomic slot theo W04. Test Finance đo first Alert thật và atomic DetailLine wrapper/inner row riêng, giữ header gap 16±0.5px, body top 0px và responsive inline/bottom 16/24px; revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
++| S12 | P1 /S03,S08,S09,S10,S15 | Inventory 86 QueryState placements; state geometry/variant nhỏ nhất cần thiết; intrinsic link role; Pager regression; rollout toàn bộ 16 modules/24 feature files, gồm Imports clearance đã được người dùng đánh dấu nếu S15 tái hiện | Không dùng universal 240 cho inline; giữ pending/stale/error/refetch/draft/URL/permission; safe malformed-page behavior sau repro; mọi file/route/slot được EDIT/KEEP_VERIFY | DONE_CONSUMER_PROFILES_SCOPED — QueryState section/inline profiles và Pager malformed-cursor handling đã implement; giữ [migration/dispositions lịch sử](../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S12-query-state-profile-migration-20261007.json). Inbox R05/R06 và primary CTA R04 hợp nhất bằng API hiện có; URL/cursor/draft và8 tuples quyền được kiểm. Current consumer symbols, source gates và browser route/state verification theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
+ | S13 | P2 /S02,S10 | Runtime cleanup tùy chọn: lifecycle của hai notice, metadata 422 sau repro, phân loại close offset, format các owner đã sửa | KEEP/adopt/remove rationale bắt buộc qua S14/S19; cleanup N/A nếu không có defect/benefit; defect tái hiện phải nâng priority vào S11/S12, không trì hoãn | N/A_OPTIONAL_CLEANUP — S13 chỉ là cleanup tùy chọn; các defect W01–W04 đã tái hiện và được xử lý trong mandatory batch trên. Lifecycle disposition của hai notice giữ tại S10/S14; không xóa chỉ vì 0 consumer. Defect mới phải mở mandatory remediation theo bằng chứng. |
+-| S14 | P1 /S02,S05,S10 | Policy check/fixtures thường trực, nhỏ, nếu checker hiện có chưa đáp ứng; IDs/pointers/catalog export-type-role-consumer mapping | Missing/duplicate/stale/export mới chưa có mapping FAIL; quyết định lifecycle của toàn bộ 28 API có lý do; generated/reference permissions đúng | COMPLETE_CATALOG_LIFECYCLE_SCOPED — 28 exported React APIs có mapped contract/consumer hoặc lifecycle rationale. Giữ conditional `PartialDataNotice`/`CapabilityUnavailable`; catalog CURRENT không còn ghi mọi API là chưa implement. Current API/catalog regression và limits theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). |
+-| S15 | P0 /S03,S09,S10 | Gia cố browser collector và ownership regression hiện có trước khi sửa owner: readiness/minimum observations/profile/slot/state/variant | Reject wrong route/loading/zero groups; baseline tái hiện ba Finance boundary và kiểm user-reported `/s/shop-demo/imports` alert→demo-controls clearance tại 806×884; positive distinct surface/fragment/wrapped actions PASS; final acceptance sau S11/S12 | DONE_READINESS_AND_ANCESTRY_SCOPED — actual route readiness và positive ancestry collectors đã implement. Các captures/log closeout trước đây giữ source/date scope riêng; current full-route DOM/ready/empty/role revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md), không nhận hash cũ là current. |
+-| S16 | P1 /S11,S12,S15 | Reflow/text 200%/browser zoom 200%/focus/hit/occlusion/portal/native fallback theo owner hiện có | 320 CSS px; native text/zoom có method riêng; critical target/action/draft không mất; method chưa chạy ghi NOT_RUN | COMPLETE_METHODS_LOCAL_SOURCE — dialog đối chiếu: browser zoom 200% 1/1 và text-only 200% 1/1; W30: native 5/5 mỗi method và browser stress 10/10 trên source cuối. Native current47/47 gồm WIDTH14 và inherited33; mỗi method có hashes riêng. [Bằng chứng hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). Speech/broad human conformance NOT_RUN; captures 07/10 giữ lịch sử. |
+-| S17 | P1 /S03,S14,S15,S16 | Check/fixtures thường trực, nhỏ, về evidence completeness/provenance; dùng task artifacts hiện có | Missing/stale/fake before/nonzero exit/incomplete file-route-slot-state coverage strict FAIL; N/A có lý do; validator không tự chứng minh log đúng | COMPLETE_LOCAL_MANIFEST_SCOPED — current manifest được refresh từ command/log/exit/source fingerprints; 11 validator, 39 contract và 82 layout fixtures PASS. [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). Validator đo provenance/coverage đã khai báo, không tự xác nhận screenshot hay acceptance. |
+-| S18 | P1 /S04,S05,S06,S07,S08,S09,S10,S14,S17 | Nối required checks vào verify/workflow đang hoạt động ../.github/workflows/frontend.yml; trigger cho chính workflow/UI closure, timeout/artifacts | Local equivalent chạy đủ; không che workflow/script failures; parent workflow active/nested retired đúng; không nhận hosted PASS | COMPLETE_LOCAL_WIRING_SCOPED — root `verify` và full Chromium/Firefox E2E được chạy local trên checkout hiện hành, gồm strict gates và failure propagation. [kiểm thực tế hiện hành](../evidence/frontend-width-fixes-20261008/REPORT.md). Hosted CI/branch protection NOT_RUN; không mở rộng local PASS thành hosted PASS. |
+-| S19 | P0 /S11,S12,S14,S16,S17,S18 | Inventory/source/API/consumer/route-state, all gates và artifact cuối | Zero unknown/missing/stale mandatory proof trong local scope | COMPLETE_LOCAL_AUTOMATED_REVALIDATION — 600/600 full Chromium/Firefox; 6/6 built-demo; 175 unit; 28 shared APIs; 54 routes/432 state cells;216 compiled route observations/50 focused cases/47 native scenarios; [report source cuối](../evidence/frontend-width-fixes-20261008/REPORT.md). |
+-| S20 | P0 /S19 | Diff/hash/catalog/gates/FE tracker/demo và acceptance guide | Local technical handoff; giới hạn riêng | READY_FOR_ACCEPTANCE_LOCAL_SCOPE — [báo cáo](../evidence/frontend-width-fixes-20261008/REPORT.md), [ca nghiệm thu](../evidence/frontend-width-fixes-20261008/ACCEPTANCE_GUIDE.md); không tự nhận owner/speech/hosted/Backend. |
++| S14 | P1 /S02,S05,S10 | Policy check/fixtures thường trực, nhỏ, nếu checker hiện có chưa đáp ứng; IDs/pointers/catalog export-type-role-consumer mapping | Missing/duplicate/stale/export mới chưa có mapping FAIL; quyết định lifecycle của toàn bộ 28 API có lý do; generated/reference permissions đúng | COMPLETE_CATALOG_LIFECYCLE_SCOPED — Discovery hiện28 exported React APIs có mapped contract/consumer hoặc lifecycle rationale; SPC-067 phủ mọi export mới, không pin count. Giữ conditional `PartialDataNotice`/`CapabilityUnavailable`; catalog CURRENT không còn ghi mọi API là chưa implement. Current API/catalog regression và limits theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
++| S15 | P0 /S03,S09,S10 | Gia cố browser collector và ownership regression hiện có trước khi sửa owner: readiness/minimum observations/profile/slot/state/variant | Reject wrong route/loading/zero groups; baseline tái hiện ba Finance boundary và kiểm user-reported `/s/shop-demo/imports` alert→demo-controls clearance tại 806×884; positive distinct surface/fragment/wrapped actions PASS; final acceptance sau S11/S12 | DONE_READINESS_AND_ANCESTRY_SCOPED — actual route readiness và positive ancestry collectors đã implement. Các captures/log closeout trước đây giữ source/date scope riêng; current full-route DOM/ready/empty/role revalidation theo [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md), không nhận hash cũ là current. |
++| S16 | P1 /S11,S12,S15 | Reflow/text 200%/browser zoom 200%/focus/hit/occlusion/portal/native fallback theo owner hiện có | 320 CSS px; native text/zoom có method riêng; critical target/action/draft không mất; method chưa chạy ghi NOT_RUN | COMPLETE_METHODS_AFFECTED_LOCAL_SOURCE — Shared batch có3 browser zoom200% và5 Firefox text-only200% native scenarios cho R04/R05/R06 và editor R10/R11, gồm Inbox desktop1600 với nháp9 dòng và108 all-route label probes (54 routes×390/1280),22 exact-text ellipsis recoveries (21 list links và1 Select) theo SPC-051; [proof hiện hành](../evidence/frontend-shared-consolidation-20261009/native-current.json).47 cases WIDTH là snapshot lịch sử, không claim đã chạy lại toàn bộ. Speech/broad human conformance NOT_RUN. |
++| S17 | P1 /S03,S14,S15,S16 | Check/fixtures thường trực, nhỏ, về evidence completeness/provenance; dùng task artifacts hiện có | Missing/stale/fake before/nonzero exit/incomplete file-route-slot-state coverage strict FAIL; N/A có lý do; validator không tự chứng minh log đúng | COMPLETE_LOCAL_MANIFEST_SCOPED — current manifest được refresh từ command/log/exit/source fingerprints; 11 validator, 40 contract và 82 layout fixtures PASS. [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). Validator đo provenance/coverage đã khai báo, không tự xác nhận screenshot hay acceptance. |
++| S18 | P1 /S04,S05,S06,S07,S08,S09,S10,S14,S17 | Nối required checks vào verify/workflow đang hoạt động ../.github/workflows/frontend.yml; trigger cho chính workflow/UI closure, timeout/artifacts | Local equivalent chạy đủ; không che workflow/script failures; parent workflow active/nested retired đúng; không nhận hosted PASS | COMPLETE_LOCAL_WIRING_SCOPED — root `verify` và full Chromium/Firefox E2E được chạy local trên checkout hiện hành, gồm strict gates và failure propagation. [kiểm thực tế hiện hành](../evidence/frontend-shared-consolidation-20261009/REPORT.md). Hosted CI/branch protection NOT_RUN; không mở rộng local PASS thành hosted PASS. |
++| S19 | P0 /S11,S12,S14,S16,S17,S18 | Inventory/source/API/consumer/route-state, all gates và artifact cuối | Zero unknown/missing/stale mandatory proof trong local scope | READY_FOR_ACCEPTANCE_LOCAL_SCOPE — 614/614 full Chromium/Firefox;6/6 built-demo;175 unit;28 discovered Shared APIs;54 routes/432 state dispositions;216 compiled observations/30 focused cases/8 deep native scenarios/108 all-route label probes; [report source cuối](../evidence/frontend-shared-consolidation-20261009/REPORT.md). |
++| S20 | P0 /S19 | Diff/hash/catalog/gates/FE tracker/demo và acceptance guide | Local technical handoff; giới hạn riêng | READY_FOR_ACCEPTANCE_LOCAL_SCOPE — [báo cáo](../evidence/frontend-shared-consolidation-20261009/REPORT.md), [ca nghiệm thu](../evidence/frontend-shared-consolidation-20261009/ACCEPTANCE_GUIDE.md); không tự nhận owner/speech/hosted/Backend. |
+ 
+ **Thứ tự thực thi:** S03 → S04–05 → S06–09 → S10 → S15 readiness/regression harness → S11 confirmed owner fix → S12 waves → S16 → S17–18 → S19–20. S14 chạy sau S10, song song owner migration. S13 cleanup P2 không là prerequisite của S19: classification/lifecycle decisions vẫn bắt buộc ở S14/S19, runtime cleanup chỉ làm nếu cần; defect thật phải nâng vào mandatory wave. Không để cải thiện readability tùy chọn trì hoãn sửa lỗi đã chứng minh. S15 tạo harness trước sửa; final evidence dùng source cuối, không lấy baseline sau khi sửa.
+ 
+@@ -2339,7 +2339,7 @@ Markdown không bảo đảm người có quyền source sẽ không bypass. Enf
+ | Nhóm | Negative phải bắt | Positive phải giữ | Scope |
+ |---|---|---|---|
+ | Binding/source | Local trusted-name spoof, shadow/barrel/renamed styled, mutation | Canonical resolved alias/path, readonly access | Source TS/TSX + CSS import closure |
+-| API/value | Generic style/unknown metadata/spread, invalid responsive/geometry/variant | Native form/ref/ARIA/valid cast/finite branches | 27 shared components + new export/type owners |
++| API/value | Generic style/unknown metadata/spread, invalid responsive/geometry/variant | Native form/ref/ARIA/valid cast/finite branches | Mọi public Shared API và export/type owner mới theo discovery/catalog |
+ | Owner | Double gap/inset qua wrapper/conditional, fake Paper role | Flush body, distinct nested surfaces, table/toolbar slots | Compositions + Panel/shell/profile |
+ | Visual/units | Font/border shorthand raw, undefined variable, px×8, selector override | Theme variant/canonical CSS variable/forced colors | Mapping + consumer style |
+ | Scope/parser | Empty root/missing new file/parse error/missing import | Inventory match/generator fresh | Mỗi strict gate và wiring |
+@@ -2356,14 +2356,14 @@ Chỉ thay trạng thái mỗi bước khi acceptance ở hàng tương ứng c
+ 
+ ### 16.10. Coverage từng file, không bỏ sót code UI
+ 
+-Nguồn tái lập: [inventory.mjs](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/inventory.mjs), [inventory.json](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/inventory.json), [coverage-review](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/coverage-review.md). Đây là audit của task hiện tại, không phải runtime gate thường trực hoặc FE tracker.
++Nguồn tái lập: [inventory.mjs](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/inventory.mjs), [inventory.json](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/inventory.json), [coverage-review](../evidence/frontend-ui-improvements/ui-governance-unified-20261006/coverage-review.md). **HISTORICAL_SNAPSHOT — inventory audit 06/10/2026**, không phải runtime gate thường trực hoặc FE tracker. Inventory hiện hành theo [batch source cuối](../evidence/frontend-shared-consolidation-20261009/inventory-current.json); các số và NOT_RUN bên dưới thuộc lượt audit ban đầu.
+ 
+ Mỗi hàng có path/hash/category/owner/editPolicy/plannedTreatment/requiredVerification/rolloutSteps/gitState/import references/route impact; verificationStatus ở lượt này là NOT_RUN_THIS_DOCS_TURN. KEEP_VERIFY yêu cầu assessment/check khi nhận việc triển khai, không có nghĩa “file không đổi = đã đạt”. Khi có finding thì chuyển EDIT_VERIFY và chỉ sửa vùng liên quan. Deleted paths có RETIRED_VALIDATE; không tự động khôi phục deletion đang có trong dirty checkout.
+ 
+ | Boundary | Inventory/owner cần reconcile | Triển khai/kiểm |
+ |---|---|---|
+ | App/root/native/Shell/style | main.tsx, index.html, app files, bootstrap.css, routes/fallback/feedback/recovery/nav/banner/demo/footer | S03–09 scope/style; S11–12 assessment; S15–19 states/render/focus |
+-| Shared foundation | 27 API owners, theme/layout/visual, model/API hooks/helpers | S05–10 binding/value/API; S11–14 minimal fixes/catalog; S19: mọi consumer |
++| Shared foundation | Mọi public Shared API owners theo export discovery, theme/layout/visual, model/API hooks/helpers | S05–10 binding/value/API; S11–14 minimal fixes/catalog; S19: mọi consumer |
+ | Feature UI và helpers | 24 files / 16 modules; JSX + import/parser/chart/preview helpers | Waves §16.11; source/read/action states, không chỉ index.tsx |
+ | Generated app outputs | 11 outputs theo scripts/generate.mjs, gồm contracts/tokens/CSS/icon/manifest | GENERATE_VERIFY; input/version/freshness/isolation; không hand edit |
+ | Public/PWA/vendor/demo | app-sw.js/sample CSV / pinned MSW worker / mock state/locale/data | Boundary/paths/persistence/capability/source-gate applicability; worker/generated/library owner rõ |
+@@ -2372,7 +2372,7 @@ Mỗi hàng có path/hash/category/owner/editPolicy/plannedTreatment/requiredVer
+ 
+ **Đối chiếu bắt buộc:** (1) disk partition = relevant + excluded, có count/reason; (2) xem xét tracked present/deleted/untracked/ignored active entries; (3) đối chiếu tsconfig/Vite/HTML/CSS/assets/import closure với router thực tế và manifest; (4) mọi hàng có treatment/verification reason/step; (5) source trong diff added/moved/deleted không mất khỏi scope; (6) required source coverage và affected route/slot/state cases khớp phạm vi đã khai báo. File/import/route/export mới phải mở scope từ source, không cố định 355/54/27 làm allowlist. Đây là mục tiêu S04/S14/S17/S19; inventory docs chỉ chứng minh discovery/classification, chưa chứng minh tuân thủ khi render.
+ 
+-**Resolution còn phải làm ở S03:** fallback require của global TypeScript trong môi trường còn UNKNOWN path/version. AI xác minh pinned local compiler path/version hoặc thay resolver hữu hạn, nhỏ, trước source edit. Ba temp compile paths và một domain-scenarios.cjs đã có mapping source rõ; runtime app closure không có unresolved first-party imports. Không ghi “full strict coverage đã sạch” từ mapping này; audit đã chứng minh resolver gates còn bypass.
++**HISTORICAL_SNAPSHOT — resolution được ghi tại audit S03:** fallback require của global TypeScript trong môi trường còn UNKNOWN path/version. AI xác minh pinned local compiler path/version hoặc thay resolver hữu hạn, nhỏ, trước source edit. Ba temp compile paths và một domain-scenarios.cjs đã có mapping source rõ; runtime app closure không có unresolved first-party imports. Không ghi “full strict coverage đã sạch” từ mapping này; audit đã chứng minh resolver gates còn bypass.
+ 
+ ### 16.11. Thứ tự wave toàn bộ module và owner ngoài module
+ 
+@@ -2380,7 +2380,7 @@ Mỗi hàng có path/hash/category/owner/editPolicy/plannedTreatment/requiredVer
+ 
+ | Wave | Module/owner | Files /routes tại snapshot | Nội dung cần chốt và kiểm |
+ |---|---|---|---|
+-| 0 /P0 | app/root/Shell + shared foundation | Ngoài 24 feature files; toàn bộ affected routes khi shared owner đổi | Single providers/native first paint, page edges/demo tools/nav/portals; 27 API value/slots; theme/fields/actions; guarded baseline |
++| 0 /P0 | app/root/Shell + shared foundation | Ngoài 24 feature files; toàn bộ affected routes khi shared owner đổi | Single providers/native first paint, page edges/demo tools/nav/portals; Mọi public API values/slots theo discovery; theme/fields/actions; guarded baseline |
+ | 1 /P0 | finance | 3 files /R20,R21,R22,R48,R49,R50 | Sửa owner của ba titled Panels đã xác nhận lỗi; demo-account-preview/report-explanations giữ semantics; cards/form/query/error/long text |
+ | 2 /P1 | catalog | 3 files /R09–R14 | index/imports/import-file: uploader/mapping/group spacing, field label/error/RHF/native file/ref; CSV dry run/result, cursor/edit dialog |
+ | 2 /P1 | orders | 2 files /R17–R19,R43 | index/demo-address-preview: checkout/list/draft/action/confirm, permission/pending/conflict/unknown; không đổi payload formatting |
+@@ -2425,7 +2425,7 @@ S20 bàn giao change/reason/tests/risks, final hashes/commands/exits thực tế
+ |---|---|---|
+ | 1 / P0 / S03 | Refresh từng file/hash/owner/consumer; xác minh compiler local đúng pin; freeze baseline thật trước source edit | Scope đầy đủ và resolvable; ghi expected route/state/slot/variant. Snapshot cũ không thay intake mới |
+ | 2 / P0 / S04–S09 | Gia cố gates hiện có từ bypass đã chứng minh: scope/parser → binding resolver → mutation/style/value/owner | Positive giữ canonical/native forms; negative/UNKNOWN bắt đúng. Nếu bắt lỗi source thật, giữ acceptance mở theo capability note §16.6, không che findings |
+-| 3 / P1 với prerequisite P0 / S10,S14,S15 | Chốt props/slots hữu hạn cho 27 API và lifecycle; browser harness phải bắt sai readiness/zero observations và Finance defect trước sửa | Không mở generic styles; native/ref/RHF/ARIA hợp lệ vẫn chạy. Harness có reproduction trước owner migration |
++| 3 / P1 với prerequisite P0 / S10,S14,S15 | Chốt props/slots hữu hạn cho mọi public API theo discovery và lifecycle; browser harness phải bắt sai readiness/zero observations và Finance defect trước sửa | Không mở generic styles; native/ref/RHF/ARIA hợp lệ vẫn chạy. Harness có reproduction trước owner migration |
+ | 4 / P0 / S11 | Sửa title-to-body owner đã xác nhận ở Finance; kiểm Panel/Shell/page consumers toàn impact | Khoảng cách theo contract trên phần tử nhìn thấy; không double inset, mất heading/action/draft hoặc sửa CSS symptom |
+ | 5 / P1 / S12, waves 2–5 | Migrate lần lượt Catalog/Orders/Procurement → Customers/Inventory/Fulfillment → Workspace/Bot/Integrations/Knowledge/Notifications/Operations → Inbox/Reports/Dashboard | Từng file EDIT_VERIFY hoặc KEEP_VERIFY có rationale; QueryState placement và async/permission branches được kiểm. Geometry đặc thù có profile, không ép form rhythm |
+ | 6 / P1 / S16–S18 | Reflow/native resize/zoom/focus và evidence completeness; wiring verify/active workflow | Phương pháp và exits thật; thiếu mandatory proof giữ open. Không nhận cấu hình CI là hosted PASS |
+@@ -2552,7 +2552,7 @@ Khoảng cách chuẩn và font lấy từ [standard](FRONTEND_SPACING_STANDARD.
+ 
+ #### C. Quyết định cho toàn bộ 27 shared APIs
+ 
+-Catalog [CURRENT/TARGET](../apps/web/src/shared/ui/README.md) là hợp đồng từng API; bảng dưới chốt hướng migration, không mô tả source đã hoàn thành.
++**HISTORICAL_SNAPSHOT — quyết định migration cho 27 API của lượt audit ban đầu.** Catalog [CURRENT/TARGET](../apps/web/src/shared/ui/README.md) và export discovery là nguồn danh sách hiện hành; bảng dưới giữ quyết định theo thời điểm ghi, không mô tả source đã hoàn thành.
+ 
+ | API | Quyết định / việc cần làm | Bước |
+ |---|---|---|
+@@ -2608,7 +2608,7 @@ Không tính tỷ lệ Enterprise từ số task/docs/rules. Chỉ nhận scope
+ | Giá trị design | `../botsales-kit/design/tokens.json` và generator | Nguồn token nguyên tử; output sinh không sửa tay. `DESIGN.md` diễn đạt nhận diện; không trở thành nguồn token/layout thứ hai. |
+ | UI rules/workflow | `docs/FRONTEND_SPACING_STANDARD.md`, SPC-001–075 | Nguồn normative duy nhất cho spacing, typography/visual ownership, composition, exception, quy trình và acceptance. Không lập rule set hoặc checklist song song. |
+ | Runtime shared owner | `theme.ts`, `layout.ts`, `visual.ts`, `components.tsx`, `composition.tsx` | Code/types là sự thật về CURRENT runtime; token → mapping/theme → shared owner → feature consumer. §16.16 S10/S14 phải reconcile mọi key với rule/catalog hoặc ghi lý do internal/geometry. |
+-| Public shared catalog | `apps/web/src/shared/ui/README.md` | CURRENT/TARGET và quyết định KEEP/MIGRATE/lifecycle theo consumer; không là nguồn status/scale thứ hai. Có 21 component exports + 6 composition exports (27 React components); `Column<T>` là exported supporting type của DataTable và phải được bao trong contract/test. |
++| Public shared catalog | `apps/web/src/shared/ui/README.md` | CURRENT/TARGET và quyết định KEEP/MIGRATE/lifecycle theo consumer; không là nguồn status/scale thứ hai. Danh sách và count hiện hành lấy từ symbol/export discovery và catalog; `Column<T>` là exported supporting type của DataTable và phải được bao trong contract/test. |
+ | Ưu tiên/trạng thái | Bảng §16.6 | S03–S08 đóng scoped theo evidence; S09–S20 còn mở. Không tạo task hay ledger trùng. |
+ | Kết quả | Step closeouts, `evidence/REPORT.md` và artifacts có command/exit/hash | Mỗi con số có đúng scope/date; source scan, build, browser, hosted, speech và user acceptance là các lớp evidence khác nhau. |
+ 
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\scripts\\check-layout.mjs" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\scripts\\check-layout.mjs"
+index 6697c52..aa53247 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\scripts\\check-layout.mjs"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\scripts\\check-layout.mjs"
+@@ -470,6 +470,7 @@ function scan(root, registryPath = null) {
+                     if (!validText) addFinding(file, locationOf(sourceFile, node), key, exprLabel(node), 'BRIDGE_CSS_TOKEN_INVALID', 'Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references');
+                     return;
+                 }
++                if (cssPixelCall(node)) return;
+                 addFinding(file, locationOf(sourceFile, node), key, exprLabel(node), 'BRIDGE_CSS_TOKEN_INVALID', 'Raw CSS layout values must be composed only from cssPixel(tokens.space.<scale>) references');
+             };
+             if (!cssValues || !ts.isObjectLiteralExpression(cssValues)) addFinding(file, { line: 1, column: 1 }, 'layoutCss', '', 'BRIDGE_CSS_TOKEN_INVALID', 'Bridge must export a structured layoutCss role map');
+@@ -487,6 +488,7 @@ function scan(root, registryPath = null) {
+             if (!reference) return null;
+             const terminal = reference.path.at(-1);
+             if (reference.importedName === 'layoutCss') {
++                if (reference.path.join('.') === 'form.labelAfterGap' && property === 'marginBottom') return null;
+                 if (!['padding'].includes(property) || terminal !== 'cellInset') return `CSS role ${terminal || '(map)'} does not match spacing property ${property}`;
+                 return null;
+             }
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\fe016.spec.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\fe016.spec.ts"
+index fe13375..0bc03aa 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\fe016.spec.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\fe016.spec.ts"
+@@ -1,3 +1,4 @@
++import path from 'node:path';
+ import { test, expect } from '@playwright/test';
+ import { startDemoServer } from './session/demo-server.mjs';
+ 
+@@ -97,12 +98,13 @@ test('UI015 mobile demo tools disclose by keyboard and inbox stays within narrow
+     }
+ });
+ 
+-test('FE016 conversation keeps its composer visible while long demo context scrolls independently', async ({ page }) => {
++test('FE016 conversation keeps its composer visible while long demo context scrolls independently', async ({ page }, info) => {
+     await page.setViewportSize({ width: 1600, height: 900 });
+     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+ 
+     const thread = page.getByTestId('inbox-thread');
+     const context = page.getByTestId('inbox-context-panel');
++    await thread.getByTestId('inbox-message-bubble').first().waitFor();
+     await expect(thread.getByRole('textbox', { name: 'Nội dung trả lời khách' })).toBeVisible();
+     await expect(context.getByRole('heading', { name: 'Bối cảnh khách hàng' })).toBeVisible();
+     await expect(context).toHaveAttribute('tabindex', '0');
+@@ -128,6 +130,79 @@ test('FE016 conversation keeps its composer visible while long demo context scro
+     expect(layout.contextScrollHeight).toBeGreaterThan(layout.contextHeight);
+     expect(layout.messageHeight).toBeLessThanOrEqual(550);
+     expect(layout.composerBottom).toBeLessThanOrEqual(layout.threadBottom + 1);
++
++    await thread.getByRole('checkbox', { name: 'Ghi chú nội bộ (không gửi khách)', exact: true }).check();
++    const draft = thread.getByRole('textbox', { name: 'Ghi chú cho nhóm' });
++    const value = Array.from({ length: 9 }, (_, index) => `Dòng nháp ${index + 1}`).join('\n');
++    await draft.fill(value);
++    await page.evaluate(() => {
++        for (const element of document.querySelectorAll<HTMLElement>('main *')) {
++            element.dataset.originalFontSize = String(Number.parseFloat(getComputedStyle(element).fontSize));
++        }
++        for (const element of document.querySelectorAll<HTMLElement>('main [data-original-font-size]')) {
++            element.style.fontSize = `${Number(element.dataset.originalFontSize) * 2}px`;
++        }
++    });
++    await page.evaluate(() => document.fonts.ready.then(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))));
++    const enlarged = await page.evaluate(() => {
++        const thread = document.querySelector<HTMLElement>('[data-testid="inbox-thread"]')!;
++        const messages = document.querySelector<HTMLElement>('[data-testid="inbox-message-list"]')!;
++        const composer = thread.querySelector<HTMLElement>('form')!;
++        const style = getComputedStyle(messages);
++        const message = messages.querySelector('[data-testid="inbox-message-bubble"] p')!;
++        return { threadBottom: thread.getBoundingClientRect().bottom, composerBottom: composer.getBoundingClientRect().bottom,
++            messageContentHeight: messages.clientHeight - Number.parseFloat(style.paddingTop) - Number.parseFloat(style.paddingBottom),
++            messageLineHeight: Number.parseFloat(getComputedStyle(message).lineHeight),
++            messageBottom: messages.getBoundingClientRect().bottom, composerTop: composer.getBoundingClientRect().top };
++    });
++    expect(enlarged.composerBottom).toBeLessThanOrEqual(enlarged.threadBottom + 1);
++    expect(enlarged.messageBottom).toBeLessThanOrEqual(enlarged.composerTop + 1);
++    expect(enlarged.messageContentHeight).toBeGreaterThanOrEqual(enlarged.messageLineHeight);
++    await expect(draft).toHaveValue(value);
++    const submit = thread.getByRole('button', { name: 'Lưu ghi chú', exact: true });
++    const boundedComposer = await thread.evaluate(element => {
++        const form = element.querySelector('form')!;
++        const body = form.querySelector('[data-testid="inbox-composer-body"]')!;
++        const button = form.querySelector('button[type="submit"]')!;
++        const textarea = form.querySelector('textarea:not([aria-hidden="true"])')!;
++        const describe = (node: Element) => {
++            const rect = node.getBoundingClientRect();
++            return { top: rect.top, bottom: rect.bottom };
++        };
++        return { form: describe(form), body: describe(body), button: describe(button),
++            bodyHeight: body.clientHeight, bodyOverflow: getComputedStyle(body).overflowY,
++            lineHeight: Number.parseFloat(getComputedStyle(textarea).lineHeight) };
++    });
++    expect(boundedComposer.bodyOverflow).toBe('auto');
++    expect(boundedComposer.bodyHeight).toBeGreaterThanOrEqual(boundedComposer.lineHeight);
++    expect(boundedComposer.body.bottom).toBeLessThanOrEqual(boundedComposer.button.top);
++    expect(boundedComposer.button.bottom).toBeLessThanOrEqual(boundedComposer.form.bottom + 1);
++    await draft.focus();
++    await draft.press('Tab');
++    await expect(submit).toBeFocused();
++    await info.attach('enlarged-composer-focus', { body: JSON.stringify(await thread.evaluate(element => {
++        const form = element.querySelector('form')!;
++        const button = form.querySelector('button[type="submit"]')!;
++        const describe = (node: Element) => {
++            const rect = node.getBoundingClientRect(), style = getComputedStyle(node);
++            return { y: rect.y, bottom: rect.bottom, height: rect.height, clientHeight: node.clientHeight,
++                scrollHeight: node.scrollHeight, scrollTop: node.scrollTop, overflow: style.overflow, flex: style.flex };
++        };
++        return { thread: describe(element), form: describe(form), button: describe(button) };
++    })), contentType: 'application/json' });
++    await expect.poll(async () => {
++        const reachable = await submit.boundingBox();
++        const form = await thread.locator('form').boundingBox();
++        return reachable!.y + reachable!.height - form!.y - form!.height;
++    }).toBeLessThanOrEqual(1);
++    expect(await submit.evaluate(button => {
++        const rect = button.getBoundingClientRect();
++        return document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)?.closest('button') === button;
++    })).toBe(true);
++    await submit.press('Shift+Tab');
++    await expect(draft).toBeFocused();
++    await expect(draft).toHaveValue(value);
++    await draft.fill('');
+ });
+ 
+ test('FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details', async ({ page }) => {
+@@ -158,6 +233,66 @@ test('FE016.AC01 inbox filters call canonical query fields and remain bookmarked
+     await expect(page.getByRole('heading', { name: 'Minh (khách mẫu)' })).toBeVisible();
+ });
+ 
++test('Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery', async ({ page }, info) => {
++    await page.addInitScript(() => {
++        const state = window as unknown as { sharedSource: EventSource; sharedSequence?: number };
++        const Original = window.EventSource;
++        window.EventSource = class extends Original {
++            constructor(url: string | URL, options?: EventSourceInit) {
++                super(url, options); state.sharedSource = this;
++                this.addEventListener('message', event => { try { state.sharedSequence = JSON.parse(event.data).sequence; } catch { /* Other suites own malformed events. */ } });
++            }
++        };
++    });
++    await page.setViewportSize({ width: 1440, height: 1000 });
++    await gotoDemo(page, '/s/shop-demo/inbox/cv1?status=open&channelId=fb-01&assignedUserId=user-demo');
++    const draft = page.getByRole('textbox', { name: 'Nội dung trả lời khách', exact: true });
++    await expect(draft).toBeVisible(); await draft.fill('Bản nháp giữ nguyên khi metadata thay đổi');
++    const fixtureUrl = '/@fs/' + path.resolve('tests/design/shared-consolidation-fixture.ts').replaceAll('\\', '/');
++    await page.evaluate(async url => { (await import(/* @vite-ignore */ url)).installMetadataBranches(); }, fixtureUrl);
++    const results = [];
++    for (const mode of ['pending', 'error', 'empty', 'normal'] as const) {
++        const before = await page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().reads, fixtureUrl);
++        const received = page.waitForResponse(response => new URL(response.url()).pathname.endsWith('/conversations/metadata'));
++        await page.evaluate(async ({ url, mode }) => {
++            (await import(/* @vite-ignore */ url)).setMetadataMode(mode);
++            const state = window as unknown as { sharedSource: EventSource; sharedSequence?: number };
++            state.sharedSource.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ eventId: crypto.randomUUID(), type: 'resync.required', schemaVersion: 2, shopId: 'shop-demo', resourceType: 'shop', resourceId: 'shop-demo', resourceVersion: 0, occurredAt: '2030-01-01T00:00:00Z', sequence: (state.sharedSequence ?? 0) + 1 }) }));
++        }, { url: fixtureUrl, mode });
++        await expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().reads, fixtureUrl)).toBeGreaterThan(before);
++        if (mode === 'pending') {
++            await expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().pending, fixtureUrl)).toBe(true);
++            await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
++            await page.evaluate(async url => (await import(/* @vite-ignore */ url)).finishMetadata(), fixtureUrl);
++        }
++        const response = await received;
++        expect(response.status()).toBe(mode === 'error' ? 422 : 200);
++        const payload = await response.json();
++        if (mode === 'empty') expect(payload.data).toEqual({ channels: [], assignees: [] });
++        if (mode === 'normal' || mode === 'pending') expect(payload.data.channels.length).toBeGreaterThan(0);
++        await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
++        await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
++        expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01');
++        expect(new URL(page.url()).searchParams.get('assignedUserId')).toBe('user-demo');
++        results.push({ mode, responseStatus: response.status(), data: payload, draftPreserved: true, selectedKeysPreserved: true });
++    }
++    const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại', exact: true });
++    const status = filters.getByRole('combobox', { name: /^Trạng thái(?: |$)/ });
++    await status.focus(); await status.press('Enter');
++    await page.getByRole('option', { name: 'Tất cả trạng thái', exact: true }).press('Enter');
++    expect(new URL(page.url()).searchParams.has('status')).toBe(false);
++    await expect(status).toBeFocused();
++    const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
++    await search.fill('Linh'); await search.press('Enter');
++    expect(new URL(page.url()).searchParams.get('q')).toBe('Linh');
++    await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
++    expect(new URL(page.url()).searchParams.has('q')).toBe(false);
++    expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01');
++    await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
++    await info.attach('metadata-draft-branches', { body: JSON.stringify(results), contentType: 'application/json' });
++    await draft.fill('');
++});
++
+ test('FE016.AC01 list cursor is isolated from message cursor and restored on back navigation', async ({ page }) => {
+     await page.setViewportSize({ width: 390, height: 844 });
+     const listWait = page.waitForResponse(response => {
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\layout-checker.test.mjs" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\layout-checker.test.mjs"
+index 68b20e2..c84ea71 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\layout-checker.test.mjs"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\layout-checker.test.mjs"
+@@ -80,6 +80,46 @@ function exception({ selector = '.skip-link', value = '12px', property = 'paddin
+ 
+ beforeEach(resetFixture);
+ 
++function addLabelRole(group = 'form', value = 'cssPixel(tokens.space.xs)') {
++    fs.writeFileSync(path.join(fixtureRoot, 'apps/web/src/shared/ui/layout.ts'),
++        validBridge.replace('export const layoutCss = { table:', `export const layoutCss = { ${group}: { labelAfterGap: ${value} }, table:`));
++}
++
++test('CSS label gap accepts the canonical direct pixel constructor and its exact owner/property', () => {
++    addLabelRole();
++    writeSource(`import { Box } from '@mui/material'; import { layoutCss } from '../../shared/ui/layout';
++export function Good() { return <Box style={{ marginBottom: layoutCss.form.labelAfterGap }} />; }`);
++    const result = runChecker();
++    assert.equal(result.status, 0, result.stdout || result.stderr);
++    assert.deepEqual(reportOf(result).findings, []);
++});
++
++test('CSS label gap cannot be used as an unrelated spacing property', () => {
++    addLabelRole();
++    writeSource(`import { Box } from '@mui/material'; import { layoutCss } from '../../shared/ui/layout';
++export function Bad() { return <Box style={{ marginTop: layoutCss.form.labelAfterGap }} />; }`);
++    const result = runChecker();
++    assert.equal(result.status, 1);
++    assert.equal(reportOf(result).counts.SEMANTIC_ROLE_MISMATCH, 1);
++});
++
++test('CSS label gap rejects a raw pixel constructor argument', () => {
++    addLabelRole('form', 'cssPixel(4)');
++    writeSource('export function Bad() { return null; }');
++    const result = runChecker();
++    assert.equal(result.status, 1);
++    assert.equal(reportOf(result).counts.BRIDGE_CSS_TOKEN_INVALID, 1);
++});
++
++test('CSS label gap cannot impersonate a role from another owner', () => {
++    addLabelRole('other');
++    writeSource(`import { Box } from '@mui/material'; import { layoutCss } from '../../shared/ui/layout';
++export function Bad() { return <Box style={{ marginBottom: layoutCss.other.labelAfterGap }} />; }`);
++    const result = runChecker();
++    assert.equal(result.status, 1);
++    assert.equal(reportOf(result).counts.SEMANTIC_ROLE_MISMATCH, 1);
++});
++
+ test('accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values', () => {
+     writeSource(`import { Box, Stack, TextField } from '@mui/material';
+ import { Controller, useForm } from 'react-hook-form';
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\session\\demo-worker-startup.spec.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\session\\demo-worker-startup.spec.ts"
+index b931e1f..d086250 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\session\\demo-worker-startup.spec.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\session\\demo-worker-startup.spec.ts"
+@@ -1,5 +1,5 @@
+ import { expect, test } from '@playwright/test';
+-import { startDemoServer } from './demo-server.mjs';
++import { startDemoServer, startLiveServer } from './demo-server.mjs';
+ 
+ let demoUrl = '';
+ let stopDemoServer: (() => Promise<void>) | undefined;
+@@ -14,6 +14,69 @@ test.afterAll(async () => {
+     await stopDemoServer?.();
+ });
+ 
++test('demo conditional module requests return complete exports without changing live or non-asset caching', async ({ browser, request }) => {
++    const modulePath = `/@fs/${process.cwd().replaceAll('\\', '/')}/packages/contracts/src/generated.ts`;
++    const moduleUrl = new URL(modulePath, demoUrl).toString();
++    const initial = await request.get(moduleUrl);
++    expect(initial.status()).toBe(200);
++    const etag = initial.headers().etag;
++    expect(etag).toBeTruthy();
++
++    const conditional = await request.get(moduleUrl, {
++        headers: { 'If-None-Match': etag, 'Sec-Fetch-Dest': 'script' },
++    });
++    expect(conditional.status()).toBe(200);
++    expect(await conditional.text()).toContain('API_BASE_PATH');
++    const nonAsset = await request.get(moduleUrl, { headers: { 'If-None-Match': etag } });
++    expect(nonAsset.status()).toBe(304);
++    const head = await request.head(moduleUrl, {
++        headers: { 'If-None-Match': etag, 'Sec-Fetch-Dest': 'script' },
++    });
++    expect(head.status()).toBe(304);
++    const styleUrl = new URL('/src/app/bootstrap.css?direct', demoUrl).toString();
++    const styleInitial = await request.get(styleUrl);
++    expect(styleInitial.status()).toBe(200);
++    const styleConditional = await request.get(styleUrl, {
++        headers: { 'If-None-Match': styleInitial.headers().etag, 'Sec-Fetch-Dest': 'style' },
++    });
++    expect(styleConditional.status()).toBe(200);
++    expect(await styleConditional.text()).toBe(await styleInitial.text());
++
++    const live = await startLiveServer();
++    try {
++        const liveUrl = new URL(modulePath, live.url).toString();
++        const liveInitial = await request.get(liveUrl);
++        expect(liveInitial.status()).toBe(200);
++        const liveConditional = await request.get(liveUrl, {
++            headers: { 'If-None-Match': liveInitial.headers().etag, 'Sec-Fetch-Dest': 'script' },
++        });
++        expect(liveConditional.status()).toBe(304);
++    }
++    finally {
++        await live.close();
++    }
++
++    const context = await browser.newContext({
++        serviceWorkers: 'allow', extraHTTPHeaders: { 'If-None-Match': etag },
++    });
++    try {
++        const page = await context.newPage();
++        const errors: string[] = [];
++        page.on('pageerror', error => errors.push(error.message));
++        const moduleResponse = page.waitForResponse(response => response.url() === moduleUrl);
++        await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
++        expect((await moduleResponse).status()).toBe(200);
++        await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toBeVisible();
++        await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
++        await page.goto(new URL('/s/shop-demo/service-cases', demoUrl).toString());
++        await expect(page.locator('main h1')).toBeVisible();
++        expect(errors).toEqual([]);
++    }
++    finally {
++        await context.close();
++    }
++});
++
+ test('demo startup explains the required setup when the browser blocks Service Workers', async ({ browser }) => {
+     const context = await browser.newContext({ serviceWorkers: 'block' });
+     try {
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-catalog-layout.spec.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-catalog-layout.spec.ts"
+index 3a80569..21af069 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-catalog-layout.spec.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-catalog-layout.spec.ts"
+@@ -89,12 +89,19 @@ test('Imports review notice and demo controls keep the measured shared 24px clea
+         const alertRect = alert.getBoundingClientRect();
+         const controlRect = control.getBoundingClientRect();
+         const labelRect = label.getBoundingClientRect();
++        const fieldRect = control.closest('.MuiFormControl-root')!.getBoundingClientRect();
+         return {
+             alertBottom: alertRect.bottom,
+             firstControlTop: controlRect.top,
+             firstLabelTop: labelRect.top,
+             controlClearance: controlRect.top - alertRect.bottom,
+             labelClearance: labelRect.top - alertRect.bottom,
++            fieldClearance: fieldRect.top - alertRect.bottom,
++            labelOffset: labelRect.top - fieldRect.top,
++            labelHeight: labelRect.height,
++            labelAfterGap: controlRect.top - labelRect.bottom,
++            labelPosition: getComputedStyle(label).position,
++            labelTransform: getComputedStyle(label).transform,
+             documentWidth: document.documentElement.scrollWidth,
+             viewportWidth: document.documentElement.clientWidth,
+         };
+@@ -105,9 +112,13 @@ test('Imports review notice and demo controls keep the measured shared 24px clea
+         contentType: 'application/json',
+     });
+     expect(geometry).not.toBeNull();
+-    expect(geometry!.controlClearance, JSON.stringify(geometry)).toBeCloseTo(24, 0);
+-    expect(geometry!.labelClearance).toBeGreaterThanOrEqual(12);
+-    expect(geometry!.labelClearance).toBeLessThanOrEqual(18);
++    expect(geometry!.fieldClearance, JSON.stringify(geometry)).toBeCloseTo(24, 0);
++    expect(geometry!.labelClearance).toBeCloseTo(24, 0);
++    expect(geometry!.labelOffset).toBeCloseTo(0, 0);
++    expect(geometry!.labelAfterGap).toBeCloseTo(4, 0);
++    expect(geometry!.controlClearance).toBeCloseTo(24 + geometry!.labelHeight + 4, 0);
++    expect(geometry!.labelPosition).toBe('static');
++    expect(geometry!.labelTransform).toBe('none');
+     expect(geometry!.documentWidth).toBe(806);
+     expect(geometry!.viewportWidth).toBe(806);
+     expect(pageErrors).toEqual([]);
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-component-layout.spec.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-component-layout.spec.ts"
+index 539dd0c..6f73b45 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-component-layout.spec.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-component-layout.spec.ts"
+@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
+ import type { Locator, Page } from '@playwright/test';
+ import AxeBuilder from '@axe-core/playwright';
+ import { startDemoServer } from './session/demo-server.mjs';
++import { ownedLabelGeometry } from './design/owned-label-geometry.mjs';
+ 
+ let url = '';
+ let close: (() => Promise<void>) | undefined;
+@@ -80,6 +81,52 @@ test('A02 product editors align category and status faces independently from loo
+     await info.attach('product-editor-faces', { body: JSON.stringify(observations), contentType: 'application/json' });
+ });
+ 
++test('Shared outlined labels focus empty and populated native controls', async ({ page }) => {
++    await ready(page, 'products/new');
++    for (const labelText of ['Tên sản phẩm', 'Mô tả dùng cho AI tư vấn']) {
++        const control = page.getByRole('textbox', { name: labelText, exact: true });
++        const label = control.locator('xpath=ancestor::*[contains(@class,"MuiTextField-root")]').locator('label');
++        for (const value of ['', 'Bản nháp được giữ khi click nhãn']) {
++            await control.fill(value);
++            await page.locator('main h1').click();
++            await label.click();
++            await expect(control).toBeFocused();
++            await expect(control).toHaveValue(value);
++        }
++    }
++});
++
++test('A02 variant fields retain readable widths when text doubles', async ({ page }, info) => {
++    const observations = [];
++    for (const route of ['products/new', 'products/p1']) for (const width of [320, 390, 1280, 1440]) {
++        await page.setViewportSize({ width, height: 1000 });
++        await ready(page, route);
++        const name = page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true }).first();
++        await expect(name).toBeVisible();
++        await name.fill('Bản nháp biến thể cần giữ');
++        // Deterministic layout stress; real Firefox text-only zoom is a separate gate.
++        await page.evaluate(() => {
++            const sizes = [...document.querySelectorAll<HTMLElement>('*')].map(element => [element, parseFloat(getComputedStyle(element).fontSize)] as const);
++            for (const [element, size] of sizes) if (Number.isFinite(size)) element.style.fontSize = `${size * 2}px`;
++        });
++        const labels = (await page.evaluate(ownedLabelGeometry, true)).filter(label => ['SKU', 'Tên / màu / kích cỡ', 'Giá bán (VND)'].includes(label.label));
++        await info.attach(`variant-fields-${route.replace('/', '-')}-${width}`, { body: JSON.stringify(labels), contentType: 'application/json' });
++        expect(labels.length).toBeGreaterThanOrEqual(3);
++        expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([]);
++        for (const label of labels) expect(label.fieldBounds.right - label.fieldBounds.left).toBeGreaterThanOrEqual(120);
++        await reflow(page, width);
++        await expect(name).toHaveValue('Bản nháp biến thể cần giữ');
++        const initial = await page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true }).count();
++        await page.getByRole('button', { name: 'Thêm biến thể', exact: true }).click();
++        await expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial + 1);
++        await page.getByRole('button', { name: `Xóa biến thể ${initial + 1}`, exact: true }).click();
++        await expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial);
++        await expect(name).toHaveValue('Bản nháp biến thể cần giữ');
++        observations.push({ route, width, labels });
++    }
++    await info.attach('variant-field-doubled-text', { body: JSON.stringify(observations), contentType: 'application/json' });
++});
++
+ test('A03 import mapping preserves natural remove actions and editable mappings', async ({ page }, info) => {
+     const observations = [];
+     for (const width of [320, 768, 1440]) {
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-dashboard-layout.spec.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-dashboard-layout.spec.ts"
+index fbab4a5..4d52042 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-dashboard-layout.spec.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-dashboard-layout.spec.ts"
+@@ -1,4 +1,6 @@
++import path from 'node:path';
+ import { expect, test } from '@playwright/test';
++import AxeBuilder from '@axe-core/playwright';
+ import { startDemoServer } from './session/demo-server.mjs';
+ 
+ let demoUrl = '';
+@@ -12,6 +14,58 @@ test.beforeAll(async () => {
+ 
+ test.afterAll(async () => closeDemo?.());
+ 
++test('Shared consolidation Dashboard primary link respects all eight permission tuples and native anchor interactions', async ({ page, context }, info) => {
++    await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
++    await expect(page.locator('main h1')).toBeVisible();
++    const fixtureUrl = '/@fs/' + path.resolve('tests/design/shared-consolidation-fixture.ts').replaceAll('\\', '/');
++    const observations = [];
++    for (const ops of [false, true]) for (const orders of [false, true]) for (const create of [false, true]) {
++        const tuple = { ops, orders, create };
++        await page.evaluate(async ({ url, tuple }) => (await import(/* @vite-ignore */ url)).installDashboardPermissions(tuple), { url: fixtureUrl, tuple });
++        const refreshed = page.waitForResponse(response => new URL(response.url()).pathname === '/api/v2/session');
++        await page.evaluate(() => window.dispatchEvent(new Event('online')));
++        const response = await refreshed;
++        expect(response.status()).toBe(200);
++        const membership = (await response.json()).data.memberships.find((row: { shopId: string }) => row.shopId === 'shop-demo');
++        expect(membership.permissions.includes('operations.read')).toBe(ops);
++        expect(membership.permissions.includes('orders.read')).toBe(orders);
++        expect(membership.permissions.includes('orders.write')).toBe(create);
++        const primary = page.getByRole('link', { name: /^Xem (việc cần làm|đơn hàng)$/ });
++        const createLink = page.getByRole('link', { name: 'Tạo đơn hàng', exact: true });
++        await expect(primary).toHaveCount(Number(ops || orders));
++        await expect(createLink).toHaveCount(Number(create));
++        await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
++        if (ops || orders) {
++            const label = ops ? 'Xem việc cần làm' : 'Xem đơn hàng';
++            const href = `/s/shop-demo/${ops ? 'operations' : 'orders'}`;
++            await expect(primary).toHaveText(label);
++            await expect(primary).toHaveAttribute('href', href);
++            await primary.focus(); await expect(primary).toBeFocused();
++            const style = await primary.evaluate(element => {
++                const s = getComputedStyle(element), r = element.getBoundingClientRect();
++                return { tag: element.tagName, height: r.height, outline: s.outlineStyle, outlineWidth: parseFloat(s.outlineWidth), background: s.backgroundColor };
++            });
++            expect(style.tag).toBe('A'); expect(style.height).toBeGreaterThanOrEqual(44);
++            expect(style.outline).not.toBe('none'); expect(style.outlineWidth).toBeGreaterThanOrEqual(2);
++            await primary.hover();
++            await expect.poll(() => primary.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(style.background);
++            if (create) { await primary.press('Tab'); await expect(createLink).toBeFocused(); }
++            if (ops && orders && create) {
++                const opened = context.waitForEvent('page');
++                await primary.click({ modifiers: ['Control'] });
++                const popup = await opened;
++                await popup.waitForURL(new URL(href, demoUrl).toString()); await popup.close();
++                expect(new URL(page.url()).pathname).toBe('/s/shop-demo/overview');
++            }
++        }
++        if (create) { await expect(createLink).toHaveAttribute('href', '/s/shop-demo/orders/new'); expect((await createLink.boundingBox())!.height).toBeGreaterThanOrEqual(44); }
++        observations.push({ ...tuple, primary: ops ? 'operations' : orders ? 'orders' : null, createVisible: create });
++    }
++    expect(observations).toHaveLength(8);
++    expect((await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
++    await info.attach('dashboard-permission-tuples', { body: JSON.stringify(observations), contentType: 'application/json' });
++});
++
+ test('dashboard hierarchy, CTA targets, and page width hold across supported breakpoints', async ({ page }) => {
+     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+     await expect(page.getByRole('heading', { name: 'Tình hình hiện tại', exact: true })).toBeVisible();
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-shared-api-contract.test.mjs" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-shared-api-contract.test.mjs"
+index 77d67b4..d689865 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-shared-api-contract.test.mjs"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-shared-api-contract.test.mjs"
+@@ -76,8 +76,8 @@ test('the shared catalog covers every public React component and supporting Colu
+     const documented = catalogRows.filter(name => actual.includes(name));
+     const unrecognized = catalogRows.filter(name => !actual.includes(name));
+ 
+-    assert.equal(components.length, 22, `component exports changed: ${components.join(', ')}`);
+-    assert.equal(compositions.length, 6, `composition exports changed: ${compositions.join(', ')}`);
++    assert.ok(components.length > 0 && compositions.length > 0, 'both public owner families must be discovered');
++    assert.equal(new Set(actual).size, actual.length, 'public API names must be unique across owner files');
+     assert.deepEqual(documented.sort(), actual, 'every public component must have exactly one CURRENT/TARGET catalog row');
+     assert.ok(unrecognized.every(name => name === 'Component' || name === 'Composition'), `catalog table has unmapped API rows: ${unrecognized.join(', ')}`);
+     assert.match(catalog, /`Column<T>`/, 'DataTable supporting type must remain documented');
+@@ -97,6 +97,16 @@ test('the shared catalog covers every public React component and supporting Colu
+     }
+ });
+ 
++test('SPC-067 covers discovered public Shared APIs without a fixed export count', () => {
++    const standard = fs.readFileSync(path.join(root, 'docs/FRONTEND_SPACING_STANDARD.md'), 'utf8');
++    const block = standard.split('**SPC-067')[1]?.split('**SPC-068')[0];
++    assert.ok(block, 'the normative forwarding rule must exist');
++    assert.match(block, /mọi public Shared API và export mới/);
++    assert.match(block, /shared\/ui\/README\.md/);
++    assert.doesNotMatch(block, /\b\d+\s+(?:shared|public)\s+(?:exports|APIs|components)/i, 'the rule must cover future discovered exports');
++    assert.ok(sharedFiles.flatMap(publicFunctionContracts).length > 0, 'discovery cannot silently become empty');
++});
++
+ test('every public React API has a direct rendered contract test', () => {
+     const exports = sharedFiles.flatMap(publicFunctionContracts);
+     const renderTestPath = path.join(root, 'apps/web/tests/shared-ui-render-contract.test.tsx');
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-shell-layout.spec.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-shell-layout.spec.ts"
+index 41daee7..878bbe0 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-shell-layout.spec.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-shell-layout.spec.ts"
+@@ -120,7 +120,7 @@ test('demo controls stay discoverable on mobile and usable on desktop', async ({
+     await expect(controls).toBeVisible();
+ });
+ 
+-test('SPC-055/057 floated demo-control labels keep a clear gap on every Shell route consumer', async ({ page }) => {
++test('SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer', async ({ page }) => {
+     test.setTimeout(300_000);
+     await page.setViewportSize({ width: 806, height: 884 });
+ 
+@@ -139,8 +139,8 @@ test('SPC-055/057 floated demo-control labels keep a clear gap on every Shell ro
+             return label.getBoundingClientRect().top - banner.getBoundingClientRect().bottom;
+         });
+ 
+-        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to floated control label`).not.toBeNull();
+-        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to floated control label`).toBeGreaterThanOrEqual(8);
++        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).not.toBeNull();
++        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).toBeGreaterThanOrEqual(8);
+     }
+ });
+ 
+diff --git "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-toolbar-layout.spec.ts" "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-toolbar-layout.spec.ts"
+index 6b1b0d9..8fbc7a6 100644
+--- "a/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-shared-consolidation-20261009\\before\\tests\\ui-toolbar-layout.spec.ts"
++++ "b/C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\tests\\ui-toolbar-layout.spec.ts"
+@@ -4,6 +4,7 @@ import type { Page } from '@playwright/test';
+ import AxeBuilder from '@axe-core/playwright';
+ import { toolbarImpact } from './design/toolbar-impact.mjs';
+ import { startDemoServer } from './session/demo-server.mjs';
++import { ownedLabelGeometry } from './design/owned-label-geometry.mjs';
+ 
+ const impact = toolbarImpact(path.resolve('.'));
+ let demoUrl = '';
+@@ -29,6 +30,34 @@ async function searchGeometry(page: Page) {
+     });
+ }
+ 
++test('Shared Toolbar and demo tools keep labels clear when text doubles', async ({ page }, info) => {
++    const observations = [];
++    for (const width of [320, 390, 1280, 1440]) {
++        await page.setViewportSize({ width, height: 1000 });
++        await ready(page, '/s/shop-demo/inbox');
++        if (width < 768) await page.getByRole('button', { name: 'Công cụ demo', exact: true }).click();
++        // Deterministic layout stress; native Firefox text zoom is verified separately.
++        await page.evaluate(() => {
++            const sizes = [...document.querySelectorAll<HTMLElement>('*')].map(element => [element, parseFloat(getComputedStyle(element).fontSize)] as const);
++            for (const [element, size] of sizes) if (Number.isFinite(size)) element.style.fontSize = `${size * 2}px`;
++        });
++        const labels = await page.evaluate(ownedLabelGeometry);
++        observations.push({ width, labels });
++        await info.attach(`doubled-labels-${width}`, { body: JSON.stringify(labels), contentType: 'application/json' });
++        expect(labels.filter(label => label.owner === 'demo-tools')).toHaveLength(3);
++        expect(labels.filter(label => label.owner === 'toolbar')).toHaveLength(1);
++        expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([]);
++        for (const label of labels) {
++            expect(label.labelPosition).toBe('static');
++            expect(label.labelTransform).toBe('none');
++            expect(label.fieldBounds.height).toBeLessThanOrEqual(label.naturalHeight + 1);
++            expect(label.legends.every(width => width <= 1)).toBe(true);
++        }
++        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
++    }
++    await info.attach('doubled-text-label-layout', { body: JSON.stringify(observations), contentType: 'application/json' });
++});
++
+ test('Toolbar geometry: multiline category lookup cannot stretch the search button', async ({ page }, info) => {
+     await page.setViewportSize({ width: 1440, height: 900 });
+     await ready(page, '/s/shop-demo/products');
+@@ -46,6 +75,49 @@ test('Toolbar geometry: multiline category lookup cannot stretch the search butt
+     expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
+ });
+ 
++test('Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths', async ({ page }, info) => {
++    test.setTimeout(180_000);
++    const observations = [];
++    for (const width of [320, 390, 768, 1280, 1440]) for (const route of ['inbox', 'inbox/cv1']) {
++        await page.setViewportSize({ width, height: 1000 });
++        await ready(page, `/s/shop-demo/${route}`);
++        const filters = page.locator('[aria-label="Bộ lọc hội thoại"]');
++        await expect(filters).toHaveAttribute('data-ui-composition', 'field-group');
++        await expect(filters).toHaveAttribute('role', 'group');
++        await expect(filters.getByRole('combobox', { includeHidden: true })).toHaveCount(4);
++        const hiddenList = route.includes('/') && width < 1280;
++        if (hiddenList) {
++            await expect(filters).toBeHidden();
++        } else {
++            await expect(filters).toBeVisible();
++            const geometry = await filters.evaluate(element => {
++                const toolbar = element.parentElement!;
++                const form = toolbar.querySelector('form')!;
++                const box = (node: Element) => { const r = node.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; };
++                const controls = [...element.querySelectorAll('.MuiTextField-root')].map(box);
++                return { outsideForm: !element.closest('form'), sharedParent: form.parentElement === toolbar,
++                    filter: box(element), form: box(form), controls, gap: parseFloat(getComputedStyle(toolbar).rowGap),
++                    inset: { left: parseFloat(getComputedStyle(element).paddingLeft), top: parseFloat(getComputedStyle(element).paddingTop) },
++                    scrollWidth: document.documentElement.scrollWidth };
++            });
++            expect(geometry.outsideForm).toBe(true);
++            expect(geometry.sharedParent).toBe(true);
++            expect(geometry.inset).toEqual({ left: 0, top: 0 });
++            expect(Math.abs(geometry.filter.left - geometry.form.left)).toBeLessThanOrEqual(0.5);
++            expect(Math.abs(geometry.filter.right - geometry.form.right)).toBeLessThanOrEqual(0.5);
++            expect(Math.abs(geometry.filter.top - geometry.form.bottom - geometry.gap)).toBeLessThanOrEqual(0.5);
++            for (const control of geometry.controls) {
++                expect(control.left).toBeGreaterThanOrEqual(geometry.filter.left - 0.5);
++                expect(control.right).toBeLessThanOrEqual(geometry.filter.right + 0.5);
++            }
++            expect(geometry.scrollWidth).toBeLessThanOrEqual(width);
++            observations.push({ route, width, hiddenList, geometry });
++        }
++        if (width === 320 || width === 1440) expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
++    }
++    await info.attach('inbox-filter-ownership', { body: JSON.stringify(observations), contentType: 'application/json' });
++});
++
+ test('Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow', async ({ page }, info) => {
+     test.setTimeout(300_000);
+     const observations = [], errors: string[] = [];

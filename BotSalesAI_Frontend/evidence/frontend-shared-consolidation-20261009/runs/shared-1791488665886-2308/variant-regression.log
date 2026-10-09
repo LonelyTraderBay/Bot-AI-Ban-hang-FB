@@ -1,0 +1,151 @@
+[WebServer] (node:87728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+(node:51588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\ui-component-layout.spec.ts:84:1 › A02 variant fields retain readable widths when text doubles
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-74564-c1483e43-4830-4200-a77e-1cdedde61272\deps\react-dom_client.js?v=3c367c8b as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui-component-layout.spec.ts:84:1 › A02 variant fields retain readable widths when text doubles 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 34
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "height": 560.25,
+    +       "left": 628.453125,
+    +       "right": 628.453125,
+    +     },
+    +     "label": "Tên / màu / kích cỡ",
+    +     "labelBounds": Object {
+    +       "bottom": 1999.28125,
+    +       "left": 628.453125,
+    +       "right": 649.125,
+    +       "top": 1518.78125,
+    +     },
+    +     "labelFontSize": 24,
+    +     "labelPosition": "static",
+    +     "labelTransform": "none",
+    +     "legends": Array [
+    +       0.01,
+    +     ],
+    +     "naturalHeight": 560.25,
+    +     "outsideField": true,
+    +     "overlapX": 0,
+    +     "overlapY": 0,
+    +     "overlaps": false,
+    +     "owner": "outlined-field",
+    +     "valueBounds": Object {
+    +       "bottom": 2055.40625,
+    +       "left": 642.453125,
+    +       "right": 642.453125,
+    +       "top": 2027.40625,
+    +     },
+    +   },
+    + ]
+
+       98 |         await info.attach(`variant-fields-${route.replace('/', '-')}-${width}`, { body: JSON.stringify(labels), contentType: 'application/json' });
+       99 |         expect(labels.length).toBeGreaterThanOrEqual(3);
+    > 100 |         expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([]);
+          |                                                                              ^
+      101 |         for (const label of labels) expect(label.fieldBounds.right - label.fieldBounds.left).toBeGreaterThanOrEqual(120);
+      102 |         await reflow(page, width);
+      103 |         await expect(name).toHaveValue('Bản nháp biến thể cần giữ');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:100:78
+
+    Error Context: test-results\playwright-51588-5dd79e97-c4a9-4175-a55a-90b5525ad30e\ui-component-layout-A02-va-fea68-le-widths-when-text-doubles-chromium\error-context.md
+
+    Error Context: test-results\playwright-51588-5dd79e97-c4a9-4175-a55a-90b5525ad30e\ui-component-layout-A02-va-fea68-le-widths-when-text-doubles-chromium\error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-51588-5dd79e97-c4a9-4175-a55a-90b5525ad30e\ui-component-layout-A02-va-fea68-le-widths-when-text-doubles-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-51588-5dd79e97-c4a9-4175-a55a-90b5525ad30e\ui-component-layout-A02-va-fea68-le-widths-when-text-doubles-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:75284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [firefox] › tests\ui-component-layout.spec.ts:84:1 › A02 variant fields retain readable widths when text doubles
+  2) [firefox] › tests\ui-component-layout.spec.ts:84:1 › A02 variant fields retain readable widths when text doubles 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 34
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "fieldBounds": Object {
+    +       "height": 560.25,
+    +       "left": 630.2333374023438,
+    +       "right": 630.2333374023438,
+    +     },
+    +     "label": "Tên / màu / kích cỡ",
+    +     "labelBounds": Object {
+    +       "bottom": 1999.550048828125,
+    +       "left": 630.2333374023438,
+    +       "right": 650.8999938964844,
+    +       "top": 1519.050048828125,
+    +     },
+    +     "labelFontSize": 24,
+    +     "labelPosition": "static",
+    +     "labelTransform": "none",
+    +     "legends": Array [
+    +       0.01,
+    +     ],
+    +     "naturalHeight": 560.25,
+    +     "outsideField": true,
+    +     "overlapX": 0,
+    +     "overlapY": 0,
+    +     "overlaps": false,
+    +     "owner": "outlined-field",
+    +     "valueBounds": Object {
+    +       "bottom": 2055.425048828125,
+    +       "left": 644.2333374023438,
+    +       "right": 644.2333374023438,
+    +       "top": 2027.425048828125,
+    +     },
+    +   },
+    + ]
+
+       98 |         await info.attach(`variant-fields-${route.replace('/', '-')}-${width}`, { body: JSON.stringify(labels), contentType: 'application/json' });
+       99 |         expect(labels.length).toBeGreaterThanOrEqual(3);
+    > 100 |         expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([]);
+          |                                                                              ^
+      101 |         for (const label of labels) expect(label.fieldBounds.right - label.fieldBounds.left).toBeGreaterThanOrEqual(120);
+      102 |         await reflow(page, width);
+      103 |         await expect(name).toHaveValue('Bản nháp biến thể cần giữ');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:100:78
+
+    Error Context: test-results\playwright-75284-ce253427-3534-47dd-9712-7ed5532fb37b\ui-component-layout-A02-va-fea68-le-widths-when-text-doubles-firefox\error-context.md
+
+    Error Context: test-results\playwright-75284-ce253427-3534-47dd-9712-7ed5532fb37b\ui-component-layout-A02-va-fea68-le-widths-when-text-doubles-firefox\error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-75284-ce253427-3534-47dd-9712-7ed5532fb37b\ui-component-layout-A02-va-fea68-le-widths-when-text-doubles-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-75284-ce253427-3534-47dd-9712-7ed5532fb37b\ui-component-layout-A02-va-fea68-le-widths-when-text-doubles-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-component-layout.spec.ts:84:1 › A02 variant fields retain readable widths when text doubles 
+    [firefox] › tests\ui-component-layout.spec.ts:84:1 › A02 variant fields retain readable widths when text doubles 

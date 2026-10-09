@@ -1,0 +1,91 @@
+{
+  "capturedAt": "2026-10-08T20:48:53.596Z",
+  "status": "PASS",
+  "routeLabelProbeCount": 108,
+  "proofCounts": {
+    "evidence/frontend-shared-consolidation-20261009/actual-browser-zoom-200-current-20261009-034538-64396.json": 3,
+    "evidence/frontend-shared-consolidation-20261009/native-text-only-200-current-20261009-034528-94432.json": 5
+  },
+  "proofs": [
+    {
+      "routeLabelProbes": 0,
+      "path": "evidence/frontend-shared-consolidation-20261009/actual-browser-zoom-200-current-20261009-034538-64396.json",
+      "sha256": "e6834fb69261e6970c50b34ac28470e4baf193372d6d2e546bce2805cbf6b8d9",
+      "scenarios": 3,
+      "recoverableEllipsis": 0,
+      "method": {
+        "browser": "Playwright-bundled Chromium, headed, fresh temporary profile",
+        "mechanism": "Temporary Manifest V3 extension calls chrome.tabs.setZoom(tabId, 2) and independently reads chrome.tabs.getZoom(tabId)",
+        "baselineViewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "targetZoomFactor": 2,
+        "note": "The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2.",
+        "browserVersion": "153.0.8010.12"
+      }
+    },
+    {
+      "routeLabelProbes": 108,
+      "path": "evidence/frontend-shared-consolidation-20261009/native-text-only-200-current-20261009-034528-94432.json",
+      "sha256": "c97fef070cebee7154dc8f2d78328fcef35871ade288782d2fb2e4e2a33b6670",
+      "scenarios": 5,
+      "recoverableEllipsis": 22,
+      "method": {
+        "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+        "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+        "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+        "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+        "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+        "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+        "baseZoomFactor": 1,
+        "targetZoomFactor": 2,
+        "scenarios": [
+          {
+            "id": "inbox-detail-desktop",
+            "route": "/s/shop-demo/inbox/cv1",
+            "viewport": {
+              "width": 1600,
+              "height": 900
+            }
+          },
+          {
+            "id": "inbox-list",
+            "route": "/s/shop-demo/inbox",
+            "viewport": {
+              "width": 390,
+              "height": 800
+            }
+          },
+          {
+            "id": "inbox-detail",
+            "route": "/s/shop-demo/inbox/cv1",
+            "viewport": {
+              "width": 390,
+              "height": 800
+            }
+          },
+          {
+            "id": "dashboard",
+            "route": "/s/shop-demo/overview",
+            "viewport": {
+              "width": 390,
+              "height": 800
+            }
+          },
+          {
+            "id": "inbox-list-desktop",
+            "route": "/s/shop-demo/inbox",
+            "viewport": {
+              "width": 1280,
+              "height": 800
+            }
+          }
+        ],
+        "browserVersion": "155.0",
+        "webdriverBuildId": "20260902192955"
+      }
+    }
+  ],
+  "limits": "Eight deep affected R04/R05/R06 profiles plus108 default route label/reflow probes on54 routes at390/1280. Zero-label states do not prove unrendered input fields; dialogs and other business states are covered only by their separately executed owner suites. Separate native browser/text methods; no CSS substitution, screen-reader speech or broad human conformance claim."
+}

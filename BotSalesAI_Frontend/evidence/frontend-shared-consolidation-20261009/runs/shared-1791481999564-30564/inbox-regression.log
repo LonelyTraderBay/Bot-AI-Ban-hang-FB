@@ -1,0 +1,72 @@
+[WebServer] (node:24500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 58 tests using 1 worker
+
+(node:90992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/58] [chromium] › tests\fe016.spec.ts:68:1 › UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-75984-aee3d35f-fa0c-4405-9c2a-d0c76a34e1be\deps\react-dom_client.js?v=f89cee27 as it exceeds the max of 500KB.
+
+[2/58] [chromium] › tests\fe016.spec.ts:101:1 › FE016 conversation keeps its composer visible while long demo context scrolls independently
+[3/58] [chromium] › tests\fe016.spec.ts:134:1 › FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details
+[4/58] [chromium] › tests\fe016.spec.ts:162:1 › Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery
+  1) [chromium] › tests\fe016.spec.ts:162:1 › Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: locator.focus: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for getByRole('group', { name: 'Bộ lọc hội thoại', exact: true }).getByRole('combobox', { name: 'Trạng thái', exact: true })
+
+
+      199 |     const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại', exact: true });
+      200 |     const status = filters.getByRole('combobox', { name: 'Trạng thái', exact: true });
+    > 201 |     await status.focus(); await status.press('Enter');
+          |                  ^
+      202 |     await page.getByRole('option', { name: 'Tất cả trạng thái', exact: true }).press('Enter');
+      203 |     expect(new URL(page.url()).searchParams.has('status')).toBe(false);
+      204 |     await expect(status).toBeFocused();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe016.spec.ts:201:18
+
+    Error Context: test-results\playwright-90992-a38d2d9e-fc8a-4f0f-a010-8fb64b6607d4\fe016-Shared-consolidation-b3a3f-ng-error-empty-and-recovery-chromium\error-context.md
+
+    Error Context: test-results\playwright-90992-a38d2d9e-fc8a-4f0f-a010-8fb64b6607d4\fe016-Shared-consolidation-b3a3f-ng-error-empty-and-recovery-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-90992-a38d2d9e-fc8a-4f0f-a010-8fb64b6607d4\fe016-Shared-consolidation-b3a3f-ng-error-empty-and-recovery-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-90992-a38d2d9e-fc8a-4f0f-a010-8fb64b6607d4\fe016-Shared-consolidation-b3a3f-ng-error-empty-and-recovery-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:7020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[5/58] [chromium] › tests\fe016.spec.ts:216:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation
+[6/58] [chromium] › tests\fe016.spec.ts:235:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change
+[7/58] [chromium] › tests\fe016.spec.ts:324:1 › UI002 mobile keeps the list page while messages page and Back restores it
+[8/58] [chromium] › tests\fe016.spec.ts:368:1 › UI002 Inbox search resets only the list cursor while a message page is open
+[9/58] [chromium] › tests\fe016.spec.ts:425:1 › UI002 deep link, refresh and mobile Back preserve their own cursors
+[10/58] [chromium] › tests\fe016.spec.ts:479:1 › UI002 list and message panel errors remain isolated
+[11/58] [chromium] › tests\fe016.spec.ts:503:1 › UI002 send, invalidation and resync keep both cursors and send only once
+[12/58] [chromium] › tests\fe016.spec.ts:563:1 › FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery
+[13/58] [chromium] › tests\fe016.spec.ts:590:1 › FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft
+[14/58] [chromium] › tests\fe016.spec.ts:621:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+[15/58] [chromium] › tests\fe016.spec.ts:644:1 › FE016.AC04 role without customer/order permissions cannot open those cross-module references
+[16/58] [chromium] › tests\fe016.spec.ts:655:1 › FE016.S03 stale takeover preserves reason and reports the version conflict
+[17/58] [chromium] › tests\fe016.spec.ts:671:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount
+[18/58] [chromium] › tests\fe016.spec.ts:685:1 › FE016.B08 image and voice preview is synthetic and stays local
+[19/58] [chromium] › tests\fe016.spec.ts:700:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft
+[20/58] [chromium] › tests\fe016.spec.ts:716:1 › FE027.B02 inbox price and available stock preview uses current canonical mock reads
+[21/58] [chromium] › tests\fe016.spec.ts:737:1 › FE027.B03 order capture links the active customer and conversation into the manual order form
+[22/58] [chromium] › tests\fe016.spec.ts:747:1 › FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist
+[23/58] [chromium] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[24/58] [chromium] › tests\ui-toolbar-layout.spec.ts:49:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths
+[25/58] [chromium] › tests\ui-toolbar-layout.spec.ts:92:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow

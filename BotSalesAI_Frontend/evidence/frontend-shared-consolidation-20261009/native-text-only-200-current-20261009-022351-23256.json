@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "task": "S16.SharedConsolidation",
+  "recordedAt": "2026-10-08T19:23:51.346Z",
+  "scope": "Isolated Firefox with local React demo and synthetic MSW; no backend, user profile, persistent app writes, or system preference changes",
+  "result": "ERROR",
+  "temporaryProfileCleanup": "REMOVED",
+  "method": {
+    "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+    "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+    "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+    "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+    "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+    "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+    "baseZoomFactor": 1,
+    "targetZoomFactor": 2,
+    "scenarios": [
+      {
+        "id": "inbox-list",
+        "route": "/s/shop-demo/inbox",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "inbox-detail",
+        "route": "/s/shop-demo/inbox/cv1",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "dashboard",
+        "route": "/s/shop-demo/overview",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "inbox-list-desktop",
+        "route": "/s/shop-demo/inbox",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        }
+      }
+    ],
+    "browserVersion": "155.0",
+    "webdriverBuildId": "20260902192955"
+  },
+  "sourceSha256": {
+    "tests/design/owned-label-geometry.mjs": "beb1d11f9616990337dc2a95547b04fdbb640b59212fffc52d18641444d8b7d7",
+    "apps/web/vite.config.ts": "3be2f3e6ac742a5d3ecbe9de67eb5654da8d2b0e04a0948179991497717f4f04",
+    "tests/session/demo-worker-startup.spec.ts": "3aaf76a0c4be00fbdfd18197a3981cdd05f10f3757f79c88daba486f8395cc30",
+    "apps/web/src/shared/ui/components.tsx": "f820ef65f5da75cb0fe755b0d68cf01365ea65938351404f61b3b7fea9d41b17",
+    "apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "apps/web/src/shared/ui/theme.ts": "89a903ba7638a7709f118750bdb7a165d44ff57fc949ba69dc0d5f19f29465df",
+    "apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "apps/web/src/app/Shell.tsx": "14d33f33d3cc1328e8739af23cc76eca319707a91b617b1467367a0a2571cbfb",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/inbox/index.tsx": "358aa20bb71c91a48eb59a4d3e633fd631818c5e12ae97079c38cb514b7f73cb",
+    "apps/web/src/modules/dashboard/index.tsx": "7a50a470d7f8366d77b7b6e90db12f3f3ed0a01a46b8759fc311bf69636b90f9",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "tests/ui-toolbar-layout.spec.ts": "978612f5cd80c301cd1c76f83faec8270b59df60dc2354d67ecb04b480ae5bcb",
+    "tests/ui-dashboard-layout.spec.ts": "647702611dace86cd1eadc214d28899b8b9c9e84babaeaeb035a63a621da3701",
+    "evidence/frontend-shared-consolidation-20261009/capture-shared-text-zoom.mjs": "23bc6afadc4bfb730e2ea336861a5983e6ca1e68010366264c988b1963962248"
+  },
+  "scenarios": [],
+  "noProgressLedgerWrites": true,
+  "error": "TypeError: after.ownedLabels is not iterable"
+}

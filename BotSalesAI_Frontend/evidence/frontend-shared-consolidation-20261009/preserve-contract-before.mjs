@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+const frontend = path.resolve(import.meta.dirname, '../..');
+const relative = 'tests/ui-shared-api-contract.test.mjs';
+const baseline = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, 'baseline.json'), 'utf8'));
+const expected = baseline.sourceFingerprints['BotSalesAI_Frontend/' + relative];
+let before = fs.readFileSync(path.join(frontend, relative), 'utf8');
+before = before.replace("    assert.ok(components.length > 0 && compositions.length > 0, 'both public owner families must be discovered');\n    assert.equal(new Set(actual).size, actual.length, 'public API names must be unique across owner files');",
+    "    assert.equal(components.length, 22, `component exports changed: ${components.join(', ')}`);\n    assert.equal(compositions.length, 6, `composition exports changed: ${compositions.join(', ')}`);");
+before = before.replace(/test\('SPC-067 covers discovered public Shared APIs without a fixed export count',[\s\S]*?(?=test\('every public React API has a direct rendered contract test')/, '');
+const hash = value => crypto.createHash('sha256').update(value).digest('hex');
+const candidates = [before, before.replaceAll('\r\n', '\n'), before.replaceAll('\r\n', '\n').replaceAll('\n', '\r\n')];
+const original = candidates.find(value => hash(value) === expected);
+if (!original) throw new Error('Own reverse patch does not match recorded before-source hash; do not write an invented snapshot');
+const target = path.join(import.meta.dirname, 'before', relative);
+if (fs.existsSync(target)) throw new Error('Original copy already exists');
+fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, original);
+fs.writeFileSync(path.join(import.meta.dirname, 'contract-before-recovery.json'), JSON.stringify({ recoveredAt: new Date().toISOString(), source: relative, artifact: path.relative(frontend, target).replaceAll('\\', '/'), sha256: expected, method: 'Reverse only this batch patch and require byte-exact SHA256 equality with the immutable pre-implementation baseline. Recovery after implementation is recorded explicitly, not called an earlier physical copy.' }, null, 2) + '\n');
+console.log('Original dirty contract bytes recovered and verified against the before-source hash.');
