@@ -1,0 +1,79 @@
+[WebServer] (node:91292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+(node:85772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-24044-669536a2-6648-4682-bdee-3a1d84b91e12\deps\react-dom_client.js?v=27344b26 as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      118 |         const table = page.getByRole('region', { name: 'Tiền trong bảng', exact: true });
+      119 |         const overflow = await table.evaluate(node => node.scrollWidth > node.clientWidth);
+    > 120 |         if (width <= 768) expect(overflow).toBe(true);
+          |                                            ^
+      121 |         await table.focus(); const before = await table.evaluate(node => node.scrollLeft);
+      122 |         await page.keyboard.press('ArrowRight');
+      123 |         if (overflow) await expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:120:44
+
+    Error Context: test-results\playwright-85772-d449684d-b1da-4fcd-92a4-db4ed7c5b0fb\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-chromium\error-context.md
+
+    Error Context: test-results\playwright-85772-d449684d-b1da-4fcd-92a4-db4ed7c5b0fb\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-85772-d449684d-b1da-4fcd-92a4-db4ed7c5b0fb\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-85772-d449684d-b1da-4fcd-92a4-db4ed7c5b0fb\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:67676) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [firefox] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+  2) [firefox] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      118 |         const table = page.getByRole('region', { name: 'Tiền trong bảng', exact: true });
+      119 |         const overflow = await table.evaluate(node => node.scrollWidth > node.clientWidth);
+    > 120 |         if (width <= 768) expect(overflow).toBe(true);
+          |                                            ^
+      121 |         await table.focus(); const before = await table.evaluate(node => node.scrollLeft);
+      122 |         await page.keyboard.press('ArrowRight');
+      123 |         if (overflow) await expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:120:44
+
+    Error Context: test-results\playwright-67676-9b401e3c-72de-4571-9158-9c9f68b47763\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-firefox\error-context.md
+
+    Error Context: test-results\playwright-67676-9b401e3c-72de-4571-9158-9c9f68b47763\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-67676-9b401e3c-72de-4571-9158-9c9f68b47763\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-67676-9b401e3c-72de-4571-9158-9c9f68b47763\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region 
+    [firefox] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region 

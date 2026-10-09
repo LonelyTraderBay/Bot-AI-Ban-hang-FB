@@ -1,0 +1,84 @@
+
+[WebServer] (node:20596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 10 tests using 1 worker
+
+(node:85012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/10] [chromium] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-84532-3436efa1-fab8-4334-b90b-9a677d738237\deps\react-dom_client.js?v=8da21d0b as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 35
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "description": "Ensure table headers have discernible text",
+    +     "help": "Table header text should not be empty",
+    +     "helpUrl": "https://dequeuniversity.com/rules/axe/4.10/empty-table-header?application=playwright",
+    +     "id": "empty-table-header",
+    +     "impact": "minor",
+    +     "nodes": Array [
+    +       Object {
+    +         "all": Array [],
+    +         "any": Array [
+    +           Object {
+    +             "data": null,
+    +             "id": "has-visible-text",
+    +             "impact": "minor",
+    +             "message": "Element does not have text that is visible to screen readers",
+    +             "relatedNodes": Array [],
+    +           },
+    +         ],
+    +         "failureSummary": "Fix any of the following:
+    +   Element does not have text that is visible to screen readers",
+    +         "html": "<th class=\"MuiTableCell-root MuiTableCell-head MuiTableCell-sizeSmall css-1n7ks3r-MuiTableCell-root\" scope=\"col\"></th>",
+    +         "impact": "minor",
+    +         "none": Array [],
+    +         "target": Array [
+    +           "th:nth-child(5)",
+    +         ],
+    +       },
+    +     ],
+    +     "tags": Array [
+    +       "cat.name-role-value",
+    +       "best-practice",
+    +     ],
+    +   },
+    + ]
+
+      44 |     const search = await primary.boundingBox(), secondary = await filters.boundingBox();
+      45 |     expect(secondary!.y).toBeGreaterThanOrEqual(search!.y + search!.height);
+    > 46 |     expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
+         |                                                                                   ^
+      47 | });
+      48 |
+      49 | test('Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow', async ({ page }, info) => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:46:83
+
+    Error Context: test-results\playwright-85012-96983288-7ea4-4d2f-bd9b-95058d61c0ce\ui-toolbar-layout-Toolbar--d67d8-t-stretch-the-search-button-chromium\error-context.md
+
+    Error Context: test-results\playwright-85012-96983288-7ea4-4d2f-bd9b-95058d61c0ce\ui-toolbar-layout-Toolbar--d67d8-t-stretch-the-search-button-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-85012-96983288-7ea4-4d2f-bd9b-95058d61c0ce\ui-toolbar-layout-Toolbar--d67d8-t-stretch-the-search-button-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-85012-96983288-7ea4-4d2f-bd9b-95058d61c0ce\ui-toolbar-layout-Toolbar--d67d8-t-stretch-the-search-button-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:87876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/10] [chromium] › tests\ui-toolbar-layout.spec.ts:49:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow

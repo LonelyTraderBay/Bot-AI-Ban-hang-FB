@@ -1,0 +1,213 @@
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (8.3949ms)
+✖ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (10.6447ms)
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (9.547ms)
+{
+  "taskId": "FE014",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R44",
+    "R45",
+    "R46",
+    "R47"
+  ],
+  "operations": 13,
+  "checks": 95
+}
+✔ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (9.9975ms)
+FE015 source map: 131 contract/source assertions passed
+✔ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (10.7685ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","listCommands","getCommand","getInboxMetadata"],"knownGap":"Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.","checks":3}
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.7412ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.5326ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.2282ms)
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.8874ms)
+✔ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (0.5509ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.1087ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0749ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.7608ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.4357ms)
+✔ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (2.0071ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.1302ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 15
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 123.3788
+
+✖ failing tests:
+
+test at tests\fe012-source-map.test.mjs:8:1
+✖ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (10.6447ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /expectedVersion: inspectionCase\.version/. Input:
+  
+  "import { draftEqual, useVersionedDraft } from '@/shared/model/versioned-draft';\r\n" +
+    "import { markDraftClean, useDraftForm } from '@/shared/model/dirty-drafts';\r\n" +
+    "import { DraftConflict } from '@/shared/ui/draft-conflict';\r\n" +
+    "import { ActionGroup, FieldGroup, FormFields, PageSections, SectionGrid } from '../../shared/ui/composition';\r\n" +
+    "import { useEffect, useRef, useState } from 'react';\r\n" +
+    "import { visualSx } from '@/shared/ui/visual';\r\n" +
+    "import { useNavigate, useParams, useSearchParams } from 'react-router-dom';\r\n" +
+    "import { Alert, Box, Button, Divider, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';\r\n" +
+    "import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';\r\n" +
+    "import AddRounded from '@mui/icons-material/AddRounded';\r\n" +
+    "import type { Order, OrderQuote, CustomerConfirmationRequest, CustomerConfirmation, ReturnCase, ReturnInspection } from '@botsales/contracts';\r\n" +
+    "import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';\r\n" +
+    "import { useScope, useCan } from '@/shared/model/scope';\r\n" +
+    "import { useListQuery } from '@/shared/model/filters';\r\n" +
+    "import { dateTime } from '@/shared/model/format';\r\n" +
+    "import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';\r\n" +
+    "import { layoutSx } from '@/shared/ui/layout';\r\n" +
+    "import { getDemoAddressOptions } from './demo-address-preview';\r\n" +
+    'export function OrdersPage() { const { shop } = useScope(); const navigate = useNavigate(); const list = useApi(\'listOrders\', { query: useListQuery(\'listOrders\') }); return <><PageHeader title="Đơn hàng" subtitle="Tách riêng trạng thái đơn, giao hàng và thanh toán." actions={<MutationButton permission="orders.write" variant="contained" onClick={() => navigate(`/s/${shop.id}/orders/new`)}>Tạo đơn hàng</MutationButton>}/><Panel><Toolbar operation="listOrders" placeholder="Tìm mã đơn hoặc khách hàng…"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable rows={list.data.data} rowKey={o => o.id} columns={[\r\n' +
+    '    {\r\n' +
+    `        key: 'id', label: 'Đơn hàng', render: o => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{o.id}</Typography><Typography variant="caption" color="text.secondary">{dateTime(o.createdAt, shop.timezone)}</Typography></Stack>\r\n` +
+    '    },\r\n' +
+    "    { key: 'customer', label: 'Khách', render: o => o.customerId }, { key: 'total', label: 'Tổng tiền', align: 'right', render: o => <Amount value={o.total}/> }, { key: 'order', label: 'Đơn', render: o => <Status value={o.orderState}/> }, { key: 'shipping', label: 'Giao hàng', render: o => <Status value={o.fulfillmentState}/> }, { key: 'payment', label: 'Tiền', render: o => <Status value={o.paymentState}/> }, { key: 'action', label: '', render: o => <RouteLink to={`/s/${shop.id}/orders/${o.id}`}>Xem đơn</RouteLink> }\r\n" +
+    ']}/><Pager page={list.data.page}/></>}</QueryState></Panel></>; }\r\n' +
+    'function DraftForm({ initial, onSaved, onBusyChange }: {\r\n' +
+    '    initial?: Order;\r\n' +
+    '    onSaved: (order: Order) => void;\r\n' +
+    '    onBusyChange?: (busy: boolean) => void;\r\n' +
+    '}) {\r\n' +
+    '    const { shop } = useScope();\r\n' +
+    '    const [params] = useSearchParams();\r\n' +
+    '    const [created, setCreated] = useState<Order | null>(null);\r\n' +
+    '    const resource = initial || created;\r\n' +
+    "    const canReadCustomers = useCan('customers.read');\r\n" +
+    "    const canReadProducts = useCan('catalog.read');\r\n" +
+    "    const canReadConversations = useCan('conversations.read');\r\n" +
+    "    const canWriteOrders = useCan('orders.write');\r\n" +
+    "    const [customerSearch, setCustomerSearch] = useState('');\r\n" +
+    "    const [productSearch, setProductSearch] = useState('');\r\n" +
+    "    const customers = usePagedApi('listCustomers', { query: { q: customerSearch.trim() || undefined, limit: 20 } }, canReadCustomers);\r\n" +
+    "    const products = usePagedApi('listProducts', { query: { q: productSearch.trim() || undefined, limit: 20 } }, canReadProducts);\r\n" +
+    "    const create = useCommand('createOrder', ['listOrders']);\r\n" +
+    "    const update = useCommand('updateOrderDraft', ['getOrder', 'listOrders']);\r\n" +
+    '    useEffect(() => { onBusyChange?.(create.pending || update.pending); }, [create.pending, update.pending, onBusyChange]);\r\n' +
+    "    const initialNotes = typeof initial?.notes === 'string' ? initial.notes : '';\r\n" +
+    "    const [customerId, setCustomer] = useState(initial?.customerId || params.get('customerId') || ''), [conversationId, setConversation] = useState(initial?.conversationId || params.get('conversationId') || ''), [warehouse, setWarehouse] = useState(initial?.warehouseId || shop.defaultWarehouseId), [addressId, setAddress] = useState(initial?.shippingAddressId || ''), [method, setMethod] = useState<'cod' | 'prepay'>(initial?.paymentMethod || 'cod'), [notes, setNotes] = useState(initialNotes);\r\n" +
+    "    const conv = usePagedApi('listConversations', { query: { customerId: customerId || undefined, limit: 20 } }, canReadConversations && !!customerId);\r\n" +
+    "    const [lines, setLines] = useState(initial?.lines.map(l => ({ key: l.id, variantId: l.variantId, variantLabel: `${l.name} · ${l.sku}`, quantity: String(l.quantity) })) || [{ key: crypto.randomUUID(), variantId: '', variantLabel: '', quantity: '1' }]);\r\n" +
+    "    const variants = products.data?.data.filter(p => p.status === 'active').flatMap(p => p.variants.filter(v => v.active).map(v => ({ ...v, productName: p.name }))) || [];\r\n" +
+    '    const lineQuantityError = (value: string) => value.length > 0 && (!/^\\d+$/.test(value) || Number(value) < 1 || Number(value) > 1_000_000);\r\n' +
+    '    const duplicateVariants = new Set(lines.map(l => l.variantId).filter(Boolean)).size !== lines.filter(l => l.variantId).length;\r\n' +
+    '    const valid = !!customerId && !!warehouse.trim() && lines.length > 0 && lines.length <= 100 && lines.every(l => l.variantId && !lineQuantityError(l.quantity)) && !duplicateVariants && notes.length <= 2_000 && (initial !== undefined || (canReadCustomers && canReadProducts));\r\n' +
+    '    const chooseVariant = (key: string, variantId: string) => {\r\n' +
+    '        const selected = variants.find(v => v.id === variantId);\r\n' +
+    '        setLines(current => current.map(line => line.key === key ? { ...line, variantId, variantLabel: selected ? `${selected.productName} · ${selected.name} · ${selected.sku}` : line.variantLabel } : line));\r\n' +
+    '    };\r\n' +
+    "    const fresh = useApi('getOrder', { path: { orderId: resource?.id || '' } }, !!resource);\r\n" +
+    '    const current = fresh.data && (!resource || fresh.data.data.version >= resource.version) ? fresh.data.data : resource;\r\n' +
+    '    const values = { customerId, conversationId, warehouse, notes, lines: lines.map(line => ({ variantId: line.variantId, quantity: line.quantity })) };\r\n' +
+    '    const editor = useVersionedDraft({\r\n' +
+    "        identity: `${shop.id}:order:${resource?.id || 'new'}`,\r\n" +
+    '        source: current ? orderSnapshot(current) : undefined,\r\n' +
+    '        draft: values,\r\n' +
+    '        apply: value => {\r\n' +
+    '            setCustomer(value.customerId); setConversation(value.conversationId); setWarehouse(value.warehouse); setNotes(value.notes);\r\n' +
+    "            setLines(existing => value.lines.map(line => ({ ...line, key: existing.find(item => item.variantId === line.variantId)?.key || crypto.randomUUID(), variantLabel: existing.find(item => item.variantId === line.variantId)?.variantLabel || '' })));\r\n" +
+    '        }, refresh: () => fresh.refetch({ throwOnError: true }),\r\n' +
+    '    });\r\n' +
+    '    const [creationBaseline] = useState(() => ({ ...values, addressId, method }));\r\n' +
+    '    const bindDraft = useDraftForm(resource ? editor.dirty : !draftEqual(creationBaseline, { ...values, addressId, method }));\r\n' +
+    '    const formRef = useRef<HTMLFormElement>(null);\r\n' +
+    '    const save = async () => { try {\r\n' +
+    '        const body = { customerId, conversationId: conversationId || null, warehouseId: warehouse, lines: lines.map(line => ({ variantId: line.variantId, quantity: Number(line.quantity) })), notes };\r\n' +
+    '        let response: Awaited<ReturnType<typeof create.execute>>;\r\n' +
+    '        if (resource) {\r\n' +
+    '            const prepared = editor.prepare(); if (!prepared) return;\r\n' +
+    '            response = await update.execute({ path: { orderId: resource.id }, version: prepared.version, body: {\r\n' +
+    '                ...(prepared.patch.customerId !== undefined ? { customerId: body.customerId } : {}),\r\n' +
+    '                ...(prepared.patch.conversationId !== undefined ? { conversationId: body.conversationId } : {}),\r\n' +
+    '                ...(prepared.patch.warehouse !== undefined ? { warehouseId: body.warehouseId } : {}),\r\n' +
+    '                ...(prepared.patch.lines !== undefined ? { lines: body.lines } : {}),\r\n' +
+    '                ...(prepared.patch.notes !== undefined ? { notes: body.notes } : {}),\r\n' +
+    '            } });\r\n' +
+    '        } else response = await create.execute({ body: { ...body, paymentMethod: method, shippingAddressId: addressId || null } });\r\n' +
+    '        const clean = editor.committed(orderSnapshot(response.data), values, `${shop.id}:order:${response.data.id}`);\r\n' +
+    '        if (clean) { if (formRef.current) markDraftClean(formRef.current); onSaved(response.data); }\r\n' +
+    '        else setCreated(response.data);\r\n' +
+    '    } catch (error) { editor.failed(error); } };\r\n' +
+    '    const selectedCustomer = customers.data?.data.find(customer => customer.id === customerId);\r\n' +
+    '    return <Box component="form" ref={form => { const element = form as HTMLFormElement | null; formRef.current = element; bindDraft(element); }} onSubmit={event => { event.preventDefault(); if (valid) void save(); }}><PageSections >\r\n' +
+    "        <ErrorNotice error={create.error || update.error}/><DraftConflict editor={editor} labels={{ customerId: 'Khách hàng', conversationId: 'Hội thoại', warehouse: 'Kho xuất', notes: 'Ghi chú', lines: 'Dòng đơn hàng' }} busy={create.pending || update.pending}/>\r\n" +
+    '        {!canReadCustomers && <Alert severity="warning">Bạn cần quyền customers.read để tìm và tạo đơn với khách hàng. Đơn nháp hiện có vẫn giữ nguyên mã khách.</Alert>}\r\n' +
+    '        {!canReadProducts && <Alert severity="warning">Bạn cần quyền catalog.read để tìm và chọn sản phẩm cho đơn hàng.</Alert>}\r\n' +
+    '        {customers.isError && <ErrorNotice '... 33298 more characters
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/fe012-source-map.test.mjs:78:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'import { draftEqual, useVersionedDraft } from \'@/shared/model/versioned-draft\';\r\nimport { markDraftClean, useDraftForm } from \'@/shared/model/dirty-drafts\';\r\nimport { DraftConflict } from \'@/shared/ui/draft-conflict\';\r\nimport { ActionGroup, FieldGroup, FormFields, PageSections, SectionGrid } from \'../../shared/ui/composition\';\r\nimport { useEffect, useRef, useState } from \'react\';\r\nimport { visualSx } from \'@/shared/ui/visual\';\r\nimport { useNavigate, useParams, useSearchParams } from \'react-router-dom\';\r\nimport { Alert, Box, Button, Divider, IconButton, MenuItem, Stack, TextField, Typography } from \'@mui/material\';\r\nimport DeleteOutlineRounded from \'@mui/icons-material/DeleteOutlineRounded\';\r\nimport AddRounded from \'@mui/icons-material/AddRounded\';\r\nimport type { Order, OrderQuote, CustomerConfirmationRequest, CustomerConfirmation, ReturnCase, ReturnInspection } from \'@botsales/contracts\';\r\nimport { useApi, useCommand, usePagedApi } from \'@/shared/api/hooks\';\r\nimport { useScope, useCan } from \'@/shared/model/scope\';\r\nimport { useListQuery } from \'@/shared/model/filters\';\r\nimport { dateTime } from \'@/shared/model/format\';\r\nimport { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, LookupLoadMore } from \'@/shared/ui/components\';\r\nimport { layoutSx } from \'@/shared/ui/layout\';\r\nimport { getDemoAddressOptions } from \'./demo-address-preview\';\r\nexport function OrdersPage() { const { shop } = useScope(); const navigate = useNavigate(); const list = useApi(\'listOrders\', { query: useListQuery(\'listOrders\') }); return <><PageHeader title="Đơn hàng" subtitle="Tách riêng trạng thái đơn, giao hàng và thanh toán." actions={<MutationButton permission="orders.write" variant="contained" onClick={() => navigate(`/s/${shop.id}/orders/new`)}>Tạo đơn hàng</MutationButton>}/><Panel><Toolbar operation="listOrders" placeholder="Tìm mã đơn hoặc khách hàng…"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable rows={list.data.data} rowKey={o => o.id} columns={[\r\n    {\r\n        key: \'id\', label: \'Đơn hàng\', render: o => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{o.id}</Typography><Typography variant="caption" color="text.secondary">{dateTime(o.createdAt, shop.timezone)}</Typography></Stack>\r\n    },\r\n    { key: \'customer\', label: \'Khách\', render: o => o.customerId }, { key: \'total\', label: \'Tổng tiền\', align: \'right\', render: o => <Amount value={o.total}/> }, { key: \'order\', label: \'Đơn\', render: o => <Status value={o.orderState}/> }, { key: \'shipping\', label: \'Giao hàng\', render: o => <Status value={o.fulfillmentState}/> }, { key: \'payment\', label: \'Tiền\', render: o => <Status value={o.paymentState}/> }, { key: \'action\', label: \'\', render: o => <RouteLink to={`/s/${shop.id}/orders/${o.id}`}>Xem đơn</RouteLink> }\r\n]}/><Pager page={list.data.page}/></>}</QueryState></Panel></>; }\r\nfunction DraftForm({ initial, onSaved, onBusyChange }: {\r\n    initial?: Order;\r\n    onSaved: (order: Order) => void;\r\n    onBusyChange?: (busy: boolean) => void;\r\n}) {\r\n    const { shop } = useScope();\r\n    const [params] = useSearchParams();\r\n    const [created, setCreated] = useState<Order | null>(null);\r\n    const resource = initial || created;\r\n    const canReadCustomers = useCan(\'customers.read\');\r\n    const canReadProducts = useCan(\'catalog.read\');\r\n    const canReadConversations = useCan(\'conversations.read\');\r\n    const canWriteOrders = useCan(\'orders.write\');\r\n    const [customerSearch, setCustomerSearch] = useState(\'\');\r\n    const [productSearch, setProductSearch] = useState(\'\');\r\n    const customers = usePagedApi(\'listCustomers\', { query: { q: customerSearch.trim() || undefined, limit: 20 } }, canReadCustomers);\r\n    const products = usePagedApi(\'listProducts\', { query: { q: productSearch.trim() || undefined, limit: 20 } }, canReadProducts);\r\n    const create = useCommand(\'createOrder\', [\'listOrders\']);\r\n    const update = useCommand(\'updateOrderDraft\', [\'getOrder\', \'listOrders\']);\r\n    useEffect(() => { onBusyChange?.(create.pending || update.pending); }, [create.pending, update.pending, onBusyChange]);\r\n    const initialNotes = typeof initial?.notes === \'string\' ? initial.notes : \'\';\r\n    const [customerId, setCustomer] = useState(initial?.customerId || params.get(\'customerId\') || \'\'), [conversationId, setConversation] = useState(initial?.conversationId || params.get(\'conversationId\') || \'\'), [warehouse, setWarehouse] = useState(initial?.warehouseId || shop.defaultWarehouseId), [addressId, setAddress] = useState(initial?.shippingAddressId || \'\'), [method, setMethod] = useState<\'cod\' | \'prepay\'>(initial?.paymentMethod || \'cod\'), [notes, setNotes] = useState(initialNotes);\r\n    const conv = usePagedApi(\'listConversations\', { query: { customerId: customerId || undefined, limit: 20 } }, canReadConversations && !!customerId);\r\n    const [lines, setLines] = useState(initial?.lines.map(l => ({ key: l.id, variantId: l.variantId, variantLabel: `${l.name} · ${l.sku}`, quantity: String(l.quantity) })) || [{ key: crypto.randomUUID(), variantId: \'\', variantLabel: \'\', quantity: \'1\' }]);\r\n    const variants = products.data?.data.filter(p => p.status === \'active\').flatMap(p => p.variants.filter(v => v.active).map(v => ({ ...v, productName: p.name }))) || [];\r\n    const lineQuantityError = (value: string) => value.length > 0 && (!/^\\d+$/.test(value) || Number(value) < 1 || Number(value) > 1_000_000);\r\n    const duplicateVariants = new Set(lines.map(l => l.variantId).filter(Boolean)).size !== lines.filter(l => l.variantId).length;\r\n    const valid = !!customerId && !!warehouse.trim() && lines.length > 0 && lines.length <= 100 && lines.every(l => l.variantId && !lineQuantityError(l.quantity)) && !duplicateVariants && notes.length <= 2_000 && (initial !== undefined || (canReadCustomers && canReadProducts));\r\n    const chooseVariant = (key: string, variantId: string) => {\r\n        const selected = variants.find(v => v.id === variantId);\r\n        setLines(current => current.map(line => line.key === key ? { ...line, variantId, variantLabel: selected ? `${selected.productName} · ${selected.name} · ${selected.sku}` : line.variantLabel } : line));\r\n    };\r\n    const fresh = useApi(\'getOrder\', { path: { orderId: resource?.id || \'\' } }, !!resource);\r\n    const current = fresh.data && (!resource || fresh.data.data.version >= resource.version) ? fresh.data.data : resource;\r\n    const values = { customerId, conversationId, warehouse, notes, lines: lines.map(line => ({ variantId: line.variantId, quantity: line.quantity })) };\r\n    const editor = useVersionedDraft({\r\n        identity: `${shop.id}:order:${resource?.id || \'new\'}`,\r\n        source: current ? orderSnapshot(current) : undefined,\r\n        draft: values,\r\n        apply: value => {\r\n            setCustomer(value.customerId); setConversation(value.conversationId); setWarehouse(value.warehouse); setNotes(value.notes);\r\n            setLines(existing => value.lines.map(line => ({ ...line, key: existing.find(item => item.variantId === line.variantId)?.key || crypto.randomUUID(), variantLabel: existing.find(item => item.variantId === line.variantId)?.variantLabel || \'\' })));\r\n        }, refresh: () => fresh.refetch({ throwOnError: true }),\r\n    });\r\n    const [creationBaseline] = useState(() => ({ ...values, addressId, method }));\r\n    const bindDraft = useDraftForm(resource ? editor.dirty : !draftEqual(creationBaseline, { ...values, addressId, method }));\r\n    const formRef = useRef<HTMLFormElement>(null);\r\n    const save = async () => { try {\r\n        const body = { customerId, conversationId: conversationId || null, warehouseId: warehouse, lines: lines.map(line => ({ variantId: line.variantId, quantity: Number(line.quantity) })), notes };\r\n        let response: Awaited<ReturnType<typeof create.execute>>;\r\n        if (resource) {\r\n            const prepared = editor.prepare(); if (!prepared) return;\r\n            response = await update.execute({ path: { orderId: resource.id }, version: prepared.version, body: {\r\n                ...(prepared.patch.customerId !== undefined ? { customerId: body.customerId } : {}),\r\n                ...(prepared.patch.conversationId !== undefined ? { conversationId: body.conversationId } : {}),\r\n                ...(prepared.patch.warehouse !== undefined ? { warehouseId: body.warehouseId } : {}),\r\n                ...(prepared.patch.lines !== undefined ? { lines: body.lines } : {}),\r\n                ...(prepared.patch.notes !== undefined ? { notes: body.notes } : {}),\r\n            } });\r\n        } else response = await create.execute({ body: { ...body, paymentMethod: method, shippingAddressId: addressId || null } });\r\n        const clean = editor.committed(orderSnapshot(response.data), values, `${shop.id}:order:${response.data.id}`);\r\n        if (clean) { if (formRef.current) markDraftClean(formRef.current); onSaved(response.data); }\r\n        else setCreated(response.data);\r\n    } catch (error) { editor.failed(error); } };\r\n    const selectedCustomer = customers.data?.data.find(customer => customer.id === customerId);\r\n    return <Box component="form" ref={form => { const element = form as HTMLFormElement | null; formRef.current = element; bindDraft(element); }} onSubmit={event => { event.preventDefault(); if (valid) void save(); }}><PageSections >\r\n        <ErrorNotice error={create.error || update.error}/><DraftConflict editor={editor} labels={{ customerId: \'Khách hàng\', conversationId: \'Hội thoại\', warehouse: \'Kho xuất\', notes: \'Ghi chú\', lines: \'Dòng đơn hàng\' }} busy={create.pending || update.pending}/>\r\n        {!canReadCustomers && <Alert severity="warning">Bạn cần quyền customers.read để tìm và tạo đơn với khách hàng. Đơn nháp hiện có vẫn giữ nguyên mã khách.</Alert>}\r\n        {!canReadProducts && <Alert severity="warning">Bạn cần quyền catalog.read để tìm và chọn sản phẩm cho đơn hàng.</Alert>}\r\n        {customers.isError && <ErrorNotice '... 33298 more characters,
+    expected: /expectedVersion: inspectionCase\.version/,
+    operator: 'match',
+    diff: 'simple'
+  }

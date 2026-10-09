@@ -1,0 +1,69 @@
+[WebServer] (node:59904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+(node:73000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/4] [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-44708-3672203f-164c-473a-bfe2-095227c9f654\deps\react-dom_client.js?v=e3f73feb as it exceeds the max of 500KB.
+
+[2/4] [chromium] › tests\frontend-corrections.spec.ts:320:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+(node:5516) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/4] [firefox] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+  1) [firefox] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo 
+
+    Error: expect(locator).not.toBeEmpty() failed
+
+    Locator:  locator('#root')
+    Expected: not empty
+    Received: empty
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "not toBeEmpty" locator('#root') with timeout 5000ms
+      - waiting for locator('#root')
+        - waiting for navigation to finish...
+        - navigated to "http://127.0.0.1:55155/s/shop-demo/bot/evaluations"
+        6 × locator resolved to <div id="root"></div>
+          - unexpected value "empty"
+        - waiting for "http://127.0.0.1:55155/s/shop-demo/bot/evaluations" navigation to finish...
+        - navigated to "http://127.0.0.1:55155/s/shop-demo/bot/evaluations"
+        7 × locator resolved to <div id="root"></div>
+          - unexpected value "empty"
+
+
+      30 |                 .replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
+      31 |             await page.goto(new URL(routePath, server.url).toString());
+    > 32 |             await expect(page.locator('#root')).not.toBeEmpty();
+         |                                                     ^
+      33 |             await expect(page.getByText('Chưa khởi động được ứng dụng', { exact: true })).toHaveCount(0);
+      34 |             const main = page.locator('main#main-content');
+      35 |             await expect(main).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\accessibility\routes.spec.ts:32:53
+
+    Error Context: test-results\playwright-5516-984166fc-e1a0-4142-820a-7df30c72f95a\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-firefox\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-5516-984166fc-e1a0-4142-820a-7df30c72f95a\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-5516-984166fc-e1a0-4142-820a-7df30c72f95a\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:39448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/4] [firefox] › tests\frontend-corrections.spec.ts:320:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+  1 failed
+    [firefox] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo 
+  3 passed (2.7m)

@@ -1,0 +1,473 @@
+{
+  "observedAt": "2026-10-08T05:38:42.734Z",
+  "result": "REPRODUCED",
+  "checks": [
+    {
+      "field": "CustomerWritePatch.notes",
+      "count": 4000,
+      "valueUtf16Length": 8000,
+      "canonical": true,
+      "currentOwner": false
+    },
+    {
+      "field": "CustomerWritePatch.notes",
+      "count": 4001,
+      "valueUtf16Length": 8002,
+      "canonical": false,
+      "currentOwner": false
+    }
+  ],
+  "edits": [
+    {
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "beforeSha256": "93e5aac9de3768385ee2fb5f3180b5af224534cc9debf53cf38a32a9dd102c42",
+      "afterSha256": "14bc610e406b356218efc2aaedd848e6caf10abf167aae2ff3ef67541c4b2c51",
+      "changes": [
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(note)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(note.trim())"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 160)"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "beforeSha256": "0098291c1ce460c3b6cf188b3e75bdfe7e95507497117a70bd6dad9fb5d87642",
+      "afterSha256": "a43b3c48e256624b32aa66bc03ba3fc65e09661dec5827eb55ab4b468a87a388",
+      "changes": [
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 1000)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 1000)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(summary.trim())"
+        },
+        {
+          "kind": "Zod Unicode limit",
+          "text": ".refine(value => codePointLength(value) <= 4000, copy.notesMax)"
+        },
+        {
+          "kind": "Zod Unicode limit",
+          "text": ".refine(value => codePointLength(value) <= 40, copy.phoneMax)"
+        },
+        {
+          "kind": "Zod Unicode limit",
+          "text": ".refine(value => codePointLength(value) <= 160, copy.nameMax)"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "beforeSha256": "6460f6ed1398526a1a530df7772f03d2f86a2048f625786cf86095284ce270bc",
+      "afterSha256": "4d216c67f07350da8bdd3bf27c35de7c385711a9e68369d42bb206e45179d461",
+      "changes": [
+        {
+          "kind": "Zod Unicode limit",
+          "text": ".refine(value => codePointLength(value) <= 80, 'SKU tối đa 80 ký tự.')"
+        },
+        {
+          "kind": "Zod Unicode limit",
+          "text": ".refine(value => codePointLength(value) <= 20000, 'Mô tả tối đa 20.000 ký tự.')"
+        },
+        {
+          "kind": "Zod Unicode limit",
+          "text": ".refine(value => codePointLength(value) <= 160, 'Tên sản phẩm tối đa 160 ký tự.')"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "beforeSha256": "7b5d0a356390cba43b8bf16c162dd499150bee37d353945d552504a1eee2bd1b",
+      "afterSha256": "5492ad04ef21d3df5b85cfb3fd2bf5d7930e452e53b48bab1fb822a38cb2a4d7",
+      "changes": [
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 120)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 120)"
+        },
+        {
+          "kind": "Zod Unicode limit",
+          "text": ".refine(value => codePointLength(value) >= 5, 'Lý do cần ít nhất 5 ký tự').refine(value => codePointLength(value) <= 1000, 'Lý do không được quá 1.000 ký tự')"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "beforeSha256": "9c4e7e6c4fa22d632517487daa7e46b3babd2a8ba966c67cc5765a0e238c7a5f",
+      "afterSha256": "197332bcd5173db77bba39139bc2047c5dffeb9d61840c1231642b47caffb810",
+      "changes": [
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(line.reason)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(line.reason)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(notes)"
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 2000)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(notes)"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "beforeSha256": "b232374ed17759d105022cc29d87205de9414b7d2b5327f0bf9135243248134c",
+      "afterSha256": "c292431530f44dcc005ac6662497f368f6c648260b1bda1dd985d88a09bb0a65",
+      "changes": [
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(description.trim())"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "beforeSha256": "7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b",
+      "afterSha256": "acf06edc7f2d4fc847bf7bc63d2a84f643a04e34d571ab1f5189603f793535a5",
+      "changes": [
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 2000)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 10000)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 1000)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(restoreReason.trim())"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 100000)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 180)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 1000)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 180)"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "beforeSha256": "cbca27471ea771f325b3577095a6ff30f66b29c711c0138b3678a8dc4c1d40af",
+      "afterSha256": "92d2cd21fa6b74afaca61da769e0965db5ec46b110f21e5a6b7e21aeed9f3e70",
+      "changes": [
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason)"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "beforeSha256": "21c786a8280031a029af35e434f7f755b6c81acbab59ca3098d87028aab7aa65",
+      "afterSha256": "1a2011b16665df078cec13aaf75a198f19c4af9533b9812045242194171b556f",
+      "changes": [
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 16384)"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "beforeSha256": "608bdffd80bc3b3bc0bd2a6b49a3591b38262f797c195de09ee566a34db5518b",
+      "afterSha256": "2f668faf82d5241bdc2851c5159b7c43ef83f932bdbcef5b179b112344dc42a3",
+      "changes": [
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "beforeSha256": "9e3e9e0be9359ec2a9d2fa9342da085ccbd64f7037f52fb0219569d053518074",
+      "afterSha256": "27e33c89ae73c93c7f20252539f8e92a49cf26c8c5e206f0e74c1c35cfe9239f",
+      "changes": [
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 120)"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "beforeSha256": "524f131d265375b0effd148146a122dcac33009eb06fe1dd5929556dba86a913",
+      "afterSha256": "d013702152756553b663eab4ef4f70271cc1806cdf1622bedef51d02b4a2374b",
+      "changes": [
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(change.target.value, 160)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(externalEventId)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(externalEventId)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(change.target.value, 160)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 160)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(externalEventId.trim())"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(issue)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 1000)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 100)"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "beforeSha256": "3d27eb15eb18b36c17dbea9e25e57736d4b95d0a02bacf092c763b14c4cd2134",
+      "afterSha256": "b97dcd2331f276a1a463a793e025f87b11ff0c6a8378b8de463de3261b7fe07f",
+      "changes": [
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 1000)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(event.target.value, 160)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(document.trim())"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(input.reason)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 1000)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(reason.trim())"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 500)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 200)"
+        },
+        {
+          "kind": "remove UTF16 native limit",
+          "text": ""
+        },
+        {
+          "kind": "native Unicode limit",
+          "text": "limitCodePoints(e.target.value, 160)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(terms)"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(contact.trim())"
+        },
+        {
+          "kind": "string comparison",
+          "text": "codePointLength(name.trim())"
+        }
+      ]
+    }
+  ]
+}

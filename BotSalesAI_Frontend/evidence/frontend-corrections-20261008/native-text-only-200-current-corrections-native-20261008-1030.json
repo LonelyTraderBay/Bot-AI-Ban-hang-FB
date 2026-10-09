@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W30",
+  "recordedAt": "2026-10-08T03:28:41.844Z",
+  "scope": "Isolated Firefox with local React demo and synthetic MSW; no backend, user profile, persistent app writes, or system preference changes",
+  "result": "PASS",
+  "temporaryProfileCleanup": "REMOVED",
+  "method": {
+    "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+    "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+    "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+    "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+    "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+    "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+    "baseZoomFactor": 1,
+    "targetZoomFactor": 2,
+    "scenarios": [
+      {
+        "id": "draft-comparison",
+        "route": "/s/shop-demo/customers/c1",
+        "viewport": {
+          "width": 390,
+          "height": 560
+        }
+      }
+    ],
+    "browserVersion": "155.0",
+    "webdriverBuildId": "20260902192955"
+  },
+  "sourceSha256": {
+    "apps/web/src/modules/customers/index.tsx": "0098291c1ce460c3b6cf188b3e75bdfe7e95507497117a70bd6dad9fb5d87642",
+    "apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
+    "apps/web/src/shared/ui/draft-conflict.tsx": "5332f808b3bb81c901962bcdd678e6f37290c408033b1e552f9321d0a01ed809",
+    "apps/web/src/shared/ui/components.tsx": "79cd7a6e0473da61469d5256f03888045d549075903e28e5ad4f6e0da6298e6b",
+    "evidence/frontend-corrections-20261008/capture-comparison-text-zoom.mjs": "ee308ccded53f485e9095ece83afe0195d2ceaa176a1d6abf54c1f088bb3ed30",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "apps/web/src/app/Shell.tsx": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/catalog/index.tsx": "6460f6ed1398526a1a530df7772f03d2f86a2048f625786cf86095284ce270bc",
+    "apps/web/src/modules/inbox/index.tsx": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b",
+    "apps/web/src/modules/inbox/conversation-components.tsx": "13e4285f3bbc8ca234050141bc5690c23ff257d95ba412893813a8a815e4ea3b",
+    "apps/web/src/modules/reports/index.tsx": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754",
+    "apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "apps/web/src/shared/ui/theme.ts": "953a3ca9df114d93395c0ec61f61d65230bf39440aad45a8b55f884e39669b04",
+    "apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
+    "tests/ui028-w30-stress.spec.ts": "54c71563d0be5266c3ac495bfe7ca36252adf6812ec3db665559cd76d6cd9d36",
+    "tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781"
+  },
+  "scenarios": [
+    {
+      "id": "draft-comparison",
+      "route": "/s/shop-demo/customers/c1",
+      "routeUrl": "http://127.0.0.1:50851/s/shop-demo/customers/c1",
+      "viewport": {
+        "width": 390,
+        "height": 560
+      },
+      "setup": "actual-412-comparison-open",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "viewport": {
+          "width": 390,
+          "height": 560,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2455,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[role=\"dialog\"] h3",
+            "found": true,
+            "x": 62,
+            "y": 198.3,
+            "width": 266,
+            "height": 21.98,
+            "right": 328,
+            "bottom": 220.28,
+            "scrollWidth": 266,
+            "clientWidth": 266,
+            "scrollHeight": 22,
+            "clientHeight": 22,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 14
+          },
+          {
+            "selector": "[role=\"dialog\"] [role=\"combobox\"]",
+            "found": true,
+            "x": 62,
+            "y": 421.28,
+            "width": 266,
+            "height": 53.13,
+            "right": 328,
+            "bottom": 474.42,
+            "scrollWidth": 266,
+            "clientWidth": 266,
+            "scrollHeight": 53,
+            "clientHeight": 53,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "14px",
+            "textLength": 1
+          },
+          {
+            "selector": "[role=\"dialog\"] button",
+            "found": true,
+            "x": 301,
+            "y": 45,
+            "width": 44,
+            "height": 44,
+            "right": 345,
+            "bottom": 89,
+            "scrollWidth": 44,
+            "clientWidth": 44,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "24px",
+            "textLength": 0
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": {
+          "x": 32,
+          "y": 32,
+          "width": 326,
+          "height": 496,
+          "right": 358,
+          "bottom": 528,
+          "scrollWidth": 324,
+          "clientWidth": 324,
+          "scrollHeight": 494,
+          "clientHeight": 494,
+          "overflowX": "auto",
+          "overflowY": "auto",
+          "fontSize": "14px",
+          "textLength": 3761
+        },
+        "activeFocus": {
+          "tag": "div",
+          "role": "presentation",
+          "label": "Đối chiếu thay đổi\n\nBản gốc v1 · server v2. Danh sách được chọn nguyên bản. Áp d",
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": 0,
+            "bottom": 560
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [
+          {
+            "method": "PATCH",
+            "url": "/api/v2/shops/shop-demo/customers/c1"
+          }
+        ]
+      },
+      "textOnly200": {
+        "viewport": {
+          "width": 390,
+          "height": 560,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 5029,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[role=\"dialog\"] h3",
+            "found": true,
+            "x": 62,
+            "y": -747.8,
+            "width": 266,
+            "height": 43.97,
+            "right": 328,
+            "bottom": -703.83,
+            "scrollWidth": 266,
+            "clientWidth": 266,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 14,
+            "nativeTextScaleRatio": 2
+          },
+          {
+            "selector": "[role=\"dialog\"] [role=\"combobox\"]",
+            "found": true,
+            "x": 62,
+            "y": -385.83,
+            "width": 266,
+            "height": 73.25,
+            "right": 328,
+            "bottom": -312.58,
+            "scrollWidth": 266,
+            "clientWidth": 266,
+            "scrollHeight": 73,
+            "clientHeight": 73,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 1,
+            "nativeTextScaleRatio": 2
+          },
+          {
+            "selector": "[role=\"dialog\"] button",
+            "found": true,
+            "x": 281,
+            "y": 45,
+            "width": 64,
+            "height": 64,
+            "right": 345,
+            "bottom": 109,
+            "scrollWidth": 64,
+            "clientWidth": 64,
+            "scrollHeight": 64,
+            "clientHeight": 64,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "48px",
+            "textLength": 0,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": {
+          "x": 32,
+          "y": 32,
+          "width": 326,
+          "height": 496,
+          "right": 358,
+          "bottom": 528,
+          "scrollWidth": 324,
+          "clientWidth": 324,
+          "scrollHeight": 494,
+          "clientHeight": 494,
+          "overflowX": "auto",
+          "overflowY": "auto",
+          "fontSize": "28px",
+          "textLength": 3761
+        },
+        "activeFocus": {
+          "tag": "div",
+          "role": "combobox",
+          "label": "Dùng bản server",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 62,
+            "right": 328,
+            "y": 202.38333129882812,
+            "bottom": 275.6333312988281
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": [
+          {
+            "method": "PATCH",
+            "url": "/api/v2/shops/shop-demo/customers/c1"
+          }
+        ]
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-corrections-20261008/native-text-only-200-draft-comparison-focused-corrections-native-20261008-1030.png",
+        "sha256": "b0158bb4ae558f79ae17b416f9482e7b5db73aff946ec7e643e406546df75fcf"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-corrections-20261008/native-text-only-200-draft-comparison-current-corrections-native-20261008-1030.png",
+        "sha256": "771200eeed7329a7e923cdd7d65d54b6bbbb86135ab216643cb63a25f96842ed"
+      },
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "noProgressLedgerWrites": true
+}

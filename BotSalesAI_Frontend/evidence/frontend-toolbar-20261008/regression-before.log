@@ -1,0 +1,44 @@
+
+[WebServer] (node:61288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:70356) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [chromium] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-26032-bae389e7-2e5e-4ffe-bccf-2a97fa429951\deps\react-dom_client.js?v=e719979c as it exceeds the max of 500KB.
+  1) [chromium] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 45
+    Received:    130.25
+
+      36 |     const geometry = await searchGeometry(page);
+      37 |     await info.attach('toolbar-geometry', { body: JSON.stringify(geometry), contentType: 'application/json' });
+    > 38 |     expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1);
+         |                                   ^
+      39 |     const primary = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true }).locator('xpath=ancestor::form');
+      40 |     await expect(primary.getByRole('combobox', { name: 'Trạng thái', exact: true })).toBeVisible();
+      41 |     await expect(primary.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toHaveCount(0);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:38:35
+
+    Error Context: test-results\playwright-70356-48a02379-76d2-49d0-aae4-48cdb593872a\ui-toolbar-layout-Toolbar--d67d8-t-stretch-the-search-button-chromium\error-context.md
+
+    Error Context: test-results\playwright-70356-48a02379-76d2-49d0-aae4-48cdb593872a\ui-toolbar-layout-Toolbar--d67d8-t-stretch-the-search-button-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-70356-48a02379-76d2-49d0-aae4-48cdb593872a\ui-toolbar-layout-Toolbar--d67d8-t-stretch-the-search-button-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-70356-48a02379-76d2-49d0-aae4-48cdb593872a\ui-toolbar-layout-Toolbar--d67d8-t-stretch-the-search-button-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button 

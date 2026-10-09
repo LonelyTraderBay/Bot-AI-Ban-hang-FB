@@ -1,0 +1,86 @@
+[WebServer] (node:64244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 8 tests using 1 worker
+
+(node:23932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/8] [chromium] › tests\ui-component-layout.spec.ts:39:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-30888-624fe240-7fa8-48df-bd3b-d2a66ddc00f4\deps\react-dom_client.js?v=9689b1c2 as it exceeds the max of 500KB.
+
+[2/8] [chromium] › tests\ui-component-layout.spec.ts:60:1 › A02 product editors align category and status faces independently from lookup metadata
+[3/8] [chromium] › tests\ui-component-layout.spec.ts:83:1 › A03 import mapping preserves natural remove actions and editable mappings
+[4/8] [chromium] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+  1) [chromium] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      118 |         const table = page.getByRole('region', { name: 'Tiền trong bảng', exact: true });
+      119 |         await table.focus(); const before = await table.evaluate(node => node.scrollLeft);
+    > 120 |         await page.keyboard.press('ArrowRight'); expect(await table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before);
+          |                                                                                                        ^
+      121 |         expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
+      122 |     }
+      123 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:120:104
+
+    Error Context: test-results\playwright-23932-b501cd2a-39c7-4fe5-8871-27031f341d85\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-chromium\error-context.md
+
+    Error Context: test-results\playwright-23932-b501cd2a-39c7-4fe5-8871-27031f341d85\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-23932-b501cd2a-39c7-4fe5-8871-27031f341d85\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-23932-b501cd2a-39c7-4fe5-8871-27031f341d85\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:79184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[5/8] [firefox] › tests\ui-component-layout.spec.ts:39:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[6/8] [firefox] › tests\ui-component-layout.spec.ts:60:1 › A02 product editors align category and status faces independently from lookup metadata
+[7/8] [firefox] › tests\ui-component-layout.spec.ts:83:1 › A03 import mapping preserves natural remove actions and editable mappings
+[8/8] [firefox] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+  2) [firefox] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+
+      118 |         const table = page.getByRole('region', { name: 'Tiền trong bảng', exact: true });
+      119 |         await table.focus(); const before = await table.evaluate(node => node.scrollLeft);
+    > 120 |         await page.keyboard.press('ArrowRight'); expect(await table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before);
+          |                                                                                                        ^
+      121 |         expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
+      122 |     }
+      123 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:120:104
+
+    Error Context: test-results\playwright-79184-c39139fa-6285-4554-911c-01768ce25c53\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-firefox\error-context.md
+
+    Error Context: test-results\playwright-79184-c39139fa-6285-4554-911c-01768ce25c53\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-79184-c39139fa-6285-4554-911c-01768ce25c53\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-79184-c39139fa-6285-4554-911c-01768ce25c53\ui-component-layout-A04-fu-3c40d--in-the-named-scroll-region-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region 
+    [firefox] › tests\ui-component-layout.spec.ts:103:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region 
+  6 passed (1.0m)

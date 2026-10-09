@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W30",
+  "recordedAt": "2026-10-08T03:26:09.576Z",
+  "scope": "Isolated Firefox with local React demo and synthetic MSW; no backend, user profile, persistent app writes, or system preference changes",
+  "result": "ERROR",
+  "temporaryProfileCleanup": "REMOVED",
+  "method": {
+    "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+    "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+    "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+    "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+    "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+    "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+    "baseZoomFactor": 1,
+    "targetZoomFactor": 2,
+    "scenarios": [
+      {
+        "id": "draft-comparison",
+        "route": "/s/shop-demo/customers/c1",
+        "viewport": {
+          "width": 390,
+          "height": 560
+        }
+      }
+    ],
+    "browserVersion": "155.0",
+    "webdriverBuildId": "20260902192955"
+  },
+  "sourceSha256": {
+    "apps/web/src/modules/customers/index.tsx": "0098291c1ce460c3b6cf188b3e75bdfe7e95507497117a70bd6dad9fb5d87642",
+    "apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
+    "apps/web/src/shared/ui/draft-conflict.tsx": "5332f808b3bb81c901962bcdd678e6f37290c408033b1e552f9321d0a01ed809",
+    "apps/web/src/shared/ui/components.tsx": "79cd7a6e0473da61469d5256f03888045d549075903e28e5ad4f6e0da6298e6b",
+    "evidence/frontend-corrections-20261008/capture-comparison-text-zoom.mjs": "51a7970a6bf884a6a4c7e76729a713f582b40d1a4f3fb0f6172bb4595e2c3a46",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "apps/web/src/app/Shell.tsx": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/catalog/index.tsx": "6460f6ed1398526a1a530df7772f03d2f86a2048f625786cf86095284ce270bc",
+    "apps/web/src/modules/inbox/index.tsx": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b",
+    "apps/web/src/modules/inbox/conversation-components.tsx": "13e4285f3bbc8ca234050141bc5690c23ff257d95ba412893813a8a815e4ea3b",
+    "apps/web/src/modules/reports/index.tsx": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754",
+    "apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "apps/web/src/shared/ui/theme.ts": "dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532",
+    "apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
+    "tests/ui028-w30-stress.spec.ts": "54c71563d0be5266c3ac495bfe7ca36252adf6812ec3db665559cd76d6cd9d36",
+    "tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781"
+  },
+  "scenarios": [],
+  "noProgressLedgerWrites": true,
+  "error": "Error: Expected serialized string result: {\"realm\":\"097615a9-465e-40c7-9990-75b3dbd5457f\",\"type\":\"success\",\"result\":{\"type\":\"function\"}}"
+}

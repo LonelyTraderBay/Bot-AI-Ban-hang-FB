@@ -1,0 +1,748 @@
+{
+  "schemaVersion": 1,
+  "task": "S16.Toolbar",
+  "recordedAt": "2026-10-08T08:44:16.795Z",
+  "scope": "Isolated Firefox with local React demo and synthetic MSW; no backend, user profile, persistent app writes, or system preference changes",
+  "result": "FAIL",
+  "temporaryProfileCleanup": "REMOVED",
+  "method": {
+    "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+    "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+    "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+    "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+    "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+    "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+    "baseZoomFactor": 1,
+    "targetZoomFactor": 2,
+    "scenarios": [
+      {
+        "id": "products-mobile",
+        "route": "/s/shop-demo/products",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "products-desktop",
+        "route": "/s/shop-demo/products",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        }
+      },
+      {
+        "id": "inventory",
+        "route": "/s/shop-demo/inventory",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "movements",
+        "route": "/s/shop-demo/inventory/movements",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      }
+    ],
+    "browserVersion": "155.0",
+    "webdriverBuildId": "20260902192955"
+  },
+  "sourceSha256": {
+    "apps/web/src/shared/ui/components.tsx": "6b874039515e9c9be4abcc8efe88ed00a979a4da6f05a1b1eb3eaa096a2965bf",
+    "apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "apps/web/src/shared/ui/theme.ts": "953a3ca9df114d93395c0ec61f61d65230bf39440aad45a8b55f884e39669b04",
+    "apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "apps/web/src/app/Shell.tsx": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/catalog/index.tsx": "f3d541c8b8898fbd66146123d6fc0cca3be78488b7101f036fe6966f13e68722",
+    "apps/web/src/modules/inventory/index.tsx": "6d62daee4da307c8a6063db31d2524e12fab8626782771a2ce8e0f2720d56ffd",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "tests/ui-toolbar-layout.spec.ts": "2235d87ef7177c2090ab8066f9cd32e371ad2d66fdf30170c1d0ebc68bca0283",
+    "evidence/frontend-toolbar-20261008/capture-toolbar-text-zoom.mjs": "8a979eb2b868da359a0558203a2fa78d70dc97a83048b61e58eda1d9f222a96a"
+  },
+  "scenarios": [
+    {
+      "id": "products-mobile",
+      "route": "/s/shop-demo/products",
+      "routeUrl": "http://127.0.0.1:55833/s/shop-demo/products",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 1660,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 488.73,
+            "width": 324,
+            "height": 44,
+            "right": 357,
+            "bottom": 532.73,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": 0,
+            "bottom": 1659.63330078125
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 3794,
+          "scrollY": 502,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 440.45,
+            "width": 324,
+            "height": 61,
+            "right": 357,
+            "bottom": 501.45,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 59,
+            "clientHeight": 59,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 8,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 357,
+            "y": 440.45001220703125,
+            "bottom": 501.45001220703125
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-toolbar-20261008/native-text-only-200-products-mobile-focused-toolbar-native-attempt1-20261008.png",
+        "sha256": "55f1a275dbeeb7159691468136586f92bfb82fceb1e6c4b71683a70a227a9453"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-toolbar-20261008/native-text-only-200-products-mobile-current-toolbar-native-attempt1-20261008.png",
+        "sha256": "f2ac13db4e3eb814283a7429488b3b98db3286b42198975056a61d69402db9c6"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "products-desktop",
+      "route": "/s/shop-demo/products",
+      "routeUrl": "http://127.0.0.1:55833/s/shop-demo/products",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "viewport": {
+          "width": 1280,
+          "height": 800,
+          "clientWidth": 1280,
+          "documentWidth": 1280,
+          "pageOverflow": 0,
+          "scrollHeight": 1250,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 983.82,
+            "y": 335.6,
+            "width": 93.18,
+            "height": 44,
+            "right": 1077,
+            "bottom": 379.6,
+            "scrollWidth": 91,
+            "clientWidth": 91,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Jokertrader · tài khoản mẫu",
+            "x": 58,
+            "y": 741,
+            "width": 113,
+            "height": 21,
+            "right": 171,
+            "bottom": 762,
+            "scrollWidth": 168,
+            "clientWidth": 113,
+            "scrollHeight": 21,
+            "clientHeight": 21,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "14px",
+            "textLength": 27
+          }
+        ],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nBotSales AI\nĐội ngũ vận hành cửa hàng\nJoker Studio · Shop mẫu",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 1280,
+            "y": 0,
+            "bottom": 1249.7333984375
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "viewport": {
+          "width": 1280,
+          "height": 800,
+          "clientWidth": 1280,
+          "documentWidth": 1280,
+          "pageOverflow": 0,
+          "scrollHeight": 1981,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 922.65,
+            "y": 459.45,
+            "width": 154.35,
+            "height": 61,
+            "right": 1077,
+            "bottom": 520.45,
+            "scrollWidth": 152,
+            "clientWidth": 152,
+            "scrollHeight": 59,
+            "clientHeight": 59,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 8,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [
+          {
+            "tag": "p",
+            "role": null,
+            "text": "Jokertrader · tài khoản mẫu",
+            "x": 88,
+            "y": 700,
+            "width": 71,
+            "height": 42,
+            "right": 159,
+            "bottom": 742,
+            "scrollWidth": 337,
+            "clientWidth": 71,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "28px",
+            "textLength": 27
+          }
+        ],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 922.6500244140625,
+            "right": 1077.0000305175781,
+            "y": 459.45001220703125,
+            "bottom": 520.4500122070312
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-toolbar-20261008/native-text-only-200-products-desktop-focused-toolbar-native-attempt1-20261008.png",
+        "sha256": "522bc623a0c4349cd7f7b974a79dadb71f2b3d41122b90e087d00ad64ac109bd"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-toolbar-20261008/native-text-only-200-products-desktop-current-toolbar-native-attempt1-20261008.png",
+        "sha256": "55ed655ea63c10393a973079bb873a43b66b4fe19a5a8fd044f174bacf4d5a72"
+      },
+      "issues": [
+        "Potential clipped text elements: 1."
+      ],
+      "result": "FAIL"
+    },
+    {
+      "id": "inventory",
+      "route": "/s/shop-demo/inventory",
+      "routeUrl": "http://127.0.0.1:55833/s/shop-demo/inventory",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2484,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 603.73,
+            "width": 324,
+            "height": 44,
+            "right": 357,
+            "bottom": 647.73,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": 0,
+            "bottom": 2483.86669921875
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 4313,
+          "scrollY": 840,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 440.95,
+            "width": 324,
+            "height": 61,
+            "right": 357,
+            "bottom": 501.95,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 59,
+            "clientHeight": 59,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 8,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 357,
+            "y": 440.95001220703125,
+            "bottom": 501.95001220703125
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-toolbar-20261008/native-text-only-200-inventory-focused-toolbar-native-attempt1-20261008.png",
+        "sha256": "709d4943bea93ed192049a04f26fb279f704872f075a97a5f2bca37336b49cfe"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-toolbar-20261008/native-text-only-200-inventory-current-toolbar-native-attempt1-20261008.png",
+        "sha256": "d64fb4af4d64462eddedf26329dbc7aefc37371997622b9621a0809b4aee512c"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "movements",
+      "route": "/s/shop-demo/inventory/movements",
+      "routeUrl": "http://127.0.0.1:55833/s/shop-demo/inventory/movements",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-toolbar",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2385,
+          "scrollY": 0,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 509.73,
+            "width": 324,
+            "height": 44,
+            "right": 357,
+            "bottom": 553.73,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": 0,
+            "bottom": 2385
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "viewport": {
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 3530,
+          "scrollY": 536,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 440.95,
+            "width": 324,
+            "height": 61,
+            "right": 357,
+            "bottom": 501.95,
+            "scrollWidth": 322,
+            "clientWidth": 322,
+            "scrollHeight": 59,
+            "clientHeight": 59,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 8,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 357,
+            "y": 440.95001220703125,
+            "bottom": 501.95001220703125
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-toolbar-20261008/native-text-only-200-movements-focused-toolbar-native-attempt1-20261008.png",
+        "sha256": "ecab740162fa4f7af03cc2d8d81188fbb4fd65260dc69d057625beb80849b455"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-toolbar-20261008/native-text-only-200-movements-current-toolbar-native-attempt1-20261008.png",
+        "sha256": "6fec1f62b794329d2ba38b750094feed943aec22bbef3e0e1e5f3d074e14335c"
+      },
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "noProgressLedgerWrites": true
+}

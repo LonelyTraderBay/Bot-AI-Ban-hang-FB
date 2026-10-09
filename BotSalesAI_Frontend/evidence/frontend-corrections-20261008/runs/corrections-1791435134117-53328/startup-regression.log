@@ -1,0 +1,100 @@
+[WebServer] (node:31840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+(node:48104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/4] [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-78400-4643de7f-f748-4cf5-bd37-25fd3db31cf0\deps\react-dom_client.js?v=da301ef0 as it exceeds the max of 500KB.
+
+[2/4] [chromium] › tests\frontend-corrections.spec.ts:320:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+(node:70772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/4] [firefox] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+  1) [firefox] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo 
+
+    Error: expect(locator).not.toBeEmpty() failed
+
+    Locator:  locator('#root')
+    Expected: not empty
+    Received: empty
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "not toBeEmpty" locator('#root') with timeout 5000ms
+      - waiting for locator('#root')
+        - waiting for navigation to finish...
+        - navigated to "http://127.0.0.1:58837/workspaces"
+        4 × locator resolved to <div id="root"></div>
+          - unexpected value "empty"
+        - waiting for "http://127.0.0.1:58837/workspaces" navigation to finish...
+        - navigated to "http://127.0.0.1:58837/workspaces"
+        9 × locator resolved to <div id="root"></div>
+          - unexpected value "empty"
+
+
+      30 |                 .replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
+      31 |             await page.goto(new URL(routePath, server.url).toString());
+    > 32 |             await expect(page.locator('#root')).not.toBeEmpty();
+         |                                                     ^
+      33 |             await expect(page.getByText('Chưa khởi động được ứng dụng', { exact: true })).toHaveCount(0);
+      34 |             const main = page.locator('main#main-content');
+      35 |             await expect(main).toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\accessibility\routes.spec.ts:32:53
+
+    Error Context: test-results\playwright-70772-dffe2b42-1be9-4f6f-b868-f50f37706277\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-firefox\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-70772-dffe2b42-1be9-4f6f-b868-f50f37706277\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-70772-dffe2b42-1be9-4f6f-b868-f50f37706277\accessibility-routes-all-c-a4e72-xe-checks-in-the-React-demo-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:50356) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/4] [firefox] › tests\frontend-corrections.spec.ts:320:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+  2) [firefox] › tests\frontend-corrections.spec.ts:320:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard 
+
+    Error: page.goto: NS_BINDING_ABORTED
+    Call log:
+      - navigating to "http://127.0.0.1:56903/s/shop-demo/bot/evaluations", waiting until "load"
+
+
+       7 | test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolationKey: 'frontend-corrections' }); demoUrl = server.url; closeDemo = server.close; });
+       8 | test.afterAll(async () => closeDemo?.());
+    >  9 | async function visit(page: Page, path: string) { await page.goto(demoUrl + '/s/shop-demo/' + path); await expect(page.locator('main')).toBeVisible(); }
+         |                                                             ^
+      10 | async function mutate(page: Page, path: string, body: unknown, method = 'POST', version?: number) {
+      11 |     return page.evaluate(async ({ path, body, method, version }) => {
+      12 |         const response = await fetch('/api/v2/shops/shop-demo/' + path, { method, headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': 'botsales-demo-csrf-not-a-real-secret', 'Idempotency-Key': crypto.randomUUID(), ...(version !== undefined ? { 'If-Match': `"${version}"` } : {}) }, body: JSON.stringify(body) });
+        at visit (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\frontend-corrections.spec.ts:9:61)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\frontend-corrections.spec.ts:322:15
+
+    Error Context: test-results\playwright-50356-64be0ace-3fc8-405e-bafb-559449ea3662\frontend-corrections-F06-g-7eb48-ation-leaves-no-false-guard-firefox\error-context.md
+
+    Error Context: test-results\playwright-50356-64be0ace-3fc8-405e-bafb-559449ea3662\frontend-corrections-F06-g-7eb48-ation-leaves-no-false-guard-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-50356-64be0ace-3fc8-405e-bafb-559449ea3662\frontend-corrections-F06-g-7eb48-ation-leaves-no-false-guard-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-50356-64be0ace-3fc8-405e-bafb-559449ea3662\frontend-corrections-F06-g-7eb48-ation-leaves-no-false-guard-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [firefox] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo 
+    [firefox] › tests\frontend-corrections.spec.ts:320:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard 
+  2 passed (1.6m)

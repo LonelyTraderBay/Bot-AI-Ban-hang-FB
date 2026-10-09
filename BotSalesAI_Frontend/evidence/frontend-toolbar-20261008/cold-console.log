@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "runs": [
+    {
+      "name": "initialize-isolated-git-root",
+      "command": "git init --quiet",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d",
+      "exitCode": 0
+    },
+    {
+      "name": "clean-install",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"ci\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "npm-audit-low",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"audit\" \"--audit-level=low\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "setup",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"run\" \"setup\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "verify",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"run\" \"verify\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "contract-tests",
+      "command": "node --test tests/contracts/generator.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "build-demo",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"run\" \"build:demo\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "repeat-production-build",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"run\" \"build\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "repeat-demo-build",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"run\" \"build:demo\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    },
+    {
+      "name": "production-unavailable-smoke",
+      "command": "node \"C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend\\production-unavailable-smoke-current-20261008.mjs\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "exitCode": 0
+    }
+  ],
+  "productionTreeSha256": "eaf6e218cecbf7daa81577ea43a44feb2572577f9445fa6a5e8d7f11d5eea7ab",
+  "demoTreeSha256": "ab4a010f70b13f57afba0ae401aec82897125834964a2a1b47070f15ee77268d",
+  "productionWorker": false,
+  "demoWorker": true,
+  "tempWorkspaceRemovedAfterPass": false,
+  "logFile": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/clean-build-toolbar-20261008.log",
+  "manifestFile": "BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/clean-artifacts-toolbar-20261008.json",
+  "failure": null
+}

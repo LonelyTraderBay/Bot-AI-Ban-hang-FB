@@ -1,0 +1,186 @@
+[WebServer] (node:74988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 12 tests using 1 worker
+
+(node:9636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/12] [chromium] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-29356-1d07e20f-72d4-4d4f-b4ea-20311be8b080\deps\react-dom_client.js?v=1703b27b as it exceeds the max of 500KB.
+
+[2/12] [chromium] › tests\ui-toolbar-layout.spec.ts:49:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow
+[3/12] [chromium] › tests\ui-toolbar-layout.spec.ts:74:1 › Toolbar public extra slot cannot stretch a single-line submit action
+[4/12] [chromium] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup
+  1) [chromium] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('combobox', { name: 'Danh mục', exact: true })
+    Expected substring: "Quần"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByRole('combobox', { name: 'Danh mục', exact: true }) with timeout 5000ms
+      - waiting for getByRole('combobox', { name: 'Danh mục', exact: true })
+
+
+      121 |     await categories.fill('danh mục không có');
+      122 |     await expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0);
+    > 123 |     await expect(page.getByRole('combobox', { name: 'Danh mục', exact: true })).toContainText('Quần');
+          |                                                                                 ^
+      124 |     expect(new URL(page.url()).searchParams.get('categoryId')).toBe(selected);
+      125 | });
+      126 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:123:81
+
+    Error Context: test-results\playwright-9636-30b85456-8a02-4075-850b-73d0ce4adde1\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-chromium\error-context.md
+
+    Error Context: test-results\playwright-9636-30b85456-8a02-4075-850b-73d0ce4adde1\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-9636-30b85456-8a02-4075-850b-73d0ce4adde1\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-9636-30b85456-8a02-4075-850b-73d0ce4adde1\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:86768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[5/12] [chromium] › tests\ui-toolbar-layout.spec.ts:127:1 › Toolbar keeps Inventory apply/reset separate from search submission
+[6/12] [chromium] › tests\ui-toolbar-layout.spec.ts:143:1 › Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination
+  2) [chromium] › tests\ui-toolbar-layout.spec.ts:143:1 › Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Đã tải 50 lựa chọn', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Đã tải 50 lựa chọn', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Đã tải 50 lựa chọn', { exact: true })
+
+
+      151 |     const more = page.getByRole('button', { name: 'Tải thêm danh mục', exact: true });
+      152 |     await expect(more).toBeEnabled();
+    > 153 |     await expect(page.getByText('Đã tải 50 lựa chọn', { exact: true })).toBeVisible();
+          |                                                                         ^
+      154 |     await more.click();
+      155 |     await expect(more).toBeDisabled();
+      156 |     await expect(more).toHaveText('Đang tải…');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:153:73
+
+    Error Context: test-results\playwright-86768-eda934b0-a6ea-4d0a-b12d-b9589200cda5\ui-toolbar-layout-Toolbar--24909-metry-and-actual-pagination-chromium\error-context.md
+
+    Error Context: test-results\playwright-86768-eda934b0-a6ea-4d0a-b12d-b9589200cda5\ui-toolbar-layout-Toolbar--24909-metry-and-actual-pagination-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-86768-eda934b0-a6ea-4d0a-b12d-b9589200cda5\ui-toolbar-layout-Toolbar--24909-metry-and-actual-pagination-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-86768-eda934b0-a6ea-4d0a-b12d-b9589200cda5\ui-toolbar-layout-Toolbar--24909-metry-and-actual-pagination-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:79428) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[7/12] [firefox] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[8/12] [firefox] › tests\ui-toolbar-layout.spec.ts:49:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow
+[9/12] [firefox] › tests\ui-toolbar-layout.spec.ts:74:1 › Toolbar public extra slot cannot stretch a single-line submit action
+[10/12] [firefox] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup
+  3) [firefox] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('combobox', { name: 'Danh mục', exact: true })
+    Expected substring: "Quần"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByRole('combobox', { name: 'Danh mục', exact: true }) with timeout 5000ms
+      - waiting for getByRole('combobox', { name: 'Danh mục', exact: true })
+
+
+      121 |     await categories.fill('danh mục không có');
+      122 |     await expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0);
+    > 123 |     await expect(page.getByRole('combobox', { name: 'Danh mục', exact: true })).toContainText('Quần');
+          |                                                                                 ^
+      124 |     expect(new URL(page.url()).searchParams.get('categoryId')).toBe(selected);
+      125 | });
+      126 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:123:81
+
+    Error Context: test-results\playwright-79428-868b1b38-d7d2-4bdf-b742-afda21f1752e\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-firefox\error-context.md
+
+    Error Context: test-results\playwright-79428-868b1b38-d7d2-4bdf-b742-afda21f1752e\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-79428-868b1b38-d7d2-4bdf-b742-afda21f1752e\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-79428-868b1b38-d7d2-4bdf-b742-afda21f1752e\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:35696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[11/12] [firefox] › tests\ui-toolbar-layout.spec.ts:127:1 › Toolbar keeps Inventory apply/reset separate from search submission
+[12/12] [firefox] › tests\ui-toolbar-layout.spec.ts:143:1 › Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination
+  4) [firefox] › tests\ui-toolbar-layout.spec.ts:143:1 › Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Đã tải 50 lựa chọn', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Đã tải 50 lựa chọn', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Đã tải 50 lựa chọn', { exact: true })
+
+
+      151 |     const more = page.getByRole('button', { name: 'Tải thêm danh mục', exact: true });
+      152 |     await expect(more).toBeEnabled();
+    > 153 |     await expect(page.getByText('Đã tải 50 lựa chọn', { exact: true })).toBeVisible();
+          |                                                                         ^
+      154 |     await more.click();
+      155 |     await expect(more).toBeDisabled();
+      156 |     await expect(more).toHaveText('Đang tải…');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:153:73
+
+    Error Context: test-results\playwright-35696-b6092bb5-8e4a-48e6-9aa8-ff9e47c99b8f\ui-toolbar-layout-Toolbar--24909-metry-and-actual-pagination-firefox\error-context.md
+
+    Error Context: test-results\playwright-35696-b6092bb5-8e4a-48e6-9aa8-ff9e47c99b8f\ui-toolbar-layout-Toolbar--24909-metry-and-actual-pagination-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-35696-b6092bb5-8e4a-48e6-9aa8-ff9e47c99b8f\ui-toolbar-layout-Toolbar--24909-metry-and-actual-pagination-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-35696-b6092bb5-8e4a-48e6-9aa8-ff9e47c99b8f\ui-toolbar-layout-Toolbar--24909-metry-and-actual-pagination-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  4 failed
+    [chromium] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup 
+    [chromium] › tests\ui-toolbar-layout.spec.ts:143:1 › Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination 
+    [firefox] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup 
+    [firefox] › tests\ui-toolbar-layout.spec.ts:143:1 › Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination 
+  8 passed (3.2m)

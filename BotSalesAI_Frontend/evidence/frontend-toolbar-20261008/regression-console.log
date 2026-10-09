@@ -1,0 +1,111 @@
+[WebServer] (node:74240) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 10 tests using 1 worker
+
+(node:87296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/10] [chromium] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-37952-bc74ba88-ea6c-407f-a8ad-14e98ab9c9ca\deps\react-dom_client.js?v=21987208 as it exceeds the max of 500KB.
+
+[2/10] [chromium] › tests\ui-toolbar-layout.spec.ts:49:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow
+[3/10] [chromium] › tests\ui-toolbar-layout.spec.ts:74:1 › Toolbar public extra slot cannot stretch a single-line submit action
+[4/10] [chromium] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup
+  1) [chromium] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /q=/
+    Received string:  "http://127.0.0.1:58340/s/shop-demo/products?status=active"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        14 × locator resolved to <html lang="vi">…</html>
+           - unexpected value "http://127.0.0.1:58340/s/shop-demo/products?status=active"
+
+
+      100 |     await search.fill('Áo');
+      101 |     await search.press('Enter');
+    > 102 |     await expect(page).toHaveURL(/q=/);
+          |                        ^
+      103 |     expect(new URL(page.url()).searchParams.get('q')).toBe('Áo');
+      104 |     await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
+      105 |     await expect(search).toBeFocused();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:102:24
+
+    Error Context: test-results\playwright-87296-737282c8-abdd-4d92-b790-3470734e9b32\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-chromium\error-context.md
+
+    Error Context: test-results\playwright-87296-737282c8-abdd-4d92-b790-3470734e9b32\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-87296-737282c8-abdd-4d92-b790-3470734e9b32\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-87296-737282c8-abdd-4d92-b790-3470734e9b32\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:79512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[5/10] [chromium] › tests\ui-toolbar-layout.spec.ts:125:1 › Toolbar keeps Inventory apply/reset separate from search submission
+(node:57388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[6/10] [firefox] › tests\ui-toolbar-layout.spec.ts:32:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[7/10] [firefox] › tests\ui-toolbar-layout.spec.ts:49:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow
+[8/10] [firefox] › tests\ui-toolbar-layout.spec.ts:74:1 › Toolbar public extra slot cannot stretch a single-line submit action
+[9/10] [firefox] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup
+  2) [firefox] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup 
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /q=/
+    Received string:  "http://127.0.0.1:50381/s/shop-demo/products?status=active"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        13 × locator resolved to <html lang="vi">…</html>
+           - unexpected value "http://127.0.0.1:50381/s/shop-demo/products?status=active"
+
+
+      100 |     await search.fill('Áo');
+      101 |     await search.press('Enter');
+    > 102 |     await expect(page).toHaveURL(/q=/);
+          |                        ^
+      103 |     expect(new URL(page.url()).searchParams.get('q')).toBe('Áo');
+      104 |     await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
+      105 |     await expect(search).toBeFocused();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:102:24
+
+    Error Context: test-results\playwright-57388-30b3a5ca-2815-408b-9004-0e5162f4d8c5\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-firefox\error-context.md
+
+    Error Context: test-results\playwright-57388-30b3a5ca-2815-408b-9004-0e5162f4d8c5\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-57388-30b3a5ca-2815-408b-9004-0e5162f4d8c5\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-57388-30b3a5ca-2815-408b-9004-0e5162f4d8c5\ui-toolbar-layout-Toolbar--40802-independent-category-lookup-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:48160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[10/10] [firefox] › tests\ui-toolbar-layout.spec.ts:125:1 › Toolbar keeps Inventory apply/reset separate from search submission
+  2 failed
+    [chromium] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup 
+    [firefox] › tests\ui-toolbar-layout.spec.ts:91:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup 
+  8 passed (2.5m)
+{"stage":"regression","exitCode":1,"sourceDrift":[],"record":"C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-toolbar-20261008\\runs\\toolbar-1791448741105-68208\\regression-record.json"}

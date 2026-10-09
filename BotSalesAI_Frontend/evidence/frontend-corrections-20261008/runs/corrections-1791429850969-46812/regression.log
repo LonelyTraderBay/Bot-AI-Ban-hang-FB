@@ -1,0 +1,96 @@
+[WebServer] (node:46944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 42 tests using 1 worker
+
+(node:54576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/42] [chromium] › tests\frontend-corrections.spec.ts:18:1 › F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-64148-02ddb035-856e-4e8e-8b5a-469782e51446\deps\react-dom_client.js?v=5e989aca as it exceeds the max of 500KB.
+
+[2/42] [chromium] › tests\frontend-corrections.spec.ts:46:1 › F01 requires an explicit choice for a field changed by both editors
+[3/42] [chromium] › tests\frontend-corrections.spec.ts:62:1 › F06 detects an order draft and blocks navigation until explicit discard
+[4/42] [chromium] › tests\frontend-corrections.spec.ts:75:1 › F02 retains an unsaved product image through an unrelated refetch
+[5/42] [chromium] › tests\frontend-corrections.spec.ts:87:1 › F03 retains notification-policy inputs through a background resync and navigation
+[6/42] [chromium] › tests\frontend-corrections.spec.ts:98:1 › F05 keeps text typed while a previous internal note is pending
+[7/42] [chromium] › tests\frontend-corrections.spec.ts:111:1 › F08 validates 4001 customer-note characters at the field and accepts 4000
+[8/42] [chromium] › tests\frontend-corrections.spec.ts:131:1 › F07 routes the fulfillment footer close through the shared discard guard
+[9/42] [chromium] › tests\frontend-corrections.spec.ts:145:1 › F09 refreshes new Inbox messages without refetching the visible product and stock snapshots
+[10/42] [chromium] › tests\frontend-corrections.spec.ts:175:1 › F01 shop settings merges a server-only locale change and preserves edits typed during save
+[11/42] [chromium] › tests\frontend-corrections.spec.ts:201:1 › F03 privacy policy preserves refetch drafts and compares before applying the newest version
+[12/42] [chromium] › tests\frontend-corrections.spec.ts:218:1 › F01 category keeps a late edit after saving, and reopens with a clean current baseline
+[13/42] [chromium] › tests\frontend-corrections.spec.ts:239:1 › F01 supplier preserves a concurrent server-only term and PATCHes the local name
+[14/42] [chromium] › tests\frontend-corrections.spec.ts:256:1 › F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft
+[15/42] [chromium] › tests\frontend-corrections.spec.ts:275:1 › F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion
+[16/42] [chromium] › tests\frontend-corrections.spec.ts:301:1 › F01 order editor keeps its original version and compares whole line lists before PATCH
+[17/42] [chromium] › tests\frontend-corrections.spec.ts:320:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+[18/42] [chromium] › tests\frontend-corrections.spec.ts:342:1 › F01 analogous return-inspection draft does not adopt a refetched version without comparison
+[19/42] [chromium] › tests\frontend-corrections.spec.ts:366:1 › F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content
+[20/42] [chromium] › tests\frontend-corrections.spec.ts:395:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+[21/42] [chromium] › tests\frontend-corrections.spec.ts:406:1 › F06 order custom close respects the draft guard and busy editors remain protected
+  1) [chromium] › tests\frontend-corrections.spec.ts:406:1 › F06 order custom close respects the draft guard and busy editors remain protected 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: locator.fill: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for getByRole('dialog', { name: 'Sửa đơn nháp', exact: true }).getByLabel('Ghi chú chuẩn bị')
+        - locator resolved to <textarea id="«r1n»" maxlength="2000" aria-invalid="false" aria-describedby="«r1n»-helper-text" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1n5pdcw-MuiInputBase-input-MuiOutlinedInput-input">Unsaved order close</textarea>
+        - fill("Late order change")
+      - attempting fill action
+        - waiting for element to be visible, enabled and editable
+      - element was detached from the DOM, retrying
+
+
+      415 |     const saved = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().includes('/orders/'));
+      416 |     await editor.getByRole('button', { name: 'Lưu đơn nháp', exact: true }).click(); await expect(editor.getByRole('button', { name: 'Đóng chỉnh sửa', exact: true })).toBeDisabled();
+    > 417 |     await editor.getByLabel('Ghi chú chuẩn bị').fill('Late order change'); await saved; await expect(editor).toBeVisible(); await expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Late order change');
+          |                                                 ^
+      418 | });
+      419 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\frontend-corrections.spec.ts:417:49
+
+    Error Context: test-results\playwright-54576-5077acc5-7d98-4106-99ad-1194f880c1f7\frontend-corrections-F06-o-1aaf7-sy-editors-remain-protected-chromium\error-context.md
+
+    Error Context: test-results\playwright-54576-5077acc5-7d98-4106-99ad-1194f880c1f7\frontend-corrections-F06-o-1aaf7-sy-editors-remain-protected-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-54576-5077acc5-7d98-4106-99ad-1194f880c1f7\frontend-corrections-F06-o-1aaf7-sy-editors-remain-protected-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-54576-5077acc5-7d98-4106-99ad-1194f880c1f7\frontend-corrections-F06-o-1aaf7-sy-editors-remain-protected-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:54840) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[22/42] [firefox] › tests\frontend-corrections.spec.ts:18:1 › F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes
+[23/42] [firefox] › tests\frontend-corrections.spec.ts:46:1 › F01 requires an explicit choice for a field changed by both editors
+[24/42] [firefox] › tests\frontend-corrections.spec.ts:62:1 › F06 detects an order draft and blocks navigation until explicit discard
+[25/42] [firefox] › tests\frontend-corrections.spec.ts:75:1 › F02 retains an unsaved product image through an unrelated refetch
+[26/42] [firefox] › tests\frontend-corrections.spec.ts:87:1 › F03 retains notification-policy inputs through a background resync and navigation
+[27/42] [firefox] › tests\frontend-corrections.spec.ts:98:1 › F05 keeps text typed while a previous internal note is pending
+[28/42] [firefox] › tests\frontend-corrections.spec.ts:111:1 › F08 validates 4001 customer-note characters at the field and accepts 4000
+[29/42] [firefox] › tests\frontend-corrections.spec.ts:131:1 › F07 routes the fulfillment footer close through the shared discard guard
+[30/42] [firefox] › tests\frontend-corrections.spec.ts:145:1 › F09 refreshes new Inbox messages without refetching the visible product and stock snapshots
+[31/42] [firefox] › tests\frontend-corrections.spec.ts:175:1 › F01 shop settings merges a server-only locale change and preserves edits typed during save
+[32/42] [firefox] › tests\frontend-corrections.spec.ts:201:1 › F03 privacy policy preserves refetch drafts and compares before applying the newest version
+[33/42] [firefox] › tests\frontend-corrections.spec.ts:218:1 › F01 category keeps a late edit after saving, and reopens with a clean current baseline
+[34/42] [firefox] › tests\frontend-corrections.spec.ts:239:1 › F01 supplier preserves a concurrent server-only term and PATCHes the local name
+[35/42] [firefox] › tests\frontend-corrections.spec.ts:256:1 › F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft
+[36/42] [firefox] › tests\frontend-corrections.spec.ts:275:1 › F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion
+[37/42] [firefox] › tests\frontend-corrections.spec.ts:301:1 › F01 order editor keeps its original version and compares whole line lists before PATCH
+[38/42] [firefox] › tests\frontend-corrections.spec.ts:320:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+[39/42] [firefox] › tests\frontend-corrections.spec.ts:342:1 › F01 analogous return-inspection draft does not adopt a refetched version without comparison
+[40/42] [firefox] › tests\frontend-corrections.spec.ts:366:1 › F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content
+[41/42] [firefox] › tests\frontend-corrections.spec.ts:395:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+[42/42] [firefox] › tests\frontend-corrections.spec.ts:406:1 › F06 order custom close respects the draft guard and busy editors remain protected
+  1 failed
+    [chromium] › tests\frontend-corrections.spec.ts:406:1 › F06 order custom close respects the draft guard and busy editors remain protected 
+  41 passed (4.9m)

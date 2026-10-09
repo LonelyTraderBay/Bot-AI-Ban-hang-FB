@@ -1,0 +1,79 @@
+[WebServer] (node:9172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+(node:46160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\ui-component-layout.spec.ts:129:1 › A05 status height follows its own label while long labels remain fully readable
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-78616-fa5e822e-02ed-4299-91ba-fa913cc18ba2\deps\react-dom_client.js?v=e595dadd as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui-component-layout.spec.ts:129:1 › A05 status height follows its own label while long labels remain fully readable 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 126
+    Received:   126
+
+      136 |         });
+      137 |         expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1);
+    > 138 |         expect(geometry.parent).toBeGreaterThan(geometry.actual);
+          |                                 ^
+      139 |         const long = page.locator('main .MuiChip-label').last();
+      140 |         await expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120));
+      141 |         expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:138:33
+
+    Error Context: test-results\playwright-46160-5844ed75-75a7-42da-be02-30d724c3442e\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-chromium\error-context.md
+
+    Error Context: test-results\playwright-46160-5844ed75-75a7-42da-be02-30d724c3442e\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-46160-5844ed75-75a7-42da-be02-30d724c3442e\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-46160-5844ed75-75a7-42da-be02-30d724c3442e\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:70664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [firefox] › tests\ui-component-layout.spec.ts:129:1 › A05 status height follows its own label while long labels remain fully readable
+  2) [firefox] › tests\ui-component-layout.spec.ts:129:1 › A05 status height follows its own label while long labels remain fully readable 
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 126
+    Received:   126
+
+      136 |         });
+      137 |         expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1);
+    > 138 |         expect(geometry.parent).toBeGreaterThan(geometry.actual);
+          |                                 ^
+      139 |         const long = page.locator('main .MuiChip-label').last();
+      140 |         await expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120));
+      141 |         expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:138:33
+
+    Error Context: test-results\playwright-70664-410dd2e8-12c8-43c7-944d-ca7a2c474b20\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-firefox\error-context.md
+
+    Error Context: test-results\playwright-70664-410dd2e8-12c8-43c7-944d-ca7a2c474b20\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-70664-410dd2e8-12c8-43c7-944d-ca7a2c474b20\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-70664-410dd2e8-12c8-43c7-944d-ca7a2c474b20\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-component-layout.spec.ts:129:1 › A05 status height follows its own label while long labels remain fully readable 
+    [firefox] › tests\ui-component-layout.spec.ts:129:1 › A05 status height follows its own label while long labels remain fully readable 

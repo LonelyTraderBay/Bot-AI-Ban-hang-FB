@@ -1,0 +1,318 @@
+{
+  "modules": [
+    "bot",
+    "catalog",
+    "customers",
+    "dashboard",
+    "finance",
+    "fulfillment",
+    "inbox",
+    "integrations",
+    "inventory",
+    "knowledge",
+    "notifications",
+    "operations",
+    "orders",
+    "procurement",
+    "reports",
+    "workspace"
+  ],
+  "records": [
+    {
+      "module": "bot",
+      "path": "apps/web/src/modules/bot/index.tsx",
+      "sha256": "92d2cd21fa6b74afaca61da769e0965db5ec46b110f21e5a6b7e21aeed9f3e70",
+      "matches": []
+    },
+    {
+      "module": "catalog",
+      "path": "apps/web/src/modules/catalog/import-file.ts",
+      "sha256": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
+      "matches": []
+    },
+    {
+      "module": "catalog",
+      "path": "apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da",
+      "matches": []
+    },
+    {
+      "module": "catalog",
+      "path": "apps/web/src/modules/catalog/index.tsx",
+      "sha256": "4d216c67f07350da8bdd3bf27c35de7c385711a9e68369d42bb206e45179d461",
+      "matches": [
+        {
+          "line": 35,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\r\n        const timer = window.setTimeout(() => setCategorySearch(categorySearchInput.trim()), 250);\r\n        return () => window.clearTimeout(timer);\r\n    }, [categorySearchInput])"
+        },
+        {
+          "line": 69,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\r\n        const timer = window.setTimeout(() => setCategoryQuery(categorySearch.trim()), 250);\r\n        return () => window.clearTimeout(timer);\r\n    }, [categorySearch])"
+        },
+        {
+          "line": 91,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${shop.id}:product:${routeProductId || 'new'}`,\r\n        source: product.data ? productSnapshot(product.data.data) : undefined,\r\n        draft: { ...productForm.getValues(), imageFileIds: imageIds },\r\n        apply: (values, baseline) => {\r\n            reset(baseline);\r\n            for (const key of ['name', 'description', 'categoryId', 'status', 'variants'] as const)\r\n                if (!draftEqual(values[key], baseline[key])) productForm.setValue(key, values[key], { shouldDirty: true });\r\n            setImageIds(values.imageFileIds); setSavedImageIds(baseline.imageFileIds);\r\n        },\r\n        refresh: () => product.refetch({ throwOnError: true }),\r\n    })"
+        },
+        {
+          "line": 105,
+          "kind": "useEffect",
+          "text": "useEffect(() => { if (!isDirty && !imagesDirty)\r\n        return; const prevent = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; }; window.addEventListener('beforeunload', prevent); return () => window.removeEventListener('beforeunload', prevent); }, [isDirty, imagesDirty])"
+        },
+        {
+          "line": 154,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${useScope().shop.id}:category:${edit?.id || 'new'}`,\r\n        source: detail ? { version: detail.version, values: { name: detail.name, parentId: detail.parentId || '' } } : undefined,\r\n        draft: { name, parentId }, apply: values => { setName(values.name); setParentId(values.parentId); },\r\n        refresh: () => categoryDetail.refetch({ throwOnError: true }),\r\n    })"
+        }
+      ]
+    },
+    {
+      "module": "customers",
+      "path": "apps/web/src/modules/customers/index.tsx",
+      "sha256": "a43b3c48e256624b32aa66bc03ba3fc65e09661dec5827eb55ab4b468a87a388",
+      "matches": [
+        {
+          "line": 69,
+          "kind": "form.reset",
+          "text": "form.reset()"
+        },
+        {
+          "line": 94,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${shop.id}:customer:${customerId}`,\r\n        source: customer.data ? customerSnapshot(customer.data.data) : undefined,\r\n        draft: form.getValues(),\r\n        apply: (values, baseline) => {\r\n            form.reset(baseline);\r\n            for (const key of Object.keys(values) as (keyof CustomerFields)[]) form.setValue(key, values[key], { shouldDirty: true });\r\n        },\r\n        refresh: () => customer.refetch({ throwOnError: true }),\r\n    })"
+        },
+        {
+          "line": 99,
+          "kind": "form.reset",
+          "text": "form.reset(baseline)"
+        }
+      ]
+    },
+    {
+      "module": "dashboard",
+      "path": "apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef",
+      "matches": []
+    },
+    {
+      "module": "finance",
+      "path": "apps/web/src/modules/finance/demo-account-preview.ts",
+      "sha256": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60",
+      "matches": []
+    },
+    {
+      "module": "finance",
+      "path": "apps/web/src/modules/finance/index.tsx",
+      "sha256": "c292431530f44dcc005ac6662497f368f6c648260b1bda1dd985d88a09bb0a65",
+      "matches": [
+        {
+          "line": 28,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\n        const committedSearch = params.toString();\n        if (pendingSearch.current !== null && pendingSearch.current !== committedSearch) return;\n        latestParams.current = new URLSearchParams(params);\n        pendingSearch.current = null;\n    }, [params])"
+        }
+      ]
+    },
+    {
+      "module": "finance",
+      "path": "apps/web/src/modules/finance/report-explanations.ts",
+      "sha256": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
+      "matches": []
+    },
+    {
+      "module": "fulfillment",
+      "path": "apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "d013702152756553b663eab4ef4f70271cc1806cdf1622bedef51d02b4a2374b",
+      "matches": [
+        {
+          "line": 173,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\r\n        const timer = window.setTimeout(() => setOrderSearch(orderSearchInput.trim()), 250);\r\n        return () => window.clearTimeout(timer);\r\n    }, [orderSearchInput])"
+        }
+      ]
+    },
+    {
+      "module": "inbox",
+      "path": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "sha256": "efde881b00dbb60978017f8394e939fe547403600d85eff6b38e37fe5ca1b848",
+      "matches": []
+    },
+    {
+      "module": "inbox",
+      "path": "apps/web/src/modules/inbox/index.tsx",
+      "sha256": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b",
+      "matches": [
+        {
+          "line": 109,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\n        if (!messageCursor) end.current?.scrollIntoView({ block: 'nearest', behavior: 'auto' });\n    }, [messages.data, messageCursor])"
+        }
+      ]
+    },
+    {
+      "module": "integrations",
+      "path": "apps/web/src/modules/integrations/index.tsx",
+      "sha256": "1a2011b16665df078cec13aaf75a198f19c4af9533b9812045242194171b556f",
+      "matches": []
+    },
+    {
+      "module": "inventory",
+      "path": "apps/web/src/modules/inventory/index.tsx",
+      "sha256": "5492ad04ef21d3df5b85cfb3fd2bf5d7930e452e53b48bab1fb822a38cb2a4d7",
+      "matches": [
+        {
+          "line": 34,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\n        setWarehouseId(params.get('warehouseId') || '');\n        setVariantId(params.get('variantId') || '');\n    }, [params])"
+        }
+      ]
+    },
+    {
+      "module": "knowledge",
+      "path": "apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "acf06edc7f2d4fc847bf7bc63d2a84f643a04e34d571ab1f5189603f793535a5",
+      "matches": []
+    },
+    {
+      "module": "notifications",
+      "path": "apps/web/src/modules/notifications/index.tsx",
+      "sha256": "27e33c89ae73c93c7f20252539f8e92a49cf26c8c5e206f0e74c1c35cfe9239f",
+      "matches": [
+        {
+          "line": 52,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\r\n        const timer = window.setTimeout(() => setMemberSearch(memberSearchInput.trim()), 250);\r\n        return () => window.clearTimeout(timer);\r\n    }, [memberSearchInput])"
+        },
+        {
+          "line": 64,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${shop.id}:notification-policy`, source: policy.data ? notificationSnapshot(policy.data.data) : undefined,\r\n        draft: { enabled, minutes, max, quiet, quietStart, quietEnd, primary, fallback, channel, urgent },\r\n        apply: values => { setEnabled(values.enabled); setMinutes(values.minutes); setMax(values.max); setQuiet(values.quiet); setQuietStart(values.quietStart); setQuietEnd(values.quietEnd); setPrimary(values.primary); setFallback(values.fallback); setChannel(values.channel); setUrgent(values.urgent); },\r\n        refresh: () => policy.refetch({ throwOnError: true }),\r\n    })"
+        }
+      ]
+    },
+    {
+      "module": "notifications",
+      "path": "apps/web/src/modules/notifications/push-capabilities.ts",
+      "sha256": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
+      "matches": []
+    },
+    {
+      "module": "operations",
+      "path": "apps/web/src/modules/operations/index.tsx",
+      "sha256": "2f668faf82d5241bdc2851c5159b7c43ef83f932bdbcef5b179b112344dc42a3",
+      "matches": [
+        {
+          "line": 36,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\n        const timer = window.setTimeout(() => setMemberSearch(memberSearchInput.trim()), 250);\n        return () => window.clearTimeout(timer);\n    }, [memberSearchInput])"
+        }
+      ]
+    },
+    {
+      "module": "orders",
+      "path": "apps/web/src/modules/orders/demo-address-preview.ts",
+      "sha256": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a",
+      "matches": []
+    },
+    {
+      "module": "orders",
+      "path": "apps/web/src/modules/orders/index.tsx",
+      "sha256": "b84d655154133cbad9f54cefb7439b7c2aa152c9f2517c3366672dcc37ff3f1d",
+      "matches": [
+        {
+          "line": 44,
+          "kind": "useEffect",
+          "text": "useEffect(() => { onBusyChange?.(create.pending || update.pending); }, [create.pending, update.pending, onBusyChange])"
+        },
+        {
+          "line": 60,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${shop.id}:order:${resource?.id || 'new'}`,\r\n        source: current ? orderSnapshot(current) : undefined,\r\n        draft: values,\r\n        apply: value => {\r\n            setCustomer(value.customerId); setConversation(value.conversationId); setWarehouse(value.warehouse); setNotes(value.notes);\r\n            setLines(existing => value.lines.map(line => ({ ...line, key: existing.find(item => item.variantId === line.variantId)?.key || crypto.randomUUID(), variantLabel: existing.find(item => item.variantId === line.variantId)?.variantLabel || '' })));\r\n        }, refresh: () => fresh.refetch({ throwOnError: true }),\r\n    })"
+        },
+        {
+          "line": 166,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\r\n        if (!quote)\r\n            return;\r\n        const timer = window.setInterval(() => setNowMs(Date.now()), 1_000);\r\n        return () => window.clearInterval(timer);\r\n    }, [quote])"
+        },
+        {
+          "line": 175,
+          "kind": "useEffect",
+          "text": "useEffect(() => { if (order && quote && order.version !== quote.orderVersion) {\r\n        setQuote(null);\r\n        setConfirmation(null);\r\n    } }, [order, quote])"
+        },
+        {
+          "line": 254,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\r\n        const timer = window.setTimeout(() => setOrderSearch(orderSearchInput.trim()), 250);\r\n        return () => window.clearTimeout(timer);\r\n    }, [orderSearchInput])"
+        },
+        {
+          "line": 267,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${shop.id}:return:${selected?.id || 'none'}`,\r\n        source: selected && inspectionCase?.id === selected.id ? returnInspectionSnapshot(inspectionCase) : undefined,\r\n        draft: { lines: inspections }, apply: values => setInspections(values.lines),\r\n        refresh: () => selectedReturn.refetch({ throwOnError: true }),\r\n    })"
+        }
+      ]
+    },
+    {
+      "module": "procurement",
+      "path": "apps/web/src/modules/procurement/index.tsx",
+      "sha256": "b97dcd2331f276a1a463a793e025f87b11ff0c6a8378b8de463de3261b7fe07f",
+      "matches": [
+        {
+          "line": 33,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${shop.id}:supplier:${edit?.id || 'new'}`,\r\n        source: supplierSource ? supplierSnapshot(supplierSource) : undefined,\r\n        draft: { name, contact, lead, terms, method, adapter },\r\n        apply: values => { setName(values.name); setContact(values.contact); setLead(values.lead); setTerms(values.terms); setMethod(values.method); setAdapter(values.adapter); },\r\n        refresh: () => supplierDetail.refetch({ throwOnError: true }),\r\n    })"
+        }
+      ]
+    },
+    {
+      "module": "reports",
+      "path": "apps/web/src/modules/reports/index.tsx",
+      "sha256": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754",
+      "matches": [
+        {
+          "line": 52,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\n        const committedSearch = params.toString();\n        if (pendingSearch.current !== null && pendingSearch.current !== committedSearch) return;\n        latestParams.current = new URLSearchParams(params);\n        pendingSearch.current = null;\n    }, [params])"
+        },
+        {
+          "line": 97,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\n        if (!snapshotAsOf) return;\n        if (!defaultRange) {\n            setRangeError('Múi giờ cửa hàng hoặc mốc thời gian báo cáo không hợp lệ.');\n            return;\n        }\n        try {\n            const next = new URLSearchParams(latestParams.current);\n            let changed = false;\n            if (requestedType !== 'inventory' && requestedType !== 'cashflow' && requestedType !== 'profit_loss' && requestedType !== 'orders') {\n                next.set('reportType', 'orders');\n                changed = true;\n            }\n            if (!params.has('fromDate') || (fromValue && !isValidDateOnly(fromValue))) {\n                next.set('fromDate', defaultRange.fromDate);\n                changed = true;\n            }\n            if (!params.has('toDate') || (toValue && !isValidDateOnly(toValue))) {\n                next.set('toDate', defaultRange.toDate);\n                changed = true;\n            }\n            if (changed) {\n                latestParams.current = next;\n                pendingSearch.current = next.toString();\n                setParams(next, { replace: true, flushSync: true });\n            }\n        }\n        catch { setRangeError('Múi giờ cửa hàng hoặc mốc thời gian báo cáo không hợp lệ.'); }\n    }, [defaultRange, params, requestedType, fromValue, toValue, setParams, snapshotAsOf])"
+        }
+      ]
+    },
+    {
+      "module": "reports",
+      "path": "apps/web/src/modules/reports/report-utils.ts",
+      "sha256": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
+      "matches": []
+    },
+    {
+      "module": "workspace",
+      "path": "apps/web/src/modules/workspace/index.tsx",
+      "sha256": "14bc610e406b356218efc2aaedd848e6caf10abf167aae2ff3ef67541c4b2c51",
+      "matches": [
+        {
+          "line": 84,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${shop.id}:settings`,\r\n        source: { version: currentShop.version, values: { name: currentShop.name, timezone: currentShop.timezone, locale: currentShop.locale } },\r\n        draft: { name, timezone, locale },\r\n        apply: values => { setName(values.name); setTimezone(values.timezone); setLocale(values.locale); },\r\n        refresh: () => latestShop.refetch({ throwOnError: true }),\r\n    })"
+        },
+        {
+          "line": 185,
+          "kind": "useEffect",
+          "text": "useEffect(() => {\r\n        const timer = window.setTimeout(() => setCustomerSearch(customerSearchInput.trim()), 250);\r\n        return () => window.clearTimeout(timer);\r\n    }, [customerSearchInput])"
+        },
+        {
+          "line": 192,
+          "kind": "useVersionedDraft",
+          "text": "useVersionedDraft({\r\n        identity: `${shop.id}:privacy`,\r\n        source: policy.data ? { version: policy.data.data.version, values: { days: policy.data.data.chatRetentionDays?.toString() || '', note: policy.data.data.jurisdictionNote } } : undefined,\r\n        draft: { days, note },\r\n        apply: values => { setDays(values.days); setNote(values.note); },\r\n        refresh: () => policy.refetch({ throwOnError: true }),\r\n    })"
+        },
+        {
+          "line": 258,
+          "kind": "useEffect",
+          "text": "useEffect(() => { if (!jobStatus || !['queued', 'running'].includes(jobStatus))\r\n        return; const timer = setInterval(() => void refetch(), 3000); return () => clearInterval(timer); }, [jobStatus, refetch])"
+        }
+      ]
+    }
+  ]
+}

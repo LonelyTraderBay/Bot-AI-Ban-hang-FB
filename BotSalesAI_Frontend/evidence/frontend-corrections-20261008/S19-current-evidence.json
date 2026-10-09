@@ -1,0 +1,1179 @@
+{
+  "schemaVersion": 1,
+  "step": "S19",
+  "scope": "F01–F09 and confirmed analogous defects across 16 modules; final current source, named automated UI behavior, native zoom, artifacts and canonical FE evidence. Local synthetic scope only.",
+  "recordedAt": "2026-10-08T08:06:42.769Z",
+  "status": "COMPLETE",
+  "checks": [
+    {
+      "id": "generate",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run generate:check",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "11 generated outputs / 283 schemas / 210 operations / 54 routes remain current",
+      "observed": "11 generated outputs / 283 schemas / 210 operations / 54 routes remain current",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444892502-39420/generate.log",
+        "sha256": "892c65e69b47ea479e78a83f56058649831bea47bd11f91f17c6d817156932fd"
+      }
+    },
+    {
+      "id": "verify",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "All mandatory verify stages exit 0; 173 unit / 88 domain-network / strict source, type, boundary, layout, visual, composition and evidence gates pass",
+      "observed": "All mandatory verify stages exit 0; 173 unit / 88 domain-network / strict source, type, boundary, layout, visual, composition and evidence gates pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791446078968-78560/verify.log",
+        "sha256": "ae0fd0189546b65adeb91667b941254536f5db3615d1a218f81cec6e0186f04f"
+      }
+    },
+    {
+      "id": "e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run test:e2e",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "One complete Chromium/Firefox run passes 554/554 cases",
+      "observed": "One complete Chromium/Firefox run passes 554/554 cases",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441445991-24436/e2e.log",
+        "sha256": "3cacad22f6067dd1457cbb612a006c0c23b5fbe412b9463eb0e9cce03e58def3"
+      }
+    },
+    {
+      "id": "unit",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js test -- --reporter=verbose",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "173/173 unit cases pass",
+      "observed": "173/173 unit cases pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191868-26044/unit.log",
+        "sha256": "30b43fa2caed68b69a8af1d3f42966be47fb599333ec8aeabf545d4e3a06828a"
+      }
+    },
+    {
+      "id": "contracts",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/ui-composition-checker.test.mjs tests/ui-composition-ancestry.test.mjs tests/ui-shared-api-contract.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "38/38 composition, ancestry and shared API contract cases pass",
+      "observed": "38/38 composition, ancestry and shared API contract cases pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191994-24324/contracts.log",
+        "sha256": "814fa1705df6c0328a5ff34db7285266a2ca658a06ae720a02a883bf036c32e0"
+      }
+    },
+    {
+      "id": "layout",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run test:layout",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "82/82 fixtures pass; source scan 79 files, zero findings, one declared exception",
+      "observed": "82/82 fixtures pass; source scan 79 files, zero findings, one declared exception",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192183-45608/layout.log",
+        "sha256": "05debc1a7e0afddd7a6ac8b33d0a1812c06e2772d17a00fa7f5ebdc359e0a689"
+      }
+    },
+    {
+      "id": "evidence-validator",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/ui-evidence-validator.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "11/11 provenance validator cases pass",
+      "observed": "11/11 provenance validator cases pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192383-49108/evidence-validator.log",
+        "sha256": "ead18f03ab3447b29f353e8be328a301a82de5bfd0a5bb7edc05ec0a1ea5a6bd"
+      }
+    },
+    {
+      "id": "source-maps",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "16/16 canonical feature source-map cases pass",
+      "observed": "16/16 canonical feature source-map cases pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192559-16080/source-maps.log",
+        "sha256": "5995622faa92f23d7d7aaf71389770d0c2f06620028cee851c437263d462ea95"
+      }
+    },
+    {
+      "id": "built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "6/6 dedicated Chromium/Firefox built-demo cases pass",
+      "observed": "6/6 dedicated Chromium/Firefox built-demo cases pass",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444650847-70468/built-demo.log",
+        "sha256": "7a0b4144184a753be8151839e9a6c36446ccb91e0ed149baca057f25fd9f5c9d"
+      }
+    },
+    {
+      "id": "kit-checks-record.json",
+      "command": "C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -X utf8 scripts/validate-release.py --no-write | C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -X utf8 scripts/test_release_sync.py -v | C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -X utf8 scripts/test_release.py | C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -X utf8 scripts/sync-release.py --check | C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -X utf8 scripts/generate-theme.py --check | C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -X utf8 prototype/build.py --check | C:\\Program Files\\nodejs\\node.EXE scripts/progress.mjs validate | C:\\Program Files\\nodejs\\node.EXE scripts/progress.mjs status",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "8/8 kit checks",
+      "observed": "8/8 kit checks",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/kit-release.log",
+        "sha256": "104e10ca2ee9020bca07535e27f111df976f613b0369dd007951b8c50d1d2713"
+      }
+    },
+    {
+      "id": "progress-tests-record.json",
+      "command": "C:\\Users\\Joker-PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -X utf8 scripts/test_progress.py",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "26/26 tracker self-tests",
+      "observed": "26/26 tracker self-tests",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/progress-tests.log",
+        "sha256": "058f72ddb3e495b7fe4406e2e6200b22c152747295a0e494e41dd450cfea90fa"
+      }
+    },
+    {
+      "id": "cold-artifacts",
+      "command": "node evidence/frontend-corrections-20261008/run-clean-build.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "10/10 isolated stages; byte-identical production/demo repeats and current artifact files",
+      "observed": "10/10 isolated stages; byte-identical production/demo repeats and current artifact files",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/clean-build-corrections-20261008.log",
+        "sha256": "d3793140c13cfb1f7016579ea19a5b07a575d283c40b35a7529f625b0cbf2f62"
+      }
+    },
+    {
+      "id": "built-comparison",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-corrections-20261008\\review-built-comparison.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Compiled comparison preserves the draft, applies without HTTP, then PATCHes only chosen fields with version 2 in Chromium and Firefox",
+      "observed": "Compiled comparison preserves the draft, applies without HTTP, then PATCHes only chosen fields with version 2 in Chromium and Firefox",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/built-comparison-review-current.json",
+        "sha256": "1c84b43ae8cf57c7cac3bb33a785ff3994a16ec09a391add2ba23f46506c343a"
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "name": "source-files",
+      "expected": 76,
+      "observed": 76,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "Current runtime source partition, hashes and owned gates; inventory is not a visual conformance percentage."
+    },
+    {
+      "name": "shared-api-exports",
+      "expected": 28,
+      "observed": 28,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "22 components plus six compositions; direct-render and finite API/type/runtime/catalog contracts."
+    },
+    {
+      "name": "route-mappings",
+      "expected": 54,
+      "observed": 54,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "Current canonical route to actual React source/component binding."
+    },
+    {
+      "name": "rendered-routes",
+      "expected": 54,
+      "observed": 54,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "All-route smoke/axe plus the dedicated built-artifact viewport review."
+    },
+    {
+      "name": "slots",
+      "expected": 28,
+      "observed": 28,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "All public APIs have slot/native form/ref/ARIA/state contract coverage; counts do not mean every business branch was manually reviewed."
+    },
+    {
+      "name": "states",
+      "expected": 432,
+      "observed": 432,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "54 by eight declared cells; tested versus justified N/A kept in the current matrix."
+    },
+    {
+      "name": "baseline-records",
+      "expected": 106,
+      "observed": 106,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "106 preserved source/package/config/script snapshots and actual before-render probes; scope is this corrective batch, not a fabricated baseline picture for every route."
+    },
+    {
+      "name": "corrective-findings",
+      "expected": 9,
+      "observed": 9,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "F01–F09 owner fixes with behavior regressions in the full run."
+    },
+    {
+      "name": "modules-reviewed",
+      "expected": 16,
+      "observed": 16,
+      "missing": 0,
+      "result": "COMPLETE",
+      "reason": "24 module files plus shared/app owners; KEEP and confirmed fixes in ANALOGOUS_PATTERNS.md."
+    }
+  ],
+  "baseline": {
+    "status": "CAPTURED",
+    "capturedAt": "2026-10-08T02:31:09.289Z",
+    "implementationStartedAt": "2026-10-08T02:32:53.085Z",
+    "artifacts": [
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline.json",
+        "sha256": "544180612cad4ec87db1cac7c03abc067870ed0f29eb7d9b0238d45152cbf6a1"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/results.json",
+        "sha256": "555048d495363fd68784de6ab121a0b86060996f1f24c0777b3e13613e12669c"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/implementation-provenance.json",
+        "sha256": "efec8d8da688a5c8c60e8a89891249187755254c4a720cd193eee459bb38b897"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/package.json",
+        "sha256": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/public/app-sw.js",
+        "sha256": "9080a6f5bfdd8753d64bc3a5632ee626517a79bd9d989edb3cc54f089e721936"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/bootstrap.css",
+        "sha256": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/CommandRecovery.tsx",
+        "sha256": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/dirty-drafts.ts",
+        "sha256": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/feedback.tsx",
+        "sha256": "449b8f38b670784f4b99c91b007ca6a90949b6dab1acc69fd8f93a22e11b2a22"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/i18n.ts",
+        "sha256": "535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/locales/vi/customers.ts",
+        "sha256": "a2a880bc7aad48e156e0fe8d6cafd63a453a91187af62b398ae5c8247312e97b"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/locales/vi/knowledge.ts",
+        "sha256": "a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/navigation.ts",
+        "sha256": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/router.tsx",
+        "sha256": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/ScopeEvents.tsx",
+        "sha256": "65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/SessionProvider.tsx",
+        "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/Shell.tsx",
+        "sha256": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/app/tokens.css",
+        "sha256": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/main.tsx",
+        "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/auxiliary.ts",
+        "sha256": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/browser.ts",
+        "sha256": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/catalog.ts",
+        "sha256": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/control.ts",
+        "sha256": "2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/database.ts",
+        "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/files.ts",
+        "sha256": "21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/finance.ts",
+        "sha256": "c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/fulfillment.ts",
+        "sha256": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/handlers.ts",
+        "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/marketing-fixture.ts",
+        "sha256": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/orders.ts",
+        "sha256": "c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/procurement.ts",
+        "sha256": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/mocks/service.ts",
+        "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/bot/index.tsx",
+        "sha256": "cbca27471ea771f325b3577095a6ff30f66b29c711c0138b3678a8dc4c1d40af"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/catalog/import-file.ts",
+        "sha256": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/catalog/imports.tsx",
+        "sha256": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/catalog/index.tsx",
+        "sha256": "98e8ac7e9600837171d4e9a2d36a7d03978071c4dfc7d87fcc2617655c8c1639"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/customers/index.tsx",
+        "sha256": "1f6d62a562b6ec124fb3029fdce8eeb9937d09323abb5a523aad496343a4531b"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/dashboard/index.tsx",
+        "sha256": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/finance/demo-account-preview.ts",
+        "sha256": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/finance/index.tsx",
+        "sha256": "b232374ed17759d105022cc29d87205de9414b7d2b5327f0bf9135243248134c"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/finance/report-explanations.ts",
+        "sha256": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/fulfillment/index.tsx",
+        "sha256": "e906c5574670111cd6198ea77484284cc3d3b503a3268c8fdb4bd26e15bf1fc4"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/inbox/conversation-components.tsx",
+        "sha256": "9611c21db12bdac47fbead422c4fe047902a5df0e6359b73e81ea813ba26177d"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/inbox/index.tsx",
+        "sha256": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/integrations/index.tsx",
+        "sha256": "21c786a8280031a029af35e434f7f755b6c81acbab59ca3098d87028aab7aa65"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/inventory/index.tsx",
+        "sha256": "7b5d0a356390cba43b8bf16c162dd499150bee37d353945d552504a1eee2bd1b"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/knowledge/index.tsx",
+        "sha256": "7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/notifications/index.tsx",
+        "sha256": "f3c4f450a411703bf605153eee7a9bb3f555882b276b191cd15ce1df26b8dd7d"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/notifications/push-capabilities.ts",
+        "sha256": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/operations/index.tsx",
+        "sha256": "608bdffd80bc3b3bc0bd2a6b49a3591b38262f797c195de09ee566a34db5518b"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/orders/demo-address-preview.ts",
+        "sha256": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/orders/index.tsx",
+        "sha256": "d1cad2cb0dbbfa618dc6cd5c7096711354feaecb977807037b8c6a2748ed6da7"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/procurement/index.tsx",
+        "sha256": "137c535a1c086c6e998281e3e9d4620adf9f3d6b41a0e775add49339b6f82bc1"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/reports/index.tsx",
+        "sha256": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/reports/report-utils.ts",
+        "sha256": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/modules/workspace/index.tsx",
+        "sha256": "2ea39976473d8dfc2a0da5f0ea8b3e7912d098e4e427487fde5b59479091c269"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/api/client.ts",
+        "sha256": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/api/client.type-contracts.ts",
+        "sha256": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/api/errors.ts",
+        "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/api/hooks.ts",
+        "sha256": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/api/intents.ts",
+        "sha256": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/api/validation.ts",
+        "sha256": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/model/auth.ts",
+        "sha256": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/model/dirty-drafts.ts",
+        "sha256": "87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/model/download.ts",
+        "sha256": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/model/filters.ts",
+        "sha256": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/model/format.ts",
+        "sha256": "32d13ed518870d525b857a8be711b24b7d56b0f5c7eff4699ba4f572e958b223"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/model/labels.ts",
+        "sha256": "7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/model/scope.tsx",
+        "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/ui/components.tsx",
+        "sha256": "0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/ui/composition.tsx",
+        "sha256": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/ui/layout.ts",
+        "sha256": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/ui/theme.ts",
+        "sha256": "dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/shared/ui/visual.ts",
+        "sha256": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/src/vite-env.d.ts",
+        "sha256": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/tsconfig.json",
+        "sha256": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/vite.config.ts",
+        "sha256": "5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/apps/web/vitest.config.ts",
+        "sha256": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/eslint.config.mjs",
+        "sha256": "4c8329d64fd7e8ec9cc65d9bbea66585fdfa3775104f7087345ebdc5a870ab25"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/package-lock.json",
+        "sha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/package.json",
+        "sha256": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/packages/contracts/src/generated.ts",
+        "sha256": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/packages/contracts/src/index.ts",
+        "sha256": "bcc7e843b4ad0f8e5609e262fb9d0d1e9f1845bd88b6153e3a9ef63cf7fde2c7"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/packages/contracts/src/operations.json",
+        "sha256": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/packages/contracts/src/permissions.json",
+        "sha256": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/packages/contracts/src/routes.json",
+        "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/packages/contracts/src/schemas.json",
+        "sha256": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/packages/design-tokens/src/index.ts",
+        "sha256": "e14a11a006fc239bc8a51bbf929ba3646aefe1e12cbb1ce1ec988e6e2a2ec0df"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/packages/design-tokens/src/tokens.json",
+        "sha256": "95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/playwright.config.ts",
+        "sha256": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/check-boundaries.mjs",
+        "sha256": "64e2453c1b4186bf86a6c74e3917ecb0d9d5b73e9d77195be3e401e97aec7d0f"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/check-layout.mjs",
+        "sha256": "d1fb4346896bcce7d22395d8c128ad946005f5e3baadea250ce9b4cc3bcbf3fb"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/check-source.mjs",
+        "sha256": "593b95de828d54edfd04e0dd847007a71d36175b7fe7b9bc1cb83bea88af6fd3"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/check-ui-composition.mjs",
+        "sha256": "c39d3465ee936858f1393b251de5e9f54febd2efd0b508887d5550beaafaf97c"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/check-visual-tokens.mjs",
+        "sha256": "144f844c7ae2447136580054abde6b07610623a6ba3b3e25db887d8d378a61d6"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/doctor.mjs",
+        "sha256": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/generate.mjs",
+        "sha256": "02867fe31f4686636c9af095dbf975cc23ddcaea6a82ba320999e25900b2e4e6"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/run-e2e.mjs",
+        "sha256": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/setup.mjs",
+        "sha256": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/source-policy.mjs",
+        "sha256": "254e9c4a86d2a01adb27c4eada9d03306c159dda684cdc5eb7162d073a804e3f"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/test-domain.mjs",
+        "sha256": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/tools.mjs",
+        "sha256": "df9bb454ec2a12f2cee7729187df9e244836132ff21c39e3b69767fc313db2ef"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/ui-bindings.mjs",
+        "sha256": "7a6b98855a7c27774ff5ae1fc2cff90e06f866f910cb25dad47d6181647beeb2"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/ui-entry-scope.mjs",
+        "sha256": "eea8ba6819e7bcb381e1faaac1acdab248088cc4a6fd13790b1febd451e851ce"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/ui-import-scope.mjs",
+        "sha256": "844ba99c7374f5b3b4c9e6e1545213d9e8957362702a13c10766f1c93452742f"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/ui-source-files.mjs",
+        "sha256": "6f71a77ef96ff8d46394c7f02ced656ef536f8975c0f081ac6bfad9b99fd8b1a"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/validate-mock-schemas.py",
+        "sha256": "26fed7c86be0b6124ee44fa9c8a15d9dbd64408d5e8af7f2c3c4c930c76fa688"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/validate-ui-evidence.mjs",
+        "sha256": "48f9bc2187d4ec07eb651bf622621e476f3afddb5c26cd4c4f65f2b01a505d91"
+      },
+      {
+        "path": "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/baseline/scripts/vite-cache.mjs",
+        "sha256": "56478cc7e72edf0afe9e4fa949b2816e0a280260461b17bc1b5e04859a34458f"
+      }
+    ],
+    "sourceFingerprints": {
+      "BotSalesAI_Frontend/apps/web/src/app/bootstrap.css": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89",
+      "BotSalesAI_Frontend/apps/web/src/app/CommandRecovery.tsx": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac",
+      "BotSalesAI_Frontend/apps/web/src/app/dirty-drafts.ts": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13",
+      "BotSalesAI_Frontend/apps/web/src/app/feedback.tsx": "449b8f38b670784f4b99c91b007ca6a90949b6dab1acc69fd8f93a22e11b2a22",
+      "BotSalesAI_Frontend/apps/web/src/app/i18n.ts": "535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340",
+      "BotSalesAI_Frontend/apps/web/src/app/locales/vi/customers.ts": "a2a880bc7aad48e156e0fe8d6cafd63a453a91187af62b398ae5c8247312e97b",
+      "BotSalesAI_Frontend/apps/web/src/app/locales/vi/knowledge.ts": "a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9",
+      "BotSalesAI_Frontend/apps/web/src/app/navigation.ts": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7",
+      "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4",
+      "BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx": "65c1786961cfe5744796f7d4b658db124e1bbb3ab3a8c2c1f920e5e993672219",
+      "BotSalesAI_Frontend/apps/web/src/app/SessionProvider.tsx": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e",
+      "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d",
+      "BotSalesAI_Frontend/apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+      "BotSalesAI_Frontend/apps/web/src/main.tsx": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb",
+      "BotSalesAI_Frontend/apps/web/src/mocks/auxiliary.ts": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c",
+      "BotSalesAI_Frontend/apps/web/src/mocks/browser.ts": "91138a6c675903e7aec92237387d6797169b6b4d7bbedca24c304d0d79942cd9",
+      "BotSalesAI_Frontend/apps/web/src/mocks/catalog.ts": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56",
+      "BotSalesAI_Frontend/apps/web/src/mocks/control.ts": "2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541",
+      "BotSalesAI_Frontend/apps/web/src/mocks/database.ts": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c",
+      "BotSalesAI_Frontend/apps/web/src/mocks/files.ts": "21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd",
+      "BotSalesAI_Frontend/apps/web/src/mocks/finance.ts": "c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d",
+      "BotSalesAI_Frontend/apps/web/src/mocks/fulfillment.ts": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40",
+      "BotSalesAI_Frontend/apps/web/src/mocks/handlers.ts": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608",
+      "BotSalesAI_Frontend/apps/web/src/mocks/marketing-fixture.ts": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb",
+      "BotSalesAI_Frontend/apps/web/src/mocks/orders.ts": "c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4",
+      "BotSalesAI_Frontend/apps/web/src/mocks/procurement.ts": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0",
+      "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69",
+      "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "cbca27471ea771f325b3577095a6ff30f66b29c711c0138b3678a8dc4c1d40af",
+      "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
+      "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da",
+      "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "98e8ac7e9600837171d4e9a2d36a7d03978071c4dfc7d87fcc2617655c8c1639",
+      "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "1f6d62a562b6ec124fb3029fdce8eeb9937d09323abb5a523aad496343a4531b",
+      "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef",
+      "BotSalesAI_Frontend/apps/web/src/modules/finance/demo-account-preview.ts": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60",
+      "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "b232374ed17759d105022cc29d87205de9414b7d2b5327f0bf9135243248134c",
+      "BotSalesAI_Frontend/apps/web/src/modules/finance/report-explanations.ts": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
+      "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx": "e906c5574670111cd6198ea77484284cc3d3b503a3268c8fdb4bd26e15bf1fc4",
+      "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "9611c21db12bdac47fbead422c4fe047902a5df0e6359b73e81ea813ba26177d",
+      "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b",
+      "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "21c786a8280031a029af35e434f7f755b6c81acbab59ca3098d87028aab7aa65",
+      "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "7b5d0a356390cba43b8bf16c162dd499150bee37d353945d552504a1eee2bd1b",
+      "BotSalesAI_Frontend/apps/web/src/modules/knowledge/index.tsx": "7744ecf46521ccf8b7709229f5c59da53c201ae2d44b775f8b07b616a9e71b2b",
+      "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx": "f3c4f450a411703bf605153eee7a9bb3f555882b276b191cd15ce1df26b8dd7d",
+      "BotSalesAI_Frontend/apps/web/src/modules/notifications/push-capabilities.ts": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
+      "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx": "608bdffd80bc3b3bc0bd2a6b49a3591b38262f797c195de09ee566a34db5518b",
+      "BotSalesAI_Frontend/apps/web/src/modules/orders/demo-address-preview.ts": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a",
+      "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "d1cad2cb0dbbfa618dc6cd5c7096711354feaecb977807037b8c6a2748ed6da7",
+      "BotSalesAI_Frontend/apps/web/src/modules/procurement/index.tsx": "137c535a1c086c6e998281e3e9d4620adf9f3d6b41a0e775add49339b6f82bc1",
+      "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754",
+      "BotSalesAI_Frontend/apps/web/src/modules/reports/report-utils.ts": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
+      "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx": "2ea39976473d8dfc2a0da5f0ea8b3e7912d098e4e427487fde5b59479091c269",
+      "BotSalesAI_Frontend/apps/web/src/shared/api/client.ts": "8e11a4b16a7f6e5213feaa54a7c0236177a18325f7fe9f696679d36b771cc2c4",
+      "BotSalesAI_Frontend/apps/web/src/shared/api/client.type-contracts.ts": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e",
+      "BotSalesAI_Frontend/apps/web/src/shared/api/errors.ts": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227",
+      "BotSalesAI_Frontend/apps/web/src/shared/api/hooks.ts": "05ee735f2522545eb4c67f8e8e7ab7f2104d0ae61db5b5fb1db65898cf6549c1",
+      "BotSalesAI_Frontend/apps/web/src/shared/api/intents.ts": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b",
+      "BotSalesAI_Frontend/apps/web/src/shared/api/validation.ts": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1",
+      "BotSalesAI_Frontend/apps/web/src/shared/model/auth.ts": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4",
+      "BotSalesAI_Frontend/apps/web/src/shared/model/dirty-drafts.ts": "87050b5dea6151be6f5e4dff7b93ce60e8bc32909e3a030e6095b63aecd741dc",
+      "BotSalesAI_Frontend/apps/web/src/shared/model/download.ts": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c",
+      "BotSalesAI_Frontend/apps/web/src/shared/model/filters.ts": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d",
+      "BotSalesAI_Frontend/apps/web/src/shared/model/format.ts": "32d13ed518870d525b857a8be711b24b7d56b0f5c7eff4699ba4f572e958b223",
+      "BotSalesAI_Frontend/apps/web/src/shared/model/labels.ts": "7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2",
+      "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
+      "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "0ca6abdb42fa7f8246e0309042719aadd9d71c194e2e3dd5e6245889ad5002a5",
+      "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+      "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+      "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "dfb131b7987db08c66df78d349e93175663bcc55e3e633e151c59dfaa1d67532",
+      "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
+      "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
+      "BotSalesAI_Frontend/scripts/check-boundaries.mjs": "64e2453c1b4186bf86a6c74e3917ecb0d9d5b73e9d77195be3e401e97aec7d0f",
+      "BotSalesAI_Frontend/scripts/check-layout.mjs": "d1fb4346896bcce7d22395d8c128ad946005f5e3baadea250ce9b4cc3bcbf3fb",
+      "BotSalesAI_Frontend/scripts/check-source.mjs": "593b95de828d54edfd04e0dd847007a71d36175b7fe7b9bc1cb83bea88af6fd3",
+      "BotSalesAI_Frontend/scripts/check-ui-composition.mjs": "c39d3465ee936858f1393b251de5e9f54febd2efd0b508887d5550beaafaf97c",
+      "BotSalesAI_Frontend/scripts/check-visual-tokens.mjs": "144f844c7ae2447136580054abde6b07610623a6ba3b3e25db887d8d378a61d6",
+      "BotSalesAI_Frontend/scripts/doctor.mjs": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e",
+      "BotSalesAI_Frontend/scripts/generate.mjs": "02867fe31f4686636c9af095dbf975cc23ddcaea6a82ba320999e25900b2e4e6",
+      "BotSalesAI_Frontend/scripts/run-e2e.mjs": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891",
+      "BotSalesAI_Frontend/scripts/setup.mjs": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa",
+      "BotSalesAI_Frontend/scripts/source-policy.mjs": "254e9c4a86d2a01adb27c4eada9d03306c159dda684cdc5eb7162d073a804e3f",
+      "BotSalesAI_Frontend/scripts/test-domain.mjs": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a",
+      "BotSalesAI_Frontend/scripts/tools.mjs": "df9bb454ec2a12f2cee7729187df9e244836132ff21c39e3b69767fc313db2ef",
+      "BotSalesAI_Frontend/scripts/ui-bindings.mjs": "7a6b98855a7c27774ff5ae1fc2cff90e06f866f910cb25dad47d6181647beeb2",
+      "BotSalesAI_Frontend/scripts/ui-entry-scope.mjs": "eea8ba6819e7bcb381e1faaac1acdab248088cc4a6fd13790b1febd451e851ce",
+      "BotSalesAI_Frontend/scripts/ui-import-scope.mjs": "844ba99c7374f5b3b4c9e6e1545213d9e8957362702a13c10766f1c93452742f",
+      "BotSalesAI_Frontend/scripts/ui-source-files.mjs": "6f71a77ef96ff8d46394c7f02ced656ef536f8975c0f081ac6bfad9b99fd8b1a",
+      "BotSalesAI_Frontend/scripts/validate-mock-schemas.py": "26fed7c86be0b6124ee44fa9c8a15d9dbd64408d5e8af7f2c3c4c930c76fa688",
+      "BotSalesAI_Frontend/scripts/validate-ui-evidence.mjs": "48f9bc2187d4ec07eb651bf622621e476f3afddb5c26cd4c4f65f2b01a505d91",
+      "BotSalesAI_Frontend/scripts/vite-cache.mjs": "56478cc7e72edf0afe9e4fa949b2816e0a280260461b17bc1b5e04859a34458f",
+      "BotSalesAI_Frontend/package.json": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138",
+      "BotSalesAI_Frontend/package-lock.json": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a",
+      "BotSalesAI_Frontend/eslint.config.mjs": "4c8329d64fd7e8ec9cc65d9bbea66585fdfa3775104f7087345ebdc5a870ab25",
+      "BotSalesAI_Frontend/apps/web/package.json": "1f57a81cd2012b0f73f735ca0af9802454ccdc301610033181701bfd4e4d878a",
+      "BotSalesAI_Frontend/apps/web/tsconfig.json": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1",
+      "BotSalesAI_Frontend/apps/web/vite.config.ts": "5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a",
+      "BotSalesAI_Frontend/apps/web/vitest.config.ts": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e",
+      "BotSalesAI_Frontend/playwright.config.ts": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e",
+      "BotSalesAI_Frontend/apps/web/public/app-sw.js": "9080a6f5bfdd8753d64bc3a5632ee626517a79bd9d989edb3cc54f089e721936",
+      "BotSalesAI_Frontend/packages/contracts/src/generated.ts": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709",
+      "BotSalesAI_Frontend/packages/contracts/src/index.ts": "bcc7e843b4ad0f8e5609e262fb9d0d1e9f1845bd88b6153e3a9ef63cf7fde2c7",
+      "BotSalesAI_Frontend/packages/contracts/src/operations.json": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88",
+      "BotSalesAI_Frontend/packages/contracts/src/permissions.json": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1",
+      "BotSalesAI_Frontend/packages/contracts/src/routes.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+      "BotSalesAI_Frontend/packages/contracts/src/schemas.json": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1",
+      "BotSalesAI_Frontend/packages/design-tokens/src/index.ts": "e14a11a006fc239bc8a51bbf929ba3646aefe1e12cbb1ce1ec988e6e2a2ec0df",
+      "BotSalesAI_Frontend/packages/design-tokens/src/tokens.json": "95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0"
+    },
+    "reason": "First mutation timestamp extracted from the actual tool-call history; preserved copies have original bytes."
+  },
+  "sourceFingerprints": {
+    "BotSalesAI_Frontend/apps/web/src/app/bootstrap.css": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89",
+    "BotSalesAI_Frontend/apps/web/src/app/CommandRecovery.tsx": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac",
+    "BotSalesAI_Frontend/apps/web/src/app/dirty-drafts.ts": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13",
+    "BotSalesAI_Frontend/apps/web/src/app/feedback.tsx": "449b8f38b670784f4b99c91b007ca6a90949b6dab1acc69fd8f93a22e11b2a22",
+    "BotSalesAI_Frontend/apps/web/src/app/i18n.ts": "535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340",
+    "BotSalesAI_Frontend/apps/web/src/app/locales/vi/customers.ts": "94a1b204b882ce2f87da801327f731842b8c6954f1d77820b10a8d230f592159",
+    "BotSalesAI_Frontend/apps/web/src/app/locales/vi/knowledge.ts": "a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9",
+    "BotSalesAI_Frontend/apps/web/src/app/navigation.ts": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7",
+    "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4",
+    "BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx": "cfea6704a8f8a08ca735700ae3aef4444dd40d8b6a8fb121d06cbab60085c0aa",
+    "BotSalesAI_Frontend/apps/web/src/app/SessionProvider.tsx": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e",
+    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d",
+    "BotSalesAI_Frontend/apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "BotSalesAI_Frontend/apps/web/src/main.tsx": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb",
+    "BotSalesAI_Frontend/apps/web/src/mocks/auxiliary.ts": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c",
+    "BotSalesAI_Frontend/apps/web/src/mocks/browser.ts": "3786d71b2b665490a116bc0671c5e2494e57e87677e132e8cce1fa80cd5860ee",
+    "BotSalesAI_Frontend/apps/web/src/mocks/catalog.ts": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56",
+    "BotSalesAI_Frontend/apps/web/src/mocks/collections.json": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6",
+    "BotSalesAI_Frontend/apps/web/src/mocks/control.ts": "2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541",
+    "BotSalesAI_Frontend/apps/web/src/mocks/database.ts": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c",
+    "BotSalesAI_Frontend/apps/web/src/mocks/files.ts": "21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd",
+    "BotSalesAI_Frontend/apps/web/src/mocks/finance.ts": "c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d",
+    "BotSalesAI_Frontend/apps/web/src/mocks/fulfillment.ts": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40",
+    "BotSalesAI_Frontend/apps/web/src/mocks/handlers.ts": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608",
+    "BotSalesAI_Frontend/apps/web/src/mocks/marketing-fixture.ts": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb",
+    "BotSalesAI_Frontend/apps/web/src/mocks/orders.ts": "c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4",
+    "BotSalesAI_Frontend/apps/web/src/mocks/procurement.ts": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0",
+    "BotSalesAI_Frontend/apps/web/src/mocks/seed.json": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d",
+    "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69",
+    "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "92d2cd21fa6b74afaca61da769e0965db5ec46b110f21e5a6b7e21aeed9f3e70",
+    "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
+    "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da",
+    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "4d216c67f07350da8bdd3bf27c35de7c385711a9e68369d42bb206e45179d461",
+    "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "a43b3c48e256624b32aa66bc03ba3fc65e09661dec5827eb55ab4b468a87a388",
+    "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/demo-account-preview.ts": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "c292431530f44dcc005ac6662497f368f6c648260b1bda1dd985d88a09bb0a65",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/report-explanations.ts": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
+    "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx": "d013702152756553b663eab4ef4f70271cc1806cdf1622bedef51d02b4a2374b",
+    "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "efde881b00dbb60978017f8394e939fe547403600d85eff6b38e37fe5ca1b848",
+    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b",
+    "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "1a2011b16665df078cec13aaf75a198f19c4af9533b9812045242194171b556f",
+    "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "5492ad04ef21d3df5b85cfb3fd2bf5d7930e452e53b48bab1fb822a38cb2a4d7",
+    "BotSalesAI_Frontend/apps/web/src/modules/knowledge/index.tsx": "acf06edc7f2d4fc847bf7bc63d2a84f643a04e34d571ab1f5189603f793535a5",
+    "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx": "27e33c89ae73c93c7f20252539f8e92a49cf26c8c5e206f0e74c1c35cfe9239f",
+    "BotSalesAI_Frontend/apps/web/src/modules/notifications/push-capabilities.ts": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
+    "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx": "2f668faf82d5241bdc2851c5159b7c43ef83f932bdbcef5b179b112344dc42a3",
+    "BotSalesAI_Frontend/apps/web/src/modules/orders/demo-address-preview.ts": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a",
+    "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "b84d655154133cbad9f54cefb7439b7c2aa152c9f2517c3366672dcc37ff3f1d",
+    "BotSalesAI_Frontend/apps/web/src/modules/procurement/index.tsx": "b97dcd2331f276a1a463a793e025f87b11ff0c6a8378b8de463de3261b7fe07f",
+    "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754",
+    "BotSalesAI_Frontend/apps/web/src/modules/reports/report-utils.ts": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
+    "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx": "14bc610e406b356218efc2aaedd848e6caf10abf167aae2ff3ef67541c4b2c51",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/client.ts": "14f723eb00cb9e7e5e244b440c1de7dfd534be499c991cf25288b5a7506c65ae",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/client.type-contracts.ts": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/errors.ts": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/event-invalidation.ts": "099f9459e47c239cb5db573262d47d7b757c520e9c3a659f4c7a8c04430ec0cd",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/hooks.ts": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/intents.ts": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/validation.ts": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/auth.ts": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/dirty-drafts.ts": "387b509645164ec4c1aaccdfa96e0b99329ff3ba83f7b28931a8ffb6de3be7a2",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/download.ts": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/filters.ts": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/format.ts": "9a7d546e64919fefa0e293b4c2869fdef8a13115b308e8aa6c4725b4e0ec4200",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/labels.ts": "7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "7f908a77e18ff58c4b45d6195a20a676c326b5f5e3545b055124fa987e147962",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5332f808b3bb81c901962bcdd678e6f37290c408033b1e552f9321d0a01ed809",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "33ca9e6d26e53146f8a9af06e6af3bee0ac157312e6dbe243d66cf2e700123f7",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "953a3ca9df114d93395c0ec61f61d65230bf39440aad45a8b55f884e39669b04",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
+    "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
+    "BotSalesAI_Frontend/apps/web/tests/api-client.test.tsx": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
+    "BotSalesAI_Frontend/apps/web/tests/catalog-import-file.test.ts": "c2b111d0f4848a25cc9bd9ad135af54213f01764ef9905ee331299d40cd3b970",
+    "BotSalesAI_Frontend/apps/web/tests/command-lifetime.test.tsx": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+    "BotSalesAI_Frontend/apps/web/tests/components.test.tsx": "35187e221b903fd7c1e0434c28dcedebb817b6cfd41612c3b51d43a8055af02f",
+    "BotSalesAI_Frontend/apps/web/tests/composition.test.tsx": "e837d20843e166e3dcd742b737c6c1ed79709e67540b4c4127bd5fea88cb6f33",
+    "BotSalesAI_Frontend/apps/web/tests/dashboard-labels.test.ts": "17afcd7d1fbc42134b3a07848104e5bca3b0744baff2ed1d309c5650877a700d",
+    "BotSalesAI_Frontend/apps/web/tests/fe021-source-map.test.ts": "7655838585f32d9e3dc6502591ebfa7a586ab14438cfce8f0c208ebcea5327ee",
+    "BotSalesAI_Frontend/apps/web/tests/format.test.ts": "745fd8d4010f69daa84ed73dbcbf8ec258d5eb94630dcfed94ea885fa400aa6a",
+    "BotSalesAI_Frontend/apps/web/tests/push-capabilities.test.ts": "260bb3d89b3ebd391981084b46b199ae99442f4099b6f35ae987fd5d1c160e87",
+    "BotSalesAI_Frontend/apps/web/tests/report-utils.test.ts": "ed3a365e175bfd161ad4141f58b584df8563392cfdb95e56748ae91ccf7e3fb8",
+    "BotSalesAI_Frontend/apps/web/tests/scope-events.test.tsx": "5cea51724d2f1ca1c1d34325b7b310e57ff35754510452117e20329f301bb622",
+    "BotSalesAI_Frontend/apps/web/tests/setup.ts": "0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5",
+    "BotSalesAI_Frontend/apps/web/tests/shared-ui-render-contract.test.tsx": "fff8f92a38b08a54825f729e497ad85ff554f337f7f62747c9d8a120e97431ff",
+    "BotSalesAI_Frontend/apps/web/tests/states/fe023-state.test.tsx": "15a3815aaaea1bfd726d2d7ada8d867f6695b3531d1ca90c513ad3798944661b",
+    "BotSalesAI_Frontend/apps/web/tests/timezone.test.ts": "68b23d02af2d54ad89b7aeff783dffe942d1630bed38c35c1ce5be45e07fc05d",
+    "BotSalesAI_Frontend/apps/web/tests/versioned-draft.test.tsx": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+    "BotSalesAI_Frontend/packages/contracts/src/generated.ts": "0d27c530b1122843a6f30c1493183cd7362ffd6219d28eacbff68c6cd0e2c709",
+    "BotSalesAI_Frontend/packages/contracts/src/index.ts": "bcc7e843b4ad0f8e5609e262fb9d0d1e9f1845bd88b6153e3a9ef63cf7fde2c7",
+    "BotSalesAI_Frontend/packages/contracts/src/operations.json": "1d386010f82335bebc55f4a2e35fdfa41279786139a1c9e6b7834f32683ffb88",
+    "BotSalesAI_Frontend/packages/contracts/src/permissions.json": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1",
+    "BotSalesAI_Frontend/packages/contracts/src/routes.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "BotSalesAI_Frontend/packages/contracts/src/schemas.json": "9b83f0a2059a6318e62a7583358499b284b69182666281a6094f20e5af372ec1",
+    "BotSalesAI_Frontend/packages/design-tokens/src/index.ts": "e14a11a006fc239bc8a51bbf929ba3646aefe1e12cbb1ce1ec988e6e2a2ec0df",
+    "BotSalesAI_Frontend/packages/design-tokens/src/tokens.json": "95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0",
+    "BotSalesAI_Frontend/scripts/check-boundaries.mjs": "64e2453c1b4186bf86a6c74e3917ecb0d9d5b73e9d77195be3e401e97aec7d0f",
+    "BotSalesAI_Frontend/scripts/check-layout.mjs": "d1fb4346896bcce7d22395d8c128ad946005f5e3baadea250ce9b4cc3bcbf3fb",
+    "BotSalesAI_Frontend/scripts/check-source.mjs": "593b95de828d54edfd04e0dd847007a71d36175b7fe7b9bc1cb83bea88af6fd3",
+    "BotSalesAI_Frontend/scripts/check-ui-composition.mjs": "c39d3465ee936858f1393b251de5e9f54febd2efd0b508887d5550beaafaf97c",
+    "BotSalesAI_Frontend/scripts/check-visual-tokens.mjs": "144f844c7ae2447136580054abde6b07610623a6ba3b3e25db887d8d378a61d6",
+    "BotSalesAI_Frontend/scripts/doctor.mjs": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e",
+    "BotSalesAI_Frontend/scripts/generate.mjs": "02867fe31f4686636c9af095dbf975cc23ddcaea6a82ba320999e25900b2e4e6",
+    "BotSalesAI_Frontend/scripts/layout-exceptions.json": "7428954378a6b0c978790f9714cfa29ee7981a2c15884f9fdbac3c87939d210c",
+    "BotSalesAI_Frontend/scripts/layout-exceptions.schema.json": "69906bf9106e978700f004ab65387fc1966a75a29d5d4ab7f359a94978d53617",
+    "BotSalesAI_Frontend/scripts/run-e2e.mjs": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891",
+    "BotSalesAI_Frontend/scripts/setup.mjs": "fbb997823edc1f1d2cd6ee9438b0240a2672a3bb808f5160512b8280ac6284aa",
+    "BotSalesAI_Frontend/scripts/source-policy.mjs": "254e9c4a86d2a01adb27c4eada9d03306c159dda684cdc5eb7162d073a804e3f",
+    "BotSalesAI_Frontend/scripts/test-domain.mjs": "6fad16d1450fa44011c63a022c023d3271cf33fa6a257f0437f6c7318d027a9a",
+    "BotSalesAI_Frontend/scripts/tools.mjs": "df9bb454ec2a12f2cee7729187df9e244836132ff21c39e3b69767fc313db2ef",
+    "BotSalesAI_Frontend/scripts/ui-bindings.mjs": "7a6b98855a7c27774ff5ae1fc2cff90e06f866f910cb25dad47d6181647beeb2",
+    "BotSalesAI_Frontend/scripts/ui-entry-scope.mjs": "eea8ba6819e7bcb381e1faaac1acdab248088cc4a6fd13790b1febd451e851ce",
+    "BotSalesAI_Frontend/scripts/ui-import-scope.mjs": "844ba99c7374f5b3b4c9e6e1545213d9e8957362702a13c10766f1c93452742f",
+    "BotSalesAI_Frontend/scripts/ui-source-files.mjs": "6f71a77ef96ff8d46394c7f02ced656ef536f8975c0f081ac6bfad9b99fd8b1a",
+    "BotSalesAI_Frontend/scripts/validate-mock-schemas.py": "26fed7c86be0b6124ee44fa9c8a15d9dbd64408d5e8af7f2c3c4c930c76fa688",
+    "BotSalesAI_Frontend/scripts/validate-ui-evidence.mjs": "48f9bc2187d4ec07eb651bf622621e476f3afddb5c26cd4c4f65f2b01a505d91",
+    "BotSalesAI_Frontend/scripts/vite-cache.mjs": "56478cc7e72edf0afe9e4fa949b2816e0a280260461b17bc1b5e04859a34458f",
+    "BotSalesAI_Frontend/tests/accessibility/routes.spec.ts": "9ec199807f025335a2ff6ea90f69cea6a737adfbf5311abedf7bbf4f9766577c",
+    "BotSalesAI_Frontend/tests/architecture/check-boundaries.mjs": "c2e90eea61c7a8e6198b89f15236726b527f1a9ad8de80e2935b34a908279849",
+    "BotSalesAI_Frontend/tests/artifacts/demo-preview.spec.ts": "97177073bb270a69a49ad0e3e2aee4ea5474370b05f409955d33971727e7b1c3",
+    "BotSalesAI_Frontend/tests/built-demo-regression.spec.ts": "fec03f71f6318db2023813257109508f80fe2b05ee7a8a732c95aa1fa7e62b71",
+    "BotSalesAI_Frontend/tests/contracts/generator.test.mjs": "7ff255de33ec7c1d2f78773aabc7de17829ae83d4d8067fedddc942c03a457d0",
+    "BotSalesAI_Frontend/tests/design/browser-audit.mjs": "2ec75d0ffb27cc22e04ffdbbab24baa8b0e135684c217ca5827785e78985249a",
+    "BotSalesAI_Frontend/tests/design/manual-contrast.mjs": "45a0e3faa047451d2e22d71ed05a373b2be2a39a85d4c4898da85c8a3192fe63",
+    "BotSalesAI_Frontend/tests/design/palette-guard.mjs": "f421c14ad5e322f3d952a84d873c2e8a860e0fb0f05ecaafe017946999392356",
+    "BotSalesAI_Frontend/tests/design/run-browser-audit.mjs": "5bc23f154e45159eaea5ce35bb0d30cd2b5f5bdacc42db4c31839d91bce61f05",
+    "BotSalesAI_Frontend/tests/design/ui012-route-contrast-audit.mjs": "f63f9db32a4984bbd4a63daa2280e7e17e7737413019f6c18b07ba5c65b47b7c",
+    "BotSalesAI_Frontend/tests/domain-scenarios.cjs": "ac65e916a6433de60f96292ac03381b625aece42a04f6ac37085eb1243766245",
+    "BotSalesAI_Frontend/tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
+    "BotSalesAI_Frontend/tests/fe009.spec.ts": "9376dbfca4cfd30cf2e374b6f177cc6dae646ac0f0feaef305a29f43ca2c9325",
+    "BotSalesAI_Frontend/tests/fe010.spec.ts": "bbb42c602be4a7bba82f04675f2ca9e1434a60e42e4da6421c89f57903563d35",
+    "BotSalesAI_Frontend/tests/fe011-source-map.test.mjs": "422db817da901192ee2a80924aebef3115ddf7c00b45ae4297e58ce782e9fef9",
+    "BotSalesAI_Frontend/tests/fe011.spec.ts": "62c14c8ed89669e6b35ebc49b96444171950093c80f8a1d6f90a8d674a3304d5",
+    "BotSalesAI_Frontend/tests/fe012-source-map.test.mjs": "096636c823514b1da90192a0a55a22cea800fa5c1de225ec60fd3ecb9b4bb98c",
+    "BotSalesAI_Frontend/tests/fe012.spec.ts": "502c5ae089f88b25ca9f9f91af97ce06dd4cfd8600762d4c88e465260b6e3b4b",
+    "BotSalesAI_Frontend/tests/fe013-source-map.test.mjs": "2f3086d0beee91d8890cfd352ce09df8034d0071e1516ca14e23e7565fa24260",
+    "BotSalesAI_Frontend/tests/fe013.spec.ts": "58d0913b181195a92b5b9a9955edcf45d1b52e5f6b216d503a70f4c59de6eb1e",
+    "BotSalesAI_Frontend/tests/fe014-source-map.test.mjs": "1c090f6f03dee833a1ab1e116eef77a420ae3d563b5aaac295aa4aa610fddb0d",
+    "BotSalesAI_Frontend/tests/fe014.spec.ts": "85c85a46f160212f7b0a56c334b1f0176b779c2e2b4819d65a9a9c894b03f57e",
+    "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "9e1cb4e6a7e0209a73b88fb3b088a88f79327893f2704e3f2e558993a6c3cacd",
+    "BotSalesAI_Frontend/tests/fe015.spec.ts": "aa701e02703a32e7203757173977d8f6347aec697fb7be598a89f82e73d8ea19",
+    "BotSalesAI_Frontend/tests/fe016-source-map.test.mjs": "d0dde372f5c0d8a9a9ba9d076f9a1ae9a19f7761e6beb1b1d7f283c17f10a89e",
+    "BotSalesAI_Frontend/tests/fe016.spec.ts": "13d8f679b28a36dde0394f2de63700687b32f932f038b9a0c22a05f9f0b5b101",
+    "BotSalesAI_Frontend/tests/fe017-source-map.test.mjs": "c6b5cca99c48eca7accd8f83cc8474d67f17b14d5d6ade9b397c03429fa56e99",
+    "BotSalesAI_Frontend/tests/fe017-validation.spec.ts": "44f86fc257a9dd645b0255562bff0c1177801a330a92c4dd4f7872b7d4e87e98",
+    "BotSalesAI_Frontend/tests/fe017.spec.ts": "584332c7c8ebb99b714f8346c36cad8fa6c9927552ff23b0d9488d968491cd6f",
+    "BotSalesAI_Frontend/tests/fe018-source-map.test.mjs": "f4bf77135fddc7b141a598e184cf7569c0fdafeca3d4c050f86671c40f4d3fc8",
+    "BotSalesAI_Frontend/tests/fe018.spec.ts": "215394c04d3c1e0a9344282645960b51646d04e708c4df55c3736045542e40fc",
+    "BotSalesAI_Frontend/tests/fe019.spec.ts": "3165aa76a09669914518aba9462af3afdab524924f3764dbaf15acc29f193b3c",
+    "BotSalesAI_Frontend/tests/fe020-source-map.test.mjs": "89d244277f25a2d15cb93ca3836a53b0811c09ce6f7544fb1dbabbcd9cef7b5e",
+    "BotSalesAI_Frontend/tests/fe020.spec.ts": "8ab1a7f289aae644ad84783eccb196d3f3f22453d8fd69dd6d4caf874105591c",
+    "BotSalesAI_Frontend/tests/fe021.spec.ts": "1744ec561e277dc8c6ebc69c5420dfe560658a20432e44ad0453f3f0c3426880",
+    "BotSalesAI_Frontend/tests/fixtures/mock-network.mjs": "a074b777328e7aae5d81f6f2b60ea0653c674fcd80b1c146820e94daffdad6e6",
+    "BotSalesAI_Frontend/tests/fixtures/ui-source-project.mjs": "3e947d9057bdb6a31be58c6edd9a8b78602620a9e17c0f253af218aea4c54c60",
+    "BotSalesAI_Frontend/tests/frontend-corrections.spec.ts": "c4566d11bd0da0fedbb3af885936c6a80a2669350e8a9a17a76f0449b7f30f90",
+    "BotSalesAI_Frontend/tests/frontend.spec.ts": "f2ca4b49adf9e97fe9d03d39cafb913fb2b9a21faedeed335c32ef24a60e76d5",
+    "BotSalesAI_Frontend/tests/layout-checker.test.mjs": "4bb886e5942c6c3b85b59c09631dc6d2902d17e21c5f2c0a1eed686101811585",
+    "BotSalesAI_Frontend/tests/route-role-matrix.spec.ts": "56e590890be436d0116241975ffb2fb10eeddab0ff3b2a13b7dbc6b833850a9e",
+    "BotSalesAI_Frontend/tests/security.spec.ts": "dbd94885111164222eb11742350d57991379910bc0d31203097448a427c234a4",
+    "BotSalesAI_Frontend/tests/session/demo-server-cache-isolation.spec.ts": "8cbbfdc37f5a32c1a228be78b0875652660b10b4ad64c41139753dcd51e7c385",
+    "BotSalesAI_Frontend/tests/session/demo-server.mjs": "7bb5fbd500c01a503079367fef8711a9f46d3b4f118794e38c05895fe1f06cef",
+    "BotSalesAI_Frontend/tests/session/demo-worker-startup.spec.ts": "0477f40018f0300e36917d710f5945a921b6de881a946e9b685f7e8126f64580",
+    "BotSalesAI_Frontend/tests/session/dirty-drafts.check.mjs": "847afcad5f75d5c6348a40a18b429e265dc76a8084ca1f93e0e5c169a5fa6cb4",
+    "BotSalesAI_Frontend/tests/session/session-revocation.spec.ts": "e9066f0af951ca3397b240c52453287bbb1c3a8119676a49f51df9b2276748c4",
+    "BotSalesAI_Frontend/tests/session/session-unauthorized.spec.ts": "6895cee9923c10c572aeecf6b4e909db54886c46e06114f215cd2c2c2869c143",
+    "BotSalesAI_Frontend/tests/source-checker.test.mjs": "bdc53b8f7d154e9b4126d7f0b7670198c85a0686b9b616598b2583f195f9df7e",
+    "BotSalesAI_Frontend/tests/states/fe023.spec.ts": "24324d01e83939a7674ca32a7030c140057a094a19c003eb3fd51e77f1e403d0",
+    "BotSalesAI_Frontend/tests/states/generate-fe023-evidence.mjs": "aeb5b08269e5722e55e87508abeec2bdbebb7baf255fc1c15788a1e3a2bb1a3e",
+    "BotSalesAI_Frontend/tests/states/generate-route-state-roles.mjs": "a9be4c94a6db11167f48bd7bcba817e84f0a5358bfe4a47bad21f725d559a798",
+    "BotSalesAI_Frontend/tests/states/route-empty-composition.spec.ts": "729a36c4c2572b8cfa8ddcd1ba2eb246e9b2c54e49886ade0374772897891630",
+    "BotSalesAI_Frontend/tests/states/route-error-composition.spec.ts": "e51d2f45a5831596923654d4cab64642688ae311f40a69b6c966a2b9893f86d1",
+    "BotSalesAI_Frontend/tests/tools.test.mjs": "21ce2d1a87e26afd574979f3832dc4da084aa538421034853eceea685d27a0a7",
+    "BotSalesAI_Frontend/tests/ui-binding-gates.test.mjs": "d537e23d08bcb7cee4bf0c244f6b8fd579ac86fa7d6180a8cbd234941b411443",
+    "BotSalesAI_Frontend/tests/ui-bindings.test.mjs": "1bc80a89420d3147211c8bb0445791b1721f266b09497d06b5d3e40d0160021c",
+    "BotSalesAI_Frontend/tests/ui-bot-layout.spec.ts": "68fafbde47907289f1af901813d3993b79e7abc6cac3a05591b142b29f04b733",
+    "BotSalesAI_Frontend/tests/ui-canonical-readonly.test.mjs": "b375cf25be3904f294766bdaf806e54f38eda18462dcbc25c6d88dbb6b685aaa",
+    "BotSalesAI_Frontend/tests/ui-catalog-layout.spec.ts": "dad7b7c9c4fb9f4b4cca3e41ea4af4ae7cb3c1758db3376901f31c31649c55a5",
+    "BotSalesAI_Frontend/tests/ui-composition-ancestry.test.mjs": "cdbb012fff52ae65b448a1cfc4062328c826719cf86fc6154fa5c93b9a66c2d8",
+    "BotSalesAI_Frontend/tests/ui-composition-checker.test.mjs": "13e24fd54e50601016a3ec7289c66811ffbe9f46958cacae13100950b08c228c",
+    "BotSalesAI_Frontend/tests/ui-composition-layout.spec.ts": "f6e4bca0f6df5c0d97d6af3ff83438209e2803a5f10a47a8d6e5a900c5f5d9de",
+    "BotSalesAI_Frontend/tests/ui-composition-positive-ancestry.spec.ts": "88ccd6f23fb0de29f08d73d52adc86719e640f2bc19c1a70eeac117bff537661",
+    "BotSalesAI_Frontend/tests/ui-customers-layout.spec.ts": "8c0bb6056555399cfcd6be6606a6229e87ef1155e26ba8c62b1056293116b0e7",
+    "BotSalesAI_Frontend/tests/ui-dashboard-layout.spec.ts": "9fe1f1080cf27d9721a33556d76e43cdb4d354e01ec97b606e8a3cc1c4e96a10",
+    "BotSalesAI_Frontend/tests/ui-entry-scope.test.mjs": "34855f434ee80ada00c0969f6949c1c268ccfae9c798c66d5d8c67675bb81cb1",
+    "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
+    "BotSalesAI_Frontend/tests/ui-finance-layout.spec.ts": "be38e84d9a6abacc2927146644c80cac29407faf787fc422c38df36ba037ec90",
+    "BotSalesAI_Frontend/tests/ui-fulfillment-layout.spec.ts": "68b82ff1df3a270997fea89c942450187aae11083b9b06700464ee8b79044ea6",
+    "BotSalesAI_Frontend/tests/ui-import-scope.test.mjs": "02d21b1e9efd724c9c0539a6a61bc2ac1f1a9cda9a9fb5513892e9e2bb414fe4",
+    "BotSalesAI_Frontend/tests/ui-integrations-layout.spec.ts": "aa637449a82057131c448ec3129e6b5f7fdca9e7dbece6d243cdfd92366f0f65",
+    "BotSalesAI_Frontend/tests/ui-inventory-layout.spec.ts": "bebcef681efacf68ca6329bb8bbb1106fc251cd5e24713ef5b6454c69cf0e1a6",
+    "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "267d89cdd917bfa82008ecea9bbc304369cf7d4141f224b005ad0ebd941486b4",
+    "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
+    "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "530164987f5ab5654620927b4d489979ab285543b2629fa4b30cfa17cfa60dec",
+    "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "82bfee1e80d57aea7db37c111eb9b2ff9426623e2a2ff4cb2106193179dc9520",
+    "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "962772b04d85359908300e0aaae238dbea39a5ab5ac6f2ad92944a8dffe09dd3",
+    "BotSalesAI_Frontend/tests/ui-panel-layout.spec.ts": "6bc207480e1ae6ad33fcb01dc349798f5c01d0b349caec5fc5b81ac81457be1b",
+    "BotSalesAI_Frontend/tests/ui-procurement-layout.spec.ts": "4ff93ba7f23748a3fe6acc5b567a126d5eee7e2578e6d20ac39a4a8fdfcc127d",
+    "BotSalesAI_Frontend/tests/ui-query-state-layout.spec.ts": "c05feb79aaea1e9e0eaec2c0e44f914446ed4e594d3a80e5b1a21baf07331df9",
+    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "593a1d6c73b959454698353a13dacf226a56d15e0667749a0ad53478926cb54f",
+    "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "635f90d8ef2e1a62a3719fc33054cc5e37323f240132b183dc98376e317388a7",
+    "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
+    "BotSalesAI_Frontend/tests/ui-workspace-layout.spec.ts": "c998d7488abed50b94f074fd311364990b221fc06f8b2bc7d7a7b47b092a3b50",
+    "BotSalesAI_Frontend/tests/ui006-lookups.spec.ts": "10232d95422dbd79f86812888c3f3e04a5f739694320b464c203c8c29534e0b4",
+    "BotSalesAI_Frontend/tests/ui007-query-states.spec.ts": "fe2775f059e9595307c171cde49c1a1d47b88c4c79b8706bd3922dbccda451b8",
+    "BotSalesAI_Frontend/tests/ui008-integration-empty.spec.ts": "d4ea76d24e310ee012a8303af82c1a14b8d38bd1005b079448200ccbb9154860",
+    "BotSalesAI_Frontend/tests/ui009-scope-regression.spec.ts": "9939f7c1d99bb903f0e333f6913f172938fa39cc986c593cb9b8c840e18b509e",
+    "BotSalesAI_Frontend/tests/ui010-dialog-draft.spec.ts": "b101a56dae428a8a8c9f1e11a8304563d829a744f39670daf1a50d685afa1d39",
+    "BotSalesAI_Frontend/tests/ui011-date-time.spec.ts": "3b0c72599267f42d22493d44f06257fe66f3f697a855792fcf0c8ca857b6358e",
+    "BotSalesAI_Frontend/tests/ui012-keyboard.spec.ts": "f780da7c5716ab6ec28844a880aab3168b1a74c9d3829bf40d26122abfc964c8",
+    "BotSalesAI_Frontend/tests/ui013-url-state.spec.ts": "2fde7cd4bf8cc540e6af0b830fee6b38323dc45bc971a30e63bc09673bfa182f",
+    "BotSalesAI_Frontend/tests/ui021-permission-edge.spec.ts": "8bd61c80c24eecce596ded9863aceb57f39d89d0479863bd5e96a13c3710ff5e",
+    "BotSalesAI_Frontend/tests/ui028-w24-inbox-layout.spec.ts": "271fdf9c33785869dc02f727678e1ab1b1a7f413a643a4f7b69dc87ae2572d8d",
+    "BotSalesAI_Frontend/tests/ui028-w25-reports-layout.spec.ts": "c673c7b66f45a5a1933dd7ca702e0cff478e0705be8e2ca1e43642a1af5b9534",
+    "BotSalesAI_Frontend/tests/ui028-w28-routes.spec.ts": "6d170aba5f04cc606cdbb34ba50ae5a69ae6d32ce33329e1f2f123ad829b3896",
+    "BotSalesAI_Frontend/tests/ui028-w29-reflow.spec.ts": "25b0d6e9fd584103c51d6424b396327af1ab2ccbcdd7b8afdba2543ec1255090",
+    "BotSalesAI_Frontend/tests/ui028-w30-stress.spec.ts": "54c71563d0be5266c3ac495bfe7ca36252adf6812ec3db665559cd76d6cd9d36",
+    "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts": "ec361c50c29453b188f86723b1a58ecb02430209a7fca4f4eff6c468d9f103ef",
+    "BotSalesAI_Frontend/tests/vertical-slices/generate-fe022-evidence.mjs": "6efafd7ba45c64267690620aeff0d6cb38dd23614edda2df9088da2dbeb4d048",
+    "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "4b569fd1c0b4e3c533a3e9df1e8858ed3ea30d2716cee3c73426f733dcb24e0b",
+    "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "35b8c496508d754f820e53782d729ef5330fd88897dd2150a205800a3a5bceae",
+    "BotSalesAI_Frontend/package.json": "3a7da11e60a8baf002ac749c49c24c134640ce8d412402caa86a16c1beb34138",
+    "BotSalesAI_Frontend/package-lock.json": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a",
+    "BotSalesAI_Frontend/playwright.config.ts": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e",
+    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "1141ea054c988f9547f975bd0d41613d71e85ce5470b13aa76d0b7d66aa7f7e0",
+    "BotSalesAI_Frontend/apps/web/vite.config.ts": "5cf012d64418ea4c9f404005fc4f3240e33a4c1dd5a700ebda00f8c2477eea4a",
+    "BotSalesAI_Frontend/apps/web/tsconfig.json": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1",
+    "BotSalesAI_Frontend/apps/web/vitest.config.ts": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e",
+    "AGENTS.md": "06874e85ccacdf330aee76eb6db3bd1940b90900178ea3ad514ab5755a3b2cfd",
+    "BotSalesAI_Frontend/AGENTS.md": "07bc3fc2998c25cf702b325e71e3eb970df019d5184c2bbd7cc11fb676089222",
+    "BotSalesAI_Frontend/AI_RULES.md": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+    "BotSalesAI_Frontend/DESIGN.md": "af2becd9bbdd5eca4a502ae63b911ca7028417068faa5ae6025e10faa4b03f4e",
+    "BotSalesAI_Frontend/README.md": "a36525391c6106fdb07e6c9af9cb5f30d1ae2ce7264b12b1ab1df6696dace29d",
+    "BotSalesAI_Frontend/STACK_LOCK.md": "5228cebafeb5f10a7e4e50be9be9ec914e37bd6570a9b23981154257f344b9a3",
+    "BotSalesAI_Frontend/UX-CONTRACT.md": "cef8e70f75926ec98225225bac725818834464fcf4a0c5b0342ffc7a24ddd69f",
+    "BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md": "11e1dc254ed378e1328638c9e4e15454b340372e9f5c8f226d63812d46f79de0",
+    "BotSalesAI_Frontend/docs/FRONTEND_SCOPE.md": "959a06ef9efb2c1ca4fceea921842f43c93fdf4f8d3ba3b67eb38dc61ccd5fab",
+    "BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md": "c4c5c697343c5d49ffc7f68253f49a68b9ab8cada944151cfdb877a2c539da30",
+    "BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "fcdfe2dc2d05b7f3f3756824529164988e7e588b54fa6c69085cce54928deaae",
+    "BotSalesAI_Frontend/docs/KNOWN_GAPS.md": "97cc4f7fa1ab012c9b4510885d99e3ed7909fe0f3ac12050f9a593725127b574",
+    "BotSalesAI_Frontend/docs/PROJECT_CONTEXT.md": "da60f5189df35d857334816147cc8e6e7f6823e3643736d98ffa2b7ba913a37f",
+    "BotSalesAI_Frontend/samples/MOCK_DATA.md": "056b1ce6df3cba962d9e0f78cc438a063be65306541f29258016d8794905fd40",
+    "README.md": "ba1a40c5b6adc72ed8160e92c25256ee5844dd308790226307979eb549af485b",
+    "botsales-kit/AGENTS.md": "eebc9cc5f02e76190193a4be3aa9c3526490da9eecacfcbdffe5f8929d40a488",
+    "botsales-kit/AI_RULES.md": "1662406d9ac9e63646130516ad6811934b2bd7f0a6b7d240403749200777f9e3",
+    "botsales-kit/AI_RULES_PROJECT.md": "62f1f5ae65bfea17be16c8c2734826478d7f45e7bc35ae5f8dd169ea1e62de59",
+    "botsales-kit/ARCHITECTURE_BLUEPRINT.md": "fcc20a6c40937bbc21bfca546c420660a6b2f880051219af5411d8a4b4b0037c",
+    "botsales-kit/CHANGELOG.md": "67472ea19f54e965858bdecf4e34c9c94c8703dd1e4c422f703139180fdb3e2e",
+    "botsales-kit/DOCUMENT_INDEX.md": "9e18d350a2d75fd11ad90a17c9cff8a0004ac51d3e7f82f7fc1233eaa5d03a1d",
+    "botsales-kit/IMPLEMENTATION_PLAN.md": "41cd48f73c4da16e00cac50d8bd05378fa42c94c7638bdeeee35c8f11470c972",
+    "botsales-kit/PROJECT_BUILD_PROMPT_VI.txt": "c60f9534fdda3412f3482e3a02430dedec1ac3c5ef53e41825f0f5b108262545",
+    "botsales-kit/README.md": "591d9410f51f8e2ae4e86bebe593cbd227e19972326a26271e2aaa5f6357790c",
+    "botsales-kit/RELEASE_NOTES.md": "f84f36696e217075cbfc12775573ba763af097225e12fea3d85f82050c75a079",
+    "botsales-kit/START_HERE.md": "06965f437a85262452d75039358be4b4bb3fe368cf7f732e76d8815786b44a0c",
+    "botsales-kit/UPGRADE.md": "71622ebd2d2773d7723f10cd98f977063ec4513731d653e3a9a0f40dde07c925",
+    "botsales-kit/design/IMPLEMENTATION_NOTES.md": "36fb13fa6c7cd70ff98f1e04808bd0150d4f7ce00d4d21bdad5afac6e7129e31",
+    "botsales-kit/design/PALETTE.md": "38f4b3a80501a8c26fbf7de89c834d843810e9faf7e70067bbcba90ae136aa28",
+    "botsales-kit/docs/00_PROVENANCE_AND_DECISIONS.md": "5e825bba10e696b893df643c0e3cacc4d73d2a0862cd6b05af2ec4c744baf527",
+    "botsales-kit/docs/01_PRODUCT_SCOPE.md": "d5c3ee74bd88de0866963d469cc6088c963d639a0f26c0324dc54820639af926",
+    "botsales-kit/docs/02_ARCHITECTURE.md": "8fd3805498d179f638ac0256af5ea61bfb9cd0a39db2108e3fcb670b44a49a04",
+    "botsales-kit/docs/03_DESIGN_SYSTEM.md": "ded8c5dda631c0eef14ed764cbfb4ae481d8255405f54811f0f5babd49543916",
+    "botsales-kit/docs/04_SCREENS_AND_FLOWS.md": "ac46214ebd7c0cf293f63a979fce89273c80c3cb5c7e565752b9d2111fdd1e8f",
+    "botsales-kit/docs/05_DOMAIN_AND_INVARIANTS.md": "6d585c81dae49e25b8592f5dbd9829f95ae7eb1561a0221a6da0ead58c261124",
+    "botsales-kit/docs/06_API_AND_REALTIME.md": "0ea1fddc67a9e1aa5de1865efa937a1d1e12a680236482a992ae1ec830997da5",
+    "botsales-kit/docs/07_AI_AND_CHANNELS.md": "343b0d782b3b5ac783073e85e18712f5250fc678ba7b68d962b440c1d9d896eb",
+    "botsales-kit/docs/08_SECURITY_TENANCY_RBAC.md": "ee0c6fc7c44a1907c150b9b30e1f14de324a3a8cae68b3e7eeffd51a4a37cf00",
+    "botsales-kit/docs/09_STATE_AND_DATA_ACCESS.md": "9279561702670366325d7dbdee8a74f7f3601ce1d66b8ae87b07ba71590949c8",
+    "botsales-kit/docs/10_TESTING_ACCEPTANCE.md": "ebf939449381fd4c3d17ce7bbf1f21297b86c32ec54519c647920c2d804f201d",
+    "botsales-kit/docs/11_DELIVERY_MULTI_AGENT.md": "967e12aa98e315f3389e293a5d832cdb1f0fc8e20770a0c465b9ba4fba025170",
+    "botsales-kit/docs/12_OPERATIONS_RELEASE.md": "5e913532694c58d7b9be5fc67ee333bd09af55450e984cd47a54bc3c648f6997",
+    "botsales-kit/docs/13_EXTENSION_AND_MIGRATION.md": "0f5a9c54d0461034ddfd6fec330ea6b9fd76458225049a387a5e6b204ef63197",
+    "botsales-kit/docs/14_IMPLEMENTATION_BACKLOG.md": "4b2f13ce04a902c2ec2dab1398bf5a58bd09633d8bba7729a68f94b139e9bb08",
+    "botsales-kit/docs/15_RISKS_DECISION_REGISTER.md": "1d798cd869e623f77bf8003dd727692cf84fdba020a8ba19202fd4a9c3dd9b7d",
+    "botsales-kit/docs/16_SOURCES.md": "1d434024c534b440f448908e0271e53bf85f1f59de90c0c11b09ce31e46d5a4d",
+    "botsales-kit/docs/17_TRACEABILITY.md": "1591ccfb43a5ebd70ab75e12f6a0d3aa6803e1b5c8f6b4ea4a45df6008dfe30b",
+    "botsales-kit/docs/18_CODING_STANDARDS.md": "98e1f9e6b561264445ae2115289edffad35310d5161d58dc662eca7026547866",
+    "botsales-kit/docs/19_DARK_ONLY_POLICY.md": "ecd34b7aefae8a49ed7000896f1b69718df9510e876a3284cd8dec0fed73e55e",
+    "botsales-kit/docs/20_AI_BOOTSTRAP_AND_ENFORCEMENT.md": "bdc1eba4605edccfa6928b7410cd527069fae51c988a40976a4daf8185788533",
+    "botsales-kit/docs/21_NOTIFICATIONS.md": "2f02b69e8ad618852aa32956554055482ec652c9761478f72f0e6562d6340862",
+    "botsales-kit/docs/22_FULFILLMENT.md": "89ba7f9d88153fdc6b9943ee1368a00f62dd5ebba5197e375b3ebaf2eaab6865",
+    "botsales-kit/docs/23_PROCUREMENT.md": "70697b4de0bdda6fd82de5fc44370685bd542df4b76a298439a889cb707ede5d",
+    "botsales-kit/docs/24_FINANCE.md": "765817d2f8da798418a710a9277600a693abfca8de419916061d7ce4926135f0",
+    "botsales-kit/docs/25_OPERATIONS_AI.md": "628aa83fb12e31cd6d3582442a37ee0dc618071e3086f18da3e3021317f1374c",
+    "botsales-kit/docs/26_DATA_DICTIONARY.md": "b767e183d3a1445c2d0ec29070a0346012ec89bb701b1f375950426090fd462e",
+    "botsales-kit/docs/27_RUNTIME_POLICY.md": "c5a481d1a6c985724ec158e3c04b06d66b8294382c07f794db244ad4cc440788",
+    "botsales-kit/execution/FRONTEND_PLAN_GUIDE.md": "eeb2c1566acdd3ebb528aa181a53ad946bc725b779e8f9d88ea0af1667a24614",
+    "botsales-kit/execution/FRONTEND_PROGRESS.md": "6c13b16e1a58fd70430f3edc095c434ed033ffef2c267636be1fb03723c9b972",
+    "botsales-kit/execution/FRONTEND_SCOPE_ADOPTION.md": "c82580847c7add9acc428096cbe238c59e3a8ba6cdc1daecc4d9d3902ae34fd3",
+    "botsales-kit/execution/PLAN_GUIDE.md": "880c28cf10c8f39e8dc59e353f07dbbf81eceded00484742388cf8f76c35df76",
+    "botsales-kit/execution/SESSION_HANDOFF.md": "dca3ae7702786918caf43f7f9a6ec7ba57b55161b6704f82a50b892d80f895c3",
+    "botsales-kit/execution/frontend-tasks/FE001.md": "214847d5c03ac6d52d1e70d286e10640fdf6ab226a002aa14050f05e275c4793",
+    "botsales-kit/execution/frontend-tasks/FE002.md": "9dddda1d63a0a3087f19d6024b8bcc9dcfaea0af17bda952a801342b9bdd7435",
+    "botsales-kit/execution/frontend-tasks/FE003.md": "fc3d5a28aa4f6a201a713d08cab085a6dbf97c7f49a492ee4e4b8188ee583e09",
+    "botsales-kit/execution/frontend-tasks/FE004.md": "79ae78fa9b361960440777ffa48e413f8f446cf02cd81ed4d4f880ff6b9ef6a1",
+    "botsales-kit/execution/frontend-tasks/FE005.md": "e29cb989f64dcbfe730e0b8074e562f573ba7cedc7ec64b1ac4e8de23b5a5887",
+    "botsales-kit/execution/frontend-tasks/FE006.md": "76365d1b258a0557e56e3fcab22991ec3ffac4e7e6b3829cfb5ff0adeb4a5a51",
+    "botsales-kit/execution/frontend-tasks/FE007.md": "7668972d927023caa073d2cde887897885faee37c4ee4578e533e0e1edef9e51",
+    "botsales-kit/execution/frontend-tasks/FE008.md": "cdedb17ff01aed014e6e6026c9a933f6e803cbacd9f2b70ad2aae2003cfb300c",
+    "botsales-kit/execution/frontend-tasks/FE009.md": "46ad26716c0873b7369562810f7138e8fdc8bb8329218aa0fc81d7c353c3a817",
+    "botsales-kit/execution/frontend-tasks/FE010.md": "de3b11bd057f5cfbd353bbb2fe2bc8a2793080cdb30a9db92e5d4503031a0817",
+    "botsales-kit/execution/frontend-tasks/FE011.md": "f0469d253811130af59e385d6597a16a07fed8a013f122f26d3ac7bc1c96e0cb",
+    "botsales-kit/execution/frontend-tasks/FE012.md": "c8448fa869d61b0775f19976a6bf595746dba16de10c1d46d3f1ce6cf7fd4d67",
+    "botsales-kit/execution/frontend-tasks/FE013.md": "e9395f7a325fb4a605d9f3064dda2e7b1a1c6bfa9485e3a3c622ffab5207ed6f",
+    "botsales-kit/execution/frontend-tasks/FE014.md": "cf62a0e119fa4a7800d4e51c12291c467ab569ecba19bfc31175e5f5d5ddf133",
+    "botsales-kit/execution/frontend-tasks/FE015.md": "ea4ae085201783e1a313843acb9f0d623f3aa80034017938dddf3be44690c327",
+    "botsales-kit/execution/frontend-tasks/FE016.md": "db68ecaad33b6152560b0ae1347d10b3c43fd991fd585642b2332b65f1d19816",
+    "botsales-kit/execution/frontend-tasks/FE017.md": "4ea11298b421beb93686c86a9a1a12b4c5587f409330231dd1ed1d718b7aaaa7",
+    "botsales-kit/execution/frontend-tasks/FE018.md": "4eb79a7695f750353043905b09a0bc9a45a503c31f6dfaefdee13365636c93cb",
+    "botsales-kit/execution/frontend-tasks/FE019.md": "a4be61458b3bc10ea6b236ae0d6fbd65d0c83ff86a9bb310a60fa44494a26f70",
+    "botsales-kit/execution/frontend-tasks/FE020.md": "cce6be8f51c88ecd3fe5758302fb5e717a57f3376f0be94b9d20d6a97c3e4358",
+    "botsales-kit/execution/frontend-tasks/FE021.md": "6371f2ececdbd8fa751cb485f42059b9b10aede35f0f6b1e1e48c70a2630c34b",
+    "botsales-kit/execution/frontend-tasks/FE022.md": "75fbac2fcc204e98f6b1fe6c4945b1a85aaba50baf2ee839ff2d4643840ff740",
+    "botsales-kit/execution/frontend-tasks/FE023.md": "a05195fb6ff5fe6b9ab0beb4d245c2d0f8fba59cc46489daa9c90080fe5ed7cd",
+    "botsales-kit/execution/frontend-tasks/FE024.md": "72d94ef7a6fc509ef7c817fdd956419ab6e727b0e7c70aa092e9d8900be99b89",
+    "botsales-kit/execution/frontend-tasks/FE025.md": "76ad80230f9072bf246f13afc03df21f94399267bb3f7792f116dacb082db6f4",
+    "botsales-kit/execution/frontend-tasks/FE026.md": "14fbdc45b9865637fcddcb6b2023e80e833e4b8f44035b29ae7c2dec4de8bb11",
+    "botsales-kit/execution/frontend-tasks/FE027.md": "c2240ac9db0e71664c145d390f85cb3f7d3cbeff789e1f2765c20a08bce64a8e",
+    "botsales-kit/execution/frontend-tasks/FE028.md": "ab47d46a63ee963c550176ea50cf38f277fb131fd5f44d8d8d335326a2c88244",
+    "botsales-kit/scripts/requirements-validation.txt": "0b0709dc3105d98b29f4fc6a870c15c0cf42191498384ef8a2a32d3fcf5f34ed",
+    "botsales-kit/templates/AGENTS_REPO_SNIPPET.md": "d109c881ba9e04fbee219092c5a803ce2ef5d027ce92b67899562dd82f2669a3",
+    "BotSalesAI_Frontend/evidence/REPORT.md": "8778ddc7fed6102085038c4159f39b6c5e50956a80d6d098f42ae2664e1a515b",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/REPORT.md": "5552109b035646af51f1df2f279f3b87f4d5fc6662bd811893f83a646314a854",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/ANALOGOUS_PATTERNS.md": "434010a77d717940a8c5e2c0cc3eb10480be24d96dce6a0bef1425d319e0c4af",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/ACCEPTANCE_GUIDE.md": "b7b15138d0ab69ef9e871953758792ba22afd18b0f7c7b7a58e863c554cc42a9",
+    "botsales-kit/execution/frontend-evidence/FE001/handoff.md": "d47241498180762895aa3131c3447c6a5c0d448edc350129e9efcc8e22244b1e",
+    "botsales-kit/execution/frontend-evidence/FE003/handoff.md": "1dd96ad616cff5ef5c7fae67690f57cd99376d81642452d79ca47e4b00968694",
+    "botsales-kit/execution/frontend-evidence/FE022/handoff.md": "2a08b2dda9c69aefc806da68fd4702ec9ca4a97c3d39c30b92562d5d32dc70f8",
+    "botsales-kit/execution/frontend-evidence/FE023/handoff.md": "6ea9dcda3e8c0fad1b569c12e1cd7cddfe445fcbbad4eea7bbdb3ad7e1bbd61d",
+    "botsales-kit/execution/frontend-evidence/FE028/handoff.md": "2b19c60fdca70c408b21f7cd9917dc870a5ee5af1b044b480a0c4504d53d7ac9",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/final-verify-preserve-1791446078916/domain-before.json": "71fcb1066be0fa871b557b20fe15db1c58deea0705dadb5d77caa6514fec3724",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/final-verify-preserve-1791446078916/domain-produced.json": "2409a94404f2108b343240ce3b025a1556821eb66e17c28b1ac1ff467415110c",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/diff-review-current.json": "a0371ffa26a4b6b5545975f3adb9e9966d0052176c436af05645454b9e566877",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/final-verify-preservation.json": "63a5884075c6d5a89e29a7af4b728ae5dcc83ddab6963162386fc3b99a3ac82e",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/run-final-verify.mjs": "7ab702dd1851babfe2a2a3d3096abcdbf8e4f321e62d1ec178d3c01dc95f8141",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/canonical-revalidation-latest.json": "f74625a1e4c7bb1b070e322df08b319b69622907a468d16ce8b0d32b85f234f2",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/canonical-revalidation-r2.json": "aa531e1416146ead15a13cf3e59253bcb446efa3f7bc2f820034ebdbc05c797e",
+    "botsales-kit/scripts/validate-release.py": "d7100be443e28ed21eab7e3b15b9bc90282312f9a2a629b18cf49e2093dc70e8",
+    "botsales-kit/scripts/generate-theme.py": "0058a538acd47268dd764c9762c5907badf072e056dfb10a7b74ffdcfec427b0",
+    "botsales-kit/scripts/sync-release.py": "508165fc675bc1c24f16d3a32aa7b5900937972a828a11086597ae0f55889626",
+    "botsales-kit/scripts/progress.mjs": "e8ec5daefa29d9770cf18caf592043fe74f98dc2d5e000ee7f0c5f8267a6f228",
+    "botsales-kit/scripts/test_release.py": "03bf73d731f07d4e618e7e5bf3ce106916b7bde5d0b426d593269c33987ebaab",
+    "botsales-kit/scripts/test_release_sync.py": "4dc378b352f8163419dbc53d805d652d93105f22fbf369a5401d7161c9e04901",
+    "botsales-kit/design/tokens.json": "95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0",
+    "botsales-kit/design/decision.json": "216c00eb482684f97a3485c6d1af8945af60c1859996456bd96305306dcc12a0",
+    "botsales-kit/reference/tokens-v2.1-approved.json": "b4083eb2032d9ebac7f1f793f3aae1cda6a30e075b0dd9e19f241567651d1895",
+    "botsales-kit/execution/frontend-token-extension-record.json": "16d064d8207ed5abd3c42db5a9b259e2d2cad42a1f9259d151f85c2bb13e852d",
+    "botsales-kit/execution/plan.json": "c8891f11430bc476d8c8e86609b4b96987ea180d8d7018c768245c123e294d16",
+    "botsales-kit/execution/progress.json": "23f3034ff445b069843cd6e5eda52f4cf471e2efa10d899a9bcfd7387efa31ed",
+    "botsales-kit/execution/frontend-plan.json": "f0e54ec3cf455a14d79cdadfb4aa6e4ec6091c7a7d832251c83c958a8d4e3e4e",
+    "botsales-kit/execution/frontend-progress.json": "a66aa50eb066321b0ca70be765353ef78b75c29d5a97ee0a49c390dd3ec731a2",
+    "botsales-kit/prototype/build.py": "60bdaed6d9087c2b4bded2aa06cfb36670d1506d2389414f205565309dda8052",
+    "botsales-kit/prototype/index.html": "c9e1d9af0f4708b3981bc96e1a956772d5202246f97d1489407205dba034f7ad",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/kit-checks-record.json": "f7060da074e0be03561d7f847c2b3ce0d3bfb63f57c138148ef6f44694f7cfec",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/progress-tests.json": "5eb37b3d0ccb6db9936ea60fa07a5651dd0073c55e13aec85025c8974dfeb45c",
+    "botsales-kit/scripts/test_progress.py": "e65dde923eb6fdc6818aed05e5dd4dfb759d5cf3dd3f425c6839d794a39b1b42",
+    "botsales-kit/execution/frontend-command-map.json": "d6ae98e9030020488e3fa76b7ad0efc377a84c3f38469f9d612e01b52c82250b",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/progress-tests-record.json": "da93a080eece90ceeb5b1e5dad01920c7068bfb0cef89925800a59023c78ba8a",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/clean-artifacts-corrections-20261008.json": "0773617c2c8a200e5ccbe934d95e90862ee43e826bb2e5d5e00a39aa5f661300",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/environment-current.json": "1b0822a374df27cb9761deb0cbab8bdde004b3a408525a17dd0eff904a10823d",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/wrapper-diagnosis-current.json": "9a3f4f945db0b4c25b09af76e206f3ceb6688a3f3184878d0b84830cc9543588",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/uat-matrix-corrections-20261008.json": "6f62c1814ff2551122d378ad1553e9cdbd30794aeac0f7c18952aefcbab7e4e9",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/quality-gate-matrix-corrections-20261008.json": "1511b95eddadabaedac3a0f2b1add30fadcf70d89d03789f881798d9035e6534",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/production-claim-review-corrections-20261008.json": "6706470b8d4391a5951e5a94aded10ba559cb8581c575b431064c3d3177e58e9",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/actual-browser-zoom-200-current-corrections-native-20261008-final.json": "98b7788bce75b4ba370ba3c8de4c893ea4d68179a613acf9aaa2c0e077194ff0",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/native-text-only-200-current-corrections-native-20261008-final.json": "d32c16e08bdf45532491b6816077506cc455d83b14cfe257fb85327bbfc5862a",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-current-corrections-w30-final-20261008.json": "50094272081df877195661b61b8a19f8a83905a45dd5dd10ad7932d575a42929",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/native-text-only-200-current-corrections-w30-final-20261008.json": "19c8b78d2a08d767ec7e6828795ff857003734bb1e6f536d19240baa59ebaba7",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/review-built-comparison.mjs": "2909c34f89dd8c5e539b8a1156ceac4a81190fc406c24b23578032eded539989",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/built-comparison-review-current.json": "1c84b43ae8cf57c7cac3bb33a785ff3994a16ec09a391add2ba23f46506c343a",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/inventory-current.json": "73da0f78afa5281558b8e2b704c2b848a9aa05d77258bc0974d15370e321b991",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/shared-api-current.json": "0b22c451876ee27967ded5ee2e6ab4258f95181f423c1dc7167594de68cdf051",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/patterns-current.json": "4da7b84aee8743d4cdae0b6b9fb9ffa09a1376b7e57c9c863fd0f0bdac534328",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/documents-current.json": "baaae0b074850699e5bd31ae0df81abf7a5d552bb5c51b4f42c1f2ddbcbe7a7f",
+    "BotSalesAI_Frontend/evidence/frontend-corrections-20261008/S01-contract-crosswalk-current-20261008.json": "0cd09de52109d12913edcdfb23e052daef4c6948111f64f70c3b03ff6a5beceb",
+    "BotSalesAI_Frontend/docs/route-implementation.json": "6797c8d348acd73d90c1b7548f695e1289d2afc7fd2365c80cb3756f89e2db04",
+    "BotSalesAI_Frontend/docs/route-state-role-matrix.json": "f3fd14caa7120d39396afd965a2a4a064eeb830ed4b235e8d4e44b374960c6d7"
+  },
+  "knownLimits": [
+    "React/MSW synthetic local evidence only; no Backend/provider/database/production runtime proof.",
+    "Screen-reader speech and broad human WCAG conformance NOT_RUN; hosted CI/branch protection NOT_RUN.",
+    "Owner/user acceptance PENDING; READY_FOR_ACCEPTANCE_LOCAL_SCOPE means technical handoff is ready.",
+    "Canonical feature-link and missing-operation contract limits remain disclosed; no canonical API/schema/token edit or invented Backend endpoint.",
+    "Historical failed/interrupted runs and diagnostic REPRODUCED probes remain historical; only the single complete final run closes the browser gate."
+  ]
+}

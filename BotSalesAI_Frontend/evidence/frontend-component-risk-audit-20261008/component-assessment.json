@@ -1,0 +1,4252 @@
+{
+  "capturedAt": "2026-10-08T10:55:13.666Z",
+  "mode": "DIAGNOSTIC_ONLY",
+  "head": "53c0ba8f413b1f1e0fa16a747ed27f728b861dd6",
+  "scope": "React/TypeScript Frontend source and synthetic local render. Findings, not an acceptance tracker.",
+  "sourceDrift": [],
+  "shared": [
+    {
+      "name": "PageHeader",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 20,
+      "uses": 49,
+      "assessment": "Desktop căn center đã khai báo; action Stack chưa wrap. Baseline hiện hành và fixture ba action không tái hiện tràn; số action/nhãn mới vẫn cần kiểm riêng."
+    },
+    {
+      "name": "Panel",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 39,
+      "uses": 91,
+      "assessment": "Header responsive center; body inset có owner rõ. overflow:hidden là rủi ro cắt Amount dài ở body ngoài table; không dùng việc document không tràn để kết luận nội dung không bị cắt."
+    },
+    {
+      "name": "Stat",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 68,
+      "uses": 20,
+      "assessment": "minWidth:0 và overflowWrap ở value không thắng nowrap của Amount. Fixture Money hợp lệ dài làm tràn tại 320px."
+    },
+    {
+      "name": "Stats",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 77,
+      "uses": 5,
+      "assessment": "Grid 1/2/4 cột có chủ đích. Chiều cao card bằng nhau không phải lỗi nút stretch; min-content của dữ liệu con cần kiểm riêng."
+    },
+    {
+      "name": "Amount",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 80,
+      "uses": 48,
+      "assessment": "48 calls, nowrap, Decimal cho phép tối đa 60 ký tự. Table có vùng cuộn riêng; Stat/DetailLine/summary ngoài table chưa xử lý hết chuỗi hợp lệ dài."
+    },
+    {
+      "name": "CopyableCode",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 83,
+      "uses": 3,
+      "assessment": "Wrap anywhere và flexWrap; fixture 120 ký tự không tràn. Clipboard lifecycle không được kiểm lại trong audit bố cục này."
+    },
+    {
+      "name": "Status",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 108,
+      "uses": 68,
+      "assessment": "height:auto để nhãn có thể nhiều dòng. Khi là flex child của row normal/stretch, capsule có thể cao theo đoạn văn; fixture đo 168px. Không sửa bằng height cố định 32px."
+    },
+    {
+      "name": "DataTable",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 120,
+      "uses": 47,
+      "assessment": "TableContainer sở hữu cuộn ngang, min-width mobile 600px có chủ đích; không đánh đồng với page overflow. Header/behavior ngoài mục tiêu audit này giữ gate sở hữu."
+    },
+    {
+      "name": "Empty",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 137,
+      "uses": 7,
+      "assessment": "Các consumer hiện hành dùng thông báo hữu hạn. Fixture mã không có khoảng trắng làm tràn 702px tại viewport 320px; rủi ro API khi dùng nội dung động."
+    },
+    {
+      "name": "QueryState",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 141,
+      "uses": 86,
+      "assessment": "Pending/error/stale wrapper được đọc; action Alert không stretch theo toàn đoạn lỗi trong các probe. Message dài có thể cuộn trong MUI Alert message; không gọi đó là page overflow."
+    },
+    {
+      "name": "ErrorNotice",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 168,
+      "uses": 89,
+      "assessment": "89 calls, validation field và unknown command có nội dung động. Fixture lỗi với mã 120 ký tự không làm tràn document; không thay chứng cứ screen reader hoặc mọi lỗi server."
+    },
+    {
+      "name": "Toolbar",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 203,
+      "uses": 22,
+      "assessment": "22 calls đã tách form/filters và khai báo center desktop. Audit route hiện tại không tái hiện lỗi submit 130px; generic composition bên cạnh vẫn có nguy cơ riêng."
+    },
+    {
+      "name": "Pager",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 240,
+      "uses": 36,
+      "assessment": "Outer row center; action siblings wrap. Baseline và fixture total dài không tái hiện page overflow; số lớn mới/zoom cần giữ phép thử riêng."
+    },
+    {
+      "name": "LookupLoadMore",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 250,
+      "uses": 22,
+      "assessment": "Row center đã khai báo; loaded caption và action không kéo cao nhau trong probe. Busy/empty/error thuộc consumer."
+    },
+    {
+      "name": "RouteLink",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 264,
+      "uses": 64,
+      "assessment": "Bọc MUI Button; hình dạng ngoài phụ thuộc parent. Có thể stretch nếu bị đặt trong row có sibling nhiều dòng; hiện chưa tái hiện ngoài những owner đã nêu."
+    },
+    {
+      "name": "MutationButton",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 268,
+      "uses": 107,
+      "assessment": "Bọc Button, giữ permission/busy/online. Không có invariant tự ngăn stretch ở component này; phải khóa alignment tại bố cục sử dụng. Audit không lặp lại ma trận mọi role."
+    },
+    {
+      "name": "EditDialog",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 295,
+      "uses": 50,
+      "assessment": "Title flex-start/minWidth:0, actions wrap. 30 trường hợp mở dialog và fixture title 120 ký tự được đo. Body mixed FormFields trong Sửa đơn nháp vẫn kéo IconButton."
+    },
+    {
+      "name": "PartialDataNotice",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 443,
+      "uses": 0,
+      "assessment": "0 production calls; đọc owner và render fixture default. Không thêm consumer nhân tạo vào app để tăng coverage."
+    },
+    {
+      "name": "CapabilityUnavailable",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 447,
+      "uses": 0,
+      "assessment": "0 production calls; đọc owner và render fixture default. Chỉ là notice của state explicit; không suy có route thật đang unavailable."
+    },
+    {
+      "name": "ConfirmDialog",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 451,
+      "uses": 23,
+      "assessment": "Dùng EditDialog; lý do multiline và action wrap. Các case confirm device/channel/role đã mở; không gửi lệnh xác nhận trong audit."
+    },
+    {
+      "name": "DetailLine",
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 468,
+      "uses": 98,
+      "assessment": "Value minWidth:0/wrap nhưng Amount con nowrap. Fixture trong Panel cho thấy nội dung tiền dài vượt box và bị ancestor cắt."
+    },
+    {
+      "name": "FormFields",
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 29,
+      "uses": 75,
+      "assessment": "75 calls. Mặc định column stretch cần thiết cho form. Khi đổi thành row mà không alignItems, TextField root gồm helper kéo sibling Button/IconButton; đã tái hiện Orders và fixture."
+    },
+    {
+      "name": "FieldGroup",
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 36,
+      "uses": 30,
+      "assessment": "30 calls. Row không có alignment tại Imports kéo nút Bỏ theo field; fixture helper dài lên 200px. ProductEditor dùng center nhưng căn wrapper lookup nhiều dòng, gây lệch mặt input."
+    },
+    {
+      "name": "SurfaceContent",
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 41,
+      "uses": 31,
+      "assessment": "31 calls. Default column ổn cho surface flow; direction=row với đoạn văn và Status mặc định có thể stretch chip theo đoạn văn. Fixture xác nhận."
+    },
+    {
+      "name": "ActionGroup",
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 50,
+      "uses": 32,
+      "assessment": "32 calls. Có flexWrap mặc định; các peer action hiện hành và fixture đã thử không tái hiện thêm stretch. Wrap không chứng minh mọi mixed child/state tương lai an toàn."
+    },
+    {
+      "name": "PageSections",
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 61,
+      "uses": 10,
+      "assessment": "10 calls. Section gap 24px, column flow có chủ đích. Giữ parent boundary; không đổi thành center toàn cục để xử lý lỗi row ở FormFields."
+    },
+    {
+      "name": "SectionGrid",
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 73,
+      "uses": 15,
+      "assessment": "15 calls. Card/pane grid stretch có thể hợp lệ; columns 1fr chưa tự đảm bảo dữ liệu unbreakable. Chọn minmax/shrink theo owner, không sửa mọi grid do thấy normal."
+    },
+    {
+      "name": "DraftConflict",
+      "file": "apps/web/src/shared/ui/draft-conflict.tsx",
+      "line": 13,
+      "uses": 9,
+      "assessment": "Ba snapshot dùng pre-wrap/overflowWrap:anywhere, grid minmax và shrinkChildren; đọc cả Comparison private. Audit này không tạo thêm xung đột server hoặc chạy lại speech/native zoom cho nó."
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "apps/web/src/app/bootstrap.css",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89"
+    },
+    {
+      "file": "apps/web/src/app/CommandRecovery.tsx",
+      "renders": [
+        "CommandRecovery"
+      ],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac"
+    },
+    {
+      "file": "apps/web/src/app/dirty-drafts.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13"
+    },
+    {
+      "file": "apps/web/src/app/feedback.tsx",
+      "renders": [
+        "FeedbackDialog"
+      ],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "449b8f38b670784f4b99c91b007ca6a90949b6dab1acc69fd8f93a22e11b2a22"
+    },
+    {
+      "file": "apps/web/src/app/i18n.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340"
+    },
+    {
+      "file": "apps/web/src/app/locales/vi/customers.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "94a1b204b882ce2f87da801327f731842b8c6954f1d77820b10a8d230f592159"
+    },
+    {
+      "file": "apps/web/src/app/locales/vi/knowledge.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9"
+    },
+    {
+      "file": "apps/web/src/app/navigation.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7"
+    },
+    {
+      "file": "apps/web/src/app/router.tsx",
+      "renders": [
+        "OrderPage",
+        "Loading",
+        "PermissionGate",
+        "GlobalGate",
+        "RouteError",
+        "NotFound"
+      ],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4"
+    },
+    {
+      "file": "apps/web/src/app/ScopeEvents.tsx",
+      "renders": [
+        "ScopeEvents"
+      ],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "cfea6704a8f8a08ca735700ae3aef4444dd40d8b6a8fb121d06cbab60085c0aa"
+    },
+    {
+      "file": "apps/web/src/app/SessionProvider.tsx",
+      "renders": [
+        "SessionProvider"
+      ],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "renders": [
+        "NavIcon",
+        "Shell",
+        "MockTools"
+      ],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "14d33f33d3cc1328e8739af23cc76eca319707a91b617b1467367a0a2571cbfb"
+    },
+    {
+      "file": "apps/web/src/app/tokens.css",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca"
+    },
+    {
+      "file": "apps/web/src/main.tsx",
+      "renders": [
+        "start"
+      ],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "file": "apps/web/src/mocks/auxiliary.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c"
+    },
+    {
+      "file": "apps/web/src/mocks/browser.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "3786d71b2b665490a116bc0671c5e2494e57e87677e132e8cce1fa80cd5860ee"
+    },
+    {
+      "file": "apps/web/src/mocks/catalog.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56"
+    },
+    {
+      "file": "apps/web/src/mocks/collections.json",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "file": "apps/web/src/mocks/control.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541"
+    },
+    {
+      "file": "apps/web/src/mocks/database.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "file": "apps/web/src/mocks/files.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd"
+    },
+    {
+      "file": "apps/web/src/mocks/finance.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d"
+    },
+    {
+      "file": "apps/web/src/mocks/fulfillment.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40"
+    },
+    {
+      "file": "apps/web/src/mocks/handlers.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "file": "apps/web/src/mocks/marketing-fixture.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb"
+    },
+    {
+      "file": "apps/web/src/mocks/orders.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4"
+    },
+    {
+      "file": "apps/web/src/mocks/procurement.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0"
+    },
+    {
+      "file": "apps/web/src/mocks/seed.json",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "file": "apps/web/src/mocks/service.ts",
+      "renders": [],
+      "sourceRole": "SYNTHETIC_API_SUPPORT",
+      "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "renders": [
+        "BotConfigPage",
+        "PlaygroundPage",
+        "EvaluationsPage",
+        "AgentTeamPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "92d2cd21fa6b74afaca61da769e0965db5ec46b110f21e5a6b7e21aeed9f3e70"
+    },
+    {
+      "file": "apps/web/src/modules/catalog/import-file.ts",
+      "renders": [],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f"
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "renders": [
+        "ImportsPage",
+        "ImportResultPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "daccdc34d666987ed8e07f4ddeb6f83bfa8731d0d99e93c5e7fc12461ec669da"
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "renders": [
+        "ProductsPage",
+        "ProductEditorPage",
+        "CategoriesPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "78fe9ffcadf0282bda479e285f799473ab7a0357dafeeff00a07291525d71712"
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "renders": [
+        "CustomersPage",
+        "CustomerPage",
+        "ServiceCasesPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "a43b3c48e256624b32aa66bc03ba3fc65e09661dec5827eb55ab4b468a87a388"
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "renders": [
+        "DashboardPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "a0c0e09070e25ed627c67846bb25e142e053bc9ec797825c7b7b6a2b804b6bef"
+    },
+    {
+      "file": "apps/web/src/modules/finance/demo-account-preview.ts",
+      "renders": [],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60"
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "renders": [
+        "ReportRangeFields",
+        "CashflowPage",
+        "EntriesPage",
+        "ProfitLossPage",
+        "JournalAccountField",
+        "JournalsPage",
+        "ReconciliationPage",
+        "StatementDialog",
+        "DebtsPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "c292431530f44dcc005ac6662497f368f6c648260b1bda1dd985d88a09bb0a65"
+    },
+    {
+      "file": "apps/web/src/modules/finance/report-explanations.ts",
+      "renders": [],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020"
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "renders": [
+        "FulfillmentPage",
+        "PrepDialog",
+        "ShipmentsPage",
+        "ShippingQuotePreview"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "d013702152756553b663eab4ef4f70271cc1806cdf1622bedef51d02b4a2374b"
+    },
+    {
+      "file": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "renders": [
+        "ConversationComposer",
+        "ConversationContextPanel"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "efde881b00dbb60978017f8394e939fe547403600d85eff6b38e37fe5ca1b848"
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "renders": [
+        "InboxPage",
+        "ConversationPanel",
+        "MockMediaPreview",
+        "MockSalesFlowPreview",
+        "MockUpsellPreview"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b"
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "renders": [
+        "ChannelsPage",
+        "AIProvidersPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "1a2011b16665df078cec13aaf75a198f19c4af9533b9812045242194171b556f"
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "renders": [
+        "InventoryFilters",
+        "InventoryPage",
+        "MovementsPage",
+        "movementSource"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "6d62daee4da307c8a6063db31d2524e12fab8626782771a2ce8e0f2720d56ffd"
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "renders": [
+        "CurrentCatalogSources",
+        "ProductContentMockPreview",
+        "KnowledgePage",
+        "KnowledgeDetailPage",
+        "FeedbackPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "acf06edc7f2d4fc847bf7bc63d2a84f643a04e34d571ab1f5189603f793535a5"
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "renders": [
+        "NotificationsPage",
+        "DevicesPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "27e33c89ae73c93c7f20252539f8e92a49cf26c8c5e206f0e74c1c35cfe9239f"
+    },
+    {
+      "file": "apps/web/src/modules/notifications/push-capabilities.ts",
+      "renders": [],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a"
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "renders": [
+        "OperationsPage",
+        "ApprovalsPage",
+        "DigestsPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "2f668faf82d5241bdc2851c5159b7c43ef83f932bdbcef5b179b112344dc42a3"
+    },
+    {
+      "file": "apps/web/src/modules/orders/demo-address-preview.ts",
+      "renders": [],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a"
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "renders": [
+        "OrdersPage",
+        "DraftForm",
+        "NewOrderPage",
+        "OrderDetailPage",
+        "ReturnsPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "b84d655154133cbad9f54cefb7439b7c2aa152c9f2517c3366672dcc37ff3f1d"
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "renders": [
+        "SuppliersPage",
+        "ReplenishmentPage",
+        "PurchasesPage",
+        "PurchaseDialog",
+        "ReceiptsPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "b97dcd2331f276a1a463a793e025f87b11ff0c6a8378b8de463de3261b7fe07f"
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "renders": [
+        "MarketingReasonTick",
+        "ReportsPage",
+        "MarketingPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754"
+    },
+    {
+      "file": "apps/web/src/modules/reports/report-utils.ts",
+      "renders": [],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0"
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "renders": [
+        "AuthCard",
+        "LoginPage",
+        "WorkspacesPage",
+        "OnboardingPage",
+        "ShopSettingsPage",
+        "SetupChecklistItem",
+        "TeamPage",
+        "AuditPage",
+        "PrivacyPage",
+        "ContactConsentPreview",
+        "JobPage"
+      ],
+      "sourceRole": "MODULE_OWNER_OR_SUPPORT",
+      "sha256": "14bc610e406b356218efc2aaedd848e6caf10abf167aae2ff3ef67541c4b2c51"
+    },
+    {
+      "file": "apps/web/src/shared/api/client.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "14f723eb00cb9e7e5e244b440c1de7dfd534be499c991cf25288b5a7506c65ae"
+    },
+    {
+      "file": "apps/web/src/shared/api/client.type-contracts.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e"
+    },
+    {
+      "file": "apps/web/src/shared/api/errors.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+    },
+    {
+      "file": "apps/web/src/shared/api/event-invalidation.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "099f9459e47c239cb5db573262d47d7b757c520e9c3a659f4c7a8c04430ec0cd"
+    },
+    {
+      "file": "apps/web/src/shared/api/hooks.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213"
+    },
+    {
+      "file": "apps/web/src/shared/api/intents.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b"
+    },
+    {
+      "file": "apps/web/src/shared/api/validation.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1"
+    },
+    {
+      "file": "apps/web/src/shared/model/auth.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4"
+    },
+    {
+      "file": "apps/web/src/shared/model/dirty-drafts.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "387b509645164ec4c1aaccdfa96e0b99329ff3ba83f7b28931a8ffb6de3be7a2"
+    },
+    {
+      "file": "apps/web/src/shared/model/download.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c"
+    },
+    {
+      "file": "apps/web/src/shared/model/filters.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d"
+    },
+    {
+      "file": "apps/web/src/shared/model/format.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "9a7d546e64919fefa0e293b4c2869fdef8a13115b308e8aa6c4725b4e0ec4200"
+    },
+    {
+      "file": "apps/web/src/shared/model/labels.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2"
+    },
+    {
+      "file": "apps/web/src/shared/model/scope.tsx",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "file": "apps/web/src/shared/model/versioned-draft.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b"
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "renders": [
+        "PageHeader",
+        "Panel",
+        "Stat",
+        "Stats",
+        "Amount",
+        "CopyableCode",
+        "Status",
+        "DataTable",
+        "Empty",
+        "QueryState",
+        "ErrorNotice",
+        "Toolbar",
+        "Pager",
+        "LookupLoadMore",
+        "RouteLink",
+        "MutationButton",
+        "EditDialog",
+        "PartialDataNotice",
+        "CapabilityUnavailable",
+        "ConfirmDialog",
+        "DetailLine"
+      ],
+      "sourceRole": "SHARED_OWNER",
+      "sha256": "6b874039515e9c9be4abcc8efe88ed00a979a4da6f05a1b1eb3eaa096a2965bf"
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "renders": [
+        "FormFields",
+        "FieldGroup",
+        "SurfaceContent",
+        "ActionGroup",
+        "PageSections",
+        "SectionGrid"
+      ],
+      "sourceRole": "SHARED_OWNER",
+      "sha256": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b"
+    },
+    {
+      "file": "apps/web/src/shared/ui/draft-conflict.tsx",
+      "renders": [
+        "DraftConflict",
+        "Comparison"
+      ],
+      "sourceRole": "SHARED_OWNER",
+      "sha256": "5332f808b3bb81c901962bcdd678e6f37290c408033b1e552f9321d0a01ed809"
+    },
+    {
+      "file": "apps/web/src/shared/ui/layout.ts",
+      "renders": [],
+      "sourceRole": "SHARED_OWNER",
+      "sha256": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a"
+    },
+    {
+      "file": "apps/web/src/shared/ui/README.md",
+      "renders": [],
+      "sourceRole": "SHARED_OWNER",
+      "sha256": "6669164e3f8b57417cb18c6932f73aa41a3be36466c98b7f5bc3650cde254582"
+    },
+    {
+      "file": "apps/web/src/shared/ui/theme.ts",
+      "renders": [],
+      "sourceRole": "SHARED_OWNER",
+      "sha256": "953a3ca9df114d93395c0ec61f61d65230bf39440aad45a8b55f884e39669b04"
+    },
+    {
+      "file": "apps/web/src/shared/ui/visual.ts",
+      "renders": [],
+      "sourceRole": "SHARED_OWNER",
+      "sha256": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d"
+    },
+    {
+      "file": "apps/web/src/vite-env.d.ts",
+      "renders": [],
+      "sourceRole": "APP_OR_SHARED_SUPPORT",
+      "sha256": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc"
+    }
+  ],
+  "renderingFunctions": [
+    {
+      "file": "apps/web/src/app/CommandRecovery.tsx",
+      "line": 11,
+      "name": "CommandRecovery",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/app/feedback.tsx",
+      "line": 9,
+      "name": "FeedbackDialog",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/app/router.tsx",
+      "line": 73,
+      "name": "OrderPage",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/app/router.tsx",
+      "line": 130,
+      "name": "Loading",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/app/router.tsx",
+      "line": 136,
+      "name": "PermissionGate",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/app/router.tsx",
+      "line": 145,
+      "name": "GlobalGate",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/app/router.tsx",
+      "line": 150,
+      "name": "RouteError",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/app/router.tsx",
+      "line": 165,
+      "name": "NotFound",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/app/ScopeEvents.tsx",
+      "line": 10,
+      "name": "ScopeEvents",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/app/SessionProvider.tsx",
+      "line": 7,
+      "name": "SessionProvider",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 29,
+      "name": "NavIcon",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 39,
+      "name": "Shell",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 128,
+      "name": "MockTools",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/main.tsx",
+      "line": 13,
+      "name": "start",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 11,
+      "name": "BotConfigPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 43,
+      "name": "PlaygroundPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 53,
+      "name": "EvaluationsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 70,
+      "name": "AgentTeamPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "line": 13,
+      "name": "ImportsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "line": 107,
+      "name": "ImportResultPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 29,
+      "name": "ProductsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 77,
+      "name": "ProductEditorPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 160,
+      "name": "CategoriesPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 52,
+      "name": "CustomersPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 77,
+      "name": "CustomerPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 182,
+      "name": "ServiceCasesPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 33,
+      "name": "DashboardPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 70,
+      "name": "ReportRangeFields",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 100,
+      "name": "CashflowPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 107,
+      "name": "EntriesPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 144,
+      "name": "ProfitLossPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 200,
+      "name": "JournalAccountField",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 208,
+      "name": "JournalsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 244,
+      "name": "ReconciliationPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 295,
+      "name": "StatementDialog",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 315,
+      "name": "DebtsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 24,
+      "name": "FulfillmentPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 51,
+      "name": "PrepDialog",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 167,
+      "name": "ShipmentsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 349,
+      "name": "ShippingQuotePreview",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "line": 14,
+      "name": "ConversationComposer",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "line": 146,
+      "name": "ConversationContextPanel",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 15,
+      "name": "InboxPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 91,
+      "name": "ConversationPanel",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 240,
+      "name": "MockMediaPreview",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 281,
+      "name": "MockSalesFlowPreview",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 343,
+      "name": "MockUpsellPreview",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "line": 13,
+      "name": "ChannelsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "line": 33,
+      "name": "AIProvidersPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 29,
+      "name": "InventoryFilters",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 75,
+      "name": "InventoryPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 145,
+      "name": "MovementsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 168,
+      "name": "movementSource",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 22,
+      "name": "CurrentCatalogSources",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 88,
+      "name": "ProductContentMockPreview",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 108,
+      "name": "KnowledgePage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 137,
+      "name": "KnowledgeDetailPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 179,
+      "name": "FeedbackPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 19,
+      "name": "NotificationsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 46,
+      "name": "DevicesPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 23,
+      "name": "OperationsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 143,
+      "name": "ApprovalsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 238,
+      "name": "DigestsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 19,
+      "name": "OrdersPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 25,
+      "name": "DraftForm",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 142,
+      "name": "NewOrderPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 143,
+      "name": "OrderDetailPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 245,
+      "name": "ReturnsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 17,
+      "name": "SuppliersPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 97,
+      "name": "ReplenishmentPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 180,
+      "name": "PurchasesPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 255,
+      "name": "PurchaseDialog",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 288,
+      "name": "ReceiptsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 23,
+      "name": "MarketingReasonTick",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 47,
+      "name": "ReportsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 217,
+      "name": "MarketingPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 26,
+      "name": "AuthCard",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 29,
+      "name": "LoginPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 48,
+      "name": "WorkspacesPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 55,
+      "name": "OnboardingPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 75,
+      "name": "ShopSettingsPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 138,
+      "name": "SetupChecklistItem",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 147,
+      "name": "TeamPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 173,
+      "name": "AuditPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 176,
+      "name": "PrivacyPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 224,
+      "name": "ContactConsentPreview",
+      "exported": false
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 250,
+      "name": "JobPage",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 20,
+      "name": "PageHeader",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 39,
+      "name": "Panel",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 68,
+      "name": "Stat",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 77,
+      "name": "Stats",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 80,
+      "name": "Amount",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 83,
+      "name": "CopyableCode",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 108,
+      "name": "Status",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 120,
+      "name": "DataTable",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 137,
+      "name": "Empty",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 141,
+      "name": "QueryState",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 168,
+      "name": "ErrorNotice",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 203,
+      "name": "Toolbar",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 240,
+      "name": "Pager",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 250,
+      "name": "LookupLoadMore",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 264,
+      "name": "RouteLink",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 268,
+      "name": "MutationButton",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 295,
+      "name": "EditDialog",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 443,
+      "name": "PartialDataNotice",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 447,
+      "name": "CapabilityUnavailable",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 451,
+      "name": "ConfirmDialog",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 468,
+      "name": "DetailLine",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 29,
+      "name": "FormFields",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 36,
+      "name": "FieldGroup",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 41,
+      "name": "SurfaceContent",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 50,
+      "name": "ActionGroup",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 61,
+      "name": "PageSections",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 73,
+      "name": "SectionGrid",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/draft-conflict.tsx",
+      "line": 13,
+      "name": "DraftConflict",
+      "exported": true
+    },
+    {
+      "file": "apps/web/src/shared/ui/draft-conflict.tsx",
+      "line": 23,
+      "name": "Comparison",
+      "exported": false
+    }
+  ],
+  "rowReviews": [
+    {
+      "file": "apps/web/src/app/CommandRecovery.tsx",
+      "line": 40,
+      "owner": "CommandRecovery",
+      "tag": "ActionGroup",
+      "props": {
+        "key": "{x.intentId}",
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "flexWrap": "\"wrap\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/app/router.tsx",
+      "line": 156,
+      "owner": "RouteError",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 108,
+      "owner": "Shell",
+      "tag": "Box",
+      "props": {
+        "sx": "{{ height: '100%', bgcolor: colors.sidebar, display: 'flex', flexDirection: 'column' }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "controls": [
+        "Button",
+        "IconButton"
+      ],
+      "helper": false,
+      "assessment": "Explicit vertical flex container; discovery candidate is not itself a row defect."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 109,
+      "owner": "Shell",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "sx": "{[layoutSx.navigation.brandGap, layoutSx.navigation.brandInset]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 113,
+      "owner": "Shell",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "sx": "{[layoutSx.navigation.accountInset, layoutSx.navigation.accountGap]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "IconButton"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 116,
+      "owner": "Shell",
+      "tag": "Box",
+      "props": {
+        "sx": "{{ display: 'flex', minHeight: '100vh' }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "controls": [
+        "IconButton",
+        "TextField",
+        "Button"
+      ],
+      "helper": true,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 117,
+      "owner": "Shell",
+      "tag": "Box",
+      "props": {
+        "sx": "{{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "controls": [
+        "IconButton",
+        "TextField",
+        "Button"
+      ],
+      "helper": true,
+      "assessment": "Explicit vertical flex container; discovery candidate is not itself a row defect."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 117,
+      "owner": "Shell",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "justifyContent": "\"space-between\"",
+        "sx": "{layoutSx.page.gutter}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "IconButton",
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 118,
+      "owner": "Shell",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "IconButton"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 119,
+      "owner": "Shell",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "sx": "{layoutSx.toolbar.controlGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "TextField",
+        "IconButton"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 161,
+      "owner": "MockTools",
+      "tag": "Stack",
+      "props": {
+        "id": "\"mock-tools-controls\"",
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "alignItems": "{{ xs: 'stretch', sm: 'center' }}",
+        "sx": "{[layoutSx.shell.demoControls, { display: { xs: mobileExpanded ? 'flex' : 'none', md: 'flex' } }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 22,
+      "owner": "BotConfigPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "beforeGap": "\"form\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 51,
+      "owner": "PlaygroundPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "sx": "{[layoutSx.code.inlineGap, { flexWrap: 'wrap' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 81,
+      "owner": "AgentTeamPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "sx": "{[layoutSx.code.inlineGap, layoutSx.surface.sectionBefore, layoutSx.notice.afterGap, { flexWrap: 'wrap' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 81,
+      "owner": "AgentTeamPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "line": 51,
+      "owner": "ImportsPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "alignItems": "{{ xs: 'stretch', sm: 'center' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/catalog/imports.tsx",
+      "line": 55,
+      "owner": "ImportsPage",
+      "tag": "FieldGroup",
+      "props": {
+        "key": "{index}",
+        "direction": "{{ xs: 'column', sm: 'row' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "TextField",
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Observed: remove action inherits TextField height; verified risk of growth when field content changes."
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 56,
+      "owner": "ProductsPage",
+      "tag": "FormFields",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "alignItems": "{{ xs: 'stretch', sm: 'flex-start' }}",
+        "role": "\"group\"",
+        "aria-label": "\"Bộ lọc danh mục\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField",
+        "LookupLoadMore",
+        "Button"
+      ],
+      "helper": true,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 143,
+      "owner": "ProductEditorPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "alignItems": "{{ xs: 'stretch', sm: 'center' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "TextField",
+        "LookupLoadMore",
+        "Button"
+      ],
+      "helper": true,
+      "assessment": "Observed: center aligns multiline lookup wrapper rather than input faces."
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 144,
+      "owner": "ProductEditorPage",
+      "tag": "FieldGroup",
+      "props": {
+        "key": "{field.id}",
+        "direction": "{{ xs: 'column', md: 'row' }}",
+        "alignItems": "\"start\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "TextField",
+        "Checkbox",
+        "IconButton"
+      ],
+      "helper": true,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 152,
+      "owner": "ProductEditorPage",
+      "tag": "ActionGroup",
+      "props": {
+        "key": "{fileId}",
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 153,
+      "owner": "ProductEditorPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "beforeGap": "\"form\"",
+        "justifyContent": "{\"space-between\"}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/catalog/index.tsx",
+      "line": 182,
+      "owner": "CategoriesPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 153,
+      "owner": "CustomerPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\"",
+        "alignItems": "\"center\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Status"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 52,
+      "owner": "DashboardPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "{{ xs: 'column', md: 'row' }}",
+        "justifyContent": "\"space-between\"",
+        "sx": "{layoutSx.dashboard.sectionGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 58,
+      "owner": "DashboardPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"column\"",
+        "density": "\"comfortable\"",
+        "justifyContent": "\"center\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Intentional column action layout; not a horizontal control-stretch candidate."
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 90,
+      "owner": "DashboardPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "sx": "{layoutSx.code.inlineGap}",
+        "flexWrap": "\"wrap\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 107,
+      "owner": "DashboardPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "density": "\"comfortable\"",
+        "alignItems": "{{ xs: 'stretch', sm: 'center' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Status",
+        "MutationButton"
+      ],
+      "helper": true,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 71,
+      "owner": "ReportRangeFields",
+      "tag": "FormFields",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "afterGap": "\"section\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": true,
+      "assessment": "Field-only row: root stretch can include helper space; no extra action-height defect observed. Input-face alignment must remain independent of helper length."
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 132,
+      "owner": "EntriesPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 181,
+      "owner": "ProfitLossPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"column\"",
+        "beforeGap": "\"form\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Intentional column action layout; not a horizontal control-stretch candidate."
+    },
+    {
+      "file": "apps/web/src/modules/finance/index.tsx",
+      "line": 240,
+      "owner": "JournalsPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "sx": "{layoutSx.form.pairedFields}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": true,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 78,
+      "owner": "PrepDialog",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\"",
+        "alignItems": "\"center\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Status",
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 110,
+      "owner": "PrepDialog",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\"",
+        "sx": "{layoutSx.surface.headerFlowGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 246,
+      "owner": "ShipmentsPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button",
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 281,
+      "owner": "ShipmentsPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"column\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": true,
+      "assessment": "Intentional column action layout; not a horizontal control-stretch candidate."
+    },
+    {
+      "file": "apps/web/src/modules/fulfillment/index.tsx",
+      "line": 295,
+      "owner": "ShipmentsPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "sx": "{layoutSx.dialog.actionsGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Button",
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "line": 80,
+      "owner": "ConversationComposer",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "justifyContent": "\"space-between\"",
+        "sx": "{[layoutSx.inbox.composerControlsBeforeGap, layoutSx.inbox.composerActionGap]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "line": 124,
+      "owner": "ConversationMessageList",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "sx": "{[layoutSx.surface.compactContentGap, { flexWrap: 'wrap' }]}",
+        "aria-label": "\"Nguồn tham chiếu\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/conversation-components.tsx",
+      "line": 130,
+      "owner": "ConversationMessageList",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "sx": "{[layoutSx.inbox.composerActionGap, { flexWrap: 'wrap' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 53,
+      "owner": "InboxPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "sx": "{[layoutSx.toolbar.controlGap, layoutSx.surface.bodyInsetAfterHeader, { flexWrap: 'wrap' }]}",
+        "aria-label": "\"Bộ lọc hội thoại\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 73,
+      "owner": "InboxPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\"",
+        "sx": "{[layoutSx.surface.compactContentGap, { alignItems: 'center' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 130,
+      "owner": "ConversationPanel",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "justifyContent": "\"space-between\"",
+        "bodyMode": "\"header\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button",
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 131,
+      "owner": "ConversationPanel",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "sx": "{[layoutSx.surface.compactContentGap, { flexWrap: 'wrap' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 143,
+      "owner": "ConversationPanel",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 326,
+      "owner": "MockSalesFlowPreview",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "density": "\"comfortable\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "line": 28,
+      "owner": "ChannelsPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "beforeGap": "\"surface\"",
+        "afterGap": "\"notice\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "line": 28,
+      "owner": "ChannelsPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "line": 42,
+      "owner": "AIProvidersPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 61,
+      "owner": "InventoryFilters",
+      "tag": "FormFields",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "alignItems": "{{ sm: 'center' }}",
+        "flexWrap": "\"wrap\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField",
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 62,
+      "owner": "InventoryFilters",
+      "tag": "FormFields",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "Field-only row: root stretch can include helper space; no extra action-height defect observed. Input-face alignment must remain independent of helper length."
+    },
+    {
+      "file": "apps/web/src/modules/inventory/index.tsx",
+      "line": 68,
+      "owner": "InventoryFilters",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 53,
+      "owner": "CurrentCatalogSources",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "density": "\"comfortable\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 153,
+      "owner": "KnowledgeDetailPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/knowledge/index.tsx",
+      "line": 192,
+      "owner": "FeedbackPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 25,
+      "owner": "NotificationsPage",
+      "tag": "SurfaceContent",
+      "props": {
+        "direction": "{{ xs: 'column', md: 'row' }}",
+        "justifyContent": "\"space-between\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 41,
+        "name": "SurfaceContent"
+      },
+      "controls": [
+        "Status",
+        "MutationButton",
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "Watch auto-height chip in normal/stretch row; SurfaceContent fixture reproduces growth. Not every current chip height difference is a defect."
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 25,
+      "owner": "NotificationsPage",
+      "tag": "SurfaceContent",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 41,
+        "name": "SurfaceContent"
+      },
+      "controls": [
+        "Status"
+      ],
+      "helper": false,
+      "assessment": "Watch auto-height chip in normal/stretch row; SurfaceContent fixture reproduces growth. Not every current chip height difference is a defect."
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 25,
+      "owner": "NotificationsPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "beforeGap": "\"detail\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Status"
+      ],
+      "helper": false,
+      "assessment": "Watch auto-height chip in normal/stretch row; SurfaceContent fixture reproduces growth. Not every current chip height difference is a defect."
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 115,
+      "owner": "DevicesPage",
+      "tag": "SurfaceContent",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 41,
+        "name": "SurfaceContent"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 118,
+      "owner": "DevicesPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "flexWrap": "\"wrap\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 124,
+      "owner": "DevicesPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "{{ xs: \"column\", sm: \"row\" }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 124,
+      "owner": "DevicesPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"column\"",
+        "beforeGap": "\"form\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "Intentional column action layout; not a horizontal control-stretch candidate."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 67,
+      "owner": "OperationsPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "justifyContent": "\"space-between\"",
+        "alignItems": "{{ xs: 'stretch', sm: 'center' }}",
+        "sx": "{layoutSx.surface.headerFlowGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 95,
+      "owner": "OperationsPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton",
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 164,
+      "owner": "ApprovalsPage",
+      "tag": "FormFields",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "Field-only row: root stretch can include helper space; no extra action-height defect observed. Input-face alignment must remain independent of helper length."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 172,
+      "owner": "ApprovalsPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"column\"",
+        "beforeGap": "\"form\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Intentional column action layout; not a horizontal control-stretch candidate."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 253,
+      "owner": "DigestsPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\"",
+        "sx": "{layoutSx.surface.headerFlowGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Status"
+      ],
+      "helper": false,
+      "assessment": "Watch auto-height chip in normal/stretch row; SurfaceContent fixture reproduces growth. Not every current chip height difference is a defect."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 266,
+      "owner": "DigestsPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Status"
+      ],
+      "helper": false,
+      "assessment": "Watch auto-height chip in normal/stretch row; SurfaceContent fixture reproduces growth. Not every current chip height difference is a defect."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 283,
+      "owner": "DigestsPage",
+      "tag": "Box",
+      "props": {
+        "key": "{criterion}",
+        "sx": "{[layoutSx.detail.valueGap, layoutSx.detail.rowInsetBlock, { display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', borderBottom: 1, borderColor: 'divider' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 293,
+      "owner": "DigestsPage",
+      "tag": "Box",
+      "props": {
+        "key": "{role.id}",
+        "sx": "{[layoutSx.detail.valueGap, layoutSx.detail.rowInsetBlock, { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', borderBottom: 1, borderColor: 'divider' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 107,
+      "owner": "DraftForm",
+      "tag": "FormFields",
+      "props": {
+        "direction": "{{ xs: 'column', md: 'row' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": true,
+      "assessment": "Field-only row: root stretch can include helper space; no extra action-height defect observed. Input-face alignment must remain independent of helper length."
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 123,
+      "owner": "DraftForm",
+      "tag": "FormFields",
+      "props": {
+        "key": "{line.key}",
+        "direction": "{{ xs: 'column', sm: 'row' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField",
+        "IconButton"
+      ],
+      "helper": true,
+      "assessment": "Observed: mixed line fields and IconButton stretch to helper-root height on R18 and R19 edit dialog."
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 202,
+      "owner": "OrderDetailPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "afterGap": "\"section\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Status"
+      ],
+      "helper": false,
+      "assessment": "Watch auto-height chip in normal/stretch row; SurfaceContent fixture reproduces growth. Not every current chip height difference is a defect."
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 209,
+      "owner": "OrderDetailPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\"",
+        "beforeGap": "\"form\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "MutationButton",
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 217,
+      "owner": "OrderDetailPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 49,
+      "owner": "SuppliersPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "flexWrap": "\"wrap\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 95,
+      "owner": "SuppliersPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 125,
+      "owner": "ReplenishmentPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "{{ xs: \"column\", sm: \"row\" }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "LookupLoadMore"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 164,
+      "owner": "ReplenishmentPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 235,
+      "owner": "PurchasesPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "alignItems": "{{ sm: 'center' }}",
+        "justifyContent": "\"space-between\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 239,
+      "owner": "PurchasesPage",
+      "tag": "FormFields",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": true,
+      "assessment": "Field-only row: root stretch can include helper space; no extra action-height defect observed. Input-face alignment must remain independent of helper length."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 279,
+      "owner": "PurchaseDialog",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "\"row\"",
+        "flexWrap": "\"wrap\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 352,
+      "owner": "ReceiptsPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/procurement/index.tsx",
+      "line": 362,
+      "owner": "ReceiptsPage",
+      "tag": "FieldGroup",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 36,
+        "name": "FieldGroup"
+      },
+      "controls": [
+        "Button",
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 170,
+      "owner": "ReportsPage",
+      "tag": "FormFields",
+      "props": {
+        "data-testid": "\"reports-date-filters\"",
+        "direction": "{{ xs: 'column', sm: 'row' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 29,
+        "name": "FormFields"
+      },
+      "controls": [
+        "TextField"
+      ],
+      "helper": false,
+      "assessment": "Field-only row: root stretch can include helper space; no extra action-height defect observed. Input-face alignment must remain independent of helper length."
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 182,
+      "owner": "ReportsPage",
+      "tag": "ActionGroup",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "alignItems": "{{ xs: 'stretch', sm: 'center' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 50,
+        "name": "ActionGroup"
+      },
+      "controls": [
+        "RouteLink"
+      ],
+      "helper": true,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 28,
+      "owner": "AuthCard",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "sx": "{layoutSx.auth.brandMarkGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 139,
+      "owner": "SetupChecklistItem",
+      "tag": "SurfaceContent",
+      "props": {
+        "bodyMode": "\"compactControlOutlined\"",
+        "direction": "\"row\"",
+        "alignItems": "{{ xs: 'flex-start', md: 'center' }}",
+        "justifyContent": "\"space-between\"",
+        "flexWrap": "\"wrap\""
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 41,
+        "name": "SurfaceContent"
+      },
+      "controls": [
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 158,
+      "owner": "TeamPage",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\""
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 26,
+      "owner": "PageHeader",
+      "tag": "Stack",
+      "props": {
+        "direction": "{{ xs: 'column', md: 'row' }}",
+        "justifyContent": "\"space-between\"",
+        "alignItems": "{{ xs: 'stretch', md: 'center' }}",
+        "sx": "{[layoutSx.pageHeader.columnsGap, layoutSx.pageHeader.afterGap]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 28,
+      "owner": "PageHeader",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "sx": "{layoutSx.pageHeader.actionsGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 64,
+      "owner": "Panel",
+      "tag": "Stack",
+      "props": {
+        "direction": "{{ xs: 'column', sm: 'row' }}",
+        "justifyContent": "\"space-between\"",
+        "alignItems": "{{ xs: 'stretch', sm: 'center' }}",
+        "sx": "{[layoutSx.surface.headerInset, layoutSx.surface.headerFlowGap]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 75,
+      "owner": "Stat",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\"",
+        "sx": "{layoutSx.stats.titleGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 97,
+      "owner": "CopyableCode",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "flexWrap": "\"wrap\"",
+        "sx": "{[layoutSx.code.inlineGap, { minWidth: 0 }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "IconButton"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 233,
+      "owner": "Toolbar",
+      "tag": "Stack",
+      "props": {
+        "component": "\"form\"",
+        "onSubmit": "{e => { e.preventDefault(); updateSearch(draft); }}",
+        "direction": "{{ xs: 'column', md: 'row' }}",
+        "alignItems": "{{ xs: 'stretch', md: 'center' }}",
+        "sx": "{layoutSx.toolbar.controlGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "TextField",
+        "IconButton",
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 247,
+      "owner": "Pager",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\"",
+        "alignItems": "\"center\"",
+        "sx": "{layoutSx.pager.inset}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 247,
+      "owner": "Pager",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "sx": "{layoutSx.pager.actionsGap}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 259,
+      "owner": "LookupLoadMore",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "alignItems": "\"center\"",
+        "justifyContent": "\"space-between\"",
+        "sx": "{layoutSx.lookup.loadMoreRow}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 429,
+      "owner": "EditDialog",
+      "tag": "DialogTitle",
+      "props": {
+        "id": "{`${titleId}-heading`}",
+        "sx": "{{ display: 'flex', alignItems: 'flex-start' }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/DialogTitle/DialogTitle.d.ts",
+        "line": 37,
+        "name": "DialogTitle"
+      },
+      "controls": [
+        "IconButton"
+      ],
+      "helper": false,
+      "assessment": "Explicit alignment exists; review its semantic level and responsive branches. Center on a multiline wrapper does not imply matching input faces."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 471,
+      "owner": "DetailLine",
+      "tag": "Stack",
+      "props": {
+        "direction": "\"row\"",
+        "justifyContent": "\"space-between\"",
+        "sx": "{[layoutSx.detail.valueGap, layoutSx.detail.rowInsetBlock]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "No additional defect observed in sampled baseline/state; inspect this context again when labels, helper/error, permissions or direction change."
+    }
+  ],
+  "grids": [
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 47,
+      "owner": "PlaygroundPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', lg: '1fr 1fr' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "TextField",
+        "MutationButton"
+      ],
+      "helper": true,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/bot/index.tsx",
+      "line": 81,
+      "owner": "AgentTeamPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', md: 'repeat(2,1fr)' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "Status",
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/customers/index.tsx",
+      "line": 120,
+      "owner": "CustomerPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', lg: '1.2fr 1fr' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "TextField",
+        "MutationButton",
+        "RouteLink",
+        "Status"
+      ],
+      "helper": true,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 77,
+      "owner": "DashboardPage",
+      "tag": "Box",
+      "props": {
+        "sx": "{[layoutSx.dashboard.sectionGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', xl: '1.6fr 1fr' }, alignItems: 'start' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "controls": [
+        "RouteLink",
+        "Button",
+        "Status",
+        "MutationButton"
+      ],
+      "helper": true,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/dashboard/index.tsx",
+      "line": 98,
+      "owner": "DashboardPage",
+      "tag": "SectionGrid",
+      "props": {
+        "rhythm": "\"content\"",
+        "columns": "{{ xs: '1fr', sm: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "Status"
+      ],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 50,
+      "owner": "InboxPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', lg: '300px minmax(0,1fr)' }}",
+        "geometry": "{{minHeight: 650}}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "TextField",
+        "Status"
+      ],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 127,
+      "owner": "ConversationPanel",
+      "tag": "SectionGrid",
+      "props": {
+        "data-testid": "\"inbox-conversation-layout\"",
+        "columns": "{{ xs: '1fr', xl: 'minmax(0,1fr) 260px' }}",
+        "geometry": "{{minWidth: 0}}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "Button",
+        "MutationButton",
+        "TextField"
+      ],
+      "helper": true,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/integrations/index.tsx",
+      "line": 42,
+      "owner": "AIProvidersPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', lg: '1fr 1fr' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "Status",
+        "MutationButton"
+      ],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/notifications/index.tsx",
+      "line": 115,
+      "owner": "DevicesPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', lg: '1.2fr 1fr' }}",
+        "shrinkChildren": "true",
+        "geometry": "{{minWidth: 0}}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "TextField",
+        "MutationButton",
+        "Status",
+        "LookupLoadMore",
+        "Button",
+        "Checkbox"
+      ],
+      "helper": true,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/operations/index.tsx",
+      "line": 248,
+      "owner": "DigestsPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', lg: '1.5fr 1fr' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "Status"
+      ],
+      "helper": true,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/orders/index.tsx",
+      "line": 203,
+      "owner": "OrderDetailPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', lg: '2fr 1fr' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "RouteLink"
+      ],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 155,
+      "owner": "ReportsPage",
+      "tag": "SectionGrid",
+      "props": {
+        "data-testid": "\"reports-main-layout\"",
+        "columns": "{{ xs: 'minmax(0, 1fr)', xl: 'minmax(0, 1.2fr) minmax(0, .8fr)' }}",
+        "alignItems": "{'start'}",
+        "geometry": "{{minWidth: 0}}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "TextField",
+        "Button",
+        "RouteLink",
+        "Status"
+      ],
+      "helper": true,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 235,
+      "owner": "MarketingPage",
+      "tag": "SectionGrid",
+      "props": {
+        "data-testid": "\"marketing-sections-grid\"",
+        "columns": "{{ xs: '1fr', lg: '1fr 1fr' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 53,
+      "owner": "WorkspacesPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', md: 'repeat(2,1fr)' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "Button"
+      ],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/modules/workspace/index.tsx",
+      "line": 214,
+      "owner": "PrivacyPage",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', lg: '1fr 1.4fr' }}"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [
+        "Status",
+        "TextField",
+        "MutationButton"
+      ],
+      "helper": true,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 79,
+      "owner": "Stats",
+      "tag": "Box",
+      "props": {
+        "sx": "{[layoutSx.stats.gutter, layoutSx.stats.afterGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' } }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 74,
+      "owner": "SectionGrid",
+      "tag": "Box",
+      "props": {
+        "children": "{props.children}",
+        "id": "{props.id}",
+        "role": "{props.role}",
+        "aria-label": "{props['aria-label']}",
+        "alignItems": "{props.alignItems}",
+        "data-testid": "{props['data-testid']}",
+        "data-draft-clean": "{props['data-draft-clean']}",
+        "data-ui-composition": "\"section-grid\"",
+        "data-ui-rhythm": "{rhythm}",
+        "sx": "{[rhythm === 'section' ? layoutSx.grid.gutter : layoutSx.surface.contentGap, layoutSx.composition.childBoundaries, { display: 'grid', gridTemplateColumns: columns }, shrinkChildren === true && { '& > *': { minWidth: 0 } }, { width: geometry?.width, minWidth: geometry?.minWidth, maxWidth: geometry?.maxWidth, height: geometry?.height, minHeight: geometry?.minHeight, flex: geometry?.flex, gridColumn: geometry?.gridColumn }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    },
+    {
+      "file": "apps/web/src/shared/ui/draft-conflict.tsx",
+      "line": 33,
+      "owner": "Comparison",
+      "tag": "SectionGrid",
+      "props": {
+        "columns": "{{ xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' }}",
+        "rhythm": "\"content\"",
+        "shrinkChildren": "true"
+      },
+      "target": {
+        "file": "apps/web/src/shared/ui/composition.tsx",
+        "line": 73,
+        "name": "SectionGrid"
+      },
+      "controls": [],
+      "helper": false,
+      "assessment": "Review card/pane equality separately from control height; track min-content and explicit scrolling of long data. No default-data page overflow observed in route matrix."
+    }
+  ],
+  "text": [
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 108,
+      "owner": "Shell",
+      "tag": "Box",
+      "props": {
+        "sx": "{{ height: '100%', bgcolor: colors.sidebar, display: 'flex', flexDirection: 'column' }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 109,
+      "owner": "Shell",
+      "tag": "Box",
+      "props": {
+        "sx": "{[layoutSx.navigation.brandMarkShape, { width: 38, height: 38, bgcolor: 'primary.main', color: colors.onAccent, display: 'grid', placeItems: 'center' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 113,
+      "owner": "Shell",
+      "tag": "Avatar",
+      "props": {
+        "sx": "{{ width: 32, height: 32, bgcolor: colors.raised, color: 'primary.main' }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Avatar/Avatar.d.ts",
+        "line": 108,
+        "name": "Avatar"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/app/Shell.tsx",
+      "line": 119,
+      "owner": "Shell",
+      "tag": "Avatar",
+      "props": {
+        "sx": "{{ width: 32, height: 32, bgcolor: colors.selected, color: 'primary.main', fontSize: tokens.fontSizes.body }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Avatar/Avatar.d.ts",
+        "line": 108,
+        "name": "Avatar"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 71,
+      "owner": "InboxPage",
+      "tag": "Avatar",
+      "props": {
+        "sx": "{{ bgcolor: colors.raised, color: 'text.primary', width: 38, height: 38 }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Avatar/Avatar.d.ts",
+        "line": 108,
+        "name": "Avatar"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 74,
+      "owner": "InboxPage",
+      "tag": "Typography",
+      "props": {
+        "fontWeight": "{visualSx.typography.fontWeight.strong}",
+        "noWrap": "true"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Typography/Typography.d.ts",
+        "line": 95,
+        "name": "Typography"
+      },
+      "assessment": "Intentional Inbox preview truncation; complete conversation must remain reachable. No blanket hidden-overflow exemption."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 77,
+      "owner": "InboxPage",
+      "tag": "Typography",
+      "props": {
+        "variant": "\"body2\"",
+        "noWrap": "true",
+        "color": "\"text.secondary\"",
+        "sx": "{[layoutSx.surface.titleDescriptionGap, { display: 'block' }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Typography/Typography.d.ts",
+        "line": 95,
+        "name": "Typography"
+      },
+      "assessment": "Intentional Inbox preview truncation; complete conversation must remain reachable. No blanket hidden-overflow exemption."
+    },
+    {
+      "file": "apps/web/src/modules/inbox/index.tsx",
+      "line": 128,
+      "owner": "ConversationPanel",
+      "tag": "Box",
+      "props": {
+        "data-testid": "\"inbox-thread\"",
+        "component": "\"section\"",
+        "aria-label": "\"Nội dung hội thoại\"",
+        "sx": "{{ minWidth: 0, height: { xl: 650 } }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/modules/reports/index.tsx",
+      "line": 244,
+      "owner": "MarketingPage",
+      "tag": "Box",
+      "props": {
+        "role": "\"img\"",
+        "aria-label": "{`Biểu đồ lý do không chốt đơn, ${m.lostSaleReasons.length} nhóm`}",
+        "data-testid": "\"marketing-loss-chart\"",
+        "sx": "{[{ height: 260 }, layoutSx.report.chartViewportInset]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 52,
+      "owner": "Panel",
+      "tag": "Paper",
+      "props": {
+        "variant": "\"outlined\"",
+        "sx": "{[\r\n        { borderRadius: `${tokens.radius.card}px`, overflow: 'hidden' },\r\n        beforeGap === 'section' && layoutSx.page.sectionBefore,\r\n        beforeGap === 'surface' && layoutSx.surface.sectionBefore,\r\n        afterGap === 'section' && layoutSx.page.sectionAfter,\r\n        {\r\n            display: geometry?.display,\r\n            flexDirection: geometry?.flexDirection,\r\n            height: geometry?.height,\r\n            gridColumn: geometry?.gridColumn,\r\n        },\r\n    ]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Paper/Paper.d.ts",
+        "line": 54,
+        "name": "Paper"
+      },
+      "assessment": "Measured long-money risk at shared owner/consumer composition."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 82,
+      "owner": "Amount",
+      "tag": "Box",
+      "props": {
+        "component": "\"span\"",
+        "sx": "{{ fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "assessment": "Measured long-money risk at shared owner/consumer composition."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 112,
+      "owner": "Status",
+      "tag": "Chip",
+      "props": {
+        "label": "{label(value)}",
+        "sx": "{{ color: palette[0], background: palette[1], maxWidth: '100%', height: 'auto', minHeight: 32, '& .MuiChip-label': { whiteSpace: 'normal', overflowWrap: 'anywhere' } }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Chip/Chip.d.ts",
+        "line": 129,
+        "name": "Chip"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/shared/ui/components.tsx",
+      "line": 140,
+      "owner": "Empty",
+      "tag": "Box",
+      "props": {
+        "aria-hidden": "\"true\"",
+        "sx": "{{ width: tokens.layout.touchTarget, height: tokens.layout.touchTarget, borderRadius: `${tokens.radius.control}px`, bgcolor: colors.raised, display: 'grid', placeItems: 'center', color: 'text.secondary' }}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 37,
+      "owner": "FieldGroup",
+      "tag": "Stack",
+      "props": {
+        "children": "{props.children}",
+        "direction": "{props.direction}",
+        "alignItems": "{props.alignItems}",
+        "justifyContent": "{props.justifyContent}",
+        "flexWrap": "{props.flexWrap}",
+        "id": "{props.id}",
+        "role": "{props.role}",
+        "aria-label": "{props['aria-label']}",
+        "aria-labelledby": "{props['aria-labelledby']}",
+        "aria-describedby": "{props['aria-describedby']}",
+        "data-testid": "{props['data-testid']}",
+        "data-draft-clean": "{props['data-draft-clean']}",
+        "data-ui-composition": "\"field-group\"",
+        "sx": "{[layoutSx.form.inlineGap, layoutSx.composition.childBoundaries, bodyMode === 'toolbar' && layoutSx.toolbar.inset, { width: geometry?.width, minWidth: geometry?.minWidth, maxWidth: geometry?.maxWidth, height: geometry?.height, minHeight: geometry?.minHeight, flex: geometry?.flex, gridColumn: geometry?.gridColumn }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 46,
+      "owner": "SurfaceContent",
+      "tag": "Stack",
+      "props": {
+        "children": "{props.children}",
+        "direction": "{props.direction}",
+        "alignItems": "{props.alignItems}",
+        "justifyContent": "{props.justifyContent}",
+        "flexWrap": "{props.flexWrap}",
+        "id": "{props.id}",
+        "role": "{props.role}",
+        "aria-label": "{props['aria-label']}",
+        "aria-labelledby": "{props['aria-labelledby']}",
+        "aria-describedby": "{props['aria-describedby']}",
+        "data-testid": "{props['data-testid']}",
+        "data-draft-clean": "{props['data-draft-clean']}",
+        "data-ui-composition": "\"surface-content\"",
+        "sx": "{[layoutSx.surface.contentGap, layoutSx.composition.childBoundaries, (bodyMode === 'inset' || bodyMode === 'insetDivider') && layoutSx.surface.inset, bodyMode === 'insetDivider' && { borderBottom: 1, borderColor: 'divider' }, (bodyMode === 'compactOutlined' || bodyMode === 'compactControlOutlined') && layoutSx.surface.compactInset, bodyMode === 'compactOutlined' && { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.large }, bodyMode === 'compactControlOutlined' && { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }, beforeGap === 'surface' && layoutSx.surface.sectionBefore, afterGap === 'notice' && layoutSx.notice.afterGap, { width: geometry?.width, minWidth: geometry?.minWidth, maxWidth: geometry?.maxWidth, height: geometry?.height, minHeight: geometry?.minHeight, flex: geometry?.flex, gridColumn: geometry?.gridColumn }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 57,
+      "owner": "ActionGroup",
+      "tag": "Stack",
+      "props": {
+        "children": "{props.children}",
+        "alignItems": "{props.alignItems}",
+        "justifyContent": "{props.justifyContent}",
+        "flexWrap": "{props.flexWrap}",
+        "id": "{props.id}",
+        "role": "{props.role}",
+        "aria-label": "{props['aria-label']}",
+        "aria-labelledby": "{props['aria-labelledby']}",
+        "aria-describedby": "{props['aria-describedby']}",
+        "data-testid": "{props['data-testid']}",
+        "data-draft-clean": "{props['data-draft-clean']}",
+        "data-ui-composition": "\"action-group\"",
+        "data-ui-rhythm": "{density}",
+        "direction": "{direction}",
+        "sx": "{[spacing, layoutSx.composition.childBoundaries, bodyMode === 'header' && layoutSx.surface.headerInset, bodyMode === 'header' && { borderBottom: 1, borderColor: 'divider' }, beforeGap === 'form' && layoutSx.actions.beforeGap, beforeGap === 'surface' && layoutSx.surface.sectionBefore, beforeGap === 'detail' && layoutSx.detail.relatedContentGap, afterGap === 'section' && layoutSx.page.sectionAfter, afterGap === 'notice' && layoutSx.notice.afterGap, { width: geometry?.width, minWidth: geometry?.minWidth, maxWidth: geometry?.maxWidth, height: geometry?.height, minHeight: geometry?.minHeight, flex: geometry?.flex, gridColumn: geometry?.gridColumn }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 62,
+      "owner": "PageSections",
+      "tag": "Stack",
+      "props": {
+        "children": "{props.children}",
+        "direction": "{props.direction}",
+        "alignItems": "{props.alignItems}",
+        "justifyContent": "{props.justifyContent}",
+        "flexWrap": "{props.flexWrap}",
+        "id": "{props.id}",
+        "role": "{props.role}",
+        "aria-label": "{props['aria-label']}",
+        "aria-labelledby": "{props['aria-labelledby']}",
+        "aria-describedby": "{props['aria-describedby']}",
+        "data-testid": "{props['data-testid']}",
+        "data-draft-clean": "{props['data-draft-clean']}",
+        "data-ui-composition": "\"page-sections\"",
+        "sx": "{[layoutSx.page.sectionGap, layoutSx.composition.childBoundaries, beforeGap === 'section' && layoutSx.page.sectionBefore, shrinkChildren === true && { '& > *': { minWidth: 0 } }, { width: geometry?.width, minWidth: geometry?.minWidth, maxWidth: geometry?.maxWidth, height: geometry?.height, minHeight: geometry?.minHeight, flex: geometry?.flex, gridColumn: geometry?.gridColumn }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Stack/Stack.d.ts",
+        "line": 54,
+        "name": "Stack"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    },
+    {
+      "file": "apps/web/src/shared/ui/composition.tsx",
+      "line": 74,
+      "owner": "SectionGrid",
+      "tag": "Box",
+      "props": {
+        "children": "{props.children}",
+        "id": "{props.id}",
+        "role": "{props.role}",
+        "aria-label": "{props['aria-label']}",
+        "alignItems": "{props.alignItems}",
+        "data-testid": "{props['data-testid']}",
+        "data-draft-clean": "{props['data-draft-clean']}",
+        "data-ui-composition": "\"section-grid\"",
+        "data-ui-rhythm": "{rhythm}",
+        "sx": "{[rhythm === 'section' ? layoutSx.grid.gutter : layoutSx.surface.contentGap, layoutSx.composition.childBoundaries, { display: 'grid', gridTemplateColumns: columns }, shrinkChildren === true && { '& > *': { minWidth: 0 } }, { width: geometry?.width, minWidth: geometry?.minWidth, maxWidth: geometry?.maxWidth, height: geometry?.height, minHeight: geometry?.minHeight, flex: geometry?.flex, gridColumn: geometry?.gridColumn }]}"
+      },
+      "target": {
+        "file": "node_modules/@mui/material/esm/Box/Box.d.ts",
+        "line": 16,
+        "name": "Box"
+      },
+      "assessment": "Finite decorative, chart, pane or declared geometry; review content clipping at consumer, not from a height literal alone."
+    }
+  ]
+}

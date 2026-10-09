@@ -1,0 +1,39 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+apps/web/src/modules/catalog/index.tsx(15,1): error TS6133: 'layoutSx' is declared but its value is never read.
+{"stage":"e2e","exitCode":2,"sourceDrift":[],"record":"C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend\\evidence\\frontend-toolbar-20261008\\runs\\toolbar-1791449516268-30680\\e2e-record.json"}

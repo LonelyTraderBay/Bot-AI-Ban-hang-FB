@@ -1,0 +1,309 @@
+{
+  "schemaVersion": 1,
+  "task": "S16.Toolbar",
+  "recordedAt": "2026-10-08T14:54:23.679Z",
+  "scope": "Isolated Chromium with local React demo and synthetic MSW; no backend or persistent app writes",
+  "sourceSha256": {
+    "apps/web/src/shared/ui/components.tsx": "f820ef65f5da75cb0fe755b0d68cf01365ea65938351404f61b3b7fea9d41b17",
+    "apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "apps/web/src/shared/ui/theme.ts": "89a903ba7638a7709f118750bdb7a165d44ff57fc949ba69dc0d5f19f29465df",
+    "apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "apps/web/src/app/Shell.tsx": "14d33f33d3cc1328e8739af23cc76eca319707a91b617b1467367a0a2571cbfb",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/catalog/index.tsx": "6329c92de23b5b5c9ce4d0306d6850d4193be69cbb26533076573d96e52a4dc6",
+    "apps/web/src/modules/inventory/index.tsx": "6d62daee4da307c8a6063db31d2524e12fab8626782771a2ce8e0f2720d56ffd",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "tests/ui-toolbar-layout.spec.ts": "8202f2cf064ec3491cb6b957245fc8bc61b379eb6a21f0ba651ca43a417856f8",
+    "evidence/frontend-toolbar-20261008/capture-toolbar-browser-zoom.mjs": "aff38564924cdeeb18cbe646af065eb047d7c8a3a55e7c98adf0874b039f9972"
+  },
+  "method": {
+    "browser": "Playwright-bundled Chromium, headed, fresh temporary profile",
+    "mechanism": "Temporary Manifest V3 extension calls chrome.tabs.setZoom(tabId, 2) and independently reads chrome.tabs.getZoom(tabId)",
+    "baselineViewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "targetZoomFactor": 2,
+    "note": "The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2.",
+    "browserVersion": "153.0.8010.12"
+  },
+  "scenarios": [
+    {
+      "id": "products-desktop",
+      "route": "/s/shop-demo/products",
+      "browserZoom": {
+        "startingZoom": 1,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:63814/s/shop-demo/products"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 640
+      },
+      "measurements": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 1617,
+          "scrollY": 236,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 210.72,
+            "width": 569,
+            "height": 44,
+            "right": 602,
+            "bottom": 254.72,
+            "scrollWidth": 567,
+            "clientWidth": 567,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 602,
+            "y": 210.71875,
+            "bottom": 254.71875
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-toolbar-20261008/actual-browser-zoom-200-products-desktop-focused-width-inherited-r2-20261008.png",
+        "sha256": "4f858390cae44bb96143f79ca9473e395e93f2e7ff25066a48c0c737683f8794"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-toolbar-20261008/actual-browser-zoom-200-products-desktop-after-tab-width-inherited-r2-20261008.png",
+        "sha256": "69fe6acf6122c4d8e0dce2738205047ba98c0a2847457895b7bf2ed79303c306"
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "inventory",
+      "route": "/s/shop-demo/inventory",
+      "browserZoom": {
+        "startingZoom": 2,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:63814/s/shop-demo/inventory"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635
+      },
+      "measurements": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 2586,
+          "scrollY": 330,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 210.72,
+            "width": 569,
+            "height": 44,
+            "right": 602,
+            "bottom": 254.72,
+            "scrollWidth": 567,
+            "clientWidth": 567,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 602,
+            "y": 210.71875,
+            "bottom": 254.71875
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-toolbar-20261008/actual-browser-zoom-200-inventory-focused-width-inherited-r2-20261008.png",
+        "sha256": "0ea770e959cde4727bb83d430e4984867e10e5bceed7415f6b586bc4ad743d9a"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-toolbar-20261008/actual-browser-zoom-200-inventory-after-tab-width-inherited-r2-20261008.png",
+        "sha256": "02cce80fd7163b9c516affbde9a6c6f31cfc44c9be353788cfd77ad8a43e7e17"
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "movements",
+      "route": "/s/shop-demo/inventory/movements",
+      "browserZoom": {
+        "startingZoom": 2,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:63814/s/shop-demo/inventory/movements"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635
+      },
+      "measurements": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 2322,
+          "scrollY": 236,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main form button[type=\"submit\"]",
+            "found": true,
+            "x": 33,
+            "y": 210.72,
+            "width": 569,
+            "height": 44,
+            "right": 602,
+            "bottom": 254.72,
+            "scrollWidth": 567,
+            "clientWidth": 567,
+            "scrollHeight": 42,
+            "clientHeight": 42,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Tìm kiếm",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 602,
+            "y": 210.71875,
+            "bottom": 254.71875
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-toolbar-20261008/actual-browser-zoom-200-movements-focused-width-inherited-r2-20261008.png",
+        "sha256": "1766376e590b0793ed242283cce113d381b5d9de33ace7d5583f45f0fe91e5a7"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-toolbar-20261008/actual-browser-zoom-200-movements-after-tab-width-inherited-r2-20261008.png",
+        "sha256": "62369ad990bfd82513abac1d79a205952e2f623a46cf6c2ad0eda67268239c4c"
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

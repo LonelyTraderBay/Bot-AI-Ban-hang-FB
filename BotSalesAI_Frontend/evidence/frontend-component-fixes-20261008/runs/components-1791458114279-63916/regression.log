@@ -1,0 +1,88 @@
+[WebServer] (node:22968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+(node:79072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/4] [chromium] › tests\ui-component-layout.spec.ts:29:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-90756-3cbcf505-b86f-439f-8ebb-ccd025078758\deps\react-dom_client.js?v=908b2024 as it exceeds the max of 500KB.
+
+[2/4] [chromium] › tests\ui-component-layout.spec.ts:50:1 › A02 product editors align category and status faces independently from lookup metadata
+  1) [chromium] › tests\ui-component-layout.spec.ts:50:1 › A02 product editors align category and status faces independently from lookup metadata 
+
+    Error: locator.boundingBox: Error: strict mode violation: getByRole('combobox', { name: /^Trạng thái/ }) resolved to 2 elements:
+        1) <div id="«rb»" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Trạng thái thử" aria-labelledby="«rb»-label «rb»" class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1gmaj3z-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input">Bình thường</div> aka getByRole('combobox', { name: 'Trạng thái thử Trạng thái thử' })
+        2) <div id="«rq»" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="«rq»-label «rq»" class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-uln7yc-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input">Bản nháp</div> aka getByRole('combobox', { name: 'Trạng thái Bản nháp' })
+
+    Call log:
+      - waiting for getByRole('combobox', { name: /^Trạng thái/ })
+
+
+      55 |         await expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible();
+      56 |         await expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible();
+    > 57 |         const geometry = { category: (await page.getByRole('combobox', { name: /^Danh mục/ }).boundingBox())!, status: (await page.getByRole('combobox', { name: /^Trạng thái/ }).boundingBox())! };
+         |                                                                                                                                                                                   ^
+      58 |         if (width >= 768) expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1);
+      59 |         else expect(geometry.status.y).toBeGreaterThan(geometry.category.y);
+      60 |         await reflow(page, width);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:57:179
+
+    Error Context: test-results\playwright-79072-81b90d3e-f4ce-4687-995d-c049a4efb7d1\ui-component-layout-A02-pr-8d59e-dently-from-lookup-metadata-chromium\error-context.md
+
+    Error Context: test-results\playwright-79072-81b90d3e-f4ce-4687-995d-c049a4efb7d1\ui-component-layout-A02-pr-8d59e-dently-from-lookup-metadata-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-79072-81b90d3e-f4ce-4687-995d-c049a4efb7d1\ui-component-layout-A02-pr-8d59e-dently-from-lookup-metadata-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-79072-81b90d3e-f4ce-4687-995d-c049a4efb7d1\ui-component-layout-A02-pr-8d59e-dently-from-lookup-metadata-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:89932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/4] [firefox] › tests\ui-component-layout.spec.ts:29:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[4/4] [firefox] › tests\ui-component-layout.spec.ts:50:1 › A02 product editors align category and status faces independently from lookup metadata
+  2) [firefox] › tests\ui-component-layout.spec.ts:50:1 › A02 product editors align category and status faces independently from lookup metadata 
+
+    Error: locator.boundingBox: Error: strict mode violation: getByRole('combobox', { name: /^Trạng thái/ }) resolved to 2 elements:
+        1) <div id="«rb»" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Trạng thái thử" aria-labelledby="«rb»-label «rb»" class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1gmaj3z-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input">Bình thường</div> aka getByRole('combobox', { name: 'Trạng thái thử Trạng thái thử' })
+        2) <div id="«rq»" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-labelledby="«rq»-label «rq»" class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-uln7yc-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input">Bản nháp</div> aka getByRole('combobox', { name: 'Trạng thái Bản nháp' })
+
+    Call log:
+      - waiting for getByRole('combobox', { name: /^Trạng thái/ })
+
+
+      55 |         await expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible();
+      56 |         await expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible();
+    > 57 |         const geometry = { category: (await page.getByRole('combobox', { name: /^Danh mục/ }).boundingBox())!, status: (await page.getByRole('combobox', { name: /^Trạng thái/ }).boundingBox())! };
+         |                                                                                                                                                                                   ^
+      58 |         if (width >= 768) expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1);
+      59 |         else expect(geometry.status.y).toBeGreaterThan(geometry.category.y);
+      60 |         await reflow(page, width);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:57:179
+
+    Error Context: test-results\playwright-89932-4d0e5f3e-03da-4d0b-937f-6f93665c91cf\ui-component-layout-A02-pr-8d59e-dently-from-lookup-metadata-firefox\error-context.md
+
+    Error Context: test-results\playwright-89932-4d0e5f3e-03da-4d0b-937f-6f93665c91cf\ui-component-layout-A02-pr-8d59e-dently-from-lookup-metadata-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-89932-4d0e5f3e-03da-4d0b-937f-6f93665c91cf\ui-component-layout-A02-pr-8d59e-dently-from-lookup-metadata-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-89932-4d0e5f3e-03da-4d0b-937f-6f93665c91cf\ui-component-layout-A02-pr-8d59e-dently-from-lookup-metadata-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-component-layout.spec.ts:50:1 › A02 product editors align category and status faces independently from lookup metadata 
+    [firefox] › tests\ui-component-layout.spec.ts:50:1 › A02 product editors align category and status faces independently from lookup metadata 
+  2 passed (30.0s)

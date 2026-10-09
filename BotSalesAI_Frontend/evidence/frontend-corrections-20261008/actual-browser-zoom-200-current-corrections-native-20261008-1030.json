@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W30",
+  "recordedAt": "2026-10-08T03:28:33.645Z",
+  "scope": "Isolated Chromium with local React demo and synthetic MSW; no backend or persistent app writes",
+  "sourceSha256": {
+    "apps/web/src/modules/customers/index.tsx": "0098291c1ce460c3b6cf188b3e75bdfe7e95507497117a70bd6dad9fb5d87642",
+    "apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
+    "apps/web/src/shared/ui/draft-conflict.tsx": "5332f808b3bb81c901962bcdd678e6f37290c408033b1e552f9321d0a01ed809",
+    "apps/web/src/shared/ui/components.tsx": "79cd7a6e0473da61469d5256f03888045d549075903e28e5ad4f6e0da6298e6b",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "apps/web/src/app/Shell.tsx": "54062999115c0d16097dd715c9d3d089d9ee4f11e40220636b1f67028e96d00d",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/modules/catalog/index.tsx": "6460f6ed1398526a1a530df7772f03d2f86a2048f625786cf86095284ce270bc",
+    "apps/web/src/modules/inbox/index.tsx": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b",
+    "apps/web/src/modules/reports/index.tsx": "fd9f178af85314370f1eff5d38539b654e1d805ed42d13d3a0ff8b655bd37754",
+    "tests/ui028-w30-stress.spec.ts": "54c71563d0be5266c3ac495bfe7ca36252adf6812ec3db665559cd76d6cd9d36",
+    "tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
+    "evidence/frontend-ui-improvements/UI028/W30/design-contract-pre-stress-current-20261006.md": "359fad0f5b642b39c237ce0f7bd236f7cafa4f520acee5956a0996ce7d8fa6ee",
+    "evidence/frontend-corrections-20261008/capture-comparison-browser-zoom.mjs": "e2d3ca4f6c1714eee19695b045697e9cc3204e795d7b52bea07241f9df2dc8d3"
+  },
+  "method": {
+    "browser": "Playwright-bundled Chromium, headed, fresh temporary profile",
+    "mechanism": "Temporary Manifest V3 extension calls chrome.tabs.setZoom(tabId, 2) and independently reads chrome.tabs.getZoom(tabId)",
+    "baselineViewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "targetZoomFactor": 2,
+    "note": "The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2.",
+    "browserVersion": "153.0.8010.12"
+  },
+  "scenarios": [
+    {
+      "id": "draft-comparison",
+      "route": "/s/shop-demo/customers/c1",
+      "browserZoom": {
+        "startingZoom": 1,
+        "before": 1,
+        "requested": 2,
+        "reported": 2,
+        "tabUrl": "http://127.0.0.1:59130/s/shop-demo/customers/c1"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 640
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 640,
+          "documentWidth": 640,
+          "pageOverflow": 0,
+          "scrollHeight": 2219,
+          "scrollY": 893.5,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[role=\"dialog\"]",
+            "found": true,
+            "x": 32,
+            "y": 32,
+            "width": 576,
+            "height": 296,
+            "right": 608,
+            "bottom": 328,
+            "scrollWidth": 574,
+            "clientWidth": 574,
+            "scrollHeight": 294,
+            "clientHeight": 294,
+            "overflowX": "auto",
+            "overflowY": "auto",
+            "fontSize": "14px",
+            "textLength": 3761
+          },
+          {
+            "selector": "[role=\"dialog\"] h3",
+            "found": true,
+            "x": 62,
+            "y": -418.7,
+            "width": 511,
+            "height": 21.98,
+            "right": 573,
+            "bottom": -396.73,
+            "scrollWidth": 511,
+            "clientWidth": 511,
+            "scrollHeight": 22,
+            "clientHeight": 22,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 14
+          },
+          {
+            "selector": "[role=\"dialog\"] [role=\"combobox\"]",
+            "found": true,
+            "x": 62,
+            "y": -195.73,
+            "width": 511,
+            "height": 53.13,
+            "right": 573,
+            "bottom": -142.6,
+            "scrollWidth": 511,
+            "clientWidth": 511,
+            "scrollHeight": 53,
+            "clientHeight": 53,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "14px",
+            "textLength": 1
+          },
+          {
+            "selector": "[role=\"dialog\"] button",
+            "found": true,
+            "x": 551,
+            "y": 45,
+            "width": 44,
+            "height": 44,
+            "right": 595,
+            "bottom": 89,
+            "scrollWidth": 44,
+            "clientWidth": 44,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "24px",
+            "textLength": 0
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": {
+          "x": 32,
+          "y": 32,
+          "width": 576,
+          "height": 296,
+          "right": 608,
+          "bottom": 328,
+          "scrollWidth": 574,
+          "clientWidth": 574,
+          "scrollHeight": 294,
+          "clientHeight": 294,
+          "overflowX": "auto",
+          "overflowY": "auto",
+          "fontSize": "14px",
+          "textLength": 3761
+        },
+        "activeFocus": {
+          "tag": "div",
+          "role": "combobox",
+          "label": "Dùng bản server",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 62,
+            "right": 573,
+            "y": 143.375,
+            "bottom": 196.5
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-corrections-20261008/actual-browser-zoom-200-draft-comparison-focused-corrections-native-20261008-1030.png",
+        "sha256": "2d45f2588cd0ee131f78976fa651794a3ba79322062ff8d78574ba7a55b03be5"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-corrections-20261008/actual-browser-zoom-200-draft-comparison-after-tab-corrections-native-20261008-1030.png",
+        "sha256": "2d45f2588cd0ee131f78976fa651794a3ba79322062ff8d78574ba7a55b03be5"
+      },
+      "writeRequests": [
+        {
+          "method": "PATCH",
+          "url": "http://127.0.0.1:59130/api/v2/shops/shop-demo/customers/c1"
+        }
+      ],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

@@ -1,0 +1,79 @@
+[WebServer] (node:85180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 2 tests using 1 worker
+
+(node:28936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/2] [chromium] › tests\ui-component-layout.spec.ts:28:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-67220-703d5410-467b-4080-abe8-20a25cee71ce\deps\react-dom_client.js?v=b169d685 as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui-component-layout.spec.ts:28:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 45
+    Received:    92.125
+
+      36 |             const geometry = await intrinsic(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true }));
+      37 |             observations.push({ width, quantity, ...geometry });
+    > 38 |             expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1);
+         |                                     ^
+      39 |             await reflow(page, width);
+      40 |         }
+      41 |         await page.getByRole('button', { name: 'Thêm dòng', exact: true }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:38:37
+
+    Error Context: test-results\playwright-28936-0a7108e3-7662-4e8a-a419-b449cd09fda7\ui-component-layout-A01-or-526ca-lean-and-invalid-quantities-chromium\error-context.md
+
+    Error Context: test-results\playwright-28936-0a7108e3-7662-4e8a-a419-b449cd09fda7\ui-component-layout-A01-or-526ca-lean-and-invalid-quantities-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-28936-0a7108e3-7662-4e8a-a419-b449cd09fda7\ui-component-layout-A01-or-526ca-lean-and-invalid-quantities-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-28936-0a7108e3-7662-4e8a-a419-b449cd09fda7\ui-component-layout-A01-or-526ca-lean-and-invalid-quantities-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:35120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/2] [firefox] › tests\ui-component-layout.spec.ts:28:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+  2) [firefox] › tests\ui-component-layout.spec.ts:28:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 45
+    Received:    92.13333129882812
+
+      36 |             const geometry = await intrinsic(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true }));
+      37 |             observations.push({ width, quantity, ...geometry });
+    > 38 |             expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1);
+         |                                     ^
+      39 |             await reflow(page, width);
+      40 |         }
+      41 |         await page.getByRole('button', { name: 'Thêm dòng', exact: true }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:38:37
+
+    Error Context: test-results\playwright-35120-25b7652b-51a5-422b-8cd4-51a0c245ff9a\ui-component-layout-A01-or-526ca-lean-and-invalid-quantities-firefox\error-context.md
+
+    Error Context: test-results\playwright-35120-25b7652b-51a5-422b-8cd4-51a0c245ff9a\ui-component-layout-A01-or-526ca-lean-and-invalid-quantities-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-35120-25b7652b-51a5-422b-8cd4-51a0c245ff9a\ui-component-layout-A01-or-526ca-lean-and-invalid-quantities-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-35120-25b7652b-51a5-422b-8cd4-51a0c245ff9a\ui-component-layout-A01-or-526ca-lean-and-invalid-quantities-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-component-layout.spec.ts:28:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities 
+    [firefox] › tests\ui-component-layout.spec.ts:28:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities 

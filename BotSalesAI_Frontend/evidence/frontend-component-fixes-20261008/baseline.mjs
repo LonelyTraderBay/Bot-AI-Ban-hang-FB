@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+const root = path.resolve(import.meta.dirname, '../..');
+const walk = directory => fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => entry.isDirectory() ? walk(path.join(directory, entry.name)) : [path.join(directory, entry.name)]);
+const hash = file => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const audit = JSON.parse(fs.readFileSync(path.join(root, 'evidence/frontend-component-risk-audit-20261008/audit-final.json')));
+const prior = JSON.parse(fs.readFileSync(path.join(path.dirname(root), audit.priorVerify.record)));
+const runtime = walk(path.join(root, 'apps/web/src'));
+const mismatch = runtime.filter(file => prior.sourceFingerprints['BotSalesAI_Frontend/' + path.relative(root, file).replaceAll('\\', '/')] !== hash(file));
+if (mismatch.length) throw new Error('Before audit source mismatch: ' + mismatch.join(', '));
+const record = { capturedAt: new Date().toISOString(), HEAD: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), status: execFileSync('git', ['status', '--porcelain=v1', '--untracked-files=all'], { encoding: 'utf8', maxBuffer: 20_000_000 }), source: Object.fromEntries(runtime.map(file => [path.relative(root, file).replaceAll('\\', '/'), hash(file)])), pairedBaseline: { report: '../frontend-component-risk-audit-20261008/REPORT.md', manifestHash: hash(path.join(root, 'evidence/frontend-component-risk-audit-20261008/audit-final.json')), mismatch, observations: audit.observations } };
+const target = path.join(import.meta.dirname, 'baseline.json');
+if (fs.existsSync(target)) throw new Error('Baseline already exists; never overwrite before evidence.');
+fs.writeFileSync(target, JSON.stringify(record, null, 2) + '\n');
+console.log(JSON.stringify({ runtime: runtime.length, mismatch, HEAD: record.HEAD }));

@@ -1,0 +1,527 @@
+{
+  "schemaVersion": 1,
+  "task": "S16.Toolbar",
+  "recordedAt": "2026-10-08T11:33:29.417Z",
+  "scope": "Isolated Firefox with local React demo and synthetic MSW; no backend, user profile, persistent app writes, or system preference changes",
+  "result": "ERROR",
+  "temporaryProfileCleanup": "REMOVED",
+  "method": {
+    "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+    "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+    "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+    "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+    "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+    "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+    "baseZoomFactor": 1,
+    "targetZoomFactor": 2,
+    "scenarios": [
+      {
+        "id": "order",
+        "route": "/s/shop-demo/orders/new",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "product",
+        "route": "/s/shop-demo/products/new",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "import",
+        "route": "/s/shop-demo/imports",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "money",
+        "route": "/s/shop-demo/products",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "status",
+        "route": "/s/shop-demo/products",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "empty",
+        "route": "/s/shop-demo/products",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      },
+      {
+        "id": "address",
+        "route": "/s/shop-demo/orders",
+        "viewport": {
+          "width": 390,
+          "height": 800
+        }
+      }
+    ],
+    "browserVersion": "155.0",
+    "webdriverBuildId": "20260902192955"
+  },
+  "sourceSha256": {
+    "apps/web/src/app/bootstrap.css": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89",
+    "apps/web/src/app/CommandRecovery.tsx": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac",
+    "apps/web/src/app/dirty-drafts.ts": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13",
+    "apps/web/src/app/feedback.tsx": "449b8f38b670784f4b99c91b007ca6a90949b6dab1acc69fd8f93a22e11b2a22",
+    "apps/web/src/app/i18n.ts": "535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340",
+    "apps/web/src/app/locales/vi/customers.ts": "94a1b204b882ce2f87da801327f731842b8c6954f1d77820b10a8d230f592159",
+    "apps/web/src/app/locales/vi/knowledge.ts": "a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9",
+    "apps/web/src/app/navigation.ts": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7",
+    "apps/web/src/app/router.tsx": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4",
+    "apps/web/src/app/ScopeEvents.tsx": "cfea6704a8f8a08ca735700ae3aef4444dd40d8b6a8fb121d06cbab60085c0aa",
+    "apps/web/src/app/SessionProvider.tsx": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e",
+    "apps/web/src/app/Shell.tsx": "14d33f33d3cc1328e8739af23cc76eca319707a91b617b1467367a0a2571cbfb",
+    "apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "apps/web/src/main.tsx": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb",
+    "apps/web/src/mocks/auxiliary.ts": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c",
+    "apps/web/src/mocks/browser.ts": "3786d71b2b665490a116bc0671c5e2494e57e87677e132e8cce1fa80cd5860ee",
+    "apps/web/src/mocks/catalog.ts": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56",
+    "apps/web/src/mocks/collections.json": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6",
+    "apps/web/src/mocks/control.ts": "2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541",
+    "apps/web/src/mocks/database.ts": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c",
+    "apps/web/src/mocks/files.ts": "21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd",
+    "apps/web/src/mocks/finance.ts": "c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d",
+    "apps/web/src/mocks/fulfillment.ts": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40",
+    "apps/web/src/mocks/handlers.ts": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608",
+    "apps/web/src/mocks/marketing-fixture.ts": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb",
+    "apps/web/src/mocks/orders.ts": "c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4",
+    "apps/web/src/mocks/procurement.ts": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0",
+    "apps/web/src/mocks/seed.json": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d",
+    "apps/web/src/mocks/service.ts": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69",
+    "apps/web/src/modules/bot/index.tsx": "235abafb2cb1430415f10e8671b546e16a958ea5e801029762ac8620fce9e3b0",
+    "apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
+    "apps/web/src/modules/catalog/imports.tsx": "cf3a13e9a65334a6ad4d1df6916c20171c48f1c7faac9a4d0aa5a5d68783f8c6",
+    "apps/web/src/modules/catalog/index.tsx": "6329c92de23b5b5c9ce4d0306d6850d4193be69cbb26533076573d96e52a4dc6",
+    "apps/web/src/modules/customers/index.tsx": "a2233f8be5b1c97f5184c1fcafe9cd0a5578b5d8faed43b4af27678709af334c",
+    "apps/web/src/modules/dashboard/index.tsx": "6b33cc85906201a54fb7652d070a61e86d2db47e5b46cd9bf00e0f21c0b54a82",
+    "apps/web/src/modules/finance/demo-account-preview.ts": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60",
+    "apps/web/src/modules/finance/index.tsx": "86bec24ecbef9680357edd714c05f8be42d46ccf805cf6d686ad172796680bdb",
+    "apps/web/src/modules/finance/report-explanations.ts": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
+    "apps/web/src/modules/fulfillment/index.tsx": "d013702152756553b663eab4ef4f70271cc1806cdf1622bedef51d02b4a2374b",
+    "apps/web/src/modules/inbox/conversation-components.tsx": "efde881b00dbb60978017f8394e939fe547403600d85eff6b38e37fe5ca1b848",
+    "apps/web/src/modules/inbox/index.tsx": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b",
+    "apps/web/src/modules/integrations/index.tsx": "1a2011b16665df078cec13aaf75a198f19c4af9533b9812045242194171b556f",
+    "apps/web/src/modules/inventory/index.tsx": "6d62daee4da307c8a6063db31d2524e12fab8626782771a2ce8e0f2720d56ffd",
+    "apps/web/src/modules/knowledge/index.tsx": "acf06edc7f2d4fc847bf7bc63d2a84f643a04e34d571ab1f5189603f793535a5",
+    "apps/web/src/modules/notifications/index.tsx": "27e33c89ae73c93c7f20252539f8e92a49cf26c8c5e206f0e74c1c35cfe9239f",
+    "apps/web/src/modules/notifications/push-capabilities.ts": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
+    "apps/web/src/modules/operations/index.tsx": "a996cf3a6b01ae5577f455066472ceb8df300a943a9517a6890e23a8ea2d5419",
+    "apps/web/src/modules/orders/demo-address-preview.ts": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a",
+    "apps/web/src/modules/orders/index.tsx": "c724b7190c574c3561a8dba2de02190d080c966b711cf48d07f2f811669823f6",
+    "apps/web/src/modules/procurement/index.tsx": "2a6b7ec272ec3ce684a40fc780a40898c1e5682306412af2551f5e5a324008d9",
+    "apps/web/src/modules/reports/index.tsx": "9ed41fb74c7472454bbe5be07bac95a936dafe537d6cf9fa5e1faedceb0c54fd",
+    "apps/web/src/modules/reports/report-utils.ts": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
+    "apps/web/src/modules/workspace/index.tsx": "14bc610e406b356218efc2aaedd848e6caf10abf167aae2ff3ef67541c4b2c51",
+    "apps/web/src/shared/api/client.ts": "14f723eb00cb9e7e5e244b440c1de7dfd534be499c991cf25288b5a7506c65ae",
+    "apps/web/src/shared/api/client.type-contracts.ts": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e",
+    "apps/web/src/shared/api/errors.ts": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227",
+    "apps/web/src/shared/api/event-invalidation.ts": "099f9459e47c239cb5db573262d47d7b757c520e9c3a659f4c7a8c04430ec0cd",
+    "apps/web/src/shared/api/hooks.ts": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213",
+    "apps/web/src/shared/api/intents.ts": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b",
+    "apps/web/src/shared/api/validation.ts": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1",
+    "apps/web/src/shared/model/auth.ts": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4",
+    "apps/web/src/shared/model/dirty-drafts.ts": "387b509645164ec4c1aaccdfa96e0b99329ff3ba83f7b28931a8ffb6de3be7a2",
+    "apps/web/src/shared/model/download.ts": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c",
+    "apps/web/src/shared/model/filters.ts": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d",
+    "apps/web/src/shared/model/format.ts": "9a7d546e64919fefa0e293b4c2869fdef8a13115b308e8aa6c4725b4e0ec4200",
+    "apps/web/src/shared/model/labels.ts": "7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2",
+    "apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
+    "apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
+    "apps/web/src/shared/ui/components.tsx": "ac888885346668a7e2e8fb0ed3564484eb14f6861edec6ba11059e8706ce3e59",
+    "apps/web/src/shared/ui/composition.tsx": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b",
+    "apps/web/src/shared/ui/draft-conflict.tsx": "5332f808b3bb81c901962bcdd678e6f37290c408033b1e552f9321d0a01ed809",
+    "apps/web/src/shared/ui/layout.ts": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a",
+    "apps/web/src/shared/ui/README.md": "3ba09d16d00db869f6b8f24efc033a25cc8057e3848d74b7c9df139968313f18",
+    "apps/web/src/shared/ui/theme.ts": "953a3ca9df114d93395c0ec61f61d65230bf39440aad45a8b55f884e39669b04",
+    "apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
+    "apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
+    "tests/ui-component-layout.spec.ts": "d14eb932e09c78b26e74e80ea05b24ae655dc15e05b4e52dea2eff405118fc90",
+    "tests/design/component-layout-fixture.tsx": "70d33b3c7907b9fe80ce318badce24bfedbb07c6a1ee567f1747c97b118f2146",
+    "../botsales-kit/contracts/route-manifest.json": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "../botsales-kit/design/tokens.json": "95b1202c741162890227ddc70adc7c1e479d17348bedaea56d3dea019f45bbb0",
+    "evidence/frontend-component-fixes-20261008/capture-component-text-zoom.mjs": "ca134ca581b93776f7a0cccdb098e5aabaee880c29a2ac7ff139755d5459af70"
+  },
+  "scenarios": [
+    {
+      "id": "order",
+      "route": "/s/shop-demo/orders/new",
+      "routeUrl": "http://127.0.0.1:63987/s/shop-demo/orders/new",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-component-order",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "url": "http://127.0.0.1:63987/s/shop-demo/orders/new",
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2297,
+          "scrollY": 1197,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-native-target=\"true\"]",
+            "found": true,
+            "x": 33,
+            "y": 378.4,
+            "width": 44,
+            "height": 44,
+            "right": 77,
+            "bottom": 422.4,
+            "scrollWidth": 44,
+            "clientWidth": 44,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "24px",
+            "textLength": 0
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "paintedOwner": null,
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": -1197,
+            "bottom": 1099.666748046875
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": {
+          "buttonHeight": 64,
+          "naturalHeight": 80,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "url": "http://127.0.0.1:63987/s/shop-demo/orders/new",
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 4225,
+          "scrollY": 2341.699951171875,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-native-target=\"true\"]",
+            "found": true,
+            "x": 33,
+            "y": 664.25,
+            "width": 64,
+            "height": 64,
+            "right": 97,
+            "bottom": 728.25,
+            "scrollWidth": 64,
+            "clientWidth": 64,
+            "scrollHeight": 64,
+            "clientHeight": 64,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "48px",
+            "textLength": 0,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Bỏ dòng 1",
+          "paintedOwner": null,
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 97,
+            "y": 664.25,
+            "bottom": 728.25
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-component-fixes-20261008/native-text-only-200-order-focused-components-native-r2-20261008.png",
+        "sha256": "f83e0b56937fd1ff5ee0a09bba6a49d35745fcb48c8143ea79ce5b2aee01383e"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-component-fixes-20261008/native-text-only-200-order-current-components-native-r2-20261008.png",
+        "sha256": "6aea8c7211c100209c4effb413e5bced4b30e986010237ab9f1cbabb232aea0b"
+      },
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "product",
+      "route": "/s/shop-demo/products/new",
+      "routeUrl": "http://127.0.0.1:63987/s/shop-demo/products/new",
+      "viewport": {
+        "width": 390,
+        "height": 800
+      },
+      "setup": "loaded-real-component-product",
+      "nativeSettings": {
+        "baseline": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 1,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "after": {
+          "zoomFullPage": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomSiteSpecific": {
+            "levelOfControl": "controlled_by_this_extension",
+            "value": false
+          },
+          "zoomFactor": 2,
+          "fullPageSet": true,
+          "siteSpecificSet": true
+        },
+        "fixedViewport": true,
+        "fixedDevicePixelRatio": true
+      },
+      "baseline": {
+        "toolbarGeometry": {
+          "buttonHeight": 44,
+          "naturalHeight": 44,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "url": "http://127.0.0.1:63987/s/shop-demo/products/new",
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 1761,
+          "scrollY": 635,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-native-target=\"true\"]",
+            "found": true,
+            "x": 33,
+            "y": 377.73,
+            "width": 324,
+            "height": 44,
+            "right": 357,
+            "bottom": 421.73,
+            "scrollWidth": 324,
+            "clientWidth": 324,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 13
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "body",
+          "role": null,
+          "label": "Đến nội dung chính\nDemo\nJ\nFrontend review: API được mô phỏng trong bộ nhớ, không",
+          "paintedOwner": null,
+          "outlineStyle": "none",
+          "outlineWidth": "3px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 0,
+            "right": 390,
+            "y": -635,
+            "bottom": 1126.433349609375
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "textOnly200": {
+        "toolbarGeometry": {
+          "buttonHeight": 61,
+          "naturalHeight": 73,
+          "centerHitsButton": true
+        },
+        "viewport": {
+          "url": "http://127.0.0.1:63987/s/shop-demo/products/new",
+          "width": 390,
+          "height": 800,
+          "clientWidth": 390,
+          "documentWidth": 390,
+          "pageOverflow": 0,
+          "scrollHeight": 2996,
+          "scrollY": 1249.816650390625,
+          "devicePixelRatio": 1,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-native-target=\"true\"]",
+            "found": true,
+            "x": 33,
+            "y": 570.38,
+            "width": 324,
+            "height": 61,
+            "right": 357,
+            "bottom": 631.38,
+            "scrollWidth": 324,
+            "clientWidth": 324,
+            "scrollHeight": 61,
+            "clientHeight": 61,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 13,
+            "nativeTextScaleRatio": 2
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "input",
+          "role": null,
+          "label": "",
+          "paintedOwner": {
+            "tag": "FIELDSET",
+            "borderWidth": "2px",
+            "borderColor": "rgb(246, 200, 95)",
+            "borderStyle": "solid",
+            "bounds": {
+              "x": 33,
+              "y": 642.38330078125,
+              "width": 324,
+              "height": 78.25,
+              "top": 642.38330078125,
+              "right": 357,
+              "bottom": 720.63330078125,
+              "left": 33
+            },
+            "valid": true
+          },
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "outlineColor": "rgb(245, 247, 250)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 33,
+            "right": 357,
+            "y": 647.38330078125,
+            "bottom": 720.63330078125
+          },
+          "visible": true
+        },
+        "pageErrors": [],
+        "writeRequests": []
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-component-fixes-20261008/native-text-only-200-product-focused-components-native-r2-20261008.png",
+        "sha256": "c211c49c2fa859538c41a9437d332752bde3d18a0592be431765504aecb02736"
+      },
+      "screenshot": {
+        "path": "evidence/frontend-component-fixes-20261008/native-text-only-200-product-current-components-native-r2-20261008.png",
+        "sha256": "8c38a81c56a72a2c6c81af8b8457c80cfeea813d9d7701ab809fcbb8139d41d6"
+      },
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "noProgressLedgerWrites": true,
+  "error": "Error: import: keyboard focus target not found or not visible."
+}

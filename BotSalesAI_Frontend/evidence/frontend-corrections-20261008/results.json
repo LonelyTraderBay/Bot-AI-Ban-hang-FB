@@ -1,0 +1,86 @@
+{
+  "executedAt": "2026-10-08T02:31:41.855Z",
+  "scope": "actual React demo with synthetic MSW API; diagnostic assertions prove defects",
+  "results": [
+    {
+      "id": "R1-order-draft-guard",
+      "result": "REPRODUCED",
+      "observed": {
+        "editedNotes": true,
+        "guardDetectedDirty": false,
+        "navigatedWithoutWarning": true
+      }
+    },
+    {
+      "id": "R2-customer-lost-update",
+      "result": "REPRODUCED",
+      "observed": {
+        "baselineVersion": 1,
+        "submittedVersion": "\"2\"",
+        "concurrentNotes": "Saved concurrently by another editor",
+        "overwrittenWith": "Dữ liệu giả lập; không dùng để liên lạc.",
+        "httpStatus": 200
+      }
+    },
+    {
+      "id": "R3-product-image-refetch",
+      "result": "REPRODUCED",
+      "observed": {
+        "beforeUpload": 0,
+        "afterUpload": 1,
+        "afterUnrelatedServerEvent": 0,
+        "productSaved": false
+      }
+    },
+    {
+      "id": "R4-policy-draft-refetch",
+      "result": "REPRODUCED",
+      "observed": {
+        "localDraftMinutes": "17",
+        "afterUnrelatedServerEvent": "",
+        "policySaved": false
+      }
+    },
+    {
+      "id": "R5-composer-inflight-edits",
+      "result": "REPRODUCED",
+      "observed": {
+        "textEditableDuringRequest": true,
+        "nextDraftErasedOnFirstSuccess": true
+      }
+    },
+    {
+      "id": "R6-customer-note-limit",
+      "result": "REPRODUCED",
+      "observed": {
+        "frontendAcceptedLength": 4001,
+        "contractMaxLength": 4000,
+        "errorAtTransportBoundary": true,
+        "requestSent": false
+      }
+    },
+    {
+      "id": "R7-prep-close-bypass",
+      "result": "REPRODUCED",
+      "observed": {
+        "setup": "existing synthetic prep moved to valid picking state",
+        "changedScan": true,
+        "footerClosedWithoutDraftWarning": true
+      }
+    },
+    {
+      "id": "R9-event-broad-refetch",
+      "result": "REPRODUCED",
+      "observed": {
+        "syntheticNormalEvent": "message.created",
+        "refetchedRequests": [
+          "/api/v2/shops/shop-demo/customers/c1",
+          "/api/v2/shops/shop-demo/orders",
+          "/api/v2/shops/shop-demo/shipments",
+          "/api/v2/shops/shop-demo/service-cases"
+        ],
+        "unrelatedQueriesInvalidated": true
+      }
+    }
+  ]
+}
