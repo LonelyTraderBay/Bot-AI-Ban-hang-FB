@@ -1,14 +1,15 @@
+import {label as businessLabel} from '@/shared/model/labels';
 import { PageSections } from '../../shared/ui/composition';
 import { ActionGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
 import { useEffect, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { Alert, Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { layoutSx } from '../../shared/ui/layout';
-import type { AgentRole, WorkItem } from '@botsales/contracts';
+import type { AgentRole, BudgetPolicy, PurchaseDelegation, PurchaseDelegationReservation, SupplierOffer, WorkItem } from '@botsales/contracts';
 import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
-import { dateTime } from '@/shared/model/format';
+import { codePointLength, dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, Stats, Stat, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, Amount, DetailLine, ConfirmDialog, LookupLoadMore } from '@/shared/ui/components';
 
 const workItemActions = ['begin', 'complete', 'block', 'reassign'] as const;
@@ -78,10 +79,10 @@ export function OperationsPage() {
             <Toolbar operation="listWorkItems" />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
-                    <DataTable rows={visibleItems} rowKey={task => task.id} columns={[
+                    <DataTable label="Công việc vận hành" rows={visibleItems} rowKey={task => task.id} columns={[
                         {
                             key: 'task', label: 'Công việc', render: task => <Stack>
-                                <Typography fontWeight={visualSx.typography.fontWeight.strong}>{task.kind === 'prepare_order' ? 'Chuẩn bị đơn hàng' : task.kind === 'customer_handoff' ? 'Tiếp quản khách hàng' : task.kind === 'payment_mismatch' ? 'Sai lệch thanh toán' : task.kind === 'late_shipment' ? 'Vận đơn quá hạn' : task.kind}</Typography>
+                                <Typography fontWeight={visualSx.typography.fontWeight.strong}>{task.kind === 'prepare_order' ? 'Chuẩn bị đơn hàng' : task.kind === 'customer_handoff' ? 'Tiếp quản khách hàng' : task.kind === 'payment_mismatch' ? 'Sai lệch thanh toán' : task.kind === 'late_shipment' ? 'Vận đơn quá hạn' : businessLabel(task.kind)}</Typography>
                                 <Typography variant="caption" color="text.secondary">{task.source.type} · {task.source.id}</Typography>
                             </Stack>,
                         },
@@ -111,7 +112,7 @@ export function OperationsPage() {
                 </>}
             </QueryState>
         </Panel>
-        <EditDialog open={!!item} title="Cập nhật công việc" onClose={() => setItem(null)} busy={update.pending} actions={<Button variant="contained" disabled={!item || !availableActions.includes(action) || reason.trim().length < 5 || (action === 'reassign' && !assignee) || update.pending} onClick={async () => {
+        <EditDialog open={!!item} title="Cập nhật công việc" onClose={() => setItem(null)} busy={update.pending} actions={<Button variant="contained" disabled={!item || !availableActions.includes(action) || codePointLength(reason.trim()) < 5 || (action === 'reassign' && !assignee) || update.pending} onClick={async () => {
             if (!item || !availableActions.includes(action)) return;
             try {
                 await update.execute({ path: { resourceId: item.id }, body: { expectedVersion: item.version, action, reason, ...(action === 'reassign' ? { assigneeUserId: assignee || null } : {}) } });
@@ -143,9 +144,6 @@ export function OperationsPage() {
 export function ApprovalsPage() {
     const { shop } = useScope();
     const list = useApi('listApprovals', { query: useListQuery('listApprovals') });
-    const [delegateRole, setDelegateRole] = useState('warehouse_buyer');
-    const [delegateLimit, setDelegateLimit] = useState('300000');
-    const [delegationPreview, setDelegationPreview] = useState(false);
     const [approvalId, setApprovalId] = useState<string | null>(null);
     const detail = useApi('getApproval', { path: { resourceId: approvalId || '' } }, Boolean(approvalId));
     const decide = useCommand('decideApproval', ['getApproval', 'listApprovals', 'listPurchaseOrders', 'getOperationsSummary']);
@@ -159,30 +157,12 @@ export function ApprovalsPage() {
     return <>
         <PageHeader title="Cần phê duyệt" subtitle="Quyết định gắn với đúng nội dung, phiên bản và hạn hiệu lực — không phải một nút đồng ý chung." />
         <PageSections>
-            <Panel title="Xem thử ủy quyền" subtitle="Bản xem trước cục bộ để nghiệm thu giao diện; không cấp quyền hiệu lực." bodyMode="inset">
-                <Alert severity="info" sx={layoutSx.notice.afterGap}>Contract hiện chưa có thao tác tạo quy tắc ủy quyền. Hạn mức và phạm vi bên dưới chỉ là dữ liệu mẫu, không thay đổi người duyệt hoặc quyền quyết định.</Alert>
-                <FormFields direction={{ xs: 'column', sm: 'row' }}>
-                    <TextField select label="Vai trò được ủy quyền" value={delegateRole} onChange={event => { setDelegateRole(event.target.value); setDelegationPreview(false); }} fullWidth>
-                        <MenuItem value="warehouse_buyer">Kho & mua hàng</MenuItem>
-                        <MenuItem value="accountant">Kế toán</MenuItem>
-                        <MenuItem value="supervisor">Trưởng nhóm</MenuItem>
-                    </TextField>
-                    <TextField label="Hạn mức mẫu (VND)" type="number" value={delegateLimit} onChange={event => { setDelegateLimit(event.target.value); setDelegationPreview(false); }} inputProps={{ min: 1 }} fullWidth />
-                </FormFields>
-                <ActionGroup direction="column" beforeGap="form">
-                    <Button variant="outlined" disabled={!delegateLimit || Number(delegateLimit) < 1} onClick={() => setDelegationPreview(true)}>Tạo bản xem thử</Button>
-                </ActionGroup>
-                {delegationPreview && <SurfaceContent role="status" data-testid="delegation-preview" beforeGap="surface">
-                    <Typography variant="body2">Ủy quyền mô phỏng: {roleNames[delegateRole as AgentRole['kind']] || delegateRole} · tối đa {Number(delegateLimit).toLocaleString('vi-VN')} VND.</Typography>
-                    <Typography variant="caption" color="text.secondary">Không ghi API, không nâng scope và không cho phép người nhận tự duyệt quyết định của mình.</Typography>
-                </SurfaceContent>}
-            </Panel>
             <Panel>
             <Toolbar operation="listApprovals" />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
-                    <DataTable rows={list.data.data} rowKey={entry => entry.id} columns={[
-                        { key: 'action', label: 'Nội dung', render: entry => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{entry.action}</Typography><Typography variant="caption">{entry.resource.type} · {entry.resource.id}</Typography></Stack> },
+                    <DataTable label="Yêu cầu phê duyệt" rows={list.data.data} rowKey={entry => entry.id} columns={[
+                        { key: 'action', label: 'Nội dung', render: entry => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{businessLabel(entry.action)}</Typography><Typography variant="caption">{businessLabel(entry.resource.type)} · {entry.action} · Mã đối tượng: {entry.resource.id}</Typography></Stack> },
                         { key: 'amount', label: 'Số tiền', render: entry => <Amount value={entry.amount} /> },
                         { key: 'state', label: 'Trạng thái', render: entry => <Status value={entry.status} /> },
                         { key: 'due', label: 'Hết hạn', render: entry => dateTime(entry.expiresAt, shop.timezone) },
@@ -199,8 +179,9 @@ export function ApprovalsPage() {
                 </>}
             </QueryState>
             </Panel>
+            <PurchaseDelegationsPanel />
         </PageSections>
-        <EditDialog open={Boolean(approvalId)} title="Xem xét phê duyệt" onClose={() => setApprovalId(null)} busy={decide.pending} actions={<MutationButton permission="approvals.decide" variant="contained" busy={decide.pending} disabled={!approval || detail.isPending || approval.status !== 'pending' || expired || reason.trim().length < 5} onClick={async () => {
+        <EditDialog open={Boolean(approvalId)} title="Xem xét phê duyệt" onClose={() => setApprovalId(null)} busy={decide.pending} actions={<MutationButton permission="approvals.decide" variant="contained" busy={decide.pending} disabled={!approval || detail.isPending || approval.status !== 'pending' || expired || codePointLength(reason.trim()) < 5} onClick={async () => {
             if (!approval || approval.status !== 'pending' || expired) return;
             try {
                 await decide.execute({ path: { resourceId: approval.id }, body: { expectedVersion: approval.version, intentHash: approval.intentHash, decision, reason } });
@@ -214,14 +195,14 @@ export function ApprovalsPage() {
                     <Alert severity="warning">Thay đổi giá, số lượng, đối tượng hoặc quyền có thể làm phê duyệt hết hiệu lực. Im lặng không được coi là đồng ý.</Alert>
                     {!expiryVerified && <Alert severity="error">Không xác minh được thời điểm hiện tại từ API; không thể gửi quyết định an toàn.</Alert>}
                     {expired && <Alert severity="error">Phê duyệt đã hết hạn; cần xin phê duyệt mới trước khi tiếp tục.</Alert>}
-                    {approval.status !== 'pending' && <Alert severity="info">Phê duyệt hiện ở trạng thái “{approval.status}”; không thể quyết định lại.</Alert>}
-                    <DetailLine label="Hành động">{approval.action}</DetailLine>
-                    <DetailLine label="Đối tượng">{approval.resource.type} · {approval.resource.id} · phiên bản {approval.resourceVersion}</DetailLine>
+                    {approval.status !== 'pending' && <Alert severity="info">Phê duyệt hiện ở trạng thái “{businessLabel(approval.status)}”; không thể quyết định lại.</Alert>}
+                    <DetailLine label="Hành động">{businessLabel(approval.action)}</DetailLine>
+                    <DetailLine label="Đối tượng">{approval.resource.type} · Mã đối tượng: {approval.resource.id} · phiên bản {approval.resourceVersion}</DetailLine>
                     <DetailLine label="Chính sách">{approval.policyVersion}</DetailLine>
-                    <DetailLine label="Người yêu cầu">{approval.requestedBy}</DetailLine>
-                    <DetailLine label="Giá trị"><Amount value={approval.amount} /></DetailLine>
+                    <DetailLine label="Người yêu cầu">Mã nhân sự: {approval.requestedBy}</DetailLine>
+                    <DetailLine label="Giá trị"><Amount wrap value={approval.amount} /></DetailLine>
                     <DetailLine label="Hạn hiệu lực">{dateTime(approval.expiresAt, shop.timezone)}</DetailLine>
-                    {approval.decidedBy && <DetailLine label="Người quyết định">{approval.decidedBy}</DetailLine>}
+                    {approval.decidedBy && <DetailLine label="Người quyết định">Mã nhân sự: {approval.decidedBy}</DetailLine>}
                     {approval.decisionReason && <DetailLine label="Lý do đã ghi nhận">{approval.decisionReason}</DetailLine>}
                     <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>Hash nội dung: {approval.intentHash}</Typography>
                     <TextField label="Quyết định" select value={decision} onChange={event => setDecision(event.target.value as typeof decision)} disabled={approval.status !== 'pending' || expired}>
@@ -233,6 +214,115 @@ export function ApprovalsPage() {
             </QueryState>
         </EditDialog>
     </>;
+}
+
+function PurchaseDelegationsPanel() {
+    const { shop, session } = useScope();
+    const canRead = useCan('procurement.read');
+    const canManage = useCan('procurement.delegation.manage');
+    const grants = useApi('listPurchaseDelegations', { query: { limit: 20 } }, canRead);
+    const reservations = useApi('listPurchaseDelegationReservations', { query: { limit: 20 } }, canManage);
+    const agents = usePagedApi('listAgentRoles', {}, canManage);
+    const suppliers = usePagedApi('listSuppliers', {}, canManage);
+    const warehouses = usePagedApi('listWarehouses', { query: { status: 'active' } }, canManage);
+    const offers = usePagedApi('listSupplierOffers', {}, canManage);
+    const budgets = usePagedApi('listBudgetPolicies', {}, canManage);
+    const budgetApprovals = useApi('listApprovals', { query: { limit: 100 } }, canManage);
+    const create = useCommand('createPurchaseDelegation', ['listPurchaseDelegations']);
+    const update = useCommand('updatePurchaseDelegation', ['listPurchaseDelegations', 'listPurchaseDelegationReservations', 'listReorderRules', 'listPurchaseSuggestions']);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [agentId, setAgentId] = useState('');
+    const [supplierId, setSupplierId] = useState('');
+    const [warehouseId, setWarehouseId] = useState('');
+    const [offerIds, setOfferIds] = useState<string[]>([]);
+    const [budgetId, setBudgetId] = useState('');
+    const [maxPerOrder, setMaxPerOrder] = useState('');
+    const [expiresAt, setExpiresAt] = useState(() => localDateTimeInput(Date.now() + 7 * 24 * 60 * 60 * 1000));
+    const [actionGrant, setActionGrant] = useState<PurchaseDelegation | null>(null);
+    const [actionStatus, setActionStatus] = useState<'active' | 'paused' | 'revoked'>('paused');
+    const readyAgents = agents.data?.data.filter(agent => agent.kind === 'warehouse_buyer' && agent.humanOwnerId === session.user.id) || [];
+    const approvedSuppliers = suppliers.data?.data.filter(supplier => supplier.status === 'approved') || [];
+    const eligibleOffers = offers.data?.data.filter(offer => offer.supplierId === supplierId) || [];
+    const procurementBudgets = budgets.data?.data.filter((budget: BudgetPolicy) => budget.kind === 'procurement' && budget.enabled && !!budget.limitAmount && !!budget.approvalId && !!budgetApprovals.data?.meta.asOf && budgetApprovals.data.data.some(approval => approval.id === budget.approvalId && approval.status === 'approved' && approval.resource.type === 'budget_policy' && approval.resource.id === budget.id && approval.resourceVersion === budget.version && Date.parse(approval.expiresAt) > Date.parse(budgetApprovals.data?.meta.asOf || '')) ) || [];
+    const selectedBudget = procurementBudgets.find(budget => budget.id === budgetId);
+    const validAmount = /^\d+$/.test(maxPerOrder) && Number(maxPerOrder) > 0 && !!selectedBudget?.limitAmount && Number(maxPerOrder) <= Number(selectedBudget.limitAmount.amount);
+    const expiryValid = Number.isFinite(Date.parse(expiresAt)) && Date.parse(expiresAt) > Date.now();
+    const canCreate = !!agentId && !!supplierId && !!warehouseId && offerIds.length > 0 && !!selectedBudget && validAmount && expiryValid && !create.pending;
+    const openCreate = () => {
+        setAgentId(readyAgents[0]?.id || '');
+        setSupplierId('');
+        setWarehouseId(warehouses.data?.data[0]?.id || '');
+        setOfferIds([]);
+        setBudgetId(procurementBudgets[0]?.id || '');
+        setMaxPerOrder('300000');
+        setExpiresAt(localDateTimeInput(Date.now() + 7 * 24 * 60 * 60 * 1000));
+        create.clearError();
+        setDialogOpen(true);
+    };
+    const saveGrant = async () => {
+        if (!canCreate || !selectedBudget) return;
+        try {
+            await create.execute({ body: {
+                agentId, supplierId, warehouseId, offerIds,
+                maxPerOrder: { amount: maxPerOrder, currency: shop.currency },
+                budgetPolicyId: budgetId, expiresAt: new Date(expiresAt).toISOString(),
+            } });
+            setDialogOpen(false);
+        }
+        catch { /* giữ biểu mẫu và lỗi tại chỗ để người dùng sửa hoặc thử lại */ }
+    };
+    const grantLabel = (grant: PurchaseDelegation) => {
+        const agent = agents.data?.data.find(row => row.id === grant.agentId);
+        const supplier = suppliers.data?.data.find(row => row.id === grant.supplierId);
+        const warehouse = warehouses.data?.data.find(row => row.id === grant.warehouseId);
+        return `${agent?.kind ? roleNames[agent.kind] : `Mã vai trò: ${grant.agentId}`} · ${supplier?.name || `Mã nhà cung cấp: ${grant.supplierId}`} · ${warehouse?.name || `Mã kho: ${grant.warehouseId}`}`;
+    };
+
+    if (!canRead) return null;
+    return <Panel title="Ủy quyền gửi đơn mua" subtitle="Chỉ owner cấp quyền; mỗi ủy quyền giới hạn theo người phụ trách, nhà cung cấp, kho, báo giá, ngân sách, hạn mức và thời hạn.">
+        <Alert severity="info" sx={layoutSx.notice.afterGap}>Đây là worker MSW local xác định. Không gọi AI, nhà cung cấp hoặc thanh toán; trạng thái “đã gửi” chỉ là kết quả mô phỏng.</Alert>
+        {canManage && <ActionGroup direction="row" beforeGap="form"><MutationButton permission="procurement.delegation.manage" onClick={openCreate}>Tạo ủy quyền có giới hạn</MutationButton></ActionGroup>}
+        <QueryState query={grants} pendingProfile="section">{grants.data && <DataTable label="Ủy quyền gửi đơn mua" rows={grants.data.data} rowKey={grant => grant.id} columns={[
+            { key: 'scope', label: 'Phạm vi', render: grant => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{grantLabel(grant)}</Typography><Typography variant="caption">{grant.offerSnapshots.length} báo giá · tối đa {grant.maxPerOrder.amount} {grant.maxPerOrder.currency} / đơn</Typography><Typography variant="caption">Ngân sách · mã chính sách {grant.budgetPolicyId} · {grant.budgetPeriod} · đến {dateTime(grant.expiresAt, shop.timezone)}</Typography></Stack> },
+            { key: 'state', label: 'Trạng thái', render: grant => <Status value={Date.parse(grant.expiresAt) <= Date.now() && grant.status === 'active' ? 'expired' : grant.status}/> },
+            { key: 'reason', label: 'Lý do gần nhất', render: grant => grant.lastReason || '—' },
+            { key: 'actions', label: '', render: grant => <ActionGroup direction="row">
+                {grant.status !== 'revoked' && Date.parse(grant.expiresAt) > Date.now() && <MutationButton permission="procurement.delegation.manage" disabled={update.pending} onClick={() => { setActionGrant(grant); setActionStatus(grant.status === 'active' ? 'paused' : 'active'); }}>{grant.status === 'active' ? 'Tạm dừng' : 'Kích hoạt'}</MutationButton>}
+                {grant.status !== 'revoked' && <MutationButton permission="procurement.delegation.manage" color="error" disabled={update.pending} onClick={() => { setActionGrant(grant); setActionStatus('revoked'); }}>Thu hồi</MutationButton>}
+            </ActionGroup> },
+        ]}/>}</QueryState>
+        <QueryState query={reservations} pendingProfile="section">{reservations.data && <DataTable label="Lịch sử hạn mức mua tự động" rows={reservations.data.data as PurchaseDelegationReservation[]} rowKey={row => row.id} columns={[
+            { key: 'purchase', label: 'Đơn mua', render: row => row.purchaseOrderId },
+            { key: 'amount', label: 'Số tiền', render: row => <Amount value={row.amount}/> },
+            { key: 'period', label: 'Kỳ ngân sách', render: row => row.periodKey },
+            { key: 'status', label: 'Đối chiếu', render: row => <Status value={row.status}/> },
+        ]}/>}</QueryState>
+        <ErrorNotice error={create.error || update.error}/>
+        <EditDialog open={dialogOpen} title="Tạo ủy quyền mua hàng" description="Ủy quyền tạo ở trạng thái tạm dừng. Kích hoạt chỉ khả dụng sau khi vai trò, báo giá và ngân sách được kiểm tra lại." onClose={() => setDialogOpen(false)} busy={create.pending} actions={<Button variant="contained" disabled={!canCreate} onClick={() => void saveGrant()}>Tạo ở trạng thái tạm dừng</Button>}>
+            <ErrorNotice error={create.error}/>
+            <FormFields>
+                <TextField select label="Vai trò mua hàng chịu trách nhiệm" value={agentId} onChange={event => setAgentId(event.target.value)}>{readyAgents.map(agent => <MenuItem key={agent.id} value={agent.id}>{roleNames[agent.kind]} · {agent.id} · {agent.status === 'paused' ? 'đang tạm dừng' : agent.status}</MenuItem>)}</TextField>
+                {readyAgents.length === 0 && <Typography role="status">Không có vai trò warehouse_buyer do tài khoản hiện tại phụ trách.</Typography>}
+                <TextField select label="Nhà cung cấp đã duyệt" value={supplierId} onChange={event => { setSupplierId(event.target.value); setOfferIds([]); }}>{approvedSuppliers.map(supplier => <MenuItem key={supplier.id} value={supplier.id}>{supplier.name}</MenuItem>)}</TextField>
+                <TextField select label="Kho đang hoạt động" value={warehouseId} onChange={event => setWarehouseId(event.target.value)}>{warehouses.data?.data.map(warehouse => <MenuItem key={warehouse.id} value={warehouse.id}>{warehouse.code} · {warehouse.name}</MenuItem>)}</TextField>
+                <TextField select label="Báo giá nằm trong phạm vi" value={offerIds} slotProps={{ select: { multiple: true } }} onChange={event => setOfferIds(typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value)}>{eligibleOffers.map((offer: SupplierOffer) => <MenuItem key={offer.id} value={offer.id}>{offer.id} · Mã biến thể: {offer.variantId} · {offer.unitCost.amount} {offer.unitCost.currency} · MOQ {offer.minimumQuantity}/{offer.packSize}</MenuItem>)}</TextField>
+                {budgetApprovals.isPending && <Typography role="status">Đang đối chiếu phê duyệt ngân sách…</Typography>}{budgetApprovals.isError && <ErrorNotice error={budgetApprovals.error}/>}<TextField select label="Ngân sách mua hàng đã bật và được duyệt" value={budgetId} onChange={event => setBudgetId(event.target.value)}>{procurementBudgets.map(budget => <MenuItem key={budget.id} value={budget.id}>{budget.id} · {budget.limitAmount?.amount} {budget.limitAmount?.currency} · {budget.period}</MenuItem>)}</TextField>{!budgetApprovals.isPending && !budgetApprovals.isError && procurementBudgets.length === 0 && <Typography role="status">Không có ngân sách mua hàng đang bật, còn hiệu lực phê duyệt và khớp phiên bản.</Typography>}
+                <TextField label="Hạn mức mỗi đơn" type="number" value={maxPerOrder} onChange={event => setMaxPerOrder(event.target.value)} inputProps={{ min: 1, step: 1 }} error={maxPerOrder !== '' && !validAmount} helperText={selectedBudget ? `Không vượt ${selectedBudget.limitAmount?.amount} ${shop.currency}.` : 'Chọn ngân sách đã bật trước.'}/>
+                <TextField label="Hết hạn vào" type="datetime-local" value={expiresAt} onChange={event => setExpiresAt(event.target.value)} error={expiresAt !== '' && !expiryValid}/>
+                <Typography variant="caption">Bản ghi lưu snapshot giá/MOQ/quy cách và phiên bản ngân sách. Mọi thay đổi trong scope sẽ chặn lần gửi tiếp theo.</Typography>
+            </FormFields>
+        </EditDialog>
+        <ConfirmDialog open={!!actionGrant} title={actionStatus === 'revoked' ? 'Thu hồi ủy quyền gửi đơn' : actionStatus === 'active' ? 'Kích hoạt ủy quyền gửi đơn' : 'Tạm dừng ủy quyền gửi đơn'} description={`${actionGrant ? grantLabel(actionGrant) : ''}. Hạn mức ${actionGrant?.maxPerOrder.amount || ''} ${actionGrant?.maxPerOrder.currency || ''}/đơn; hành động áp dụng cho ${actionGrant?.toolId || 'purchase.send'}. Lệnh đã được tiếp nhận không thể bị thu hồi.`} confirmLabel={actionStatus === 'revoked' ? 'Thu hồi ủy quyền' : actionStatus === 'active' ? 'Kích hoạt ủy quyền' : 'Tạm dừng ủy quyền'} requireReason busy={update.pending} error={update.error} onClose={() => setActionGrant(null)} onConfirm={async reason => {
+            if (!actionGrant) return;
+            try { await update.execute({ path: { resourceId: actionGrant.id }, body: { expectedVersion: actionGrant.version, status: actionStatus, reason } }); setActionGrant(null); }
+            catch { /* giữ quyết định và lý do để đối chiếu lỗi/version */ }
+        }}/>
+    </Panel>;
+}
+
+function localDateTimeInput(timestamp: number) {
+    const local = new Date(timestamp - new Date(timestamp).getTimezoneOffset() * 60_000);
+    return local.toISOString().slice(0, 16);
 }
 
 export function DigestsPage() {
@@ -298,6 +388,6 @@ export function DigestsPage() {
             </QueryState>
             <ErrorNotice error={control.error} />
         </Panel>
-        <ConfirmDialog open={Boolean(stop)} title={stop?.action === 'pause' ? 'Tạm dừng vai trò AI' : 'Kiểm tra điều kiện tiếp tục'} description="Lệnh sử dụng đúng version và tăng generation theo mô phỏng. Đây không phải bằng chứng worker đã dừng hoặc provider đã sẵn sàng; tác động bên ngoài đã được nhận không thể thu hồi." requireReason onClose={() => setStop(null)} error={control.error} busy={control.pending} onConfirm={reason => control.execute({ body: { expectedVersion: stop?.role.version || 1, scope: 'role', resourceId: stop?.role.id || null, action: stop?.action || 'pause', reason } })} />
+        <ConfirmDialog open={Boolean(stop)} title={stop?.action === 'pause' ? 'Tạm dừng vai trò AI' : 'Kiểm tra điều kiện tiếp tục'} confirmLabel={stop?.action === "pause" ? "Tạm dừng vai trò" : "Kiểm tra để tiếp tục"} description={`${stop ? roleNames[stop.role.kind] : ""} (${stop?.role.id || ""}) trong ${shop.name}: ${stop?.action === "pause" ? "dừng các tác động chưa được tiếp nhận." : "kiểm điều kiện và chính sách trước khi cho phép tác động mới."} Tác động bên ngoài đã được nhận không thể thu hồi.`} requireReason onClose={() => setStop(null)} error={control.error} busy={control.pending} onConfirm={reason => control.execute({ body: { expectedVersion: stop?.role.version || 1, scope: 'role', resourceId: stop?.role.id || null, action: stop?.action || 'pause', reason } })} />
     </>;
 }

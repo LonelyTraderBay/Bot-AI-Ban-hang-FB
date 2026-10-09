@@ -46,6 +46,9 @@ export function DashboardPage() {
     const data = dashboard.data?.data;
     const botConfig = bot.data?.data;
     const greetingName = dashboardGreetingName(session.user.displayName);
+    const primaryAction = canOps
+        ? { label: 'Xem việc cần làm', to: `/s/${shop.id}/operations` }
+        : canOrders ? { label: 'Xem đơn hàng', to: `/s/${shop.id}/orders` } : null;
 
     return <>
         <Box sx={[layoutSx.dashboard.groupInset, layoutSx.pageHeader.afterGap, { border: 1, borderColor: colors.heroBorder, borderRadius: visualSx.radius.hero, background: `linear-gradient(115deg, ${colors.heroStart}, ${colors.heroEnd})` }]}>
@@ -56,8 +59,7 @@ export function DashboardPage() {
                     <Typography color="text.secondary" sx={[layoutSx.dashboard.heroDescriptionGap, { maxWidth: 620 }]}>Theo dõi việc cần xử lý, tiến độ đơn hàng và đội ngũ AI — tập trung vào những quyết định quan trọng.</Typography>
                 </Box>
                 {(canOps || canOrders || canCreateOrder) && <ActionGroup direction="column" density="comfortable" justifyContent="center">
-                    {canOps && <Link component={RouterLink} to={`/s/${shop.id}/operations`} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: visualSx.radius.dialog, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'primary.light', textDecoration: 'none' }, '&:active': { bgcolor: 'primary.dark' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>Xem việc cần làm <ArrowForwardRounded fontSize="small" /></Link>}
-                    {!canOps && canOrders && <Link component={RouterLink} to={`/s/${shop.id}/orders`} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: visualSx.radius.dialog, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'primary.light', textDecoration: 'none' }, '&:active': { bgcolor: 'primary.dark' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>Xem đơn hàng <ArrowForwardRounded fontSize="small" /></Link>}
+                    {primaryAction && <Link component={RouterLink} to={primaryAction.to} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: visualSx.radius.dialog, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'primary.light', textDecoration: 'none' }, '&:active': { bgcolor: 'primary.dark' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>{primaryAction.label} <ArrowForwardRounded fontSize="small" /></Link>}
                     {canCreateOrder && <Link component={RouterLink} to={`/s/${shop.id}/orders/new`} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: 1, borderColor: 'divider', borderRadius: visualSx.radius.dialog, color: 'text.primary', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'action.hover', textDecoration: 'none' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>Tạo đơn hàng</Link>}
                 </ActionGroup>}
             </Stack>
@@ -78,8 +80,8 @@ export function DashboardPage() {
 
             <Panel title="Dòng tiền và doanh thu" subtitle="Doanh thu ghi nhận và tiền đã thu là hai chỉ số khác nhau." bodyMode="inset">
                 {canFinance ? data ? <SurfaceContent >
-                    <Box><Typography color="text.secondary" variant="body2">Doanh thu đã ghi nhận</Typography><Typography variant="h4" sx={layoutSx.dashboard.metricValueGap}><Amount value={data.recognizedRevenue} /></Typography></Box>
-                    <Box><Typography color="text.secondary" variant="body2">Tiền đã thu</Typography><Typography variant="h4" sx={[layoutSx.dashboard.metricValueGap, { color: 'primary.main' }]}><Amount value={data.cashReceived} /></Typography></Box>
+                    <Box><Typography color="text.secondary" variant="body2">Doanh thu đã ghi nhận</Typography><Typography variant="h4" sx={layoutSx.dashboard.metricValueGap}><Amount wrap value={data.recognizedRevenue} /></Typography></Box>
+                    <Box><Typography color="text.secondary" variant="body2">Tiền đã thu</Typography><Typography variant="h4" sx={[layoutSx.dashboard.metricValueGap, { color: 'primary.main' }]}><Amount wrap value={data.cashReceived} /></Typography></Box>
                     <RouteLink to={`/s/${shop.id}/finance/profit-loss`}>Xem lợi nhuận</RouteLink>
                 </SurfaceContent> : dashboard.isPending ? <Box role="status">Đang tải số liệu tài chính…</Box> : <Alert severity="warning" action={<Button onClick={() => void dashboard.refetch()}>Thử lại</Button>}>Không thể tải số liệu tài chính. Dữ liệu của các khu vực khác vẫn dùng được.</Alert>
                     : <Alert severity="info">Chỉ hiển thị khi vai trò có finance.read.</Alert>}
@@ -116,6 +118,6 @@ export function DashboardPage() {
             {data.warnings.map((warning, index) => <Alert key={`${index}-${warning}`} severity="info">{warning}</Alert>)}
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>Dữ liệu cập nhật {dateTime(data.asOf, shop.timezone)} · {shop.name}</Typography>
         </Stack>}
-        <ConfirmDialog open={pauseOpen} title="Tạm dừng trợ lý bán hàng" description="Các tác động chưa gửi sẽ dừng. Tin nhắn nhà cung cấp đã nhận không thể thu hồi." requireReason busy={pause.pending} error={pause.error} onClose={() => setPauseOpen(false)} onConfirm={reason => pause.execute({ body: { expectedVersion: botConfig?.version || 1, reason } })} />
+        <ConfirmDialog open={pauseOpen} title="Tạm dừng trợ lý bán hàng" confirmLabel="Tạm dừng trợ lý" description={`Trợ lý bán hàng ${botConfig?.id || ""} trong ${shop.name}: các tác động chưa gửi sẽ dừng. Tin nhắn nhà cung cấp đã nhận không thể thu hồi.`} requireReason busy={pause.pending} error={pause.error} onClose={() => setPauseOpen(false)} onConfirm={reason => pause.execute({ body: { expectedVersion: botConfig?.version || 1, reason } })} />
     </>;
 }

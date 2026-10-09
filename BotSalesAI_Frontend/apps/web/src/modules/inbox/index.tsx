@@ -1,4 +1,4 @@
-import { ActionGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
+import { ActionGroup, FieldGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
 import { useEffect, useRef, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { Link as RouterLink, useParams, useSearchParams } from 'react-router-dom';
@@ -49,8 +49,8 @@ export function InboxPage() {
         <PageHeader title="Hộp thư khách hàng" subtitle="AI và nhân viên tiếp quản rõ ràng; chỉ gửi khi chính sách kênh cho phép." />
         <SectionGrid columns={{ xs: '1fr', lg: '300px minmax(0,1fr)' }} geometry={{minHeight: 650}}>
             <Panel geometry={{ display: { xs: conversationId ? 'none' : 'block', lg: 'block' } }}>
-                <Toolbar operation="listConversations" placeholder="Tìm hội thoại…" cursorParam={listCursorParam} />
-                <Stack direction={{ xs: 'column', sm: 'row' }} sx={[layoutSx.toolbar.controlGap, layoutSx.surface.bodyInsetAfterHeader, { flexWrap: 'wrap' }]} aria-label="Bộ lọc hội thoại">
+                <Toolbar operation="listConversations" placeholder="Tìm hội thoại…" cursorParam={listCursorParam} filters={
+                <FieldGroup direction={{ xs: 'column', sm: 'row' }} flexWrap="wrap" role="group" aria-label="Bộ lọc hội thoại">
                     <TextField select size="small" label="Trạng thái" value={status || ''} onChange={event => updateFilter('status', event.target.value)} sx={{ flex: 1, minWidth: 140 }}>
                         <MenuItem value="">Tất cả trạng thái</MenuItem><MenuItem value="open">Đang mở</MenuItem><MenuItem value="resolved">Đã giải quyết</MenuItem>
                     </TextField>
@@ -63,7 +63,7 @@ export function InboxPage() {
                     <TextField select size="small" label="Nhân viên" value={assignedUserId || ''} onChange={event => updateFilter('assignedUserId', event.target.value)} sx={{ flex: 1, minWidth: 160 }}>
                         <MenuItem value="">Tất cả nhân viên</MenuItem>{metadata.data?.data.assignees.map(assignee => <MenuItem key={assignee.userId} value={assignee.userId}>{assignee.displayName}</MenuItem>)}
                     </TextField>
-                </Stack>
+                </FieldGroup>} />
                 <QueryState query={list}>
                     <List disablePadding>
                         {list.data?.data.map(c => <ListItem key={c.id} disablePadding>
@@ -127,14 +127,14 @@ function ConversationPanel({ conversationId }: {
                 <SectionGrid data-testid="inbox-conversation-layout" columns={{ xs: '1fr', xl: 'minmax(0,1fr) 260px' }} geometry={{minWidth: 0}}>
                     <Box data-testid="inbox-thread" component="section" aria-label="Nội dung hội thoại" sx={{ minWidth: 0, height: { xl: 650 } }}>
                         <Panel geometry={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                            <ActionGroup direction="row" alignItems="center" justifyContent="space-between" bodyMode="header">
+                            <ActionGroup direction="row" alignItems="center" justifyContent="space-between" bodyMode="header" geometry={{ flex: '0 0 auto' }}>
                                 <Stack direction="row" alignItems="center" sx={[layoutSx.surface.compactContentGap, { flexWrap: 'wrap' }]}>
                                     <Button component={RouterLink} to={inboxHref()} sx={{ display: { lg: 'none' }, minWidth: 44 }} aria-label="Danh sách hội thoại">
                                         <ArrowBackRounded />
                                     </Button>
                                     <Avatar sx={{ bgcolor: colors.selected, color: 'primary.main' }}>{conversation.displayName.slice(0, 1)}</Avatar>
                                     <Box>
-                                        <Typography variant="h6">{conversation.displayName}</Typography>
+                                        <Typography component="h2" variant="h6">{conversation.displayName}</Typography>
                                         <Typography variant="caption" color="text.secondary">
                                             {conversation.mode === 'human' ? 'Nhân viên đang tiếp quản' : 'Trợ lý tự động'} · {conversation.id}
                                         </Typography>
@@ -156,7 +156,7 @@ function ConversationPanel({ conversationId }: {
                                     </Alert>
                                 </Box>
                             )}
-                            <Box data-testid="inbox-message-list" sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: 350, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
+                            <Box data-testid="inbox-message-list" sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: { xs: 350, xl: '6em' }, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
                                 <QueryState query={messages}>
                                     <Stack data-testid="inbox-message-groups" sx={layoutSx.inbox.messageGroupGap}>
                                         <ConversationMessageList
@@ -178,13 +178,13 @@ function ConversationPanel({ conversationId }: {
                     </Box>
                     <ConversationContextPanel conversation={conversation}>
                         {__MOCK__ && <MockSalesFlowPreview customerId={conversation.customerId} conversationId={conversation.id} />}
-                        {__MOCK__ && <MockMediaPreview />}
                         {__MOCK__ && <MockUpsellPreview />}
                     </ConversationContextPanel>
                     <ConfirmDialog
                         open={!!action}
                         title={action === 'takeover' ? 'Tiếp quản cuộc trò chuyện' : action === 'release' ? 'Trả cuộc trò chuyện về bot' : 'Đánh dấu đã giải quyết'}
-                        description={action === 'takeover' ? 'Các câu trả lời AI đang chờ phải bị chặn trước khi gửi.' : 'Hệ thống kiểm lại quyền và phiên bản hội thoại.'}
+                        confirmLabel={action === 'takeover' ? 'Tiếp quản' : action === 'release' ? 'Trả về AI' : 'Đánh dấu đã giải quyết'}
+                        description={`${conversation.displayName} (${conversationId}): ${action === 'takeover' ? 'chuyển trách nhiệm trả lời sang nhân viên và chặn câu trả lời AI đang chờ trước khi gửi.' : action === 'release' ? 'trả trách nhiệm trả lời về AI sau khi kiểm quyền và điều kiện gửi hiện tại.' : 'đánh dấu hội thoại đã giải quyết; lịch sử tin nhắn được giữ.'}`}
                         requireReason
                         onClose={() => setAction(null)}
                         busy={takeover.pending || release.pending || resolve.pending}
@@ -237,22 +237,6 @@ function ConversationPanel({ conversationId }: {
         </QueryState>
     );
 }
-function MockMediaPreview() {
-    const [open, setOpen] = useState(false);
-    return <SurfaceContent beforeGap="surface">
-        <Alert severity="info" action={<Button size="small" onClick={() => setOpen(value => !value)}>{open ? 'Ẩn mẫu media' : 'Xem mẫu ảnh và tin thoại'}</Button>}>
-            Preview chỉ dùng dữ liệu tổng hợp. Message contract chưa có media; nội dung mẫu không được gửi, phát hoặc gắn vào hội thoại.
-        </Alert>
-        {open && <Stack role="status" data-testid="mock-media-preview" sx={[layoutSx.surface.compactContentGap, layoutSx.surface.compactInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }]}>
-            <Box role="img" aria-label="Ảnh sản phẩm mẫu, không phải tệp khách gửi" sx={{ minHeight: 80, display: 'grid', placeItems: 'center', borderRadius: visualSx.radius.control, bgcolor: 'action.hover' }}>
-                <Typography variant="body2">Ảnh sản phẩm mẫu · DEMO-MEDIA-IMAGE-01</Typography>
-            </Box>
-            <Typography variant="body2" fontWeight={visualSx.typography.fontWeight.strong}>Tin thoại mẫu · 00:08 · chưa phát âm thanh</Typography>
-            <Typography variant="caption" color="text.secondary">Bản chép thử: “Shop còn màu xanh không ạ?” · chưa được người dùng xác nhận.</Typography>
-        </Stack>}
-    </SurfaceContent>;
-}
-
 type SalesPreviewTab = 'script' | 'sources' | 'order' | 'confirmation';
 type SalesSourceRow = {
     key: string;
@@ -305,7 +289,7 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
                 <TextField select label="Ngành hàng mẫu" value={industry} onChange={event => setIndustry(event.target.value as keyof typeof sampleSalesScripts)}>
                     {Object.entries(sampleSalesScripts).map(([key, value]) => <MenuItem key={key} value={key}>{value.label}</MenuItem>)}
                 </TextField>
-                <Typography variant="subtitle2">Câu hỏi gợi ý</Typography>
+                <Typography component="h3" variant="subtitle2">Câu hỏi gợi ý</Typography>
                 {script.questions.map((question, index) => <Typography key={question} variant="body2">{index + 1}. {question}</Typography>)}
                 <Alert severity="warning">Ranh giới mẫu: {script.boundary}</Alert>
                 <Typography variant="caption" color="text.secondary">Bản nháp mẫu riêng với cấu hình bot đang dùng; không có thao tác xuất bản ở đây.</Typography>
@@ -343,11 +327,11 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
 function MockUpsellPreview() {
     const [open, setOpen] = useState(false);
     return <SurfaceContent beforeGap="surface">
-        <Typography variant="subtitle2">Gợi ý bán kèm mẫu · DEMO-PROMO-01</Typography>
+        <Typography component="h3" variant="subtitle2">Gợi ý bán kèm mẫu · DEMO-PROMO-01</Typography>
         <Alert severity="info">Combo áo thun + túi tote chỉ minh họa giao diện. Không có API khuyến mại; giá, lợi nhuận, SKU và tồn kho chưa được xác thực.</Alert>
         <Button size="small" variant="outlined" onClick={() => setOpen(value => !value)}>{open ? 'Ẩn điều kiện mẫu' : 'Xem điều kiện combo mẫu'}</Button>
         {open && <Stack role="status" data-testid="mock-promotion-preview" sx={[layoutSx.surface.compactContentGap, layoutSx.surface.compactInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }]}>
-            <Typography variant="subtitle2">Combo mẫu · DEMO-PROMO-01</Typography>
+            <Typography component="h3" variant="subtitle2">Combo mẫu · DEMO-PROMO-01</Typography>
             <Typography variant="body2">Điều kiện minh họa: có ít nhất một áo và một phụ kiện trong đơn nháp.</Typography>
             <Typography variant="caption" color="text.secondary">Không áp dụng giảm giá, không sửa đơn và không khẳng định đạt biên lợi nhuận.</Typography>
         </Stack>}

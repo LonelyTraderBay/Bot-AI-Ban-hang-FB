@@ -1,14 +1,15 @@
 import { ActionGroup, FormFields, PageSections, SectionGrid } from '../../shared/ui/composition';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, Link, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import type { ExportRequest, Job } from '@botsales/contracts';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import type { ExportRequest, Job, MarketingBucket } from '@botsales/contracts';
 import { colors, tokens } from '@botsales/tokens';
 import { useApi, useCommand } from '../../shared/api/hooks';
 import { useScope, useCan } from '../../shared/model/scope';
-import { dateTime, isValidDateOnly } from '../../shared/model/format';
+import { dateTime, formatDateOnly, isValidDateOnly } from '../../shared/model/format';
 import { Amount, DataTable, DetailLine, ErrorNotice, PageHeader, Panel, Pager, QueryState, RouteLink, Stat, Stats, Status } from '../../shared/ui/components';
 import { layoutSx } from '../../shared/ui/layout';
 import { authorizedDownloadHref, dateInTimezone, reportDateBoundary, reportFilename } from './report-utils';
@@ -216,27 +217,109 @@ export function ReportsPage() {
 
 export function MarketingPage() {
     const { shop } = useScope();
-    const data = useApi('getMarketingSummary');
+    const [params, setParams] = useSearchParams();
+    const search = params.toString();
+    const fromParam = params.get('fromDate') || '';
+    const toParam = params.get('toDate') || '';
+    const bucketParam = params.get('bucket') || 'day';
+    const hasDateFilter = params.has('fromDate') || params.has('toDate');
+    const appliedError = marketingRangeError(fromParam, toParam, bucketParam, !hasDateFilter);
+    const query = appliedError ? undefined : {
+        ...(params.has('fromDate') ? { fromDate: fromParam } : {}),
+        ...(params.has('toDate') ? { toDate: toParam } : {}),
+        ...(params.has('bucket') ? { bucket: bucketParam as MarketingBucket } : {}),
+    };
+    const data = useApi('getMarketingSummary', query && Object.keys(query).length ? { query } : undefined, !appliedError);
     const m = data.data?.data;
+    const marketingPeriod = m?.period;
+    const [draft, setDraft] = useState({ fromDate: fromParam, toDate: toParam, bucket: bucketParam });
+    const [showFilterError, setShowFilterError] = useState(false);
+    const fromRef = useRef<HTMLInputElement>(null);
+    const toRef = useRef<HTMLInputElement>(null);
+    const bucketRef = useRef<HTMLInputElement>(null);
+    const draftError = marketingRangeError(draft.fromDate, draft.toDate, draft.bucket, false);
+    const visibleFilterError = showFilterError ? draftError : appliedError;
+
+    useEffect(() => {
+        if (marketingPeriod) {
+            setDraft({ fromDate: marketingPeriod.fromDate, toDate: marketingPeriod.toDate, bucket: marketingPeriod.bucket });
+            const next = new URLSearchParams({ fromDate: marketingPeriod.fromDate, toDate: marketingPeriod.toDate, bucket: marketingPeriod.bucket });
+            if (next.toString() !== search) setParams(next, { replace: true });
+        }
+    }, [marketingPeriod, search, setParams]);
+
+    useEffect(() => {
+        const current = new URLSearchParams(search);
+        if (!current.has('fromDate') && !current.has('toDate')) return;
+        setDraft({ fromDate: current.get('fromDate') || '', toDate: current.get('toDate') || '', bucket: current.get('bucket') || 'day' });
+        setShowFilterError(false);
+    }, [search]);
+
+    const applyFilter = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setShowFilterError(true);
+        if (draftError) {
+            const target = draftError.field === 'fromDate' ? fromRef.current : draftError.field === 'toDate' ? toRef.current : bucketRef.current;
+            target?.focus();
+            return;
+        }
+        const next = new URLSearchParams({ fromDate: draft.fromDate, toDate: draft.toDate, bucket: draft.bucket });
+        setShowFilterError(false);
+        setParams(next);
+    };
+
     return <>
         <PageHeader title="Thông tin cho marketing" subtitle="Đề xuất chỉ đọc; trang không tự đăng nội dung hoặc thay đổi ngân sách." />
-        <QueryState query={data} pendingProfile="section">{m && <>
-            {__MOCK__ && <Alert severity="warning" sx={layoutSx.notice.afterGap}>Số liệu minh họa từ fixture API tổng hợp; không phải dữ liệu quảng cáo hoặc phân bổ nguồn thật.</Alert>}
+        {__MOCK__ && <Alert severity="warning" sx={layoutSx.notice.afterGap}>Số liệu mẫu do API mô phỏng tổng hợp; chưa kết nối tài khoản quảng cáo hoặc nguồn phân bổ thật.</Alert>}
+        <Panel title="Khoảng thời gian báo cáo" subtitle={`Ngày được tính theo lịch ${shop.timezone} của cửa hàng.`} bodyMode="inset" afterGap="section">
+            <FormFields component="form" onSubmit={applyFilter} data-testid="marketing-range-form">
+                <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-end' }} sx={layoutSx.toolbar.controlGap}>
+                    <TextField inputRef={fromRef} type="date" label="Từ ngày" value={draft.fromDate} onChange={event => setDraft(value => ({ ...value, fromDate: event.target.value }))} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'fromDate'} helperText={visibleFilterError?.field === 'fromDate' ? visibleFilterError.message : 'Ngày bắt đầu, tính cả ngày đã chọn.'} />
+                    <TextField inputRef={toRef} type="date" label="Đến ngày" value={draft.toDate} onChange={event => setDraft(value => ({ ...value, toDate: event.target.value }))} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'toDate'} helperText={visibleFilterError?.field === 'toDate' ? visibleFilterError.message : 'Tối đa 366 ngày, tính cả hai đầu.'} />
+                    <TextField inputRef={bucketRef} select label="Gộp theo" value={draft.bucket} onChange={event => setDraft(value => ({ ...value, bucket: event.target.value }))} error={visibleFilterError?.field === 'bucket'} helperText={visibleFilterError?.field === 'bucket' ? visibleFilterError.message : 'Chọn ngày, tuần hoặc tháng.'}>
+                        <MenuItem value="day">Ngày</MenuItem><MenuItem value="week">Tuần</MenuItem><MenuItem value="month">Tháng</MenuItem>
+                    </TextField>
+                    <Button type="submit" variant="contained">Áp dụng</Button>
+                </Stack>
+                {showFilterError && draftError && <Alert severity="error" role="alert">{draftError.message}</Alert>}
+            </FormFields>
+        </Panel>
+        {appliedError ? <Alert severity="error" role="alert"><strong>Bộ lọc trên đường dẫn không hợp lệ.</strong> Hãy sửa trường được đánh dấu trước khi áp dụng.</Alert> : <QueryState query={data} pendingProfile="section">{m && <>
             <Stats>
-                <Stat title="Đơn có nguồn xác định" value={m.knownAttributedOrders} note="Theo trường knownAttributedOrders của API" />
+                <Stat title="Đơn có nguồn xác định" value={m.knownAttributedOrders} note="Được API tổng hợp trong kỳ" />
                 <Stat title="Đơn chưa rõ nguồn" value={m.unknownAttributionOrders} note="Giữ riêng, không tự gán nguồn" />
-                <Stat title="Chi quảng cáo thực tế" value={<Amount value={m.actualSpend} />} note={m.actualSpend ? 'API cung cấp số thực tế' : 'Chưa có số thực tế từ API'} />
-                <Stat title="Chi quảng cáo ước tính" value={<Amount value={m.estimatedSpend} />} note="Ước tính không phải số ghi sổ" />
+                <Stat title="Chi quảng cáo thực tế" value={<Amount wrap value={m.actualSpend} />} note={m.actualSpend ? 'API cung cấp số thực tế' : 'Kỳ này chưa có số thực tế từ API'} />
+                <Stat title="Chi quảng cáo ước tính" value={<Amount wrap value={m.estimatedSpend} />} note="Ước tính không phải số ghi sổ" />
             </Stats>
             <Stack data-testid="marketing-as-of" sx={[layoutSx.report.contextGap, layoutSx.page.sectionAfter]}>
-                <Alert severity="info">getMarketingSummary không nhận bộ lọc ngày; không thể lọc chuỗi này theo kỳ ở frontend.</Alert>
-                <Typography variant="caption" color="text.secondary">Cập nhật {dateTime(m.asOf, shop.timezone)} · {shop.name} · múi giờ {shop.timezone}</Typography>
+                {m.period && <Typography variant="body2">Kỳ {formatDateOnly(m.period.fromDate)} – {formatDateOnly(m.period.toDate)} · gộp theo {m.period.bucket === 'day' ? 'ngày' : m.period.bucket === 'week' ? 'tuần' : 'tháng'}</Typography>}
+                <Typography variant="caption" color="text.secondary">Cập nhật {dateTime(m.asOf, m.period?.timezone || shop.timezone)} · {shop.name} · múi giờ {m.period?.timezone || shop.timezone}</Typography>
             </Stack>
             <SectionGrid data-testid="marketing-sections-grid" columns={{ xs: '1fr', lg: '1fr 1fr' }}>
+                <Panel title="Đơn theo thời gian" subtitle="Số đơn có nguồn xác định và chưa rõ nguồn do API tổng hợp.">
+                    <Box role="img" aria-label={`Số đơn theo ${m.period?.bucket || 'kỳ'} trong khoảng đã chọn`} data-testid="marketing-trend-chart" sx={[{ height: 280 }, layoutSx.report.chartViewportInset]}>
+                        {m.trend?.length ? <ResponsiveContainer width="100%" height="100%"><BarChart data={m.trend} accessibilityLayer>
+                            <CartesianGrid stroke={colors.borderDecorative} vertical={false} />
+                            <XAxis dataKey="fromDate" stroke={colors.textSecondary} interval={Math.max(0, Math.ceil(m.trend.length / 7) - 1)} tickFormatter={value => formatDateOnly(String(value))} />
+                            <YAxis allowDecimals={false} stroke={colors.textSecondary} />
+                            <Tooltip labelFormatter={value => formatDateOnly(String(value))} contentStyle={{ background: colors.raised, color: colors.textPrimary, borderColor: colors.borderDecorative }} />
+                            <Legend />
+                            <Bar dataKey="knownAttributedOrders" name="Có nguồn xác định" fill={colors.accent} radius={[3, 3, 0, 0]} />
+                            <Bar dataKey="unknownAttributionOrders" name="Chưa rõ nguồn" fill={colors.textSecondary} radius={[3, 3, 0, 0]} />
+                        </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>API chưa có bucket dữ liệu trong kỳ đã chọn.</Typography>}
+                    </Box>
+                    <DataTable label="Tổng hợp marketing theo kỳ" rows={m.trend || []} rowKey={point => point.fromDate} empty="Chưa có dữ liệu theo kỳ trong khoảng này." columns={[
+                        { key: 'range', label: 'Khoảng ngày', render: point => `${formatDateOnly(point.fromDate)} – ${formatDateOnly(point.toDate)}` },
+                        { key: 'known', label: 'Có nguồn', align: 'right', render: point => point.knownAttributedOrders },
+                        { key: 'unknown', label: 'Chưa rõ nguồn', align: 'right', render: point => point.unknownAttributionOrders },
+                        { key: 'estimated', label: 'Chi ước tính', align: 'right', render: point => <Amount value={point.estimatedSpend} /> },
+                        { key: 'actual', label: 'Chi thực tế', align: 'right', render: point => <Amount value={point.actualSpend} /> },
+                    ]} />
+                </Panel>
                 <Panel title="Câu hỏi khách thường hỏi" subtitle="Các mục do API tổng hợp cung cấp.">
                     <Box data-testid="marketing-question-surface" sx={layoutSx.report.listSurfaceInset}>
                         <Stack component="ul" data-testid="marketing-top-questions" sx={[{ m: 0, p: 0 }, layoutSx.report.listMarkerInset, layoutSx.report.listItemGap]}>
-                            {m.topQuestions.length ? m.topQuestions.map((question, index) => <Typography component="li" key={`${index}-${question}`}>{question}</Typography>) : <Typography component="li" color="text.secondary">Chưa đủ dữ liệu.</Typography>}
+                            {m.topQuestions.length ? m.topQuestions.map((question, index) => <Typography component="li" key={`${index}-${question}`}>{question}</Typography>) : <Typography component="li" color="text.secondary">Chưa có thống kê câu hỏi trong kỳ đã chọn.</Typography>}
                         </Stack>
                     </Box>
                 </Panel>
@@ -248,15 +331,26 @@ export function MarketingPage() {
                             <YAxis allowDecimals={false} stroke={colors.textSecondary} />
                             <Tooltip contentStyle={{ background: colors.raised, color: colors.textPrimary, borderColor: colors.borderDecorative }} />
                             <Bar dataKey="count" name="Số trường hợp" fill={colors.accent} radius={[4, 4, 0, 0]} />
-                        </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>API chưa cung cấp nhóm lý do để vẽ biểu đồ.</Typography>}
+                        </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>Chưa có lý do mất đơn trong kỳ này.</Typography>}
                     </Box>
-                    <DataTable rows={m.lostSaleReasons} rowKey={reason => reason.reason} label="Lý do không chốt đơn" empty="Chưa có lý do mất đơn trong payload API." columns={[
+                    <DataTable rows={m.lostSaleReasons} rowKey={reason => reason.reason} label="Lý do không chốt đơn" empty="Chưa có lý do mất đơn trong kỳ đã chọn." columns={[
                         { key: 'reason', label: 'Lý do', render: reason => reason.reason },
                         { key: 'count', label: 'Số trường hợp', align: 'right', render: reason => reason.count },
                     ]} />
                 </Panel>
             </SectionGrid>
             <Alert severity="info" sx={layoutSx.page.sectionBefore}>Không tự gán nguồn cho đơn thiếu dữ liệu, không ghi chi ước tính thành chi thực tế và không tự đăng nội dung hoặc tăng ngân sách.</Alert>
-        </>}</QueryState>
+        </>}</QueryState>}
     </>;
+}
+
+function marketingRangeError(fromDate: string, toDate: string, bucket: string, allowDefault: boolean): { field: 'fromDate' | 'toDate' | 'bucket'; message: string } | null {
+    if (!['day', 'week', 'month'].includes(bucket)) return { field: 'bucket', message: 'Chọn nhóm ngày, tuần hoặc tháng.' };
+    if (allowDefault && !fromDate && !toDate) return null;
+    if (!isValidDateOnly(fromDate)) return { field: 'fromDate', message: 'Nhập ngày bắt đầu hợp lệ.' };
+    if (!isValidDateOnly(toDate)) return { field: 'toDate', message: 'Nhập ngày kết thúc hợp lệ.' };
+    if (fromDate > toDate) return { field: 'fromDate', message: 'Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.' };
+    const days = Math.floor((Date.parse(`${toDate}T00:00:00.000Z`) - Date.parse(`${fromDate}T00:00:00.000Z`)) / (24 * 60 * 60 * 1000)) + 1;
+    if (days > 366) return { field: 'toDate', message: 'Khoảng báo cáo không được vượt quá 366 ngày.' };
+    return null;
 }
