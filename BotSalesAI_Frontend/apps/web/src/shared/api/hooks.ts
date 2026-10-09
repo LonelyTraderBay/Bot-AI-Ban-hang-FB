@@ -1,13 +1,13 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { InfiniteData } from '@tanstack/react-query';
 import type { CommandResponse, OperationId, ResponseOf } from '@botsales/contracts';
 import { operations } from '@botsales/contracts';
-import { request } from './client';
+import { request, subscribeScopeCancellation } from './client';
 import type { ApiArguments, ApiOptions, MutationOperationId, QueryApiOptions, QueryOperationId } from './client';
 import { ApiError, UnknownResultError } from './errors';
 import { useScope } from '../model/scope';
-import { rememberUnknown, hasUnknownIntent } from './intents';
+import { rememberUnknown, hasUnknownIntent, subscribeIntents, intentSnapshot } from './intents';
 export function useApi<K extends QueryOperationId>(op: K, options: Omit<QueryApiOptions<K>, 'signal'> = {}, enabled = true) {
     const scope = useScope();
     const { user } = scope.session;
@@ -62,63 +62,111 @@ export function useCommand<K extends MutationOperationId>(op: K, invalidate: rea
     const [pending, setPending] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const inFlight = useRef(false);
-    const unresolved = useRef(false);
-    if (!hasUnknownIntent(scope.shop.id, op))
-        unresolved.current = false;
+    const intents = useSyncExternalStore(subscribeIntents, intentSnapshot, intentSnapshot);
+    const unresolved = intents.some(intent => intent.shopId === scope.shop.id && intent.operation === op);
+    const mounted = useRef(false);
+    const controllers = useRef(new Set<AbortController>());
+    const identity = `${scope.session.user.id}:${scope.shop.id}:${scope.membership.permissionVersion}:${op}`;
+    const currentIdentity = useRef(identity);
+    currentIdentity.current = identity;
+    useEffect(() => {
+        mounted.current = true;
+        const active = controllers.current;
+        return () => {
+            mounted.current = false;
+            for (const controller of active) controller.abort();
+            active.clear();
+        };
+    }, [identity]);
     const execute = useCallback(async (...args: ApiArguments<K>): Promise<ResponseOf<K>> => {
         const options = (args[0] ?? {}) as ApiOptions<K>;
-        if (inFlight.current || unresolved.current || hasUnknownIntent(scope.shop.id, op))
+        if (!mounted.current || currentIdentity.current !== identity || options.signal?.aborted)
+            throw new DOMException('Màn hình hoặc phạm vi đã đóng.', 'AbortError');
+        if (inFlight.current || hasUnknownIntent(scope.shop.id, op))
             throw new ApiError(409, 'IN_FLIGHT', 'Thao tác đang xử lý hoặc chưa xác minh kết quả.');
         if (!scope.online)
             throw new ApiError(0, 'OFFLINE', 'Đang ngoại tuyến. Không gửi thay đổi.');
         inFlight.current = true;
         setPending(true);
         setError(null);
+        const controller = new AbortController();
+        controllers.current.add(controller);
+        const cancel = () => controller.abort();
+        const unsubscribe = subscribeScopeCancellation(cancel);
+        options.signal?.addEventListener('abort', cancel, { once: true });
+        const alive = () => mounted.current && currentIdentity.current === identity && !controller.signal.aborted;
+        const assertAlive = () => { if (!alive()) throw new DOMException('Màn hình hoặc phạm vi đã đóng.', 'AbortError'); };
+        const intentId = options.idempotencyKey || crypto.randomUUID();
+        let commandId: string | undefined;
+        let unsettled = false;
         try {
-            const result = await request(op, { ...options, path: { shopId: scope.shop.id, ...options.path }, idempotencyKey: options.idempotencyKey || crypto.randomUUID() });
+            assertAlive();
+            const result = await request(op, { ...options, path: { shopId: scope.shop.id, ...options.path }, signal: controller.signal, idempotencyKey: intentId });
             let settledResult = result;
             if (operations[op].responseSchema === 'CommandResponse' && result && typeof result === 'object' && 'data' in result) {
                 const command = result.data;
                 if (command && typeof command === 'object' && 'id' in command && typeof command.id === 'string' && 'status' in command) {
                     let observed = command.status;
+                    commandId = command.id;
+                    unsettled = ['accepted', 'running', 'unknown'].includes(String(observed));
                     if (observed === 'failed')
                         throw new ApiError(409, 'COMMAND_FAILED', 'Lệnh bị từ chối; xem kết quả kiểm tra của backend.');
                     for (let attempt = 0; ['accepted', 'running'].includes(String(observed)) && attempt < 8; attempt++) {
-                        await new Promise(resolve => setTimeout(resolve, 400 + attempt * 150));
+                        assertAlive();
+                        await waitForPoll(400 + attempt * 150, controller.signal);
+                        assertAlive();
                         let current: CommandResponse;
                         try {
-                            current = await request('getCommand', { path: { shopId: scope.shop.id, commandId: command.id } });
+                            current = await request('getCommand', { path: { shopId: scope.shop.id, commandId: command.id }, signal: controller.signal });
                         }
                         catch {
-                            throw new UnknownResultError(options.idempotencyKey || command.id, command.id);
+                            throw new UnknownResultError(intentId, command.id);
                         }
                         observed = current.data.status;
+                        unsettled = ['accepted', 'running', 'unknown'].includes(String(observed));
                         settledResult = current as ResponseOf<K>;
                         if (observed === 'failed')
                             throw new ApiError(409, current.data.problem?.code || 'COMMAND_FAILED', current.data.problem?.detail || 'Lệnh bị từ chối.');
                     }
                     if (['unknown', 'accepted', 'running'].includes(String(observed)))
-                        throw new UnknownResultError(options.idempotencyKey || command.id, command.id);
+                        throw new UnknownResultError(intentId, command.id);
                 }
             }
+            assertAlive();
             await Promise.all(invalidate.map(id => cache.invalidateQueries({ queryKey: ['scope', scope.session.user.id, scope.shop.id, scope.membership.permissionVersion, id] })));
+            assertAlive();
             return settledResult;
         }
         catch (e) {
             const error = e instanceof Error ? e : new Error('Yêu cầu thất bại');
-            setError(error);
+            if (alive()) setError(error);
             if (error instanceof UnknownResultError) {
-                unresolved.current = true;
                 rememberUnknown({ intentId: error.intentId, commandId: error.commandId || null, shopId: scope.shop.id, operation: op });
             }
+            else if (unsettled) {
+                rememberUnknown({ intentId, commandId: commandId || null, shopId: scope.shop.id, operation: op });
+            }
+            if (!alive()) throw new DOMException('Màn hình hoặc phạm vi đã đóng; kết quả chưa rõ được giữ để đối chiếu.', 'AbortError');
             throw error;
         }
         finally {
             inFlight.current = false;
-            setPending(false);
+            if (mounted.current && currentIdentity.current === identity) setPending(false);
+            unsubscribe();
+            options.signal?.removeEventListener('abort', cancel);
+            controllers.current.delete(controller);
         }
-    }, [cache, invalidate, op, scope]);
+    }, [cache, invalidate, op, scope, identity]);
     return {
-        execute, pending, error, clearError: () => setError(null), resetAfterReconcile: () => { unresolved.current = false; setError(null); }
+        execute, pending, unresolved, error, clearError: () => setError(null), resetAfterReconcile: () => setError(null)
     };
+}
+
+function waitForPoll(ms: number, signal: AbortSignal) {
+    return new Promise<void>((resolve, reject) => {
+        const cancel = () => { clearTimeout(timer); signal.removeEventListener('abort', cancel); reject(new DOMException('Đã hủy kiểm tra lệnh.', 'AbortError')); };
+        const timer = setTimeout(() => { signal.removeEventListener('abort', cancel); resolve(); }, ms);
+        signal.addEventListener('abort', cancel, { once: true });
+        if (signal.aborted) cancel();
+    });
 }

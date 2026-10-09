@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dateOnlyInTimezone, dateOnlyStartOfDayToISOString, dateTimeLocalInput, dateTimeLocalToISOString, isValidDateOnly } from '../src/shared/model/format';
+import { dateOnlyInTimezone, dateOnlyStartOfDayToISOString, dateTimeLocalInput, dateTimeLocalToISOString, isValidDateOnly, isValidTimeZone } from '../src/shared/model/format';
 
 describe('shop-timezone date and time fields', () => {
     const monthBoundary = new Date('2026-09-30T17:30:00.000Z');
@@ -50,5 +50,12 @@ describe('shop-timezone date and time fields', () => {
         expect(isValidDateOnly('2026-13-01')).toBe(false);
         expect(isValidDateOnly('not-a-date')).toBe(false);
         expect(isValidDateOnly('')).toBe(false);
+    });
+
+    it('validates shop timezones without exposing Intl exceptions to form state', () => {
+        expect(isValidTimeZone('Asia/Vientiane')).toBe(true);
+        expect(isValidTimeZone('Mars/OlympusMons')).toBe(false);
+        expect(isValidTimeZone(' Asia/Vientiane ')).toBe(false);
+        expect(isValidTimeZone('')).toBe(false);
     });
 });

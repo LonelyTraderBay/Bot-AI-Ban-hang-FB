@@ -126,6 +126,23 @@ describe('typed HTTP boundary', () => {
         expect(init?.headers).not.toHaveProperty('Idempotency-Key');
     });
 
+    it('rejects a successful HTTP status that differs from the operation contract', async () => {
+        fetchMock.mockResolvedValueOnce(jsonResponse(200, { accepted: true }));
+
+        await expect(request('logout')).rejects.toMatchObject({
+            status: 200, code: 'UNEXPECTED_STATUS',
+        });
+    });
+
+    it('marks a mismatched successful mutation status as unresolved instead of treating it as committed', async () => {
+        fetchMock.mockResolvedValueOnce(jsonResponse(200, customerResponse()));
+
+        await expect(request('createCustomer', {
+            path: { shopId: shop.id }, body: customerBody, idempotencyKey: 'intent-status-mismatch',
+        })).rejects.toBeInstanceOf(UnknownResultError);
+        resolveObservedIntent('intent-status-mismatch');
+    });
+
     it('sets If-Match from the required typed version option', async () => {
         fetchMock.mockResolvedValueOnce(jsonResponse(200, customerResponse()));
 

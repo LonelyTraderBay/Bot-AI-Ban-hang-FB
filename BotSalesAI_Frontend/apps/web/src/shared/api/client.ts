@@ -6,6 +6,12 @@ import { rememberUnknown } from './intents';
 let csrfToken = '';
 let scopeEpoch = 0;
 const activeRequests = new Set<AbortController>();
+const scopeCancellations = new Set<() => void>();
+/** Includes executions waiting between HTTP requests, not just active fetches. */
+export function subscribeScopeCancellation(cancel: () => void) {
+    scopeCancellations.add(cancel);
+    return () => { scopeCancellations.delete(cancel); };
+}
 export function setCsrfToken(token: string) {
     if (token === '') {
         csrfToken = '';
@@ -22,6 +28,8 @@ export function setCsrfToken(token: string) {
 }
 export function cancelScopeRequests() {
     scopeEpoch += 1;
+    for (const cancel of scopeCancellations)
+        cancel();
     for (const controller of activeRequests)
         controller.abort();
     activeRequests.clear();
@@ -200,9 +208,12 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
         const response = await fetch(url, { method: spec.method, credentials: 'same-origin', cache: 'no-store', headers, body, signal: controller.signal });
         if (epoch !== scopeEpoch)
             throw new DOMException('Đã chuyển cửa hàng hoặc phiên', 'AbortError');
-        if (response.status === 204 && response.ok)
-            return undefined as ResponseOf<K>;
         let raw: unknown;
+        if (response.status === 204 && response.ok) {
+            if (response.status !== spec.status)
+                throw new ApiError(response.status, 'UNEXPECTED_STATUS', 'Mã trạng thái phản hồi không đúng hợp đồng API.');
+            return undefined as ResponseOf<K>;
+        }
         try {
             raw = await response.json();
         }
@@ -222,6 +233,8 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
             catch { /* Unknown server payload stays untrusted. */ }
             throw new ApiError(response.status, problem?.code || 'HTTP_ERROR', problem?.detail || problem?.title || `Yêu cầu thất bại (${response.status})`, problem);
         }
+        if (response.status !== spec.status)
+            throw new ApiError(response.status, 'UNEXPECTED_STATUS', 'Mã trạng thái phản hồi không đúng hợp đồng API.');
         const contentType = response.headers?.get('content-type');
         if (contentType && !/^(application\/json|[\w.+-]+\/[\w.+-]+\+json)(?:\s*;|$)/i.test(contentType))
             throw new ApiError(response.status, 'UNEXPECTED_CONTENT_TYPE', 'Kiểu dữ liệu phản hồi không đúng hợp đồng.');

@@ -1,4 +1,14 @@
+import { useCallback } from 'react';
 type DraftControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+/** Controlled editors report semantic dirty state, including arrays and non-input controls. */
+export function useDraftForm(dirty: boolean) {
+    return useCallback((form: HTMLFormElement | null) => {
+        if (!form) return;
+        setDraftDirty(form, dirty);
+        if (!dirty) markDraftClean(form);
+    }, [dirty]);
+}
 
 let pendingSubmitAt = 0;
 let pendingSubmitForm: HTMLFormElement | null = null;
@@ -116,20 +126,5 @@ export function consumeFormSubmissionNavigation(root: ParentNode = document) {
     pendingSubmitForm = null;
     if (!form || !root.contains(form))
         return false;
-    form.dataset.draftClean = 'true';
-    for (const control of controlsIn(form)) {
-        if (control instanceof HTMLInputElement) {
-            if (control.type === 'checkbox' || control.type === 'radio')
-                control.defaultChecked = control.checked;
-            else if (control.type !== 'file')
-                control.defaultValue = control.value;
-        }
-        else if (control instanceof HTMLSelectElement) {
-            for (const option of control.options)
-                option.defaultSelected = option.selected;
-        }
-        else
-            control.defaultValue = control.value;
-    }
-    return true;
+    return form.dataset.draftClean === 'true' && !hasUnsavedFormDraft(root);
 }

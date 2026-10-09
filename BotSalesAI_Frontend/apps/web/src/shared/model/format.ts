@@ -1,4 +1,14 @@
 import type { Money } from '@botsales/contracts';
+
+/** JSON Schema counts Unicode code points, including combining marks, rather than UTF-16 units. */
+export function codePointLength(value: string): number {
+    return Array.from(value).length;
+}
+
+export function limitCodePoints(value: string, maximum: number): string {
+    return Array.from(value).slice(0, maximum).join('');
+}
+
 type LocalDateTimeParts = { year: number; month: number; day: number; hour: number; minute: number; second?: number };
 
 function localDateTimeParts(instant: Date, timezone: string): LocalDateTimeParts {
@@ -50,6 +60,27 @@ export function isValidDateOnly(value: string | null | undefined): value is stri
     return date.getUTCFullYear() === Number(match[1])
         && date.getUTCMonth() === Number(match[2]) - 1
         && date.getUTCDate() === Number(match[3]);
+}
+
+/** Validate an IANA timezone before it reaches API input or a formatter. */
+export function isValidTimeZone(value: string | null | undefined): boolean {
+    if (!value || value !== value.trim())
+        return false;
+    try {
+        new Intl.DateTimeFormat('vi-VN', { timeZone: value }).format(new Date(0));
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+
+/** Format a calendar date without treating it as an instant or shifting it by timezone. */
+export function formatDateOnly(value: string | null | undefined): string {
+    if (!isValidDateOnly(value))
+        return value ? 'Ngày không hợp lệ' : 'Chưa ghi nhận';
+    const [year = 0, month = 1, day = 1] = value.split('-').map(Number);
+    return new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(year, month - 1, day)));
 }
 
 /** Convert a date-only value to the first instant in that local calendar day. */

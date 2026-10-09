@@ -5,6 +5,7 @@ import type { EventEnvelope } from '@botsales/contracts';
 import { useScope } from '@/shared/model/scope';
 import { operationUrl } from '@/shared/api/client';
 import { assertSchema } from '@/shared/api/validation';
+import { eventInvalidations } from '@/shared/api/event-invalidation';
 import { layoutSx } from '@/shared/ui/layout';
 export function ScopeEvents() {
     const scope = useScope();
@@ -40,9 +41,12 @@ export function ScopeEvents() {
                 }
                 if (lastSequence !== null && payload.sequence <= lastSequence)
                     return;
+                const gap = lastSequence !== null && payload.sequence !== lastSequence + 1;
                 lastSequence = payload.sequence;
-                // Both normal events and gaps invalidate snapshots. Never apply inventory/money deltas in the client.
-                void cache.invalidateQueries({ queryKey: key });
+                const affected = gap ? null : eventInvalidations(payload);
+                if (affected) {
+                    for (const operation of affected) void cache.invalidateQueries({ queryKey: [...key, operation] });
+                } else void cache.invalidateQueries({ queryKey: key });
             }
             catch {
                 void cache.invalidateQueries({ queryKey: key });
