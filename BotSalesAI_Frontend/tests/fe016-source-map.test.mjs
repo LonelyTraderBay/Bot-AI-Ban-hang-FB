@@ -28,12 +28,14 @@ test('FE016 maps R05/R06 reads and mutations to canonical permissions and curren
     assert.equal(r06.path, '/s/:shopId/inbox/:conversationId');
     assert.equal(r05.readPermission, 'conversations.read');
     assert.equal(r06.readPermission, 'conversations.read');
-    for (const operationId of ['listConversations', 'getInboxMetadata', 'getConversation', 'listMessages', 'getCommand', 'sendMessage', 'addInternalNote', 'takeoverConversation', 'releaseConversation', 'assignConversation', 'resolveConversation', 'createFeedback']) {
+    for (const operationId of ['listConversations', 'getInboxMetadata', 'getConversation', 'listMessages', 'getCommand', 'sendMessage', 'addInternalNote', 'takeoverConversation', 'releaseConversation', 'assignConversation', 'resolveConversation', 'createFeedback', 'uploadFile', 'getFile']) {
         assert.ok(operations[operationId], `${operationId} exists in canonical OpenAPI`);
     }
     const actions = new Map(r06.actions.map(action => [action.operationId, action.permission]));
     assert.equal(actions.get('sendMessage'), 'conversations.reply');
     assert.equal(actions.get('addInternalNote'), 'conversations.reply');
+    assert.equal(actions.get('uploadFile'), 'conversations.reply');
+    assert.ok(r06.readOperations.includes('getFile'));
     for (const operationId of ['takeoverConversation', 'releaseConversation', 'assignConversation', 'resolveConversation'])
         assert.equal(actions.get(operationId), 'conversations.assign');
     assert.equal(actions.get('createFeedback'), 'conversations.read');
@@ -51,11 +53,16 @@ test('FE016 contract bounds list filters, safe message refs and versioned send p
         assert.ok(queryNames.includes(field), `listConversations supports ${field}`);
     const message = openapi.components.schemas.Message;
     assert.ok(message.properties.sourceEvidence);
-    assert.equal(message.properties.media, undefined);
-    assert.equal(message.properties.attachments, undefined);
+    assert.ok(message.properties.attachments);
+    assert.ok(openapi.components.schemas.MessageAttachment.properties.fileId);
     assert.deepEqual(openapi.components.schemas.ResourceRef.required, ['type', 'id']);
     const messageWrite = openapi.components.schemas.MessageWrite;
-    assert.deepEqual(messageWrite.required, ['clientMessageId', 'text', 'expectedConversationVersion']);
+    assert.deepEqual(messageWrite.required, ['clientMessageId', 'expectedConversationVersion']);
+    assert.ok(messageWrite.properties.fileIds);
+    assert.ok(messageWrite.anyOf, 'send still requires text or a non-empty attachment list');
+    assert.ok(openapi.components.schemas.FileUpload.properties.purpose.enum.includes('conversation_media'));
+    assert.ok(openapi.components.schemas.InboxMetadata.properties.channels.items.properties.mediaPolicy);
+    assert.ok(operations.getFile && operations.uploadFile);
     assert.ok(operations.sendMessage.responses['202'], 'sendMessage has its documented asynchronous response');
     assert.match(inboxComponents, /message\.text/);
     assert.doesNotMatch(inboxUi, /dangerouslySetInnerHTML/);
@@ -67,6 +74,11 @@ test('FE016 contract bounds list filters, safe message refs and versioned send p
     assert.match(mockService, /'mode', 'channelId', 'assignedUserId'/);
     assert.match(inboxComponents, /expectedConversationVersion:\s*conversation\.version/);
     assert.match(inboxComponents, /clientMessageId:\s*crypto\.randomUUID\(\)/);
+    assert.match(inboxComponents, /fileIds:/);
+    assert.match(inboxComponents, /request\('getFile'/);
+    assert.match(inboxComponents, /revokeObjectURL/);
+    assert.match(mockService, /conversation_media:\s*'conversations\.reply'/);
+    assert.match(readText('apps/web/src/mocks/files.ts'), /FILE_NOT_READY/);
 });
 
 test('FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version', () => {
@@ -81,4 +93,4 @@ test('FE016 uses shell-owned resync and command recovery, and mock takeover enfo
     assert.match(mock, /c\.generation = num\(c\.generation\) \+ 1/);
 });
 
-console.log(JSON.stringify({taskId:'FE016',scope:'FRONTEND_WITH_SYNTHETIC_MOCK_API',routes:['R05','R06'],operations:Object.keys(operations).filter(id=>/Conversation|Message|InboxMetadata|Feedback|Command/.test(id)),knownGap:'Canonical Message has no media or attachment field/operation; UI must not invent a provider endpoint.',checks:3}));
+console.log(JSON.stringify({taskId:'FE016',scope:'FRONTEND_WITH_SYNTHETIC_MOCK_API',routes:['R05','R06'],operations:Object.keys(operations).filter(id=>/Conversation|Message|InboxMetadata|Feedback|Command|uploadFile|getFile/.test(id)),knownGap:'Real media provider, antivirus scan, Meta policy and production storage remain outside Frontend/MSW verification.',checks:3}));

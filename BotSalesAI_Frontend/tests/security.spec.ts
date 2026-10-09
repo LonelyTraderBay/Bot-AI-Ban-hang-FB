@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -98,9 +99,10 @@ test('mock uploads require a purpose, enforce its role, and fingerprint file con
     const salesPage = await salesContext.newPage();
     await gotoDemo(salesPage, '/s/shop-demo/imports');
     await expect(salesPage.getByText('Frontend review: API được mô phỏng trong bộ nhớ', { exact: false })).toBeVisible();
+    await openDemoControls(salesPage);
     await salesPage.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
     await salesPage.getByRole('option', { name: 'sales', exact: true }).click();
-    await expect(salesPage.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('sales', { exact: true })).toBeVisible();
+    await expect(salesPage.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('sales');
     const denied = await uploadStatus(salesPage, 'product_import', 'sales-import', 'sku,name,price\nP-1,Sample,100');
     expect(denied.status).toBe(403);
   } finally {

@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
@@ -20,6 +21,7 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, option: string) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox').nth(label === 'Vai trò mô phỏng' ? 0 : 1).click();
     await page.getByRole('option', { name: option, exact: true }).click();
 }
@@ -144,7 +146,7 @@ test('FE018.S01 maps routes and operations to the canonical OpenAPI permissions'
 
 test('FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/bot');
-    await expect(page.getByText('Hợp đồng BotConfigWrite hiện khóa requireHumanOrderConfirmation=true.')).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Đơn do AI đề xuất vẫn cần người có quyền kiểm tra và xác nhận.' })).toBeVisible();
     await page.getByRole('button', { name: 'Sửa bản nháp' }).click();
     const dialog = page.getByRole('dialog', { name: 'Cấu hình bản nháp' });
     const instructions = 'Chỉ tư vấn theo dữ liệu mẫu đã duyệt; không tự chốt đơn.';
@@ -219,7 +221,7 @@ test('FE018.AC01/04 successful publish is tied to the tested revision and pause 
     await pauseDialog.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Dừng kiểm thử');
     const pauseRequestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/bot/pause'));
     const pauseResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/bot/pause'));
-    await pauseDialog.getByRole('button', { name: 'Xác nhận' }).click();
+    await pauseDialog.getByRole('button', { name: 'Tạm dừng Admin AI' }).click();
     const pauseRequest = await pauseRequestWait;
     const pauseResponse = await pauseResponseWait;
     expect(pauseRequest.postDataJSON()).toEqual({ expectedVersion: 2, reason: 'Dừng kiểm thử' });
@@ -309,7 +311,7 @@ test('FE018.AC02 role kill switch is versioned, preserves API tools, and does no
     await resumeDialog.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Kiểm thử tiếp tục');
     const resumeRequestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/automation-control'));
     const resumeResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/automation-control'));
-    await resumeDialog.getByRole('button', { name: 'Xác nhận' }).click();
+    await resumeDialog.getByRole('button', { name: 'Kiểm tra để tiếp tục' }).click();
     const resumeRequest = await resumeRequestWait;
     expect(resumeRequest.postDataJSON()).toMatchObject({ expectedVersion: 1, scope: 'role', resourceId: 'agent-0', action: 'resume', reason: 'Kiểm thử tiếp tục' });
     expect((await resumeResponseWait).status()).toBe(202);
@@ -320,7 +322,7 @@ test('FE018.AC02 role kill switch is versioned, preserves API tools, and does no
     await pauseDialog.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Dừng riêng vai trò');
     const pauseRequestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/automation-control'));
     const pauseResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/automation-control'));
-    await pauseDialog.getByRole('button', { name: 'Xác nhận' }).click();
+    await pauseDialog.getByRole('button', { name: 'Tạm dừng vai trò' }).click();
     const pauseRequest = await pauseRequestWait;
     expect(pauseRequest.postDataJSON()).toMatchObject({ expectedVersion: 2, scope: 'role', resourceId: 'agent-0', action: 'pause', reason: 'Dừng riêng vai trò' });
     expect((await pauseResponseWait).status()).toBe(202);
@@ -397,7 +399,7 @@ test('FE018.AC05 unknown role command stays unresolved and does not claim succes
     const dialog = page.getByRole('dialog', { name: 'Kiểm điều kiện để tiếp tục' });
     await dialog.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Lệnh cần đối soát');
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/automation-control'));
-    await dialog.getByRole('button', { name: 'Xác nhận' }).click();
+    await dialog.getByRole('button', { name: 'Kiểm tra để tiếp tục' }).click();
     const response = await responseWait;
     expect(response.status()).toBe(202);
     expect((await response.json()).data.status).toBe('unknown');

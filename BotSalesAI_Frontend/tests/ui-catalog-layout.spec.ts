@@ -40,7 +40,7 @@ test('catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at 
             let panelInset: string | null = null;
             if (route.inset) {
                 panelInset = await page.locator('main#main-content .MuiPaper-root').first().locator(':scope > .MuiBox-root').evaluate(element => getComputedStyle(element).paddingLeft);
-                expect(panelInset, `${route.id} surface body inset at ${viewport.width}`).toBe(viewport.gutter);
+                expect(panelInset, `${route.id} operational body inset at ${viewport.width}`).toBe(viewport.width < 768 ? '12px' : '16px');
             }
             observations.push({ route: route.id, width: viewport.width, documentWidth: scrollWidth, panelInset });
         }
@@ -64,7 +64,7 @@ test('catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at 
     expect(pageErrors).toEqual([]);
 });
 
-test('Imports review notice and demo controls keep the measured shared 24px clearance at 806x884', async ({ page }) => {
+test('Imports review notice and demo controls keep the measured shared disclosure boundary at 806x884', async ({ page }) => {
     const pageErrors: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.message));
     await page.setViewportSize({ width: 806, height: 884 });
@@ -76,6 +76,7 @@ test('Imports review notice and demo controls keep the measured shared 24px clea
     const notice = page.getByRole('alert').filter({ hasText: 'Frontend review: API được mô phỏng trong bộ nhớ' });
     const controls = page.locator('#mock-tools-controls');
     await expect(notice).toBeVisible();
+    await page.locator('button[aria-controls="mock-tools-controls"]').click();
     await expect(controls).toBeVisible();
     await expect(controls.getByRole('combobox')).toHaveCount(3);
 
@@ -83,18 +84,28 @@ test('Imports review notice and demo controls keep the measured shared 24px clea
         const alert = [...document.querySelectorAll('.MuiAlert-root')]
             .find(element => element.textContent?.includes('Frontend review: API được mô phỏng trong bộ nhớ'));
         const controls = document.querySelector('#mock-tools-controls');
+        const disclosure = document.querySelector('button[aria-controls="mock-tools-controls"]');
         const control = controls?.querySelector('.MuiInputBase-root');
         const label = controls?.querySelector('.MuiInputLabel-root');
-        if (!alert || !controls || !control || !label) return null;
+        if (!alert || !controls || !control || !label || !disclosure) return null;
         const alertRect = alert.getBoundingClientRect();
         const controlRect = control.getBoundingClientRect();
         const labelRect = label.getBoundingClientRect();
+        const fieldRect = control.closest('.MuiFormControl-root')!.getBoundingClientRect();
         return {
+            disclosureClearance: disclosure.getBoundingClientRect().top - alertRect.bottom,
+            disclosureHeight: disclosure.getBoundingClientRect().height,
             alertBottom: alertRect.bottom,
             firstControlTop: controlRect.top,
             firstLabelTop: labelRect.top,
             controlClearance: controlRect.top - alertRect.bottom,
             labelClearance: labelRect.top - alertRect.bottom,
+            fieldClearance: fieldRect.top - alertRect.bottom,
+            labelOffset: labelRect.top - fieldRect.top,
+            labelHeight: labelRect.height,
+            labelAfterGap: controlRect.top - labelRect.bottom,
+            labelPosition: getComputedStyle(label).position,
+            labelTransform: getComputedStyle(label).transform,
             documentWidth: document.documentElement.scrollWidth,
             viewportWidth: document.documentElement.clientWidth,
         };
@@ -105,9 +116,16 @@ test('Imports review notice and demo controls keep the measured shared 24px clea
         contentType: 'application/json',
     });
     expect(geometry).not.toBeNull();
-    expect(geometry!.controlClearance, JSON.stringify(geometry)).toBeCloseTo(24, 0);
-    expect(geometry!.labelClearance).toBeGreaterThanOrEqual(12);
-    expect(geometry!.labelClearance).toBeLessThanOrEqual(18);
+    expect(geometry!.disclosureClearance).toBeCloseTo(12, 0);
+    expect(geometry!.disclosureHeight).toBeGreaterThanOrEqual(44);
+    const clearance = geometry!.disclosureClearance + geometry!.disclosureHeight;
+    expect(geometry!.fieldClearance, JSON.stringify(geometry)).toBeCloseTo(clearance, 0);
+    expect(geometry!.labelClearance).toBeCloseTo(clearance, 0);
+    expect(geometry!.labelOffset).toBeCloseTo(0, 0);
+    expect(geometry!.labelAfterGap).toBeCloseTo(4, 0);
+    expect(geometry!.controlClearance).toBeCloseTo(clearance + geometry!.labelHeight + 4, 0);
+    expect(geometry!.labelPosition).toBe('static');
+    expect(geometry!.labelTransform).toBe('none');
     expect(geometry!.documentWidth).toBe(806);
     expect(geometry!.viewportWidth).toBe(806);
     expect(pageErrors).toEqual([]);

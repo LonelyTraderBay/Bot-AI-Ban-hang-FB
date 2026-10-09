@@ -129,7 +129,7 @@ test('UI007 supplier and offer failures keep purchase suggestions visible and ha
     await expect(page.getByRole('button', { name: 'Thử lại danh sách báo giá', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Thử lại danh sách nhà cung cấp', exact: true })).toHaveCount(0);
     expect(suggestionResponses).toContain(200);
-    await expect(page.getByRole('table', { name: 'Dữ liệu' })).toBeVisible();
+    await expect(page.getByRole('table', { name: 'Đề nghị nhập hàng' })).toBeVisible();
 
     await setOperationFailure(page, 'listSupplierOffers', null);
     let observeRetryRequests = false;

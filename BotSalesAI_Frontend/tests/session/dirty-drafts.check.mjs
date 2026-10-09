@@ -49,6 +49,9 @@ test('rebases a successfully submitted form but keeps edits after a failed submi
     form.querySelector('input').value = 'Đã sửa';
     assert.equal(drafts.hasUnsavedFormDraft(), true);
     form.dispatchEvent(new dom.window.Event('submit', { bubbles: true }));
+    assert.equal(drafts.consumeFormSubmissionNavigation(), false);
+    drafts.markDraftClean(form);
+    form.dispatchEvent(new dom.window.Event('submit', { bubbles: true }));
     assert.equal(drafts.consumeFormSubmissionNavigation(), true);
     assert.equal(drafts.hasUnsavedFormDraft(), false);
     assert.equal(form.dataset.draftClean, 'true');
@@ -68,9 +71,23 @@ test('a saved form does not hide a separate dirty dialog draft', () => {
     const note = document.querySelector('textarea');
     name.value = 'Đã lưu';
     form.dispatchEvent(new dom.window.Event('submit', { bubbles: true }));
+    assert.equal(drafts.consumeFormSubmissionNavigation(), false);
+    drafts.markDraftClean(form);
+    form.dispatchEvent(new dom.window.Event('submit', { bubbles: true }));
     assert.equal(drafts.consumeFormSubmissionNavigation(), true);
     assert.equal(drafts.hasUnsavedFormDraft(), false);
     note.value = 'Ghi chú chưa lưu';
     note.closest('[role="dialog"]').dataset.draftDirty = 'true';
+    assert.equal(drafts.hasUnsavedFormDraft(), true);
+});
+
+test('F06 successful submit cannot bypass a later controlled edit or another dirty form', () => {
+    document.body.innerHTML = '<main><form id="saved"><input value="A"></form><form id="other"><input value="B"></form></main>';
+    const saved = document.querySelector('#saved');
+    const other = document.querySelector('#other');
+    drafts.markDraftClean(saved);
+    saved.dispatchEvent(new dom.window.Event('submit', { bubbles: true }));
+    drafts.setDraftDirty(other, true);
+    assert.equal(drafts.consumeFormSubmissionNavigation(), false);
     assert.equal(drafts.hasUnsavedFormDraft(), true);
 });

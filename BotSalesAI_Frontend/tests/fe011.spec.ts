@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -18,6 +19,7 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -83,7 +85,8 @@ test('FE011.AC02 adjustment validates, waits for mock confirmation, and reconcil
     await page.getByRole('link', { name: 'Lịch sử biến động' }).click();
     await expect(page.getByRole('heading', { name: 'Lịch sử kho', exact: true })).toBeVisible();
     const movement = page.getByRole('row').filter({ hasText: 'Kiểm kê FE011' });
-    await expect(movement).toContainText('adjustment');
+    await expect(movement).toContainText('Điều chỉnh tồn');
+    await expect(movement.locator('[title="adjustment"]')).toContainText('Điều chỉnh tồn');
     await expect(movement).toContainText('2');
     await expect(movement).toContainText('user-demo');
     expect(calls.some(call => call.method === 'GET' && call.path.startsWith('/api/v2/shops/shop-demo/inventory/movements'))).toBeTruthy();
@@ -104,7 +107,9 @@ test('FE011.AC03 conflict and insufficient stock preserve the draft and never up
 
     await dialog.getByLabel('Thay đổi số lượng').fill('-100');
     await dialog.getByRole('button', { name: 'Xác nhận điều chỉnh' }).click();
-    await expect(dialog.getByRole('alert').filter({ hasText: 'Không đủ hàng bán được' })).toBeVisible();
+    const insufficientStock = dialog.getByRole('alert').filter({ hasText: 'Điều chỉnh vượt tồn hiện có.' });
+    await expect(insufficientStock).toBeVisible();
+    await expect(insufficientStock).not.toContainText('Tải lại dữ liệu mới nhất');
     await expect(dialog.getByLabel('Thay đổi số lượng')).toHaveValue('-100');
     await expect(dialog).toHaveAttribute('data-draft-dirty', 'true');
     expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/inventory/adjustments'))).toHaveLength(2);
@@ -157,7 +162,7 @@ test('FE011.AC04 movement contract filters are URL-backed and history exposes ac
     await expect(page.getByRole('heading', { name: 'Lịch sử kho', exact: true })).toBeVisible();
     await expect(page.getByRole('alert').filter({ hasText: 'Cursor không còn phù hợp' })).toBeVisible();
     await expect(page.getByLabel('Loại biến động')).toHaveCount(0);
-    await page.getByLabel('Mã kho').fill('warehouse-01');
+    await chooseOption(page, 'Kho', 'MAIN · Kho chính · dữ liệu tổng hợp');
     await page.getByLabel('Mã biến thể').fill('v-p1');
     const filteredRequest = page.waitForRequest(request => {
         const url = new URL(request.url());

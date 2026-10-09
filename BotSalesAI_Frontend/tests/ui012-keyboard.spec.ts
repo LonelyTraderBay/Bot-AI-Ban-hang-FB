@@ -311,13 +311,13 @@ test('UI012 order draft does not announce an untouched required customer as inva
     await expect(page.getByRole('button', { name: 'Lưu đơn nháp' })).toBeDisabled();
 });
 
-test('UI012 long BotConfig policy literal wraps inside its alert at a 320 CSS-pixel viewport', async ({ page }) => {
+test('UI012 human-confirmation policy copy wraps inside its alert at a 320 CSS-pixel viewport', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 900 });
     await page.goto(new URL('/s/shop-demo/bot', demoUrl).toString());
 
-    const alert = page.getByRole('alert').filter({ hasText: 'BotConfigWrite' });
+    const alert = page.getByRole('alert').filter({ hasText: 'Đơn do AI đề xuất vẫn cần người có quyền kiểm tra và xác nhận.' });
     await expect(alert).toBeVisible();
-    await expect(alert.getByText('requireHumanOrderConfirmation=true', { exact: true })).toBeVisible();
+    await expect(alert).toContainText('Lưu bản nháp không thay đổi cấu hình đang chạy hoặc tự chốt đơn.');
 
     const layout = await alert.evaluate(element => {
         const message = element.querySelector<HTMLElement>('.MuiAlert-message');

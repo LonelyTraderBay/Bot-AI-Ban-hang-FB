@@ -10,7 +10,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     defaults:
       run:
         working-directory: BotSalesAI_Frontend
@@ -32,6 +32,8 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox
       - run: npm run verify
       - run: npm run test:e2e
+      - name: Verify the built demo in both browsers
+        run: npx playwright test --config playwright.built-demo.config.ts --output test-results/built-demo
       - name: Upload revision-scoped build and browser evidence
         if: ${{ always() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

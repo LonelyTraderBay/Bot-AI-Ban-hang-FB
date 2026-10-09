@@ -43,7 +43,7 @@ test('Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px', a
     expect(pageErrors).toEqual([]);
 });
 
-test('Orders draft, versioned quote, synthetic address and return dialogs keep their behavior without writes', async ({ page }) => {
+test('Orders draft, versioned quote, canonical address snapshot and return dialogs keep their behavior without writes', async ({ page }) => {
     const pageErrors: string[] = [];
     const writes: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.message));
@@ -55,15 +55,15 @@ test('Orders draft, versioned quote, synthetic address and return dialogs keep t
 
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(new URL('/s/shop-demo/orders/new', demoUrl).toString());
-    await expect(page.getByText(/Địa chỉ mẫu chỉ phục vụ nghiệm thu giao diện/)).toBeVisible();
+    await expect(page.getByText(/Đơn xác nhận giữ snapshot địa chỉ của báo giá/)).toBeVisible();
     await page.getByRole('combobox', { name: 'Khách hàng' }).click();
     await page.getByRole('option', { name: 'Linh (khách mẫu)', exact: true }).click();
     await page.getByRole('combobox', { name: 'Hội thoại liên quan' }).click();
     await page.getByRole('option', { name: 'Linh (khách mẫu) · cv1', exact: true }).click();
     await page.getByRole('combobox', { name: 'Sản phẩm 1' }).click();
     await page.getByRole('option', { name: 'Áo thun Essential · L · Than · AO-002', exact: true }).click();
-    await page.getByRole('combobox', { name: 'Địa chỉ giao hàng (mẫu demo)' }).click();
-    await page.getByRole('option', { name: 'Địa chỉ mẫu · shop-demo (chỉ dùng trong demo)', exact: true }).click();
+    await page.getByRole('combobox', { name: 'Địa chỉ giao hàng' }).click();
+    await page.getByRole('option', { name: 'Địa chỉ giao hàng mẫu · Linh (khách mẫu)', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Lưu đơn nháp', exact: true })).toBeEnabled();
     expect(writes).toEqual([]);
 

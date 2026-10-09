@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -17,6 +18,7 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -36,7 +38,7 @@ test('FE017.AC01 demo publishing uses the approved permission and lifecycle subs
     await reviewDialog.getByRole('textbox', { name: /Lý do/ }).fill('Kiểm tra bản nháp FE017 trước khi đánh giá.');
     const reviewRequestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/knowledge/k3/submit-review'));
     const reviewResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/knowledge/k3/submit-review'));
-    await reviewDialog.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await reviewDialog.getByRole('button', { name: 'Gửi nguồn để duyệt', exact: true }).click();
     const reviewRequest = await reviewRequestWait;
     expect(JSON.parse(reviewRequest.postData() || 'null')).toEqual({ expectedVersion: initial.version, reason: 'Kiểm tra bản nháp FE017 trước khi đánh giá.' });
     expect((await reviewResponseWait).status()).toBe(202);
@@ -242,7 +244,7 @@ test('FE017.AC04 feedback approval creates inert draft content and its first rev
 test('FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
     await chooseOption(page, 'Vai trò mô phỏng', 'manager');
-    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('manager');
     await expect(page.getByRole('button', { name: 'Sửa bản nháp', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Gửi duyệt', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Xuất bản bản đã đánh giá', exact: true })).toHaveCount(0);
@@ -268,7 +270,7 @@ test('FE017.AC06 stale review preserves the reason and explains the conflict', a
     const reason = 'Giữ lý do này sau khi phiên bản bị thay đổi.';
     await dialog.getByRole('textbox', { name: /Lý do/ }).fill(reason);
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/submit-review'));
-    await dialog.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Gửi nguồn để duyệt', exact: true }).click();
     const response = await responseWait;
     expect(response.status()).toBe(412);
     await expect(dialog.getByRole('textbox', { name: /Lý do/ })).toHaveValue(reason);

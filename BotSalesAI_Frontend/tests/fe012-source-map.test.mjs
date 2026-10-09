@@ -75,7 +75,9 @@ test('FE012 routes, operations, permissions and DTO limits map to canonical cont
     assert.match(orders, /useCommand\('createReturnCase'/);
     assert.match(orders, /useApi\('getReturnCase'/);
     assert.match(orders, /useCommand\('inspectReturn', \['listReturnCases', 'getReturnCase'/);
-    assert.match(orders, /expectedVersion: inspectionCase\.version/);
+    assert.match(orders, /const prepared = inspectionEditor\.prepare\(\)/);
+    assert.match(orders, /expectedVersion: prepared\.version, lines: inspections/);
+    assert.doesNotMatch(orders, /expectedVersion: inspectionCase\.version/);
     assert.doesNotMatch(orders, /\/addresses\b|createShippingAddress|updateShippingAddress/);
     assert.match(knownGaps, /địa chỉ giao hàng|shipping address/i);
     assert.match(router, /simulateCustomerConfirmation/);

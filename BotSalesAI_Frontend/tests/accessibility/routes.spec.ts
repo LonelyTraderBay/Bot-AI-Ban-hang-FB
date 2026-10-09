@@ -76,7 +76,21 @@ test('all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React
     }
 
     const violations = results.flatMap(route => route.violations.map(issue => ({ routeId: route.routeId, ...issue })));
-    expect(results.filter(result => result.state === 'loaded')).toHaveLength(54);
+    expect(results.filter(result => result.state === 'loaded')).toHaveLength(routeManifest.routes.length);
     expect(pageErrors).toEqual([]);
     expect(violations, JSON.stringify(violations, null, 2)).toEqual([]);
+});
+
+test('contained action buttons do not animate between contrasting enabled and disabled color pairs', async ({ page }) => {
+    const server = await startDemoServer();
+    try {
+        await page.goto(new URL('/s/shop-demo/settings/privacy', server.url).toString());
+        const action = page.getByRole('button', { name: 'Tạo yêu cầu xác nhận lại', exact: true });
+        await expect(action).toBeVisible();
+        await expect(action).toBeEnabled();
+        const transitions = await action.evaluate(element => getComputedStyle(element).transitionProperty.split(',').map(value => value.trim()));
+        expect(transitions).not.toContain('background-color');
+    } finally {
+        await server.close();
+    }
 });

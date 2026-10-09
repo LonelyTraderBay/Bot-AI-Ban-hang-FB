@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -18,6 +19,7 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -90,13 +92,13 @@ test('FE012.AC01 searchable customer and product pickers submit contract-shaped 
     await expect(page.getByText('Bản nháp', { exact: true })).toBeVisible();
 });
 
-test('FE012 demo address choice is labeled synthetic and completes the mock order flow', async ({ page }) => {
+test('FE012 canonical customer address choice completes the mock order flow with a versioned snapshot', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/orders/new');
-    await expect(page.getByText(/Địa chỉ mẫu chỉ phục vụ nghiệm thu giao diện/)).toBeVisible();
+    await expect(page.getByText(/Đơn xác nhận giữ snapshot địa chỉ của báo giá/)).toBeVisible();
     await chooseOption(page, 'Khách hàng', 'Linh (khách mẫu)');
     await chooseOption(page, 'Hội thoại liên quan', 'Linh (khách mẫu) · cv1');
     await chooseOption(page, 'Sản phẩm 1', 'Áo thun Essential · L · Than · AO-002');
-    await chooseOption(page, 'Địa chỉ giao hàng (mẫu demo)', 'Địa chỉ mẫu · shop-demo (chỉ dùng trong demo)');
+    await chooseOption(page, 'Địa chỉ giao hàng', 'Địa chỉ giao hàng mẫu · Linh (khách mẫu)');
 
     const createResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders'));
     await page.getByRole('button', { name: 'Lưu đơn nháp' }).click();
@@ -181,15 +183,18 @@ test('FE012.AC01 editing lines invalidates quote and customer consent; a new quo
 
 test('FE012.AC03 mock stale-version 412 preserves draft fields and does not show success', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/orders/DH-1001');
+    await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
+    await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
     await page.getByRole('button', { name: 'Sửa đơn nháp' }).click();
     const staleNotes = page.getByRole('textbox', { name: 'Ghi chú chuẩn bị' });
     await staleNotes.fill('Bản chỉnh sửa cần giữ lại khi có xung đột');
-    await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
-    await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
     const staleSave = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname.endsWith('/orders/DH-1001'));
     await page.getByRole('button', { name: 'Lưu đơn nháp' }).click();
     expect((await staleSave).status()).toBe(412);
-    await expect(page.getByRole('alert').filter({ hasText: 'Mô phỏng dữ liệu bị thay đổi' })).toBeVisible();
+    const comparison=page.getByRole('dialog',{name:'Đối chiếu thay đổi',exact:true});
+    await expect(comparison).toBeVisible();
+    await expect(comparison.getByText('Bản chỉnh sửa cần giữ lại khi có xung đột',{exact:true})).toBeVisible();
+    await comparison.getByRole('button',{name:'Áp dụng vào bản nháp',exact:true}).click();
     await expect(staleNotes).toHaveValue('Bản chỉnh sửa cần giữ lại khi có xung đột');
 });
 

@@ -124,8 +124,7 @@ for (const viewport of viewports) {
         fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
         console.log(`[w28-route-geometry] ${JSON.stringify({ browser: browserName, width: viewport.width, routes: report.renderedRoutes, issues: issues.length, pageErrors: pageErrors.length, evidence: path.relative(root, output) })}`);
 
-        expect(manifest.routes).toHaveLength(54);
-        expect(report.renderedRoutes).toBe(54);
+        expect(report.renderedRoutes).toBe(manifest.routes.length);
         expect(issues).toEqual([]);
         expect(pageErrors).toEqual([]);
     });

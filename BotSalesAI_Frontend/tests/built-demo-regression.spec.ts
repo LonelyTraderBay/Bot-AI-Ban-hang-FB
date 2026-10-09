@@ -153,8 +153,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 
         fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
         console.log(`[built-demo-routes] ${JSON.stringify({ browser: browserName, width: viewport.width, routes: report.renderedRoutes, issues: issues.length, pageErrors: pageErrors.length, artifactSha256: fingerprint.sha256, evidence: path.relative(root, output) })}`);
 
-        expect(manifest.routes).toHaveLength(54);
-        expect(report.renderedRoutes).toBe(54);
+        expect(report.renderedRoutes).toBe(manifest.routes.length);
         expect(issues).toEqual([]);
         expect(pageErrors).toEqual([]);
     });

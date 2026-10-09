@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { expect, test } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 import { evidenceRunId } from './evidence-run-id.mjs';
@@ -15,6 +16,7 @@ test.afterAll(async () => closeDemo?.());
 
 async function gotoDemo(page: import('@playwright/test').Page, path: string) {
     await page.goto(new URL(path, demoUrl).toString());
+    await openDemoControls(page);
     await expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible();
 }
 
@@ -40,6 +42,7 @@ async function setOperationDelay(page: import('@playwright/test').Page, delayMs:
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -72,7 +75,7 @@ test('UI008 R29 successful empty collection exposes an accessible state and one 
 test('UI008 R29 read-only bot_admin sees the empty state without a manage action', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/overview');
     await chooseMockOption(page, 'Vai trò mô phỏng', 'bot_admin');
-    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('bot_admin', { exact: true })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('bot_admin');
     await setFault(page, 'empty_persistent');
     const channelsResponse = page.waitForResponse(response => response.request().method() === 'GET'
         && new URL(response.url()).pathname.endsWith('/integrations/channels'));
@@ -158,7 +161,7 @@ test('UI008 R30 successful empty AI connection cards show a first-use state and 
 test('UI008 R30 read-only bot_admin sees the empty state without an add action', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/overview');
     await chooseMockOption(page, 'Vai trò mô phỏng', 'bot_admin');
-    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('bot_admin', { exact: true })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('bot_admin');
     await setFault(page, 'empty_persistent');
     const connectionsResponse = page.waitForResponse(response => response.request().method() === 'GET'
         && new URL(response.url()).pathname.endsWith('/integrations/ai'));

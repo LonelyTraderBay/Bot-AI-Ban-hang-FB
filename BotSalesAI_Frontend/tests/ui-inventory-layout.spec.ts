@@ -62,10 +62,11 @@ test('Inventory filters reset cursor and preserve other URL state; adjustment va
     const staleInventoryCursor = 'w12-stale-cursor-probe';
     const inventoryCursorRequest = page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).searchParams.get('cursor') === staleInventoryCursor);
     await page.goto(new URL(`/s/shop-demo/inventory?cursor=${staleInventoryCursor}&preserve=keep`, demoUrl).toString());
-    await page.getByRole('textbox', { name: 'Mã kho' }).waitFor({ state: 'visible' });
+    await page.getByRole('combobox', { name: 'Kho', exact: true }).waitFor({ state: 'visible' });
     await inventoryCursorRequest;
 
-    await page.getByRole('textbox', { name: 'Mã kho' }).fill('warehouse-01');
+    await page.getByRole('combobox', { name: 'Kho', exact: true }).click();
+    await page.getByRole('option', { name: 'MAIN · Kho chính · dữ liệu tổng hợp', exact: true }).click();
     const filteredRequest = page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).searchParams.get('warehouseId') === 'warehouse-01');
     await page.getByRole('button', { name: 'Áp dụng bộ lọc', exact: true }).click();
     const request = await filteredRequest;
@@ -84,7 +85,8 @@ test('Inventory filters reset cursor and preserve other URL state; adjustment va
     await page.goto(new URL(`/s/shop-demo/inventory/movements?cursor=${staleMovementCursor}&preserve=keep`, demoUrl).toString());
     await page.getByRole('textbox', { name: 'Mã biến thể' }).waitFor({ state: 'visible' });
     await movementCursorRequest;
-    await page.getByRole('textbox', { name: 'Mã kho' }).fill('warehouse-01');
+    await page.getByRole('combobox', { name: 'Kho', exact: true }).click();
+    await page.getByRole('option', { name: 'MAIN · Kho chính · dữ liệu tổng hợp', exact: true }).click();
     await page.getByRole('textbox', { name: 'Mã biến thể' }).fill('v-p1');
     const movementFilterRequest = page.waitForRequest(request => {
         const query = new URL(request.url()).searchParams;

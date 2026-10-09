@@ -37,21 +37,30 @@ test('SPC-061/062 shared compositions own their gap and child boundaries on ever
                 };
             });
             const context = `${route.id} ${viewport.width}px`;
-            const gaps: Record<string, string> = { 'form-fields': '16px', 'field-group': '8px', 'surface-content': '12px', 'page-sections': '24px' };
+            const gaps: Record<string, string> = { 'form-fields': '16px', 'field-group': '8px', 'surface-content': '12px', 'page-sections': '16px' };
             for (const group of result.groups) {
                 observedOwners.add(group.owner);
                 let expected = gaps[group.owner];
-                if (group.owner === 'action-group') {
+                if (group.owner === 'form-fields') {
+                    expect(group.rhythm, context).toMatch(/^(compact|comfortable)$/);
+                    expected = group.rhythm === 'compact' ? '12px' : '16px';
+                } else if (group.owner === 'surface-content') {
+                    expect(group.rhythm, context).toMatch(/^(content|dividedRows)$/);
+                    expected = group.rhythm === 'dividedRows' ? '0px' : '12px';
+                } else if (group.owner === 'page-sections') {
+                    expect(group.rhythm, context).toMatch(/^(section|major)$/);
+                    expected = group.rhythm === 'major' ? '24px' : '16px';
+                } else if (group.owner === 'action-group') {
                     expect(group.rhythm, `${context} action-group rhythm`).toMatch(/^(compact|comfortable)$/);
                     expected = group.rhythm === 'comfortable' ? '12px' : '8px';
                 } else if (group.owner === 'section-grid') {
                     expect(group.rhythm, `${context} section-grid rhythm`).toMatch(/^(section|content)$/);
-                    expected = group.rhythm === 'content' ? '12px' : '24px';
+                    expected = group.rhythm === 'content' ? '12px' : '16px';
                 }
                 expect(group.gap, `${context} ${group.owner}`).toBe(expected);
                 for (const margins of group.childMargins) expect(margins, `${context} ${group.owner} child boundary`).toEqual(['0px', '0px']);
             }
-            if (pathname.startsWith('/s/')) expect(result.inset, `${context} Shell main`).toEqual(['24px', '24px']);
+            if (pathname.startsWith('/s/')) expect(result.inset, `${context} Shell main`).toEqual(['16px', '16px']);
             expect(result.document[0], `${context} page overflow`).toBeLessThanOrEqual(result.document[1]);
             observations.push({ route: route.id, pathname, viewport, ...result });
         }

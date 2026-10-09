@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import fs from 'node:fs';
 import path from 'node:path';
 import { expect, test } from '@playwright/test';
@@ -54,6 +55,8 @@ test('Shell keeps header, banner, main and footer on one responsive gutter', asy
             const footer = document.querySelector('footer')!;
             const banner = header.nextElementSibling!.querySelector('.MuiAlert-root')!;
             const navigation = document.querySelector('nav')!;
+            const account = navigation.querySelector('button[aria-label="Đăng xuất"]')!.parentElement!;
+            const accountName = account.querySelector('p')!;
             const edge = (element: Element, side: 'left' | 'right', insetProperty: 'paddingLeft' | 'paddingRight') => {
                 const rect = element.getBoundingClientRect();
                 const inset = Number.parseFloat(getComputedStyle(element)[insetProperty]);
@@ -76,6 +79,7 @@ test('Shell keeps header, banner, main and footer on one responsive gutter', asy
                 contentColumn: { display: getComputedStyle(contentColumn).display, direction: getComputedStyle(contentColumn).flexDirection },
                 document: { clientWidth: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth },
                 navigationWidth: navigation.getBoundingClientRect().width,
+                accountName: { whiteSpace: getComputedStyle(accountName).whiteSpace, overflowWrap: getComputedStyle(accountName).overflowWrap, clientWidth: accountName.clientWidth, scrollWidth: accountName.scrollWidth },
             };
         });
 
@@ -88,11 +92,14 @@ test('Shell keeps header, banner, main and footer on one responsive gutter', asy
         expect(metrics.bannerRight).toBe(viewport.width - viewport.gutter);
         expect(metrics.footerLeft).toBe(metrics.navigationWidth + viewport.gutter);
         expect(metrics.footerRight).toBe(viewport.width - viewport.gutter);
-        expect(metrics.footerBlockInset).toBe('16px');
+        expect(metrics.footerBlockInset).toBe('8px');
         expect(metrics.mainFlexGrow).toBe('1');
-        expect(metrics.mainBlockInset).toEqual(['24px', '24px']);
+        expect(metrics.mainBlockInset).toEqual(['16px', '16px']);
         expect(metrics.contentColumn).toEqual({ display: 'flex', direction: 'column' });
         expect(metrics.document.scrollWidth).toBe(metrics.document.clientWidth);
+        expect(metrics.accountName.whiteSpace).toBe('normal');
+        expect(metrics.accountName.overflowWrap).toBe('anywhere');
+        expect(metrics.accountName.scrollWidth).toBeLessThanOrEqual(metrics.accountName.clientWidth + 1);
     }
 });
 
@@ -110,11 +117,11 @@ test('demo controls stay discoverable on mobile and usable on desktop', async ({
     await expect(page.getByRole('combobox', { name: 'Dataset mô phỏng' })).toBeVisible();
 
     await page.setViewportSize({ width: 1280, height: 900 });
-    await expect(toggle).toBeHidden();
+    await expect(toggle).toBeVisible();
     await expect(controls).toBeVisible();
 });
 
-test('SPC-055/057 floated demo-control labels keep a clear gap on every Shell route consumer', async ({ page }) => {
+test('SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer', async ({ page }) => {
     test.setTimeout(300_000);
     await page.setViewportSize({ width: 806, height: 884 });
 
@@ -124,6 +131,7 @@ test('SPC-055/057 floated demo-control labels keep a clear gap on every Shell ro
         const alert = page.locator('header').locator('xpath=following-sibling::*[1]').locator('.MuiAlert-root');
         const controls = page.locator('#mock-tools-controls');
         await expect(alert).toBeVisible();
+        await page.locator('button[aria-controls="mock-tools-controls"]').click();
         await expect(controls).toBeVisible();
 
         const visibleGap = await page.evaluate(() => {
@@ -133,8 +141,8 @@ test('SPC-055/057 floated demo-control labels keep a clear gap on every Shell ro
             return label.getBoundingClientRect().top - banner.getBoundingClientRect().bottom;
         });
 
-        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to floated control label`).not.toBeNull();
-        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to floated control label`).toBeGreaterThanOrEqual(8);
+        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).not.toBeNull();
+        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).toBeGreaterThanOrEqual(8);
     }
 });
 

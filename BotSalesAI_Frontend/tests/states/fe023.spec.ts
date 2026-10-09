@@ -1,3 +1,4 @@
+import { openDemoControls } from '../session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
 
@@ -77,6 +78,7 @@ test('FE023.S04 delayed requests show loading and failed refresh keeps a retry p
     const pageErrors: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.stack || error.message));
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    await openDemoControls(page);
     await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
     await page.getByRole('option', { name: 'Tải chậm', exact: true }).click();
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Danh mục' }).click();
@@ -84,6 +86,7 @@ test('FE023.S04 delayed requests show loading and failed refresh keeps a retry p
     await expect(page.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible();
     await expect(page.getByRole('status').filter({ hasText: 'Đang tải dữ liệu' })).toHaveCount(0);
 
+    await openDemoControls(page);
     await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
     await page.getByRole('option', { name: 'Lỗi danh sách thiết bị', exact: true }).click();
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Điện thoại & lịch trực' }).click();
@@ -94,6 +97,7 @@ test('FE023.S04 delayed requests show loading and failed refresh keeps a retry p
         throw new Error(`Route failed while rendering devices page. Browser errors: ${pageErrors.join('\n') || '(none captured)'}. Route detail: ${await page.getByTestId('route-error-details').textContent() || '(none)'}`);
     await expect(page.getByRole('alert').filter({ hasText: 'Không thể hoàn thành yêu cầu' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Thử lại' })).toBeVisible();
+    await openDemoControls(page);
     await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
     await page.getByRole('option', { name: 'Bình thường', exact: true }).click();
     await page.getByRole('button', { name: 'Thử lại' }).first().click();

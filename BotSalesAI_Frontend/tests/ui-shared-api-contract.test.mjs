@@ -305,7 +305,8 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.ok(browserInstall >= 0 && browserInstall < verifyStep, 'Browser-backed verify requires installed engines first');
     assert.match(workflow, /npm run verify/);
     assert.match(workflow, /npm run test:e2e/);
-    assert.match(workflow, /timeout-minutes: 45/);
+    assert.match(workflow, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
+    assert.match(workflow, /timeout-minutes: 75/);
     assert.match(workflow, /if: \$\{\{ always\(\) \}\}/);
     assert.match(workflow, /upload-artifact/);
 });

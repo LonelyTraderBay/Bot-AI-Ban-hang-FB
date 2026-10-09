@@ -63,6 +63,13 @@ describe('FE023 shared state and form behavior', () => {
             expect(screen.getByRole('alert')).toHaveTextContent(detail);
     });
 
+    it('does not describe a business-rule 409 as a stale-version conflict', () => {
+        renderWithTheme(<ErrorNotice error={new ApiError(409, 'INSUFFICIENT_STOCK', 'Điều chỉnh vượt tồn hiện có.')} />);
+        expect(screen.getByRole('alert')).toHaveTextContent('Không thể hoàn thành yêu cầu');
+        expect(screen.getByRole('alert')).toHaveTextContent('Điều chỉnh vượt tồn hiện có.');
+        expect(screen.getByRole('alert')).not.toHaveTextContent('Tải lại dữ liệu mới nhất');
+    });
+
     it('keeps an unknown mutation outcome distinct and includes the reconciliation command ID', () => {
         renderWithTheme(<ErrorNotice error={new UnknownResultError('intent-1', 'command-1')} />);
         expect(screen.getByRole('alert')).toHaveTextContent('Kết quả chưa xác minh');

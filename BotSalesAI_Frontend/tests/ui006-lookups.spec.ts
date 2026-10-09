@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -237,6 +238,7 @@ test('UI006.C02 selected order identity survives a failed search and cursor retr
     const detailRequest = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/orders/${selectedOrderId}`));
     await gotoDemo(page, `/s/shop-demo/returns?orderId=${selectedOrderId}`);
     await Promise.all([initialOrders, detailRequest]);
+    await openDemoControls(page);
     await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
     await page.getByRole('option', { name: 'Mất quyền truy vấn tiếp', exact: true }).click();
     await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');

@@ -1,3 +1,4 @@
+import { openDemoControls } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
@@ -20,6 +21,7 @@ function routePath(path: string) {
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -30,6 +32,7 @@ test('empty collection responses render accessible empty states on canonical lis
 
     try {
         await page.goto(new URL('/s/shop-demo/overview', server.url).toString());
+        await openDemoControls(page);
         await expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible();
         await chooseMockOption(page, 'Trạng thái thử', 'Danh sách rỗng (demo)');
 

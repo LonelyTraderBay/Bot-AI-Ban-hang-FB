@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import {test,expect} from '@playwright/test';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
@@ -20,6 +21,7 @@ async function gotoDemo(page: import('@playwright/test').Page,path: string){
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page,label: string,value: string){
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox',{name:label}).click();
     await page.getByRole('option',{name:value,exact:true}).click();
 }
@@ -112,8 +114,14 @@ test('product update sends If-Match and keeps edits visible after a 412 conflict
     await page.getByLabel('Tên sản phẩm').fill('Áo cập nhật FE010');
     await page.getByLabel('Giá bán (VND)').first().fill('71000');
     await chooseMockOption(page,'Trạng thái thử','Xung đột lần ghi tiếp');
+    const staleSave=page.waitForResponse(response=>response.request().method()==='PATCH'&&new URL(response.url()).pathname.endsWith('/shops/shop-demo/products/p1'));
     await page.getByRole('button',{name:'Lưu sản phẩm',exact:true}).click();
-    await expect(page.getByRole('alert').filter({hasText:'dữ liệu bị thay đổi bởi người khác'})).toBeVisible();
+    expect((await staleSave).status()).toBe(412);
+    const comparison=page.getByRole('dialog',{name:'Đối chiếu thay đổi',exact:true});
+    await expect(comparison).toBeVisible();
+    await expect(comparison.getByText('Áo cập nhật FE010',{exact:true})).toBeVisible();
+    expect(calls.filter(call=>call.method==='PATCH'&&call.path.endsWith('/shops/shop-demo/products/p1'))).toHaveLength(1);
+    await comparison.getByRole('button',{name:'Áp dụng vào bản nháp',exact:true}).click();
     await expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo cập nhật FE010');
     await expect(page.getByLabel('Giá bán (VND)').first()).toHaveValue('71000');
     const patch=calls.find(call=>call.method==='PATCH'&&call.path.endsWith('/shops/shop-demo/products/p1'));
@@ -121,6 +129,14 @@ test('product update sends If-Match and keeps edits visible after a 412 conflict
     expect(patch?.headers['if-match']).toBeTruthy();
     expect(JSON.parse(patch?.body||'null')).toMatchObject({name:'Áo cập nhật FE010'});
     expect(JSON.parse(patch?.body||'null')).not.toHaveProperty('unitCost');
+    const latestVersion=await page.evaluate(async()=>(await(await fetch('/api/v2/shops/shop-demo/products/p1')).json()).data.version);
+    const saved=page.waitForResponse(response=>response.request().method()==='PATCH'&&new URL(response.url()).pathname.endsWith('/shops/shop-demo/products/p1'));
+    await page.getByRole('button',{name:'Lưu sản phẩm',exact:true}).click();
+    expect((await saved).status()).toBe(200);
+    const patches=calls.filter(call=>call.method==='PATCH'&&call.path.endsWith('/shops/shop-demo/products/p1'));
+    expect(patches).toHaveLength(2);
+    expect(patches[1].headers['if-match']).toBe(`"${latestVersion}"`);
+    await expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo cập nhật FE010');
 });
 
 test('warehouse role can read catalog products but cannot edit product fields or price cost data',async({page})=>{
@@ -194,7 +210,7 @@ test('CSV preview reports row-level errors and commits only valid product rows',
 
     await page.getByRole('button',{name:'Xác nhận nhập các dòng hợp lệ',exact:true}).click();
     const confirm=page.getByRole('dialog',{name:'Ghi dữ liệu đã kiểm tra'});
-    await confirm.getByRole('button',{name:'Xác nhận',exact:true}).click();
+    await confirm.getByRole('button',{name:'Nhập các dòng hợp lệ',exact:true}).click();
     await expect(page.getByText('1 / 3',{exact:true})).toBeVisible();
     const commit=calls.find(call=>call.method==='POST'&&/\/shops\/shop-demo\/imports\/job-[^/]+\/commit$/.test(call.path));
     expect(JSON.parse(commit?.body||'null')).toMatchObject({confirmValidRowsOnly:true});
@@ -256,7 +272,7 @@ test('import validation token is rejected with 412 after catalog changes and the
 
     await page.getByRole('button',{name:'Xác nhận nhập các dòng hợp lệ',exact:true}).click();
     const confirm=page.getByRole('dialog',{name:'Ghi dữ liệu đã kiểm tra'});
-    await confirm.getByRole('button',{name:'Xác nhận',exact:true}).click();
+    await confirm.getByRole('button',{name:'Nhập các dòng hợp lệ',exact:true}).click();
     await expect(page.getByRole('alert').filter({hasText:'Danh mục đã đổi sau dry-run'})).toBeVisible();
     await expect(page.getByText('Chờ xác nhận',{exact:true})).toBeVisible();
     await confirm.getByRole('button',{name:'Hủy',exact:true}).click();
@@ -463,12 +479,14 @@ test('product category lookup pages the full collection and preserves the select
     await page.getByRole('button',{name:'Lưu sản phẩm',exact:true}).click();
     expect((await updateResponse).status()).toBe(200);
     const editCall=apiRequests.find(request=>request.method==='PATCH'&&request.url.endsWith('/shops/shop-demo/products/p1'));
-    expect(JSON.parse(editCall?.body||'null')).toMatchObject({name:'Áo mẫu A UI005',categoryId:'cat-0'});
+    expect(JSON.parse(editCall?.body||'null')).toEqual({name:'Áo mẫu A UI005'});
+    const savedProduct=await page.evaluate(async()=>(await(await fetch('/api/v2/shops/shop-demo/products/p1')).json()).data);
+    expect(savedProduct).toMatchObject({name:'Áo mẫu A UI005',categoryId:'cat-0'});
 
     const evidenceDir=resolve(process.cwd(),'evidence/frontend-ui-improvements/UI005');
     await mkdir(evidenceDir,{recursive:true});
-    const evidence={scope:'frontend with synthetic MSW data',totalCategories:105,selectedLastCategory:{id:'cat-2',name:'Phụ kiện'},createPayload:createPayload,editPayload:JSON.parse(editCall?.body||'null'),productQueryStayedVisibleAfterLookup403:true,loadMore403WasRetried:true,apiRequests,apiResponses};
+    const evidence={scope:'frontend with synthetic MSW data',totalCategories:105,selectedLastCategory:{id:'cat-2',name:'Phụ kiện'},createPayload:createPayload,editPayload:JSON.parse(editCall?.body||'null'),savedProductCategoryId:savedProduct.categoryId,productQueryStayedVisibleAfterLookup403:true,loadMore403WasRetried:true,apiRequests,apiResponses};
     await writeFile(resolve(evidenceDir,`S03-request-trace-${test.info().project.name}-${evidenceRunId}.json`),JSON.stringify(evidence,null,2)+'\n',{flag:'wx'});
-    await writeFile(resolve(evidenceDir,`S03-acceptance-${test.info().project.name}-${evidenceRunId}.json`),JSON.stringify({synthetic:true,categoryTotal:105,firstPageCount:20,lastCategorySelectableOnCreate:true,createPayloadCategoryId:'cat-2',selectedLabelRetainedAfterSearch:true,editSelectedCategoryOutsideFirstPage:true,editPayloadCategoryId:'cat-0',loadMoreDelayVisible:true,loadMore403Visible:true,retrySucceeded:true,primaryProductQueryPreserved:true},null,2)+'\n',{flag:'wx'});
-    console.log(`UI005 acceptance: ${JSON.stringify({categoryTotal:105,createCategoryId:createPayload.categoryId,editCategoryId:JSON.parse(editCall?.body||'null').categoryId,categoryRequests:apiResponses.filter(response=>response.url.includes('/categories')).length})}`);
+    await writeFile(resolve(evidenceDir,`S03-acceptance-${test.info().project.name}-${evidenceRunId}.json`),JSON.stringify({synthetic:true,categoryTotal:105,firstPageCount:20,lastCategorySelectableOnCreate:true,createPayloadCategoryId:'cat-2',selectedLabelRetainedAfterSearch:true,editSelectedCategoryOutsideFirstPage:true,editPayloadOmitsUnchangedCategory:true,storedProductCategoryId:savedProduct.categoryId,loadMoreDelayVisible:true,loadMore403Visible:true,retrySucceeded:true,primaryProductQueryPreserved:true},null,2)+'\n',{flag:'wx'});
+    console.log(`UI005 acceptance: ${JSON.stringify({categoryTotal:105,createCategoryId:createPayload.categoryId,editCategoryId:savedProduct.categoryId,categoryRequests:apiResponses.filter(response=>response.url.includes('/categories')).length})}`);
 });

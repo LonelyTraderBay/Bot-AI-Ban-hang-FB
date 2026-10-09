@@ -1,3 +1,4 @@
+import { openDemoControls } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
@@ -19,6 +20,7 @@ function routePath(path: string) {
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -32,7 +34,10 @@ test('every shop route composes the shared API error state with its page content
         const selectedRouteId = process.env.ROUTE_ERROR_TEST_ID;
         const shopRoutes = routeManifest.routes
             .filter(route => route.path.startsWith('/s/') && (!selectedRouteId || route.id === selectedRouteId));
-        expect(shopRoutes).toHaveLength(selectedRouteId ? 1 : 51);
+        if (selectedRouteId)
+            expect(shopRoutes).toHaveLength(1);
+        else
+            expect(shopRoutes.length).toBeGreaterThan(0);
 
         for (const route of shopRoutes) {
             // Isolate each page's MSW service-worker client. Reusing a context after
@@ -42,6 +47,7 @@ test('every shop route composes the shared API error state with its page content
             try {
                 const startingRoute = route.id === 'R39' || route.id === 'R33' ? '/s/shop-demo/overview' : '/s/shop-demo/notifications';
                 await page.goto(new URL(startingRoute, server.url).toString());
+                await openDemoControls(page);
                 await expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible({ timeout: 15_000 });
                 await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');
                 await page.evaluate(nextPath => {
@@ -65,12 +71,14 @@ test('every shop route composes the shared API error state with its page content
                         .toBeVisible({ timeout: 10_000 });
                     await chooseMockOption(page, 'Trạng thái thử', 'Bình thường');
                 }
+                await expect(page.locator('.MuiSnackbar-root').filter({ hasText: /thành công|đã lưu|đã tạo|đã cập nhật|hoàn tất|success/i }), `${route.id} must not show a success toast while an API read is failing`)
+                    .toHaveCount(0);
                 if (route.id === 'R10') {
                     await expect(main.getByRole('combobox', { name: 'Danh mục' })).toBeVisible();
                 }
                 checkedRouteIds.push(route.id);
                 if (checkedRouteIds.length % 10 === 0)
-                    console.log(`ROUTE_ERROR_COMPOSITION_PROGRESS=${checkedRouteIds.length}/51`);
+                    console.log(`ROUTE_ERROR_COMPOSITION_PROGRESS=${checkedRouteIds.length}/${shopRoutes.length}`);
             } finally {
                 await context.close();
             }

@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -18,6 +19,7 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -138,7 +140,7 @@ test('FE014.AC02 approval covers the exact purchase intent; unknown send is bloc
     });
     const sentRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith(`/purchase-orders/${purchaseId}/send`));
     const sentResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/purchase-orders/${purchaseId}/send`));
-    await sendDialog.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await sendDialog.getByRole('button', { name: 'Gửi đơn mua', exact: true }).click();
     const sendReq = await sentRequest;
     expect(JSON.parse(sendReq.postData() || 'null')).toMatchObject({ expectedVersion: 3 });
     expect(JSON.parse(sendReq.postData() || 'null').intentHash).toBeTruthy();
@@ -151,17 +153,65 @@ test('FE014.AC02 approval covers the exact purchase intent; unknown send is bloc
     await approvedAfterFaultDialog.getByRole('button', { name: 'Đóng', exact: true }).last().click();
 });
 
-test('FE014.S03 auto-send cannot be configured without an enabled procurement budget', async ({ page }) => {
+test('FE014.S03 auto-send requires an active matching purchase delegation', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/replenishment');
     await page.getByRole('button', { name: 'Thêm quy tắc', exact: true }).click();
     const rule = page.getByRole('dialog', { name: 'Quy tắc nhập lại' });
     await chooseOption(page, 'Báo giá / SKU', /v-p1 · supplier-01/);
     await chooseOption(page, 'Mức tự động', '3 · Tự gửi trong hạn mức');
-    await expect(rule.getByText('Không có chính sách ngân sách mua hàng đang bật và có hạn mức.', { exact: true })).toBeVisible();
-    await expect(rule.getByRole('combobox', { name: 'Ngân sách mua hàng đã duyệt' })).toHaveCount(0);
-    await rule.getByRole('checkbox', { name: 'Tôi hiểu phạm vi tự gửi và đã kiểm chính sách' }).check();
+    await chooseOption(page, 'Ngân sách mua hàng đã duyệt', /budget-2/);
+    await expect(rule.getByText(/Không có ủy quyền đang hiệu lực khớp nhà cung cấp, kho, báo giá snapshot và ngân sách/)).toBeVisible();
+    await expect(rule.getByRole('combobox', { name: 'Ủy quyền purchase.send' })).toHaveCount(0);
+    await rule.getByRole('checkbox', { name: 'Tôi đã kiểm giới hạn, snapshot và phạm vi tự gửi' }).check();
     await expect(rule.getByRole('button', { name: 'Lưu quy tắc' })).toBeDisabled();
-    await expect(rule.getByText(/Backend phải kiểm nhà cung cấp, giá, lượng, ngân sách/)).toBeVisible();
+    await expect(rule.getByText(/Worker MSW local ghi nhận kết quả xác định/)).toBeVisible();
+});
+
+test('FE014.S04 owner manages a paused purchase delegation only after rechecking the buyer role', async ({ page }) => {
+    await gotoDemo(page, '/s/shop-demo/bot/team');
+    const buyer = page.getByRole('heading', { name: 'Kho & mua hàng', exact: true }).locator('xpath=ancestor::div[contains(@class,"MuiPaper-root")][1]');
+    await buyer.getByRole('button', { name: 'Đề nghị tiếp tục', exact: true }).click();
+    const resume = page.getByRole('dialog', { name: 'Kiểm điều kiện để tiếp tục' });
+    await resume.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Chủ shop kiểm tra vai trò mua hàng.');
+    const resumeWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/automation-control'));
+    await resume.getByRole('button', { name: 'Kiểm tra để tiếp tục' }).click();
+    expect((await resumeWait).status()).toBe(202);
+
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Cần phê duyệt', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Ủy quyền gửi đơn mua', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Tạo ủy quyền có giới hạn', exact: true }).click();
+    const create = page.getByRole('dialog', { name: 'Tạo ủy quyền mua hàng' });
+    await chooseOption(page, 'Vai trò mua hàng chịu trách nhiệm', /agent-2/);
+    await chooseOption(page, 'Nhà cung cấp đã duyệt', 'Xưởng hàng mẫu');
+    await chooseOption(page, 'Kho đang hoạt động', /warehouse-01|MAIN/);
+    await chooseOption(page, 'Báo giá nằm trong phạm vi', /offer-p1/);
+    await page.keyboard.press('Escape');
+    await chooseOption(page, 'Ngân sách mua hàng đã bật và được duyệt', /budget-2/);
+    const createRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/purchase-delegations'));
+    const createResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/purchase-delegations'));
+    await create.getByRole('button', { name: 'Tạo ở trạng thái tạm dừng' }).click();
+    const request = await createRequest;
+    const response = await createResponse;
+    expect(response.status(), await response.text()).toBe(201);
+    expect(request.headers()['idempotency-key']).toBeTruthy();
+    expect(request.postDataJSON()).toMatchObject({
+        agentId: 'agent-2', supplierId: 'supplier-01', warehouseId: 'warehouse-01', offerIds: ['offer-p1'],
+        maxPerOrder: { amount: '300000', currency: 'VND' }, budgetPolicyId: 'budget-2',
+    });
+    const created = (await response.json()).data;
+    expect(created).toMatchObject({ status: 'paused', toolId: 'purchase.send', supplierId: 'supplier-01', warehouseId: 'warehouse-01', budgetPolicyId: 'budget-2' });
+    expect(created.offerSnapshots).toEqual([{ supplierOfferId: 'offer-p1', offerVersion: 1, unitCost: { amount: '100000', currency: 'VND' }, minimumQuantity: 5, packSize: 5 }]);
+
+    const grantRow = page.getByRole('table', { name: 'Ủy quyền gửi đơn mua' }).getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' });
+    await expect(grantRow).toContainText('Tạm dừng');
+    await grantRow.getByRole('button', { name: 'Kích hoạt', exact: true }).click();
+    const activate = page.getByRole('dialog', { name: 'Kích hoạt ủy quyền gửi đơn' });
+    await activate.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Đã rà lại giới hạn và báo giá.');
+    const activateWait = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname.endsWith(`/purchase-delegations/${created.id}`));
+    await activate.getByRole('button', { name: 'Kích hoạt ủy quyền', exact: true }).click();
+    const activation = await activateWait;
+    expect(activation.status(), await activation.text()).toBe(200);
+    await expect(page.getByRole('table', { name: 'Ủy quyền gửi đơn mua' }).getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' })).toContainText('Đang hoạt động');
 });
 
 test('FE014.S03 manager without procurement.receive cannot open receipt actions', async ({ page }) => {
@@ -170,7 +220,7 @@ test('FE014.S03 manager without procurement.receive cannot open receipt actions'
     const draft = page.getByRole('dialog', { name: 'Phiếu nhận hàng mới' });
     await chooseOption(page, 'Đơn mua đã xác nhận', 'seed-purchaseorder-10046');
     await draft.getByRole('textbox', { name: 'Mã phiếu giao / chứng từ nguồn' }).fill('FE014-GR-PERMISSION-01');
-    await draft.getByRole('spinbutton', { name: 'Nhận đạt v-p6' }).fill('1');
+    await draft.getByRole('spinbutton', { name: 'Nhận đạt mã biến thể v-p6' }).fill('1');
     const createRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/goods-receipts'));
     const createResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/goods-receipts'));
     await draft.getByRole('button', { name: 'Tạo phiếu nháp' }).click();
@@ -180,7 +230,7 @@ test('FE014.S03 manager without procurement.receive cannot open receipt actions'
     const receipt = page.getByRole('row').filter({ hasText: 'FE014-GR-PERMISSION-01' });
     await expect(receipt).toBeVisible();
     await chooseOption(page, 'Vai trò mô phỏng', 'manager');
-    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('Quản lý', { exact: true })).toBeVisible();
     await expect(receipt.getByRole('button', { name: 'Xem / ghi nhận phiếu' })).toHaveCount(0);
 });
 
@@ -195,12 +245,12 @@ test('FE014.AC03 partial receipt posts only accepted units to synthetic stock an
     const draft = page.getByRole('dialog', { name: 'Phiếu nhận hàng mới' });
     await chooseOption(page, 'Đơn mua đã xác nhận', 'seed-purchaseorder-10046');
     await expect(draft.getByText('Đặt 10 · đã nhận 4 · bị từ chối 0 · còn 6')).toBeVisible();
-    const accepted = draft.getByRole('spinbutton', { name: 'Nhận đạt v-p6' });
-    const rejected = draft.getByRole('spinbutton', { name: 'Từ chối / hỏng v-p6' });
+    const accepted = draft.getByRole('spinbutton', { name: 'Nhận đạt mã biến thể v-p6' });
+    const rejected = draft.getByRole('spinbutton', { name: 'Từ chối / hỏng mã biến thể v-p6' });
     await accepted.fill('3');
     await rejected.fill('3');
     await expect(draft.getByRole('button', { name: 'Tạo phiếu nháp' })).toBeDisabled();
-    await draft.getByRole('textbox', { name: 'Ghi chú kiểm hàng v-p6' }).fill('Ba sản phẩm lỗi bao bì, từ chối theo kiểm nhận.');
+    await draft.getByRole('textbox', { name: 'Ghi chú kiểm hàng mã biến thể v-p6' }).fill('Ba sản phẩm lỗi bao bì, từ chối theo kiểm nhận.');
     await draft.getByRole('textbox', { name: 'Mã phiếu giao / chứng từ nguồn' }).fill('FE014-GR-PARTIAL-01');
 
     const detailRequest = page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).pathname.endsWith('/purchase-orders/seed-purchaseorder-10046'));
@@ -226,7 +276,7 @@ test('FE014.AC03 partial receipt posts only accepted units to synthetic stock an
     const postResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.match(/\/goods-receipts\/[^/]+\/post$/));
     await receiptDialog.getByRole('button', { name: 'Kiểm & ghi nhận vào kho' }).click();
     const confirm = page.getByRole('dialog', { name: 'Ghi nhận hàng đã kiểm vào kho' });
-    await confirm.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await confirm.getByRole('button', { name: 'Ghi nhận vào kho', exact: true }).click();
     const postReq = await postRequest;
     expect(JSON.parse(postReq.postData() || 'null')).toEqual({ expectedVersion: 1 });
     expect((await postResponse).status()).toBe(202);

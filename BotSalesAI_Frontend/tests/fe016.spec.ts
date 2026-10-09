@@ -1,3 +1,5 @@
+import { openDemoControls } from './session/demo-controls';
+import path from 'node:path';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -60,6 +62,7 @@ async function seedInboxCursorFixture(page: import('@playwright/test').Page) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: typeof value === 'string' }).click();
 }
@@ -97,12 +100,13 @@ test('UI015 mobile demo tools disclose by keyboard and inbox stays within narrow
     }
 });
 
-test('FE016 conversation keeps its composer visible while long demo context scrolls independently', async ({ page }) => {
+test('FE016 conversation keeps its composer visible while long demo context scrolls independently', async ({ page }, info) => {
     await page.setViewportSize({ width: 1600, height: 900 });
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
 
     const thread = page.getByTestId('inbox-thread');
     const context = page.getByTestId('inbox-context-panel');
+    await thread.getByTestId('inbox-message-bubble').first().waitFor();
     await expect(thread.getByRole('textbox', { name: 'Nội dung trả lời khách' })).toBeVisible();
     await expect(context.getByRole('heading', { name: 'Bối cảnh khách hàng' })).toBeVisible();
     await expect(context).toHaveAttribute('tabindex', '0');
@@ -128,6 +132,79 @@ test('FE016 conversation keeps its composer visible while long demo context scro
     expect(layout.contextScrollHeight).toBeGreaterThan(layout.contextHeight);
     expect(layout.messageHeight).toBeLessThanOrEqual(550);
     expect(layout.composerBottom).toBeLessThanOrEqual(layout.threadBottom + 1);
+
+    await thread.getByRole('checkbox', { name: 'Ghi chú nội bộ (không gửi khách)', exact: true }).check();
+    const draft = thread.getByRole('textbox', { name: 'Ghi chú cho nhóm' });
+    const value = Array.from({ length: 9 }, (_, index) => `Dòng nháp ${index + 1}`).join('\n');
+    await draft.fill(value);
+    await page.evaluate(() => {
+        for (const element of document.querySelectorAll<HTMLElement>('main *')) {
+            element.dataset.originalFontSize = String(Number.parseFloat(getComputedStyle(element).fontSize));
+        }
+        for (const element of document.querySelectorAll<HTMLElement>('main [data-original-font-size]')) {
+            element.style.fontSize = `${Number(element.dataset.originalFontSize) * 2}px`;
+        }
+    });
+    await page.evaluate(() => document.fonts.ready.then(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))));
+    const enlarged = await page.evaluate(() => {
+        const thread = document.querySelector<HTMLElement>('[data-testid="inbox-thread"]')!;
+        const messages = document.querySelector<HTMLElement>('[data-testid="inbox-message-list"]')!;
+        const composer = thread.querySelector<HTMLElement>('form')!;
+        const style = getComputedStyle(messages);
+        const message = messages.querySelector('[data-testid="inbox-message-bubble"] p')!;
+        return { threadBottom: thread.getBoundingClientRect().bottom, composerBottom: composer.getBoundingClientRect().bottom,
+            messageContentHeight: messages.clientHeight - Number.parseFloat(style.paddingTop) - Number.parseFloat(style.paddingBottom),
+            messageLineHeight: Number.parseFloat(getComputedStyle(message).lineHeight),
+            messageBottom: messages.getBoundingClientRect().bottom, composerTop: composer.getBoundingClientRect().top };
+    });
+    expect(enlarged.composerBottom).toBeLessThanOrEqual(enlarged.threadBottom + 1);
+    expect(enlarged.messageBottom).toBeLessThanOrEqual(enlarged.composerTop + 1);
+    expect(enlarged.messageContentHeight).toBeGreaterThanOrEqual(enlarged.messageLineHeight);
+    await expect(draft).toHaveValue(value);
+    const submit = thread.getByRole('button', { name: 'Lưu ghi chú', exact: true });
+    const boundedComposer = await thread.evaluate(element => {
+        const form = element.querySelector('form')!;
+        const body = form.querySelector('[data-testid="inbox-composer-body"]')!;
+        const button = form.querySelector('button[type="submit"]')!;
+        const textarea = form.querySelector('textarea:not([aria-hidden="true"])')!;
+        const describe = (node: Element) => {
+            const rect = node.getBoundingClientRect();
+            return { top: rect.top, bottom: rect.bottom };
+        };
+        return { form: describe(form), body: describe(body), button: describe(button),
+            bodyHeight: body.clientHeight, bodyOverflow: getComputedStyle(body).overflowY,
+            lineHeight: Number.parseFloat(getComputedStyle(textarea).lineHeight) };
+    });
+    expect(boundedComposer.bodyOverflow).toBe('auto');
+    expect(boundedComposer.bodyHeight).toBeGreaterThanOrEqual(boundedComposer.lineHeight);
+    expect(boundedComposer.body.bottom).toBeLessThanOrEqual(boundedComposer.button.top);
+    expect(boundedComposer.button.bottom).toBeLessThanOrEqual(boundedComposer.form.bottom + 1);
+    await draft.focus();
+    await draft.press('Tab');
+    await expect(submit).toBeFocused();
+    await info.attach('enlarged-composer-focus', { body: JSON.stringify(await thread.evaluate(element => {
+        const form = element.querySelector('form')!;
+        const button = form.querySelector('button[type="submit"]')!;
+        const describe = (node: Element) => {
+            const rect = node.getBoundingClientRect(), style = getComputedStyle(node);
+            return { y: rect.y, bottom: rect.bottom, height: rect.height, clientHeight: node.clientHeight,
+                scrollHeight: node.scrollHeight, scrollTop: node.scrollTop, overflow: style.overflow, flex: style.flex };
+        };
+        return { thread: describe(element), form: describe(form), button: describe(button) };
+    })), contentType: 'application/json' });
+    await expect.poll(async () => {
+        const reachable = await submit.boundingBox();
+        const form = await thread.locator('form').boundingBox();
+        return reachable!.y + reachable!.height - form!.y - form!.height;
+    }).toBeLessThanOrEqual(1);
+    expect(await submit.evaluate(button => {
+        const rect = button.getBoundingClientRect();
+        return document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)?.closest('button') === button;
+    })).toBe(true);
+    await submit.press('Shift+Tab');
+    await expect(draft).toBeFocused();
+    await expect(draft).toHaveValue(value);
+    await draft.fill('');
 });
 
 test('FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details', async ({ page }) => {
@@ -156,6 +233,66 @@ test('FE016.AC01 inbox filters call canonical query fields and remain bookmarked
     await page.getByRole('link', { name: /Minh \(khách mẫu\)/ }).click();
     await expect(page).toHaveURL(/q=Minh.*status=open.*mode=human.*channelId=fb-01.*assignedUserId=user-demo/);
     await expect(page.getByRole('heading', { name: 'Minh (khách mẫu)' })).toBeVisible();
+});
+
+test('Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery', async ({ page }, info) => {
+    await page.addInitScript(() => {
+        const state = window as unknown as { sharedSource: EventSource; sharedSequence?: number };
+        const Original = window.EventSource;
+        window.EventSource = class extends Original {
+            constructor(url: string | URL, options?: EventSourceInit) {
+                super(url, options); state.sharedSource = this;
+                this.addEventListener('message', event => { try { state.sharedSequence = JSON.parse(event.data).sequence; } catch { /* Other suites own malformed events. */ } });
+            }
+        };
+    });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await gotoDemo(page, '/s/shop-demo/inbox/cv1?status=open&channelId=fb-01&assignedUserId=user-demo');
+    const draft = page.getByRole('textbox', { name: 'Nội dung trả lời khách', exact: true });
+    await expect(draft).toBeVisible(); await draft.fill('Bản nháp giữ nguyên khi metadata thay đổi');
+    const fixtureUrl = '/@fs/' + path.resolve('tests/design/shared-consolidation-fixture.ts').replaceAll('\\', '/');
+    await page.evaluate(async url => { (await import(/* @vite-ignore */ url)).installMetadataBranches(); }, fixtureUrl);
+    const results = [];
+    for (const mode of ['pending', 'error', 'empty', 'normal'] as const) {
+        const before = await page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().reads, fixtureUrl);
+        const received = page.waitForResponse(response => new URL(response.url()).pathname.endsWith('/conversations/metadata'));
+        await page.evaluate(async ({ url, mode }) => {
+            (await import(/* @vite-ignore */ url)).setMetadataMode(mode);
+            const state = window as unknown as { sharedSource: EventSource; sharedSequence?: number };
+            state.sharedSource.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ eventId: crypto.randomUUID(), type: 'resync.required', schemaVersion: 2, shopId: 'shop-demo', resourceType: 'shop', resourceId: 'shop-demo', resourceVersion: 0, occurredAt: '2030-01-01T00:00:00Z', sequence: (state.sharedSequence ?? 0) + 1 }) }));
+        }, { url: fixtureUrl, mode });
+        await expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().reads, fixtureUrl)).toBeGreaterThan(before);
+        if (mode === 'pending') {
+            await expect.poll(() => page.evaluate(async url => (await import(/* @vite-ignore */ url)).metadataState().pending, fixtureUrl)).toBe(true);
+            await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
+            await page.evaluate(async url => (await import(/* @vite-ignore */ url)).finishMetadata(), fixtureUrl);
+        }
+        const response = await received;
+        expect(response.status()).toBe(mode === 'error' ? 422 : 200);
+        const payload = await response.json();
+        if (mode === 'empty') expect(payload.data).toEqual({ channels: [], assignees: [] });
+        if (mode === 'normal' || mode === 'pending') expect(payload.data.channels.length).toBeGreaterThan(0);
+        await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
+        await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
+        expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01');
+        expect(new URL(page.url()).searchParams.get('assignedUserId')).toBe('user-demo');
+        results.push({ mode, responseStatus: response.status(), data: payload, draftPreserved: true, selectedKeysPreserved: true });
+    }
+    const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại', exact: true });
+    const status = filters.getByRole('combobox', { name: /^Trạng thái(?: |$)/ });
+    await status.focus(); await status.press('Enter');
+    await page.getByRole('option', { name: 'Tất cả trạng thái', exact: true }).press('Enter');
+    expect(new URL(page.url()).searchParams.has('status')).toBe(false);
+    await expect(status).toBeFocused();
+    const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
+    await search.fill('Linh'); await search.press('Enter');
+    expect(new URL(page.url()).searchParams.get('q')).toBe('Linh');
+    await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
+    expect(new URL(page.url()).searchParams.has('q')).toBe(false);
+    expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01');
+    await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
+    await info.attach('metadata-draft-branches', { body: JSON.stringify(results), contentType: 'application/json' });
+    await draft.fill('');
 });
 
 test('FE016.AC01 list cursor is isolated from message cursor and restored on back navigation', async ({ page }) => {
@@ -512,7 +649,7 @@ test('FE016.AC01 takeover and reply use current versions and show API send state
     await takeoverDialog.getByRole('textbox', { name: /Lý do/ }).fill('Khách cần nhân viên hỗ trợ trực tiếp.');
     const takeoverRequestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/takeover'));
     const takeoverResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/takeover'));
-    await takeoverDialog.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await takeoverDialog.getByRole('button', { name: 'Tiếp quản', exact: true }).click();
     const takeoverRequest = await takeoverRequestWait;
     expect(JSON.parse(takeoverRequest.postData() || 'null')).toMatchObject({ expectedVersion: 1, reason: 'Khách cần nhân viên hỗ trợ trực tiếp.' });
     expect((await takeoverResponseWait).status()).toBe(202);
@@ -529,7 +666,7 @@ test('FE016.AC01 takeover and reply use current versions and show API send state
     expect(sendBody.clientMessageId).toBeTruthy();
     expect((await sendResponseWait).status()).toBe(202);
     await expect(page.locator('main').getByText(reply, { exact: true }).last()).toBeVisible();
-    await expect(page.getByText(/· sent$/)).toBeVisible();
+    await expect(page.getByText(/· Đã gửi$/)).toBeVisible();
 });
 
 test('FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft', async ({ page }) => {
@@ -546,7 +683,9 @@ test('FE016.AC02 internal notes render HTML-like text inert and feedback creates
     await expect(page.getByText(payload, { exact: true })).toBeVisible();
     await expect(page.locator('img[src="x"]')).toHaveCount(0);
     await expect(page.getByText('Ghi chú nội bộ', { exact: true }).last()).toBeVisible();
-    await expect(page.getByText(/Ảnh\/tin thoại chỉ bật khi hợp đồng/)).toBeVisible();
+    await page.getByRole('checkbox', { name: 'Ghi chú nội bộ (không gửi khách)' }).uncheck();
+    await expect(page.getByRole('button', { name: 'Đính kèm', exact: true })).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: /chưa khai báo loại tệp được hỗ trợ/i })).toHaveCount(0);
 
     const publishedWrites: string[] = [];
     page.on('request', request => {
@@ -579,7 +718,9 @@ test('FE016.AC03 unknown send keeps the reply draft, exposes command recovery an
     await expect(page.getByText('Có 1 thao tác chưa xác minh kết quả')).toBeVisible();
     await expect(textbox).toHaveValue(reply);
     await expect(page.getByText(/Mã lệnh cần kiểm tra/)).toBeVisible();
-    await page.getByRole('button', { name: 'Gửi trả lời', exact: true }).click();
+    const sendAgain=page.getByRole('button', { name: 'Gửi trả lời', exact: true });
+    await expect(sendAgain).toBeDisabled();
+    await sendAgain.evaluate(button=>(button as HTMLButtonElement).click());
     await expect(page.getByRole('alert').filter({ hasText: /chưa xác minh kết quả/ })).toBeVisible();
     expect(sends).toHaveLength(1);
 });
@@ -587,7 +728,7 @@ test('FE016.AC03 unknown send keeps the reply draft, exposes command recovery an
 test('FE016.AC04 role without customer/order permissions cannot open those cross-module references', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/inbox/cv2');
     await chooseOption(page, 'Vai trò mô phỏng', 'bot_admin');
-    await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('bot_admin', { exact: true })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('bot_admin');
     await expect(page.getByRole('link', { name: 'Hồ sơ khách' })).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Tạo đơn từ hội thoại' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Tiếp quản', exact: true })).toHaveCount(0);
@@ -603,7 +744,7 @@ test('FE016.S03 stale takeover preserves reason and reports the version conflict
     const reason = 'Khách cần hỗ trợ đối chiếu đơn.';
     await dialog.getByRole('textbox', { name: /Lý do/ }).fill(reason);
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/takeover'));
-    await dialog.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Tiếp quản', exact: true }).click();
     expect((await responseWait).status()).toBe(412);
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('textbox', { name: /Lý do/ })).toHaveValue(reason);
@@ -625,19 +766,126 @@ test('FE016.B05 cross-sell promotion preview shows sample rules without applying
     expect(writes).toEqual([]);
 });
 
-test('FE016.B08 image and voice preview is synthetic and stays local', async ({ page }) => {
-    const writes: string[] = [];
-    page.on('request', request => {
-        if (request.method() !== 'GET' && new URL(request.url()).pathname.startsWith('/api/v2/'))
-            writes.push(`${request.method()} ${new URL(request.url()).pathname}`);
+test('FE016.B08 capability-driven image, voice and document media upload and send by scoped file IDs', async ({ page }) => {
+    await page.addInitScript(() => {
+        const created: string[] = [];
+        const revoked: string[] = [];
+        const create = URL.createObjectURL.bind(URL);
+        const revoke = URL.revokeObjectURL.bind(URL);
+        URL.createObjectURL = blob => { const url = create(blob); created.push(url); return url; };
+        URL.revokeObjectURL = url => { revoked.push(url); revoke(url); };
+        (window as unknown as { __mediaUrls: { created: string[]; revoked: string[] } }).__mediaUrls = { created, revoked };
     });
-    await gotoDemo(page, '/s/shop-demo/inbox/cv1');
-    await page.getByRole('button', { name: 'Xem mẫu ảnh và tin thoại' }).click();
-    const preview = page.getByTestId('mock-media-preview');
-    await expect(preview).toContainText('DEMO-MEDIA-IMAGE-01');
-    await expect(preview).toContainText('Tin thoại mẫu · 00:08 · chưa phát âm thanh');
+    const uploadIds: string[] = [];
+    let uploadRequests = 0;
+    page.on('request', request => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/uploads')) uploadRequests += 1;
+    });
+    await gotoDemo(page, '/s/shop-demo/inbox/cv2');
+    const attach = page.getByRole('button', { name: 'Đính kèm', exact: true });
+    await expect(attach).toBeVisible();
+    await attach.focus();
+    await expect(attach).toBeFocused();
+    const fileInput = page.getByTestId('inbox-attachment-input');
+    const files = [
+        { name: 'khach-gui.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/H1sAAAAASUVORK5CYII=', 'base64') },
+        { name: 'tin-thoai.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3\x04\x00\x00\x00\x00\x00\x00') },
+        { name: 'hoa-don.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4\n1 0 obj\n<<>>\nendobj\n%%EOF') },
+    ];
+    for (let index = 0; index < files.length; index += 1) {
+        const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/uploads'));
+        await fileInput.setInputFiles(files[index]);
+        const response = await responseWait;
+        expect(response.status()).toBe(201);
+        uploadIds.push((await response.json()).data.id);
+        await expect(page.getByText('Sẵn sàng gửi · kiểm tra mô phỏng đạt').nth(index)).toBeVisible();
+    }
+    const fourthUpload = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/uploads'), { timeout: 500 }).catch(() => null);
+    await fileInput.setInputFiles({ name: 'anh-thu-tu.png', mimeType: 'image/png', buffer: files[0].buffer });
+    await expect(page.getByRole('alert').filter({ hasText: /tối đa 3 tệp/i })).toBeVisible();
+    expect(await fourthUpload).toBeNull();
+    expect(uploadRequests).toBe(3);
+
+    const readWaiters = uploadIds.map(fileId => page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/uploads/${fileId}`)));
+    const sendRequestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/messages'));
+    const sendResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/messages'));
+    const reply = 'Đã nhận ảnh và tệp, tôi sẽ kiểm tra giúp mình.';
+    await page.getByRole('textbox', { name: 'Nội dung trả lời khách' }).fill(reply);
+    await page.getByRole('button', { name: 'Gửi trả lời', exact: true }).click();
+    const sendRequest = await sendRequestWait;
+    expect(JSON.parse(sendRequest.postData() || '{}')).toMatchObject({ text: reply, fileIds: uploadIds });
+    expect(JSON.parse(sendRequest.postData() || '{}')).not.toHaveProperty('mediaUrl');
+    expect((await sendResponseWait).status()).toBe(202);
+    const readResponses = await Promise.all(readWaiters);
+    for (const response of readResponses) {
+        const file = (await response.json()).data;
+        expect(file.readUrl).toMatch(/^blob:/);
+    }
+    // The list response is contract-validated by MSW; assert the read model through
+    // the rendered message, avoiding a response-body read after the app refreshes.
+    await expect(page.getByTestId('inbox-message-groups').getByText(reply, { exact: true })).toBeVisible();
+    await expect(page.getByRole('img', { name: 'khach-gui.png', exact: true })).toBeVisible();
+    await expect(page.locator('audio[aria-label="Phát tin-thoai.mp3"]')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'hoa-don.pdf · tải tệp', exact: true })).toBeVisible();
+    const urls = await page.evaluate(() => (window as unknown as { __mediaUrls: { created: string[]; revoked: string[] } }).__mediaUrls);
+    expect(urls.created.length).toBeGreaterThanOrEqual(6);
+    expect(urls.revoked).toEqual(expect.arrayContaining(urls.created.slice(0, 3)));
+});
+
+test('FE016.B09 pending media send preserves newer text and blocks blind retry after unknown outcome', async ({ page }) => {
+    const sends: string[] = [];
+    page.on('request', request => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/messages')) sends.push(request.postData() || '');
+    });
+    await gotoDemo(page, '/s/shop-demo/inbox/cv2');
+    const image = { name: 'anh-cho-doi.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/H1sAAAAASUVORK5CYII=', 'base64') };
+    const uploadResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/uploads'));
+    await page.getByTestId('inbox-attachment-input').setInputFiles(image);
+    const submittedUpload = await uploadResponseWait;
+    expect(submittedUpload.status()).toBe(201);
+    const submittedFileId = (await submittedUpload.json()).data.id as string;
+    await expect(page.getByText('Sẵn sàng gửi · kiểm tra mô phỏng đạt')).toBeVisible();
+    const textbox = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
+    await textbox.fill('Tin ban đầu đang được gửi.');
+    await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('sendMessage', 2500));
+    await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+    const requestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/messages'));
+    const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/messages'));
+    await page.getByRole('button', { name: 'Gửi trả lời', exact: true }).click();
+    try {
+        await requestWait;
+        await textbox.fill('Nội dung mới cần được giữ lại.');
+        const newerUploadWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/uploads'));
+        await page.getByTestId('inbox-attachment-input').setInputFiles({ name: 'anh-moi-trong-khi-gui.png', mimeType: 'image/png', buffer: image.buffer });
+        const newerUpload = await newerUploadWait;
+        expect(newerUpload.status()).toBe(201);
+        const newerFileId = (await newerUpload.json()).data.id as string;
+        expect(JSON.parse(sends[0]).fileIds).toEqual([submittedFileId]);
+        expect(JSON.parse(sends[0]).fileIds).not.toContain(newerFileId);
+        expect((await responseWait).status()).toBe(202);
+    } finally {
+        await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('sendMessage', null)).catch(() => undefined);
+    }
+    await expect(page.getByText('Có 1 thao tác chưa xác minh kết quả')).toBeVisible();
+    await expect(textbox).toHaveValue('Nội dung mới cần được giữ lại.');
+    await expect(page.getByText('Sẵn sàng gửi · kiểm tra mô phỏng đạt')).toHaveCount(2);
+    await expect(page.getByText('anh-moi-trong-khi-gui.png')).toBeVisible();
+    const sendAgain = page.getByRole('button', { name: 'Gửi trả lời', exact: true });
+    await expect(sendAgain).toBeDisabled();
+    await sendAgain.evaluate(button => (button as HTMLButtonElement).click());
+    expect(sends).toHaveLength(1);
+});
+
+test('FE016.B10 a channel without an explicit media policy keeps text composer and denies attachments', async ({ page }) => {
+    let uploads = 0;
+    page.on('request', request => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/uploads')) uploads += 1;
+    });
+    await gotoDemo(page, '/s/shop-second/inbox/b-cv2');
     await expect(page.getByRole('textbox', { name: 'Nội dung trả lời khách' })).toBeVisible();
-    expect(writes).toEqual([]);
+    await expect(page.getByRole('button', { name: 'Đính kèm', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('alert').filter({ hasText: /chưa khai báo loại tệp được hỗ trợ/i })).toBeVisible();
+    expect(uploads).toBe(0);
 });
 
 test('FE027.B01 industry sales script preview asks for missing facts and stays a local draft', async ({ page }) => {

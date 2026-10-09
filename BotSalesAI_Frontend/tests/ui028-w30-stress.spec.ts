@@ -41,8 +41,10 @@ async function prepareScenario(page: import('@playwright/test').Page, id: string
         await link.waitFor({ state: 'visible', timeout: 8_000 });
         await expect(page.locator('.MuiDrawer-paper').filter({ has: link })).toHaveCSS('transform', 'none');
         await link.evaluate(element => {
+            const label = element.querySelector<HTMLElement>('.MuiListItemText-primary');
+            if (!label) throw new Error('Navigation primary label was not rendered in its text container.');
             element.dataset.w30LongLabel = 'true';
-            element.append(document.createTextNode(` ${'Danh mục sản phẩm nhãn dài '.repeat(8)} ID-${'NAV-LONG-'.repeat(8)}`));
+            label.textContent = `Sản phẩm ${'Danh mục sản phẩm nhãn dài '.repeat(8)} ID-${'NAV-LONG-'.repeat(8)}`;
         });
         return { targets: ['[data-w30-long-label="true"]', 'main h1'], focusTarget: '[data-w30-long-label="true"]' };
     }
@@ -124,6 +126,21 @@ for (const scenario of scenarios) {
                 const element = document.querySelector<HTMLElement>(selector);
                 return { selector, found: Boolean(element), ...(element ? bounds(element) : {}) };
             });
+            const stressedNavigationLink = document.querySelector<HTMLElement>('a[data-w30-long-label="true"]');
+            const stressedNavigationLabel = stressedNavigationLink?.querySelector<HTMLElement>('.MuiListItemText-primary');
+            const stressedNavigationItem = stressedNavigationLink?.closest('li');
+            const followingNavigationItem = stressedNavigationItem?.nextElementSibling instanceof HTMLElement
+                ? stressedNavigationItem.nextElementSibling
+                : null;
+            const linkRect = stressedNavigationLink?.getBoundingClientRect();
+            const labelRect = stressedNavigationLabel?.getBoundingClientRect();
+            const followingRect = followingNavigationItem?.getBoundingClientRect();
+            const navigationLabelLayout = stressedNavigationLink && stressedNavigationLabel && linkRect && labelRect && followingRect ? {
+                labelContainedByLink: labelRect.top >= linkRect.top - 1 && labelRect.bottom <= linkRect.bottom + 1,
+                directTextChild: [...stressedNavigationLink.childNodes].some(node => node.nodeType === Node.TEXT_NODE && Boolean(node.textContent?.trim())),
+                labelFollowingOverlap: Math.max(0, Math.min(labelRect.bottom, followingRect.bottom) - Math.max(labelRect.top, followingRect.top)),
+                linkFollowingOverlap: Math.max(0, Math.min(linkRect.bottom, followingRect.bottom) - Math.max(linkRect.top, followingRect.top)),
+            } : null;
             const viewportWidth = document.documentElement.clientWidth;
             const documentWidth = document.documentElement.scrollWidth;
             const overflowCandidates = [...document.querySelectorAll<HTMLElement>('body *')]
@@ -165,6 +182,7 @@ for (const scenario of scenarios) {
             return {
                 viewport: { width: innerWidth, height: innerHeight, clientWidth: viewportWidth, documentWidth, pageOverflow: documentWidth - viewportWidth, scrollHeight: document.documentElement.scrollHeight, scrollY },
                 targets: targetGeometry,
+                navigationLabelLayout,
                 overflowCandidates,
                 textClips,
                 activeFocus: active && focusStyle && focusRect ? {
@@ -189,6 +207,11 @@ for (const scenario of scenarios) {
         if (!focus || (focus.outlineStyle === 'none' || focus.outlineWidth === '0px') && focus.boxShadow === 'none')
             issues.push('Keyboard focus indicator was not measurable after simultaneous text/spacing stress');
         if (measured.textClips.length) issues.push(`Potential clipped text elements: ${measured.textClips.length}`);
+        if (measured.navigationLabelLayout && (!measured.navigationLabelLayout.labelContainedByLink
+            || measured.navigationLabelLayout.directTextChild
+            || measured.navigationLabelLayout.labelFollowingOverlap > 1
+            || measured.navigationLabelLayout.linkFollowingOverlap > 1))
+            issues.push(`Long navigation label geometry is invalid: ${JSON.stringify(measured.navigationLabelLayout)}`);
         if (pageErrors.length) issues.push(`React page errors: ${pageErrors.length}`);
 
         const report = {

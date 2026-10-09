@@ -59,16 +59,16 @@ test('Finance R20/R21/R22/R48/R49/R50 route layouts retain shell gutter without 
     expect(errors).toEqual([]);
 });
 
-test('titled Finance Panels keep one 16px header-to-first-content boundary', async ({ page }) => {
+test('titled Finance Panels keep one 12px header-to-first-content boundary', async ({ page }) => {
     const pageErrors: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.message));
     const cases = [
-        { path: '/s/shop-demo/finance', heading: 'Kỳ báo cáo', hasAction: false, firstContentSelector: '.MuiStack-root', firstContentPaddingTop: 12 },
-        { path: '/s/shop-demo/finance/profit-loss', heading: 'Chi tiết kết quả kinh doanh', hasAction: true, firstContentSelector: '.MuiStack-root', firstContentPaddingTop: 12 },
+        { path: '/s/shop-demo/finance', heading: 'Kỳ báo cáo', hasAction: false, firstContentSelector: '[data-ui-detail-line]', firstContentPaddingTop: 0, detailRowPaddingTop: 8 },
+        { path: '/s/shop-demo/finance/profit-loss', heading: 'Chi tiết kết quả kinh doanh', hasAction: true, firstContentSelector: '[data-ui-detail-line]', firstContentPaddingTop: 0, detailRowPaddingTop: 8 },
         // The mock notice is now first; its MUI inset is separate from the Panel header boundary.
         { path: '/s/shop-demo/finance/profit-loss', heading: 'Hỏi đáp có nguồn', hasAction: false, firstContentSelector: '.MuiAlert-root[role="alert"]', firstContentPaddingTop: 6 },
     ];
-    const observations: Array<{ path: string; heading: string; width: number; headerContentBottom: number; firstContentTop: number; gap: number; bodyPaddingTop: number; bodyPaddingInlineStart: number; bodyPaddingBottom: number; firstContentPaddingTop: number; hasAction: boolean }> = [];
+    const observations: Array<{ path: string; heading: string; width: number; headerContentBottom: number; firstContentTop: number; gap: number; bodyPaddingTop: number; bodyPaddingInlineStart: number; bodyPaddingBottom: number; firstContentPaddingTop: number; detailRowPaddingTop: number | null; detailDividers: number | null; hasAction: boolean }> = [];
 
     for (const width of [390, 806, 1440]) {
         await page.setViewportSize({ width, height: 900 });
@@ -88,6 +88,7 @@ test('titled Finance Panels keep one 16px header-to-first-content boundary', asy
                 const firstContentTop = firstContent.getBoundingClientRect().top;
                 const bodyStyle = getComputedStyle(body!);
                 const firstContentStyle = getComputedStyle(firstContent);
+                const detailRow = firstContent.matches('[data-ui-detail-line]') ? firstContent.firstElementChild : null;
                 return {
                     headerContentBottom,
                     firstContentTop,
@@ -96,6 +97,8 @@ test('titled Finance Panels keep one 16px header-to-first-content boundary', asy
                     bodyPaddingInlineStart: Number.parseFloat(bodyStyle.paddingInlineStart),
                     bodyPaddingBottom: Number.parseFloat(bodyStyle.paddingBottom),
                     firstContentPaddingTop: Number.parseFloat(firstContentStyle.paddingTop),
+                    detailRowPaddingTop: detailRow ? Number.parseFloat(getComputedStyle(detailRow).paddingTop) : null,
+                    detailDividers: detailRow ? firstContent.querySelectorAll('.MuiDivider-root').length : null,
                     hasAction: header!.children.length > 1,
                 };
             });
@@ -111,12 +114,14 @@ test('titled Finance Panels keep one 16px header-to-first-content boundary', asy
     expect(observations).toHaveLength(9);
     expect(pageErrors).toEqual([]);
     const mismatches = observations.filter(item =>
-        Math.abs(item.gap - 16) > 0.5 ||
+        Math.abs(item.gap - 12) > 0.5 ||
         item.bodyPaddingTop !== 0 ||
         item.firstContentPaddingTop !== cases.find(testCase => testCase.heading === item.heading)?.firstContentPaddingTop ||
+        item.detailRowPaddingTop !== (cases.find(testCase => testCase.heading === item.heading)?.detailRowPaddingTop ?? null) ||
+        item.detailDividers !== (item.detailRowPaddingTop === null ? null : 1) ||
         item.hasAction !== cases.find(testCase => testCase.heading === item.heading)?.hasAction ||
-        item.bodyPaddingInlineStart !== (item.width < 768 ? 16 : 24) ||
-        item.bodyPaddingBottom !== (item.width < 768 ? 16 : 24),
+        item.bodyPaddingInlineStart !== (item.width < 768 ? 12 : 16) ||
+        item.bodyPaddingBottom !== (item.width < 768 ? 12 : 16),
     );
     expect(mismatches, JSON.stringify(observations)).toEqual([]);
 });
@@ -178,7 +183,7 @@ test('Finance report, entry, journal, reconciliation and period dialogs remain i
         if (await closePeriod.isVisible().catch(() => false)) {
             await closePeriod.click();
             dialog = page.getByRole('dialog', { name: 'Khóa kỳ kế toán' });
-            await expect(dialog.getByRole('button', { name: 'Xác nhận', exact: true })).toBeVisible();
+            await expect(dialog.getByRole('button', { name: 'Khóa kỳ kế toán', exact: true })).toBeVisible();
             await expectDialogWithinViewport(page, dialog, width, height);
             await page.keyboard.press('Escape');
         }

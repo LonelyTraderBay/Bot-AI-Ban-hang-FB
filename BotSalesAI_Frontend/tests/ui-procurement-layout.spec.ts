@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { expect, test } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -17,6 +18,7 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp, within?: import('@playwright/test').Locator) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     const scope = within || page;
     await scope.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: typeof value === 'string' }).click();
@@ -110,7 +112,7 @@ test('Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow
         await expectDialogWithinViewport(page, receipt, width);
         await chooseOption(page, 'Đơn mua đã xác nhận', 'seed-purchaseorder-10046', receipt);
         await expect(receipt.getByText('Đặt 10 · đã nhận 4 · bị từ chối 0 · còn 6')).toBeVisible();
-        await expect(receipt.getByRole('spinbutton', { name: 'Nhận đạt v-p6' })).toBeVisible();
+        await expect(receipt.getByRole('spinbutton', { name: 'Nhận đạt mã biến thể v-p6' })).toBeVisible();
         await page.keyboard.press('Escape');
     }
 

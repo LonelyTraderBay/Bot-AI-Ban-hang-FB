@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import {test,expect} from '@playwright/test';
 import {startDemoServer} from './session/demo-server.mjs';
 
@@ -17,6 +18,7 @@ async function gotoDemo(page: import('@playwright/test').Page,path: string){
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page,label: string,value: string){
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox',{name:label}).click();
     await page.getByRole('option',{name:value,exact:true}).click();
 }
@@ -85,15 +87,25 @@ test('customer create validates fields, submits through mock HTTP, and preserves
     const updatedName='Khách FE009 đổi tên';
     await page.getByLabel('Tên khách hàng').fill(updatedName);
     await chooseMockOption(page,'Trạng thái thử','Xung đột lần ghi tiếp');
+    const staleSave=page.waitForResponse(response=>response.request().method()==='PATCH'&&new URL(response.url()).pathname.includes('/shops/shop-demo/customers/'));
     await page.getByRole('button',{name:'Lưu thay đổi',exact:true}).click();
-    await expect(page.getByRole('alert').filter({hasText:'dữ liệu bị thay đổi bởi người khác'})).toBeVisible();
+    expect((await staleSave).status()).toBe(412);
+    const comparison=page.getByRole('dialog',{name:'Đối chiếu thay đổi',exact:true});
+    await expect(comparison).toBeVisible();
+    await expect(comparison.getByText(updatedName,{exact:true})).toBeVisible();
+    expect(calls.filter(call=>call.method==='PATCH'&&call.path.includes('/shops/shop-demo/customers/'))).toHaveLength(1);
+    await comparison.getByRole('button',{name:'Áp dụng vào bản nháp',exact:true}).click();
     await expect(page.getByLabel('Tên khách hàng')).toHaveValue(updatedName);
+    expect(calls.filter(call=>call.method==='PATCH'&&call.path.includes('/shops/shop-demo/customers/'))).toHaveLength(1);
+    const customerPath=new URL(page.url()).pathname.replace('/s/','/shops/');
+    const latestVersion=await page.evaluate(async(path:string)=>(await(await fetch('/api/v2'+path)).json()).data.version,customerPath);
 
     await page.getByRole('button',{name:'Lưu thay đổi',exact:true}).click();
     await expect(page.getByRole('heading',{name:updatedName,exact:true})).toBeVisible();
     const customerPatches=calls.filter(call=>call.method==='PATCH'&&call.path.includes('/shops/shop-demo/customers/'));
     expect(customerPatches).toHaveLength(2);
     expect(customerPatches.every(call=>Boolean(call.headers['if-match']))).toBe(true);
+    expect(customerPatches[1].headers['if-match']).toBe(`"${latestVersion}"`);
     expect(JSON.parse(customerPatches[1].body||'null')).toMatchObject({displayName:updatedName});
     await page.getByRole('link',{name:'Danh sách khách'}).click();
     await expect(page).toHaveURL(/\/customers$/);
@@ -129,6 +141,41 @@ test('customer detail keeps redacted contact fields read-only and does not overw
     await expect(phone).toHaveValue('09•• ••• 121');
 });
 
+test('job detail follows an export created in the current synthetic shop and can refetch it',async({page})=>{
+    const requests:ObservedRequest[]=[];
+    page.on('request',request=>{
+        const url=new URL(request.url());
+        if(url.pathname.includes('/shops/shop-demo/exports')||url.pathname.includes('/shops/shop-demo/jobs/'))
+            requests.push({method:request.method(),path:url.pathname,body:request.postData(),headers:request.headers()});
+    });
+
+    await gotoDemo(page,'/s/shop-demo/reports');
+    await expect(page.getByRole('heading',{name:'Báo cáo & xuất dữ liệu',exact:true})).toBeVisible();
+    const exportButton=page.getByRole('button',{name:'Tạo tệp báo cáo CSV',exact:true});
+    await expect(exportButton).toBeEnabled();
+    await exportButton.click();
+
+    const jobLink=page.getByRole('link',{name:/^Theo dõi công việc job-/});
+    await expect(jobLink).toBeVisible();
+    const jobPath=new URL(await jobLink.getAttribute('href')||'',page.url()).pathname;
+    const jobId=jobPath.split('/').at(-1)||'';
+    expect(jobId).toMatch(/^job-/);
+    const exportRequest=requests.find(request=>request.method==='POST'&&request.path==='/api/v2/shops/shop-demo/exports');
+    expect(JSON.parse(exportRequest?.body||'null')).toMatchObject({reportType:'orders',format:'csv',timezone:'Asia/Vientiane'});
+
+    await jobLink.click();
+    await expect(page).toHaveURL(new RegExp(`/s/shop-demo/jobs/${jobId}$`));
+    await expect(page.getByRole('heading',{name:`Công việc ${jobId}`,exact:true})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Kết quả xử lý',exact:true})).toBeVisible();
+    await expect(page.getByRole('button',{name:'Mở kết quả xuất',exact:true})).toBeVisible();
+    expect(requests.some(request=>request.method==='GET'&&request.path===`/api/v2/shops/shop-demo/jobs/${jobId}`)).toBe(true);
+
+    const jobGetCount=()=>requests.filter(request=>request.method==='GET'&&request.path===`/api/v2/shops/shop-demo/jobs/${jobId}`).length;
+    const beforeRefetch=jobGetCount();
+    await page.getByRole('button',{name:'Kiểm tra lại',exact:true}).click();
+    await expect.poll(jobGetCount).toBe(beforeRefetch+1);
+});
+
 test('FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified',async({page})=>{
     const writes:string[]=[];
     page.on('request',request=>{ if(request.method()!=='GET') writes.push(`${request.method()} ${new URL(request.url()).pathname}`); });
@@ -142,19 +189,14 @@ test('FE009.G01 shop setup checklist guides to supported pages and leaves missin
     expect(writes).toEqual([]);
 });
 
-test('FE009.G05 marketing consent preview is interactive but never claims server opt-out',async({page})=>{
-    const writes:string[]=[];
-    page.on('request',request=>{ if(request.method()!=='GET') writes.push(`${request.method()} ${new URL(request.url()).pathname}`); });
+test('FE009.G05 consent management persists challenges without granting consent before customer action',async({page})=>{
     await gotoDemo(page,'/s/shop-demo/settings/shop');
-    await page.getByRole('link',{name:'Xem thử consent',exact:true}).click();
+    await page.getByRole('link',{name:'Quản lý consent',exact:true}).click();
     await expect(page).toHaveURL(/\/settings\/privacy$/);
-    await expect(page.getByRole('heading',{name:'Xem thử consent marketing',exact:true})).toBeVisible();
-    const preview=page.getByTestId('consent-preview-status');
-    await expect(preview).toContainText('Chưa xác minh từ API');
-    await page.getByRole('checkbox',{name:'Ngừng liên hệ marketing (chỉ bản xem trước)'}).check();
-    await expect(preview).toContainText('Opt-out mô phỏng; chưa ghi server');
-    await expect(preview).toContainText('Số khách opt-out trong preview: 1');
-    expect(writes).toEqual([]);
+    await expect(page.getByRole('heading',{name:'Consent marketing và xác nhận lại',exact:true})).toBeVisible();
+    await expect(page.getByRole('table',{name:'Lịch sử consent khách hàng'})).toBeVisible();
+    await expect(page.getByRole('checkbox',{name:/Ngừng liên hệ marketing/})).toHaveCount(0);
+    await expect(page.getByText(/Tạo yêu cầu chỉ tạo challenge đang chờ; không bật consent/)).toBeVisible();
 });
 
 test('FE009.H06 audit screen distinguishes available fields from missing contract detail',async({page})=>{
@@ -176,11 +218,11 @@ test('FE009.B06 after-sale cases only link orders loaded for the selected custom
     await chooseMockOption(page,'Khách hàng','Linh (khách mẫu)');
     const relatedOrder=dialog.getByRole('combobox',{name:'Đơn hàng liên quan (không bắt buộc)'});
     await expect(relatedOrder).toBeEnabled();
-    await chooseMockOption(page,'Đơn hàng liên quan (không bắt buộc)','DH-DEMO-PAID-01 · completed');
+    await chooseMockOption(page,'Đơn hàng liên quan (không bắt buộc)','DH-DEMO-PAID-01 · Hoàn tất');
     await chooseMockOption(page,'Khách hàng','Minh (khách mẫu)');
     await expect(relatedOrder).not.toContainText('DH-DEMO-PAID-01');
     await chooseMockOption(page,'Khách hàng','Linh (khách mẫu)');
-    await chooseMockOption(page,'Đơn hàng liên quan (không bắt buộc)','DH-DEMO-PAID-01 · completed');
+    await chooseMockOption(page,'Đơn hàng liên quan (không bắt buộc)','DH-DEMO-PAID-01 · Hoàn tất');
     await chooseMockOption(page,'Loại yêu cầu','Yêu cầu trả hàng');
     await dialog.getByLabel('Nội dung').fill('Khách muốn kiểm tra tình trạng yêu cầu trả một phần đơn.');
     await dialog.getByRole('button',{name:'Tạo yêu cầu',exact:true}).click();
@@ -189,19 +231,19 @@ test('FE009.B06 after-sale cases only link orders loaded for the selected custom
     await expect(page.getByText('Khách muốn kiểm tra tình trạng yêu cầu trả một phần đơn.',{exact:true})).toBeVisible();
     const createCall=calls.find(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/service-cases'));
     expect(JSON.parse(createCall?.body||'null')).toMatchObject({customerId:'c1',orderId:'DH-DEMO-PAID-01',kind:'return_request'});
-    await expect(page.getByRole('link',{name:'DH-DEMO-PAID-01',exact:true})).toBeVisible();
+    await expect(page.getByRole('link',{name:'DH-DEMO-PAID-01',exact:true}).last()).toBeVisible();
 
     await page.getByRole('link',{name:'Linh (khách mẫu)',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Linh (khách mẫu)',exact:true})).toBeVisible();
     await expect(page.getByRole('heading',{name:'Vận đơn liên quan',exact:true})).toBeVisible();
     await expect(page.getByText('seed-shipment-10021',{exact:true})).toBeVisible();
-    await expect(page.getByRole('link',{name:'DH-DEMO-PAID-01',exact:true})).toBeVisible();
+    await expect(page.getByRole('link',{name:'DH-DEMO-PAID-01',exact:true}).last()).toBeVisible();
 });
 
 test('team invitation and membership revoke stay shop-scoped and protect the active owner',async({page})=>{
     const calls=observeShopRequests(page);
     await gotoDemo(page,'/s/shop-demo/settings/team');
-    const table=page.getByRole('table',{name:'Dữ liệu'});
+    const table=page.getByRole('table',{name:'Nhân sự và quyền truy cập'});
     const rows=table.locator('tbody tr');
     await expect(rows.first()).toBeVisible();
     const initialMemberCount=await rows.count();
@@ -222,7 +264,7 @@ test('team invitation and membership revoke stay shop-scoped and protect the act
     await warehouseRow.getByRole('button',{name:'Thu hồi'}).click();
     const confirm=page.getByRole('dialog',{name:'Thu hồi quyền nhân viên'});
     await expect(confirm).toBeVisible();
-    await confirm.getByRole('button',{name:'Xác nhận',exact:true}).click();
+    await confirm.getByRole('button',{name:'Thu hồi quyền',exact:true}).click();
     await expect(warehouseRow.getByText('Đã thu hồi',{exact:true})).toBeVisible();
     await expect(ownerRow.getByText('Đang hoạt động',{exact:true})).toBeVisible();
     const revokeCall=calls.find(call=>call.method==='DELETE'&&call.path.includes('/shops/shop-demo/members/member-warehouse'));

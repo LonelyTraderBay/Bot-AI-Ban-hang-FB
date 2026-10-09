@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -18,6 +19,7 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -45,7 +47,8 @@ test('FE013.C04 shipping preview distinguishes missing address, unserviceable zo
     });
     await gotoDemo(page, '/s/shop-demo/shipments');
     await expect(page.getByRole('heading', { name: 'Vận đơn & giao hàng', exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Xem trước phí & vùng giao hàng', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Mở bản xem thử phí giao hàng', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Xem thử phí và vùng giao hàng', exact: true })).toBeVisible();
     await expect(page.getByText(/DỮ LIỆU MÔ PHỎNG/)).toBeVisible();
     await expect(page.getByText(/Ước tính mẫu:.*VND/)).toBeVisible();
 
@@ -102,9 +105,13 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     expect(claimReq.headers()['idempotency-key']).toBeTruthy();
     expect((await claimResponse).status()).toBe(200);
     await expect(prepDialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' })).toBeVisible();
+    // The claim response precedes query reconciliation; the dialog stays inert until it settles.
+    await expect(prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeEnabled();
+    await expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toBeEditable();
 
     const wrongSku = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.includes('/prep-jobs/') && new URL(response.url()).pathname.endsWith('/pick'));
     await prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' }).fill('SKU-SAI');
+    await expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toHaveValue('SKU-SAI');
     await prepDialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
     expect((await wrongSku).status()).toBe(422);
     await expect(prepDialog.getByRole('alert').filter({ hasText: 'Mã SKU không khớp' })).toBeVisible();
@@ -120,6 +127,7 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     const partialPick = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pick'));
     await prepDialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
     expect((await partialPick).status()).toBe(200);
+    await expect(prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeEnabled();
     await expect(prepDialog.getByText('0/1', { exact: true })).toBeVisible();
     await expect(prepDialog.getByRole('button', { name: 'Xác nhận đã đóng gói' })).toBeDisabled();
 
@@ -133,7 +141,7 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await prepDialog.getByRole('button', { name: 'Xác nhận đã đóng gói' }).click();
     const packDialog = page.getByRole('dialog', { name: 'Hoàn tất đóng gói' });
     const packResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pack'));
-    await packDialog.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await packDialog.getByRole('button', { name: 'Xác nhận đã đóng gói', exact: true }).click();
     expect((await packResponse).status()).toBe(200);
     await expect(prepDialog.getByText('Đã đóng gói', { exact: true })).toBeVisible();
     await prepDialog.getByRole('link', { name: 'Tạo vận đơn để bàn giao' }).click();
@@ -179,6 +187,7 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     const eventDialog = page.getByRole('dialog', { name: 'Cập nhật hành trình có bằng chứng' });
     await chooseOption(page, 'Sự kiện', 'Khách đã nhận hàng');
     await eventDialog.getByRole('textbox', { name: 'Mã sự kiện bên vận chuyển' }).fill('carrier-event-delivered-1001');
+    await eventDialog.getByLabel('Thời gian sự kiện').fill('2026-09-29T14:00');
     await eventDialog.getByRole('textbox', { name: 'Mã bằng chứng' }).fill('proof-delivery-1001');
     const eventResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/events'));
     await eventDialog.getByRole('button', { name: 'Ghi sự kiện' }).click();
@@ -187,7 +196,7 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await expect(deliveredRow).toContainText('Đã giao');
     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
     expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/handover'))).toHaveLength(1);
-    await page.getByRole('link', { name: 'DH-1001', exact: true }).click();
+    await page.getByRole('link', { name: 'Mã đơn: DH-1001', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Đơn DH-1001', exact: true })).toBeVisible();
     await expect(page.getByText('Đã giao', { exact: true })).toBeVisible();
     await expect(page.getByText('Chưa thu', { exact: true })).toBeVisible();
@@ -205,7 +214,10 @@ test('FE013.AC03 unknown handover cannot be repeated before command reconciliati
     const claim = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/claim'));
     await prepDialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' }).click();
     expect((await claim).status()).toBe(200);
+    await expect(prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeEnabled();
+    await expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toBeEditable();
     await prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' }).fill('AO-002');
+    await expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toHaveValue('AO-002');
     await prepDialog.getByRole('spinbutton', { name: 'Số lượng đã lấy' }).fill('1');
     const pick = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pick'));
     await prepDialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
@@ -213,7 +225,7 @@ test('FE013.AC03 unknown handover cannot be repeated before command reconciliati
     await prepDialog.getByRole('button', { name: 'Xác nhận đã đóng gói' }).click();
     const packDialog = page.getByRole('dialog', { name: 'Hoàn tất đóng gói' });
     const pack = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pack'));
-    await packDialog.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await packDialog.getByRole('button', { name: 'Xác nhận đã đóng gói', exact: true }).click();
     expect((await pack).status()).toBe(200);
     await prepDialog.getByRole('link', { name: 'Tạo vận đơn để bàn giao' }).click();
     await page.getByRole('button', { name: 'Tạo vận đơn', exact: true }).click();

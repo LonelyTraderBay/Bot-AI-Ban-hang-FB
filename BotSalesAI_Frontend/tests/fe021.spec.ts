@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -17,8 +18,12 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
+    if (label === 'Vai trò mô phỏng') {
+        await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+    }
 }
 
 async function setDemoRole(page: import('@playwright/test').Page, role: 'owner' | 'viewer' | 'accountant') {
@@ -38,28 +43,132 @@ test('FE021 dashboard keeps independent panels usable and hides finance fields w
     await expect(page.getByText('Dữ liệu cập nhật', { exact: false })).toBeVisible();
 });
 
-test('FE021 marketing chart and table match the same synthetic API fixture and preserve missing actual spend', async ({ page }) => {
-    await gotoDemo(page, '/s/shop-demo/overview');
-    await setDemoRole(page, 'owner');
-    await gotoDemo(page, '/s/shop-demo/reports/marketing');
+test('FE021 timezone and privacy validation waits for interaction and blocks invalid writes', async ({ page }) => {
+    let mutationRequests = 0;
+    page.on('request', request => {
+        if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method())) mutationRequests++;
+    });
+
+    await gotoDemo(page, '/onboarding');
+    await page.getByLabel('Tên cửa hàng').fill('Cửa hàng timezone kiểm thử');
+    const onboardingTimezone = page.getByLabel('Múi giờ');
+    await onboardingTimezone.fill('Mars/OlympusMons');
+    await onboardingTimezone.blur();
+    await expect(onboardingTimezone).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByText('Nhập múi giờ hợp lệ, ví dụ Asia/Vientiane.', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Tạo cửa hàng' }).click();
+    expect(mutationRequests).toBe(0);
+
+    await gotoDemo(page, '/s/shop-demo/settings/shop');
+    const settingsTimezone = page.getByLabel('Múi giờ');
+    await settingsTimezone.fill('Mars/OlympusMons');
+    await page.getByRole('button', { name: 'Lưu cấu hình' }).click();
+    await expect(settingsTimezone).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByLabel('Ngôn ngữ giao diện')).toBeDisabled();
+    expect(mutationRequests).toBe(0);
+
+    await gotoDemo(page, '/s/shop-demo/settings/privacy');
+    const retentionDays = page.getByLabel('Số ngày lưu hội thoại');
+    await expect(retentionDays).toHaveValue('');
+    await expect(retentionDays).not.toHaveAttribute('aria-invalid', 'true');
+    await retentionDays.fill('0');
+    await retentionDays.blur();
+    await expect(retentionDays).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByText('Nhập số nguyên từ 1 đến 36.500 ngày.', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Lưu bản nháp chính sách' }).click();
+    expect(mutationRequests).toBe(0);
+});
+
+test('FE021 approval and shipment work queues appear before sample previews', async ({ page }) => {
+    await gotoDemo(page, '/s/shop-demo/approvals');
+    const approvals = page.getByRole('table', { name: 'Yêu cầu phê duyệt' });
+    const delegationPreview = page.getByText('Ủy quyền gửi đơn mua', { exact: true }).last();
+    await expect(approvals).toBeVisible();
+    await expect(delegationPreview).toBeVisible();
+    expect((await approvals.boundingBox())?.y).toBeLessThan((await delegationPreview.boundingBox())?.y ?? Infinity);
+
+    await gotoDemo(page, '/s/shop-demo/shipments');
+    const shipments = page.getByRole('table', { name: 'Danh sách vận đơn' });
+    const previewToggle = page.getByRole('button', { name: 'Mở bản xem thử phí giao hàng' });
+    await expect(shipments).toBeVisible();
+    await expect(previewToggle).toBeVisible();
+    expect((await shipments.boundingBox())?.y).toBeLessThan((await previewToggle.boundingBox())?.y ?? Infinity);
+    await previewToggle.click();
+    await expect(page.getByTestId('shipment-fee-preview')).toBeVisible();
+    await page.getByRole('button', { name: 'Ẩn bản xem thử phí giao hàng' }).click();
+    await expect(page.getByTestId('shipment-fee-preview')).toBeHidden();
+    await page.getByRole('button', { name: 'Mở bản xem thử phí giao hàng' }).click();
+    await expect(page.getByTestId('shipment-fee-preview')).toBeVisible();
+});
+
+test('FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend', async ({ page }) => {
     const responsePromise = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/marketing-summary'));
-    await page.reload();
+    await gotoDemo(page, '/s/shop-demo/reports/marketing');
     const response = await responsePromise;
     expect(response.status()).toBe(200);
     const envelope = await response.json();
     const reasons = envelope.data.lostSaleReasons as Array<{ reason: string; count: number }>;
     expect(reasons.length).toBeGreaterThan(0);
     await expect(page.getByTestId('marketing-loss-chart')).toBeVisible();
+    await expect(page.getByTestId('marketing-trend-chart')).toBeVisible();
+    await expect(page).toHaveURL(/fromDate=2026-08-31.*toDate=2026-09-29.*bucket=day/);
+    expect(envelope.data.period).toMatchObject({ fromDate: '2026-08-31', toDate: '2026-09-29', bucket: 'day', timezone: 'Asia/Vientiane' });
     const table = page.getByRole('table', { name: 'Lý do không chốt đơn' });
     await expect(table.getByRole('row')).toHaveCount(reasons.length + 1);
     for (const reason of reasons) {
-        await expect(table.getByText(reason.reason, { exact: true })).toBeVisible();
-        await expect(table.getByText(String(reason.count), { exact: true })).toBeVisible();
+        const row = table.getByRole('row').filter({ hasText: reason.reason });
+        await expect(row.getByRole('cell', { name: String(reason.count), exact: true })).toBeVisible();
     }
     expect(envelope.data.actualSpend).toBeNull();
-    await expect(page.getByText('Chưa có số thực tế từ API', { exact: true })).toBeVisible();
+    await expect(page.getByText('Kỳ này chưa có số thực tế từ API', { exact: true })).toBeVisible();
     await expect(page.getByText('Ước tính không phải số ghi sổ', { exact: true })).toBeVisible();
-    await expect(page.getByText('getMarketingSummary không nhận bộ lọc ngày;', { exact: false })).toBeVisible();
+
+    await page.getByLabel('Từ ngày').fill('2026-09-18');
+    await page.getByLabel('Đến ngày').fill('2026-09-24');
+    await chooseOption(page, 'Gộp theo', 'Tuần');
+    const filteredResponsePromise = page.waitForResponse(candidate => {
+        const url = new URL(candidate.url());
+        return candidate.request().method() === 'GET'
+            && url.pathname.endsWith('/marketing-summary')
+            && url.searchParams.get('fromDate') === '2026-09-18'
+            && url.searchParams.get('toDate') === '2026-09-24'
+            && url.searchParams.get('bucket') === 'week';
+    });
+    await page.getByRole('button', { name: 'Áp dụng' }).click();
+    const filteredResponse = await filteredResponsePromise;
+    expect(filteredResponse.status()).toBe(200);
+    const filtered = (await filteredResponse.json()).data;
+    expect(filtered).toMatchObject({ knownAttributedOrders: 2, unknownAttributionOrders: 1, estimatedSpend: { amount: '400000', currency: 'VND' }, actualSpend: null });
+    expect(filtered.trend).toHaveLength(2);
+    await expect(page).toHaveURL(/fromDate=2026-09-18.*toDate=2026-09-24.*bucket=week/);
+    await page.reload();
+    await expect(page.getByLabel('Từ ngày')).toHaveValue('2026-09-18');
+    await expect(page.getByRole('combobox', { name: 'Gộp theo' })).toHaveText('Tuần');
+
+    let marketingRequests = 0;
+    page.on('request', request => {
+        if (new URL(request.url()).pathname.endsWith('/marketing-summary')) marketingRequests++;
+    });
+    const beforeInvalidSubmit = marketingRequests;
+    await page.getByLabel('Từ ngày').fill('2025-10-01');
+    await page.getByLabel('Đến ngày').fill('2026-10-02');
+    await page.getByRole('button', { name: 'Áp dụng' }).click();
+    await expect(page.getByRole('alert').filter({ hasText: 'không được vượt quá 366 ngày' })).toBeVisible();
+    expect(marketingRequests).toBe(beforeInvalidSubmit);
+});
+
+test('FE021 invalid marketing deep links mark the responsible field and never send the invalid range', async ({ page }) => {
+    let marketingRequests = 0;
+    page.on('request', request => {
+        if (new URL(request.url()).pathname.endsWith('/marketing-summary')) marketingRequests++;
+    });
+    await gotoDemo(page, '/s/shop-demo/reports/marketing?fromDate=2026-10-02&toDate=2026-10-01&bucket=day');
+
+    const from = page.getByRole('textbox', { name: 'Từ ngày' });
+    await expect(from).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByText('Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.', { exact: true })).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Bộ lọc trên đường dẫn không hợp lệ.' })).toContainText('Hãy sửa trường được đánh dấu');
+    expect(marketingRequests).toBe(0);
 });
 
 test('FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination', async ({ page }) => {
@@ -181,8 +290,8 @@ test('FE021 empty report and marketing payloads render explicit empty states', a
 
     await page.getByRole('link', { name: 'Thông tin marketing' }).click();
     await expect(page).toHaveURL(new RegExp(`/s/${shopId}/reports/marketing$`));
-    await expect(page.getByText('API chưa cung cấp nhóm lý do để vẽ biểu đồ.', { exact: true })).toBeVisible();
-    await expect(page.getByText('Chưa có lý do mất đơn trong payload API.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Chưa có lý do mất đơn trong kỳ này.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Chưa có lý do mất đơn trong kỳ đã chọn.', { exact: true })).toBeVisible();
 
     await page.getByRole('link', { name: 'Xuất báo cáo' }).click();
     await expect(page).toHaveURL(new RegExp(`/s/${shopId}/reports$`));

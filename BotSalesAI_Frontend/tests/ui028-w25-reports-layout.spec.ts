@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -45,10 +46,10 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
                 dateFieldGap: styleOf('[data-testid="reports-date-filters"]').gap,
             };
         });
-        const inset = width < 768 ? '16px' : '24px';
+        const inset = width < 768 ? '12px' : '16px';
         expect(spacing).toEqual({
-            pageGridGap: '24px',
-            sectionGap: '24px',
+            pageGridGap: '16px',
+            sectionGap: '16px',
             bodyInset: { top: '0px', right: inset, bottom: inset, left: inset },
             formGap: '16px',
             dateFieldGap: '16px',
@@ -94,12 +95,12 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
                 chartTextCount: svg?.querySelectorAll('text').length ?? 0,
             };
         });
-        expect(spacing.sectionsGap).toBe('24px');
-        expect(spacing.asOfGap).toBe('16px');
-        expect(spacing.asOfMarginBottom).toBe('24px');
-        expect(spacing.questionSurfaceInset).toBe('24px');
+        expect(spacing.sectionsGap).toBe('16px');
+        expect(spacing.asOfGap).toBe('12px');
+        expect(spacing.asOfMarginBottom).toBe('16px');
+        expect(spacing.questionSurfaceInset).toBe('16px');
         expect(spacing.questionList).toMatchObject({ gap: '12px', padding: '0px 0px 0px 16px', paddingLeft: '16px' });
-        expect(spacing.questionTextInset).toBe(40);
+        expect(spacing.questionTextInset).toBe(32);
         expect(spacing.chartFrame).toEqual({ height: '260px', padding: '16px' });
         expect(spacing.chartSvg).not.toBeNull();
         expect(spacing.chartTextCount).toBeGreaterThan(0);
@@ -112,6 +113,7 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
 
 test('UI028.W25 authorized report download link retains its 44px hit target', async ({ page }) => {
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    await openDemoControls(page);
     await page.getByLabel('Vai trò mô phỏng').click();
     await page.getByRole('option', { name: 'owner', exact: true }).click();
     await page.goto(new URL('/s/shop-demo/reports', demoUrl).toString());

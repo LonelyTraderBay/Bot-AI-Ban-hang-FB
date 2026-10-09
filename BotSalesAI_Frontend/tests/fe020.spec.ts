@@ -1,3 +1,4 @@
+import { openDemoControls } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -17,6 +18,7 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
+    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -117,6 +119,7 @@ test('FE020.AC02/03 work-item actions follow allowedActions and operations healt
     await expect(page.getByText(/Chưa có API tạo\/sửa lịch bản tin/)).toBeVisible();
     await expect(page.getByText('Chưa kiểm tra thực tế', { exact: true }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /Tạo lịch bản tin|Lưu lịch bản tin/ })).toHaveCount(0);
+    await openDemoControls(page);
     await page.getByLabel('Vai trò mô phỏng').click();
     await page.getByRole('option', { name: 'viewer', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Tạm dừng vai trò' })).toHaveCount(0);
@@ -141,7 +144,7 @@ test('FE020.AC03 role pause control uses the canonical versioned mock and never 
     await dialog.getByRole('textbox', { name: 'Lý do (ít nhất 5 ký tự)' }).fill('Kiểm tra mô phỏng policy và version hiện tại.');
     const requestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/automation-control'));
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/automation-control'));
-    await dialog.getByRole('button', { name: 'Xác nhận', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Kiểm tra để tiếp tục', exact: true }).click();
     const body = (await requestWait).postDataJSON();
     expect(body).toMatchObject({ expectedVersion: 1, scope: 'role', action: 'resume', reason: 'Kiểm tra mô phỏng policy và version hiện tại.' });
     expect(body.resourceId).toBeTruthy();
@@ -172,21 +175,35 @@ test('FE020.F03 operations exception filter groups overdue, blocked, and unclaim
     expect(writes).toEqual([]);
 });
 
-test('FE020.F05 delegation rule preview stays local and grants no API approval capability', async ({ page }) => {
+test('FE020.F05 purchase delegation is bounded, saved paused, and requires a separate activation decision', async ({ page }) => {
     const writes: string[] = [];
     page.on('request', request => {
-        if (request.method() !== 'GET' && new URL(request.url()).pathname.startsWith('/api/v2/'))
+        if (request.method() !== 'GET' && new URL(request.url()).pathname.endsWith('/purchase-delegations'))
             writes.push(`${request.method()} ${new URL(request.url()).pathname}`);
     });
     await gotoDemo(page, '/s/shop-demo/approvals');
-    await chooseOption(page, 'Vai trò được ủy quyền', 'Kho & mua hàng');
-    await page.getByRole('spinbutton', { name: 'Hạn mức mẫu (VND)' }).fill('450000');
-    await page.getByRole('button', { name: 'Tạo bản xem thử' }).click();
-    const preview = page.getByTestId('delegation-preview');
-    await expect(preview).toContainText('Kho & mua hàng');
-    await expect(preview).toContainText('450.000 VND');
-    await expect(preview).toContainText('không nâng scope');
+    const panel = page.getByRole('heading', { name: 'Ủy quyền gửi đơn mua', exact: true });
+    await expect(panel).toBeVisible();
+    await page.getByRole('button', { name: 'Tạo ủy quyền có giới hạn', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Tạo ủy quyền mua hàng' });
+    await expect(dialog).toContainText('Ủy quyền tạo ở trạng thái tạm dừng');
+    await chooseOption(page, 'Vai trò mua hàng chịu trách nhiệm', /agent-2/);
+    await chooseOption(page, 'Nhà cung cấp đã duyệt', 'Xưởng hàng mẫu');
+    await chooseOption(page, 'Kho đang hoạt động', /warehouse-01|MAIN/);
+    await chooseOption(page, 'Báo giá nằm trong phạm vi', /offer-p1/);
+    await page.keyboard.press('Escape');
+    await chooseOption(page, 'Ngân sách mua hàng đã bật và được duyệt', /budget-2/);
+    await dialog.getByRole('spinbutton', { name: 'Hạn mức mỗi đơn' }).fill('300000');
+    await expect(dialog.getByRole('button', { name: 'Tạo ở trạng thái tạm dừng', exact: true })).toBeEnabled();
     expect(writes).toEqual([]);
+
+    const response = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/purchase-delegations'));
+    await dialog.getByRole('button', { name: 'Tạo ở trạng thái tạm dừng', exact: true }).click();
+    const created = await response;
+    expect(created.status(), await created.text()).toBe(201);
+    expect((await created.json()).data).toMatchObject({ status: 'paused', toolId: 'purchase.send', agentId: 'agent-2', supplierId: 'supplier-01', warehouseId: 'warehouse-01', budgetPolicyId: 'budget-2', maxPerOrder: { amount: '300000', currency: 'VND' } });
+    await expect(page.getByRole('table', { name: 'Ủy quyền gửi đơn mua' }).getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' })).toContainText('Tạm dừng');
+    expect(writes).toEqual(['POST /api/v2/shops/shop-demo/purchase-delegations']);
 });
 
 test('FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready', async ({ page }) => {

@@ -234,7 +234,7 @@ test('FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not r
     await deviceRow.getByRole('button', { name: 'Thu hồi' }).click();
     const revokeDialog = page.getByRole('dialog', { name: 'Thu hồi thiết bị' });
     const revokeResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/devices/${device.id}/revoke`));
-    await revokeDialog.getByRole('button', { name: 'Xác nhận' }).click();
+    await revokeDialog.getByRole('button', { name: 'Thu hồi thiết bị' }).click();
     const revokeResponse = await revokeResponseWait;
     expect(revokeResponse.status()).toBe(200);
     expect((await revokeResponse.json()).data).toMatchObject({ id: device.id, status: 'revoked' });

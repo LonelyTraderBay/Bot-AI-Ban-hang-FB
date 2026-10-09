@@ -36,7 +36,7 @@ test('UI028.W24 Inbox spacing roles remain consistent across breakpoints without
                 unreadPaddingLeft: unreadStyle.paddingLeft,
             };
         });
-        expect(listSpacing).toEqual({ padding: '16px', gap: '12px', unreadPaddingLeft: '8px' });
+        expect(listSpacing).toEqual({ padding: '12px', gap: '12px', unreadPaddingLeft: '8px' });
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
 
@@ -68,13 +68,13 @@ test('UI028.W24 Inbox spacing roles remain consistent across breakpoints without
             };
         });
         expect(spacing).toEqual({
-            messageInset: '16px',
+            messageInset: '12px',
             bubbleInset: '12px',
             messageContentGap: '4px',
             messageMetaGap: '8px',
             messageGroupGap: '12px',
-            composerInset: '16px',
-            contextInset: width < 768 ? '16px' : '24px',
+            composerInset: '12px',
+            contextInset: width < 768 ? '12px' : '16px',
         });
         const draft = `W24 draft ${width}`;
         await composer.fill(draft);
