@@ -1,0 +1,18 @@
+# Rà nguyên nhân tương tự — phạm vi density
+
+Nguồn giá trị và thứ tự duy nhất: standard v1.29 và UI plan §16.6/16.20. Báo cáo này mô tả closure của lần sửa.
+
+- Đệm/gap mặc định tại layout owner được rà cho toàn bộ 16 module qua import/route/consumer inventory, rendered routes và suite sở hữu; primitive/business geometry vẫn giữ ownership hiện hành.
+- Bảng: theme dùng CSS inset 8/12; không cố định chiều cao hàng. Action target và bàn phím được kiểm độc lập.
+- DetailLine: row8/value12; danh sách capabilities AI dùng dividedRows0. List có child riêng vẫn content12; không giảm gap bằng override ở consumer.
+- Panel: operational12/16 +header boundary12; knowledge reading comfortable16/24 +boundary16. FormFields complex16 mặc định; category ngắn compact12. PageSections section16/major24.
+- Dialog: EditDialog compact16; ConfirmDialog/DraftConflict và dirty-discard comfortable16/24. Busy/dirty/focus/navigation behavior tiếp tục bằng owner regression.
+- Rà closure phát hiện thêm title dirty-discard và Shell navigation-discard còn dùng MUI default. Probe thật trước sửa ghi title inline24 ở320px và Shell actions8/default spacing. Hai owner đã dùng dialog.inset/actionsInset/actionsGap/viewportMargin; regression category hiện kiểm cả hai đường guard ở320/1440, giữ nháp khi tiếp tục. Lượt full đang chạy được dừng có kiểm soát trước sửa, không tính là PASS; pointer/log riêng tại e2e-interrupted-missing-dirty-role.json.
+- Inbox: pane/composer/list12, context12/16. Bubble12/history4/8/12, scroll owner và draft giữ nguyên. Reports/chart geometry, target44, page gutter16/24 và typography giữ nguyên.
+- Demo: warning luôn hiện; disclosure mặc định thu ở mọi viewport; summary dùng nhãn từ cùng danh sách lựa chọn. Tests thao tác disclosure công khai trước mock controls. Lượt migration ban đầu có9 lời gọi top-level không hợp lệ đã được phát hiện bằng discovery, loại bỏ và giữ log lỗi lịch sử.
+- Full run tiếp theo phát hiện các precondition trước chooseMockOption trong route-empty/error còn đợi dropdown trước khi mở disclosure. Rà toàn bộ expectation cùng pattern xác nhận thêm ui008 gotoDemo; đã mở qua helper trước assertion ở cả ba nơi, giữ nguyên yêu cầu visibility và error/empty content. Raw full log, hai traces/error-context và pointer nằm trong full-disclosure-precondition-failure; không coi các ca đã chạy hoặc targeted retest là full PASS. Preflight hiện gồm254 ca (250 UI +4 state cases) trước full lại.
+- Lượt preflight dự kiến254 ca phát hiện W03/W04 trong ui-width-layout còn kỳ vọng section24 và divided list12 của chuẩn cũ. Chuẩn v1.29 quy định section16 và dividedRows0; cập nhật kỳ vọng chính xác theo role, bổ sung kiểm profile hữu hạn. Giữ nguyên độ rộng notice, breakpoint, số7 dòng, divider từng dòng và cấu trúc atomic; không nới sai số hoặc giảm assertion. Lượt này dừng có kiểm soát khi đang chạy ca118, exit4294967295/sourceDrift0; không ghi full PASS. Pointer và hai traces nằm trong preflight-width-expectation-failure. Suite sở hữu sau sửa đạt20/20 độc lập; full cuối vẫn chạy lại từ đầu.
+- Axe của dialog được đo sau khi các CSS animations thực kết thúc qua Animation.finished. Lượt đo giữa Fade của Chromium lưu riêng; không đổi màu, tắt rule hoặc nới contrast threshold.
+- Contract phát hiện crosswalk chưa thêm Shell làm consumer của ba dialog roles sau closure guard. Đã cập nhật catalog từ reference source thực; lượt41 contracts cuối đạt đủ. Diff của các suite nghiệp vụ chỉ mở disclosure qua helper công khai trước chọn role/fault/dataset; assertion nghiệp vụ được giữ.
+
+Các artifact fresh, expected/observed, counts và giới hạn thực tế được đóng trong REPORT sau final gates; không suy PASS từ source inspection.

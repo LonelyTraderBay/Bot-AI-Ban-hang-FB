@@ -1,0 +1,185 @@
+[WebServer] (node:88080) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 4 tests using 1 worker
+
+(node:82976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/4] [chromium] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-30880-c18ff09f-1a1b-42ea-b179-cc9f84ae7397\deps\react-dom_client.js?v=025a3b90 as it exceeds the max of 500KB.
+
+  1) [chromium] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('main tbody td').first()
+    Expected: "8px"
+    Received: "12px"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" locator('main tbody td').first() with timeout 5000ms
+      - waiting for locator('main tbody td').first()
+        14 × locator resolved to <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-eb2rcd-MuiTableCell-root">…</td>
+           - unexpected value "12px"
+
+
+      11 |  for(const width of [320,806,1440]){
+      12 |   await page.setViewportSize({width,height:900});await ready(page,'products');
+    > 13 |   const cells=page.locator('main tbody td');await expect(cells.first()).toHaveCSS('padding-top','8px');await expect(cells.first()).toHaveCSS('padding-left','12px');
+         |                                                                         ^
+      14 |   const link=page.getByRole('link',{name:'Chi tiết',exact:true}).first();expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      15 |   await expect(page.getByText('DEMO-001',{exact:true})).toBeVisible();await expect(page.getByText('150.000 ₫',{exact:true})).toBeVisible();
+      16 |   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-density-layout.spec.ts:13:73
+
+    Error Context: test-results\playwright-82976-72669109-e7bc-41e7-8786-7d1a20cc56a5\ui-density-layout-density--dfe22-ving-action-target-and-data-chromium\error-context.md
+
+    Error Context: test-results\playwright-82976-72669109-e7bc-41e7-8786-7d1a20cc56a5\ui-density-layout-density--dfe22-ving-action-target-and-data-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-82976-72669109-e7bc-41e7-8786-7d1a20cc56a5\ui-density-layout-density--dfe22-ving-action-target-and-data-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-82976-72669109-e7bc-41e7-8786-7d1a20cc56a5\ui-density-layout-density--dfe22-ving-action-target-and-data-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:70448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/4] [chromium] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap
+  2) [chromium] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('[data-ui-composition="surface-content"][data-ui-rhythm="dividedRows"]')
+    Expected: 1
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('[data-ui-composition="surface-content"][data-ui-rhythm="dividedRows"]') with timeout 5000ms
+      - waiting for locator('[data-ui-composition="surface-content"][data-ui-rhythm="dividedRows"]')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      23 |  for(const width of [320,1440]){
+      24 |   await page.setViewportSize({width,height:900});await ready(page,'integrations/ai');
+    > 25 |   const facts=page.locator('[data-ui-composition="surface-content"][data-ui-rhythm="dividedRows"]');await expect(facts).toHaveCount(1);await expect(facts).toHaveCSS('gap','0px');
+         |                                                                                                                         ^
+      26 |   await expect(facts.locator(':scope > [data-ui-detail-line]')).toHaveCount(7);
+      27 |   for(const row of await facts.locator(':scope > [data-ui-detail-line]').all()){await expect(row.locator(':scope > .MuiStack-root')).toHaveCSS('padding-top','8px');await expect(row.locator('.MuiDivider-root')).toHaveCount(1);}
+      28 |   if(width===1440){expect((await facts.boundingBox())!.height).toBeCloseTo(266,0);const panel=page.getByRole('heading',{name:'Kết nối AI mô phỏng'}).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');expect((await panel.boundingBox())!.width).toBeGreaterThan(1100);}
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-density-layout.spec.ts:25:121
+
+    Error Context: test-results\playwright-70448-e05188b9-442b-4bf7-8696-eed60e55625e\ui-density-layout-density--73b5a-no-additional-inter-row-gap-chromium\error-context.md
+
+    Error Context: test-results\playwright-70448-e05188b9-442b-4bf7-8696-eed60e55625e\ui-density-layout-density--73b5a-no-additional-inter-row-gap-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-70448-e05188b9-442b-4bf7-8696-eed60e55625e\ui-density-layout-density--73b5a-no-additional-inter-row-gap-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-70448-e05188b9-442b-4bf7-8696-eed60e55625e\ui-density-layout-density--73b5a-no-additional-inter-row-gap-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:82760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/4] [firefox] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data
+  3) [firefox] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('main tbody td').first()
+    Expected: "8px"
+    Received: "12px"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" locator('main tbody td').first() with timeout 5000ms
+      - waiting for locator('main tbody td').first()
+        14 × locator resolved to <td class="MuiTableCell-root MuiTableCell-body MuiTableCell-sizeSmall css-eb2rcd-MuiTableCell-root">…</td>
+           - unexpected value "12px"
+
+
+      11 |  for(const width of [320,806,1440]){
+      12 |   await page.setViewportSize({width,height:900});await ready(page,'products');
+    > 13 |   const cells=page.locator('main tbody td');await expect(cells.first()).toHaveCSS('padding-top','8px');await expect(cells.first()).toHaveCSS('padding-left','12px');
+         |                                                                         ^
+      14 |   const link=page.getByRole('link',{name:'Chi tiết',exact:true}).first();expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      15 |   await expect(page.getByText('DEMO-001',{exact:true})).toBeVisible();await expect(page.getByText('150.000 ₫',{exact:true})).toBeVisible();
+      16 |   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-density-layout.spec.ts:13:73
+
+    Error Context: test-results\playwright-82760-117c3ebc-95f2-48f9-975f-03a8d8e36160\ui-density-layout-density--dfe22-ving-action-target-and-data-firefox\error-context.md
+
+    Error Context: test-results\playwright-82760-117c3ebc-95f2-48f9-975f-03a8d8e36160\ui-density-layout-density--dfe22-ving-action-target-and-data-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-82760-117c3ebc-95f2-48f9-975f-03a8d8e36160\ui-density-layout-density--dfe22-ving-action-target-and-data-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-82760-117c3ebc-95f2-48f9-975f-03a8d8e36160\ui-density-layout-density--dfe22-ving-action-target-and-data-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:48444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/4] [firefox] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap
+  4) [firefox] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('[data-ui-composition="surface-content"][data-ui-rhythm="dividedRows"]')
+    Expected: 1
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('[data-ui-composition="surface-content"][data-ui-rhythm="dividedRows"]') with timeout 5000ms
+      - waiting for locator('[data-ui-composition="surface-content"][data-ui-rhythm="dividedRows"]')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      23 |  for(const width of [320,1440]){
+      24 |   await page.setViewportSize({width,height:900});await ready(page,'integrations/ai');
+    > 25 |   const facts=page.locator('[data-ui-composition="surface-content"][data-ui-rhythm="dividedRows"]');await expect(facts).toHaveCount(1);await expect(facts).toHaveCSS('gap','0px');
+         |                                                                                                                         ^
+      26 |   await expect(facts.locator(':scope > [data-ui-detail-line]')).toHaveCount(7);
+      27 |   for(const row of await facts.locator(':scope > [data-ui-detail-line]').all()){await expect(row.locator(':scope > .MuiStack-root')).toHaveCSS('padding-top','8px');await expect(row.locator('.MuiDivider-root')).toHaveCount(1);}
+      28 |   if(width===1440){expect((await facts.boundingBox())!.height).toBeCloseTo(266,0);const panel=page.getByRole('heading',{name:'Kết nối AI mô phỏng'}).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');expect((await panel.boundingBox())!.width).toBeGreaterThan(1100);}
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-density-layout.spec.ts:25:121
+
+    Error Context: test-results\playwright-48444-0ab55726-19e6-47ad-ba30-3683734a2cc9\ui-density-layout-density--73b5a-no-additional-inter-row-gap-firefox\error-context.md
+
+    Error Context: test-results\playwright-48444-0ab55726-19e6-47ad-ba30-3683734a2cc9\ui-density-layout-density--73b5a-no-additional-inter-row-gap-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-48444-0ab55726-19e6-47ad-ba30-3683734a2cc9\ui-density-layout-density--73b5a-no-additional-inter-row-gap-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-48444-0ab55726-19e6-47ad-ba30-3683734a2cc9\ui-density-layout-density--73b5a-no-additional-inter-row-gap-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  4 failed
+    [chromium] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data 
+    [chromium] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap 
+    [firefox] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data 
+    [firefox] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap 

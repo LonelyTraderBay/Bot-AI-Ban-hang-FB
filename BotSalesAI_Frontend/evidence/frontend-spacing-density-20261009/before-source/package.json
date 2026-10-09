@@ -1,0 +1,54 @@
+{
+  "name": "botsales-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.17.0",
+  "workspaces": [
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @botsales/web",
+    "dev:live": "npm run dev:live --workspace @botsales/web",
+    "generate": "node scripts/generate.mjs",
+    "generate:check": "node scripts/generate.mjs --check",
+    "typecheck": "tsc -p apps/web/tsconfig.json --noEmit",
+    "lint": "eslint apps/web/src --max-warnings 0",
+    "boundaries": "node scripts/check-boundaries.mjs",
+    "test": "vitest run --config apps/web/vitest.config.ts",
+    "test:source": "node scripts/check-source.mjs && node --test tests/source-checker.test.mjs",
+    "test:layout": "node --test tests/layout-checker.test.mjs tests/ui-layout-binding-gates.test.mjs && node scripts/check-layout.mjs",
+    "test:domain": "node scripts/test-domain.mjs",
+    "test:visual-tokens": "node --test tests/visual-token-checker.test.mjs && node scripts/check-visual-tokens.mjs",
+    "test:ui-composition": "node --test tests/ui-composition-checker.test.mjs tests/ui-composition-ancestry.test.mjs tests/ui-shared-api-contract.test.mjs && node scripts/check-ui-composition.mjs",
+    "test:evidence": "node --test tests/ui-evidence-validator.test.mjs && node scripts/validate-ui-evidence.mjs evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json",
+    "test:e2e": "node scripts/run-e2e.mjs",
+    "build": "npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web",
+    "build:demo": "npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web",
+    "preview": "npm run preview --workspace @botsales/web",
+    "verify": "npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build && npm run test:layout && npm run test:visual-tokens && npm run test:ui-composition && npm run test:evidence",
+    "setup": "node scripts/setup.mjs",
+    "doctor": "node scripts/doctor.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@eslint/js": "9.34.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.3.0",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "@vitejs/plugin-react": "5.0.2",
+    "eslint": "9.34.0",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "globals": "16.3.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.71.0",
+    "vite": "7.3.6"
+  }
+}

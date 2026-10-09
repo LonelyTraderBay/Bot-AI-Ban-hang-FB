@@ -1,0 +1,665 @@
+{
+  "version": "1.0",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "note": "Register an exact command as VERIFIED_AVAILABLE only after it succeeds with an actual log; unknown new gate commands must be implemented and checked first.",
+  "commands": [
+    {
+      "id": "install",
+      "command": "npm.cmd --script-shell=powershell.exe install",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node v24.19.0 npm 11.17.0; install exit 0"
+    },
+    {
+      "id": "clean-install",
+      "command": "C:\\Program Files\\nodejs\\node.exe \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" --script-shell=powershell.exe ci",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node v24.19.0 npm 11.17.0; isolated cold npm ci exit 0"
+    },
+    {
+      "id": "clean-install-current",
+      "command": "& 'C:\\Program Files\\nodejs\\node.exe' 'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js' --prefix 'C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-fe-clean-install-20260930' --script-shell=powershell.exe ci",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0 npm 11.17.0; isolated npm ci passed with 447 packages, React deduped, and lock SHA256 matched"
+    },
+    {
+      "id": "setup",
+      "command": "npm.cmd --script-shell=powershell.exe run setup",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node v24.19.0 npm 11.17.0; exit 0"
+    },
+    {
+      "id": "doctor",
+      "command": "npm.cmd --script-shell=powershell.exe run doctor",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node v24.19.0 npm 11.17.0; exit 0"
+    },
+    {
+      "id": "setup-doctor-capture",
+      "command": "& 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=powershell.exe run setup 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-setup-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=powershell.exe run doctor 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE002/S04-doctor-output.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0 npm 11.17.0; setup and doctor both exited 0 with captured logs"
+    },
+    {
+      "id": "generate",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run generate:check",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "generate-check-windows",
+      "command": "& 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe run generate:check",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0 npm 11.17.0; current frontend contract drift check exit 0"
+    },
+    {
+      "id": "contracts",
+      "command": "& 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe run test:contracts",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "DECLARED_NOT_RUN",
+      "observedOn": "This package script was removed; direct Node contract tests are registered separately as contract-tests"
+    },
+    {
+      "id": "source",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:source",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "contract-tests",
+      "command": "& 'C:\\Program Files\\nodejs\\node.exe' --test tests/contracts/generator.test.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0; canonical validation, negative schema/version/drift fixtures passed 5/5"
+    },
+    {
+      "id": "boundaries",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run boundaries",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "types",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run typecheck",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "lint",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run lint",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "domain",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:domain",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "unit",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe test",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "build",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "build-demo",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run build:demo",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; npm run build:demo exited 0; MSW demo worker/assets included; chunk-size warning only; log execution/frontend-evidence/FE011/S04-build-demo.log"
+    },
+    {
+      "id": "draft-helper",
+      "command": "& 'C:\\Program Files\\nodejs\\node.exe' --test tests/session/dirty-drafts.check.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0; dirty-draft helper passed 4/4 checks; log execution/frontend-evidence/FE007/S05-dirty-draft-helper-current.log"
+    },
+    {
+      "id": "e2e",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && npm.cmd --script-shell=cmd.exe run test:e2e",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; invoked from cmd.exe with Windows System32 and Node.js on PATH"
+    },
+    {
+      "id": "schemas",
+      "command": "python scripts/validate-mock-schemas.py",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Python 3.12.10 with isolated jsonschema 4.25.1 via PYTHONPATH; 391/391 schema checks passed; log execution/frontend-evidence/FE008/S05-schema-current.log"
+    },
+    {
+      "id": "fe011-source-map",
+      "command": "set PATH=C:\\Windows\\System32;C:\\Program Files\\nodejs;%PATH% && \"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0; FE011 canonical route, permission, operation, DTO and source mapping passed; log execution/frontend-evidence/FE011/S01-source-map-test.log"
+    },
+    {
+      "id": "fe011-e2e",
+      "command": "$env:Path='C:\\Windows\\System32;C:\\Program Files\\nodejs'; & 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe run test:e2e -- --grep FE011 --timeout=60000 --reporter=line 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE011/S05-fe011-diagnostic-3.log'",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; eight FE011 browser scenarios passed in Chromium against the React demo and synthetic MSW API; log execution/frontend-evidence/FE011/S05-fe011-diagnostic-3.log"
+    },
+    {
+      "id": "fe017-source-map",
+      "command": "& 'C:\\Program Files\\nodejs\\node.exe' --test tests/fe017-source-map.test.mjs 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE017/S01-source-map-current-20261001.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0; FE017 canonical routes, permissions, operations, upload purpose, source preview and revision mock passed 4/4; log execution/frontend-evidence/FE017/S01-source-map-current-20261001.log"
+    },
+    {
+      "id": "fe017-e2e",
+      "command": "$env:Path = (Join-Path (Get-Location) 'node_modules\\.bin') + ';C:\\Program Files\\nodejs;C:\\Windows\\System32;C:\\Windows'; & 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe run test:e2e -- tests/fe017.spec.ts --reporter=line --timeout=45000",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0 and Chromium; six FE017 knowledge/review browser scenarios passed against the React demo and synthetic MSW API; log execution/frontend-evidence/FE017/S05-e2e-final.log"
+    },
+    {
+      "id": "verify-current",
+      "command": "$env:Path = (Join-Path (Get-Location) 'node_modules\\.bin') + ';C:\\Program Files\\nodejs;C:\\Windows\\System32;C:\\Windows'; & 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe run verify 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE026/S03-verify-final-current-20261001.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; verify exited 0, generator/source/boundaries/lint/typecheck/domain/MSW/Vitest/production build all passed; log execution/frontend-evidence/FE026/S03-verify-final-current-20261001.log"
+    },
+    {
+      "id": "e2e-current",
+      "command": "$env:Path = (Join-Path (Get-Location) 'node_modules\\.bin') + ';C:\\Program Files\\nodejs;C:\\Windows\\System32;C:\\Windows'; & 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe run test:e2e 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE027/e2e-current-final-20261001-unlocked-128-rerun.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0 and Chromium 153; full demo artifact E2E passed 128/128 in 5.3m; log execution/frontend-evidence/FE027/e2e-current-final-20261001-unlocked-128-rerun.log"
+    },
+    {
+      "id": "audit-current",
+      "command": "& 'C:\\Program Files\\nodejs\\npm.cmd' --script-shell=cmd.exe audit --json 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE024/npm-audit-final-current-20261001.json' | Out-Null; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; node -e \"const a=require('./botsales-kit/execution/frontend-evidence/FE024/npm-audit-final-current-20261001.json'); const v=a.metadata?.vulnerabilities||{}; console.log(JSON.stringify({dependencies:a.metadata?.dependencies?.total,vulnerabilities:v},null,2))\"",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; npm audit JSON: 478 dependencies, 0 vulnerabilities"
+    },
+    {
+      "id": "schemas-current",
+      "command": "$env:PYTHONPATH = 'C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-jsonschema-20261001'; & python scripts/validate-mock-schemas.py 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE024/mock-schema-final-current-20261001.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Python 3.12.10 / jsonschema 4.26.0 on isolated PYTHONPATH; 356/356 mock schema checks passed"
+    },
+    {
+      "id": "verify-current-20261002",
+      "command": "npm.cmd --script-shell=cmd.exe run verify",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; verify exited 0 with generated/source/boundary/lint/typecheck/domain/Vitest/production-build gates"
+    },
+    {
+      "id": "e2e-current-20261002",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0/Chromium 153; current built-artifact Playwright suite passed 142/142"
+    },
+    {
+      "id": "unit-verbose-20261002",
+      "command": "npm.cmd --script-shell=cmd.exe test -- --reporter=verbose",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; Vitest 71/71 passed"
+    },
+    {
+      "id": "clean-ci-20261002",
+      "command": "npm.cmd --script-shell=cmd.exe ci",
+      "cwd": "isolated current working-tree copy under TEMP",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/npm 11.17.0; isolated cold npm ci added 426 packages and exited 0"
+    },
+    {
+      "id": "clean-build-20261002",
+      "command": "npm.cmd --script-shell=cmd.exe run build",
+      "cwd": "isolated current working-tree copy under TEMP",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Clean-installed copy; generate:check, TypeScript and production Vite build passed"
+    },
+    {
+      "id": "clean-build-demo-20261002",
+      "command": "npm.cmd --script-shell=cmd.exe run build:demo",
+      "cwd": "isolated current working-tree copy under TEMP",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Same clean-installed copy; generate:check, TypeScript and demo Vite build passed"
+    },
+    {
+      "id": "npm-audit-20261002",
+      "command": "npm.cmd --script-shell=cmd.exe audit --json",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Current lockfile audit reports 0 vulnerabilities across 478 dependencies"
+    },
+    {
+      "id": "mock-schema-20261002",
+      "command": "python scripts/validate-mock-schemas.py",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Python 3.12.10 with isolated jsonschema 4.26.0; 356/356 fixtures passed"
+    },
+    {
+      "id": "reflow-320-20261002",
+      "command": "node botsales-kit/execution/frontend-evidence/FE027/audit-route-reflow-320-20261001.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Built React demo; 54/54 routes at 320 CSS px with no horizontal overflow or page errors"
+    },
+    {
+      "id": "capture-ui-20261002",
+      "command": "node botsales-kit/execution/frontend-evidence/FE027/capture-ui-review-20261002.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Built React demo; four screenshots and request manifest captured with no page errors"
+    },
+    {
+      "id": "artifact-manifest-20261002",
+      "command": "node botsales-kit/execution/frontend-evidence/FE026/create-artifact-manifest-current-20261002.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Production/demo asset manifest generated; MSW worker excluded from production and present in demo"
+    },
+    {
+      "id": "route-map-20261002",
+      "command": "node tests/vertical-slices/generate-route-implementation.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Current feature map has 54 routes, 64 feature IDs, and 65/65 direct synthetic interaction rows"
+    },
+    {
+      "id": "route-state-role-map-20261002",
+      "command": "node tests/states/generate-route-state-roles.mjs --unit-log botsales-kit/execution/frontend-evidence/FE023/unit-current-verbose-20261002.log --browser-log botsales-kit/execution/frontend-evidence/FE027/e2e-current-final-20261002-frontend-coverage.log",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Current 54-route × 7-role matrix generated from 71 unit and 142 browser passing results; untested combinations remain explicit"
+    },
+    {
+      "id": "feature-source-maps-20261002",
+      "command": "node --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Current route/operation/permission source maps passed for FE011–FE018 and FE020"
+    },
+    {
+      "id": "route-state-role-map-full-20261002",
+      "command": "& 'C:\\Program Files\\nodejs\\node.exe' tests/states/generate-route-state-roles.mjs --unit-log botsales-kit/execution/frontend-evidence/FE023/unit-current-verbose-20261002.log --browser-log botsales-kit/execution/frontend-evidence/FE027/e2e-current-route-role-20261002.log --role-log botsales-kit/execution/frontend-evidence/FE024/route-role-matrix-current-final-20261002.log 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE023/route-state-role-matrix-current-20261002.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0; full 143/143 browser run includes 357 route-read-permission cases across 51 routes and seven mock roles"
+    },
+    {
+      "id": "route-role-matrix-test-20261002",
+      "command": "& 'C:\\Program Files\\nodejs\\node.exe' 'node_modules/@playwright/test/cli.js' test 'tests/route-role-matrix.spec.ts' --reporter=line 2>&1 | Tee-Object -FilePath 'botsales-kit/execution/frontend-evidence/FE024/route-role-matrix-current-final-20261002.log'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Windows Node 24.19.0/Chromium; focused Playwright route access test passed 357/357 expected permission cases"
+    },
+    {
+      "id": "verify-ui-select-feplan-002",
+      "command": "npm.cmd --script-shell=cmd.exe run verify",
+      "observedOn": "2026-10-02 Windows Node 24.19.0/npm 11.17.0; verify exit 0; generator/source/boundaries/lint/typecheck/domain/MSW/Vitest/build passed; execution/frontend-evidence/FE026/verify-ui-select-and-feplan-002-20261002.log",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "e2e-ui-select-feplan-002",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e",
+      "observedOn": "2026-10-02 Windows Node 24.19.0/npm 11.17.0 Chromium 153; full built-demo E2E 147/147 passed; execution/frontend-evidence/FE027/e2e-ui-select-and-feplan-002-current-20261002.log",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "unit-ui-select-feplan-002",
+      "command": "npm.cmd --script-shell=cmd.exe test -- --reporter=verbose",
+      "observedOn": "2026-10-02 Windows Node 24.19.0/npm 11.17.0; Vitest 71/71 passed; execution/frontend-evidence/FE023/unit-verbose-ui-select-current-20261002.log",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "schema-ui-select-feplan-002",
+      "command": "python scripts/validate-mock-schemas.py",
+      "observedOn": "2026-10-02 Windows Python 3.12.10 with isolated jsonschema 4.26.0 via PYTHONPATH; 356/356 schema checks passed; execution/frontend-evidence/FE024/mock-schema-isolated-ui-select-current-20261002.log",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "audit-ui-select-feplan-002",
+      "command": "npm.cmd --script-shell=cmd.exe audit --json",
+      "observedOn": "2026-10-02 Windows npm 11.17.0; audit exit 0, 0 vulnerabilities across 478 dependencies; execution/frontend-evidence/FE024/npm-audit-ui-select-current-20261002.json",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "reflow-ui-select-feplan-002",
+      "command": "node botsales-kit/execution/frontend-evidence/FE027/audit-route-reflow-320-20261001.mjs",
+      "observedOn": "2026-10-02 Windows Node 24.19.0/Chromium 153; 54 routes at 320 CSS px, no overflow or page errors; execution/frontend-evidence/FE027/route-reflow-320-current-20261002.json",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "route-matrix-ui-select-feplan-002",
+      "command": "node tests/states/generate-route-state-roles.mjs --unit-log botsales-kit/execution/frontend-evidence/FE023/unit-verbose-ui-select-current-20261002.log --browser-log botsales-kit/execution/frontend-evidence/FE027/e2e-ui-select-and-feplan-002-current-20261002.log --role-log botsales-kit/execution/frontend-evidence/FE027/e2e-ui-select-and-feplan-002-current-20261002.log",
+      "observedOn": "2026-10-02 Windows Node 24.19.0; generated 54 routes × 7 roles, 432 state cells, 0 NOT_TESTED; execution/frontend-evidence/FE023/route-state-role-matrix-ui-select-current-20261002.log",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE"
+    },
+    {
+      "id": "capture-screenshots-current-20261002",
+      "command": "node botsales-kit/execution/frontend-evidence/FE027/capture-ui-review-20261002.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "2026-10-02 Windows Node 24.19.0/Chromium 153; captured four built-demo screens with synthetic API request manifest and no page errors; execution/frontend-evidence/FE027/capture-ui-select-current-20261002.log"
+    },
+    {
+      "id": "artifact-manifest-current-20261002",
+      "command": "node botsales-kit/execution/frontend-evidence/FE026/create-artifact-manifest-current-20261002.mjs",
+      "cwd": "BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "2026-10-02 Windows Node 24.19.0; checksummed production/demo artifacts, 32 production files without worker and 37 demo files with worker; execution/frontend-evidence/FE026/artifact-manifest-ui-select-current-20261002.log"
+    },
+    {
+      "id": "corrections-verify",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441393892-56000/verify.log; synthetic Frontend scope only. The isolated cold workspace was removed after successful checks."
+    },
+    {
+      "id": "corrections-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run test:e2e",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441445991-24436/e2e.log; synthetic Frontend scope only. The isolated cold workspace was removed after successful checks."
+    },
+    {
+      "id": "corrections-unit",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441191868-26044/unit.log; synthetic Frontend scope only. The isolated cold workspace was removed after successful checks."
+    },
+    {
+      "id": "corrections-source-maps",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791441192559-16080/source-maps.log; synthetic Frontend scope only. The isolated cold workspace was removed after successful checks."
+    },
+    {
+      "id": "corrections-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-corrections-20261008/runs/corrections-1791444650847-70468/built-demo.log; synthetic Frontend scope only. The isolated cold workspace was removed after successful checks."
+    },
+    {
+      "id": "corrections-install",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" --script-shell=cmd.exe install",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-corrections-20261008/environment-2.log; synthetic Frontend scope only. The isolated cold workspace was removed after successful checks."
+    },
+    {
+      "id": "corrections-setup",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run setup",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-corrections-20261008/environment-4.log; synthetic Frontend scope only. The isolated cold workspace was removed after successful checks."
+    },
+    {
+      "id": "corrections-clean-install",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"ci\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-corrections-clean-20261008-r0idZ1\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-corrections-20261008/clean-build-corrections-20261008.log; synthetic Frontend scope only. The isolated cold workspace was removed after successful checks."
+    },
+    {
+      "id": "toolbar-verify",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791453471887-70896/verify.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "toolbar-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run test:e2e",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791449812941-81044/e2e.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "toolbar-unit",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791450799118-6420/unit.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "toolbar-source-maps",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791451297907-9880/source-maps.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "toolbar-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/runs/toolbar-1791453253022-85404/built-demo.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "toolbar-install",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" --script-shell=cmd.exe ci",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/environment-2.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "toolbar-setup",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run setup",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/environment-4.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "toolbar-clean-install",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"ci\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-toolbar-clean-20261008-wAfz3d\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-toolbar-20261008/clean-build-toolbar-20261008.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "components-verify",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460838729-35556/verify.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "components-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run test:e2e",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791461051112-24880/e2e.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "components-unit",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460717257-83008/unit.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "components-source-maps",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791460724809-86548/source-maps.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "components-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/runs/components-1791461137424-54940/built-demo.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "components-install",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" --script-shell=cmd.exe ci",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/environment-2.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "components-setup",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run setup",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/environment-4.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "components-clean-install",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"ci\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-components-clean-20261008-UhudSO\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows Node v24.19.0/npm 11.17.0 direct CLI execution; argv/cwd/source/log hashes at BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/clean-build-components-20261008.log; synthetic Frontend scope only. Isolated cold workspace retention is recorded by the cold manifest; no cleanup claim."
+    },
+    {
+      "id": "width-verify",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791476232832-77820/verify.log SHA256=5f1a26eb82b0b3bcbfc4d877b011a2e5bf5a3d667926a7f7372ed9cf888ac533. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "width-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run test:e2e",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log SHA256=0dd13c7e0d58c6a0b233fa73b5292792d7fc9d823db36e18e2d43a7681ec7d65. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "width-unit",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471979366-47856/unit.log SHA256=9bdf32f670c42b6008b248bc8a31bd9c446e58ab5fbed5177ff4b9b8146e86be. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "width-source-maps",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471980144-85744/source-maps.log SHA256=0cd6f9893f86513b00b56e54f6b429fe50eb8ca10472bf361b88fb07e4772b26. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "width-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791476022925-8140/built-demo.log SHA256=e87ef94110b0b39ed716edef9e8c3192866c234682cdbf4c0b8376c6574fb6ac. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "width-dependencies",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/environment-2.log SHA256=1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "width-setup",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run setup",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/environment-4.log SHA256=3b1ccbc2700f36f6dacf53468a0310dc9146402bba7e3458b71ea760c6019177. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "width-clean-install",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"ci\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-width-clean-20261008-5kJa2K\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/clean-build-width-20261008.log SHA256=26f0dd73b140ffd775941d2ee94aa819b32e51186d3435ad700e98f493866a28. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "shared-verify",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791497165022-11008/verify.log SHA256=66c0700c579b8351b264a281a593b6eff11ec995dde473ba4dae7c30a19794e7. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "shared-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run test:e2e",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791497493248-49984/e2e.log SHA256=6fd084377cbd0e7a76ad5b770d18b7f0972253de81bd08fa5a45f88afd21f4b4. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "shared-unit",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496796123-33904/unit.log SHA256=04c3f089347abe026dde44d521d08f622159956f409bd70ec43b328cfd3f8c5c. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "shared-source-maps",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791496796189-65096/source-maps.log SHA256=088c9148a0b6218ab388252154db0806095d725e2ed5323714b6318bb7e3ca2b. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "shared-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/runs/shared-1791501092771-85932/built-demo.log SHA256=c4c97f6b06c5d750966fd536c524f0f58a09e39f56d8e1891198facf0689a4e0. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "shared-dependencies",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/environment-2.log SHA256=1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "shared-setup",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" run setup",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/environment-4.log SHA256=3b1ccbc2700f36f6dacf53468a0310dc9146402bba7e3458b71ea760c6019177. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    },
+    {
+      "id": "shared-clean-install",
+      "command": "node \"C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js\" \"--script-shell=cmd.exe\" \"ci\"",
+      "cwd": "C:\\Users\\Joker-PC\\AppData\\Local\\Temp\\botsales-width-clean-20261009-KP3Hcs\\BotSalesAI_Frontend",
+      "status": "VERIFIED_AVAILABLE",
+      "observedOn": "Actual Windows direct Node/npm CLI execution; argv/cwd and immutable raw log BotSalesAI_Frontend/evidence/frontend-shared-consolidation-20261009/clean-build-width-20261009.log SHA256=772b6a7f86a5f9de01a65fa16f7efbd0b7f111d84948e5dd65533a7f5c51455e. Dependencies means npm ls --all; installation is the separately recorded isolated npm ci. Local synthetic Frontend scope; no hosted CI or cleanup claim."
+    }
+  ]
+}

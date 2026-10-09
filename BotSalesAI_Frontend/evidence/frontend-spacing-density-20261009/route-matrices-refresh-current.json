@@ -1,0 +1,62 @@
+{
+  "recordedAt": "2026-10-09T05:11:37.582Z",
+  "status": "PASS",
+  "scope": "Canonical owners regenerated evidence references from the current actual full E2E and verbose unit logs. Route/feature/state/role semantics must stay byte-equivalent after removing only log paths, generation time and input-log fingerprints.",
+  "runs": [
+    {
+      "startedAt": "2026-10-09T05:11:37.460Z",
+      "finishedAt": "2026-10-09T05:11:37.520Z",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "tests/vertical-slices/generate-route-implementation.mjs",
+        "evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"routes\": 54,\n  \"uniqueFeatures\": 64,\n  \"routeEvidenceFile\": \"evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log\",\n  \"journeyEvidenceFile\": \"evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log\"\n}\n"
+    },
+    {
+      "startedAt": "2026-10-09T05:11:37.520Z",
+      "finishedAt": "2026-10-09T05:11:37.577Z",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "tests/states/generate-route-state-roles.mjs",
+        "--unit-log",
+        "evidence/frontend-spacing-density-20261009/runs/density-1791517338471-44912/unit.log",
+        "--browser-log",
+        "evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
+        "--role-log",
+        "evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "output": "Generated docs/route-state-role-matrix.json — 54 routes × 7 roles; 19 shared state cases evidenced.\n"
+    }
+  ],
+  "semanticDrift": [],
+  "sourceFingerprints": {
+    "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/refresh-route-matrices.mjs": "13ef0f6b4eee59a0e6ffcaf7b8baa0d276d5040bec10272da522c7ea2916896a",
+    "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "4b569fd1c0b4e3c533a3e9df1e8858ed3ea30d2716cee3c73426f733dcb24e0b",
+    "BotSalesAI_Frontend/tests/states/generate-route-state-roles.mjs": "a9be4c94a6db11167f48bd7bcba817e84f0a5358bfe4a47bad21f725d559a798"
+  },
+  "inputs": [
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
+      "sha256": "8c35ba10b993a303946c89addd4dcb04c7fc718f5cff8daa5a74f2e3fd8fe85d"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-spacing-density-20261009/runs/density-1791517338471-44912/unit.log",
+      "sha256": "d1928a0902ebc21f0c0780bc9467ca4e0f52beb179b91314a6cf1533aee097a8"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "BotSalesAI_Frontend/docs/route-implementation.json",
+      "sha256": "d5e8762ff4600081d3b2b062c620977c09a32f7ecc22281369085e081ca71fd3"
+    },
+    {
+      "path": "BotSalesAI_Frontend/docs/route-state-role-matrix.json",
+      "sha256": "ebb66d0f386cce3a996b18aee7ea8d28e6bd19f56f0f5ff836be2b73cf14a282"
+    }
+  ]
+}

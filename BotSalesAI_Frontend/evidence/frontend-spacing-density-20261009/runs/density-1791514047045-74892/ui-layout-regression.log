@@ -1,0 +1,60 @@
+[WebServer] (node:22052) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 250 tests using 1 worker
+
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-88056-84cc418e-2b89-40d4-8bca-85b875e73696\deps\react-dom_client.js?v=7383da01 as it exceeds the max of 500KB.
+
+(node:69624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/250] [chromium] › tests\ui-bot-layout.spec.ts:42:1 › Bot routes R26/R27/R28/R51 fit the supported page-width boundaries
+[2/250] [chromium] › tests\ui-bot-layout.spec.ts:52:1 › Bot config, evaluation, role and budget dialogs stay inside mobile and desktop viewports
+[3/250] [chromium] › tests\ui-catalog-layout.spec.ts:15:1 › catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at mobile and desktop
+  1) [chromium] › tests\ui-catalog-layout.spec.ts:15:1 › catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at mobile and desktop 
+
+    Error: R10 surface body inset at 390
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "16px"
+    Received: "12px"
+
+      41 |             if (route.inset) {
+      42 |                 panelInset = await page.locator('main#main-content .MuiPaper-root').first().locator(':scope > .MuiBox-root').evaluate(element => getComputedStyle(element).paddingLeft);
+    > 43 |                 expect(panelInset, `${route.id} surface body inset at ${viewport.width}`).toBe(viewport.gutter);
+         |                                                                                           ^
+      44 |             }
+      45 |             observations.push({ route: route.id, width: viewport.width, documentWidth: scrollWidth, panelInset });
+      46 |         }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-catalog-layout.spec.ts:43:91
+
+    Error Context: test-results\playwright-69624-78466f5c-c45a-4a2e-8026-27d5b6ee7d64\ui-catalog-layout-catalog--7b8a9--flow-at-mobile-and-desktop-chromium\error-context.md
+
+    Error Context: test-results\playwright-69624-78466f5c-c45a-4a2e-8026-27d5b6ee7d64\ui-catalog-layout-catalog--7b8a9--flow-at-mobile-and-desktop-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-69624-78466f5c-c45a-4a2e-8026-27d5b6ee7d64\ui-catalog-layout-catalog--7b8a9--flow-at-mobile-and-desktop-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-69624-78466f5c-c45a-4a2e-8026-27d5b6ee7d64\ui-catalog-layout-catalog--7b8a9--flow-at-mobile-and-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:81756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/250] [chromium] › tests\ui-catalog-layout.spec.ts:67:1 › Imports review notice and demo controls keep the measured shared disclosure boundary at 806x884
+[5/250] [chromium] › tests\ui-component-layout.spec.ts:40:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[6/250] [chromium] › tests\ui-component-layout.spec.ts:61:1 › A02 product editors align category and status faces independently from lookup metadata
+[7/250] [chromium] › tests\ui-component-layout.spec.ts:84:1 › Shared outlined labels focus empty and populated native controls
+[8/250] [chromium] › tests\ui-component-layout.spec.ts:99:1 › A02 variant fields retain readable widths when text doubles
+[9/250] [chromium] › tests\ui-component-layout.spec.ts:130:1 › A03 import mapping preserves natural remove actions and editable mappings
+[10/250] [chromium] › tests\ui-component-layout.spec.ts:150:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+[11/250] [chromium] › tests\ui-component-layout.spec.ts:176:1 › A05 status height follows its own label while long labels remain fully readable
+[12/250] [chromium] › tests\ui-component-layout.spec.ts:195:1 › A06 Empty wraps unbroken reference text and retains its keyboard action
+[13/250] [chromium] › tests\ui-component-layout.spec.ts:208:1 › A07 locked order addresses expose full text and edit lines retain intrinsic actions

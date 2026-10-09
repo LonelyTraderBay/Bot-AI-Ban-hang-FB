@@ -1,0 +1,15 @@
+import fs from 'node:fs'; import path from 'node:path'; import crypto from 'node:crypto';
+const output=import.meta.dirname,root=path.resolve(output,'../..'),repo=path.dirname(root);
+const read=f=>JSON.parse(fs.readFileSync(f,'utf8')),hash=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+const pointer=read(path.join(output,'e2e-latest.json')).record,full=read(path.join(repo,pointer));
+if(full.exitCode||full.sourceDrift.length||hash(path.join(repo,full.log.path))!==full.log.sha256)throw Error('Full execution failed/changed');
+for(const [file,digest]of Object.entries(full.sourceFingerprints))if(hash(path.join(repo,file))!==digest)throw Error('Full source stale '+file);
+const log=fs.readFileSync(path.join(repo,full.log.path),'utf8'),fullCount=Number(log.match(/\b(\d+) passed \(/)?.[1]);
+if(fullCount!==624||/\b\d+ failed\b/.test(log))throw Error('Complete current 624-case execution required');
+const ownerFiles=fs.readdirSync(path.join(root,'tests')).filter(f=>/^ui.*\.spec\.ts$/.test(f));
+const executions=log.split('\n').filter(l=>/^\s*ok\s+\d+/.test(l)&&/tests[\\/]ui.*\.spec\.ts:/.test(l));
+const projects=Object.fromEntries(['chromium','firefox'].map(engine=>[engine,executions.filter(l=>l.includes('['+engine+']')).length]));
+if(projects.chromium!==125||projects.firefox!==125)throw Error('250 current UI assertions must execute inside full run');
+for(const file of ownerFiles)for(const engine of ['chromium','firefox'])if(!executions.some(l=>l.includes(file)&&l.includes('['+engine+']')))throw Error('Missing '+file+':'+engine);
+fs.writeFileSync(path.join(output,'ui-final-full-coverage.json'),JSON.stringify({status:'PASS',capturedAt:new Date().toISOString(),fullRecord:pointer,fullRecordSha256:hash(path.join(repo,pointer)),fullLog:full.log,fullCases:fullCount,uiCases:executions.length,projects,ownerFiles,executions,sourceFingerprints:full.sourceFingerprints,scope:'All current UI assertions execute again within the same complete full Chromium/Firefox run. Failed preflights retained as history; no addition of targeted runs to full totals.'},null,2)+'\n');
+console.log({fullCount,projects});

@@ -1,0 +1,8708 @@
+{
+  "getCsrfToken": {
+    "method": "GET",
+    "path": "/auth/csrf",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CsrfResponse",
+    "status": 200,
+    "pathParameters": [],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "logout": {
+    "method": "POST",
+    "path": "/auth/logout",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": null,
+    "status": 204,
+    "pathParameters": [],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "stepUp": {
+    "method": "POST",
+    "path": "/auth/step-up",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": "StepUpRequest",
+    "responseSchema": "StepUpResultResponse",
+    "status": 200,
+    "pathParameters": [],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getSession": {
+    "method": "GET",
+    "path": "/session",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "SessionResponse",
+    "status": 200,
+    "pathParameters": [],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listShops": {
+    "method": "GET",
+    "path": "/shops",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ShopListResponse",
+    "status": 200,
+    "pathParameters": [],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createShop": {
+    "method": "POST",
+    "path": "/shops",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": "ShopWrite",
+    "responseSchema": "ShopResponse",
+    "status": 201,
+    "pathParameters": [],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getShop": {
+    "method": "GET",
+    "path": "/shops/{shopId}",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ShopResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateShop": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}",
+    "permission": "shop.manage",
+    "versionRequired": true,
+    "requestSchema": "ShopPatch",
+    "responseSchema": "ShopResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listMembers": {
+    "method": "GET",
+    "path": "/shops/{shopId}/members",
+    "permission": "members.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "MembershipListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "inviteMember": {
+    "method": "POST",
+    "path": "/shops/{shopId}/members",
+    "permission": "members.manage",
+    "versionRequired": false,
+    "requestSchema": "MemberInvite",
+    "responseSchema": "MembershipResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateMemberRoles": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/members/{memberId}",
+    "permission": "members.manage",
+    "versionRequired": true,
+    "requestSchema": "MemberRolePatch",
+    "responseSchema": "MembershipResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "memberId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "revokeMembership": {
+    "method": "DELETE",
+    "path": "/shops/{shopId}/members/{memberId}",
+    "permission": "members.manage",
+    "versionRequired": true,
+    "requestSchema": null,
+    "responseSchema": null,
+    "status": 204,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "memberId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getMember": {
+    "method": "GET",
+    "path": "/shops/{shopId}/members/{memberId}",
+    "permission": "members.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "MembershipResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "memberId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getDashboard": {
+    "method": "GET",
+    "path": "/shops/{shopId}/dashboard",
+    "permission": "dashboard.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "DashboardResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listProducts": {
+    "method": "GET",
+    "path": "/shops/{shopId}/products",
+    "permission": "catalog.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ProductListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      },
+      {
+        "name": "categoryId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createProduct": {
+    "method": "POST",
+    "path": "/shops/{shopId}/products",
+    "permission": "catalog.write",
+    "versionRequired": false,
+    "requestSchema": "ProductWrite",
+    "responseSchema": "ProductResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getProduct": {
+    "method": "GET",
+    "path": "/shops/{shopId}/products/{productId}",
+    "permission": "catalog.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ProductResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "productId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateProduct": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/products/{productId}",
+    "permission": "catalog.write",
+    "versionRequired": true,
+    "requestSchema": "ProductWritePatch",
+    "responseSchema": "ProductResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "productId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "archiveProduct": {
+    "method": "POST",
+    "path": "/shops/{shopId}/products/{productId}/archive",
+    "permission": "catalog.write",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "productId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listCategories": {
+    "method": "GET",
+    "path": "/shops/{shopId}/categories",
+    "permission": "catalog.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CategoryListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createCategory": {
+    "method": "POST",
+    "path": "/shops/{shopId}/categories",
+    "permission": "catalog.write",
+    "versionRequired": false,
+    "requestSchema": "CategoryWrite",
+    "responseSchema": "CategoryResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getCategory": {
+    "method": "GET",
+    "path": "/shops/{shopId}/categories/{categoryId}",
+    "permission": "catalog.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CategoryResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "categoryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateCategory": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/categories/{categoryId}",
+    "permission": "catalog.write",
+    "versionRequired": true,
+    "requestSchema": "CategoryWritePatch",
+    "responseSchema": "CategoryResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "categoryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "archiveCategory": {
+    "method": "POST",
+    "path": "/shops/{shopId}/categories/{categoryId}/archive",
+    "permission": "catalog.write",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "categoryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listCustomers": {
+    "method": "GET",
+    "path": "/shops/{shopId}/customers",
+    "permission": "customers.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CustomerListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createCustomer": {
+    "method": "POST",
+    "path": "/shops/{shopId}/customers",
+    "permission": "customers.write",
+    "versionRequired": false,
+    "requestSchema": "CustomerWrite",
+    "responseSchema": "CustomerResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getCustomer": {
+    "method": "GET",
+    "path": "/shops/{shopId}/customers/{customerId}",
+    "permission": "customers.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CustomerResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "customerId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateCustomer": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/customers/{customerId}",
+    "permission": "customers.write",
+    "versionRequired": true,
+    "requestSchema": "CustomerWritePatch",
+    "responseSchema": "CustomerResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "customerId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listStockSnapshots": {
+    "method": "GET",
+    "path": "/shops/{shopId}/inventory",
+    "permission": "inventory.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "StockSnapshotListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      },
+      {
+        "name": "warehouseId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "variantId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "listStockMovements": {
+    "method": "GET",
+    "path": "/shops/{shopId}/inventory/movements",
+    "permission": "inventory.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "StockMovementListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      },
+      {
+        "name": "warehouseId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "variantId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createInventoryAdjustment": {
+    "method": "POST",
+    "path": "/shops/{shopId}/inventory/adjustments",
+    "permission": "inventory.adjust",
+    "versionRequired": false,
+    "requestSchema": "InventoryAdjustment",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listOrders": {
+    "method": "GET",
+    "path": "/shops/{shopId}/orders",
+    "permission": "orders.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "OrderListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      },
+      {
+        "name": "customerId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/orders",
+    "permission": "orders.write",
+    "versionRequired": false,
+    "requestSchema": "OrderDraft",
+    "responseSchema": "OrderResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getOrder": {
+    "method": "GET",
+    "path": "/shops/{shopId}/orders/{orderId}",
+    "permission": "orders.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "OrderResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateOrderDraft": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/orders/{orderId}",
+    "permission": "orders.write",
+    "versionRequired": true,
+    "requestSchema": "OrderDraftPatch",
+    "responseSchema": "OrderResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "quoteOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/orders/{orderId}/quote",
+    "permission": "orders.write",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "OrderQuoteResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "confirmOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/orders/{orderId}/confirm",
+    "permission": "orders.confirm",
+    "versionRequired": false,
+    "requestSchema": "ConfirmOrder",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "cancelOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/orders/{orderId}/cancel",
+    "permission": "orders.write",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "payOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/orders/{orderId}/pay",
+    "permission": "finance.post",
+    "versionRequired": false,
+    "requestSchema": "PaymentRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "refundOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/orders/{orderId}/refund",
+    "permission": "finance.refund",
+    "versionRequired": false,
+    "requestSchema": "RefundRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listFinanceEntries": {
+    "method": "GET",
+    "path": "/shops/{shopId}/finance/entries",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "FinanceEntryListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createFinanceEntry": {
+    "method": "POST",
+    "path": "/shops/{shopId}/finance/entries",
+    "permission": "finance.post",
+    "versionRequired": false,
+    "requestSchema": "FinanceEntryWrite",
+    "responseSchema": "FinanceEntryResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getFinanceEntry": {
+    "method": "GET",
+    "path": "/shops/{shopId}/finance/entries/{entryId}",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "FinanceEntryResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "entryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateFinanceEntry": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/finance/entries/{entryId}",
+    "permission": "finance.post",
+    "versionRequired": true,
+    "requestSchema": "FinanceEntryWritePatch",
+    "responseSchema": "FinanceEntryResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "entryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "postFinanceEntry": {
+    "method": "POST",
+    "path": "/shops/{shopId}/finance/entries/{entryId}/post",
+    "permission": "finance.post",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "entryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "reverseFinanceEntry": {
+    "method": "POST",
+    "path": "/shops/{shopId}/finance/entries/{entryId}/reverse",
+    "permission": "finance.post",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "entryId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getCashflow": {
+    "method": "GET",
+    "path": "/shops/{shopId}/finance/cashflow",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CashflowResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "from",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/DateTime"
+        }
+      },
+      {
+        "name": "to",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/DateTime"
+        }
+      },
+      {
+        "name": "timezone",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getProfitLoss": {
+    "method": "GET",
+    "path": "/shops/{shopId}/finance/profit-loss",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ProfitLossResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "from",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/DateTime"
+        }
+      },
+      {
+        "name": "to",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/DateTime"
+        }
+      },
+      {
+        "name": "timezone",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "listConversations": {
+    "method": "GET",
+    "path": "/shops/{shopId}/conversations",
+    "permission": "conversations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ConversationListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      },
+      {
+        "name": "customerId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "assignedUserId",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "mode",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "bot",
+            "human",
+            "paused"
+          ]
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getConversation": {
+    "method": "GET",
+    "path": "/shops/{shopId}/conversations/{conversationId}",
+    "permission": "conversations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ConversationResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listMessages": {
+    "method": "GET",
+    "path": "/shops/{shopId}/conversations/{conversationId}/messages",
+    "permission": "conversations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "MessageListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "sendMessage": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/messages",
+    "permission": "conversations.reply",
+    "versionRequired": false,
+    "requestSchema": "MessageWrite",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "addInternalNote": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/notes",
+    "permission": "conversations.reply",
+    "versionRequired": false,
+    "requestSchema": "NoteWrite",
+    "responseSchema": "MessageResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "takeoverConversation": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/takeover",
+    "permission": "conversations.assign",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "releaseConversation": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/release",
+    "permission": "conversations.assign",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "resolveConversation": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/resolve",
+    "permission": "conversations.assign",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "assignConversation": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/assign",
+    "permission": "conversations.assign",
+    "versionRequired": false,
+    "requestSchema": "Assignment",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listKnowledge": {
+    "method": "GET",
+    "path": "/shops/{shopId}/knowledge",
+    "permission": "knowledge.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "KnowledgeListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createKnowledge": {
+    "method": "POST",
+    "path": "/shops/{shopId}/knowledge",
+    "permission": "knowledge.write",
+    "versionRequired": false,
+    "requestSchema": "KnowledgeWrite",
+    "responseSchema": "KnowledgeResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getKnowledge": {
+    "method": "GET",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}",
+    "permission": "knowledge.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "KnowledgeResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateKnowledge": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}",
+    "permission": "knowledge.write",
+    "versionRequired": true,
+    "requestSchema": "KnowledgeWritePatch",
+    "responseSchema": "KnowledgeResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "submitKnowledgeReview": {
+    "method": "POST",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}/submit-review",
+    "permission": "knowledge.write",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "JobResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "publishKnowledge": {
+    "method": "POST",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}/publish",
+    "permission": "knowledge.publish",
+    "versionRequired": false,
+    "requestSchema": "KnowledgePublishRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "retireKnowledge": {
+    "method": "POST",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}/retire",
+    "permission": "knowledge.publish",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listFeedback": {
+    "method": "GET",
+    "path": "/shops/{shopId}/feedback",
+    "permission": "knowledge.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "FeedbackListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createFeedback": {
+    "method": "POST",
+    "path": "/shops/{shopId}/feedback",
+    "permission": "conversations.read",
+    "versionRequired": false,
+    "requestSchema": "FeedbackWrite",
+    "responseSchema": "FeedbackResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "reviewFeedback": {
+    "method": "POST",
+    "path": "/shops/{shopId}/feedback/{feedbackId}/review",
+    "permission": "knowledge.write",
+    "versionRequired": false,
+    "requestSchema": "FeedbackReview",
+    "responseSchema": "FeedbackResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "feedbackId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getBotConfig": {
+    "method": "GET",
+    "path": "/shops/{shopId}/bot/config",
+    "permission": "bot.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "BotConfigResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateBotDraft": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/bot/config",
+    "permission": "bot.configure",
+    "versionRequired": true,
+    "requestSchema": "BotConfigWritePatch",
+    "responseSchema": "BotConfigResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "runPlayground": {
+    "method": "POST",
+    "path": "/shops/{shopId}/bot/playground",
+    "permission": "bot.configure",
+    "versionRequired": false,
+    "requestSchema": "PlaygroundRequest",
+    "responseSchema": "PlaygroundResultResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listEvaluations": {
+    "method": "GET",
+    "path": "/shops/{shopId}/bot/evaluations",
+    "permission": "bot.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "EvaluationListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createEvaluation": {
+    "method": "POST",
+    "path": "/shops/{shopId}/bot/evaluations",
+    "permission": "bot.configure",
+    "versionRequired": false,
+    "requestSchema": "EvaluationRequest",
+    "responseSchema": "EvaluationResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getEvaluation": {
+    "method": "GET",
+    "path": "/shops/{shopId}/bot/evaluations/{evaluationId}",
+    "permission": "bot.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "EvaluationResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "evaluationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "publishBotConfig": {
+    "method": "POST",
+    "path": "/shops/{shopId}/bot/config/publish",
+    "permission": "bot.publish",
+    "versionRequired": false,
+    "requestSchema": "BotPublishRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "pauseBot": {
+    "method": "POST",
+    "path": "/shops/{shopId}/bot/pause",
+    "permission": "bot.publish",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getProviderCatalog": {
+    "method": "GET",
+    "path": "/shops/{shopId}/integrations/ai/catalog",
+    "permission": "integrations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ProviderDescriptorListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "listAIConnections": {
+    "method": "GET",
+    "path": "/shops/{shopId}/integrations/ai",
+    "permission": "integrations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "AIConnectionListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createAIConnection": {
+    "method": "POST",
+    "path": "/shops/{shopId}/integrations/ai",
+    "permission": "integrations.manage",
+    "versionRequired": false,
+    "requestSchema": "AIConnectionWrite",
+    "responseSchema": "AIConnectionResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getAIConnection": {
+    "method": "GET",
+    "path": "/shops/{shopId}/integrations/ai/{connectionId}",
+    "permission": "integrations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "AIConnectionResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "connectionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateAIConnection": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/integrations/ai/{connectionId}",
+    "permission": "integrations.manage",
+    "versionRequired": true,
+    "requestSchema": "AIConnectionPatch",
+    "responseSchema": "AIConnectionResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "connectionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "deleteAIConnection": {
+    "method": "DELETE",
+    "path": "/shops/{shopId}/integrations/ai/{connectionId}",
+    "permission": "integrations.manage",
+    "versionRequired": true,
+    "requestSchema": null,
+    "responseSchema": null,
+    "status": 204,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "connectionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "testAIConnection": {
+    "method": "POST",
+    "path": "/shops/{shopId}/integrations/ai/{connectionId}/test",
+    "permission": "integrations.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "JobResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "connectionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listChannels": {
+    "method": "GET",
+    "path": "/shops/{shopId}/integrations/channels",
+    "permission": "integrations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ChannelListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "beginChannelConnect": {
+    "method": "POST",
+    "path": "/shops/{shopId}/integrations/channels/connect",
+    "permission": "integrations.manage",
+    "versionRequired": false,
+    "requestSchema": "ConnectRequest",
+    "responseSchema": "ConnectStartResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getChannel": {
+    "method": "GET",
+    "path": "/shops/{shopId}/integrations/channels/{channelId}",
+    "permission": "integrations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ChannelResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "reconnectChannel": {
+    "method": "POST",
+    "path": "/shops/{shopId}/integrations/channels/{channelId}/reconnect",
+    "permission": "integrations.manage",
+    "versionRequired": false,
+    "requestSchema": "ConnectRequest",
+    "responseSchema": "ConnectStartResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "disconnectChannel": {
+    "method": "POST",
+    "path": "/shops/{shopId}/integrations/channels/{channelId}/disconnect",
+    "permission": "integrations.manage",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "checkChannelHealth": {
+    "method": "POST",
+    "path": "/shops/{shopId}/integrations/channels/{channelId}/check",
+    "permission": "integrations.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "JobResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "channelId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "uploadFile": {
+    "method": "POST",
+    "path": "/shops/{shopId}/uploads",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "FileObjectResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "multipart"
+  },
+  "getFile": {
+    "method": "GET",
+    "path": "/shops/{shopId}/uploads/{fileId}",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "FileObjectResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "fileId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "createProductImport": {
+    "method": "POST",
+    "path": "/shops/{shopId}/imports",
+    "permission": "catalog.import",
+    "versionRequired": false,
+    "requestSchema": "ImportRequest",
+    "responseSchema": "JobResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "commitProductImport": {
+    "method": "POST",
+    "path": "/shops/{shopId}/imports/{jobId}/commit",
+    "permission": "catalog.import",
+    "versionRequired": false,
+    "requestSchema": "ImportCommit",
+    "responseSchema": "JobResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "jobId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getReportSummary": {
+    "method": "GET",
+    "path": "/shops/{shopId}/reports",
+    "permission": "reports.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ReportSummaryResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "createExport": {
+    "method": "POST",
+    "path": "/shops/{shopId}/exports",
+    "permission": "reports.export",
+    "versionRequired": false,
+    "requestSchema": "ExportRequest",
+    "responseSchema": "JobResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listJobs": {
+    "method": "GET",
+    "path": "/shops/{shopId}/jobs",
+    "permission": "jobs.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "JobListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getJob": {
+    "method": "GET",
+    "path": "/shops/{shopId}/jobs/{jobId}",
+    "permission": "jobs.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "JobResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "jobId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listCommands": {
+    "method": "GET",
+    "path": "/shops/{shopId}/commands",
+    "permission": "jobs.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CommandListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getCommand": {
+    "method": "GET",
+    "path": "/shops/{shopId}/commands/{commandId}",
+    "permission": "jobs.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CommandResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "commandId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listAuditEvents": {
+    "method": "GET",
+    "path": "/shops/{shopId}/audit",
+    "permission": "audit.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "AuditEventListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getPrivacyPolicy": {
+    "method": "GET",
+    "path": "/shops/{shopId}/privacy/policy",
+    "permission": "privacy.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "PrivacyPolicyResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updatePrivacyPolicy": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/privacy/policy",
+    "permission": "privacy.manage",
+    "versionRequired": true,
+    "requestSchema": "PrivacyPolicyWritePatch",
+    "responseSchema": "PrivacyPolicyResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listPrivacyRequests": {
+    "method": "GET",
+    "path": "/shops/{shopId}/privacy/requests",
+    "permission": "privacy.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "PrivacyRequestListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createPrivacyRequest": {
+    "method": "POST",
+    "path": "/shops/{shopId}/privacy/requests",
+    "permission": "privacy.manage",
+    "versionRequired": false,
+    "requestSchema": "PrivacyRequestWrite",
+    "responseSchema": "PrivacyRequestResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "approvePrivacyRequest": {
+    "method": "POST",
+    "path": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+    "permission": "privacy.manage",
+    "versionRequired": false,
+    "requestSchema": "ReauthApproval",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "privacyRequestId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "subscribeEvents": {
+    "method": "GET",
+    "path": "/shops/{shopId}/events",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": null,
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "Last-Event-ID",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listKnowledgeRevisions": {
+    "method": "GET",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions",
+    "permission": "knowledge.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "KnowledgeRevisionListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createKnowledgeRevision": {
+    "method": "POST",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions",
+    "permission": "knowledge.write",
+    "versionRequired": false,
+    "requestSchema": "KnowledgeWrite",
+    "responseSchema": "KnowledgeRevisionResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getKnowledgeRevision": {
+    "method": "GET",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions/{revisionId}",
+    "permission": "knowledge.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "KnowledgeRevisionResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "restoreKnowledgeRevision": {
+    "method": "POST",
+    "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions/{revisionId}/restore",
+    "permission": "knowledge.write",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "KnowledgeRevisionResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "knowledgeId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listBotRevisions": {
+    "method": "GET",
+    "path": "/shops/{shopId}/bot/revisions",
+    "permission": "bot.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "BotRevisionListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "status",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      {
+        "name": "sort",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getBotRevision": {
+    "method": "GET",
+    "path": "/shops/{shopId}/bot/revisions/{revisionId}",
+    "permission": "bot.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "BotRevisionResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "restoreBotRevision": {
+    "method": "POST",
+    "path": "/shops/{shopId}/bot/revisions/{revisionId}/restore",
+    "permission": "bot.configure",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "BotRevisionResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "revisionId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getInboxMetadata": {
+    "method": "GET",
+    "path": "/shops/{shopId}/conversations/metadata",
+    "permission": "conversations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "InboxMetadataResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listWorkItems": {
+    "method": "GET",
+    "path": "/shops/{shopId}/work-items",
+    "permission": "operations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "WorkItemListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getWorkItem": {
+    "method": "GET",
+    "path": "/shops/{shopId}/work-items/{resourceId}",
+    "permission": "operations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "WorkItemResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listApprovals": {
+    "method": "GET",
+    "path": "/shops/{shopId}/approvals",
+    "permission": "approvals.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ApprovalListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createApproval": {
+    "method": "POST",
+    "path": "/shops/{shopId}/approvals",
+    "permission": "approvals.request",
+    "versionRequired": false,
+    "requestSchema": "ApprovalCreate",
+    "responseSchema": "ApprovalResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getApproval": {
+    "method": "GET",
+    "path": "/shops/{shopId}/approvals/{resourceId}",
+    "permission": "approvals.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ApprovalResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listDevices": {
+    "method": "GET",
+    "path": "/shops/{shopId}/devices",
+    "permission": "notifications.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "DeviceSubscriptionListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createDevice": {
+    "method": "POST",
+    "path": "/shops/{shopId}/devices",
+    "permission": "notifications.manage",
+    "versionRequired": false,
+    "requestSchema": "DeviceRegister",
+    "responseSchema": "DeviceSubscriptionResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getDevice": {
+    "method": "GET",
+    "path": "/shops/{shopId}/devices/{resourceId}",
+    "permission": "notifications.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "DeviceSubscriptionResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listNotifications": {
+    "method": "GET",
+    "path": "/shops/{shopId}/notifications",
+    "permission": "notifications.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "NotificationListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getNotification": {
+    "method": "GET",
+    "path": "/shops/{shopId}/notifications/{resourceId}",
+    "permission": "notifications.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "NotificationResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listPrepJobs": {
+    "method": "GET",
+    "path": "/shops/{shopId}/prep-jobs",
+    "permission": "fulfillment.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "PrepJobListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getPrepJob": {
+    "method": "GET",
+    "path": "/shops/{shopId}/prep-jobs/{resourceId}",
+    "permission": "fulfillment.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "PrepJobResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listShipments": {
+    "method": "GET",
+    "path": "/shops/{shopId}/shipments",
+    "permission": "fulfillment.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ShipmentListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createShipment": {
+    "method": "POST",
+    "path": "/shops/{shopId}/shipments",
+    "permission": "fulfillment.write",
+    "versionRequired": false,
+    "requestSchema": "ShipmentCreate",
+    "responseSchema": "ShipmentResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getShipment": {
+    "method": "GET",
+    "path": "/shops/{shopId}/shipments/{resourceId}",
+    "permission": "fulfillment.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ShipmentResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listReturnCases": {
+    "method": "GET",
+    "path": "/shops/{shopId}/returns",
+    "permission": "orders.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ReturnCaseListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createReturnCase": {
+    "method": "POST",
+    "path": "/shops/{shopId}/returns",
+    "permission": "orders.return",
+    "versionRequired": false,
+    "requestSchema": "ReturnCaseCreate",
+    "responseSchema": "ReturnCaseResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getReturnCase": {
+    "method": "GET",
+    "path": "/shops/{shopId}/returns/{resourceId}",
+    "permission": "orders.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ReturnCaseResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listSuppliers": {
+    "method": "GET",
+    "path": "/shops/{shopId}/suppliers",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "SupplierListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createSupplier": {
+    "method": "POST",
+    "path": "/shops/{shopId}/suppliers",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": "SupplierWrite",
+    "responseSchema": "SupplierResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getSupplier": {
+    "method": "GET",
+    "path": "/shops/{shopId}/suppliers/{resourceId}",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "SupplierResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateSupplier": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/suppliers/{resourceId}",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": "SupplierPatch",
+    "responseSchema": "SupplierResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listSupplierOffers": {
+    "method": "GET",
+    "path": "/shops/{shopId}/supplier-offers",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "SupplierOfferListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createSupplierOffer": {
+    "method": "POST",
+    "path": "/shops/{shopId}/supplier-offers",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": "SupplierOfferWrite",
+    "responseSchema": "SupplierOfferResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getSupplierOffer": {
+    "method": "GET",
+    "path": "/shops/{shopId}/supplier-offers/{resourceId}",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "SupplierOfferResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listReorderRules": {
+    "method": "GET",
+    "path": "/shops/{shopId}/reorder-rules",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ReorderRuleListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createReorderRule": {
+    "method": "POST",
+    "path": "/shops/{shopId}/reorder-rules",
+    "permission": "procurement.manage",
+    "versionRequired": false,
+    "requestSchema": "ReorderRuleCreate",
+    "responseSchema": "ReorderRuleResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getReorderRule": {
+    "method": "GET",
+    "path": "/shops/{shopId}/reorder-rules/{resourceId}",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ReorderRuleResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateReorderRule": {
+    "method": "PUT",
+    "path": "/shops/{shopId}/reorder-rules/{resourceId}",
+    "permission": "procurement.manage",
+    "versionRequired": false,
+    "requestSchema": "ReorderRuleWrite",
+    "responseSchema": "ReorderRuleResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listPurchaseSuggestions": {
+    "method": "GET",
+    "path": "/shops/{shopId}/purchase-suggestions",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "PurchaseSuggestionListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getPurchaseSuggestion": {
+    "method": "GET",
+    "path": "/shops/{shopId}/purchase-suggestions/{resourceId}",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "PurchaseSuggestionResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listPurchaseOrders": {
+    "method": "GET",
+    "path": "/shops/{shopId}/purchase-orders",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "PurchaseOrderListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createPurchaseOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/purchase-orders",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": "PurchaseCreate",
+    "responseSchema": "PurchaseOrderResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getPurchaseOrder": {
+    "method": "GET",
+    "path": "/shops/{shopId}/purchase-orders/{resourceId}",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "PurchaseOrderResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listGoodsReceipts": {
+    "method": "GET",
+    "path": "/shops/{shopId}/goods-receipts",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "GoodsReceiptListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createGoodsReceipt": {
+    "method": "POST",
+    "path": "/shops/{shopId}/goods-receipts",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": "GoodsReceiptCreate",
+    "responseSchema": "GoodsReceiptResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getGoodsReceipt": {
+    "method": "GET",
+    "path": "/shops/{shopId}/goods-receipts/{resourceId}",
+    "permission": "procurement.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "GoodsReceiptResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listJournals": {
+    "method": "GET",
+    "path": "/shops/{shopId}/journals",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "JournalListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createJournal": {
+    "method": "POST",
+    "path": "/shops/{shopId}/journals",
+    "permission": "finance.post",
+    "versionRequired": false,
+    "requestSchema": "JournalCreate",
+    "responseSchema": "JournalResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getJournal": {
+    "method": "GET",
+    "path": "/shops/{shopId}/journals/{resourceId}",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "JournalResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listBankTransactions": {
+    "method": "GET",
+    "path": "/shops/{shopId}/bank-transactions",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "BankTransactionListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getBankTransaction": {
+    "method": "GET",
+    "path": "/shops/{shopId}/bank-transactions/{resourceId}",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "BankTransactionResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listReconciliationCases": {
+    "method": "GET",
+    "path": "/shops/{shopId}/reconciliation-cases",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ReconciliationCaseListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getReconciliationCase": {
+    "method": "GET",
+    "path": "/shops/{shopId}/reconciliation-cases/{resourceId}",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ReconciliationCaseResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listCODSettlements": {
+    "method": "GET",
+    "path": "/shops/{shopId}/cod-settlements",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CODSettlementListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getCODSettlement": {
+    "method": "GET",
+    "path": "/shops/{shopId}/cod-settlements/{resourceId}",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CODSettlementResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listDebtItems": {
+    "method": "GET",
+    "path": "/shops/{shopId}/debts",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "DebtItemListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getDebtItem": {
+    "method": "GET",
+    "path": "/shops/{shopId}/debts/{resourceId}",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "DebtItemResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listAccountingPeriods": {
+    "method": "GET",
+    "path": "/shops/{shopId}/periods",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "AccountingPeriodListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getAccountingPeriod": {
+    "method": "GET",
+    "path": "/shops/{shopId}/periods/{resourceId}",
+    "permission": "finance.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "AccountingPeriodResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listAgentRoles": {
+    "method": "GET",
+    "path": "/shops/{shopId}/agent-roles",
+    "permission": "bot.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "AgentRoleListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getAgentRole": {
+    "method": "GET",
+    "path": "/shops/{shopId}/agent-roles/{resourceId}",
+    "permission": "bot.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "AgentRoleResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateAgentRole": {
+    "method": "PUT",
+    "path": "/shops/{shopId}/agent-roles/{resourceId}",
+    "permission": "bot.configure",
+    "versionRequired": false,
+    "requestSchema": "AgentRoleWrite",
+    "responseSchema": "AgentRoleResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listBudgetPolicies": {
+    "method": "GET",
+    "path": "/shops/{shopId}/budget-policies",
+    "permission": "operations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "BudgetPolicyListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getBudgetPolicy": {
+    "method": "GET",
+    "path": "/shops/{shopId}/budget-policies/{resourceId}",
+    "permission": "operations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "BudgetPolicyResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateBudgetPolicy": {
+    "method": "PUT",
+    "path": "/shops/{shopId}/budget-policies/{resourceId}",
+    "permission": "operations.manage",
+    "versionRequired": false,
+    "requestSchema": "BudgetPolicyWrite",
+    "responseSchema": "BudgetPolicyResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listDigests": {
+    "method": "GET",
+    "path": "/shops/{shopId}/digests",
+    "permission": "operations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "DigestListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getDigest": {
+    "method": "GET",
+    "path": "/shops/{shopId}/digests/{resourceId}",
+    "permission": "operations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "DigestResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listServiceCases": {
+    "method": "GET",
+    "path": "/shops/{shopId}/service-cases",
+    "permission": "customers.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ServiceCaseListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "createServiceCase": {
+    "method": "POST",
+    "path": "/shops/{shopId}/service-cases",
+    "permission": "customers.write",
+    "versionRequired": false,
+    "requestSchema": "ServiceCaseWrite",
+    "responseSchema": "ServiceCaseResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getServiceCase": {
+    "method": "GET",
+    "path": "/shops/{shopId}/service-cases/{resourceId}",
+    "permission": "customers.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ServiceCaseResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "recordCustomerConfirmation": {
+    "method": "POST",
+    "path": "/shops/{shopId}/orders/{orderId}/customer-confirmations",
+    "permission": "orders.write",
+    "versionRequired": false,
+    "requestSchema": "CustomerConfirmationRequest",
+    "responseSchema": "CustomerConfirmationResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "orderId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "claimWorkItem": {
+    "method": "POST",
+    "path": "/shops/{shopId}/work-items/{resourceId}/claim",
+    "permission": "operations.claim",
+    "versionRequired": false,
+    "requestSchema": "ClaimWorkRequest",
+    "responseSchema": "WorkItemResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateWorkItem": {
+    "method": "POST",
+    "path": "/shops/{shopId}/work-items/{resourceId}/actions",
+    "permission": "operations.manage",
+    "versionRequired": false,
+    "requestSchema": "UpdateWorkRequest",
+    "responseSchema": "WorkItemResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "decideApproval": {
+    "method": "POST",
+    "path": "/shops/{shopId}/approvals/{resourceId}/decision",
+    "permission": "approvals.decide",
+    "versionRequired": false,
+    "requestSchema": "ApprovalDecision",
+    "responseSchema": "ApprovalResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "revokeDevice": {
+    "method": "POST",
+    "path": "/shops/{shopId}/devices/{resourceId}/revoke",
+    "permission": "notifications.manage",
+    "versionRequired": false,
+    "requestSchema": "VersionRequest",
+    "responseSchema": "DeviceSubscriptionResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "testDevice": {
+    "method": "POST",
+    "path": "/shops/{shopId}/devices/{resourceId}/test",
+    "permission": "notifications.manage",
+    "versionRequired": false,
+    "requestSchema": "VersionRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "acknowledgeNotification": {
+    "method": "POST",
+    "path": "/shops/{shopId}/notifications/{resourceId}/acknowledge",
+    "permission": "operations.claim",
+    "versionRequired": false,
+    "requestSchema": "ClaimWorkRequest",
+    "responseSchema": "WorkItemResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getNotificationPolicy": {
+    "method": "GET",
+    "path": "/shops/{shopId}/notification-policy",
+    "permission": "notifications.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "NotificationPolicyResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateNotificationPolicy": {
+    "method": "PUT",
+    "path": "/shops/{shopId}/notification-policy",
+    "permission": "notifications.manage",
+    "versionRequired": false,
+    "requestSchema": "NotificationPolicyWrite",
+    "responseSchema": "NotificationPolicyResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "beginTelegramPairing": {
+    "method": "POST",
+    "path": "/shops/{shopId}/telegram-pairing",
+    "permission": "notifications.manage",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "TelegramPairingResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "pickPrepLine": {
+    "method": "POST",
+    "path": "/shops/{shopId}/prep-jobs/{resourceId}/pick",
+    "permission": "fulfillment.write",
+    "versionRequired": false,
+    "requestSchema": "PickLineRequest",
+    "responseSchema": "PrepJobResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "packPrepJob": {
+    "method": "POST",
+    "path": "/shops/{shopId}/prep-jobs/{resourceId}/pack",
+    "permission": "fulfillment.write",
+    "versionRequired": false,
+    "requestSchema": "VersionRequest",
+    "responseSchema": "PrepJobResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "handoverShipment": {
+    "method": "POST",
+    "path": "/shops/{shopId}/shipments/{resourceId}/handover",
+    "permission": "fulfillment.handover",
+    "versionRequired": false,
+    "requestSchema": "VersionRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "recordShipmentEvent": {
+    "method": "POST",
+    "path": "/shops/{shopId}/shipments/{resourceId}/events",
+    "permission": "fulfillment.write",
+    "versionRequired": false,
+    "requestSchema": "ShipmentEventWrite",
+    "responseSchema": "ShipmentResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "inspectReturn": {
+    "method": "POST",
+    "path": "/shops/{shopId}/returns/{resourceId}/inspect",
+    "permission": "inventory.adjust",
+    "versionRequired": false,
+    "requestSchema": "ReturnInspection",
+    "responseSchema": "ReturnCaseResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "evaluateReorder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/purchase-suggestions/evaluate",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "requestPurchaseApproval": {
+    "method": "POST",
+    "path": "/shops/{shopId}/purchase-orders/{resourceId}/request-approval",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": "VersionRequest",
+    "responseSchema": "ApprovalResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "sendPurchaseOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/purchase-orders/{resourceId}/send",
+    "permission": "procurement.send",
+    "versionRequired": false,
+    "requestSchema": "PurchaseSend",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "confirmPurchaseOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/purchase-orders/{resourceId}/confirm",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": "PurchaseConfirm",
+    "responseSchema": "PurchaseOrderResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "postGoodsReceipt": {
+    "method": "POST",
+    "path": "/shops/{shopId}/goods-receipts/{resourceId}/post",
+    "permission": "procurement.receive",
+    "versionRequired": false,
+    "requestSchema": "VersionRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "postJournal": {
+    "method": "POST",
+    "path": "/shops/{shopId}/journals/{resourceId}/post",
+    "permission": "finance.post",
+    "versionRequired": false,
+    "requestSchema": "VersionRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "reverseJournal": {
+    "method": "POST",
+    "path": "/shops/{shopId}/journals/{resourceId}/reverse",
+    "permission": "finance.post",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "matchSettlement": {
+    "method": "POST",
+    "path": "/shops/{shopId}/reconciliation-cases/{resourceId}/match",
+    "permission": "finance.reconcile",
+    "versionRequired": false,
+    "requestSchema": "MatchSettlement",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "matchCODSettlement": {
+    "method": "POST",
+    "path": "/shops/{shopId}/cod-settlements/{resourceId}/match",
+    "permission": "finance.reconcile",
+    "versionRequired": false,
+    "requestSchema": "CODMatch",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "closeAccountingPeriod": {
+    "method": "POST",
+    "path": "/shops/{shopId}/periods/{resourceId}/close",
+    "permission": "finance.close",
+    "versionRequired": false,
+    "requestSchema": "VersionRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "controlAutomation": {
+    "method": "POST",
+    "path": "/shops/{shopId}/automation-control",
+    "permission": "bot.pause",
+    "versionRequired": false,
+    "requestSchema": "ControlRequest",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getOperationsSummary": {
+    "method": "GET",
+    "path": "/shops/{shopId}/operations-summary",
+    "permission": "operations.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "OperationsSummaryResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "getMarketingSummary": {
+    "method": "GET",
+    "path": "/shops/{shopId}/marketing-summary",
+    "permission": "reports.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "MarketingSummaryResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "beginLogin": {
+    "method": "POST",
+    "path": "/auth/start",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": "AuthStart",
+    "responseSchema": "AuthRedirectResponse",
+    "status": 200,
+    "pathParameters": [],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "setSupplierStatus": {
+    "method": "POST",
+    "path": "/shops/{shopId}/suppliers/{resourceId}/status",
+    "permission": "procurement.manage",
+    "versionRequired": false,
+    "requestSchema": "SupplierStatusRequest",
+    "responseSchema": "SupplierResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "cancelPurchaseOrder": {
+    "method": "POST",
+    "path": "/shops/{shopId}/purchase-orders/{resourceId}/cancel",
+    "permission": "procurement.write",
+    "versionRequired": false,
+    "requestSchema": "VersionedReason",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "importBankStatement": {
+    "method": "POST",
+    "path": "/shops/{shopId}/bank-transactions/import",
+    "permission": "finance.reconcile",
+    "versionRequired": false,
+    "requestSchema": "StatementImport",
+    "responseSchema": "JobResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "importCODStatement": {
+    "method": "POST",
+    "path": "/shops/{shopId}/cod-settlements/import",
+    "permission": "finance.reconcile",
+    "versionRequired": false,
+    "requestSchema": "StatementImport",
+    "responseSchema": "JobResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "reopenAccountingPeriod": {
+    "method": "POST",
+    "path": "/shops/{shopId}/periods/{resourceId}/reopen",
+    "permission": "finance.close",
+    "versionRequired": false,
+    "requestSchema": "PeriodReopen",
+    "responseSchema": "CommandResponse",
+    "status": 202,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "setServiceCaseStatus": {
+    "method": "POST",
+    "path": "/shops/{shopId}/service-cases/{resourceId}/status",
+    "permission": "customers.write",
+    "versionRequired": false,
+    "requestSchema": "CaseStatusWrite",
+    "responseSchema": "ServiceCaseResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "completeLogin": {
+    "method": "GET",
+    "path": "/auth/callback",
+    "permission": null,
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": null,
+    "status": 204,
+    "pathParameters": [],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "code",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      },
+      {
+        "name": "state",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "maxLength": 4000
+        }
+      }
+    ],
+    "bodyType": "json"
+  }
+}

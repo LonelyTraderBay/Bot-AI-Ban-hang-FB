@@ -1,0 +1,192 @@
+[WebServer] (node:89852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 10 tests using 1 worker
+
+(node:51972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/10] [chromium] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-78968-839e6a61-4290-4c06-b585-b18c8655d579\deps\react-dom_client.js?v=0945eabc as it exceeds the max of 500KB.
+
+[2/10] [chromium] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap
+[3/10] [chromium] › tests\ui-density-layout.spec.ts:33:1 › density demo disclosure retains state and always shows the synthetic warning
+[4/10] [chromium] › tests\ui-density-layout.spec.ts:48:1 › density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm
+  1) [chromium] › tests\ui-density-layout.spec.ts:48:1 › density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('main')
+    Expected: "16px"
+    Received: "24px"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" locator('main') with timeout 5000ms
+      - waiting for locator('main')
+        14 × locator resolved to <main tabindex="-1" id="main-content" class="MuiBox-root css-pf3wyz">…</main>
+           - unexpected value "24px"
+
+
+      49 |  for(const width of [390,1440]){
+      50 |   await page.setViewportSize({width,height:900});await ready(page,'finance');
+    > 51 |   await expect(page.locator('main')).toHaveCSS('padding-top','16px');
+         |                                      ^
+      52 |   const panel=page.getByRole('heading',{name:'Kỳ báo cáo',exact:true}).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');
+      53 |   const geometry=await panel.evaluate(e=>{const header=e.firstElementChild!,body=e.lastElementChild!;return {gap:body.firstElementChild!.getBoundingClientRect().top-Math.max(...[...header.children].map(c=>c.getBoundingClientRect().bottom)),bodyTop:getComputedStyle(body).paddingTop,bodyInline:getComputedStyle(body).paddingLeft};});
+      54 |   expect(geometry.gap).toBeCloseTo(12,0);expect(geometry.bodyTop).toBe('0px');expect(geometry.bodyInline).toBe(width<768?'12px':'16px');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-density-layout.spec.ts:51:38
+
+    Error Context: test-results\playwright-51972-4e1ac871-a396-4f8d-8b0a-b1b6c8cbfd22\ui-density-layout-density--77d0b-nel-keep-comfortable-rhythm-chromium\error-context.md
+
+    Error Context: test-results\playwright-51972-4e1ac871-a396-4f8d-8b0a-b1b6c8cbfd22\ui-density-layout-density--77d0b-nel-keep-comfortable-rhythm-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-51972-4e1ac871-a396-4f8d-8b0a-b1b6c8cbfd22\ui-density-layout-density--77d0b-nel-keep-comfortable-rhythm-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-51972-4e1ac871-a396-4f8d-8b0a-b1b6c8cbfd22\ui-density-layout-density--77d0b-nel-keep-comfortable-rhythm-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:84040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[5/10] [chromium] › tests\ui-density-layout.spec.ts:60:1 › density simple category editor keeps labels, errors and keyboard reflow usable
+  2) [chromium] › tests\ui-density-layout.spec.ts:60:1 › density simple category editor keeps labels, errors and keyboard reflow usable 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  getByRole('dialog').first().locator('[data-ui-composition="form-fields"]')
+    Expected: "12px"
+    Received: "16px"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" getByRole('dialog').first().locator('[data-ui-composition="form-fields"]') with timeout 5000ms
+      - waiting for getByRole('dialog').first().locator('[data-ui-composition="form-fields"]')
+        14 × locator resolved to <div data-ui-composition="form-fields" class="MuiStack-root css-1i29xmw-MuiStack-root">…</div>
+           - unexpected value "16px"
+
+
+      61 |  for(const width of [320,1440]){
+      62 |   await page.setViewportSize({width,height:900});await ready(page,'categories');await page.getByRole('button',{name:'Thêm danh mục',exact:true}).click();
+    > 63 |   const dialog=page.getByRole('dialog').first();await expect(dialog).toBeVisible();await expect(dialog.locator('[data-ui-composition="form-fields"]')).toHaveCSS('gap','12px');
+         |                                                                                                                                                        ^
+      64 |   await expect(dialog.locator('.MuiDialogContent-root')).toHaveCSS('padding-left','16px');
+      65 |   const name=dialog.getByRole('textbox',{name:'Tên',exact:true});await name.focus();await expect(name).toBeFocused();await page.keyboard.press('Tab');
+      66 |   expect((await new AxeBuilder({page}).include('[role="dialog"]').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-density-layout.spec.ts:63:152
+
+    Error Context: test-results\playwright-84040-8551a2f6-9f60-44fe-afe7-056798c67299\ui-density-layout-density--80e7c--and-keyboard-reflow-usable-chromium\error-context.md
+
+    Error Context: test-results\playwright-84040-8551a2f6-9f60-44fe-afe7-056798c67299\ui-density-layout-density--80e7c--and-keyboard-reflow-usable-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-84040-8551a2f6-9f60-44fe-afe7-056798c67299\ui-density-layout-density--80e7c--and-keyboard-reflow-usable-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-84040-8551a2f6-9f60-44fe-afe7-056798c67299\ui-density-layout-density--80e7c--and-keyboard-reflow-usable-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:80320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[6/10] [firefox] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data
+[7/10] [firefox] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap
+[8/10] [firefox] › tests\ui-density-layout.spec.ts:33:1 › density demo disclosure retains state and always shows the synthetic warning
+[9/10] [firefox] › tests\ui-density-layout.spec.ts:48:1 › density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm
+  3) [firefox] › tests\ui-density-layout.spec.ts:48:1 › density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('main')
+    Expected: "16px"
+    Received: "24px"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" locator('main') with timeout 5000ms
+      - waiting for locator('main')
+        14 × locator resolved to <main tabindex="-1" id="main-content" class="MuiBox-root css-pf3wyz">…</main>
+           - unexpected value "24px"
+
+
+      49 |  for(const width of [390,1440]){
+      50 |   await page.setViewportSize({width,height:900});await ready(page,'finance');
+    > 51 |   await expect(page.locator('main')).toHaveCSS('padding-top','16px');
+         |                                      ^
+      52 |   const panel=page.getByRole('heading',{name:'Kỳ báo cáo',exact:true}).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');
+      53 |   const geometry=await panel.evaluate(e=>{const header=e.firstElementChild!,body=e.lastElementChild!;return {gap:body.firstElementChild!.getBoundingClientRect().top-Math.max(...[...header.children].map(c=>c.getBoundingClientRect().bottom)),bodyTop:getComputedStyle(body).paddingTop,bodyInline:getComputedStyle(body).paddingLeft};});
+      54 |   expect(geometry.gap).toBeCloseTo(12,0);expect(geometry.bodyTop).toBe('0px');expect(geometry.bodyInline).toBe(width<768?'12px':'16px');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-density-layout.spec.ts:51:38
+
+    Error Context: test-results\playwright-80320-ae658a7b-f7bf-427b-86e9-df5183a87076\ui-density-layout-density--77d0b-nel-keep-comfortable-rhythm-firefox\error-context.md
+
+    Error Context: test-results\playwright-80320-ae658a7b-f7bf-427b-86e9-df5183a87076\ui-density-layout-density--77d0b-nel-keep-comfortable-rhythm-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-80320-ae658a7b-f7bf-427b-86e9-df5183a87076\ui-density-layout-density--77d0b-nel-keep-comfortable-rhythm-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-80320-ae658a7b-f7bf-427b-86e9-df5183a87076\ui-density-layout-density--77d0b-nel-keep-comfortable-rhythm-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:46664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[10/10] [firefox] › tests\ui-density-layout.spec.ts:60:1 › density simple category editor keeps labels, errors and keyboard reflow usable
+  4) [firefox] › tests\ui-density-layout.spec.ts:60:1 › density simple category editor keeps labels, errors and keyboard reflow usable 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  getByRole('dialog').first().locator('[data-ui-composition="form-fields"]')
+    Expected: "12px"
+    Received: "16px"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" getByRole('dialog').first().locator('[data-ui-composition="form-fields"]') with timeout 5000ms
+      - waiting for getByRole('dialog').first().locator('[data-ui-composition="form-fields"]')
+        14 × locator resolved to <div data-ui-composition="form-fields" class="MuiStack-root css-1i29xmw-MuiStack-root">…</div>
+           - unexpected value "16px"
+
+
+      61 |  for(const width of [320,1440]){
+      62 |   await page.setViewportSize({width,height:900});await ready(page,'categories');await page.getByRole('button',{name:'Thêm danh mục',exact:true}).click();
+    > 63 |   const dialog=page.getByRole('dialog').first();await expect(dialog).toBeVisible();await expect(dialog.locator('[data-ui-composition="form-fields"]')).toHaveCSS('gap','12px');
+         |                                                                                                                                                        ^
+      64 |   await expect(dialog.locator('.MuiDialogContent-root')).toHaveCSS('padding-left','16px');
+      65 |   const name=dialog.getByRole('textbox',{name:'Tên',exact:true});await name.focus();await expect(name).toBeFocused();await page.keyboard.press('Tab');
+      66 |   expect((await new AxeBuilder({page}).include('[role="dialog"]').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-density-layout.spec.ts:63:152
+
+    Error Context: test-results\playwright-46664-823dcb2f-3063-4bca-bcee-2b6c0bd088ee\ui-density-layout-density--80e7c--and-keyboard-reflow-usable-firefox\error-context.md
+
+    Error Context: test-results\playwright-46664-823dcb2f-3063-4bca-bcee-2b6c0bd088ee\ui-density-layout-density--80e7c--and-keyboard-reflow-usable-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-46664-823dcb2f-3063-4bca-bcee-2b6c0bd088ee\ui-density-layout-density--80e7c--and-keyboard-reflow-usable-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-46664-823dcb2f-3063-4bca-bcee-2b6c0bd088ee\ui-density-layout-density--80e7c--and-keyboard-reflow-usable-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  4 failed
+    [chromium] › tests\ui-density-layout.spec.ts:48:1 › density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm 
+    [chromium] › tests\ui-density-layout.spec.ts:60:1 › density simple category editor keeps labels, errors and keyboard reflow usable 
+    [firefox] › tests\ui-density-layout.spec.ts:48:1 › density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm 
+    [firefox] › tests\ui-density-layout.spec.ts:60:1 › density simple category editor keeps labels, errors and keyboard reflow usable 
+  6 passed (1.4m)

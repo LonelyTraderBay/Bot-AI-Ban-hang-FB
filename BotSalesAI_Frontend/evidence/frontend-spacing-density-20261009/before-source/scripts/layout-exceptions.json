@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "exceptions": [
+    {
+      "id": "UI028-A11Y-SKIP-LINK-PADDING",
+      "path": "apps/web/src/app/bootstrap.css",
+      "selector": ".skip-link",
+      "property": "padding",
+      "value": "12px",
+      "category": "A11Y_MECHANISM",
+      "reason": "The off-canvas skip link needs a visible focus target with internal separation; retain this narrowly scoped accessibility mechanism until the shared spacing migration replaces it without reducing the target.",
+      "evidence": "tests/accessibility/routes.spec.ts (keyboard skip-link focus and activation coverage)",
+      "owner": "app shell accessibility",
+      "reviewTrigger": "Remove only after a shared skip-link spacing role replaces this padding declaration and browser evidence verifies keyboard visibility, focus activation and a rendered target at least 44px high. The W09 shell migration left this selector unchanged, so W09 completion alone is not closure evidence."
+    }
+  ]
+}
