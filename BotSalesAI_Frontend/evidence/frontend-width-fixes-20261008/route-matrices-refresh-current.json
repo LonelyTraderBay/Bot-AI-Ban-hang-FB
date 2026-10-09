@@ -1,0 +1,62 @@
+{
+  "recordedAt": "2026-10-08T16:17:11.770Z",
+  "status": "PASS",
+  "scope": "Canonical owners regenerated evidence references from the current actual full E2E and verbose unit logs. Route/feature/state/role semantics must stay byte-equivalent after removing only log paths, generation time and input-log fingerprints.",
+  "runs": [
+    {
+      "startedAt": "2026-10-08T16:17:11.634Z",
+      "finishedAt": "2026-10-08T16:17:11.697Z",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "tests/vertical-slices/generate-route-implementation.mjs",
+        "evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"routes\": 54,\n  \"uniqueFeatures\": 64,\n  \"routeEvidenceFile\": \"evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log\",\n  \"journeyEvidenceFile\": \"evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log\"\n}\n"
+    },
+    {
+      "startedAt": "2026-10-08T16:17:11.697Z",
+      "finishedAt": "2026-10-08T16:17:11.765Z",
+      "executable": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "tests/states/generate-route-state-roles.mjs",
+        "--unit-log",
+        "evidence/frontend-width-fixes-20261008/runs/width-1791471979366-47856/unit.log",
+        "--browser-log",
+        "evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log",
+        "--role-log",
+        "evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log"
+      ],
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "output": "Generated docs/route-state-role-matrix.json — 54 routes × 7 roles; 19 shared state cases evidenced.\n"
+    }
+  ],
+  "semanticDrift": [],
+  "sourceFingerprints": {
+    "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/refresh-route-matrices.mjs": "ec932ae76bfb0920ef943701eaa1af3f84883673073457eb3af811158f3ef9bb",
+    "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "4b569fd1c0b4e3c533a3e9df1e8858ed3ea30d2716cee3c73426f733dcb24e0b",
+    "BotSalesAI_Frontend/tests/states/generate-route-state-roles.mjs": "a9be4c94a6db11167f48bd7bcba817e84f0a5358bfe4a47bad21f725d559a798"
+  },
+  "inputs": [
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471997932-85768/e2e.log",
+      "sha256": "0dd13c7e0d58c6a0b233fa73b5292792d7fc9d823db36e18e2d43a7681ec7d65"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-width-fixes-20261008/runs/width-1791471979366-47856/unit.log",
+      "sha256": "9bdf32f670c42b6008b248bc8a31bd9c446e58ab5fbed5177ff4b9b8146e86be"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "BotSalesAI_Frontend/docs/route-implementation.json",
+      "sha256": "6f2ce951578b6846444d2004a2bb3558000af18c31483c597d36831aa22f4e02"
+    },
+    {
+      "path": "BotSalesAI_Frontend/docs/route-state-role-matrix.json",
+      "sha256": "70c5f6d29e1b25d0eacc86884695b4c80eb73be49e5ae7643dcf949efc4d1309"
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+
+Running 16 tests using 1 worker
+
+
+
+(node:15580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/16] [chromium] › tests\fe015.spec.ts:56:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates
+  1) [chromium] › tests\fe015.spec.ts:56:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "249000"
+    Received: "0"
+
+      74 |     const report = (await septemberResponse.json()).data;
+      75 |     expect(report).toMatchObject({ from: '2026-08-31T17:00:00.000Z', to: '2026-10-01T17:00:00.000Z', timezone: 'Asia/Vientiane' });
+    > 76 |     expect(report.receipts.amount).toBe('249000');
+         |                                    ^
+      77 |     expect(report.disbursements.amount).toBe('274000');
+      78 |
+      79 |     const octoberResponseWait = page.waitForResponse(response => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:76:36
+
+    Error Context: test-results\playwright-15580-e1e9fd77-64cb-49a2-ab45-206c1caeb122\fe015-FE015-AC01-report-fi-8b751-ies-and-mock-API-aggregates-chromium\error-context.md
+
+    Error Context: test-results\playwright-15580-e1e9fd77-64cb-49a2-ab45-206c1caeb122\fe015-FE015-AC01-report-fi-8b751-ies-and-mock-API-aggregates-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-15580-e1e9fd77-64cb-49a2-ab45-206c1caeb122\fe015-FE015-AC01-report-fi-8b751-ies-and-mock-API-aggregates-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-15580-e1e9fd77-64cb-49a2-ab45-206c1caeb122\fe015-FE015-AC01-report-fi-8b751-ies-and-mock-API-aggregates-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:37692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/16] [chromium] › tests\fe015.spec.ts:102:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data
+[3/16] [chromium] › tests\fe015.spec.ts:123:1 › UI003 report timestamps follow the active shop timezone
+[4/16] [chromium] › tests\fe015.spec.ts:180:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values
+[5/16] [chromium] › tests\fe015.spec.ts:208:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings
+[6/16] [chromium] › tests\fe015.spec.ts:243:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation
+[7/16] [chromium] › tests\fe015.spec.ts:267:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions
+  2) [chromium] › tests\fe015.spec.ts:267:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.waitForResponse: Test timeout of 60000ms exceeded.
+
+      34 |     await dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' }).fill(batch);
+      35 |     const importPath = kind === 'bank' ? '/bank-transactions/import' : '/cod-settlements/import';
+    > 36 |     const previewWait=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/statement-import-preview'));
+         |                            ^
+      37 |     await dialog.getByRole('button', { name: 'Xem trước bảng đối soát' }).click();
+      38 |     const previewResponse=await previewWait,previewPayload=await previewResponse.json();expect(previewResponse.status()).toBe(200);
+      39 |     if(previewPayload.data.validRows===0){await expect(dialog.getByRole('button',{name:'Nhập các dòng hợp lệ'})).toBeDisabled();await discardDialogChanges(page,dialog);return {response:previewResponse,payload:previewPayload,previewOnly:true};}
+        at importCsv (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:36:28)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:274:35
+
+    Error Context: test-results\playwright-37692-2dfd8337-749b-447c-9107-cc07a1b08ee0\fe015-FE015-AC03-CSV-impor-a118b-cates-external-transactions-chromium\error-context.md
+
+    Error Context: test-results\playwright-37692-2dfd8337-749b-447c-9107-cc07a1b08ee0\fe015-FE015-AC03-CSV-impor-a118b-cates-external-transactions-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-37692-2dfd8337-749b-447c-9107-cc07a1b08ee0\fe015-FE015-AC03-CSV-impor-a118b-cates-external-transactions-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-37692-2dfd8337-749b-447c-9107-cc07a1b08ee0\fe015-FE015-AC03-CSV-impor-a118b-cates-external-transactions-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:7268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[8/16] [chromium] › tests\fe015.spec.ts:290:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page
+  3) [chromium] › tests\fe015.spec.ts:290:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.waitForResponse: Test timeout of 60000ms exceeded.
+
+      34 |     await dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' }).fill(batch);
+      35 |     const importPath = kind === 'bank' ? '/bank-transactions/import' : '/cod-settlements/import';
+    > 36 |     const previewWait=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/statement-import-preview'));
+         |                            ^
+      37 |     await dialog.getByRole('button', { name: 'Xem trước bảng đối soát' }).click();
+      38 |     const previewResponse=await previewWait,previewPayload=await previewResponse.json();expect(previewResponse.status()).toBe(200);
+      39 |     if(previewPayload.data.validRows===0){await expect(dialog.getByRole('button',{name:'Nhập các dòng hợp lệ'})).toBeDisabled();await discardDialogChanges(page,dialog);return {response:previewResponse,payload:previewPayload,previewOnly:true};}
+        at importCsv (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:36:28)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:310:24
+
+    Error Context: test-results\playwright-7268-53739c9b-2440-4473-a380-27b0301cf064\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\error-context.md
+
+    Error Context: test-results\playwright-7268-53739c9b-2440-4473-a380-27b0301cf064\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-7268-53739c9b-2440-4473-a380-27b0301cf064\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-7268-53739c9b-2440-4473-a380-27b0301cf064\fe015-UI001-reconciliation-2a8d2-yond-the-visible-table-page-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:41740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[9/16] [chromium] › tests\fe015.spec.ts:417:1 › FE015.AC03 COD settlement matches net remittance plus documented fee
+  4) [chromium] › tests\fe015.spec.ts:417:1 › FE015.AC03 COD settlement matches net remittance plus documented fee 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.waitForResponse: Test timeout of 60000ms exceeded.
+
+      34 |     await dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' }).fill(batch);
+      35 |     const importPath = kind === 'bank' ? '/bank-transactions/import' : '/cod-settlements/import';
+    > 36 |     const previewWait=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/statement-import-preview'));
+         |                            ^
+      37 |     await dialog.getByRole('button', { name: 'Xem trước bảng đối soát' }).click();
+      38 |     const previewResponse=await previewWait,previewPayload=await previewResponse.json();expect(previewResponse.status()).toBe(200);
+      39 |     if(previewPayload.data.validRows===0){await expect(dialog.getByRole('button',{name:'Nhập các dòng hợp lệ'})).toBeDisabled();await discardDialogChanges(page,dialog);return {response:previewResponse,payload:previewPayload,previewOnly:true};}
+        at importCsv (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:36:28)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:429:5
+
+    Error Context: test-results\playwright-41740-a812dc02-747e-4d0d-8f4a-4be350a611d8\fe015-FE015-AC03-COD-settl-2639e-ittance-plus-documented-fee-chromium\error-context.md
+
+    Error Context: test-results\playwright-41740-a812dc02-747e-4d0d-8f4a-4be350a611d8\fe015-FE015-AC03-COD-settl-2639e-ittance-plus-documented-fee-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-41740-a812dc02-747e-4d0d-8f4a-4be350a611d8\fe015-FE015-AC03-COD-settl-2639e-ittance-plus-documented-fee-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-41740-a812dc02-747e-4d0d-8f4a-4be350a611d8\fe015-FE015-AC03-COD-settl-2639e-ittance-plus-documented-fee-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:53584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[10/16] [chromium] › tests\fe015.spec.ts:452:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible
+  5) [chromium] › tests\fe015.spec.ts:452:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: page.waitForResponse: Test timeout of 60000ms exceeded.
+
+      34 |     await dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' }).fill(batch);
+      35 |     const importPath = kind === 'bank' ? '/bank-transactions/import' : '/cod-settlements/import';
+    > 36 |     const previewWait=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/statement-import-preview'));
+         |                            ^
+      37 |     await dialog.getByRole('button', { name: 'Xem trước bảng đối soát' }).click();
+      38 |     const previewResponse=await previewWait,previewPayload=await previewResponse.json();expect(previewResponse.status()).toBe(200);
+      39 |     if(previewPayload.data.validRows===0){await expect(dialog.getByRole('button',{name:'Nhập các dòng hợp lệ'})).toBeDisabled();await discardDialogChanges(page,dialog);return {response:previewResponse,payload:previewPayload,previewOnly:true};}
+        at importCsv (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:36:28)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:458:5
+
+    Error Context: test-results\playwright-53584-146e21ba-0157-47c4-9fdc-b81435fe8dd5\fe015-FE015-AC03-partial-b-753ec-ing-amount-and-debt-visible-chromium\error-context.md
+
+    Error Context: test-results\playwright-53584-146e21ba-0157-47c4-9fdc-b81435fe8dd5\fe015-FE015-AC03-partial-b-753ec-ing-amount-and-debt-visible-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-53584-146e21ba-0157-47c4-9fdc-b81435fe8dd5\fe015-FE015-AC03-partial-b-753ec-ing-amount-and-debt-visible-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-53584-146e21ba-0157-47c4-9fdc-b81435fe8dd5\fe015-FE015-AC03-partial-b-753ec-ing-amount-and-debt-visible-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:76504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[11/16] [chromium] › tests\fe015.spec.ts:478:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+[12/16] [chromium] › tests\ui-finance-management.spec.ts:15:1 › C06 opening validates before HTTP and preserves added/removed list drafts through every close guard
+  6) [chromium] › tests\ui-finance-management.spec.ts:15:1 › C06 opening validates before HTTP and preserves added/removed list drafts through every close guard 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('combobox', { name: 'Dataset mô phỏng', exact: true })
+
+
+       8 | test.afterAll(async()=>close?.());
+       9 | test.beforeEach(({page})=>page.setDefaultTimeout(15000));
+    > 10 | async function choose(page:Page,name:string,value:string){await page.getByRole('combobox',{name,exact:true}).click();await page.getByRole('option',{name:value,exact:true}).click();}
+         |                                                                                                              ^
+      11 | async function fresh(page:Page){await page.goto(url+'/s/shop-demo/finance/opening-balances');await expect(page.getByRole('heading',{name:'Mở sổ kế toán',exact:true})).toBeVisible();await openDemoControls(page);await choose(page,'Dataset mô phỏng','Shop mở sổ mới (tổng hợp)');await expect(page.getByRole('status').filter({hasText:'Đã tải shop tổng hợp'})).toBeVisible();}
+      12 | async function write(page:Page,path:string,body:unknown,method='POST',version?:number){return page.evaluate(async({path,body,method,version})=>{const session=(await (await fetch('/api/v2/session')).json()).data;const r=await fetch('/api/v2/shops/shop-demo/'+path,{method,headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrfToken,'Idempotency-Key':crypto.randomUUID(),...(version?{'If-Match':`"${version}"`}:{})},body:JSON.stringify(body)});return {status:r.status,payload:await r.json()};},{path,body,method,version});}
+      13 | async function openingUI(page:Page){await page.getByRole('button',{name:'Tạo nháp mở sổ',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Nháp mở sổ mới',exact:true});await dialog.getByLabel('Ngày mở sổ',{exact:true}).fill('2026-09-01');await dialog.getByLabel('Lý do mở sổ',{exact:true}).fill('Mở sổ ngân hàng đối chiếu tổng hợp');for(let i=1;i<=2;i++){await dialog.getByRole('button',{name:'Thêm số dư tài khoản',exact:true}).click();await choose(page,`Tài khoản số dư ${i}`,i===1?'112 · Tiền ngân hàng':'411 · Vốn chủ sở hữu');await dialog.getByLabel(`${i===1?'Nợ':'Có'} số dư ${i} (VND)`,{exact:true}).fill('2000000');await dialog.getByLabel(`Diễn giải số dư ${i}`,{exact:true}).fill('Số dư mở sổ đã đối chiếu');}const response=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/opening-balances'));await dialog.getByRole('button',{name:'Lưu nháp mở sổ',exact:true}).click();const r=await response;expect(r.status()).toBe(201);const opening=(await r.json()).data;await expect(dialog).not.toBeVisible();return opening;}
+        at choose (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-finance-management.spec.ts:10:110)
+        at fresh (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-finance-management.spec.ts:11:217)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-finance-management.spec.ts:16:5
+
+    Error Context: test-results\playwright-76504-d6eb82b2-74d7-4223-935c-04c116f0fcf7\ui-finance-management-C06--0adaa-s-through-every-close-guard-chromium\error-context.md
+
+    Error Context: test-results\playwright-76504-d6eb82b2-74d7-4223-935c-04c116f0fcf7\ui-finance-management-C06--0adaa-s-through-every-close-guard-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-76504-d6eb82b2-74d7-4223-935c-04c116f0fcf7\ui-finance-management-C06--0adaa-s-through-every-close-guard-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-76504-d6eb82b2-74d7-4223-935c-04c116f0fcf7\ui-finance-management-C06--0adaa-s-through-every-close-guard-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:80736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[13/16] [chromium] › tests\ui-finance-management.spec.ts:20:1 › C06 opening UI posts only its reviewed version and reports/ledger drill down to real journal IDs
+  7) [chromium] › tests\ui-finance-management.spec.ts:20:1 › C06 opening UI posts only its reviewed version and reports/ledger drill down to real journal IDs 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('combobox', { name: 'Dataset mô phỏng', exact: true })
+
+
+       8 | test.afterAll(async()=>close?.());
+       9 | test.beforeEach(({page})=>page.setDefaultTimeout(15000));
+    > 10 | async function choose(page:Page,name:string,value:string){await page.getByRole('combobox',{name,exact:true}).click();await page.getByRole('option',{name:value,exact:true}).click();}
+         |                                                                                                              ^
+      11 | async function fresh(page:Page){await page.goto(url+'/s/shop-demo/finance/opening-balances');await expect(page.getByRole('heading',{name:'Mở sổ kế toán',exact:true})).toBeVisible();await openDemoControls(page);await choose(page,'Dataset mô phỏng','Shop mở sổ mới (tổng hợp)');await expect(page.getByRole('status').filter({hasText:'Đã tải shop tổng hợp'})).toBeVisible();}
+      12 | async function write(page:Page,path:string,body:unknown,method='POST',version?:number){return page.evaluate(async({path,body,method,version})=>{const session=(await (await fetch('/api/v2/session')).json()).data;const r=await fetch('/api/v2/shops/shop-demo/'+path,{method,headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrfToken,'Idempotency-Key':crypto.randomUUID(),...(version?{'If-Match':`"${version}"`}:{})},body:JSON.stringify(body)});return {status:r.status,payload:await r.json()};},{path,body,method,version});}
+      13 | async function openingUI(page:Page){await page.getByRole('button',{name:'Tạo nháp mở sổ',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Nháp mở sổ mới',exact:true});await dialog.getByLabel('Ngày mở sổ',{exact:true}).fill('2026-09-01');await dialog.getByLabel('Lý do mở sổ',{exact:true}).fill('Mở sổ ngân hàng đối chiếu tổng hợp');for(let i=1;i<=2;i++){await dialog.getByRole('button',{name:'Thêm số dư tài khoản',exact:true}).click();await choose(page,`Tài khoản số dư ${i}`,i===1?'112 · Tiền ngân hàng':'411 · Vốn chủ sở hữu');await dialog.getByLabel(`${i===1?'Nợ':'Có'} số dư ${i} (VND)`,{exact:true}).fill('2000000');await dialog.getByLabel(`Diễn giải số dư ${i}`,{exact:true}).fill('Số dư mở sổ đã đối chiếu');}const response=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/opening-balances'));await dialog.getByRole('button',{name:'Lưu nháp mở sổ',exact:true}).click();const r=await response;expect(r.status()).toBe(201);const opening=(await r.json()).data;await expect(dialog).not.toBeVisible();return opening;}
+        at choose (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-finance-management.spec.ts:10:110)
+        at fresh (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-finance-management.spec.ts:11:217)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-finance-management.spec.ts:21:5
+
+    Error Context: test-results\playwright-80736-997a9ef8-c08f-490f-8eee-923d5840558f\ui-finance-management-C06--640c9-ll-down-to-real-journal-IDs-chromium\error-context.md
+
+    Error Context: test-results\playwright-80736-997a9ef8-c08f-490f-8eee-923d5840558f\ui-finance-management-C06--640c9-ll-down-to-real-journal-IDs-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-80736-997a9ef8-c08f-490f-8eee-923d5840558f\ui-finance-management-C06--640c9-ll-down-to-real-journal-IDs-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-80736-997a9ef8-c08f-490f-8eee-923d5840558f\ui-finance-management-C06--640c9-ll-down-to-real-journal-IDs-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:87432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[14/16] [chromium] › tests\ui-finance-management.spec.ts:26:1 › C06 opening conflict retains whole lists and reconciles two changing server versions without forced retry

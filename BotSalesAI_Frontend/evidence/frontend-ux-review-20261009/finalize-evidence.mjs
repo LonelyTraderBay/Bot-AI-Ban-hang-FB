@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { validateUiEvidence } from '../../scripts/validate-ui-evidence.mjs';
+const dir=import.meta.dirname, root=path.resolve(dir,'../..'), repo=path.dirname(root);
+const read=f=>JSON.parse(fs.readFileSync(path.join(dir,f),'utf8'));
+const sha=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+const source=read('source-review.json'), manifest=JSON.parse(fs.readFileSync(path.join(repo,source.priorEvidence.path),'utf8'));
+const errors=validateUiEvidence(manifest,repo);
+const stale=Object.entries(source.sourceFingerprints).filter(([file,expected])=>sha(path.join(repo,file))!==expected).map(([file])=>file);
+const viewport=read('viewport-review.json'), findings=read('findings.json').findings;
+if(errors.length||stale.length||new Set(viewport.map(x=>x.route)).size!==54||findings.length!==15)throw Error(JSON.stringify({errors,stale,routes:viewport.length,findings:findings.length}));
+fs.writeFileSync(path.join(dir,'freshness-final.json'),JSON.stringify({recordedAt:new Date().toISOString(),sourceIdentity:manifest.sourceIdentity,sourceFingerprintsChecked:Object.keys(source.sourceFingerprints).length,sourceChangesDuringAudit:stale,priorEvidenceErrors:errors,routeCount:54,moduleCount:16,visualReview:'54 default viewport images viewed; below-fold content reviewed through DOM/source, not all conditional states',priorEvidenceCheckCount:manifest.checks.length,freshTestsRerun:false,freshMobileVerified:false,observedViewport:{width:1280,height:720},productCodeEdited:false,canonicalPlanEdited:false},null,2)+'\n');
+const files=fs.readdirSync(dir).filter(f=>f!=='MANIFEST.json').sort().map(f=>({file:f,sha256:sha(path.join(dir,f)),bytes:fs.statSync(path.join(dir,f)).size}));
+fs.writeFileSync(path.join(dir,'MANIFEST.json'),JSON.stringify({scope:'Read-only UI/UX audit artifacts; not a release gate manifest',recordedAt:new Date().toISOString(),canonicalVisualProof:'viewport-*.png and interaction records with screenshotMode=viewport',excludedVisualProof:'live-*,stable-*,mobile-* images and initial fullPage interaction captures',files},null,2)+'\n');
+console.log(JSON.stringify({priorEvidenceFresh:errors.length===0,sourceFingerprintsChecked:Object.keys(source.sourceFingerprints).length,routes:54,findings:findings.length,artifactFiles:files.length}));

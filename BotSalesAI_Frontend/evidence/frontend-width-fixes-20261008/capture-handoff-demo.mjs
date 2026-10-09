@@ -1,0 +1,33 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {chromium, expect} from '@playwright/test';
+const output = import.meta.dirname, frontend = path.resolve(output, '../..'), repository = path.dirname(frontend);
+const hash = value => crypto.createHash('sha256').update(value).digest('hex');
+const relative = file => path.relative(repository, file).replaceAll('\\', '/');
+const origin = 'http://127.0.0.1:4173';
+const expectedHtml = hash(fs.readFileSync(path.join(frontend, 'apps/web/dist-demo/index.html')));
+const response = await fetch(origin + '/s/shop-demo/integrations/ai');
+const servedHtml = hash(Buffer.from(await response.arrayBuffer()));
+if (!response.ok || servedHtml !== expectedHtml) throw new Error('User preview must serve the current compiled demo HTML');
+const browser = await chromium.launch({headless: true});
+let record;
+try {
+    const context = await browser.newContext({viewport: {width: 1920, height: 1080}});
+    const page = await context.newPage(), pageErrors = [];
+    page.on('pageerror', error => pageErrors.push(error.message));
+    await page.goto(origin + '/s/shop-demo/integrations/ai');
+    await expect(page.locator('main h1')).toHaveText('Nhà cung cấp AI');
+    await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
+    await page.evaluate(async () => {await document.fonts.ready; window.scrollTo(0, 0);});
+    const geometry = await page.locator('main [data-ui-composition="section-grid"]').evaluate(grid => ({width: grid.getBoundingClientRect().width, cards: [...grid.children].map(card => ({width: card.getBoundingClientRect().width})), documentWidth: document.documentElement.scrollWidth}));
+    expect(geometry.cards).toHaveLength(1);
+    expect(geometry.cards[0].width).toBeCloseTo(geometry.width, 0);
+    expect(geometry.documentWidth).toBe(1920);
+    expect(pageErrors).toEqual([]);
+    const file = path.join(output, 'R30-handoff-current-1920.png');
+    await page.screenshot({path: file, fullPage: true});
+    record = {capturedAt: new Date().toISOString(), status: 'PASS', method: 'Actual current compiled demo served at the user preview origin; clean page at scrollTop0, no DOM style injection.', url: page.url(), expectedHtml, servedHtml, geometry, pageErrors, screenshot: {path: relative(file), sha256: hash(fs.readFileSync(file))}};
+} finally {await browser.close();}
+fs.writeFileSync(path.join(output, 'handoff-demo-current.json'), JSON.stringify(record, null, 2) + '\n');
+console.log(JSON.stringify(record));

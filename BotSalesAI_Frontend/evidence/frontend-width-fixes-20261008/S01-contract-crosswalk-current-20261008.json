@@ -1,0 +1,2065 @@
+{
+  "taskId": "FE005",
+  "stepId": "S01",
+  "result": "PASS",
+  "checkedAt": "2026-10-08T15:20:09.649Z",
+  "scope": "Static source-to-canonical OpenAPI/route/permission/event/DTO crosswalk; no backend, staging, provider, or hosted CI execution.",
+  "canonicalInputHashes": {
+    "openapi": "d88a70957a9de36402ff5ac0cb757a2f1c496519c7e1fd2e28df17e867f78c7c",
+    "routes": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2",
+    "permissions": "58461beb5d4ad1a19107cdf01361e2a649a41dea611272d84ee79fcd376d55d1",
+    "events": "7f2071f90cc925b4c32cb6d6de0ef99f8cc14b618c0e04224f024f3aa83c21ee",
+    "operationIndex": "6927578fa9cad2799d1e4ab8c27b2ed010c4e83227c8576f5fb0802a37c37d99"
+  },
+  "openapi": {
+    "version": "2.0.0",
+    "pathEntries": 167,
+    "operations": 210,
+    "componentSchemas": 283,
+    "apiBasePath": "/api/v2"
+  },
+  "operationIndex": {
+    "entries": 210,
+    "exactIdMethodPathPermissionMatches": 210
+  },
+  "frontendCallSites": {
+    "sourceFiles": 71,
+    "literalOperationCalls": 222,
+    "uniqueOperationIds": 186,
+    "unresolved": [],
+    "dynamicCallsInModules": []
+  },
+  "usedOperations": [
+    {
+      "operationId": "acknowledgeNotification",
+      "method": "POST",
+      "path": "/shops/{shopId}/notifications/{resourceId}/acknowledge",
+      "permission": "operations.claim",
+      "callSites": 1,
+      "modules": [
+        "notifications"
+      ]
+    },
+    {
+      "operationId": "addInternalNote",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/notes",
+      "permission": "conversations.reply",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "archiveCategory",
+      "method": "POST",
+      "path": "/shops/{shopId}/categories/{categoryId}/archive",
+      "permission": "catalog.write",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "archiveProduct",
+      "method": "POST",
+      "path": "/shops/{shopId}/products/{productId}/archive",
+      "permission": "catalog.write",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "assignConversation",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/assign",
+      "permission": "conversations.assign",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "beginChannelConnect",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/channels/connect",
+      "permission": "integrations.manage",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "beginLogin",
+      "method": "POST",
+      "path": "/auth/start",
+      "permission": null,
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "beginTelegramPairing",
+      "method": "POST",
+      "path": "/shops/{shopId}/telegram-pairing",
+      "permission": "notifications.manage",
+      "callSites": 1,
+      "modules": [
+        "notifications"
+      ]
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/cancel",
+      "permission": "orders.write",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "cancelPurchaseOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}/cancel",
+      "permission": "procurement.write",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "checkChannelHealth",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/channels/{channelId}/check",
+      "permission": "integrations.manage",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "claimWorkItem",
+      "method": "POST",
+      "path": "/shops/{shopId}/work-items/{resourceId}/claim",
+      "permission": "operations.claim",
+      "callSites": 2,
+      "modules": [
+        "fulfillment",
+        "operations"
+      ]
+    },
+    {
+      "operationId": "closeAccountingPeriod",
+      "method": "POST",
+      "path": "/shops/{shopId}/periods/{resourceId}/close",
+      "permission": "finance.close",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "commitProductImport",
+      "method": "POST",
+      "path": "/shops/{shopId}/imports/{jobId}/commit",
+      "permission": "catalog.import",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "confirmOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/confirm",
+      "permission": "orders.confirm",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "confirmPurchaseOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}/confirm",
+      "permission": "procurement.write",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "controlAutomation",
+      "method": "POST",
+      "path": "/shops/{shopId}/automation-control",
+      "permission": "bot.pause",
+      "callSites": 2,
+      "modules": [
+        "bot",
+        "operations"
+      ]
+    },
+    {
+      "operationId": "createAIConnection",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/ai",
+      "permission": "integrations.manage",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "createCategory",
+      "method": "POST",
+      "path": "/shops/{shopId}/categories",
+      "permission": "catalog.write",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "createCustomer",
+      "method": "POST",
+      "path": "/shops/{shopId}/customers",
+      "permission": "customers.write",
+      "callSites": 1,
+      "modules": [
+        "customers"
+      ]
+    },
+    {
+      "operationId": "createDevice",
+      "method": "POST",
+      "path": "/shops/{shopId}/devices",
+      "permission": "notifications.manage",
+      "callSites": 1,
+      "modules": [
+        "notifications"
+      ]
+    },
+    {
+      "operationId": "createEvaluation",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/evaluations",
+      "permission": "bot.configure",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "createExport",
+      "method": "POST",
+      "path": "/shops/{shopId}/exports",
+      "permission": "reports.export",
+      "callSites": 1,
+      "modules": [
+        "reports"
+      ]
+    },
+    {
+      "operationId": "createFeedback",
+      "method": "POST",
+      "path": "/shops/{shopId}/feedback",
+      "permission": "conversations.read",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "createFinanceEntry",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/entries",
+      "permission": "finance.post",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "createGoodsReceipt",
+      "method": "POST",
+      "path": "/shops/{shopId}/goods-receipts",
+      "permission": "procurement.write",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "createInventoryAdjustment",
+      "method": "POST",
+      "path": "/shops/{shopId}/inventory/adjustments",
+      "permission": "inventory.adjust",
+      "callSites": 1,
+      "modules": [
+        "inventory"
+      ]
+    },
+    {
+      "operationId": "createJournal",
+      "method": "POST",
+      "path": "/shops/{shopId}/journals",
+      "permission": "finance.post",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "createKnowledge",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge",
+      "permission": "knowledge.write",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "createKnowledgeRevision",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions",
+      "permission": "knowledge.write",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "createOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders",
+      "permission": "orders.write",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "createPrivacyRequest",
+      "method": "POST",
+      "path": "/shops/{shopId}/privacy/requests",
+      "permission": "privacy.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "createProduct",
+      "method": "POST",
+      "path": "/shops/{shopId}/products",
+      "permission": "catalog.write",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "createProductImport",
+      "method": "POST",
+      "path": "/shops/{shopId}/imports",
+      "permission": "catalog.import",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "createPurchaseOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders",
+      "permission": "procurement.write",
+      "callSites": 2,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "createReorderRule",
+      "method": "POST",
+      "path": "/shops/{shopId}/reorder-rules",
+      "permission": "procurement.manage",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "createReturnCase",
+      "method": "POST",
+      "path": "/shops/{shopId}/returns",
+      "permission": "orders.return",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "createServiceCase",
+      "method": "POST",
+      "path": "/shops/{shopId}/service-cases",
+      "permission": "customers.write",
+      "callSites": 1,
+      "modules": [
+        "customers"
+      ]
+    },
+    {
+      "operationId": "createShipment",
+      "method": "POST",
+      "path": "/shops/{shopId}/shipments",
+      "permission": "fulfillment.write",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "createShop",
+      "method": "POST",
+      "path": "/shops",
+      "permission": null,
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "createSupplier",
+      "method": "POST",
+      "path": "/shops/{shopId}/suppliers",
+      "permission": "procurement.write",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "createSupplierOffer",
+      "method": "POST",
+      "path": "/shops/{shopId}/supplier-offers",
+      "permission": "procurement.write",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "decideApproval",
+      "method": "POST",
+      "path": "/shops/{shopId}/approvals/{resourceId}/decision",
+      "permission": "approvals.decide",
+      "callSites": 1,
+      "modules": [
+        "operations"
+      ]
+    },
+    {
+      "operationId": "deleteAIConnection",
+      "method": "DELETE",
+      "path": "/shops/{shopId}/integrations/ai/{connectionId}",
+      "permission": "integrations.manage",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "disconnectChannel",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/channels/{channelId}/disconnect",
+      "permission": "integrations.manage",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "evaluateReorder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-suggestions/evaluate",
+      "permission": "procurement.write",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "getApproval",
+      "method": "GET",
+      "path": "/shops/{shopId}/approvals/{resourceId}",
+      "permission": "approvals.read",
+      "callSites": 1,
+      "modules": [
+        "operations"
+      ]
+    },
+    {
+      "operationId": "getBankTransaction",
+      "method": "GET",
+      "path": "/shops/{shopId}/bank-transactions/{resourceId}",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "getBotConfig",
+      "method": "GET",
+      "path": "/shops/{shopId}/bot/config",
+      "permission": "bot.read",
+      "callSites": 4,
+      "modules": [
+        "bot",
+        "dashboard"
+      ]
+    },
+    {
+      "operationId": "getCashflow",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/cashflow",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "getCategory",
+      "method": "GET",
+      "path": "/shops/{shopId}/categories/{categoryId}",
+      "permission": "catalog.read",
+      "callSites": 3,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "getCommand",
+      "method": "GET",
+      "path": "/shops/{shopId}/commands/{commandId}",
+      "permission": "jobs.read",
+      "callSites": 2,
+      "modules": [
+        "app",
+        "shared"
+      ]
+    },
+    {
+      "operationId": "getConversation",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations/{conversationId}",
+      "permission": "conversations.read",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "getCsrfToken",
+      "method": "GET",
+      "path": "/auth/csrf",
+      "permission": null,
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "getCustomer",
+      "method": "GET",
+      "path": "/shops/{shopId}/customers/{customerId}",
+      "permission": "customers.read",
+      "callSites": 2,
+      "modules": [
+        "customers",
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "getDashboard",
+      "method": "GET",
+      "path": "/shops/{shopId}/dashboard",
+      "permission": "dashboard.read",
+      "callSites": 1,
+      "modules": [
+        "dashboard"
+      ]
+    },
+    {
+      "operationId": "getFile",
+      "method": "GET",
+      "path": "/shops/{shopId}/uploads/{fileId}",
+      "permission": null,
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "getFinanceEntry",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/entries/{entryId}",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "getGoodsReceipt",
+      "method": "GET",
+      "path": "/shops/{shopId}/goods-receipts/{resourceId}",
+      "permission": "procurement.read",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "getInboxMetadata",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations/metadata",
+      "permission": "conversations.read",
+      "callSites": 2,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "getJob",
+      "method": "GET",
+      "path": "/shops/{shopId}/jobs/{jobId}",
+      "permission": "jobs.read",
+      "callSites": 2,
+      "modules": [
+        "catalog",
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "getJournal",
+      "method": "GET",
+      "path": "/shops/{shopId}/journals/{resourceId}",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "getKnowledge",
+      "method": "GET",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}",
+      "permission": "knowledge.read",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "getKnowledgeRevision",
+      "method": "GET",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions/{revisionId}",
+      "permission": "knowledge.read",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "getMarketingSummary",
+      "method": "GET",
+      "path": "/shops/{shopId}/marketing-summary",
+      "permission": "reports.read",
+      "callSites": 1,
+      "modules": [
+        "reports"
+      ]
+    },
+    {
+      "operationId": "getNotificationPolicy",
+      "method": "GET",
+      "path": "/shops/{shopId}/notification-policy",
+      "permission": "notifications.read",
+      "callSites": 1,
+      "modules": [
+        "notifications"
+      ]
+    },
+    {
+      "operationId": "getOperationsSummary",
+      "method": "GET",
+      "path": "/shops/{shopId}/operations-summary",
+      "permission": "operations.read",
+      "callSites": 3,
+      "modules": [
+        "dashboard",
+        "operations"
+      ]
+    },
+    {
+      "operationId": "getOrder",
+      "method": "GET",
+      "path": "/shops/{shopId}/orders/{orderId}",
+      "permission": "orders.read",
+      "callSites": 4,
+      "modules": [
+        "fulfillment",
+        "orders"
+      ]
+    },
+    {
+      "operationId": "getPrepJob",
+      "method": "GET",
+      "path": "/shops/{shopId}/prep-jobs/{resourceId}",
+      "permission": "fulfillment.read",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "getPrivacyPolicy",
+      "method": "GET",
+      "path": "/shops/{shopId}/privacy/policy",
+      "permission": "privacy.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "getProduct",
+      "method": "GET",
+      "path": "/shops/{shopId}/products/{productId}",
+      "permission": "catalog.read",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "getProfitLoss",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/profit-loss",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "getProviderCatalog",
+      "method": "GET",
+      "path": "/shops/{shopId}/integrations/ai/catalog",
+      "permission": "integrations.read",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "getPurchaseOrder",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}",
+      "permission": "procurement.read",
+      "callSites": 2,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "getReportSummary",
+      "method": "GET",
+      "path": "/shops/{shopId}/reports",
+      "permission": "reports.read",
+      "callSites": 1,
+      "modules": [
+        "reports"
+      ]
+    },
+    {
+      "operationId": "getReturnCase",
+      "method": "GET",
+      "path": "/shops/{shopId}/returns/{resourceId}",
+      "permission": "orders.read",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "getSession",
+      "method": "GET",
+      "path": "/session",
+      "permission": null,
+      "callSites": 1,
+      "modules": [
+        "app"
+      ]
+    },
+    {
+      "operationId": "getShipment",
+      "method": "GET",
+      "path": "/shops/{shopId}/shipments/{resourceId}",
+      "permission": "fulfillment.read",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "getShop",
+      "method": "GET",
+      "path": "/shops/{shopId}",
+      "permission": null,
+      "callSites": 2,
+      "modules": [
+        "app",
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "getSupplier",
+      "method": "GET",
+      "path": "/shops/{shopId}/suppliers/{resourceId}",
+      "permission": "procurement.read",
+      "callSites": 2,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "getSupplierOffer",
+      "method": "GET",
+      "path": "/shops/{shopId}/supplier-offers/{resourceId}",
+      "permission": "procurement.read",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "getWorkItem",
+      "method": "GET",
+      "path": "/shops/{shopId}/work-items/{resourceId}",
+      "permission": "operations.read",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "handoverShipment",
+      "method": "POST",
+      "path": "/shops/{shopId}/shipments/{resourceId}/handover",
+      "permission": "fulfillment.handover",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "importBankStatement",
+      "method": "POST",
+      "path": "/shops/{shopId}/bank-transactions/import",
+      "permission": "finance.reconcile",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "importCODStatement",
+      "method": "POST",
+      "path": "/shops/{shopId}/cod-settlements/import",
+      "permission": "finance.reconcile",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "inspectReturn",
+      "method": "POST",
+      "path": "/shops/{shopId}/returns/{resourceId}/inspect",
+      "permission": "inventory.adjust",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "inviteMember",
+      "method": "POST",
+      "path": "/shops/{shopId}/members",
+      "permission": "members.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "listAccountingPeriods",
+      "method": "GET",
+      "path": "/shops/{shopId}/periods",
+      "permission": "finance.read",
+      "callSites": 2,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "listAgentRoles",
+      "method": "GET",
+      "path": "/shops/{shopId}/agent-roles",
+      "permission": "bot.read",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "listAIConnections",
+      "method": "GET",
+      "path": "/shops/{shopId}/integrations/ai",
+      "permission": "integrations.read",
+      "callSites": 2,
+      "modules": [
+        "bot",
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "listApprovals",
+      "method": "GET",
+      "path": "/shops/{shopId}/approvals",
+      "permission": "approvals.read",
+      "callSites": 1,
+      "modules": [
+        "operations"
+      ]
+    },
+    {
+      "operationId": "listAuditEvents",
+      "method": "GET",
+      "path": "/shops/{shopId}/audit",
+      "permission": "audit.read",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "listBankTransactions",
+      "method": "GET",
+      "path": "/shops/{shopId}/bank-transactions",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "listBotRevisions",
+      "method": "GET",
+      "path": "/shops/{shopId}/bot/revisions",
+      "permission": "bot.read",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "listBudgetPolicies",
+      "method": "GET",
+      "path": "/shops/{shopId}/budget-policies",
+      "permission": "operations.read",
+      "callSites": 2,
+      "modules": [
+        "bot",
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "listCategories",
+      "method": "GET",
+      "path": "/shops/{shopId}/categories",
+      "permission": "catalog.read",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "listChannels",
+      "method": "GET",
+      "path": "/shops/{shopId}/integrations/channels",
+      "permission": "integrations.read",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "listCODSettlements",
+      "method": "GET",
+      "path": "/shops/{shopId}/cod-settlements",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "listConversations",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations",
+      "permission": "conversations.read",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "listCustomers",
+      "method": "GET",
+      "path": "/shops/{shopId}/customers",
+      "permission": "customers.read",
+      "callSites": 1,
+      "modules": [
+        "customers"
+      ]
+    },
+    {
+      "operationId": "listDebtItems",
+      "method": "GET",
+      "path": "/shops/{shopId}/debts",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "listDigests",
+      "method": "GET",
+      "path": "/shops/{shopId}/digests",
+      "permission": "operations.read",
+      "callSites": 1,
+      "modules": [
+        "operations"
+      ]
+    },
+    {
+      "operationId": "listEvaluations",
+      "method": "GET",
+      "path": "/shops/{shopId}/bot/evaluations",
+      "permission": "bot.read",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "listFeedback",
+      "method": "GET",
+      "path": "/shops/{shopId}/feedback",
+      "permission": "knowledge.read",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "listFinanceEntries",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/entries",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "listGoodsReceipts",
+      "method": "GET",
+      "path": "/shops/{shopId}/goods-receipts",
+      "permission": "procurement.read",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "listJobs",
+      "method": "GET",
+      "path": "/shops/{shopId}/jobs",
+      "permission": "jobs.read",
+      "callSites": 2,
+      "modules": [
+        "catalog",
+        "reports"
+      ]
+    },
+    {
+      "operationId": "listJournals",
+      "method": "GET",
+      "path": "/shops/{shopId}/journals",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "listKnowledge",
+      "method": "GET",
+      "path": "/shops/{shopId}/knowledge",
+      "permission": "knowledge.read",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "listKnowledgeRevisions",
+      "method": "GET",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions",
+      "permission": "knowledge.read",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "listMembers",
+      "method": "GET",
+      "path": "/shops/{shopId}/members",
+      "permission": "members.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "listMessages",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations/{conversationId}/messages",
+      "permission": "conversations.read",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "listNotifications",
+      "method": "GET",
+      "path": "/shops/{shopId}/notifications",
+      "permission": "notifications.read",
+      "callSites": 1,
+      "modules": [
+        "notifications"
+      ]
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "path": "/shops/{shopId}/orders",
+      "permission": "orders.read",
+      "callSites": 3,
+      "modules": [
+        "customers",
+        "dashboard",
+        "orders"
+      ]
+    },
+    {
+      "operationId": "listPrepJobs",
+      "method": "GET",
+      "path": "/shops/{shopId}/prep-jobs",
+      "permission": "fulfillment.read",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "listPrivacyRequests",
+      "method": "GET",
+      "path": "/shops/{shopId}/privacy/requests",
+      "permission": "privacy.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "path": "/shops/{shopId}/products",
+      "permission": "catalog.read",
+      "callSites": 3,
+      "modules": [
+        "catalog",
+        "inbox",
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "listPurchaseOrders",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-orders",
+      "permission": "procurement.read",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "listPurchaseSuggestions",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-suggestions",
+      "permission": "procurement.read",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "listReconciliationCases",
+      "method": "GET",
+      "path": "/shops/{shopId}/reconciliation-cases",
+      "permission": "finance.read",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "listReorderRules",
+      "method": "GET",
+      "path": "/shops/{shopId}/reorder-rules",
+      "permission": "procurement.read",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "listReturnCases",
+      "method": "GET",
+      "path": "/shops/{shopId}/returns",
+      "permission": "orders.read",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "listServiceCases",
+      "method": "GET",
+      "path": "/shops/{shopId}/service-cases",
+      "permission": "customers.read",
+      "callSites": 2,
+      "modules": [
+        "customers"
+      ]
+    },
+    {
+      "operationId": "listShipments",
+      "method": "GET",
+      "path": "/shops/{shopId}/shipments",
+      "permission": "fulfillment.read",
+      "callSites": 2,
+      "modules": [
+        "customers",
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "listShops",
+      "method": "GET",
+      "path": "/shops",
+      "permission": null,
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "listStockMovements",
+      "method": "GET",
+      "path": "/shops/{shopId}/inventory/movements",
+      "permission": "inventory.read",
+      "callSites": 1,
+      "modules": [
+        "inventory"
+      ]
+    },
+    {
+      "operationId": "listStockSnapshots",
+      "method": "GET",
+      "path": "/shops/{shopId}/inventory",
+      "permission": "inventory.read",
+      "callSites": 3,
+      "modules": [
+        "inbox",
+        "inventory",
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "listSupplierOffers",
+      "method": "GET",
+      "path": "/shops/{shopId}/supplier-offers",
+      "permission": "procurement.read",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "listSuppliers",
+      "method": "GET",
+      "path": "/shops/{shopId}/suppliers",
+      "permission": "procurement.read",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "listWorkItems",
+      "method": "GET",
+      "path": "/shops/{shopId}/work-items",
+      "permission": "operations.read",
+      "callSites": 1,
+      "modules": [
+        "operations"
+      ]
+    },
+    {
+      "operationId": "logout",
+      "method": "POST",
+      "path": "/auth/logout",
+      "permission": null,
+      "callSites": 1,
+      "modules": [
+        "app"
+      ]
+    },
+    {
+      "operationId": "matchCODSettlement",
+      "method": "POST",
+      "path": "/shops/{shopId}/cod-settlements/{resourceId}/match",
+      "permission": "finance.reconcile",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "matchSettlement",
+      "method": "POST",
+      "path": "/shops/{shopId}/reconciliation-cases/{resourceId}/match",
+      "permission": "finance.reconcile",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "packPrepJob",
+      "method": "POST",
+      "path": "/shops/{shopId}/prep-jobs/{resourceId}/pack",
+      "permission": "fulfillment.write",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "pauseBot",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/pause",
+      "permission": "bot.publish",
+      "callSites": 2,
+      "modules": [
+        "bot",
+        "dashboard"
+      ]
+    },
+    {
+      "operationId": "payOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/pay",
+      "permission": "finance.post",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "pickPrepLine",
+      "method": "POST",
+      "path": "/shops/{shopId}/prep-jobs/{resourceId}/pick",
+      "permission": "fulfillment.write",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "postFinanceEntry",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/entries/{entryId}/post",
+      "permission": "finance.post",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "postGoodsReceipt",
+      "method": "POST",
+      "path": "/shops/{shopId}/goods-receipts/{resourceId}/post",
+      "permission": "procurement.receive",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "postJournal",
+      "method": "POST",
+      "path": "/shops/{shopId}/journals/{resourceId}/post",
+      "permission": "finance.post",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "publishBotConfig",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/config/publish",
+      "permission": "bot.publish",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "publishKnowledge",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/publish",
+      "permission": "knowledge.publish",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "quoteOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/quote",
+      "permission": "orders.write",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "reconnectChannel",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/channels/{channelId}/reconnect",
+      "permission": "integrations.manage",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "recordCustomerConfirmation",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/customer-confirmations",
+      "permission": "orders.write",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "recordShipmentEvent",
+      "method": "POST",
+      "path": "/shops/{shopId}/shipments/{resourceId}/events",
+      "permission": "fulfillment.write",
+      "callSites": 1,
+      "modules": [
+        "fulfillment"
+      ]
+    },
+    {
+      "operationId": "refundOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/refund",
+      "permission": "finance.refund",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "releaseConversation",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/release",
+      "permission": "conversations.assign",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "reopenAccountingPeriod",
+      "method": "POST",
+      "path": "/shops/{shopId}/periods/{resourceId}/reopen",
+      "permission": "finance.close",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "requestPurchaseApproval",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}/request-approval",
+      "permission": "procurement.write",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "resolveConversation",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/resolve",
+      "permission": "conversations.assign",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "restoreBotRevision",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/revisions/{revisionId}/restore",
+      "permission": "bot.configure",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "restoreKnowledgeRevision",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions/{revisionId}/restore",
+      "permission": "knowledge.write",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "retireKnowledge",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/retire",
+      "permission": "knowledge.publish",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "reverseFinanceEntry",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/entries/{entryId}/reverse",
+      "permission": "finance.post",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "reverseJournal",
+      "method": "POST",
+      "path": "/shops/{shopId}/journals/{resourceId}/reverse",
+      "permission": "finance.post",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "reviewFeedback",
+      "method": "POST",
+      "path": "/shops/{shopId}/feedback/{feedbackId}/review",
+      "permission": "knowledge.write",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "revokeDevice",
+      "method": "POST",
+      "path": "/shops/{shopId}/devices/{resourceId}/revoke",
+      "permission": "notifications.manage",
+      "callSites": 1,
+      "modules": [
+        "notifications"
+      ]
+    },
+    {
+      "operationId": "revokeMembership",
+      "method": "DELETE",
+      "path": "/shops/{shopId}/members/{memberId}",
+      "permission": "members.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "runPlayground",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/playground",
+      "permission": "bot.configure",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "sendMessage",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/messages",
+      "permission": "conversations.reply",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "sendPurchaseOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}/send",
+      "permission": "procurement.send",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "setServiceCaseStatus",
+      "method": "POST",
+      "path": "/shops/{shopId}/service-cases/{resourceId}/status",
+      "permission": "customers.write",
+      "callSites": 1,
+      "modules": [
+        "customers"
+      ]
+    },
+    {
+      "operationId": "setSupplierStatus",
+      "method": "POST",
+      "path": "/shops/{shopId}/suppliers/{resourceId}/status",
+      "permission": "procurement.manage",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "submitKnowledgeReview",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/submit-review",
+      "permission": "knowledge.write",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "takeoverConversation",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/takeover",
+      "permission": "conversations.assign",
+      "callSites": 1,
+      "modules": [
+        "inbox"
+      ]
+    },
+    {
+      "operationId": "testAIConnection",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/ai/{connectionId}/test",
+      "permission": "integrations.manage",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "testDevice",
+      "method": "POST",
+      "path": "/shops/{shopId}/devices/{resourceId}/test",
+      "permission": "notifications.manage",
+      "callSites": 1,
+      "modules": [
+        "notifications"
+      ]
+    },
+    {
+      "operationId": "updateAgentRole",
+      "method": "PUT",
+      "path": "/shops/{shopId}/agent-roles/{resourceId}",
+      "permission": "bot.configure",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "updateAIConnection",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/integrations/ai/{connectionId}",
+      "permission": "integrations.manage",
+      "callSites": 1,
+      "modules": [
+        "integrations"
+      ]
+    },
+    {
+      "operationId": "updateBotDraft",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/bot/config",
+      "permission": "bot.configure",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "updateBudgetPolicy",
+      "method": "PUT",
+      "path": "/shops/{shopId}/budget-policies/{resourceId}",
+      "permission": "operations.manage",
+      "callSites": 1,
+      "modules": [
+        "bot"
+      ]
+    },
+    {
+      "operationId": "updateCategory",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/categories/{categoryId}",
+      "permission": "catalog.write",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "updateCustomer",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/customers/{customerId}",
+      "permission": "customers.write",
+      "callSites": 1,
+      "modules": [
+        "customers"
+      ]
+    },
+    {
+      "operationId": "updateFinanceEntry",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/finance/entries/{entryId}",
+      "permission": "finance.post",
+      "callSites": 1,
+      "modules": [
+        "finance"
+      ]
+    },
+    {
+      "operationId": "updateKnowledge",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}",
+      "permission": "knowledge.write",
+      "callSites": 1,
+      "modules": [
+        "knowledge"
+      ]
+    },
+    {
+      "operationId": "updateMemberRoles",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/members/{memberId}",
+      "permission": "members.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "updateNotificationPolicy",
+      "method": "PUT",
+      "path": "/shops/{shopId}/notification-policy",
+      "permission": "notifications.manage",
+      "callSites": 1,
+      "modules": [
+        "notifications"
+      ]
+    },
+    {
+      "operationId": "updateOrderDraft",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/orders/{orderId}",
+      "permission": "orders.write",
+      "callSites": 1,
+      "modules": [
+        "orders"
+      ]
+    },
+    {
+      "operationId": "updatePrivacyPolicy",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/privacy/policy",
+      "permission": "privacy.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "updateProduct",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/products/{productId}",
+      "permission": "catalog.write",
+      "callSites": 1,
+      "modules": [
+        "catalog"
+      ]
+    },
+    {
+      "operationId": "updateReorderRule",
+      "method": "PUT",
+      "path": "/shops/{shopId}/reorder-rules/{resourceId}",
+      "permission": "procurement.manage",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "updateShop",
+      "method": "PATCH",
+      "path": "/shops/{shopId}",
+      "permission": "shop.manage",
+      "callSites": 1,
+      "modules": [
+        "workspace"
+      ]
+    },
+    {
+      "operationId": "updateSupplier",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/suppliers/{resourceId}",
+      "permission": "procurement.write",
+      "callSites": 1,
+      "modules": [
+        "procurement"
+      ]
+    },
+    {
+      "operationId": "updateWorkItem",
+      "method": "POST",
+      "path": "/shops/{shopId}/work-items/{resourceId}/actions",
+      "permission": "operations.manage",
+      "callSites": 1,
+      "modules": [
+        "operations"
+      ]
+    },
+    {
+      "operationId": "uploadFile",
+      "method": "POST",
+      "path": "/shops/{shopId}/uploads",
+      "permission": null,
+      "callSites": 4,
+      "modules": [
+        "catalog",
+        "finance",
+        "knowledge"
+      ]
+    }
+  ],
+  "routes": {
+    "canonical": 54,
+    "generated": 54,
+    "referencedOperations": 192,
+    "unresolvedOperations": [],
+    "unresolvedPermissions": []
+  },
+  "permissions": {
+    "canonical": 53,
+    "generated": 53,
+    "referencedByApiOrRoutes": 52,
+    "jsxLiteralReferences": 31,
+    "unresolvedJsx": []
+  },
+  "events": {
+    "schemaId": "urn:botsales:events:2",
+    "eventTypes": [
+      "message.created",
+      "conversation.updated",
+      "inventory.updated",
+      "order.updated",
+      "finance.updated",
+      "job.updated",
+      "command.updated",
+      "knowledge.published",
+      "bot.config.updated",
+      "session.revoked",
+      "resync.required",
+      "work_item.updated",
+      "approval.updated",
+      "notification.updated",
+      "shipment.updated",
+      "purchase.updated",
+      "receipt.updated",
+      "journal.updated",
+      "reconciliation.updated",
+      "agent_role.updated",
+      "budget.updated",
+      "health.updated"
+    ],
+    "count": 22,
+    "requiredEnvelopeFields": [
+      "eventId",
+      "type",
+      "schemaVersion",
+      "shopId",
+      "resourceType",
+      "resourceId",
+      "resourceVersion",
+      "occurredAt",
+      "sequence"
+    ],
+    "scope": "Schema inventory only; no live event stream/backend exercised."
+  },
+  "dtoEvidence": [
+    {
+      "check": "Id remains a string with the canonical runtime pattern",
+      "pass": true
+    },
+    {
+      "check": "Money amount stays Decimal string and currency stays Currency",
+      "pass": true
+    },
+    {
+      "check": "Problem.detail optional/null semantics",
+      "generated": "Problem.detail?: string",
+      "openapiOptional": true,
+      "generatedOptional": true,
+      "openapiNullable": false,
+      "generatedNullable": false,
+      "pass": true
+    },
+    {
+      "check": "Problem.commandId optional/null semantics",
+      "generated": "Problem.commandId?: Id",
+      "openapiOptional": true,
+      "generatedOptional": true,
+      "openapiNullable": false,
+      "generatedNullable": false,
+      "pass": true
+    },
+    {
+      "check": "Command.result optional/null semantics",
+      "generated": "Command.result: (ResourceRef | null)",
+      "openapiOptional": false,
+      "generatedOptional": false,
+      "openapiNullable": true,
+      "generatedNullable": true,
+      "pass": true
+    },
+    {
+      "check": "Product.categoryId optional/null semantics",
+      "generated": "Product.categoryId: (Id | null)",
+      "openapiOptional": false,
+      "generatedOptional": false,
+      "openapiNullable": true,
+      "generatedNullable": true,
+      "pass": true
+    },
+    {
+      "check": "Variant.price optional/null semantics",
+      "generated": "Variant.price: (Money | null)",
+      "openapiOptional": false,
+      "generatedOptional": false,
+      "openapiNullable": true,
+      "generatedNullable": true,
+      "pass": true
+    },
+    {
+      "check": "Customer.phone optional/null semantics",
+      "generated": "Customer.phone: (string | null)",
+      "openapiOptional": false,
+      "generatedOptional": false,
+      "openapiNullable": true,
+      "generatedNullable": true,
+      "pass": true
+    }
+  ],
+  "generatedArtifacts": {
+    "operationIds": 210,
+    "permissionIds": 53,
+    "componentSchemas": 283
+  },
+  "sourceChecker": {
+    "status": "PASS",
+    "files": 71,
+    "operationCalls": 222,
+    "routes": 54,
+    "issues": [],
+    "preExistingReportRestoredByteForByte": true
+  },
+  "contractLimits": [
+    {
+      "finding": "listServiceCases has no customerId query parameter in canonical OpenAPI",
+      "observedQueryParameters": []
+    },
+    {
+      "finding": "getCashflow requires from, to, and timezone; frontend must not invent a reporting period",
+      "requiredQueryParameters": [
+        "from",
+        "to",
+        "timezone"
+      ]
+    },
+    {
+      "finding": "No contract or endpoint was added by this crosswalk."
+    }
+  ],
+  "gaps": []
+}

@@ -1,0 +1,108 @@
+
+[WebServer] (node:35036) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:14136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/8] [chromium] › tests\ui-ux-completion.spec.ts:108:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus
+
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-60172-d703f205-50e4-42ce-b45f-2a295c533d5f\deps\react-dom_client.js?v=0ccaabd9 as it exceeds the max of 500KB.
+  1) [chromium] › tests\ui-ux-completion.spec.ts:108:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected: "Duyệt phản hồi AI · BotSales AI"
+    Received: "Đánh giá và phản hồi · BotSales AI"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 5000ms
+        - locator resolved to <html lang="vi">…</html>
+        - unexpected value "BotSales AI — Graphite Gold"
+        12 × locator resolved to <html lang="vi">…</html>
+           - unexpected value "Đánh giá và phản hồi · BotSales AI"
+
+
+      120 |  await expect(page.getByRole('link',{name:'Sản phẩm',exact:true})).toBeVisible();
+      121 |  await page.goto(url+'/s/shop-demo/knowledge/review');
+    > 122 |  await expect(page).toHaveTitle('Duyệt phản hồi AI · BotSales AI');
+          |                     ^
+      123 |  await page.goto(url+'/unknown-path');await expect(page).toHaveTitle('Không tìm thấy trang · BotSales AI');
+      124 | });
+      125 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-ux-completion.spec.ts:122:21
+
+    Error Context: test-results\playwright-14136-7c177f56-2291-4404-8a56-e8ba8cd21e59\ui-ux-completion-UX07-titl-d9ee8-pty-state-clears-with-focus-chromium\error-context.md
+
+    Error Context: test-results\playwright-14136-7c177f56-2291-4404-8a56-e8ba8cd21e59\ui-ux-completion-UX07-titl-d9ee8-pty-state-clears-with-focus-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-14136-7c177f56-2291-4404-8a56-e8ba8cd21e59\ui-ux-completion-UX07-titl-d9ee8-pty-state-clears-with-focus-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-14136-7c177f56-2291-4404-8a56-e8ba8cd21e59\ui-ux-completion-UX07-titl-d9ee8-pty-state-clears-with-focus-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:95936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/8] [chromium] › tests\ui-ux-completion.spec.ts:126:1 › UX10 multi-table pages have distinct business names
+[3/8] [chromium] › tests\ui-ux-completion.spec.ts:136:1 › UX06 AI capability names and states are readable in Vietnamese
+[4/8] [chromium] › tests\ui-ux-completion.spec.ts:143:1 › UX15 detail captions reflow without splitting short words across all required viewports
+
+(node:8868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[5/8] [firefox] › tests\ui-ux-completion.spec.ts:108:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus
+  2) [firefox] › tests\ui-ux-completion.spec.ts:108:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus 
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected: "Duyệt phản hồi AI · BotSales AI"
+    Received: "Đánh giá và phản hồi · BotSales AI"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 5000ms
+        - locator resolved to <html lang="vi">…</html>
+        - unexpected value "BotSales AI — Graphite Gold"
+        12 × locator resolved to <html lang="vi">…</html>
+           - unexpected value "Đánh giá và phản hồi · BotSales AI"
+
+
+      120 |  await expect(page.getByRole('link',{name:'Sản phẩm',exact:true})).toBeVisible();
+      121 |  await page.goto(url+'/s/shop-demo/knowledge/review');
+    > 122 |  await expect(page).toHaveTitle('Đánh giá và phản hồi · BotSales AI');
+          |                     ^
+      123 |  await page.goto(url+'/unknown-path');await expect(page).toHaveTitle('Không tìm thấy trang · BotSales AI');
+      124 | });
+      125 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-ux-completion.spec.ts:122:21
+
+    Error Context: test-results\playwright-8868-3f853f98-06ed-4107-b6b7-9b6fdb1c535d\ui-ux-completion-UX07-titl-d9ee8-pty-state-clears-with-focus-firefox\error-context.md
+
+    Error Context: test-results\playwright-8868-3f853f98-06ed-4107-b6b7-9b6fdb1c535d\ui-ux-completion-UX07-titl-d9ee8-pty-state-clears-with-focus-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-8868-3f853f98-06ed-4107-b6b7-9b6fdb1c535d\ui-ux-completion-UX07-titl-d9ee8-pty-state-clears-with-focus-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-8868-3f853f98-06ed-4107-b6b7-9b6fdb1c535d\ui-ux-completion-UX07-titl-d9ee8-pty-state-clears-with-focus-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:63384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[6/8] [firefox] › tests\ui-ux-completion.spec.ts:126:1 › UX10 multi-table pages have distinct business names
+[7/8] [firefox] › tests\ui-ux-completion.spec.ts:136:1 › UX06 AI capability names and states are readable in Vietnamese
+[8/8] [firefox] › tests\ui-ux-completion.spec.ts:143:1 › UX15 detail captions reflow without splitting short words across all required viewports

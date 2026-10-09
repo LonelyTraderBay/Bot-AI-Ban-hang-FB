@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:botsales:events:2",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "message.created",
+        "conversation.updated",
+        "inventory.updated",
+        "order.updated",
+        "finance.updated",
+        "job.updated",
+        "command.updated",
+        "knowledge.published",
+        "bot.config.updated",
+        "session.revoked",
+        "resync.required",
+        "work_item.updated",
+        "approval.updated",
+        "notification.updated",
+        "shipment.updated",
+        "purchase.updated",
+        "receipt.updated",
+        "journal.updated",
+        "reconciliation.updated",
+        "agent_role.updated",
+        "budget.updated",
+        "health.updated",
+        "warehouse.updated",
+        "customer_address.updated",
+        "account.updated"
+      ]
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "shopId": {
+      "$ref": "#/$defs/Id"
+    },
+    "resourceType": {
+      "type": "string"
+    },
+    "resourceId": {
+      "$ref": "#/$defs/Id"
+    },
+    "resourceVersion": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "occurredAt": {
+      "$ref": "#/$defs/DateTime"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "eventId",
+    "type",
+    "schemaVersion",
+    "shopId",
+    "resourceType",
+    "resourceId",
+    "resourceVersion",
+    "occurredAt",
+    "sequence"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "Id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "DateTime": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

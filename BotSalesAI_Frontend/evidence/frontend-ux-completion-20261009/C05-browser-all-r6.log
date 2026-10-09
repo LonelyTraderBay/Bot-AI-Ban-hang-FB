@@ -1,0 +1,167 @@
+
+[WebServer] (node:80104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 172 tests using 1 worker
+
+(node:40436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/172] [chromium] › tests\fe011.spec.ts:37:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-60656-6a6af226-771e-44d8-8dde-9f3bc5211e51\deps\react-dom_client.js?v=ed568fd6 as it exceeds the max of 500KB.
+
+[2/172] [chromium] › tests\fe011.spec.ts:56:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+[3/172] [chromium] › tests\fe011.spec.ts:95:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+[4/172] [chromium] › tests\fe011.spec.ts:123:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+[5/172] [chromium] › tests\fe011.spec.ts:139:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[6/172] [chromium] › tests\fe011.spec.ts:157:1 › FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source
+[7/172] [chromium] › tests\fe011.spec.ts:185:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+[8/172] [chromium] › tests\fe011.spec.ts:208:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+[9/172] [chromium] › tests\fe012.spec.ts:37:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[10/172] [chromium] › tests\fe012.spec.ts:95:1 › FE012 canonical customer address choice completes the mock order flow with a versioned snapshot
+[11/172] [chromium] › tests\fe012.spec.ts:124:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[12/172] [chromium] › tests\fe012.spec.ts:184:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+[13/172] [chromium] › tests\fe012.spec.ts:201:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+[14/172] [chromium] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[15/172] [chromium] › tests\fe012.spec.ts:259:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[16/172] [chromium] › tests\fe012.spec.ts:279:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[17/172] [chromium] › tests\fe012.spec.ts:303:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[18/172] [chromium] › tests\fe012.spec.ts:356:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[19/172] [chromium] › tests\fe012.spec.ts:363:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[20/172] [chromium] › tests\fe014.spec.ts:27:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent
+[21/172] [chromium] › tests\fe014.spec.ts:79:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers
+[22/172] [chromium] › tests\fe014.spec.ts:97:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+[23/172] [chromium] › tests\fe014.spec.ts:156:1 › FE014.S03 auto-send cannot be configured without an enabled procurement budget
+[24/172] [chromium] › tests\fe014.spec.ts:169:1 › FE014.S03 manager without procurement.receive cannot open receipt actions
+  1) [chromium] › tests\fe014.spec.ts:169:1 › FE014.S03 manager without procurement.receive cannot open receipt actions 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true })
+
+
+      183 |     await expect(receipt).toBeVisible();
+      184 |     await chooseOption(page, 'Vai trò mô phỏng', 'manager');
+    > 185 |     await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('manager', { exact: true })).toBeVisible();
+          |                                                                                                                    ^
+      186 |     await expect(receipt.getByRole('button', { name: 'Xem / ghi nhận phiếu' })).toHaveCount(0);
+      187 | });
+      188 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe014.spec.ts:185:116
+
+    Error Context: test-results\playwright-40436-d6744e98-2402-4ad7-943f-cc0d4a951e82\fe014-FE014-S03-manager-wi-b4b72-cannot-open-receipt-actions-chromium\error-context.md
+
+    Error Context: test-results\playwright-40436-d6744e98-2402-4ad7-943f-cc0d4a951e82\fe014-FE014-S03-manager-wi-b4b72-cannot-open-receipt-actions-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-40436-d6744e98-2402-4ad7-943f-cc0d4a951e82\fe014-FE014-S03-manager-wi-b4b72-cannot-open-receipt-actions-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-40436-d6744e98-2402-4ad7-943f-cc0d4a951e82\fe014-FE014-S03-manager-wi-b4b72-cannot-open-receipt-actions-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:83588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[25/172] [chromium] › tests\fe014.spec.ts:189:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once
+[26/172] [chromium] › tests\fe014.spec.ts:260:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals
+[27/172] [chromium] › tests\fe015.spec.ts:52:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates
+[28/172] [chromium] › tests\fe015.spec.ts:98:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data
+[29/172] [chromium] › tests\fe015.spec.ts:119:1 › UI003 report timestamps follow the active shop timezone
+[30/172] [chromium] › tests\fe015.spec.ts:176:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values
+[31/172] [chromium] › tests\fe015.spec.ts:204:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings
+[32/172] [chromium] › tests\fe015.spec.ts:239:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation
+[33/172] [chromium] › tests\fe015.spec.ts:261:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions
+[34/172] [chromium] › tests\fe015.spec.ts:284:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page
+[35/172] [chromium] › tests\fe015.spec.ts:411:1 › FE015.AC03 COD settlement matches net remittance plus documented fee
+[36/172] [chromium] › tests\fe015.spec.ts:446:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible
+[37/172] [chromium] › tests\fe015.spec.ts:472:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+[38/172] [chromium] › tests\frontend-corrections.spec.ts:18:1 › F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes
+[39/172] [chromium] › tests\frontend-corrections.spec.ts:46:1 › F01 requires an explicit choice for a field changed by both editors
+[40/172] [chromium] › tests\frontend-corrections.spec.ts:62:1 › F06 detects an order draft and blocks navigation until explicit discard
+[41/172] [chromium] › tests\frontend-corrections.spec.ts:75:1 › F02 retains an unsaved product image through an unrelated refetch
+[42/172] [chromium] › tests\frontend-corrections.spec.ts:87:1 › F03 retains notification-policy inputs through a background resync and navigation
+[43/172] [chromium] › tests\frontend-corrections.spec.ts:98:1 › F05 keeps text typed while a previous internal note is pending
+[44/172] [chromium] › tests\frontend-corrections.spec.ts:113:1 › F08 validates 4001 customer-note characters at the field and accepts 4000
+[45/172] [chromium] › tests\frontend-corrections.spec.ts:147:1 › F07 routes the fulfillment footer close through the shared discard guard
+[46/172] [chromium] › tests\frontend-corrections.spec.ts:161:1 › F09 refreshes new Inbox messages without refetching the visible product and stock snapshots
+[47/172] [chromium] › tests\frontend-corrections.spec.ts:191:1 › F01 shop settings merges a server-only locale change and preserves edits typed during save
+[48/172] [chromium] › tests\frontend-corrections.spec.ts:217:1 › F03 privacy policy preserves refetch drafts and compares before applying the newest version
+[49/172] [chromium] › tests\frontend-corrections.spec.ts:234:1 › F01 category keeps a late edit after saving, and reopens with a clean current baseline
+[50/172] [chromium] › tests\frontend-corrections.spec.ts:255:1 › F01 supplier preserves a concurrent server-only term and PATCHes the local name
+[51/172] [chromium] › tests\frontend-corrections.spec.ts:272:1 › F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft
+[52/172] [chromium] › tests\frontend-corrections.spec.ts:300:1 › F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion
+[53/172] [chromium] › tests\frontend-corrections.spec.ts:326:1 › F01 order editor keeps its original version and compares whole line lists before PATCH
+[54/172] [chromium] › tests\frontend-corrections.spec.ts:348:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+[55/172] [chromium] › tests\frontend-corrections.spec.ts:373:1 › F01 analogous return-inspection draft does not adopt a refetched version without comparison
+[56/172] [chromium] › tests\frontend-corrections.spec.ts:397:1 › F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content
+[57/172] [chromium] › tests\frontend-corrections.spec.ts:426:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+[58/172] [chromium] › tests\frontend-corrections.spec.ts:451:1 › F06 order custom close respects the draft guard and busy editors remain protected
+[59/172] [chromium] › tests\ui-component-layout.spec.ts:40:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[60/172] [chromium] › tests\ui-component-layout.spec.ts:61:1 › A02 product editors align category and status faces independently from lookup metadata
+[61/172] [chromium] › tests\ui-component-layout.spec.ts:84:1 › Shared outlined labels focus empty and populated native controls
+[62/172] [chromium] › tests\ui-component-layout.spec.ts:99:1 › A02 variant fields retain readable widths when text doubles
+[63/172] [chromium] › tests\ui-component-layout.spec.ts:130:1 › A03 import mapping preserves natural remove actions and editable mappings
+[64/172] [chromium] › tests\ui-component-layout.spec.ts:150:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+[65/172] [chromium] › tests\ui-component-layout.spec.ts:176:1 › A05 status height follows its own label while long labels remain fully readable
+[66/172] [chromium] › tests\ui-component-layout.spec.ts:196:1 › A06 Empty wraps unbroken reference text and retains its keyboard action
+[67/172] [chromium] › tests\ui-component-layout.spec.ts:209:1 › A07 canonical order address selection exposes full text and edit lines retain intrinsic actions
+[68/172] [chromium] › tests\ui-inventory-layout.spec.ts:15:1 › Inventory R15/R16 preserve shared gutter and contain table overflow at 320-1440px
+[69/172] [chromium] › tests\ui-inventory-layout.spec.ts:51:1 › Inventory filters reset cursor and preserve other URL state; adjustment validation sends no command
+[70/172] [chromium] › tests\ui-master-resources.spec.ts:13:1 › C05 warehouses validate before HTTP, protect drafts and create/update/archive with visible results
+[71/172] [chromium] › tests\ui-master-resources.spec.ts:25:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation
+[72/172] [chromium] › tests\ui-master-resources.spec.ts:33:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup
+[73/172] [chromium] › tests\ui-master-resources.spec.ts:39:1 › C05 customer address UI never replays a masked phone and orders load per-customer addresses
+[74/172] [chromium] › tests\ui-master-resources.spec.ts:45:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe
+[75/172] [chromium] › tests\ui-master-resources.spec.ts:57:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation
+  2) [chromium] › tests\ui-master-resources.spec.ts:57:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation 
+
+    TimeoutError: locator.click: Timeout 15000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Thêm địa chỉ', exact: true })
+
+
+      63 |         if(response.status!==201)throw new Error('Customer creation failed');return (await response.json()).data;
+      64 |     });
+    > 65 |     await page.getByRole('link',{name:'Khách địa chỉ kiểm chứng',exact:true}).click();await expect(page).toHaveURL(new RegExp('/customers/'+customer.id+'$'));await page.getByRole('button',{name:'Thêm địa chỉ',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Thêm địa chỉ',exact:true});
+         |                                                                                                                                ^
+      66 |     await dialog.getByRole('button',{name:'Lưu địa chỉ',exact:true}).click();await expect(dialog.getByLabel('Tên địa chỉ',{exact:true})).toBeFocused();
+      67 |     for(const [label,value] of [['Tên địa chỉ','Kho khách tổng hợp'],['Người nhận','Người nhận kiểm chứng'],['Điện thoại giao hàng','0000000000'],['Địa chỉ chi tiết','Địa điểm thử nghiệm'],['Tỉnh / thành phố','Địa bàn tổng hợp']])await dialog.getByLabel(label,{exact:true}).fill(value);
+      68 |     const created=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/addresses'));await dialog.getByRole('button',{name:'Lưu địa chỉ',exact:true}).click();expect((await created).status()).toBe(201);await expect(dialog).not.toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:65:128
+
+    Error Context: test-results\playwright-83588-042da239-4dae-4da8-b9af-9cdaefef3e20\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-chromium\error-context.md
+
+    Error Context: test-results\playwright-83588-042da239-4dae-4da8-b9af-9cdaefef3e20\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-83588-042da239-4dae-4da8-b9af-9cdaefef3e20\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-83588-042da239-4dae-4da8-b9af-9cdaefef3e20\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:92824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[76/172] [chromium] › tests\ui-master-resources.spec.ts:76:1 › C05 an unknown warehouse creation keeps the draft and prevents a second request
+[77/172] [chromium] › tests\ui-orders-layout.spec.ts:15:1 › Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px
+[78/172] [chromium] › tests\ui-orders-layout.spec.ts:46:1 › Orders draft, versioned quote, canonical address snapshot and return dialogs keep their behavior without writes
+[79/172] [chromium] › tests\ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep labels clear when text doubles
+[80/172] [chromium] › tests\ui-toolbar-layout.spec.ts:61:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[81/172] [chromium] › tests\ui-toolbar-layout.spec.ts:78:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths
+[82/172] [chromium] › tests\ui-toolbar-layout.spec.ts:121:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow

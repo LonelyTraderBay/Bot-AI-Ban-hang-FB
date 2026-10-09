@@ -1,0 +1,89 @@
+
+Running 4 tests using 1 worker
+
+
+
+(node:66304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [chromium] › tests\ui-ux-completion.spec.ts:85:1 › UX03 category, member and AI deletion confirmations name the selected object and consequence
+  1) [chromium] › tests\ui-ux-completion.spec.ts:85:1 › UX03 category, member and AI deletion confirmations name the selected object and consequence 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Xóa kết nối', exact: true }).first()
+
+
+       99 |  await page.keyboard.press('Escape');
+      100 |  await page.goto(url+'/s/shop-demo/integrations/ai');
+    > 101 |  await page.getByRole('button',{name:'Xóa',exact:true}).first().click();
+          |                                                                         ^
+      102 |  dialog=page.getByRole('dialog',{name:'Xóa kết nối AI',exact:true});
+      103 |  await expect(dialog).toContainText('Kết nối AI mô phỏng');await expect(dialog).toContainText('không còn cấu hình đang sử dụng');
+      104 |  await expect(dialog.getByRole('button',{name:'Xóa kết nối AI',exact:true})).toBeDisabled();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-ux-completion.spec.ts:101:73
+
+    Error Context: test-results\playwright-66304-3b50d798-b1bb-4511-aa14-8004247d79b3\ui-ux-completion-UX03-cate-ee89d-cted-object-and-consequence-chromium\error-context.md
+
+    Error Context: test-results\playwright-66304-3b50d798-b1bb-4511-aa14-8004247d79b3\ui-ux-completion-UX03-cate-ee89d-cted-object-and-consequence-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-66304-3b50d798-b1bb-4511-aa14-8004247d79b3\ui-ux-completion-UX03-cate-ee89d-cted-object-and-consequence-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-66304-3b50d798-b1bb-4511-aa14-8004247d79b3\ui-ux-completion-UX03-cate-ee89d-cted-object-and-consequence-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+(node:42708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2/4] [chromium] › tests\ui010-dialog-draft.spec.ts:15:1 › UI010 a discarded confirmation reason is cleared before the dialog opens again
+
+(node:75508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/4] [firefox] › tests\ui-ux-completion.spec.ts:85:1 › UX03 category, member and AI deletion confirmations name the selected object and consequence
+  2) [firefox] › tests\ui-ux-completion.spec.ts:85:1 › UX03 category, member and AI deletion confirmations name the selected object and consequence 
+
+    Test timeout of 60000ms exceeded.
+
+    Error: locator.click: Test timeout of 60000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Xóa kết nối', exact: true }).first()
+
+
+       99 |  await page.keyboard.press('Escape');
+      100 |  await page.goto(url+'/s/shop-demo/integrations/ai');
+    > 101 |  await page.getByRole('button',{name:'Xóa',exact:true}).first().click();
+          |                                                                         ^
+      102 |  dialog=page.getByRole('dialog',{name:'Xóa kết nối AI',exact:true});
+      103 |  await expect(dialog).toContainText('Kết nối AI mô phỏng');await expect(dialog).toContainText('không còn cấu hình đang sử dụng');
+      104 |  await expect(dialog.getByRole('button',{name:'Xóa kết nối AI',exact:true})).toBeDisabled();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-ux-completion.spec.ts:101:73
+
+    Error Context: test-results\playwright-75508-22fb8bb2-753c-4422-b299-9dc8f33aeb62\ui-ux-completion-UX03-cate-ee89d-cted-object-and-consequence-firefox\error-context.md
+
+    Error Context: test-results\playwright-75508-22fb8bb2-753c-4422-b299-9dc8f33aeb62\ui-ux-completion-UX03-cate-ee89d-cted-object-and-consequence-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-75508-22fb8bb2-753c-4422-b299-9dc8f33aeb62\ui-ux-completion-UX03-cate-ee89d-cted-object-and-consequence-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-75508-22fb8bb2-753c-4422-b299-9dc8f33aeb62\ui-ux-completion-UX03-cate-ee89d-cted-object-and-consequence-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:39144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/4] [firefox] › tests\ui010-dialog-draft.spec.ts:15:1 › UI010 a discarded confirmation reason is cleared before the dialog opens again
+  2 failed
+    [chromium] › tests\ui-ux-completion.spec.ts:85:1 › UX03 category, member and AI deletion confirmations name the selected object and consequence 
+    [firefox] › tests\ui-ux-completion.spec.ts:85:1 › UX03 category, member and AI deletion confirmations name the selected object and consequence 
+  2 passed (2.6m)

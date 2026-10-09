@@ -1,0 +1,604 @@
+{
+  "recordedAt": "2026-10-08T14:07:33.212Z",
+  "modules": [
+    "bot",
+    "catalog",
+    "customers",
+    "dashboard",
+    "finance",
+    "fulfillment",
+    "inbox",
+    "integrations",
+    "inventory",
+    "knowledge",
+    "notifications",
+    "operations",
+    "orders",
+    "procurement",
+    "reports",
+    "workspace"
+  ],
+  "sectionGrids": [
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx",
+      "placement": "module",
+      "line": 47,
+      "owner": "PlaygroundPage",
+      "route": "R27",
+      "columns": "{{ xs: '1fr', lg: '1fr 1fr' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Câu hỏi thử\" bodyMode=\"inset\"><Box component=\"form\" onSubmit={async (e) => { e.preventDefault(); try {\n        const r = await run.execute({ body: { configRevision: config.data"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Kết quả có nguồn\" bodyMode=\"inset\"><Box>{result ? <><Typography sx={{ whiteSpace: 'pre-wrap' }}>{result.text}</Typography><DetailLine label=\"Phiên bản cấu hình\">{result.configR"
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx",
+      "placement": "module",
+      "line": 81,
+      "owner": "AgentTeamPage",
+      "route": "R51",
+      "columns": "{{ xs: '1fr', md: 'repeat(2,1fr)' }}",
+      "children": [
+        {
+          "kind": "JsxExpression",
+          "expression": "{roles.data?.data.map(r => <Panel key={r.id} title={roleNames[r.kind]} action={<Status value={r.status}/>} bodyMode=\"inset\"><Box><DetailLine label=\"Người chịu trách nhiệm\">{r.humanOwnerId ||"
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx",
+      "placement": "module",
+      "line": 120,
+      "owner": "CustomerPage",
+      "route": "R08",
+      "columns": "{{ xs: '1fr', lg: '1.2fr 1fr' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title={t('customers.detail.information')} bodyMode=\"inset\">\r\n                    <FormFields component=\"form\" ref={draftForm} data-draft-clean={!editor.dirty ? 'true' : undefined} onS"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<PageSections >\r\n                    <Panel title={t('customers.detail.recentOrders')} bodyMode=\"inset\">\r\n                        <Stack>\r\n                            {canReadOrders\r\n       "
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx",
+      "placement": "module",
+      "line": 98,
+      "owner": "DashboardPage",
+      "route": "R04",
+      "columns": "{{ xs: '1fr', sm: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' }}",
+      "children": [
+        {
+          "kind": "JsxExpression",
+          "expression": "{operations.data.data.roles.map((role, index) => <SurfaceContent key={role.id} alignItems=\"flex-start\" bodyMode=\"compactOutlined\">\n                    <Avatar sx={{ bgcolor: [colors.selected"
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx",
+      "placement": "module",
+      "line": 50,
+      "owner": "InboxPage",
+      "route": "R06",
+      "columns": "{{ xs: '1fr', lg: '300px minmax(0,1fr)' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel geometry={{ display: { xs: conversationId ? 'none' : 'block', lg: 'block' } }}>\n                <Toolbar operation=\"listConversations\" placeholder=\"Tìm hội thoại…\" cursorParam={listCu"
+        },
+        {
+          "kind": "JsxExpression",
+          "expression": "{conversationId ? <ConversationPanel key={conversationId} conversationId={conversationId} /> : <Panel><Empty text=\"Chọn một cuộc trò chuyện để xem lịch sử, tiếp quản và tạo đơn.\" /></Panel>}"
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx",
+      "placement": "module",
+      "line": 127,
+      "owner": "ConversationPanel",
+      "columns": "{{ xs: '1fr', xl: 'minmax(0,1fr) 260px' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<Box data-testid=\"inbox-thread\" component=\"section\" aria-label=\"Nội dung hội thoại\" sx={{ minWidth: 0, height: { xl: 650 } }}>\n                        <Panel geometry={{ display: 'flex', fle"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<ConversationContextPanel conversation={conversation}>\n                        {__MOCK__ && <MockSalesFlowPreview customerId={conversation.customerId} conversationId={conversation.id} />}\n  "
+        },
+        {
+          "kind": "JsxSelfClosingElement",
+          "expression": "<ConfirmDialog\n                        open={!!action}\n                        title={action === 'takeover' ? 'Tiếp quản cuộc trò chuyện' : action === 'release' ? 'Trả cuộc trò chuyện về bot"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<EditDialog\n                        open={!!ratingMessage}\n                        title=\"Đánh giá câu trả lời\"\n                        onClose={() => setRatingMessage(null)}\n               "
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx",
+      "placement": "module",
+      "line": 42,
+      "owner": "AIProvidersPage",
+      "route": "R30",
+      "columns": "{{ xs: '1fr', lg: '1fr 1fr' }}",
+      "children": [
+        {
+          "kind": "JsxExpression",
+          "expression": "{list.data?.data.map(c => <Panel key={c.id} title={c.name} bodyMode=\"inset\" action={<Status value={c.status}/>}><Box><DetailLine label=\"Provider / adapter\">{c.providerId} / {c.adapterId}</De"
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx",
+      "placement": "module",
+      "line": 115,
+      "owner": "DevicesPage",
+      "route": "R40",
+      "columns": "{{ xs: '1fr', lg: '1.2fr 1fr' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<PageSections shrinkChildren geometry={{minWidth: 0}}><Panel title=\"Thiết bị nhận thông báo\" bodyMode=\"inset\"><SurfaceContent ><ErrorNotice error={error || register.error || test.error || pa"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Quy tắc nhận và nhắc việc\" bodyMode=\"inset\"><QueryState query={policy} pendingProfile=\"section\"><FormFields component=\"form\" ref={policyForm} onSubmit={event => { event.prevent"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<Alert severity=\"info\" data-testid=\"notification-protection-note\" sx={layoutSx.page.sectionBefore}>Chống gửi lặp theo sự kiện, kiểm tra callback, thời hạn token và giới hạn tốc độ phải được "
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx",
+      "placement": "module",
+      "line": 248,
+      "owner": "DigestsPage",
+      "route": "R52",
+      "columns": "{{ xs: '1fr', lg: '1.5fr 1fr' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Bản tin điều hành\" bodyMode=\"inset\">\n                <QueryState query={list}>\n                    <SurfaceContent >\n                        {list.data?.data.map(digest => <Box"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Trạng thái phụ thuộc\" bodyMode=\"inset\">\n                <QueryState query={health}>\n                    <Stack>\n                        {health.data?.data.health.map(check => <"
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx",
+      "placement": "module",
+      "line": 210,
+      "owner": "OrderDetailPage",
+      "columns": "{{ xs: '1fr', lg: '2fr 1fr' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Sản phẩm trong đơn\"><DataTable rows={order.lines} rowKey={l => l.id} columns={[\r\n                {\r\n                    key: 'name', label: 'Sản phẩm / SKU', render: l => <Stac"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Thông tin xử lý\" bodyMode=\"inset\"><Box><DetailLine label=\"Khách\"><RouteLink to={`/s/${shop.id}/customers/${order.customerId}`}>{order.customerId}</RouteLink></DetailLine><Detai"
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx",
+      "placement": "module",
+      "line": 155,
+      "owner": "ReportsPage",
+      "route": "R31",
+      "columns": "{{ xs: 'minmax(0, 1fr)', xl: 'minmax(0, 1.2fr) minmax(0, .8fr)' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<PageSections data-testid=\"reports-page-sections\" >\n                <QueryState query={summary} pendingProfile=\"section\">\n                    {summary.data && <Panel title=\"Tạo tệp báo cáo\" "
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Phạm vi dữ liệu\" subtitle=\"Chỉ những gì API cung cấp mới được trình bày như số liệu.\" bodyMode=\"inset\">\n                <Stack sx={layoutSx.report.contextGap}>\n                "
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx",
+      "placement": "module",
+      "line": 235,
+      "owner": "MarketingPage",
+      "route": "R53",
+      "columns": "{{ xs: '1fr', lg: '1fr 1fr' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Câu hỏi khách thường hỏi\" subtitle=\"Các mục do API tổng hợp cung cấp.\">\n                    <Box data-testid=\"marketing-question-surface\" sx={layoutSx.report.listSurfaceInset}>"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Lý do không chốt đơn\" subtitle=\"Biểu đồ và bảng dùng cùng một payload API.\">\n                    <Box role=\"img\" aria-label={`Biểu đồ lý do không chốt đơn, ${m.lostSaleReasons."
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx",
+      "placement": "module",
+      "line": 53,
+      "owner": "WorkspacesPage",
+      "route": "R02",
+      "columns": "{{ xs: '1fr', md: 'repeat(2,1fr)' }}",
+      "children": [
+        {
+          "kind": "JsxExpression",
+          "expression": "{shops.data?.data.map(s => <Paper variant=\"outlined\" key={s.id} sx={[layoutSx.surface.inset, { borderRadius: visualSx.radius.large }]}><Avatar sx={{ bgcolor: colors.selected, color: 'primary"
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx",
+      "placement": "module",
+      "line": 214,
+      "owner": "PrivacyPage",
+      "route": "R35",
+      "columns": "{{ xs: '1fr', lg: '1fr 1.4fr' }}",
+      "children": [
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Chính sách lưu trữ\" bodyMode=\"inset\"><QueryState query={policy} pendingProfile=\"section\"><FormFields component=\"form\" ref={policyForm} onSubmit={event => { event.preventDefault"
+        },
+        {
+          "kind": "JsxElement",
+          "expression": "<Panel title=\"Yêu cầu của khách\" action={<MutationButton permission=\"privacy.manage\" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>}><QueryState query={requests} pendingProfile=\""
+        }
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx",
+      "placement": "shared",
+      "line": 33,
+      "owner": "Comparison",
+      "columns": "{{ xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' }}",
+      "children": [
+        {
+          "kind": "JsxExpression",
+          "expression": "{([['Bản gốc', field.base], ['Bản nháp', field.mine], ['Server mới nhất', field.theirs]] as const).map(([label, value]) => <SurfaceContent key={label}><Typography variant=\"caption\" color=\"te"
+        }
+      ]
+    }
+  ],
+  "seedAIConnections": [
+    {
+      "id": "ai-01",
+      "shopId": "shop-demo",
+      "name": "Kết nối AI mô phỏng"
+    },
+    {
+      "id": "b-ai-01",
+      "shopId": "shop-second",
+      "name": "Kết nối AI mô phỏng"
+    }
+  ],
+  "sources": [
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/bootstrap.css",
+      "sha256": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/CommandRecovery.tsx",
+      "sha256": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/dirty-drafts.ts",
+      "sha256": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/feedback.tsx",
+      "sha256": "449b8f38b670784f4b99c91b007ca6a90949b6dab1acc69fd8f93a22e11b2a22"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/i18n.ts",
+      "sha256": "535228df84e97dc5e4369880a4499c93f31fbae34057726fb48d5a35f7ca2340"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/locales/vi/customers.ts",
+      "sha256": "94a1b204b882ce2f87da801327f731842b8c6954f1d77820b10a8d230f592159"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/locales/vi/knowledge.ts",
+      "sha256": "a186bda01f5f1ff24e37a8398d090e301b6af44f90487553929c459059b460c9"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/navigation.ts",
+      "sha256": "96460ac494f79748758c7b7bbfb4bbbfd0764aa77b47a4b2ac11e237f459f0b7"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/router.tsx",
+      "sha256": "24f585969d7fb0713a0e9b30f3da57d8454fb1c54cb434e16cc9fd074c2cecd4"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx",
+      "sha256": "cfea6704a8f8a08ca735700ae3aef4444dd40d8b6a8fb121d06cbab60085c0aa"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/SessionProvider.tsx",
+      "sha256": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx",
+      "sha256": "14d33f33d3cc1328e8739af23cc76eca319707a91b617b1467367a0a2571cbfb"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/app/tokens.css",
+      "sha256": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/main.tsx",
+      "sha256": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/auxiliary.ts",
+      "sha256": "3bbda57ab9828a03264b90aa67e388c55da2605254b7c76f59b4a2d36b42928c"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/browser.ts",
+      "sha256": "3786d71b2b665490a116bc0671c5e2494e57e87677e132e8cce1fa80cd5860ee"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/catalog.ts",
+      "sha256": "48a5a4d2bc413310d92d4c57a3714dcb800e812d75d4cbf6e2ba3ead6efa1e56"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/collections.json",
+      "sha256": "27afe9a3795cb4919a5349120f3067c197348a3062009d8d00585e72d1ff16c6"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/control.ts",
+      "sha256": "2e9d304efb5187f629eb145ae1428a86a59505dd388556c5d4177408ebebb541"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/database.ts",
+      "sha256": "093fb1e7cd79d3b25a07b5eb3d892163a45b01cd9cc823b25b8b49531c1cb25c"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/files.ts",
+      "sha256": "21ba6cdcf5668a5bd8db3bfb8b1ac55fe285be40207801d9068f0b29d7b06cbd"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/finance.ts",
+      "sha256": "c23c40cd46254f122efcb88dcd4d58cc55de7b8bb17b9688defe090f4d06e01d"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/fulfillment.ts",
+      "sha256": "0f320f9fd7125ebf622c07dd4cd5b78b7a1ca9eb4294ce956afcf49daa0bfa40"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/handlers.ts",
+      "sha256": "e66c5410cb59486a8cac78fe7d512740376b884f8fcae31941785a148d656608"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/marketing-fixture.ts",
+      "sha256": "e6ced9b2ce986ab457042e02acfa879c0a5d163626c3ece6b9a1a11e4a4726fb"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/orders.ts",
+      "sha256": "c154c72c10f0eea1495352cc73f18deae17cdcbea592902d5018fa8db8278ff4"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/procurement.ts",
+      "sha256": "3484d6aab444ff5dde85f4c225794c724444021a48e7427798f31d130ce50cc0"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/seed.json",
+      "sha256": "fa115cadbe18a035602d1fe1acffe9714b0eaf99354927f99823bf8b6c3d744d"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/mocks/service.ts",
+      "sha256": "e9043a25b86f7ac07dea9d609593397ea9bc2b0faa945058c7ea4566f16ccd69"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx",
+      "sha256": "235abafb2cb1430415f10e8671b546e16a958ea5e801029762ac8620fce9e3b0"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts",
+      "sha256": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx",
+      "sha256": "cf3a13e9a65334a6ad4d1df6916c20171c48f1c7faac9a4d0aa5a5d68783f8c6"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx",
+      "sha256": "6329c92de23b5b5c9ce4d0306d6850d4193be69cbb26533076573d96e52a4dc6"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx",
+      "sha256": "a2233f8be5b1c97f5184c1fcafe9cd0a5578b5d8faed43b4af27678709af334c"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx",
+      "sha256": "6b33cc85906201a54fb7652d070a61e86d2db47e5b46cd9bf00e0f21c0b54a82"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/finance/demo-account-preview.ts",
+      "sha256": "4d24b168d57eaa1951d6b1f018e25a86c4ea0fe03cc933a57b41a2fa4a077a60"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx",
+      "sha256": "86bec24ecbef9680357edd714c05f8be42d46ccf805cf6d686ad172796680bdb"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/finance/report-explanations.ts",
+      "sha256": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx",
+      "sha256": "d013702152756553b663eab4ef4f70271cc1806cdf1622bedef51d02b4a2374b"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx",
+      "sha256": "efde881b00dbb60978017f8394e939fe547403600d85eff6b38e37fe5ca1b848"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx",
+      "sha256": "f1c52d58f9e0fc85dcbcfd206841e4eaac3a58350bb2295fb04d7f2d1e0b3e6b"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx",
+      "sha256": "1a2011b16665df078cec13aaf75a198f19c4af9533b9812045242194171b556f"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx",
+      "sha256": "6d62daee4da307c8a6063db31d2524e12fab8626782771a2ce8e0f2720d56ffd"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/knowledge/index.tsx",
+      "sha256": "acf06edc7f2d4fc847bf7bc63d2a84f643a04e34d571ab1f5189603f793535a5"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx",
+      "sha256": "27e33c89ae73c93c7f20252539f8e92a49cf26c8c5e206f0e74c1c35cfe9239f"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/notifications/push-capabilities.ts",
+      "sha256": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx",
+      "sha256": "a996cf3a6b01ae5577f455066472ceb8df300a943a9517a6890e23a8ea2d5419"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/orders/demo-address-preview.ts",
+      "sha256": "7b23d2cdcb129fafa138c39d1720e2e1bcffc3195519348fcd9a4598ad906d3a"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx",
+      "sha256": "a7e6ffbfcc98ad1bbe71f73c8738239d53f1f71e7ef816576750a2615acf9448"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/procurement/index.tsx",
+      "sha256": "2a6b7ec272ec3ce684a40fc780a40898c1e5682306412af2551f5e5a324008d9"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx",
+      "sha256": "9ed41fb74c7472454bbe5be07bac95a936dafe537d6cf9fa5e1faedceb0c54fd"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/reports/report-utils.ts",
+      "sha256": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx",
+      "sha256": "14bc610e406b356218efc2aaedd848e6caf10abf167aae2ff3ef67541c4b2c51"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/api/client.ts",
+      "sha256": "14f723eb00cb9e7e5e244b440c1de7dfd534be499c991cf25288b5a7506c65ae"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/api/client.type-contracts.ts",
+      "sha256": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/api/errors.ts",
+      "sha256": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/api/event-invalidation.ts",
+      "sha256": "099f9459e47c239cb5db573262d47d7b757c520e9c3a659f4c7a8c04430ec0cd"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/api/hooks.ts",
+      "sha256": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/api/intents.ts",
+      "sha256": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/api/validation.ts",
+      "sha256": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/model/auth.ts",
+      "sha256": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/model/dirty-drafts.ts",
+      "sha256": "387b509645164ec4c1aaccdfa96e0b99329ff3ba83f7b28931a8ffb6de3be7a2"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/model/download.ts",
+      "sha256": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/model/filters.ts",
+      "sha256": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/model/format.ts",
+      "sha256": "9a7d546e64919fefa0e293b4c2869fdef8a13115b308e8aa6c4725b4e0ec4200"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/model/labels.ts",
+      "sha256": "7115490eb33df2cdbc39f4ec7494b364965ca2756a36591f21b2d231bbeeacf2"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx",
+      "sha256": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/model/versioned-draft.ts",
+      "sha256": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx",
+      "sha256": "ac888885346668a7e2e8fb0ed3564484eb14f6861edec6ba11059e8706ce3e59"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx",
+      "sha256": "15dde3bb9fef954a14c93b8f595d46c17d4502821c9a3095e91e72fd00ccee5b"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx",
+      "sha256": "5332f808b3bb81c901962bcdd678e6f37290c408033b1e552f9321d0a01ed809"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts",
+      "sha256": "ac5cc9e11d5b5b22b1e95c6754bb1c9084a47fc53f25ac338c9d58c4c687ec5a"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md",
+      "sha256": "7651f6916a2bc575f034d9007de84c6052bc424b8a1cc6370df822499a97a9e5"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts",
+      "sha256": "89a903ba7638a7709f118750bdb7a165d44ff57fc949ba69dc0d5f19f29465df"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts",
+      "sha256": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d"
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts",
+      "sha256": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc"
+    },
+    {
+      "path": "BotSalesAI_Frontend/packages/contracts/src/routes.json",
+      "sha256": "360871c008fac723cfc77dec79417838d24d4fae844452909eb347ec8893f2b2"
+    }
+  ]
+}

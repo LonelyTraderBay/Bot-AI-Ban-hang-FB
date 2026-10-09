@@ -1,0 +1,248 @@
+
+[WebServer] (node:89404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 10 tests using 1 worker
+
+(node:39016) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/10] [chromium] › tests\ui-master-resources.spec.ts:12:1 › C05 warehouses validate before HTTP, protect drafts and create/update/archive with visible results
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-49280-f71010ab-02e3-4707-975d-d928a7f193d2\deps\react-dom_client.js?v=6df0145f as it exceeds the max of 500KB.
+
+[2/10] [chromium] › tests\ui-master-resources.spec.ts:24:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation
+  1) [chromium] › tests\ui-master-resources.spec.ts:24:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator: getByRole('dialog').first().getByLabel('Tên kho', { exact: true })
+    Expected: "Tên nháp của tôi"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveValue" getByRole('dialog').first().getByLabel('Tên kho', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('dialog').first().getByLabel('Tên kho', { exact: true })
+
+
+      26 |     expect(await mutate(page,'warehouses/warehouse-01',{name:'Tên server lần 1'},1)).toBe(200);
+      27 |     await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();const compare=page.getByRole('dialog',{name:'Đối chiếu thay đổi',exact:true});await expect(compare).toBeVisible();const choice=compare.getByRole('combobox',{name:/Chọn dữ liệu: Tên kho/});await choice.click();await page.getByRole('option',{name:'Giữ bản nháp',exact:true}).click();await compare.getByRole('button',{name:'Áp dụng vào bản nháp'}).click();
+    > 28 |     expect(await mutate(page,'warehouses/warehouse-01',{addressLine:'Địa điểm server lần 2'},2)).toBe(200);await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(compare).toBeVisible();await expect(editor.getByLabel('Tên kho',{exact:true})).toHaveValue('Tên nháp của tôi');await compare.getByRole('button',{name:'Áp dụng vào bản nháp'}).click();
+         |                                                                                                                                                                                                                                                                             ^
+      29 |     await expect(editor.getByLabel('Địa điểm kho',{exact:true})).toHaveValue('Địa điểm server lần 2');await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(editor).not.toBeVisible();
+      30 | });
+      31 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:28:269
+
+    Error Context: test-results\playwright-39016-639c1084-9fc9-4710-9a6b-9e7bf19ff324\ui-master-resources-C05-wa-5d7a7-ire-explicit-reconciliation-chromium\error-context.md
+
+    Error Context: test-results\playwright-39016-639c1084-9fc9-4710-9a6b-9e7bf19ff324\ui-master-resources-C05-wa-5d7a7-ire-explicit-reconciliation-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-39016-639c1084-9fc9-4710-9a6b-9e7bf19ff324\ui-master-resources-C05-wa-5d7a7-ire-explicit-reconciliation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-39016-639c1084-9fc9-4710-9a6b-9e7bf19ff324\ui-master-resources-C05-wa-5d7a7-ire-explicit-reconciliation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:91204) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/10] [chromium] › tests\ui-master-resources.spec.ts:32:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup
+  2) [chromium] › tests\ui-master-resources.spec.ts:32:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup 
+
+    Error: expect(locator).toBeDisabled() failed
+
+    Locator: getByRole('dialog').first().getByRole('combobox', { name: 'Nhóm tài khoản', exact: true })
+    Expected: disabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeDisabled" getByRole('dialog').first().getByRole('combobox', { name: 'Nhóm tài khoản', exact: true }) with timeout 5000ms
+      - waiting for getByRole('dialog').first().getByRole('combobox', { name: 'Nhóm tài khoản', exact: true })
+
+
+      31 |
+      32 | test('C05 accounts create and protect used fields; journal choices come from the same API lookup',async({page})=>{
+    > 33 |     await page.goto(url+'/s/shop-demo/finance/accounts');await page.getByRole('button',{name:'Sửa tài khoản 111',exact:true}).click();const used=page.getByRole('dialog').first();await expect(used.getByLabel('Mã tài khoản',{exact:true})).toBeDisabled();await expect(used.getByRole('combobox',{name:'Nhóm tài khoản',exact:true})).toBeDisabled();await used.getByRole('button',{name:'Hủy',exact:true}).click();
+         |                                                                                                                                                                                                                                                                                                                                         ^
+      34 |     await page.getByRole('button',{name:'Thêm tài khoản',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Thêm tài khoản',exact:true});await dialog.getByLabel('Mã tài khoản',{exact:true}).fill('UX_EXTRA');await dialog.getByLabel('Tên tài khoản',{exact:true}).fill('Tài khoản nguồn API');await dialog.getByRole('button',{name:'Lưu tài khoản',exact:true}).click();await expect(dialog).not.toBeVisible();
+      35 |     await page.getByRole('link',{name:'Chứng từ & sổ kép',exact:true}).click();await page.getByRole('button',{name:'Tạo bút toán nháp',exact:true}).click();const journal=page.getByRole('dialog',{name:'Bút toán nháp',exact:true});await journal.getByRole('combobox',{name:'Tài khoản dòng 1',exact:true}).click();await expect(page.getByRole('option',{name:'UX_EXTRA · Tài khoản nguồn API',exact:true})).toBeVisible();await page.keyboard.press('Escape');
+      36 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:33:329
+
+    Error Context: test-results\playwright-91204-6d2da309-d30f-4709-b433-02672ee3ef1f\ui-master-resources-C05-ac-7d141-me-from-the-same-API-lookup-chromium\error-context.md
+
+    Error Context: test-results\playwright-91204-6d2da309-d30f-4709-b433-02672ee3ef1f\ui-master-resources-C05-ac-7d141-me-from-the-same-API-lookup-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-91204-6d2da309-d30f-4709-b433-02672ee3ef1f\ui-master-resources-C05-ac-7d141-me-from-the-same-API-lookup-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-91204-6d2da309-d30f-4709-b433-02672ee3ef1f\ui-master-resources-C05-ac-7d141-me-from-the-same-API-lookup-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:69120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[4/10] [chromium] › tests\ui-master-resources.spec.ts:38:1 › C05 customer address UI never replays a masked phone and orders load per-customer addresses
+[5/10] [chromium] › tests\ui-master-resources.spec.ts:44:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe
+  3) [chromium] › tests\ui-master-resources.spec.ts:44:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe 
+
+    Error: customers/c1@320
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 1
+    Received:    322
+
+      47 |         for(const route of ['settings/warehouses','finance/accounts','customers/c1']) {
+      48 |             await page.goto(url+'/s/shop-demo/'+route);await expect(page.locator('main h1')).toBeVisible();await page.getByRole('table').first().waitFor();
+    > 49 |             expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth),`${route}@${width}`).toBeLessThanOrEqual(1);
+         |                                                                                                                                            ^
+      50 |             expect((await new AxeBuilder({page}).include('main').analyze()).violations).toEqual([]);
+      51 |         }
+      52 |         await page.getByRole('button',{name:'Thêm địa chỉ',exact:true}).focus();await page.keyboard.press('Enter');const dialog=page.getByRole('dialog',{name:'Thêm địa chỉ',exact:true});await expect(dialog).toBeVisible();await expect(dialog.getByRole('button',{name:'Đóng',exact:true})).toBeVisible();expect((await new AxeBuilder({page}).include('[role="dialog"]').analyze()).violations).toEqual([]);await page.screenshot({path:`evidence/frontend-ux-completion-20261009/C05-address-${browserName}-${width}.png`});await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:49:140
+
+    Error Context: test-results\playwright-69120-3d4a7534-34f4-48eb-87a8-94e58f752db6\ui-master-resources-C05-ne-332ef-idths-with-keyboard-and-axe-chromium\error-context.md
+
+    Error Context: test-results\playwright-69120-3d4a7534-34f4-48eb-87a8-94e58f752db6\ui-master-resources-C05-ne-332ef-idths-with-keyboard-and-axe-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-69120-3d4a7534-34f4-48eb-87a8-94e58f752db6\ui-master-resources-C05-ne-332ef-idths-with-keyboard-and-axe-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-69120-3d4a7534-34f4-48eb-87a8-94e58f752db6\ui-master-resources-C05-ne-332ef-idths-with-keyboard-and-axe-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:29776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[6/10] [firefox] › tests\ui-master-resources.spec.ts:12:1 › C05 warehouses validate before HTTP, protect drafts and create/update/archive with visible results
+[7/10] [firefox] › tests\ui-master-resources.spec.ts:24:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation
+  4) [firefox] › tests\ui-master-resources.spec.ts:24:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator: getByRole('dialog').first().getByLabel('Tên kho', { exact: true })
+    Expected: "Tên nháp của tôi"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveValue" getByRole('dialog').first().getByLabel('Tên kho', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('dialog').first().getByLabel('Tên kho', { exact: true })
+
+
+      26 |     expect(await mutate(page,'warehouses/warehouse-01',{name:'Tên server lần 1'},1)).toBe(200);
+      27 |     await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();const compare=page.getByRole('dialog',{name:'Đối chiếu thay đổi',exact:true});await expect(compare).toBeVisible();const choice=compare.getByRole('combobox',{name:/Chọn dữ liệu: Tên kho/});await choice.click();await page.getByRole('option',{name:'Giữ bản nháp',exact:true}).click();await compare.getByRole('button',{name:'Áp dụng vào bản nháp'}).click();
+    > 28 |     expect(await mutate(page,'warehouses/warehouse-01',{addressLine:'Địa điểm server lần 2'},2)).toBe(200);await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(compare).toBeVisible();await expect(editor.getByLabel('Tên kho',{exact:true})).toHaveValue('Tên nháp của tôi');await compare.getByRole('button',{name:'Áp dụng vào bản nháp'}).click();
+         |                                                                                                                                                                                                                                                                             ^
+      29 |     await expect(editor.getByLabel('Địa điểm kho',{exact:true})).toHaveValue('Địa điểm server lần 2');await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(editor).not.toBeVisible();
+      30 | });
+      31 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:28:269
+
+    Error Context: test-results\playwright-29776-b26602a2-76c0-4f8c-80e1-3da60f7ae26e\ui-master-resources-C05-wa-5d7a7-ire-explicit-reconciliation-firefox\error-context.md
+
+    Error Context: test-results\playwright-29776-b26602a2-76c0-4f8c-80e1-3da60f7ae26e\ui-master-resources-C05-wa-5d7a7-ire-explicit-reconciliation-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-29776-b26602a2-76c0-4f8c-80e1-3da60f7ae26e\ui-master-resources-C05-wa-5d7a7-ire-explicit-reconciliation-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-29776-b26602a2-76c0-4f8c-80e1-3da60f7ae26e\ui-master-resources-C05-wa-5d7a7-ire-explicit-reconciliation-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+(node:37984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[8/10] [firefox] › tests\ui-master-resources.spec.ts:32:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup
+  5) [firefox] › tests\ui-master-resources.spec.ts:32:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup 
+
+    Error: expect(locator).toBeDisabled() failed
+
+    Locator: getByRole('dialog').first().getByRole('combobox', { name: 'Nhóm tài khoản', exact: true })
+    Expected: disabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeDisabled" getByRole('dialog').first().getByRole('combobox', { name: 'Nhóm tài khoản', exact: true }) with timeout 5000ms
+      - waiting for getByRole('dialog').first().getByRole('combobox', { name: 'Nhóm tài khoản', exact: true })
+
+
+      31 |
+      32 | test('C05 accounts create and protect used fields; journal choices come from the same API lookup',async({page})=>{
+    > 33 |     await page.goto(url+'/s/shop-demo/finance/accounts');await page.getByRole('button',{name:'Sửa tài khoản 111',exact:true}).click();const used=page.getByRole('dialog').first();await expect(used.getByLabel('Mã tài khoản',{exact:true})).toBeDisabled();await expect(used.getByRole('combobox',{name:'Nhóm tài khoản',exact:true})).toBeDisabled();await used.getByRole('button',{name:'Hủy',exact:true}).click();
+         |                                                                                                                                                                                                                                                                                                                                         ^
+      34 |     await page.getByRole('button',{name:'Thêm tài khoản',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Thêm tài khoản',exact:true});await dialog.getByLabel('Mã tài khoản',{exact:true}).fill('UX_EXTRA');await dialog.getByLabel('Tên tài khoản',{exact:true}).fill('Tài khoản nguồn API');await dialog.getByRole('button',{name:'Lưu tài khoản',exact:true}).click();await expect(dialog).not.toBeVisible();
+      35 |     await page.getByRole('link',{name:'Chứng từ & sổ kép',exact:true}).click();await page.getByRole('button',{name:'Tạo bút toán nháp',exact:true}).click();const journal=page.getByRole('dialog',{name:'Bút toán nháp',exact:true});await journal.getByRole('combobox',{name:'Tài khoản dòng 1',exact:true}).click();await expect(page.getByRole('option',{name:'UX_EXTRA · Tài khoản nguồn API',exact:true})).toBeVisible();await page.keyboard.press('Escape');
+      36 | });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:33:329
+
+    Error Context: test-results\playwright-37984-941abbc5-5160-4a1a-83b6-36baa0c942e8\ui-master-resources-C05-ac-7d141-me-from-the-same-API-lookup-firefox\error-context.md
+
+    Error Context: test-results\playwright-37984-941abbc5-5160-4a1a-83b6-36baa0c942e8\ui-master-resources-C05-ac-7d141-me-from-the-same-API-lookup-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-37984-941abbc5-5160-4a1a-83b6-36baa0c942e8\ui-master-resources-C05-ac-7d141-me-from-the-same-API-lookup-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-37984-941abbc5-5160-4a1a-83b6-36baa0c942e8\ui-master-resources-C05-ac-7d141-me-from-the-same-API-lookup-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:18132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[9/10] [firefox] › tests\ui-master-resources.spec.ts:38:1 › C05 customer address UI never replays a masked phone and orders load per-customer addresses
+[10/10] [firefox] › tests\ui-master-resources.spec.ts:44:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe
+  6) [firefox] › tests\ui-master-resources.spec.ts:44:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe 
+
+    Error: customers/c1@320
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 1
+    Received:    322
+
+      47 |         for(const route of ['settings/warehouses','finance/accounts','customers/c1']) {
+      48 |             await page.goto(url+'/s/shop-demo/'+route);await expect(page.locator('main h1')).toBeVisible();await page.getByRole('table').first().waitFor();
+    > 49 |             expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth),`${route}@${width}`).toBeLessThanOrEqual(1);
+         |                                                                                                                                            ^
+      50 |             expect((await new AxeBuilder({page}).include('main').analyze()).violations).toEqual([]);
+      51 |         }
+      52 |         await page.getByRole('button',{name:'Thêm địa chỉ',exact:true}).focus();await page.keyboard.press('Enter');const dialog=page.getByRole('dialog',{name:'Thêm địa chỉ',exact:true});await expect(dialog).toBeVisible();await expect(dialog.getByRole('button',{name:'Đóng',exact:true})).toBeVisible();expect((await new AxeBuilder({page}).include('[role="dialog"]').analyze()).violations).toEqual([]);await page.screenshot({path:`evidence/frontend-ux-completion-20261009/C05-address-${browserName}-${width}.png`});await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:49:140
+
+    Error Context: test-results\playwright-18132-a40b466f-f678-4a42-bb61-67c5fc22a754\ui-master-resources-C05-ne-332ef-idths-with-keyboard-and-axe-firefox\error-context.md
+
+    Error Context: test-results\playwright-18132-a40b466f-f678-4a42-bb61-67c5fc22a754\ui-master-resources-C05-ne-332ef-idths-with-keyboard-and-axe-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-18132-a40b466f-f678-4a42-bb61-67c5fc22a754\ui-master-resources-C05-ne-332ef-idths-with-keyboard-and-axe-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-18132-a40b466f-f678-4a42-bb61-67c5fc22a754\ui-master-resources-C05-ne-332ef-idths-with-keyboard-and-axe-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+

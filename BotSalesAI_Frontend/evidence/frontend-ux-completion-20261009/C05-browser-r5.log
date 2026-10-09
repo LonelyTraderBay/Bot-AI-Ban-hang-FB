@@ -1,0 +1,89 @@
+
+Running 14 tests using 1 worker
+
+
+
+(node:33544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/14] [chromium] › tests\ui-master-resources.spec.ts:13:1 › C05 warehouses validate before HTTP, protect drafts and create/update/archive with visible results
+[2/14] [chromium] › tests\ui-master-resources.spec.ts:25:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation
+[3/14] [chromium] › tests\ui-master-resources.spec.ts:33:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup
+[4/14] [chromium] › tests\ui-master-resources.spec.ts:39:1 › C05 customer address UI never replays a masked phone and orders load per-customer addresses
+[5/14] [chromium] › tests\ui-master-resources.spec.ts:45:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe
+[6/14] [chromium] › tests\ui-master-resources.spec.ts:57:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation
+  1) [chromium] › tests\ui-master-resources.spec.ts:57:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation 
+
+    Error: page.evaluate: SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+
+      57 | test('C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation',async({page})=>{
+      58 |     await page.goto(url+'/s/shop-demo/customers');
+    > 59 |     const customer=await page.evaluate(async()=>{
+         |                               ^
+      60 |         const session=(await (await fetch('/api/v2/session')).json()).data;
+      61 |         const response=await fetch('/api/v2/shops/shop-demo/customers',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrfToken,'Idempotency-Key':crypto.randomUUID()},body:JSON.stringify({displayName:'Khách địa chỉ kiểm chứng',phone:null,email:null,notes:''})});
+      62 |         if(response.status!==201)throw new Error('Customer creation failed');return (await response.json()).data;
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:59:31
+
+    Error Context: test-results\playwright-33544-1db91ce8-65c7-4d5a-b5a7-a8dd53841565\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-chromium\error-context.md
+
+    Error Context: test-results\playwright-33544-1db91ce8-65c7-4d5a-b5a7-a8dd53841565\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-33544-1db91ce8-65c7-4d5a-b5a7-a8dd53841565\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-33544-1db91ce8-65c7-4d5a-b5a7-a8dd53841565\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:58032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[7/14] [chromium] › tests\ui-master-resources.spec.ts:75:1 › C05 an unknown warehouse creation keeps the draft and prevents a second request
+
+(node:50264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[8/14] [firefox] › tests\ui-master-resources.spec.ts:13:1 › C05 warehouses validate before HTTP, protect drafts and create/update/archive with visible results
+[9/14] [firefox] › tests\ui-master-resources.spec.ts:25:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation
+[10/14] [firefox] › tests\ui-master-resources.spec.ts:33:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup
+[11/14] [firefox] › tests\ui-master-resources.spec.ts:39:1 › C05 customer address UI never replays a masked phone and orders load per-customer addresses
+[12/14] [firefox] › tests\ui-master-resources.spec.ts:45:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe
+[13/14] [firefox] › tests\ui-master-resources.spec.ts:57:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation
+  2) [firefox] › tests\ui-master-resources.spec.ts:57:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation 
+
+    Error: page.evaluate: JSON.parse: unexpected character at line 1 column 1 of the JSON data
+
+      57 | test('C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation',async({page})=>{
+      58 |     await page.goto(url+'/s/shop-demo/customers');
+    > 59 |     const customer=await page.evaluate(async()=>{
+         |                               ^
+      60 |         const session=(await (await fetch('/api/v2/session')).json()).data;
+      61 |         const response=await fetch('/api/v2/shops/shop-demo/customers',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrfToken,'Idempotency-Key':crypto.randomUUID()},body:JSON.stringify({displayName:'Khách địa chỉ kiểm chứng',phone:null,email:null,notes:''})});
+      62 |         if(response.status!==201)throw new Error('Customer creation failed');return (await response.json()).data;
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-master-resources.spec.ts:59:31
+
+    Error Context: test-results\playwright-50264-d12d09ac-0574-4006-8101-8a87f61b979b\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-firefox\error-context.md
+
+    Error Context: test-results\playwright-50264-d12d09ac-0574-4006-8101-8a87f61b979b\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-50264-d12d09ac-0574-4006-8101-8a87f61b979b\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-50264-d12d09ac-0574-4006-8101-8a87f61b979b\ui-master-resources-C05-co-a70c2-ory-fields-prevent-creation-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:69352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[14/14] [firefox] › tests\ui-master-resources.spec.ts:75:1 › C05 an unknown warehouse creation keeps the draft and prevents a second request
+  2 failed
+    [chromium] › tests\ui-master-resources.spec.ts:57:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation 
+    [firefox] › tests\ui-master-resources.spec.ts:57:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation 
+  12 passed (1.9m)

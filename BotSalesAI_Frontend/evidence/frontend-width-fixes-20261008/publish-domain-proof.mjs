@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+const output = import.meta.dirname, frontend = path.resolve(output, '../..'), repository = path.dirname(frontend);
+const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
+const hash = file => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const rel = file => path.relative(repository, file).replaceAll('\\', '/');
+const preservation = read(path.join(output, 'final-verify-preservation.json'));
+const record = read(path.join(repository, preservation.verificationRecord));
+if (preservation.exitCode || record.exitCode || record.sourceDrift.length || !preservation.freshExecution || !preservation.originalRestored) throw new Error('Publish only actual successful current verify output');
+for (const [source, digest] of Object.entries(record.sourceFingerprints)) if (hash(path.join(repository, source)) !== digest) throw new Error('Executed source stale: ' + source);
+const produced = path.join(repository, preservation.produced.path), value = read(produced);
+if (hash(produced) !== preservation.produced.sha256 || value.status !== 'PASS' || value.network.status !== 'PASS' || value.checks.length !== 75 || value.network.checks.length !== 13 || [...value.checks, ...value.network.checks].some(item => item.status !== 'PASS')) throw new Error('Produced report incomplete');
+const target = path.join(frontend, 'evidence/domain-tests.json'), archive = path.join(output, 'domain-before-current-publication.json');
+if (fs.existsSync(path.join(output, 'domain-publication-current.json'))) throw new Error('Publication already recorded; inspect instead of overwriting provenance');
+fs.copyFileSync(target, archive); fs.copyFileSync(produced, target);
+fs.writeFileSync(path.join(output, 'domain-publication-current.json'), JSON.stringify({publishedAt: new Date().toISOString(), method: 'Byte copy of actual domain output produced by current successful full verify, after full browser historical preservation completes. No hand-written result.', original: {path: rel(archive), sha256: hash(archive)}, produced: preservation.produced, target: {path: rel(target), sha256: hash(target)}, verifyRecord: preservation.verificationRecord, status: hash(target) === hash(produced) ? 'PASS' : 'FAIL'}, null, 2) + '\n');
+console.log('Published actual current domain proof; historical original archived byte-exactly.');

@@ -1,0 +1,93 @@
+{
+  "status": "MATCH_PREVIOUS_FINAL_SOURCE_AND_DEMO",
+  "recordedAt": "2026-10-08T14:15:33.925Z",
+  "priorRuntimeFingerprintsCompared": 82,
+  "priorBuildFilesCompared": 39,
+  "runtimeDrift": [],
+  "buildDrift": [],
+  "extraGrids": [
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx",
+      "owner": "DashboardPage",
+      "line": 68,
+      "component": "Stats",
+      "opening": "<Stats>",
+      "directChildren": [
+        "<Stat title=\"Hội thoại đang mở\" value={<Link component={RouterLink} to={`/s/${shop.id}/inbox`} underline=\"hover\" color=\"inherit\">{",
+        "<Stat title=\"Đơn chờ xử lý\" value={<Link component={RouterLink} to={`/s/${shop.id}/orders`} underline=\"hover\" color=\"inherit\">{dat",
+        "<Stat title=\"Sản phẩm gần hết\" value={<Link component={RouterLink} to={`/s/${shop.id}/inventory`} underline=\"hover\" color=\"inherit",
+        "<Stat title=\"Trợ lý bán hàng\" value={<Status value={data.botStatus} />} note=\"Trạng thái do API cung cấp\" icon={<SmartToyRounded /"
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx",
+      "owner": "DashboardPage",
+      "line": 77,
+      "component": "Box",
+      "opening": "<Box sx={[layoutSx.dashboard.sectionGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', xl: '1.6fr 1fr' }, alignItems: 'start' }]}>",
+      "directChildren": [
+        "<Panel title=\"Dòng tiền và doanh thu\" subtitle=\"Doanh thu ghi nhận và tiền đã thu là hai chỉ số khác nhau.\" bodyMode=\"inset\">\n    ",
+        "<Panel title=\"Đơn hàng gần đây\" subtitle=\"Mở đơn để xem trạng thái chuẩn bị, giao hàng và thanh toán.\" action={canOrders ? <RouteL",
+        "{canOps && <Panel title=\"Đội ngũ AI của cửa hàng\" subtitle=\"Trạng thái vai trò lấy từ API; trạng thái kết nối bên ngoài chưa được ",
+        "{canPauseBot && <Panel title=\"Điều khiển trợ lý\" subtitle=\"Tạm dừng là thao tác có tác động; cần xác nhận và lý do.\" bodyMode=\"ins"
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx",
+      "owner": "CashflowPage",
+      "line": 105,
+      "component": "Stats",
+      "opening": "<Stats>",
+      "directChildren": [
+        "<Stat title=\"Tiền đã thu\" value={<Amount wrap value={c.receipts}/>}/>",
+        "<Stat title=\"Tiền đã chi\" value={<Amount wrap value={c.disbursements}/>}/>",
+        "<Stat title=\"Biến động tiền thuần\" value={<Amount wrap value={c.netCashMovement}/>} accent note=\"Không phải số dư tài khoản\"/>",
+        "<Stat title=\"Múi giờ báo cáo\" value={c.timezone}/>"
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx",
+      "owner": "ProfitLossPage",
+      "line": 158,
+      "component": "Stats",
+      "opening": "<Stats>",
+      "directChildren": [
+        "<Stat title=\"Doanh thu thuần\" value={<Amount wrap value={p.netSales} />} />",
+        "<Stat title=\"Giá vốn\" value={<Amount wrap value={p.cogs} />} />",
+        "<Stat title=\"Lãi gộp\" value={<Amount wrap value={p.grossProfit} />} accent />",
+        "<Stat title=\"Lợi nhuận vận hành\" value={<Amount wrap value={p.operatingProfit} />} note=\"Chưa có chứng nhận kế toán pháp định\" />"
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx",
+      "owner": "OperationsPage",
+      "line": 57,
+      "component": "Stats",
+      "opening": "<Stats>",
+      "directChildren": [
+        "<Stat title=\"Chưa có người nhận\" value={summary.data.data.queuedTasks} accent />",
+        "<Stat title=\"Quá hạn\" value={summary.data.data.overdueTasks} />",
+        "<Stat title=\"Chờ phê duyệt\" value={summary.data.data.pendingApprovals} />",
+        "<Stat title=\"Kết quả chưa rõ\" value={summary.data.data.unknownCommands} />"
+      ]
+    },
+    {
+      "path": "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx",
+      "owner": "MarketingPage",
+      "line": 225,
+      "component": "Stats",
+      "opening": "<Stats>",
+      "directChildren": [
+        "<Stat title=\"Đơn có nguồn xác định\" value={m.knownAttributedOrders} note=\"Theo trường knownAttributedOrders của API\" />",
+        "<Stat title=\"Đơn chưa rõ nguồn\" value={m.unknownAttributionOrders} note=\"Giữ riêng, không tự gán nguồn\" />",
+        "<Stat title=\"Chi quảng cáo thực tế\" value={<Amount wrap value={m.actualSpend} />} note={m.actualSpend ? 'API cung cấp số thực tế' ",
+        "<Stat title=\"Chi quảng cáo ước tính\" value={<Amount wrap value={m.estimatedSpend} />} note=\"Ước tính không phải số ghi sổ\" />"
+      ]
+    }
+  ],
+  "references": [
+    "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/S19-current-evidence.json",
+    "BotSalesAI_Frontend/evidence/frontend-component-fixes-20261008/clean-artifacts-components-20261008.json"
+  ],
+  "diagnosticScriptSha256": "fdcbb4cbfeb621b781b22417a348e11723fdbd2f5aabcaadf400b6b9c3913f51"
+}

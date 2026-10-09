@@ -1,0 +1,372 @@
+
+[WebServer] (node:13652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 154 tests using 1 worker
+
+
+(node:87860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/154] [chromium] › tests\fe011.spec.ts:37:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+[WebServer] [BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-37944-c17205ea-a705-483a-85cd-79cc330f3cc3\deps\react-dom_client.js?v=a209b6f6 as it exceeds the max of 500KB.
+
+[2/154] [chromium] › tests\fe011.spec.ts:56:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+  1) [chromium] › tests\fe011.spec.ts:56:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('row').filter({ hasText: 'Kiểm kê FE011' })
+    Expected substring: "adjustment"
+    Received string:    "21:00 29/9/26Điều chỉnh tồnv-p1warehouse-0120Điều chỉnh thủ cônguser-demoKiểm kê FE011"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('row').filter({ hasText: 'Kiểm kê FE011' }) with timeout 5000ms
+      - waiting for getByRole('row').filter({ hasText: 'Kiểm kê FE011' })
+        14 × locator resolved to <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr>
+           - unexpected value "21:00 29/9/26Điều chỉnh tồnv-p1warehouse-0120Điều chỉnh thủ cônguser-demoKiểm kê FE011"
+
+
+      86 |     await expect(page.getByRole('heading', { name: 'Lịch sử kho', exact: true })).toBeVisible();
+      87 |     const movement = page.getByRole('row').filter({ hasText: 'Kiểm kê FE011' });
+    > 88 |     await expect(movement).toContainText('adjustment');
+         |                            ^
+      89 |     await expect(movement).toContainText('2');
+      90 |     await expect(movement).toContainText('user-demo');
+      91 |     expect(calls.some(call => call.method === 'GET' && call.path.startsWith('/api/v2/shops/shop-demo/inventory/movements'))).toBeTruthy();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:88:28
+
+    Error Context: test-results\playwright-87860-e467acf4-4d19-4945-a15b-aff8306e1c1c\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\error-context.md
+
+    Error Context: test-results\playwright-87860-e467acf4-4d19-4945-a15b-aff8306e1c1c\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-87860-e467acf4-4d19-4945-a15b-aff8306e1c1c\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-87860-e467acf4-4d19-4945-a15b-aff8306e1c1c\fe011-FE011-AC02-adjustmen-782bf-ciles-movement-history-once-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:79656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/154] [chromium] › tests\fe011.spec.ts:94:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+[4/154] [chromium] › tests\fe011.spec.ts:122:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+[5/154] [chromium] › tests\fe011.spec.ts:138:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[6/154] [chromium] › tests\fe011.spec.ts:156:1 › FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source
+[7/154] [chromium] › tests\fe011.spec.ts:184:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+[8/154] [chromium] › tests\fe011.spec.ts:207:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+[9/154] [chromium] › tests\fe012.spec.ts:37:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[10/154] [chromium] › tests\fe012.spec.ts:95:1 › FE012 demo address choice is labeled synthetic and completes the mock order flow
+  2) [chromium] › tests\fe012.spec.ts:95:1 › FE012 demo address choice is labeled synthetic and completes the mock order flow 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/Địa chỉ mẫu chỉ phục vụ nghiệm thu giao diện/)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/Địa chỉ mẫu chỉ phục vụ nghiệm thu giao diện/) with timeout 5000ms
+      - waiting for getByText(/Địa chỉ mẫu chỉ phục vụ nghiệm thu giao diện/)
+
+
+       95 | test('FE012 demo address choice is labeled synthetic and completes the mock order flow', async ({ page }) => {
+       96 |     await gotoDemo(page, '/s/shop-demo/orders/new');
+    >  97 |     await expect(page.getByText(/Địa chỉ mẫu chỉ phục vụ nghiệm thu giao diện/)).toBeVisible();
+          |                                                                                  ^
+       98 |     await chooseOption(page, 'Khách hàng', 'Linh (khách mẫu)');
+       99 |     await chooseOption(page, 'Hội thoại liên quan', 'Linh (khách mẫu) · cv1');
+      100 |     await chooseOption(page, 'Sản phẩm 1', 'Áo thun Essential · L · Than · AO-002');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe012.spec.ts:97:82
+
+    Error Context: test-results\playwright-79656-5755ca4e-80a7-43f9-acc9-efb81f3e01d3\fe012-FE012-demo-address-c-28969-mpletes-the-mock-order-flow-chromium\error-context.md
+
+    Error Context: test-results\playwright-79656-5755ca4e-80a7-43f9-acc9-efb81f3e01d3\fe012-FE012-demo-address-c-28969-mpletes-the-mock-order-flow-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-79656-5755ca4e-80a7-43f9-acc9-efb81f3e01d3\fe012-FE012-demo-address-c-28969-mpletes-the-mock-order-flow-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-79656-5755ca4e-80a7-43f9-acc9-efb81f3e01d3\fe012-FE012-demo-address-c-28969-mpletes-the-mock-order-flow-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:30564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[11/154] [chromium] › tests\fe012.spec.ts:124:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[12/154] [chromium] › tests\fe012.spec.ts:184:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+[13/154] [chromium] › tests\fe012.spec.ts:201:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+[14/154] [chromium] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[15/154] [chromium] › tests\fe012.spec.ts:259:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[16/154] [chromium] › tests\fe012.spec.ts:279:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[17/154] [chromium] › tests\fe012.spec.ts:303:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[18/154] [chromium] › tests\fe012.spec.ts:356:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[19/154] [chromium] › tests\fe012.spec.ts:363:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[20/154] [chromium] › tests\fe015.spec.ts:52:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates
+[21/154] [chromium] › tests\fe015.spec.ts:98:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data
+[22/154] [chromium] › tests\fe015.spec.ts:119:1 › UI003 report timestamps follow the active shop timezone
+[23/154] [chromium] › tests\fe015.spec.ts:176:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values
+[24/154] [chromium] › tests\fe015.spec.ts:204:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings
+[25/154] [chromium] › tests\fe015.spec.ts:239:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation
+  3) [chromium] › tests\fe015.spec.ts:239:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('row').filter({ hasText: '2026-09-01' }).getByText('Đã đóng', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('row').filter({ hasText: '2026-09-01' }).getByText('Đã đóng', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('row').filter({ hasText: '2026-09-01' }).getByText('Đã đóng', { exact: true })
+
+
+      248 |     expect(JSON.parse((await closeRequest).postData() || 'null')).toEqual({ expectedVersion: 1 });
+      249 |     expect((await closeResponse).status()).toBe(202);
+    > 250 |     await expect(period.getByText('Đã đóng', { exact: true })).toBeVisible();
+          |                                                                ^
+      251 |
+      252 |     await page.getByRole('link', { name: 'Chứng từ & sổ kép', exact: true }).click();
+      253 |     await page.getByRole('button', { name: 'Tạo bút toán nháp', exact: true }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:250:64
+
+    Error Context: test-results\playwright-30564-ba8b69a9-4289-41eb-a133-a2c77dfc3f51\fe015-FE015-AC02-closed-ac-4f935-bles-journal-draft-creation-chromium\error-context.md
+
+    Error Context: test-results\playwright-30564-ba8b69a9-4289-41eb-a133-a2c77dfc3f51\fe015-FE015-AC02-closed-ac-4f935-bles-journal-draft-creation-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-30564-ba8b69a9-4289-41eb-a133-a2c77dfc3f51\fe015-FE015-AC02-closed-ac-4f935-bles-journal-draft-creation-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-30564-ba8b69a9-4289-41eb-a133-a2c77dfc3f51\fe015-FE015-AC02-closed-ac-4f935-bles-journal-draft-creation-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:52856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[26/154] [chromium] › tests\fe015.spec.ts:260:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions
+[27/154] [chromium] › tests\fe015.spec.ts:283:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page
+[28/154] [chromium] › tests\fe015.spec.ts:410:1 › FE015.AC03 COD settlement matches net remittance plus documented fee
+  4) [chromium] › tests\fe015.spec.ts:410:1 › FE015.AC03 COD settlement matches net remittance plus documented fee 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('row').filter({ hasText: 'FE015-COD-BATCH' }).getByText('matched', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('row').filter({ hasText: 'FE015-COD-BATCH' }).getByText('matched', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('row').filter({ hasText: 'FE015-COD-BATCH' }).getByText('matched', { exact: true })
+
+
+      438 |     expect(codBody).toMatchObject({ expectedVersion: 1, actualFees: { amount: '20000', currency: 'VND' }, feeEvidenceRef: 'FEE-INVOICE-FE015-01' });
+      439 |     expect((await codResponse).status()).toBe(202);
+    > 440 |     await expect(codRow.getByText('matched', { exact: true })).toBeVisible();
+          |                                                                ^
+      441 |     expect(posts).toHaveLength(1);
+      442 | });
+      443 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:440:64
+
+    Error Context: test-results\playwright-52856-0985f641-2fe4-4019-add8-59ef88c25981\fe015-FE015-AC03-COD-settl-2639e-ittance-plus-documented-fee-chromium\error-context.md
+
+    Error Context: test-results\playwright-52856-0985f641-2fe4-4019-add8-59ef88c25981\fe015-FE015-AC03-COD-settl-2639e-ittance-plus-documented-fee-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-52856-0985f641-2fe4-4019-add8-59ef88c25981\fe015-FE015-AC03-COD-settl-2639e-ittance-plus-documented-fee-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-52856-0985f641-2fe4-4019-add8-59ef88c25981\fe015-FE015-AC03-COD-settl-2639e-ittance-plus-documented-fee-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:18476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[29/154] [chromium] › tests\fe015.spec.ts:444:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible
+  5) [chromium] › tests\fe015.spec.ts:444:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('row').filter({ hasText: 'FE015-PARTIAL-BANK' }).getByText('suggested', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('row').filter({ hasText: 'FE015-PARTIAL-BANK' }).getByText('suggested', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('row').filter({ hasText: 'FE015-PARTIAL-BANK' }).getByText('suggested', { exact: true })
+
+
+      463 |     expect(allocationBody).toMatchObject({ allocations: [{ resource: { type: 'debt', id: 'seed-debtitem-10028' }, amount: { amount: '50000', currency: 'VND' } }] });
+      464 |     expect((await allocationResponse).status()).toBe(202);
+    > 465 |     await expect(caseRow.getByText('suggested', { exact: true })).toBeVisible();
+          |                                                                   ^
+      466 |     await expect(allocationDialog).toBeHidden();
+      467 | });
+      468 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:465:67
+
+    Error Context: test-results\playwright-18476-6c3a7445-13e1-498d-b52e-4d514276ccd4\fe015-FE015-AC03-partial-b-753ec-ing-amount-and-debt-visible-chromium\error-context.md
+
+    Error Context: test-results\playwright-18476-6c3a7445-13e1-498d-b52e-4d514276ccd4\fe015-FE015-AC03-partial-b-753ec-ing-amount-and-debt-visible-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-18476-6c3a7445-13e1-498d-b52e-4d514276ccd4\fe015-FE015-AC03-partial-b-753ec-ing-amount-and-debt-visible-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-18476-6c3a7445-13e1-498d-b52e-4d514276ccd4\fe015-FE015-AC03-partial-b-753ec-ing-amount-and-debt-visible-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:7696) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[30/154] [chromium] › tests\fe015.spec.ts:469:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+[31/154] [chromium] › tests\frontend-corrections.spec.ts:18:1 › F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes
+[32/154] [chromium] › tests\frontend-corrections.spec.ts:46:1 › F01 requires an explicit choice for a field changed by both editors
+[33/154] [chromium] › tests\frontend-corrections.spec.ts:62:1 › F06 detects an order draft and blocks navigation until explicit discard
+[34/154] [chromium] › tests\frontend-corrections.spec.ts:75:1 › F02 retains an unsaved product image through an unrelated refetch
+[35/154] [chromium] › tests\frontend-corrections.spec.ts:87:1 › F03 retains notification-policy inputs through a background resync and navigation
+[36/154] [chromium] › tests\frontend-corrections.spec.ts:98:1 › F05 keeps text typed while a previous internal note is pending
+[37/154] [chromium] › tests\frontend-corrections.spec.ts:113:1 › F08 validates 4001 customer-note characters at the field and accepts 4000
+[38/154] [chromium] › tests\frontend-corrections.spec.ts:147:1 › F07 routes the fulfillment footer close through the shared discard guard
+[39/154] [chromium] › tests\frontend-corrections.spec.ts:161:1 › F09 refreshes new Inbox messages without refetching the visible product and stock snapshots
+[40/154] [chromium] › tests\frontend-corrections.spec.ts:191:1 › F01 shop settings merges a server-only locale change and preserves edits typed during save
+[41/154] [chromium] › tests\frontend-corrections.spec.ts:217:1 › F03 privacy policy preserves refetch drafts and compares before applying the newest version
+[42/154] [chromium] › tests\frontend-corrections.spec.ts:234:1 › F01 category keeps a late edit after saving, and reopens with a clean current baseline
+[43/154] [chromium] › tests\frontend-corrections.spec.ts:255:1 › F01 supplier preserves a concurrent server-only term and PATCHes the local name
+[44/154] [chromium] › tests\frontend-corrections.spec.ts:272:1 › F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft
+[45/154] [chromium] › tests\frontend-corrections.spec.ts:300:1 › F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion
+[46/154] [chromium] › tests\frontend-corrections.spec.ts:326:1 › F01 order editor keeps its original version and compares whole line lists before PATCH
+[47/154] [chromium] › tests\frontend-corrections.spec.ts:348:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+[48/154] [chromium] › tests\frontend-corrections.spec.ts:373:1 › F01 analogous return-inspection draft does not adopt a refetched version without comparison
+[49/154] [chromium] › tests\frontend-corrections.spec.ts:397:1 › F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content
+[50/154] [chromium] › tests\frontend-corrections.spec.ts:426:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+[51/154] [chromium] › tests\frontend-corrections.spec.ts:451:1 › F06 order custom close respects the draft guard and busy editors remain protected
+[52/154] [chromium] › tests\ui-component-layout.spec.ts:40:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[53/154] [chromium] › tests\ui-component-layout.spec.ts:61:1 › A02 product editors align category and status faces independently from lookup metadata
+[54/154] [chromium] › tests\ui-component-layout.spec.ts:84:1 › Shared outlined labels focus empty and populated native controls
+[55/154] [chromium] › tests\ui-component-layout.spec.ts:99:1 › A02 variant fields retain readable widths when text doubles
+[56/154] [chromium] › tests\ui-component-layout.spec.ts:130:1 › A03 import mapping preserves natural remove actions and editable mappings
+[57/154] [chromium] › tests\ui-component-layout.spec.ts:150:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+[58/154] [chromium] › tests\ui-component-layout.spec.ts:176:1 › A05 status height follows its own label while long labels remain fully readable
+  6) [chromium] › tests\ui-component-layout.spec.ts:176:1 › A05 status height follows its own label while long labels remain fully readable 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('main .MuiChip-label').last()
+    Expected: "Trạng thái chưa biết AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    Received: "Chưa xác định"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" locator('main .MuiChip-label').last() with timeout 5000ms
+      - waiting for locator('main .MuiChip-label').last()
+        14 × locator resolved to <span class="MuiChip-label MuiChip-labelSmall css-qmwq9b-MuiChip-label">Chưa xác định</span>
+           - unexpected value "Chưa xác định"
+
+
+      186 |         expect(geometry.actual).toBeLessThanOrEqual(intrinsicSize.natural + 1);
+      187 |         const long = page.locator('main .MuiChip-label').last();
+    > 188 |         await expect(long).toHaveText('Trạng thái chưa biết ' + 'A'.repeat(120));
+          |                            ^
+      189 |         expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
+      190 |         await reflow(page, width);
+      191 |         expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:188:28
+
+    Error Context: test-results\playwright-7696-c1636ae2-34b8-4707-b18b-65272c9b90c5\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-chromium\error-context.md
+
+    Error Context: test-results\playwright-7696-c1636ae2-34b8-4707-b18b-65272c9b90c5\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-7696-c1636ae2-34b8-4707-b18b-65272c9b90c5\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-7696-c1636ae2-34b8-4707-b18b-65272c9b90c5\ui-component-layout-A05-st-e9ac3-abels-remain-fully-readable-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+(node:87164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[59/154] [chromium] › tests\ui-component-layout.spec.ts:195:1 › A06 Empty wraps unbroken reference text and retains its keyboard action
+[60/154] [chromium] › tests\ui-component-layout.spec.ts:208:1 › A07 canonical order address selection exposes full text and edit lines retain intrinsic actions
+  7) [chromium] › tests\ui-component-layout.spec.ts:208:1 › A07 canonical order address selection exposes full text and edit lines retain intrinsic actions 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('dialog', { name: 'Sửa đơn nháp', exact: true }).getByRole('combobox', { name: 'Địa chỉ giao hàng', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('dialog', { name: 'Sửa đơn nháp', exact: true }).getByRole('combobox', { name: 'Địa chỉ giao hàng', exact: true }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Sửa đơn nháp', exact: true }).getByRole('combobox', { name: 'Địa chỉ giao hàng', exact: true })
+
+
+      216 |         const address = dialog.getByRole('group', { name: 'Thông tin địa chỉ giao hàng', exact: true });
+      217 |         await expect(address).toBeVisible();
+    > 218 |         await expect(dialog.getByRole('combobox', { name: 'Địa chỉ giao hàng',exact:true })).toBeVisible();
+          |                                                                                              ^
+      219 |         await expect(dialog.getByRole('combobox', { name: /^Thanh toán/ })).toHaveCount(0);
+      220 |         await expect(dialog.getByRole('group', { name: 'Thanh toán', exact: true })).toContainText('Thu khi giao (COD)');
+      221 |         const addressText = address.locator('p'); await expect(addressText).toHaveText(expected);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:218:94
+
+    Error Context: test-results\playwright-87164-741faad5-83a3-4e5a-a197-2826530eb429\ui-component-layout-A07-ca-7ccbd-es-retain-intrinsic-actions-chromium\error-context.md
+
+    Error Context: test-results\playwright-87164-741faad5-83a3-4e5a-a197-2826530eb429\ui-component-layout-A07-ca-7ccbd-es-retain-intrinsic-actions-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-87164-741faad5-83a3-4e5a-a197-2826530eb429\ui-component-layout-A07-ca-7ccbd-es-retain-intrinsic-actions-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-87164-741faad5-83a3-4e5a-a197-2826530eb429\ui-component-layout-A07-ca-7ccbd-es-retain-intrinsic-actions-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:84064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[61/154] [chromium] › tests\ui-inventory-layout.spec.ts:15:1 › Inventory R15/R16 preserve shared gutter and contain table overflow at 320-1440px
+[62/154] [chromium] › tests\ui-inventory-layout.spec.ts:51:1 › Inventory filters reset cursor and preserve other URL state; adjustment validation sends no command
+[63/154] [chromium] › tests\ui-master-resources.spec.ts:13:1 › C05 warehouses validate before HTTP, protect drafts and create/update/archive with visible results
+[64/154] [chromium] › tests\ui-master-resources.spec.ts:25:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation
+[65/154] [chromium] › tests\ui-master-resources.spec.ts:33:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup
+[66/154] [chromium] › tests\ui-master-resources.spec.ts:39:1 › C05 customer address UI never replays a masked phone and orders load per-customer addresses
+[67/154] [chromium] › tests\ui-master-resources.spec.ts:45:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe
+[68/154] [chromium] › tests\ui-orders-layout.spec.ts:15:1 › Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px
+[69/154] [chromium] › tests\ui-orders-layout.spec.ts:46:1 › Orders draft, versioned quote, canonical address snapshot and return dialogs keep their behavior without writes
+[70/154] [chromium] › tests\ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep labels clear when text doubles
+[71/154] [chromium] › tests\ui-toolbar-layout.spec.ts:61:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[72/154] [chromium] › tests\ui-toolbar-layout.spec.ts:78:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths
+[73/154] [chromium] › tests\ui-toolbar-layout.spec.ts:121:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow
+[74/154] [chromium] › tests\ui-toolbar-layout.spec.ts:146:1 › Toolbar public extra slot cannot stretch a single-line submit action
+[75/154] [chromium] › tests\ui-toolbar-layout.spec.ts:163:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup
+[76/154] [chromium] › tests\ui-toolbar-layout.spec.ts:199:1 › Toolbar keeps Inventory apply/reset separate from search submission

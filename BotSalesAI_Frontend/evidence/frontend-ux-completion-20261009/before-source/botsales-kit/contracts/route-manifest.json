@@ -1,0 +1,2819 @@
+{
+  "version": "2.0",
+  "status": "APPROVED_DESIGN_NOT_IMPLEMENTED",
+  "shopPrefix": "/s/:shopId",
+  "globalOperations": [
+    "getSession",
+    "getCsrfToken",
+    "logout",
+    "subscribeEvents",
+    "listCommands",
+    "getCommand",
+    "getJob",
+    "getShop"
+  ],
+  "routingRules": [
+    "Static /knowledge/review and /products/new must be registered ahead of dynamic detail routes or use ranked router matching.",
+    "Every route inherits scoped session bootstrap, error boundary, permission check and safe unknown-state fallback.",
+    "Feature readiness and capabilities do not replace permission checks."
+  ],
+  "routes": [
+    {
+      "id": "R01",
+      "requirementId": "FR-001",
+      "path": "/login",
+      "title": "Đăng nhập",
+      "module": "workspace",
+      "readPermission": null,
+      "readOperations": [
+        "getCsrfToken"
+      ],
+      "actions": [
+        {
+          "label": "Đăng nhập qua hệ thống nhận dạng",
+          "operationId": "beginLogin",
+          "permission": null
+        }
+      ],
+      "purpose": "Xác thực vào ứng dụng quản trị; không nhầm với đăng nhập Facebook Page.",
+      "content": "OIDC login redirect, session error và returnTo đã allowlist; không tự giữ password/token.",
+      "behavior": "Dùng beginLogin / completeLogin; nonce/state/PKCE/session rotation ở backend. Local IdP fake chỉ test.",
+      "edgeCases": "Sai thông tin; rate limit; expired pre-session CSRF; network error; không tiết lộ email tồn tại.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R02",
+      "requirementId": "FR-002",
+      "path": "/workspaces",
+      "title": "Chọn cửa hàng",
+      "module": "workspace",
+      "readPermission": null,
+      "readOperations": [
+        "listShops",
+        "getSession"
+      ],
+      "actions": [],
+      "purpose": "Chọn shop người dùng có membership hợp lệ.",
+      "content": "Shop name, role summary, trạng thái; không hiện dữ liệu doanh thu của shop khác.",
+      "behavior": "Đổi shop mount scope mới; có guard bản nháp chưa lưu; cache và stream cũ bị dọn.",
+      "edgeCases": "Không shop; membership revoked; late response của shop trước; không tự fallback sang shop không có quyền.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R03",
+      "requirementId": "FR-003",
+      "path": "/onboarding",
+      "title": "Thiết lập cửa hàng",
+      "module": "workspace",
+      "readPermission": null,
+      "readOperations": [
+        "getSession"
+      ],
+      "actions": [
+        {
+          "label": "Tạo cửa hàng",
+          "operationId": "createShop",
+          "permission": null
+        }
+      ],
+      "purpose": "Tạo thông tin shop ban đầu trong môi trường được cấp quyền.",
+      "content": "Tên, currency, timezone, locale; xác nhận base currency trước tạo.",
+      "behavior": "Wizard có thể quay lại giữ input memory; chỉ complete sau backend tạo default warehouse/membership.",
+      "edgeCases": "Tên trống, mã currency sai, timezone không hợp lệ, submit lặp; create permission/policy server mới quyết định.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R04",
+      "requirementId": "FR-004",
+      "path": "/s/:shopId/overview",
+      "title": "Tổng quan",
+      "module": "dashboard",
+      "readPermission": "dashboard.read",
+      "readOperations": [
+        "getDashboard",
+        "getShop"
+      ],
+      "actions": [
+        {
+          "label": "Tạm dừng bot",
+          "operationId": "pauseBot",
+          "permission": "bot.publish"
+        }
+      ],
+      "purpose": "Thấy ngay việc cần xử lý và dữ liệu nào đang chưa đầy đủ.",
+      "content": "Hội thoại chờ, đơn chờ, hàng sắp hết, bot health; revenue/cash chỉ theo finance permission; asOf.",
+      "behavior": "KPI mở trang tương ứng với bộ lọc; pause có xác nhận/reason và command status.",
+      "edgeCases": "Null tiền hiển thị bị hạn chế/chưa có, không 0; partial dashboard và stale; widget lỗi không làm trắng toàn trang.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-053"
+      ]
+    },
+    {
+      "id": "R05",
+      "requirementId": "FR-005",
+      "path": "/s/:shopId/inbox",
+      "title": "Hộp thư",
+      "module": "inbox",
+      "readPermission": "conversations.read",
+      "readOperations": [
+        "listConversations",
+        "getInboxMetadata"
+      ],
+      "actions": [],
+      "purpose": "Tìm hội thoại cần phản hồi hoặc được phân công.",
+      "content": "Search, status, mode bot/human, channel/assignee filter được backend hỗ trợ; preview và unread.",
+      "behavior": "Chọn row tới R06; URL giữ filter/cursor; bàn phím tới từng hội thoại, không đọc raw PII qua toast.",
+      "edgeCases": "Không kết quả khác inbox trống; event mới không giật vị trí; slow response không đổi shop đang xem.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-033",
+        "SC-034",
+        "SC-035",
+        "SC-036",
+        "SC-037"
+      ]
+    },
+    {
+      "id": "R06",
+      "requirementId": "FR-006",
+      "path": "/s/:shopId/inbox/:conversationId",
+      "title": "Chi tiết hội thoại",
+      "module": "inbox",
+      "readPermission": "conversations.read",
+      "readOperations": [
+        "getConversation",
+        "listMessages",
+        "getCommand",
+        "getInboxMetadata"
+      ],
+      "actions": [
+        {
+          "label": "Gửi tin",
+          "operationId": "sendMessage",
+          "permission": "conversations.reply"
+        },
+        {
+          "label": "Ghi chú nội bộ",
+          "operationId": "addInternalNote",
+          "permission": "conversations.reply"
+        },
+        {
+          "label": "Tiếp quản",
+          "operationId": "takeoverConversation",
+          "permission": "conversations.assign"
+        },
+        {
+          "label": "Trả lại bot",
+          "operationId": "releaseConversation",
+          "permission": "conversations.assign"
+        },
+        {
+          "label": "Phân công",
+          "operationId": "assignConversation",
+          "permission": "conversations.assign"
+        },
+        {
+          "label": "Đánh dấu xong",
+          "operationId": "resolveConversation",
+          "permission": "conversations.assign"
+        },
+        {
+          "label": "Đánh giá câu trả lời",
+          "operationId": "createFeedback",
+          "permission": "conversations.read"
+        }
+      ],
+      "purpose": "Hỗ trợ khách và kiểm soát bot/human rõ ràng.",
+      "content": "Message timeline, delivery status, composer, sendEligibility, mode/assignee, source evidence, customer/order panel theo quyền.",
+      "behavior": "Lịch sử phân trang giữ scroll; draft reply không persist; Enter gửi chỉ theo setting, Shift+Enter xuống dòng; internal note có nhãn nổi bật.",
+      "edgeCases": "Policy unknown/blocked disable gửi; takeover race; send timeout unknown; duplicate/out-of-order event; 403 gỡ messages; không tự gửi lại.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-033",
+        "SC-034",
+        "SC-035",
+        "SC-036",
+        "SC-037"
+      ]
+    },
+    {
+      "id": "R07",
+      "requirementId": "FR-007",
+      "path": "/s/:shopId/customers",
+      "title": "Khách hàng",
+      "module": "customers",
+      "readPermission": "customers.read",
+      "readOperations": [
+        "listCustomers"
+      ],
+      "actions": [
+        {
+          "label": "Thêm khách",
+          "operationId": "createCustomer",
+          "permission": "customers.write"
+        }
+      ],
+      "purpose": "Danh sách khách theo shop, không phải tài khoản nhân viên.",
+      "content": "Tên, thông tin liên hệ masked, external identity khi được phép; search/cursor.",
+      "behavior": "Tạo khách qua form validate; chọn vào R08; không gộp khách tự động theo tên.",
+      "edgeCases": "Khách trùng số điện thoại chỉ cảnh báo/policy server; masked contact; special characters không XSS.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-038"
+      ]
+    },
+    {
+      "id": "R08",
+      "requirementId": "FR-008",
+      "path": "/s/:shopId/customers/:customerId",
+      "title": "Hồ sơ khách",
+      "module": "customers",
+      "readPermission": "customers.read",
+      "readOperations": [
+        "getCustomer"
+      ],
+      "actions": [
+        {
+          "label": "Lưu hồ sơ",
+          "operationId": "updateCustomer",
+          "permission": "customers.write"
+        }
+      ],
+      "purpose": "Xem và sửa dữ liệu chăm sóc khách được cấp quyền.",
+      "content": "Tên, phone/email, notes, trường bị che; links tới orders/inbox scoped filter thay vì tải chéo tự do.",
+      "behavior": "Edit chờ server + ETag; notes plain/sanitized text; đổi customer reset form.",
+      "edgeCases": "412 giữ draft và cho tải phiên bản mới; contact null không bị ghi đè thành chuỗi rỗng; permission change.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-038"
+      ]
+    },
+    {
+      "id": "R09",
+      "requirementId": "FR-009",
+      "path": "/s/:shopId/products",
+      "title": "Sản phẩm",
+      "module": "catalog",
+      "readPermission": "catalog.read",
+      "readOperations": [
+        "listProducts",
+        "listCategories"
+      ],
+      "actions": [],
+      "purpose": "Quản lý danh mục sản phẩm với search/filter thật toàn dataset.",
+      "content": "Tên, SKU/biến thể summary, category, status, price range theo quyền; search/category/status/sort.",
+      "behavior": "Nút thêm điều hướng R10; row tới R11; mọi phân trang ở server; không tính tổng tồn từ product DTO.",
+      "edgeCases": "0/1/100k records; long Vietnamese names; product archived; invalid cursor/filter; không fetch tất cả rồi lọc browser.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-012",
+        "SC-013",
+        "SC-014",
+        "SC-015",
+        "SC-016",
+        "SC-017",
+        "SC-018"
+      ]
+    },
+    {
+      "id": "R10",
+      "requirementId": "FR-010",
+      "path": "/s/:shopId/products/new",
+      "title": "Thêm sản phẩm",
+      "module": "catalog",
+      "readPermission": "catalog.write",
+      "readOperations": [
+        "listCategories"
+      ],
+      "actions": [
+        {
+          "label": "Tạo sản phẩm",
+          "operationId": "createProduct",
+          "permission": "catalog.write"
+        },
+        {
+          "label": "Tải ảnh",
+          "operationId": "uploadFile",
+          "permission": null
+        }
+      ],
+      "purpose": "Tạo Product và tối thiểu một Variant.",
+      "content": "Tên 1–160 ký tự, mô tả, category, status draft/active; mỗi variant có SKU, options, name, currency/price, active; ảnh.",
+      "behavior": "Client validation và server errors theo field; submit idempotent; thành công tới detail. Giá decimal string, không nhập stock ở form này.",
+      "edgeCases": "SKU trùng scoped; variant options trùng; upload quarantined; currency khác shop; mạng đứt không reset form.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-012",
+        "SC-013",
+        "SC-014",
+        "SC-015",
+        "SC-016",
+        "SC-017",
+        "SC-018"
+      ]
+    },
+    {
+      "id": "R11",
+      "requirementId": "FR-011",
+      "path": "/s/:shopId/products/:productId",
+      "title": "Chi tiết sản phẩm",
+      "module": "catalog",
+      "readPermission": "catalog.read",
+      "readOperations": [
+        "getProduct",
+        "listCategories",
+        "getFile"
+      ],
+      "actions": [
+        {
+          "label": "Lưu sản phẩm",
+          "operationId": "updateProduct",
+          "permission": "catalog.write"
+        },
+        {
+          "label": "Lưu trữ sản phẩm",
+          "operationId": "archiveProduct",
+          "permission": "catalog.write"
+        },
+        {
+          "label": "Tải ảnh",
+          "operationId": "uploadFile",
+          "permission": null
+        }
+      ],
+      "purpose": "Sửa danh mục mà không phá lịch sử đơn/kho.",
+      "content": "Overview, variants/prices/images, version và updatedAt; links kho theo variant chỉ khi có quyền.",
+      "behavior": "Edit dùng ETag; archive confirm nêu tác động; variants đã có order không xóa lịch sử; image chỉ dùng ready file.",
+      "edgeCases": "412; SKU conflict; product archived; unauthorized field; thay giá không đổi giá snapshot order cũ.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-012",
+        "SC-013",
+        "SC-014",
+        "SC-015",
+        "SC-016",
+        "SC-017",
+        "SC-018"
+      ]
+    },
+    {
+      "id": "R12",
+      "requirementId": "FR-012",
+      "path": "/s/:shopId/categories",
+      "title": "Danh mục hàng",
+      "module": "catalog",
+      "readPermission": "catalog.read",
+      "readOperations": [
+        "listCategories",
+        "getCategory"
+      ],
+      "actions": [
+        {
+          "label": "Thêm danh mục",
+          "operationId": "createCategory",
+          "permission": "catalog.write"
+        },
+        {
+          "label": "Sửa danh mục",
+          "operationId": "updateCategory",
+          "permission": "catalog.write"
+        },
+        {
+          "label": "Lưu trữ danh mục",
+          "operationId": "archiveCategory",
+          "permission": "catalog.write"
+        }
+      ],
+      "purpose": "Sắp xếp sản phẩm theo nhóm mà không tạo cây vô hạn.",
+      "content": "Tên, parent, active, phiên bản; table hoặc tree bounded.",
+      "behavior": "Create/edit parent selection chống cycle server; archive hiển thị tác động với sản phẩm đang tham chiếu.",
+      "edgeCases": "Parent khác shop; cycle; danh mục đang dùng; 412; không xóa hàng hóa theo cascade ở UI.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-012",
+        "SC-013",
+        "SC-014",
+        "SC-015",
+        "SC-016",
+        "SC-017",
+        "SC-018"
+      ]
+    },
+    {
+      "id": "R13",
+      "requirementId": "FR-013",
+      "path": "/s/:shopId/imports",
+      "title": "Nhập dữ liệu",
+      "module": "catalog",
+      "readPermission": "catalog.import",
+      "readOperations": [
+        "listJobs",
+        "getFile"
+      ],
+      "actions": [
+        {
+          "label": "Tải file",
+          "operationId": "uploadFile",
+          "permission": null
+        },
+        {
+          "label": "Kiểm tra file",
+          "operationId": "createProductImport",
+          "permission": "catalog.import"
+        }
+      ],
+      "purpose": "Import catalog có kiểm tra trước khi ghi, không import âm thầm vào kho.",
+      "content": "File CSV/XLSX không macro, purpose, mapping sku/name/description/category/price/currency/variantName, duplicate strategy.",
+      "behavior": "Upload→validate→preview; nút commit ở R14. File quá hạn/quarantine không được parse. Giới hạn do backend trả và tối đa baseline.",
+      "edgeCases": "Sai encoding/cột/currency; formula/external link; file size/rows over-limit; không đẩy toàn file parsed vào DOM.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-012",
+        "SC-013",
+        "SC-014",
+        "SC-015",
+        "SC-016",
+        "SC-017",
+        "SC-018"
+      ]
+    },
+    {
+      "id": "R14",
+      "requirementId": "FR-014",
+      "path": "/s/:shopId/imports/:jobId",
+      "title": "Kết quả nhập dữ liệu",
+      "module": "catalog",
+      "readPermission": "catalog.import",
+      "readOperations": [
+        "getJob"
+      ],
+      "actions": [
+        {
+          "label": "Ghi các dòng hợp lệ",
+          "operationId": "commitProductImport",
+          "permission": "catalog.import"
+        }
+      ],
+      "purpose": "Cho người dùng quyết định rõ trước commit kết quả dry-run.",
+      "content": "Số dòng hợp lệ/lỗi, paginated errors/export lỗi, validationToken, strategy, progress và thành công một phần.",
+      "behavior": "Confirm đúng validation snapshot; key cùng payload; job chạy backend, đóng tab không hủy lệnh đã tiếp nhận.",
+      "edgeCases": "File/dữ liệu đổi sau preview; partial commit; retry chỉ failed rows với intent mới có preview; không ghi lại dòng đã thành công.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-012",
+        "SC-013",
+        "SC-014",
+        "SC-015",
+        "SC-016",
+        "SC-017",
+        "SC-018"
+      ]
+    },
+    {
+      "id": "R15",
+      "requirementId": "FR-015",
+      "path": "/s/:shopId/inventory",
+      "title": "Tồn kho",
+      "module": "inventory",
+      "readPermission": "inventory.read",
+      "readOperations": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "actions": [
+        {
+          "label": "Điều chỉnh tồn",
+          "operationId": "createInventoryAdjustment",
+          "permission": "inventory.adjust"
+        }
+      ],
+      "purpose": "Thấy onHand, reserved và available theo SKU/warehouse.",
+      "content": "SKU, warehouse, onHand, reserved, available, low-stock, asOf; unitCost chỉ khi server cho phép.",
+      "behavior": "Điều chỉnh drawer delta + reason + expectedVersion + cost cần thiết; chờ command rồi refetch; v1 default warehouse.",
+      "edgeCases": "Oversell/negative available, version conflict, thiếu cost, unknown command; không optimistic và không PUT absolute stock.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-019",
+        "SC-020",
+        "SC-021"
+      ]
+    },
+    {
+      "id": "R16",
+      "requirementId": "FR-016",
+      "path": "/s/:shopId/inventory/movements",
+      "title": "Lịch sử kho",
+      "module": "inventory",
+      "readPermission": "inventory.read",
+      "readOperations": [
+        "listStockMovements"
+      ],
+      "actions": [],
+      "purpose": "Truy nguyên mỗi thay đổi kho đến nguồn nghiệp vụ.",
+      "content": "Thời gian, SKU, warehouse, onHand delta, reserved delta, kind, actor, reason, source link.",
+      "behavior": "Read-only, cursor/search/filter; links order chỉ mở khi có quyền; chỉnh sai bằng adjustment bù, không edit movement.",
+      "edgeCases": "Event lặp không tạo row lặp; source archived vẫn có history; timezone và sort stable.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-019",
+        "SC-020",
+        "SC-021"
+      ]
+    },
+    {
+      "id": "R17",
+      "requirementId": "FR-017",
+      "path": "/s/:shopId/orders",
+      "title": "Đơn hàng",
+      "module": "orders",
+      "readPermission": "orders.read",
+      "readOperations": [
+        "listOrders"
+      ],
+      "actions": [],
+      "purpose": "Theo dõi đơn mà không trộn trạng thái giao hàng/thanh toán.",
+      "content": "Order/customer refs, createdAt, order/fulfillment/payment states riêng, tổng tiền nếu được phép.",
+      "behavior": "Filter qua URL, tạo đơn tới R18, row tới R19; bulk mutation chưa hỗ trợ phải ẩn. V2: tách claim/pick/pack/handover/shipment/delivery/payment. Không dùng v1 fulfill tổng hợp; C07 returns theo từng dòng.",
+      "edgeCases": "Enum mới fallback read-only; stale paid badge; redacted total; phân trang không tự cộng thành doanh thu shop.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-022",
+        "SC-023",
+        "SC-024",
+        "SC-025",
+        "SC-026",
+        "SC-027"
+      ]
+    },
+    {
+      "id": "R18",
+      "requirementId": "FR-018",
+      "path": "/s/:shopId/orders/new",
+      "title": "Tạo đơn nháp",
+      "module": "orders",
+      "readPermission": "orders.write",
+      "readOperations": [
+        "listCustomers",
+        "listProducts",
+        "getShop"
+      ],
+      "actions": [
+        {
+          "label": "Tạo đơn nháp",
+          "operationId": "createOrder",
+          "permission": "orders.write"
+        }
+      ],
+      "purpose": "Tạo draft theo nhu cầu khách, chưa giữ hàng/chưa ghi nhận doanh thu.",
+      "content": "Customer, optional conversation ref, variant selection, quantities integer, warehouse mặc định, notes.",
+      "behavior": "Product picker remote search; preview giá có nhãn chưa chốt; request gửi IDs/qty, server trả authoritative snapshots. V2: tách claim/pick/pack/handover/shipment/delivery/payment. Không dùng v1 fulfill tổng hợp; C07 returns theo từng dòng.",
+      "edgeCases": "Variant archived/out of stock; customer/variant khác shop; trùng submit; thiếu quyền xem khách; intent seeded từ inbox vẫn revalidate.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-022",
+        "SC-023",
+        "SC-024",
+        "SC-025",
+        "SC-026",
+        "SC-027"
+      ]
+    },
+    {
+      "id": "R19",
+      "requirementId": "FR-019",
+      "path": "/s/:shopId/orders/:orderId",
+      "title": "Chi tiết đơn hàng",
+      "module": "orders",
+      "readPermission": "orders.read",
+      "readOperations": [
+        "getOrder",
+        "getCommand"
+      ],
+      "actions": [
+        {
+          "label": "Lưu đơn nháp",
+          "operationId": "updateOrderDraft",
+          "permission": "orders.write"
+        },
+        {
+          "label": "Lấy báo giá",
+          "operationId": "quoteOrder",
+          "permission": "orders.write"
+        },
+        {
+          "label": "Xác nhận giữ hàng",
+          "operationId": "confirmOrder",
+          "permission": "orders.confirm"
+        },
+        {
+          "label": "Bàn giao shipment sau đóng gói",
+          "operationId": "handoverShipment",
+          "permission": "fulfillment.handover"
+        },
+        {
+          "label": "Hủy đơn",
+          "operationId": "cancelOrder",
+          "permission": "orders.write"
+        },
+        {
+          "label": "Tạo yêu cầu đổi trả có kiểm hàng",
+          "operationId": "createReturnCase",
+          "permission": "orders.return"
+        },
+        {
+          "label": "Ghi nhận đã thu tiền",
+          "operationId": "payOrder",
+          "permission": "finance.post"
+        },
+        {
+          "label": "Ghi nhận hoàn tiền",
+          "operationId": "refundOrder",
+          "permission": "finance.refund"
+        }
+      ],
+      "purpose": "Vận hành workflow dựa trên allowedActions và quyền, không sửa status tùy ý.",
+      "content": "Snapshot dòng hàng, totals, ba state, source customer/conversation, version, các action server cho phép.",
+      "behavior": "Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass.",
+      "edgeCases": "Double submit, last SKU race, expired quote, unknown delivery outcome, partial returns, COD outstanding and closed period. No real money movement initiated by this UI.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-022",
+        "SC-023",
+        "SC-024",
+        "SC-025",
+        "SC-026",
+        "SC-027"
+      ]
+    },
+    {
+      "id": "R20",
+      "requirementId": "FR-020",
+      "path": "/s/:shopId/finance",
+      "title": "Thu/chi tổng quan",
+      "module": "finance",
+      "readPermission": "finance.read",
+      "readOperations": [
+        "getCashflow"
+      ],
+      "actions": [],
+      "purpose": "Phân biệt tiền vào/ra trong kỳ với lợi nhuận.",
+      "content": "From/to/timezone, receipts, disbursements, netCashMovement, asOf/warnings.",
+      "behavior": "Bộ lọc kỳ dùng [from,to); drilldown sang entries với context; currency shop duy nhất. V2: posted journal là nguồn tính; revenue theo policy được duyệt. Cash/COD/AP/AR tách biệt; không cộng tiền chưa nhận.",
+      "edgeCases": "Negative cashflow không tự gọi lỗ; incomplete period; timezone boundary; zero có thật khác null.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-028",
+        "SC-029",
+        "SC-030",
+        "SC-031",
+        "SC-032"
+      ]
+    },
+    {
+      "id": "R21",
+      "requirementId": "FR-021",
+      "path": "/s/:shopId/finance/entries",
+      "title": "Sổ thu/chi",
+      "module": "finance",
+      "readPermission": "finance.read",
+      "readOperations": [
+        "listFinanceEntries",
+        "getFinanceEntry",
+        "getCommand"
+      ],
+      "actions": [
+        {
+          "label": "Thêm phiếu nháp",
+          "operationId": "createFinanceEntry",
+          "permission": "finance.post"
+        },
+        {
+          "label": "Sửa phiếu nháp",
+          "operationId": "updateFinanceEntry",
+          "permission": "finance.post"
+        },
+        {
+          "label": "Ghi sổ",
+          "operationId": "postFinanceEntry",
+          "permission": "finance.post"
+        },
+        {
+          "label": "Đảo phiếu đã ghi",
+          "operationId": "reverseFinanceEntry",
+          "permission": "finance.post"
+        }
+      ],
+      "purpose": "Theo dõi phiếu có phân loại và nguồn, không sửa sổ đã ghi.",
+      "content": "Kind receipt/disbursement, classification, amount/currency, occurredAt, description, sourceRef, status, reversal link.",
+      "behavior": "Draft edit ETag; post/reverse explicit confirmation; capital/loan/inventory_purchase không tự tính vào operating expense. V2: posted journal là nguồn tính; revenue theo policy được duyệt. Cash/COD/AP/AR tách biệt; không cộng tiền chưa nhận.",
+      "edgeCases": "SourceRef trùng đơn; tiền âm/0 không hợp lệ cho phiếu; posted không edit; double post; reversal có lý do và audit.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-028",
+        "SC-029",
+        "SC-030",
+        "SC-031",
+        "SC-032"
+      ]
+    },
+    {
+      "id": "R22",
+      "requirementId": "FR-022",
+      "path": "/s/:shopId/finance/profit-loss",
+      "title": "Lợi nhuận quản trị",
+      "module": "finance",
+      "readPermission": "finance.read",
+      "readOperations": [
+        "getProfitLoss"
+      ],
+      "actions": [],
+      "purpose": "Trình bày lãi/lỗ quản trị có nguồn và mức đầy đủ dữ liệu.",
+      "content": "Gross/net sales, discounts/returns, COGS, gross profit, shipping/fees/AI/opex, operating profit, policyVersion/asOf.",
+      "behavior": "Kỳ/timezone server; null/unknown hiện chưa xác định; provisional badge và drilldown; không recompute từ list entries trên client. V2: posted journal là nguồn tính; revenue theo policy được duyệt. Cash/COD/AP/AR tách biệt; không cộng tiền chưa nhận.",
+      "edgeCases": "Thiếu unit cost; hoàn hàng khác hoàn tiền; invoice AI chưa đối soát; không gọi báo cáo là tuân thủ thuế quốc gia.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-028",
+        "SC-029",
+        "SC-030",
+        "SC-031",
+        "SC-032"
+      ]
+    },
+    {
+      "id": "R23",
+      "requirementId": "FR-023",
+      "path": "/s/:shopId/knowledge",
+      "title": "Nguồn kiến thức",
+      "module": "knowledge",
+      "readPermission": "knowledge.read",
+      "readOperations": [
+        "listKnowledge",
+        "getFile"
+      ],
+      "actions": [
+        {
+          "label": "Thêm nguồn",
+          "operationId": "createKnowledge",
+          "permission": "knowledge.write"
+        },
+        {
+          "label": "Tải tài liệu",
+          "operationId": "uploadFile",
+          "permission": null
+        }
+      ],
+      "purpose": "Tách tri thức đã duyệt với file đang xử lý.",
+      "content": "Tên, sourceKind, status, revision, publishedAt, warnings; search/status filter.",
+      "behavior": "Manual source hoặc file ready; tạo draft; trạng thái processing không có nghĩa đã đưa vào bot.",
+      "edgeCases": "Duplicate/content hash; parse failed/quarantine; dữ liệu PII; published vs indexed hiển thị khác nhau.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-039",
+        "SC-040",
+        "SC-041",
+        "SC-042"
+      ]
+    },
+    {
+      "id": "R24",
+      "requirementId": "FR-024",
+      "path": "/s/:shopId/knowledge/:knowledgeId",
+      "title": "Chi tiết kiến thức",
+      "module": "knowledge",
+      "readPermission": "knowledge.read",
+      "readOperations": [
+        "getKnowledge",
+        "listKnowledgeRevisions",
+        "getKnowledgeRevision"
+      ],
+      "actions": [
+        {
+          "label": "Lưu bản nháp",
+          "operationId": "updateKnowledge",
+          "permission": "knowledge.write"
+        },
+        {
+          "label": "Tạo revision mới",
+          "operationId": "createKnowledgeRevision",
+          "permission": "knowledge.write"
+        },
+        {
+          "label": "Gửi kiểm tra và duyệt",
+          "operationId": "submitKnowledgeReview",
+          "permission": "knowledge.write"
+        },
+        {
+          "label": "Publish revision",
+          "operationId": "publishKnowledge",
+          "permission": "knowledge.publish"
+        },
+        {
+          "label": "Ngừng sử dụng",
+          "operationId": "retireKnowledge",
+          "permission": "knowledge.publish"
+        },
+        {
+          "label": "Khôi phục thành nháp",
+          "operationId": "restoreKnowledgeRevision",
+          "permission": "knowledge.write"
+        }
+      ],
+      "purpose": "Quản lý nội dung và vòng đời revision có review/evaluation.",
+      "content": "Content/source, draft/live IDs, history, approver, warnings và evaluation reference.",
+      "behavior": "Published immutable; sửa tạo revision; restore tạo draft mới; publish cần eval đúng revision, không auto-live từ restore.",
+      "edgeCases": "Eval stale so với revision/model; người sửa không có publish permission; retired source còn được trích cần warning/cache cleanup.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-039",
+        "SC-040",
+        "SC-041",
+        "SC-042"
+      ]
+    },
+    {
+      "id": "R25",
+      "requirementId": "FR-025",
+      "path": "/s/:shopId/knowledge/review",
+      "title": "Đánh giá và phản hồi",
+      "module": "knowledge",
+      "readPermission": "knowledge.read",
+      "readOperations": [
+        "listFeedback"
+      ],
+      "actions": [
+        {
+          "label": "Duyệt hoặc từ chối",
+          "operationId": "reviewFeedback",
+          "permission": "knowledge.write"
+        }
+      ],
+      "purpose": "Biến phản hồi có ích thành đề xuất đã kiểm soát, không tự học mọi chat.",
+      "content": "Conversation/message reference, rating, correction, trạng thái; redaction và review reason.",
+      "behavior": "Review yêu cầu correction đã loại PII; approve chỉ tạo candidate/reference cho KB draft, không publish tự động.",
+      "edgeCases": "Prompt injection trong correction; wrong shop evidence; concurrent reviewer; rejected có lý do; không lộ raw khách cho người thiếu quyền.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-039",
+        "SC-040",
+        "SC-041",
+        "SC-042"
+      ]
+    },
+    {
+      "id": "R26",
+      "requirementId": "FR-026",
+      "path": "/s/:shopId/bot",
+      "title": "Cấu hình bot",
+      "module": "bot",
+      "readPermission": "bot.read",
+      "readOperations": [
+        "getBotConfig",
+        "listAIConnections",
+        "listKnowledge",
+        "listBotRevisions",
+        "getBotRevision"
+      ],
+      "actions": [
+        {
+          "label": "Lưu cấu hình nháp",
+          "operationId": "updateBotDraft",
+          "permission": "bot.configure"
+        },
+        {
+          "label": "Publish cấu hình",
+          "operationId": "publishBotConfig",
+          "permission": "bot.publish"
+        },
+        {
+          "label": "Tạm dừng",
+          "operationId": "pauseBot",
+          "permission": "bot.publish"
+        },
+        {
+          "label": "Khôi phục revision thành nháp",
+          "operationId": "restoreBotRevision",
+          "permission": "bot.configure"
+        }
+      ],
+      "purpose": "Tách cấu hình đang dùng với cấu hình đang soạn.",
+      "content": "Connection/model capability, instructions, knowledge revisions, limits/budget, human-confirm flag, live/draft/version.",
+      "behavior": "Save draft dùng ETag; publish cần eval chính xác; pause explicit; restore không tự active, phải qua eval/publish.",
+      "edgeCases": "Provider unsupported/degraded, budget hết, stale eval, config conflict; UI không tự bypass human-confirmation.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-043",
+        "SC-044",
+        "SC-045",
+        "SC-046"
+      ]
+    },
+    {
+      "id": "R27",
+      "requirementId": "FR-027",
+      "path": "/s/:shopId/bot/playground",
+      "title": "Thử bot an toàn",
+      "module": "bot",
+      "readPermission": "bot.configure",
+      "readOperations": [
+        "getBotConfig"
+      ],
+      "actions": [
+        {
+          "label": "Chạy thử",
+          "operationId": "runPlayground",
+          "permission": "bot.configure"
+        }
+      ],
+      "purpose": "Kiểm tra phản hồi mà không gửi khách thật.",
+      "content": "Input giả, model/config revision, answer, sources, warnings, tools summary, latency/usage/cost estimate.",
+      "behavior": "Banner sandbox; không external send; nguồn live price/stock tool backend scope; reset history khỏi scope cũ.",
+      "edgeCases": "Missing sources; hallucination rubric; provider timeout; unsupported capability; usage unknown không 0; không nhập PII thật trong demo.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-043",
+        "SC-044",
+        "SC-045",
+        "SC-046"
+      ]
+    },
+    {
+      "id": "R28",
+      "requirementId": "FR-028",
+      "path": "/s/:shopId/bot/evaluations",
+      "title": "Kiểm thử chất lượng AI",
+      "module": "bot",
+      "readPermission": "bot.read",
+      "readOperations": [
+        "listEvaluations",
+        "getEvaluation",
+        "getJob"
+      ],
+      "actions": [
+        {
+          "label": "Chạy evaluation",
+          "operationId": "createEvaluation",
+          "permission": "bot.configure"
+        }
+      ],
+      "purpose": "Theo dõi kết quả theo dataset/config revision để chặn hồi quy.",
+      "content": "Run ID, config/dataset versions, status, total/pass/critical failures, report link.",
+      "behavior": "Chạy async, poll/stream progress; retry failed run tạo run mới giữ history; không dùng rate tự tin do LLM tạo.",
+      "edgeCases": "Evaluation pending/error; critical failure blocks publish; dataset thay đổi làm kết quả cũ không đủ; partial output không coi passed.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-043",
+        "SC-044",
+        "SC-045",
+        "SC-046"
+      ]
+    },
+    {
+      "id": "R29",
+      "requirementId": "FR-029",
+      "path": "/s/:shopId/integrations/channels",
+      "title": "Kết nối Facebook",
+      "module": "integrations",
+      "readPermission": "integrations.read",
+      "readOperations": [
+        "listChannels",
+        "getChannel",
+        "getJob"
+      ],
+      "actions": [
+        {
+          "label": "Kết nối Page",
+          "operationId": "beginChannelConnect",
+          "permission": "integrations.manage"
+        },
+        {
+          "label": "Kết nối lại",
+          "operationId": "reconnectChannel",
+          "permission": "integrations.manage"
+        },
+        {
+          "label": "Ngắt kết nối",
+          "operationId": "disconnectChannel",
+          "permission": "integrations.manage"
+        },
+        {
+          "label": "Kiểm tra sức khỏe",
+          "operationId": "checkChannelHealth",
+          "permission": "integrations.manage"
+        }
+      ],
+      "purpose": "Theo dõi kênh chính thức và điều kiện gửi tin thực.",
+      "content": "Page name/id, trạng thái, lastWebhookAt, policyVersion/verification, capability/warnings.",
+      "behavior": "OAuth do backend khởi tạo; chỉ dùng authorizationUrl validated, callback kiểm state server; không nhập Page token công khai vào UI settings.",
+      "edgeCases": "Chưa app review/quyền; token revoked; webhook stale; policy unknown; disconnect không xóa lịch sử khách/đơn.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-047",
+        "SC-048",
+        "SC-049",
+        "SC-050"
+      ]
+    },
+    {
+      "id": "R30",
+      "requirementId": "FR-030",
+      "path": "/s/:shopId/integrations/ai",
+      "title": "Nhà cung cấp AI",
+      "module": "integrations",
+      "readPermission": "integrations.read",
+      "readOperations": [
+        "listAIConnections",
+        "getAIConnection",
+        "getProviderCatalog",
+        "getJob"
+      ],
+      "actions": [
+        {
+          "label": "Thêm kết nối",
+          "operationId": "createAIConnection",
+          "permission": "integrations.manage"
+        },
+        {
+          "label": "Cập nhật/đổi key",
+          "operationId": "updateAIConnection",
+          "permission": "integrations.manage"
+        },
+        {
+          "label": "Kiểm tra kết nối",
+          "operationId": "testAIConnection",
+          "permission": "integrations.manage"
+        },
+        {
+          "label": "Gỡ kết nối",
+          "operationId": "deleteAIConnection",
+          "permission": "integrations.manage"
+        }
+      ],
+      "purpose": "Quản lý adapter/model/capability, không giả định mọi key dùng được.",
+      "content": "Provider/model catalog, capabilities, status, keyLast4, hasCredential, endpoint theo policy, lastCheckedAt.",
+      "behavior": "Secret nhập một lần local; clear submit/unmount; test tính phí có xác nhận khi real; xoá connection đang được bot dùng bị server chặn hoặc cần đổi trước.",
+      "edgeCases": "Protocol mismatch; custom endpoint SSRF; expired key; quota; unknown model capability; response/log không chứa credential.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-047",
+        "SC-048",
+        "SC-049",
+        "SC-050"
+      ]
+    },
+    {
+      "id": "R31",
+      "requirementId": "FR-031",
+      "path": "/s/:shopId/reports",
+      "title": "Báo cáo và xuất dữ liệu",
+      "module": "reports",
+      "readPermission": "reports.read",
+      "readOperations": [
+        "getReportSummary",
+        "listJobs"
+      ],
+      "actions": [
+        {
+          "label": "Xuất báo cáo",
+          "operationId": "createExport",
+          "permission": "reports.export"
+        }
+      ],
+      "purpose": "Chọn báo cáo theo quyền và xuất snapshot nhất quán.",
+      "content": "Report type inventory/orders/cashflow/profit_loss, kỳ/timezone/asOf, format CSV, trạng thái job.",
+      "behavior": "Report view điều hướng route nghiệp vụ tương ứng; export cần cả reports.export và permission nguồn; tải qua URL authorized ngắn hạn.",
+      "edgeCases": "Mixed currency không cộng; signed URL hết hạn; export khác tenant; formula injection; partial/error job không phát file giả.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-010",
+        "SC-011",
+        "SC-051",
+        "SC-052"
+      ]
+    },
+    {
+      "id": "R32",
+      "requirementId": "FR-032",
+      "path": "/s/:shopId/settings/team",
+      "title": "Nhân sự và quyền",
+      "module": "workspace",
+      "readPermission": "members.manage",
+      "readOperations": [
+        "listMembers",
+        "getMember"
+      ],
+      "actions": [
+        {
+          "label": "Mời nhân viên",
+          "operationId": "inviteMember",
+          "permission": "members.manage"
+        },
+        {
+          "label": "Đổi vai trò",
+          "operationId": "updateMemberRoles",
+          "permission": "members.manage"
+        },
+        {
+          "label": "Thu hồi quyền",
+          "operationId": "revokeMembership",
+          "permission": "members.manage"
+        }
+      ],
+      "purpose": "Quản lý membership scoped theo shop.",
+      "content": "Email/user, roles, permission preview, status, permissionVersion; không trộn Customer.",
+      "behavior": "Đổi role/revoke dùng ETag; server bảo vệ owner cuối; session/stream bị revoke ở tab người bị đổi.",
+      "edgeCases": "Mời trùng; role escalation; tự xóa owner cuối; stale form; không hiện token/email invitation secret trong log.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R33",
+      "requirementId": "FR-033",
+      "path": "/s/:shopId/settings/shop",
+      "title": "Thiết lập cửa hàng",
+      "module": "workspace",
+      "readPermission": "shop.manage",
+      "readOperations": [
+        "getShop"
+      ],
+      "actions": [
+        {
+          "label": "Lưu thiết lập",
+          "operationId": "updateShop",
+          "permission": "shop.manage"
+        }
+      ],
+      "purpose": "Sửa thông tin hoạt động không phá lịch sử tiền tệ.",
+      "content": "Tên, locale, timezone; currency/default warehouse/policyVersion read-only sau onboarding.",
+      "behavior": "ETag và preview ảnh hưởng timezone tới báo cáo; base currency đổi là migration riêng, không inline select tùy tiện.",
+      "edgeCases": "Invalid timezone/locale; 412; đổi shop giữa lúc save; không fallback currency bằng browser locale.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R34",
+      "requirementId": "FR-034",
+      "path": "/s/:shopId/settings/audit",
+      "title": "Nhật ký kiểm toán",
+      "module": "workspace",
+      "readPermission": "audit.read",
+      "readOperations": [
+        "listAuditEvents"
+      ],
+      "actions": [],
+      "purpose": "Truy nguyên hành động mà không lộ raw secret/PII.",
+      "content": "Actor, action, time, resource ref, requestId, sanitized summary; search/filter/cursor.",
+      "behavior": "Read-only; links được permission guard; không cho sửa/xóa audit từ UI; giữ context filter.",
+      "edgeCases": "Long messages; deleted resource; unauthorized cross-shop; raw key/phone có trong summary phải bị scrub ở server.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R35",
+      "requirementId": "FR-035",
+      "path": "/s/:shopId/settings/privacy",
+      "title": "Quyền riêng tư và lưu trữ",
+      "module": "workspace",
+      "readPermission": "privacy.manage",
+      "readOperations": [
+        "getPrivacyPolicy",
+        "listPrivacyRequests",
+        "getCommand"
+      ],
+      "actions": [
+        {
+          "label": "Lưu policy",
+          "operationId": "updatePrivacyPolicy",
+          "permission": "privacy.manage"
+        },
+        {
+          "label": "Tạo yêu cầu dữ liệu",
+          "operationId": "createPrivacyRequest",
+          "permission": "privacy.manage"
+        },
+        {
+          "label": "Xác thực lại",
+          "operationId": "stepUp",
+          "permission": null
+        },
+        {
+          "label": "Phê duyệt yêu cầu",
+          "operationId": "approvePrivacyRequest",
+          "permission": "privacy.manage"
+        }
+      ],
+      "purpose": "Quản lý policy và request xóa/xuất theo phạm vi đã duyệt.",
+      "content": "Retention draft/active, jurisdiction note, customer request type/reason/status, legal_hold và job result.",
+      "behavior": "Xác nhận scope, step-up khi approve; server xét legal hold/authority; deletion bao gồm index/cache/downstream theo policy.",
+      "edgeCases": "Retention chưa được legal approve; hold; job failed một phần; không hứa xóa toàn bộ backup ngay; token step-up không persist.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R36",
+      "requirementId": "FR-036",
+      "path": "/s/:shopId/jobs/:jobId",
+      "title": "Theo dõi công việc nền",
+      "module": "workspace",
+      "readPermission": "jobs.read",
+      "readOperations": [
+        "getJob"
+      ],
+      "actions": [],
+      "purpose": "Theo dõi import/export/index/eval/privacy được phép từ mọi module.",
+      "content": "Kind/status, progress, counts/errors, result ref, downloadUrl khi ready.",
+      "behavior": "Refetch stream/poll bounded; source-specific permission ngoài jobs.read; trở về trang nguồn; download không chứa permanent public URL.",
+      "edgeCases": "Không thấy job người khác/tenant khác; unknown total progress; partial/failed; link expired và unauthorized data không còn cache.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC-001",
+        "SC-002",
+        "SC-003",
+        "SC-004",
+        "SC-005",
+        "SC-006",
+        "SC-007",
+        "SC-008",
+        "SC-009",
+        "SC-010",
+        "SC-011",
+        "SC-054",
+        "SC-055"
+      ]
+    },
+    {
+      "id": "R37",
+      "requirementId": "FR2-R37",
+      "path": "/s/:shopId/operations",
+      "title": "Điều hành và công việc",
+      "module": "operations",
+      "readPermission": "operations.read",
+      "readOperations": [
+        "getOperationsSummary",
+        "listWorkItems"
+      ],
+      "actions": [
+        {
+          "label": "claimWorkItem",
+          "operationId": "claimWorkItem",
+          "permission": "operations.claim"
+        },
+        {
+          "label": "updateWorkItem",
+          "operationId": "updateWorkItem",
+          "permission": "operations.manage"
+        }
+      ],
+      "purpose": "Bảng công việc chung / Giám sát ngoại lệ / Trạng thái hệ thống",
+      "content": "One WorkItem per business intent; assignee/dependencies/due/status/evidence.\nRules detect unanswered cases/unclaimed orders/late shipments/low stock/unmatched money.\nProvider/channel/worker heartbeat/lag/budget/failed/unknown; degraded runbook link.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Notification ack liên kết task, không thành tracker cạnh tranh; cancelled source cancels task.\nRule version, cooldown, dedupe; no endless self-created tasks.\nNo green healthy when last check too old; unknown distinct down.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-F02",
+        "SC2-F03",
+        "SC2-F07"
+      ],
+      "featureIds": [
+        "F02",
+        "F03",
+        "F07"
+      ]
+    },
+    {
+      "id": "R38",
+      "requirementId": "FR2-R38",
+      "path": "/s/:shopId/approvals",
+      "title": "Hàng chờ phê duyệt",
+      "module": "operations",
+      "readPermission": "approvals.read",
+      "readOperations": [
+        "listApprovals",
+        "getApproval"
+      ],
+      "actions": [
+        {
+          "label": "decideApproval",
+          "operationId": "decideApproval",
+          "permission": "approvals.decide"
+        }
+      ],
+      "purpose": "Hàng chờ duyệt / Ủy quyền",
+      "content": "Approval binds shop/action/resourceVersion/policyVersion/intentHash/expiry; reason required reject.\nVersioned rule amounts/actions/scopes; current effective authority checked before execution.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Expired/changed/replayed approvals fail; batch approval excludes stale rows with reasons.\nSupervisor không tự nâng scope, không approval của mình thành người thật.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-F04",
+        "SC2-F05"
+      ],
+      "featureIds": [
+        "F04",
+        "F05"
+      ]
+    },
+    {
+      "id": "R39",
+      "requirementId": "FR2-R39",
+      "path": "/s/:shopId/notifications",
+      "title": "Trung tâm thông báo",
+      "module": "notifications",
+      "readPermission": "notifications.read",
+      "readOperations": [
+        "listNotifications",
+        "getNotification"
+      ],
+      "actions": [
+        {
+          "label": "acknowledgeNotification",
+          "operationId": "acknowledgeNotification",
+          "permission": "operations.claim"
+        }
+      ],
+      "purpose": "Báo đơn đủ điều kiện chuẩn bị / Mở đơn an toàn từ thông báo / Xác nhận nhận chuẩn bị / Theo dõi gửi/mở/nhận việc",
+      "content": "order.confirmed + reservation bền vững + payment/COD policy cho phép mới tạo task và notification intent.\nDeep-link đến shop/order sau session bootstrap; nội dung lockscreen tối thiểu; không có PII trong URL.\nNút Tôi nhận đơn thực hiện compare-and-set task.version/assignee trong transaction; người nhận và thời gian rõ.\nTách accepted_by_provider, failed, unknown, opened_if_observed, acknowledged; không suy diễn giao thành công.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Đơn nháp, reservation fail hoặc transaction rollback không phát lệnh chuẩn bị; event trùng chỉ một việc.\nNgười không thuộc shop nhận 403/404; URL cũ không vượt quyền hiện hành.\nHai nhân viên đồng thời nhận: một thắng, một thấy người đã nhận; delivery receipt không đồng nghĩa nhận việc.\nTimeout không gắn failed; không có callback mở thì giữ unknown, không tạo tỷ lệ đọc giả.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-A02",
+        "SC2-A03",
+        "SC2-A04",
+        "SC2-A07"
+      ],
+      "featureIds": [
+        "A02",
+        "A03",
+        "A04",
+        "A07"
+      ]
+    },
+    {
+      "id": "R40",
+      "requirementId": "FR2-R40",
+      "path": "/s/:shopId/notifications/devices",
+      "title": "Thiết bị, kênh nhận và lịch trực",
+      "module": "notifications",
+      "readPermission": "notifications.manage",
+      "readOperations": [
+        "listDevices",
+        "getNotificationPolicy"
+      ],
+      "actions": [
+        {
+          "label": "createDevice",
+          "operationId": "createDevice",
+          "permission": "notifications.manage"
+        },
+        {
+          "label": "revokeDevice",
+          "operationId": "revokeDevice",
+          "permission": "notifications.manage"
+        },
+        {
+          "label": "testDevice",
+          "operationId": "testDevice",
+          "permission": "notifications.manage"
+        },
+        {
+          "label": "beginTelegramPairing",
+          "operationId": "beginTelegramPairing",
+          "permission": "notifications.manage"
+        },
+        {
+          "label": "updateNotificationPolicy",
+          "operationId": "updateNotificationPolicy",
+          "permission": "notifications.manage"
+        }
+      ],
+      "purpose": "Đăng ký thiết bị nhận thông báo / Nhắc hạn và dự phòng / Loại thông báo và lịch trực / Chống trùng và bảo vệ thông báo",
+      "content": "Hiển thị khả năng thiết bị, hướng dẫn cài PWA, xin quyền sau thao tác người dùng; gửi kiểm tra; thu hồi subscription.\nLịch nhắc dựa lịch trực/múi giờ, policy có version; định danh intent và số lần tối đa; fallback Telegram đã liên kết.\nƯu tiên đơn mới, trễ, hết hàng, lệch tiền, lỗi; giờ yên lặng; chủ shop duyệt ngoại lệ khẩn.\nDedupe theo shop/event/recipient/channel, payload tối thiểu, callback token ngắn hạn, rate/budget cap.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Từ chối quyền không ghi connected; thiết bị đã thu hồi không nhận lại; không yêu cầu key trong trình duyệt.\nNhận việc/hủy đơn dừng nhắc; worker restart không phát trùng; không có người trực thì vào hàng ngoại lệ.\nKhông tự bỏ qua giờ yên lặng; bộ nhớ cấu hình mẫu không thành chính sách live.\nCallback replay, membership revoked, sai shop hoặc TTL hết đều bị chặn; tắt SMS/voice mặc định.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-A01",
+        "SC2-A05",
+        "SC2-A06",
+        "SC2-A08"
+      ],
+      "featureIds": [
+        "A01",
+        "A05",
+        "A06",
+        "A08"
+      ]
+    },
+    {
+      "id": "R41",
+      "requirementId": "FR2-R41",
+      "path": "/s/:shopId/fulfillment",
+      "title": "Chuẩn bị và lấy hàng",
+      "module": "fulfillment",
+      "readPermission": "fulfillment.read",
+      "readOperations": [
+        "listPrepJobs",
+        "getPrepJob"
+      ],
+      "actions": [
+        {
+          "label": "pickPrepLine",
+          "operationId": "pickPrepLine",
+          "permission": "fulfillment.write"
+        },
+        {
+          "label": "packPrepJob",
+          "operationId": "packPrepJob",
+          "permission": "fulfillment.write"
+        }
+      ],
+      "purpose": "Bảng chuẩn bị hàng / Phiếu lấy hàng theo SKU / Kiểm đóng gói",
+      "content": "Task board queued/claimed/picking/packed/handed_over với assignee, dueAt, thời gian trễ.\nChecklist line, phiên bản, quantity; barcode tùy chọn và sửa lượng có reason.\nThiếu/hỏng/sai biến thể tạo issue; chỉ đóng gói đủ dòng và điều kiện bắt buộc.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Không gộp packed với delivered; bộ lọc không làm mất việc chưa nhận.\nQuét sai SKU/nhập vượt lượng chặn pack; snapshot không dùng ảnh hiện tại sai phiên bản.\nCó issue chưa giải quyết thì không ready; ảnh chứng cứ không công khai PII.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-C01",
+        "SC2-C02",
+        "SC2-C03"
+      ],
+      "featureIds": [
+        "C01",
+        "C02",
+        "C03"
+      ]
+    },
+    {
+      "id": "R42",
+      "requirementId": "FR2-R42",
+      "path": "/s/:shopId/shipments",
+      "title": "Vận đơn và giao hàng",
+      "module": "fulfillment",
+      "readPermission": "fulfillment.read",
+      "readOperations": [
+        "listShipments",
+        "getShipment"
+      ],
+      "actions": [
+        {
+          "label": "createShipment",
+          "operationId": "createShipment",
+          "permission": "fulfillment.write"
+        },
+        {
+          "label": "handoverShipment",
+          "operationId": "handoverShipment",
+          "permission": "fulfillment.handover"
+        },
+        {
+          "label": "recordShipmentEvent",
+          "operationId": "recordShipmentEvent",
+          "permission": "fulfillment.write"
+        }
+      ],
+      "purpose": "Phí và vùng giao hàng / Vận đơn và bàn giao / Trạng thái giao độc lập",
+      "content": "Shipping address, serviceability, quote/actual fee, shipper, package size nếu yêu cầu.\nAdapter carrier hoặc nhập mã thủ công; idempotent label; người thật xác nhận bàn giao.\nShipment separate from order/payment; transit/delivered/failed/returning/returned với evidence event.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Ngoài vùng, quote phí hết hạn hoặc thiếu address không hứa giao.\nTimeout create label phải reconcile; bàn giao lần hai không trừ tồn lần hai.\nEvent lùi/trùng không hoàn tất sai; delivered không đồng nghĩa tiền về ngân hàng.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-C04",
+        "SC2-C05",
+        "SC2-C06"
+      ],
+      "featureIds": [
+        "C04",
+        "C05",
+        "C06"
+      ]
+    },
+    {
+      "id": "R43",
+      "requirementId": "FR2-R43",
+      "path": "/s/:shopId/returns",
+      "title": "Đổi trả và kiểm hàng hoàn",
+      "module": "orders",
+      "readPermission": "orders.read",
+      "readOperations": [
+        "listReturnCases",
+        "getReturnCase"
+      ],
+      "actions": [
+        {
+          "label": "createReturnCase",
+          "operationId": "createReturnCase",
+          "permission": "orders.return"
+        },
+        {
+          "label": "inspectReturn",
+          "operationId": "inspectReturn",
+          "permission": "inventory.adjust"
+        }
+      ],
+      "purpose": "Đổi/trả từng phần / Sửa/hủy theo giai đoạn",
+      "content": "Return line/quantity, kiểm tình trạng, refund obligation, người duyệt, reversal.\nDraft edit; confirmed release/requote; sau handover là return process; notify task changes.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Returned item chưa kiểm không available; không hoàn quá paid/qty; partial return không làm hoàn toàn đơn.\nKhông hủy đơn đã handed_over bằng cancel thường; reservation release đúng một lần.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-C07",
+        "SC2-C08"
+      ],
+      "featureIds": [
+        "C07",
+        "C08"
+      ]
+    },
+    {
+      "id": "R44",
+      "requirementId": "FR2-R44",
+      "path": "/s/:shopId/suppliers",
+      "title": "Nhà cung cấp hàng hóa",
+      "module": "procurement",
+      "readPermission": "procurement.read",
+      "readOperations": [
+        "listSuppliers",
+        "getSupplier",
+        "listSupplierOffers"
+      ],
+      "actions": [
+        {
+          "label": "createSupplier",
+          "operationId": "createSupplier",
+          "permission": "procurement.write"
+        },
+        {
+          "label": "updateSupplier",
+          "operationId": "updateSupplier",
+          "permission": "procurement.write"
+        },
+        {
+          "label": "setSupplierStatus",
+          "operationId": "setSupplierStatus",
+          "permission": "procurement.manage"
+        },
+        {
+          "label": "createSupplierOffer",
+          "operationId": "createSupplierOffer",
+          "permission": "procurement.write"
+        }
+      ],
+      "purpose": "Nhà cung cấp hàng hóa",
+      "content": "Supplier/SKU price/MOQ/packSize/leadTime/currency/paymentTerms; approved status.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Supplier khác shop hoặc chưa duyệt không auto-purchase; lịch sử đổi giá được giữ.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-D02"
+      ],
+      "featureIds": [
+        "D02"
+      ]
+    },
+    {
+      "id": "R45",
+      "requirementId": "FR2-R45",
+      "path": "/s/:shopId/replenishment",
+      "title": "Đề nghị nhập và quy tắc",
+      "module": "procurement",
+      "readPermission": "procurement.read",
+      "readOperations": [
+        "listPurchaseSuggestions",
+        "listReorderRules"
+      ],
+      "actions": [
+        {
+          "label": "evaluateReorder",
+          "operationId": "evaluateReorder",
+          "permission": "procurement.write"
+        },
+        {
+          "label": "createReorderRule",
+          "operationId": "createReorderRule",
+          "permission": "procurement.manage"
+        },
+        {
+          "label": "updateReorderRule",
+          "operationId": "updateReorderRule",
+          "permission": "procurement.manage"
+        },
+        {
+          "label": "createPurchaseOrder",
+          "operationId": "createPurchaseOrder",
+          "permission": "procurement.write"
+        }
+      ],
+      "purpose": "Quy tắc nhập lại / Nguy cơ hết hàng / Ngăn đặt trùng và vượt vốn",
+      "content": "Reorder point/target/safety stock/rounding/approved suppliers/max commitments; versioned.\nBaseline min-max; optional forecast từ lịch sử có coverage/seasonality warnings.\nKế hoạch tính confirmed inbound + open proposals separately; reserve budget cùng transaction tạo PO.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Thiếu budget cho auto_send phải block; qty không âm và đúng packSize/MOQ.\nChưa đủ lịch sử hiển thị static rule; không dự báo confidence giả.\nHai workers reorder cùng SKU tạo tối đa một active proposal; reserved budget không vượt cap.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-D03",
+        "SC2-D04",
+        "SC2-D07"
+      ],
+      "featureIds": [
+        "D03",
+        "D04",
+        "D07"
+      ]
+    },
+    {
+      "id": "R46",
+      "requirementId": "FR2-R46",
+      "path": "/s/:shopId/purchases",
+      "title": "Đơn mua hàng",
+      "module": "procurement",
+      "readPermission": "procurement.read",
+      "readOperations": [
+        "listPurchaseOrders",
+        "getPurchaseOrder"
+      ],
+      "actions": [
+        {
+          "label": "createPurchaseOrder",
+          "operationId": "createPurchaseOrder",
+          "permission": "procurement.write"
+        },
+        {
+          "label": "requestPurchaseApproval",
+          "operationId": "requestPurchaseApproval",
+          "permission": "procurement.write"
+        },
+        {
+          "label": "sendPurchaseOrder",
+          "operationId": "sendPurchaseOrder",
+          "permission": "procurement.send"
+        },
+        {
+          "label": "confirmPurchaseOrder",
+          "operationId": "confirmPurchaseOrder",
+          "permission": "procurement.write"
+        }
+      ],
+      "purpose": "Vòng đời đơn mua / Tự gửi đơn mua có giới hạn",
+      "content": "draft/pending_approval/approved/sending/unknown/sent/confirmed/part_received/received/cancelled.\nMặc định draft_for_approval; automatic chỉ khi allowlist giá/số lượng/budget + approval authority còn hợp lệ.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Timeout send giữ unknown; không gửi đơn mới trước reconcile.\nApproval thay giá/qty/supplier cần cấp lại; không tự thanh toán từ quyền mua.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-D05",
+        "SC2-D06"
+      ],
+      "featureIds": [
+        "D05",
+        "D06"
+      ]
+    },
+    {
+      "id": "R47",
+      "requirementId": "FR2-R47",
+      "path": "/s/:shopId/receipts",
+      "title": "Nhận hàng và đối chiếu",
+      "module": "procurement",
+      "readPermission": "procurement.read",
+      "readOperations": [
+        "listGoodsReceipts",
+        "getGoodsReceipt"
+      ],
+      "actions": [
+        {
+          "label": "createGoodsReceipt",
+          "operationId": "createGoodsReceipt",
+          "permission": "procurement.write"
+        },
+        {
+          "label": "postGoodsReceipt",
+          "operationId": "postGoodsReceipt",
+          "permission": "procurement.receive"
+        }
+      ],
+      "purpose": "Tồn theo trạng thái và SKU / Nhận và đối chiếu hàng",
+      "content": "Sellable, reserved, in_transit_to_customer, quarantined, inbound_confirmed; warehouse scoped.\nGoodsReceipt line qty accepted/rejected; over-delivery policy; link PO/invoice; AP.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Hàng đang về/hỏng không có trong available; tổng projection khớp movement ledger.\nNhận một phần đúng tồn và công nợ; replay receipt không double stock; rejects không sellable.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-D01",
+        "SC2-D08"
+      ],
+      "featureIds": [
+        "D01",
+        "D08"
+      ]
+    },
+    {
+      "id": "R48",
+      "requirementId": "FR2-R48",
+      "path": "/s/:shopId/finance/journals",
+      "title": "Chứng từ và sổ kép",
+      "module": "finance",
+      "readPermission": "finance.read",
+      "readOperations": [
+        "listJournals",
+        "getJournal"
+      ],
+      "actions": [
+        {
+          "label": "createJournal",
+          "operationId": "createJournal",
+          "permission": "finance.post"
+        },
+        {
+          "label": "postJournal",
+          "operationId": "postJournal",
+          "permission": "finance.post"
+        },
+        {
+          "label": "reverseJournal",
+          "operationId": "reverseJournal",
+          "permission": "finance.post"
+        }
+      ],
+      "purpose": "Chứng từ và sổ kép / Giá vốn và lợi nhuận / Chi phí và phân bổ",
+      "content": "Journal header/lines, debit/credit exact Decimal, source uniqueness, posted immutable.\nMoving weighted average baseline có policyVersion; cost snapshot tại dispatch; recognize revenue theo approved transfer rule.\nQuảng cáo/AI/carrier/packaging/fees; actual/estimated separate; không double expense.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Không post journal mất cân bằng; source trùng không ghi lặp; reversed phải reason.\nKhông lấy toàn purchase cost vào P&L; không giả định dispatch = delivered; policy chưa duyệt chặn live post.\nPhí COD đã khấu trừ không hạch toán thêm lần thứ hai; nhãn estimate không đổi thành actual.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-E01",
+        "SC2-E02",
+        "SC2-E03"
+      ],
+      "featureIds": [
+        "E01",
+        "E02",
+        "E03"
+      ]
+    },
+    {
+      "id": "R49",
+      "requirementId": "FR2-R49",
+      "path": "/s/:shopId/finance/reconciliation",
+      "title": "Đối soát ngân hàng và COD",
+      "module": "finance",
+      "readPermission": "finance.read",
+      "readOperations": [
+        "listReconciliationCases",
+        "listBankTransactions",
+        "listCODSettlements"
+      ],
+      "actions": [
+        {
+          "label": "importBankStatement",
+          "operationId": "importBankStatement",
+          "permission": "finance.reconcile"
+        },
+        {
+          "label": "importCODStatement",
+          "operationId": "importCODStatement",
+          "permission": "finance.reconcile"
+        },
+        {
+          "label": "matchSettlement",
+          "operationId": "matchSettlement",
+          "permission": "finance.reconcile"
+        },
+        {
+          "label": "matchCODSettlement",
+          "operationId": "matchCODSettlement",
+          "permission": "finance.reconcile"
+        }
+      ],
+      "purpose": "Đối soát ngân hàng / Đối soát COD",
+      "content": "Import deterministic mapping, dedupe externalTxnId/account; match suggestions need review.\nDelivered COD receivable; carrier collection/fees/remittance; pending mismatch queue.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Ảnh chuyển khoản chỉ evidence chờ kiểm; unmatched/partial/duplicate visible; offline không post.\nKhách trả carrier khác shop received cash; net remittance + fees cân bằng gross clearing.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-E04",
+        "SC2-E05"
+      ],
+      "featureIds": [
+        "E04",
+        "E05"
+      ]
+    },
+    {
+      "id": "R50",
+      "requirementId": "FR2-R50",
+      "path": "/s/:shopId/finance/debts-periods",
+      "title": "Công nợ và khóa kỳ",
+      "module": "finance",
+      "readPermission": "finance.read",
+      "readOperations": [
+        "listDebtItems",
+        "listAccountingPeriods"
+      ],
+      "actions": [
+        {
+          "label": "closeAccountingPeriod",
+          "operationId": "closeAccountingPeriod",
+          "permission": "finance.close"
+        },
+        {
+          "label": "reopenAccountingPeriod",
+          "operationId": "reopenAccountingPeriod",
+          "permission": "finance.close"
+        }
+      ],
+      "purpose": "Công nợ / Khóa kỳ và điều chỉnh",
+      "content": "AP/AR, deposits, dueAt, aging buckets, dispute holds; base currency locked per shop.\nPeriod close prerequisite unresolved count, role + approval, reopen/reversal audit.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Không cộng khác currency chưa FX policy; deposit không bị coi revenue sai kỳ.\nBackdated post vào locked period bị chặn; export không thay dữ liệu nguồn.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-E06",
+        "SC2-E07"
+      ],
+      "featureIds": [
+        "E06",
+        "E07"
+      ]
+    },
+    {
+      "id": "R51",
+      "requirementId": "FR2-R51",
+      "path": "/s/:shopId/bot/team",
+      "title": "Bốn vai trò AI và quyền",
+      "module": "bot",
+      "readPermission": "bot.read",
+      "readOperations": [
+        "listAgentRoles",
+        "listBudgetPolicies"
+      ],
+      "actions": [
+        {
+          "label": "updateAgentRole",
+          "operationId": "updateAgentRole",
+          "permission": "bot.configure"
+        },
+        {
+          "label": "controlAutomation",
+          "operationId": "controlAutomation",
+          "permission": "bot.pause"
+        }
+      ],
+      "purpose": "Bốn vai trò AI / Kill switch / Chi phí và failover",
+      "content": "Role capabilities, tools, scopes, budget, version, human accountable owner; one orchestration substrate.\nShop/role/conversation generations; check immediately before side effect; cancel pending.\nToken/channel budgets and procurement budgets separate; approved fallback providers only.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Không xem bốn cards là bốn process; bot role không có members.manage hoặc payment transfer.\nStop cannot unsend accepted message; UI shows accepted/unknown boundary honestly.\nNo silent PII transfer to unapproved model; exhausted budget moves to safe handoff.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-F01",
+        "SC2-H02",
+        "SC2-H03"
+      ],
+      "featureIds": [
+        "F01",
+        "H02",
+        "H03"
+      ]
+    },
+    {
+      "id": "R52",
+      "requirementId": "FR2-R52",
+      "path": "/s/:shopId/operations/digests",
+      "title": "Bản tin và sức khỏe hệ thống",
+      "module": "operations",
+      "readPermission": "operations.read",
+      "readOperations": [
+        "listDigests",
+        "getOperationsSummary"
+      ],
+      "actions": [
+        {
+          "label": "controlAutomation",
+          "operationId": "controlAutomation",
+          "permission": "bot.pause"
+        }
+      ],
+      "purpose": "Bản tin chủ shop / Trạng thái hệ thống / Đánh giá chất lượng / Worker phía máy chủ / Chống trùng và phục hồi / Khôi phục và readiness",
+      "content": "Scheduled durable job per shop timezone; summarize pending/blocked/completed with links.\nProvider/channel/worker heartbeat/lag/budget/failed/unknown; degraded runbook link.\nGround-truth eval datasets, failed cases, response time, cost, human corrections.\nDurable outbox + command log + queue consumers; health/progress in UI.\nCommand idempotency/body hash, transaction/outbox, retries bounded, unknown reconciliation.\nRestore rehearsal, stale check expiry, deploy gates, last verified environment/revision.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Thiếu giờ/recipient thì chưa bật; gửi lại bản tin cùng kỳ không trùng.\nNo green healthy when last check too old; unknown distinct down.\nKhông tự nhận confidence từ model là accuracy; version linkage and sample counts visible.\nClose browser and restart worker preserves due work; queue loss rebuild from DB.\nCrash after external accept before local save not blindly retried; poison jobs isolated.\nBackup exists not restore proof; missing mandatory criterion cannot greenlight launch.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-F06",
+        "SC2-F07",
+        "SC2-F08",
+        "SC2-H01",
+        "SC2-H04",
+        "SC2-H08"
+      ],
+      "featureIds": [
+        "F06",
+        "F07",
+        "F08",
+        "H01",
+        "H04",
+        "H08"
+      ]
+    },
+    {
+      "id": "R53",
+      "requirementId": "FR2-R53",
+      "path": "/s/:shopId/reports/marketing",
+      "title": "Thông tin hỗ trợ marketing",
+      "module": "reports",
+      "readPermission": "reports.read",
+      "readOperations": [
+        "getMarketingSummary"
+      ],
+      "actions": [],
+      "purpose": "Thông tin marketing cho chủ shop / Hiệu quả chiến dịch",
+      "content": "Frequently asked, lost-sale reasons, demand vs stock and content ideas, evidence links.\nSpend import with source IDs, promo results, known/estimated attribution split.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Report missing attribution separately; no auto publish ads/content.\nKhông tự tăng ad spend; không ghi estimate thành actual finance expense.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-G07",
+        "SC2-G08"
+      ],
+      "featureIds": [
+        "G07",
+        "G08"
+      ]
+    },
+    {
+      "id": "R54",
+      "requirementId": "FR2-R54",
+      "path": "/s/:shopId/service-cases",
+      "title": "Yêu cầu sau bán",
+      "module": "customers",
+      "readPermission": "customers.read",
+      "readOperations": [
+        "listServiceCases",
+        "getServiceCase"
+      ],
+      "actions": [
+        {
+          "label": "createServiceCase",
+          "operationId": "createServiceCase",
+          "permission": "customers.write"
+        },
+        {
+          "label": "setServiceCaseStatus",
+          "operationId": "setServiceCaseStatus",
+          "permission": "customers.write"
+        }
+      ],
+      "purpose": "Chăm sóc sau mua / Hồ sơ khách liên kết",
+      "content": "Tra shipment/order theo khách xác thực; tiếp nhận yêu cầu đổi/trả và tạo case.\nPage-scoped customer identity, contact verification, case/order/conversation linkage.",
+      "behavior": "Các mutation qua command/version/policy; disable stale/offline và reconcile unknown; không tự cấp quyền từ frontend.",
+      "edgeCases": "Không gửi đơn khách khác; không hứa hoàn tiền hoặc xác nhận hoàn tiền thật.\nKhông tự merge cùng tên/số bị che; scope mismatch denied.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-B06",
+        "SC2-G04"
+      ],
+      "featureIds": [
+        "B06",
+        "G04"
+      ]
+    }
+  ],
+  "notes": [
+    "v2 source of truth; historical v1 archive is not active.",
+    "Screens describe production behavior. prototype is interaction review only."
+  ]
+}

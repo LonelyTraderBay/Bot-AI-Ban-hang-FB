@@ -1,0 +1,370 @@
+
+Running 10 tests using 1 worker
+
+(node:37248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/10] [chromium] › tests\ui-width-layout.spec.ts:29:1 › W01 AI single connection fills its collection at breakpoint edges and wide viewports
+  1) [chromium] › tests\ui-width-layout.spec.ts:29:1 › W01 AI single connection fills its collection at breakpoint edges and wide viewports 
+
+    Error: expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 992
+    Received: 484
+
+    Expected precision:    0
+    Expected difference: < 0.5
+    Received difference:   508
+
+      33 |         const geometry = await gridGeometry(page);
+      34 |         expect(geometry.children).toHaveLength(1);
+    > 35 |         expect(geometry.children[0].width).toBeCloseTo(geometry.width, 0);
+         |                                            ^
+      36 |         await documentFits(page, width);
+      37 |         observed.push({ width, ...geometry });
+      38 |     }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:35:44
+
+    Error Context: test-results\playwright-37248-b1f96623-5c49-40bd-9e1a-001b7230e113\ui-width-layout-W01-AI-sin-3ddd0-nt-edges-and-wide-viewports-chromium\error-context.md
+
+    Error Context: test-results\playwright-37248-b1f96623-5c49-40bd-9e1a-001b7230e113\ui-width-layout-W01-AI-sin-3ddd0-nt-edges-and-wide-viewports-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-37248-b1f96623-5c49-40bd-9e1a-001b7230e113\ui-width-layout-W01-AI-sin-3ddd0-nt-edges-and-wide-viewports-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-37248-b1f96623-5c49-40bd-9e1a-001b7230e113\ui-width-layout-W01-AI-sin-3ddd0-nt-edges-and-wide-viewports-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:91716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/10] [chromium] › tests\ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 1 visible shops
+  2) [chromium] › tests\ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 1 visible shops 
+
+    Error: expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 720
+    Received: 348
+
+    Expected precision:    0
+    Expected difference: < 0.5
+    Received difference:   372
+
+      94 |             expect(geometry.children).toHaveLength(count);
+      95 |             const columns = count === 1 || width < 768 ? 1 : 2;
+    > 96 |             expect(geometry.children[0].width * columns + geometry.gap * (columns - 1)).toBeCloseTo(geometry.width, 0);
+         |                                                                                         ^
+      97 |             observations.push({ count, width, ...geometry });
+      98 |         }
+      99 |         await documentFits(page, width);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:96:89
+
+    Error Context: test-results\playwright-91716-08c27d67-467d-495c-a90c-6a5d6b6bd569\ui-width-layout-W01-worksp-37802-ion-handles-1-visible-shops-chromium\error-context.md
+
+    Error Context: test-results\playwright-91716-08c27d67-467d-495c-a90c-6a5d6b6bd569\ui-width-layout-W01-worksp-37802-ion-handles-1-visible-shops-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-91716-08c27d67-467d-495c-a90c-6a5d6b6bd569\ui-width-layout-W01-worksp-37802-ion-handles-1-visible-shops-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-91716-08c27d67-467d-495c-a90c-6a5d6b6bd569\ui-width-layout-W01-worksp-37802-ion-handles-1-visible-shops-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:11268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/10] [chromium] › tests\ui-width-layout.spec.ts:104:1 › W02 full-width form groups fill their panel and retain input/mapping/shipping behavior
+  3) [chromium] › tests\ui-width-layout.spec.ts:104:1 › W02 full-width form groups fill their panel and retain input/mapping/shipping behavior 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "none"
+    Received: "760px"
+
+      113 |         });
+      114 |         expect(geometry.width).toBeCloseTo(geometry.available, 0);
+    > 115 |         expect(geometry.maxWidth).toBe('none');
+          |                                   ^
+      116 |         if (route === 'settings/shop') {
+      117 |             await page.getByRole('textbox', { name: 'Tên cửa hàng', exact: true }).fill('Tên cửa hàng cần giữ');
+      118 |             if (width < 1280) await page.getByRole('button', { name: 'Mở menu', exact: true }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:115:35
+
+    Error Context: test-results\playwright-11268-d322db08-88ea-493a-8aaf-aeb18083a003\ui-width-layout-W02-full-w-96e2a-t-mapping-shipping-behavior-chromium\error-context.md
+
+    Error Context: test-results\playwright-11268-d322db08-88ea-493a-8aaf-aeb18083a003\ui-width-layout-W02-full-w-96e2a-t-mapping-shipping-behavior-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-11268-d322db08-88ea-493a-8aaf-aeb18083a003\ui-width-layout-W02-full-w-96e2a-t-mapping-shipping-behavior-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-11268-d322db08-88ea-493a-8aaf-aeb18083a003\ui-width-layout-W02-full-w-96e2a-t-mapping-shipping-behavior-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:57764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/10] [chromium] › tests\ui-width-layout.spec.ts:139:1 › W03 notification protection notice occupies the full page row after the two panes
+  4) [chromium] › tests\ui-width-layout.spec.ts:139:1 › W03 notification protection notice occupies the full page row after the two panes 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      146 |             return { noticeWidth: n.width, gridWidth: g.width, noticeY: n.y, gridBottom: g.bottom, gap: n.y - g.bottom, insideGrid: grid.contains(notice) };
+      147 |         });
+    > 148 |         expect(geometry.insideGrid).toBe(false);
+          |                                     ^
+      149 |         expect(geometry.noticeWidth).toBeCloseTo(geometry.gridWidth, 0);
+      150 |         expect(geometry.gap).toBeCloseTo(24, 0);
+      151 |         await documentFits(page, width);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:148:37
+
+    Error Context: test-results\playwright-57764-ee0a649a-21da-4db5-a95f-6c8ab0a8e3a5\ui-width-layout-W03-notifi-1785a-age-row-after-the-two-panes-chromium\error-context.md
+
+    Error Context: test-results\playwright-57764-ee0a649a-21da-4db5-a95f-6c8ab0a8e3a5\ui-width-layout-W03-notifi-1785a-age-row-after-the-two-panes-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-57764-ee0a649a-21da-4db5-a95f-6c8ab0a8e3a5\ui-width-layout-W03-notifi-1785a-age-row-after-the-two-panes-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-57764-ee0a649a-21da-4db5-a95f-6c8ab0a8e3a5\ui-width-layout-W03-notifi-1785a-age-row-after-the-two-panes-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:41304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[5/10] [chromium] › tests\ui-width-layout.spec.ts:157:1 › W04 detail rows stay atomic in content rhythm and plain containers
+  5) [chromium] › tests\ui-width-layout.spec.ts:157:1 › W04 detail rows stay atomic in content rhythm and plain containers 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 7
+    Received: 14
+
+      164 |             return { gap: parseFloat(getComputedStyle(group).gap), childCount: slots.length, slots: slots.map(slot => ({ text: slot.textContent, rowHeight: slot.firstElementChild?.getBoundingClientRect().height, height: slot.getBoundingClientRect().height, y: slot.getBoundingClientRect().y, separators: slot.querySelectorAll('.MuiDivider-root').length })), plain: [...main.querySelectorAll('[data-ui-detail-line]')].filter(slot => slot.parentElement?.getAttribute('data-ui-composition') !== 'surface-content').slice(0, 4).map(slot => ({ height: slot.getBoundingClientRect().height, rowHeight: slot.firstElementChild!.getBoundingClientRect().height, separatorHeight: slot.lastElementChild!.getBoundingClientRect().height })) };
+      165 |         });
+    > 166 |         expect(geometry.childCount).toBe(7);
+          |                                     ^
+      167 |         expect(geometry.gap).toBe(12);
+      168 |         for (let index = 0; index < geometry.slots.length; index++) {
+      169 |             expect(geometry.slots[index].separators).toBe(1);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:166:37
+
+    Error Context: test-results\playwright-41304-a190ab11-382b-45da-a01d-cbb2ac403c0a\ui-width-layout-W04-detail-945e2-rhythm-and-plain-containers-chromium\error-context.md
+
+    Error Context: test-results\playwright-41304-a190ab11-382b-45da-a01d-cbb2ac403c0a\ui-width-layout-W04-detail-945e2-rhythm-and-plain-containers-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-41304-a190ab11-382b-45da-a01d-cbb2ac403c0a\ui-width-layout-W04-detail-945e2-rhythm-and-plain-containers-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-41304-a190ab11-382b-45da-a01d-cbb2ac403c0a\ui-width-layout-W04-detail-945e2-rhythm-and-plain-containers-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:8652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[6/10] [firefox] › tests\ui-width-layout.spec.ts:29:1 › W01 AI single connection fills its collection at breakpoint edges and wide viewports
+  6) [firefox] › tests\ui-width-layout.spec.ts:29:1 › W01 AI single connection fills its collection at breakpoint edges and wide viewports 
+
+    Error: expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 992
+    Received: 484
+
+    Expected precision:    0
+    Expected difference: < 0.5
+    Received difference:   508
+
+      33 |         const geometry = await gridGeometry(page);
+      34 |         expect(geometry.children).toHaveLength(1);
+    > 35 |         expect(geometry.children[0].width).toBeCloseTo(geometry.width, 0);
+         |                                            ^
+      36 |         await documentFits(page, width);
+      37 |         observed.push({ width, ...geometry });
+      38 |     }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:35:44
+
+    Error Context: test-results\playwright-8652-c6e0d60b-12b8-445b-9981-a70ccc16496d\ui-width-layout-W01-AI-sin-3ddd0-nt-edges-and-wide-viewports-firefox\error-context.md
+
+    Error Context: test-results\playwright-8652-c6e0d60b-12b8-445b-9981-a70ccc16496d\ui-width-layout-W01-AI-sin-3ddd0-nt-edges-and-wide-viewports-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-8652-c6e0d60b-12b8-445b-9981-a70ccc16496d\ui-width-layout-W01-AI-sin-3ddd0-nt-edges-and-wide-viewports-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-8652-c6e0d60b-12b8-445b-9981-a70ccc16496d\ui-width-layout-W01-AI-sin-3ddd0-nt-edges-and-wide-viewports-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:80844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[7/10] [firefox] › tests\ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 1 visible shops
+  7) [firefox] › tests\ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 1 visible shops 
+
+    Error: expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 720
+    Received: 348
+
+    Expected precision:    0
+    Expected difference: < 0.5
+    Received difference:   372
+
+      94 |             expect(geometry.children).toHaveLength(count);
+      95 |             const columns = count === 1 || width < 768 ? 1 : 2;
+    > 96 |             expect(geometry.children[0].width * columns + geometry.gap * (columns - 1)).toBeCloseTo(geometry.width, 0);
+         |                                                                                         ^
+      97 |             observations.push({ count, width, ...geometry });
+      98 |         }
+      99 |         await documentFits(page, width);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:96:89
+
+    Error Context: test-results\playwright-80844-71e8c57f-63b8-4e9a-8673-205f48c250ea\ui-width-layout-W01-worksp-37802-ion-handles-1-visible-shops-firefox\error-context.md
+
+    Error Context: test-results\playwright-80844-71e8c57f-63b8-4e9a-8673-205f48c250ea\ui-width-layout-W01-worksp-37802-ion-handles-1-visible-shops-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-80844-71e8c57f-63b8-4e9a-8673-205f48c250ea\ui-width-layout-W01-worksp-37802-ion-handles-1-visible-shops-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-80844-71e8c57f-63b8-4e9a-8673-205f48c250ea\ui-width-layout-W01-worksp-37802-ion-handles-1-visible-shops-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:64412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[8/10] [firefox] › tests\ui-width-layout.spec.ts:104:1 › W02 full-width form groups fill their panel and retain input/mapping/shipping behavior
+  8) [firefox] › tests\ui-width-layout.spec.ts:104:1 › W02 full-width form groups fill their panel and retain input/mapping/shipping behavior 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "none"
+    Received: "760px"
+
+      113 |         });
+      114 |         expect(geometry.width).toBeCloseTo(geometry.available, 0);
+    > 115 |         expect(geometry.maxWidth).toBe('none');
+          |                                   ^
+      116 |         if (route === 'settings/shop') {
+      117 |             await page.getByRole('textbox', { name: 'Tên cửa hàng', exact: true }).fill('Tên cửa hàng cần giữ');
+      118 |             if (width < 1280) await page.getByRole('button', { name: 'Mở menu', exact: true }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:115:35
+
+    Error Context: test-results\playwright-64412-ed440ac5-a2ce-46ec-a723-52d4bd187ec8\ui-width-layout-W02-full-w-96e2a-t-mapping-shipping-behavior-firefox\error-context.md
+
+    Error Context: test-results\playwright-64412-ed440ac5-a2ce-46ec-a723-52d4bd187ec8\ui-width-layout-W02-full-w-96e2a-t-mapping-shipping-behavior-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-64412-ed440ac5-a2ce-46ec-a723-52d4bd187ec8\ui-width-layout-W02-full-w-96e2a-t-mapping-shipping-behavior-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-64412-ed440ac5-a2ce-46ec-a723-52d4bd187ec8\ui-width-layout-W02-full-w-96e2a-t-mapping-shipping-behavior-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:95132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[9/10] [firefox] › tests\ui-width-layout.spec.ts:139:1 › W03 notification protection notice occupies the full page row after the two panes
+  9) [firefox] › tests\ui-width-layout.spec.ts:139:1 › W03 notification protection notice occupies the full page row after the two panes 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      146 |             return { noticeWidth: n.width, gridWidth: g.width, noticeY: n.y, gridBottom: g.bottom, gap: n.y - g.bottom, insideGrid: grid.contains(notice) };
+      147 |         });
+    > 148 |         expect(geometry.insideGrid).toBe(false);
+          |                                     ^
+      149 |         expect(geometry.noticeWidth).toBeCloseTo(geometry.gridWidth, 0);
+      150 |         expect(geometry.gap).toBeCloseTo(24, 0);
+      151 |         await documentFits(page, width);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:148:37
+
+    Error Context: test-results\playwright-95132-30a393f7-5d0b-4635-89c9-4b5ac4ddf2ea\ui-width-layout-W03-notifi-1785a-age-row-after-the-two-panes-firefox\error-context.md
+
+    Error Context: test-results\playwright-95132-30a393f7-5d0b-4635-89c9-4b5ac4ddf2ea\ui-width-layout-W03-notifi-1785a-age-row-after-the-two-panes-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-95132-30a393f7-5d0b-4635-89c9-4b5ac4ddf2ea\ui-width-layout-W03-notifi-1785a-age-row-after-the-two-panes-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-95132-30a393f7-5d0b-4635-89c9-4b5ac4ddf2ea\ui-width-layout-W03-notifi-1785a-age-row-after-the-two-panes-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:81780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[10/10] [firefox] › tests\ui-width-layout.spec.ts:157:1 › W04 detail rows stay atomic in content rhythm and plain containers
+  10) [firefox] › tests\ui-width-layout.spec.ts:157:1 › W04 detail rows stay atomic in content rhythm and plain containers 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 7
+    Received: 14
+
+      164 |             return { gap: parseFloat(getComputedStyle(group).gap), childCount: slots.length, slots: slots.map(slot => ({ text: slot.textContent, rowHeight: slot.firstElementChild?.getBoundingClientRect().height, height: slot.getBoundingClientRect().height, y: slot.getBoundingClientRect().y, separators: slot.querySelectorAll('.MuiDivider-root').length })), plain: [...main.querySelectorAll('[data-ui-detail-line]')].filter(slot => slot.parentElement?.getAttribute('data-ui-composition') !== 'surface-content').slice(0, 4).map(slot => ({ height: slot.getBoundingClientRect().height, rowHeight: slot.firstElementChild!.getBoundingClientRect().height, separatorHeight: slot.lastElementChild!.getBoundingClientRect().height })) };
+      165 |         });
+    > 166 |         expect(geometry.childCount).toBe(7);
+          |                                     ^
+      167 |         expect(geometry.gap).toBe(12);
+      168 |         for (let index = 0; index < geometry.slots.length; index++) {
+      169 |             expect(geometry.slots[index].separators).toBe(1);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-width-layout.spec.ts:166:37
+
+    Error Context: test-results\playwright-81780-67980495-8a1f-470f-8dfd-c92b2a0d35f2\ui-width-layout-W04-detail-945e2-rhythm-and-plain-containers-firefox\error-context.md
+
+    Error Context: test-results\playwright-81780-67980495-8a1f-470f-8dfd-c92b2a0d35f2\ui-width-layout-W04-detail-945e2-rhythm-and-plain-containers-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-81780-67980495-8a1f-470f-8dfd-c92b2a0d35f2\ui-width-layout-W04-detail-945e2-rhythm-and-plain-containers-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-81780-67980495-8a1f-470f-8dfd-c92b2a0d35f2\ui-width-layout-W04-detail-945e2-rhythm-and-plain-containers-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  10 failed
+    [chromium] › tests\ui-width-layout.spec.ts:29:1 › W01 AI single connection fills its collection at breakpoint edges and wide viewports 
+    [chromium] › tests\ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 1 visible shops 
+    [chromium] › tests\ui-width-layout.spec.ts:104:1 › W02 full-width form groups fill their panel and retain input/mapping/shipping behavior 
+    [chromium] › tests\ui-width-layout.spec.ts:139:1 › W03 notification protection notice occupies the full page row after the two panes 
+    [chromium] › tests\ui-width-layout.spec.ts:157:1 › W04 detail rows stay atomic in content rhythm and plain containers 
+    [firefox] › tests\ui-width-layout.spec.ts:29:1 › W01 AI single connection fills its collection at breakpoint edges and wide viewports 
+    [firefox] › tests\ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 1 visible shops 
+    [firefox] › tests\ui-width-layout.spec.ts:104:1 › W02 full-width form groups fill their panel and retain input/mapping/shipping behavior 
+    [firefox] › tests\ui-width-layout.spec.ts:139:1 › W03 notification protection notice occupies the full page row after the two panes 
+    [firefox] › tests\ui-width-layout.spec.ts:157:1 › W04 detail rows stay atomic in content rhythm and plain containers 

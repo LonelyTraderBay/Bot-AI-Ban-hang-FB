@@ -1,0 +1,600 @@
+FE026 isolated clean install and reproducible production/demo artifact run
+executedAt=2026-10-08T14:52:30.026Z
+status=PASS
+isolatedWorkspace=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy
+sourceLockSha256=a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a
+copiedLockSha256=a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a
+userEnvLocalCopied=false
+rootWorkflowSha256=238511056b84e1cc972b87d2e8c673be34a8aac57295f4dd7855992c38804dc2
+rootWorkflowCopiedToExpectedRelativePath=true
+isolatedGitMetadata=git init --quiet at the temporary multi-project root only so the evidence validator resolves Frontend and Kit paths; no source repository .git directory, history, branch, or user changes were copied.
+setupBehavior=npm run setup can create a fresh .env.local from .env.example when the isolated target is absent; it never copies the source workspace .env.local.
+
+## initialize-isolated-git-root
+command=git init --quiet
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy
+exitCode=0
+
+
+## clean-install
+command=node "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" "--script-shell=cmd.exe" "ci"
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+
+added 411 packages, and audited 413 packages in 52s
+
+86 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+npm warn deprecated eslint@9.34.0: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+npm warn allow-scripts 2 packages have install scripts not yet covered by allowScripts:
+npm warn allow-scripts   esbuild@0.28.2 (postinstall: node install.js)
+npm warn allow-scripts   msw@2.11.1 (postinstall: node -e "import('./config/scripts/postinstall.js').catch(() => void 0)")
+npm warn allow-scripts
+npm warn allow-scripts Run `npm approve-scripts --allow-scripts-pending` to review, or `npm approve-scripts <pkg>` to allow.
+
+## npm-audit-low
+command=node "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" "--script-shell=cmd.exe" "audit" "--audit-level=low"
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+found 0 vulnerabilities
+
+## setup
+command=node "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" "--script-shell=cmd.exe" "run" "setup"
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+Copying the worker script at "C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+## verify
+command=node "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" "--script-shell=cmd.exe" "run" "verify"
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+
+> botsales-frontend@0.1.0 verify
+> npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build && npm run test:layout && npm run test:visual-tokens && npm run test:ui-composition && npm run test:evidence
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs
+
+{
+  "checkedAt": "2026-10-08T14:46:19.968Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 71,
+  "operationCalls": 222,
+  "routes": 54,
+  "issues": [],
+  "status": "PASS"
+}
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (1.1996ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (180.099ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (206.7382ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 463.331
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-08T14:46:23.608Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 71,
+  "imports": 534,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> botsales-frontend@0.1.0 test:domain
+> node scripts/test-domain.mjs
+
+{"status":"PASS","simulatorChecks":75,"networkChecks":13,"networkHandlers":210,"passed":88,"operations":89,"node":"v24.19.0","typescript":"5.9.2"}
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/AppData/Local/Temp/botsales-components-clean-20261008-SEoMEy/BotSalesAI_Frontend
+
+
+ Test Files  15 passed (15)
+      Tests  175 passed (175)
+   Start at  21:46:55
+   Duration  28.31s (environment 53%, import 26%, setup 11%, tests 8%, transform 2%)
+
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2061 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.19 kB │ gzip:   0.60 kB
+dist/assets/index-BQPx7lJM.css               3.56 kB │ gzip:   1.33 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-CVitQAxr.js              0.32 kB │ gzip:   0.25 kB
+dist/assets/hooks-CwC8uwcv.js                4.58 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-C5itp9Kk.js       5.35 kB │ gzip:   2.48 kB
+dist/assets/index-DjA2Aw-w.js                7.92 kB │ gzip:   3.16 kB
+dist/assets/index-SqadtB0N.js                8.31 kB │ gzip:   3.53 kB
+dist/assets/index-De9CQCeZ.js                9.81 kB │ gzip:   3.68 kB
+dist/assets/index-D6fePOtf.js               13.80 kB │ gzip:   5.63 kB
+dist/assets/index-v1M_Uy5r.js               14.52 kB │ gzip:   5.35 kB
+dist/assets/index-nUScZdf7.js               14.58 kB │ gzip:   4.92 kB
+dist/assets/index-CGUiD-8t.js               15.21 kB │ gzip:   5.85 kB
+dist/assets/index-CibZ1BPf.js               16.16 kB │ gzip:   5.51 kB
+dist/assets/index-BKtjqF65.js               16.40 kB │ gzip:   5.42 kB
+dist/assets/index-6VB04RKu.js               17.81 kB │ gzip:   6.26 kB
+dist/assets/index-B9dDGWMh.js               18.33 kB │ gzip:   6.16 kB
+dist/assets/index-DdHVJlRX.js               23.80 kB │ gzip:   8.11 kB
+dist/assets/index-C9ZUZMyr.js               24.13 kB │ gzip:   8.60 kB
+dist/assets/index-BGcFrXiD.js               29.24 kB │ gzip:   9.51 kB
+dist/assets/index-Ba68GzRa.js               31.62 kB │ gzip:   9.82 kB
+dist/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-DnAFEevS.js               37.94 kB │ gzip:  10.46 kB
+dist/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/schemas-Ct4RWo9M.js             80.75 kB │ gzip:  24.39 kB
+dist/assets/index-DWNlUT0X.js               89.08 kB │ gzip:  28.26 kB
+dist/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist/assets/contract-data-BIzYYkc1.js      303.99 kB │ gzip:  36.17 kB
+dist/assets/charts-CQ4oecFO.js             313.03 kB │ gzip:  94.99 kB
+dist/assets/mui-Bz_aCSm2.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 3.44s
+
+> botsales-frontend@0.1.0 test:layout
+> node --test tests/layout-checker.test.mjs tests/ui-layout-binding-gates.test.mjs && node scripts/check-layout.mjs
+
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (1726.276ms)
+✔ rejects a CSS spacing role without a declared shared owner (1107.9995ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (1125.3587ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (1145.9695ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (1124.5954ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (3410.5785ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (3354.5589ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (4433.6776ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (2177.4244ms)
+✔ report mode inventories migration debt without turning findings into PASS (1109.1943ms)
+✔ canonical writes through casts and aliases fail outside style expressions (1769.7703ms)
+✔ Object.assign cannot mutate canonical data but can copy to a fresh object (2288.0426ms)
+✔ layout gate rejects raw spacing on const alias of MUI component (1116.7823ms)
+✔ canonical mutation gate follows global mutator aliases and reflection (1155.591ms)
+✔ local mutator names do not acquire global mutation identity (1202.0104ms)
+✔ destructured mutators and call/apply retain canonical mutation checks (1180.8581ms)
+✔ global mutator call/apply can copy canonical values into fresh objects (1155.8218ms)
+✔ mutable aliases with possible canonical destinations fail closed (1186.0293ms)
+✔ opaque apply arguments fail closed while unrelated mutable data stays valid (2606.5163ms)
+✔ canonical references inside containers and destructured aliases cannot be mutated (1179.6113ms)
+✔ independent shallow copies of scalar canonical fields remain mutable (1164.1675ms)
+✔ array references and nested destructuring preserve canonical write provenance (1132.1572ms)
+✔ array destinations distinguish independent elements from canonical references (1093.3734ms)
+✔ array destructuring, dynamic indices and spread cannot hide canonical references (1186.0014ms)
+✔ dynamic indices and destructuring of independent arrays stay mutable (1125.1544ms)
+✔ function parameters cannot hide canonical mutation across source files (1162.6707ms)
+✔ read-only helpers and mutations of unrelated arguments remain valid (1153.4618ms)
+✔ returned canonical references remain protected across helper boundaries (1180.4544ms)
+✔ helper returns of fresh scalar copies do not retain canonical destination identity (1210.408ms)
+✔ destructured object parameters cannot mutate canonical arguments (1170.6672ms)
+✔ destructured object parameters retain independent argument mutability (1139.2499ms)
+✔ default parameter and binding initializers cannot hide canonical mutations (1100.8498ms)
+✔ fresh default parameter and binding copies remain mutable (1352.5917ms)
+✔ rest parameters retain canonical argument write provenance (1171.1462ms)
+✔ rest parameters distinguish independent positions from canonical siblings (1204.3728ms)
+✔ finite spread arguments preserve shifted positional and rest destinations (1174.6655ms)
+✔ finite spread expansion keeps independent argument positions mutable (1140.2661ms)
+✔ opaque spreads keep positional mutation destinations unknown (1206.332ms)
+✔ opaque spreads into read-only helpers do not invent mutation findings (1158.0819ms)
+✔ array parameter patterns retain canonical positions including nested object arrays (1144.3237ms)
+✔ array parameter patterns retain independent bound element mutability (1274.8319ms)
+✔ layout gate rejects parameter shadow of canonical layout name (1352.5908ms)
+✔ layout gate follows genuine renamed styled factory (1181.7276ms)
+✔ layout gate accepts canonical namespace, element access and barrel alias (1162.4499ms)
+✔ layout gate does not mistake local component named Stack for MUI (1084.8695ms)
+✔ layout gate inspects renamed installed Emotion css tag (1111.9666ms)
+✔ layout gate preserves genuine aliased Controller field forwarding (1250.0013ms)
+✔ a same-named local Controller cannot exempt an unknown prop spread (1125.4335ms)
+✔ genuine useForm registration survives property and destructured aliases (1189.9619ms)
+✔ a function named register cannot exempt injected style props (1143.3145ms)
+✔ a bridge callback parameter cannot impersonate its private factor binding (1135.3566ms)
+✔ opaque namespace component selection remains a strict binding failure (1319.77ms)
+✔ opaque namespace factory cannot hide style arguments (1179.4015ms)
+✔ MUI re-export cannot hide raw spacing behind a first-party barrel (1214.9843ms)
+✔ destructuring assignments cannot hide canonical write targets (1408.136ms)
+✔ destructuring assignments can update independent copied destinations (1279.252ms)
+✔ object rest retains nested canonical references while copying the outer object (1237.0969ms)
+✔ rest scalar copies and replacement of container references stay mutable (1646.2878ms)
+✔ shallow object spread preserves canonical child references and last-writer order (1956.8ms)
+✔ shallow spread with a later independent override stays mutable (2271.6133ms)
+✔ exported mutable aliases retain assignments from their declaring file (2542.5094ms)
+✔ exported independent mutable data does not acquire canonical provenance (1894.1117ms)
+✔ literal computed keys retain canonical container and parameter provenance (2473.9987ms)
+✔ literal computed keys do not taint independent selected properties (2043.5281ms)
+✔ Object.assign shallow copies retain canonical nested reference provenance (2611.8593ms)
+✔ Object.assign later independent overrides and scalar copies stay mutable (2411.3328ms)
+✔ union and dynamic property selections retain possible canonical destinations (4644.1451ms)
+✔ finite union property selections exclude canonical siblings not in the key set (3360.193ms)
+✔ union selection over Object.assign output retains canonical child provenance (2293.0987ms)
+✔ union selection over independent Object.assign output remains mutable (2882.9835ms)
+✔ Reflect.set call/apply checks the target argument rather than the assigned value (5836.9205ms)
+✔ aliased React createElement checks MUI and native style objects (1986.5204ms)
+✔ GlobalStyles.styles is checked and local createElement names stay local (4180.9124ms)
+✔ React JSX runtime factories cannot bypass MUI or native style checks (2113.3721ms)
+✔ React cloneElement checks the cloned MUI element and preserves native props (5681.6314ms)
+✔ Emotion css props and object factories are inspected with native CSS semantics (3870.8949ms)
+✔ Inline style elements in JSX, React factories, DOM and the HTML entry fail closed (10879.7075ms)
+✔ DOM CSSOM spacing writes use semantic roles and reject opaque style strings (3107.0897ms)
+✔ HTML parsing and runtime stylesheet mutation cannot bypass the imported CSS boundary (2696.7381ms)
+✔ spacing shorthand values and responsive breakpoints preserve token and unit provenance (11612.8348ms)
+✔ function return producers cannot hide canonical children behind spreads (1151.2919ms)
+✔ producer spreads keep later independent child overrides writable (1145.9603ms)
+ℹ tests 82
+ℹ suites 0
+ℹ pass 82
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 146261.6304
+layout-check PASS: 79 source files, 0 finding(s), 1 exception(s) used
+
+> botsales-frontend@0.1.0 test:visual-tokens
+> node --test tests/visual-token-checker.test.mjs && node scripts/check-visual-tokens.mjs
+
+✔ visual checker accepts canonical theme roles, token references, geometry and semantic responsive props (723.4149ms)
+✔ visual checker rejects raw literals across sx, JSX system props and CSS declarations (579.1849ms)
+✔ visual checker follows local style aliases and callback themes, but fails raw nested values (456.2099ms)
+✔ visual checker reports unresolved spreads and malformed style sources as UNKNOWN or parse errors (515.0512ms)
+✔ visual checker includes newly added TSX files under the source root (3995.8292ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6874.4157
+visual-token-check PASS: 78 source files, 0 finding(s)
+
+> botsales-frontend@0.1.0 test:ui-composition
+> node --test tests/ui-composition-checker.test.mjs tests/ui-composition-ancestry.test.mjs tests/ui-shared-api-contract.test.mjs && node scripts/check-ui-composition.mjs
+
+✔ P10/P15 catch alias and neutral-wrapper duplicate insets through fragments and conditionals (591.7765ms)
+✔ P20 resolves shared composition identities through a barrel and const component aliases (399.5451ms)
+✔ P11/P13 catch static element access roles on every MUI surface, including Paper (406.0781ms)
+✔ P12 checks React createElement and JSX-runtime element factories (448.8355ms)
+✔ P14 resolves bodyMode literal aliases and fails closed when ownership is unknown (1326.2047ms)
+✔ checks Panel ancestry when React elements are created natively (523.2868ms)
+✔ keeps independent nested surfaces and portaled dialogs as separate owners (1064.7161ms)
+✔ accepts finite bodyMode branches and every mode in the public component contracts (1543.8116ms)
+✔ stops inherited gap ownership at Panels and independent bordered surfaces (948.8992ms)
+✔ tracks gaps through fragments, conditions and ready QueryState, but not inside DOM wrappers (502.1093ms)
+✔ applies the same finite modes and wrapper boundaries to native React factories (986.1693ms)
+✔ recognizes native outlined Paper and nested Box surface inset boundaries (985.5222ms)
+✔ fails closed when an unresolved custom wrapper obscures a semantic gap owner (492.1658ms)
+✔ rejects unsupported placement and rhythm values while accepting finite aliases and branches (1163.5266ms)
+✔ rejects unsupported finite values through React element factories (1610.4656ms)
+✔ accepts semantic composition, closed geometry and business-specific MUI primitives (6.77ms)
+✔ rejects rebuilding each shared spacing owner at a consumer (2.3038ms)
+✔ follows aliases, local style variables, object spreads and namespace imports (1.2315ms)
+✔ rejects direct and spread spacing overrides on semantic components (0.7336ms)
+✔ rejects spacing or opaque spreads hidden in geometry (0.3823ms)
+✔ allows the canonical owner implementation and fails closed on malformed source (1.0784ms)
+✔ rejects duplicated parent boundary and duplicated Panel inset (0.6727ms)
+✔ checks default MUI imports and fails closed for opaque geometry (0.4585ms)
+✔ distinguishes content grids from flex flows when reporting the shared owner (0.41ms)
+✔ rejects page spacing for paired fields and peer Panels without a section gap owner (2.1338ms)
+✔ related sibling gaps belong to ActionGroup comfortable density, not consumer Stack styles (0.5898ms)
+✔ Amount consumers declare wrapping outside DataTable columns and keep table money unbroken (23.965ms)
+✔ the shared catalog covers every public React component and supporting Column type (37.4424ms)
+✔ every public React API has a direct rendered contract test (2.023ms)
+✔ catalog declaration lines and stated JSX counts match resolved source symbols (26.0462ms)
+✔ every shared React export has a resolved production consumer or an explicit zero-use lifecycle decision (28.4117ms)
+✔ required UI evidence and regression gates remain wired to root verify and the active parent workflow (0.8862ms)
+✔ composition prop allowlists match the TypeScript owners exactly (0.2848ms)
+✔ QueryState uses only the approved inline and section pending profiles (0.313ms)
+✔ QueryState consumers reserve section loading for primary content and keep every other state inline by default (21.94ms)
+✔ body modes, placement roles and geometry keys match the TypeScript contracts (1.2296ms)
+✔ Panel geometry and DataTable columns remain closed public contracts (5.8602ms)
+✔ shared component and composition props expose no arbitrary layout/style escape hatch (0.2939ms)
+✔ layout role types, runtime values, consumers and ownership documentation stay closed (3678.5514ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13666.9044
+ui-composition PASS: 77 source files, 0 finding(s)
+
+
+> botsales-frontend@0.1.0 test:evidence
+> node --test tests/ui-evidence-validator.test.mjs && node scripts/validate-ui-evidence.mjs evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json
+
+✔ accepts current fingerprints, honest open coverage, and explained N/A (14.3688ms)
+✔ rejects a stale source fingerprint (8.6686ms)
+✔ rejects a stale command log (6.0544ms)
+✔ rejects missing, absolute, and escaping source paths (8.743ms)
+✔ rejects unrun, missing, duplicate, and nonzero command results marked PASS (4.9704ms)
+✔ rejects PASS when expected and observed results differ (5.8874ms)
+✔ rejects inconsistent coverage and N/A without a reason (6.3359ms)
+✔ rejects a baseline falsely dated after implementation started and detects changed baseline artifacts (10.5935ms)
+✔ COMPLETE cannot contain open coverage or failed commands (8.1729ms)
+✔ S19 must explicitly reconcile files, APIs, routes, rendered routes, slots, and states (11.6651ms)
+✔ rejects malformed top-level evidence instead of treating missing fields as success (4.2515ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 232.1137
+ui-evidence PASS: S17; 3 command/log record(s), 3 coverage row(s), 245 current fingerprint(s); status=COMPLETE
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\e5f62bdd8f00ac35cb32\direct-vite\27724\deps\react-dom_client.js?v=140812a3 as it exceeds the max of 500KB.
+
+## contract-tests
+command=node --test tests/contracts/generator.test.mjs
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+✔ canonical contracts validate and generate the API base path from OpenAPI (90.4916ms)
+✔ rejects drift in OpenAPI YAML and operation index projections (236.2853ms)
+✔ generated operation registry preserves required and optional query parameter metadata (42.5978ms)
+✔ rejects unresolved schema references before generation (75.9641ms)
+✔ rejects missing API version and a server URL outside same-origin path form (66.8216ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (60.9027ms)
+✔ detects a stale generated file and accepts it after regeneration (10.9028ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 735.8628
+
+## build-demo
+command=node "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" "--script-shell=cmd.exe" "run" "build:demo"
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2277 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.19 kB │ gzip:   0.60 kB
+dist-demo/assets/index-BQPx7lJM.css               3.56 kB │ gzip:   1.33 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/filters-Bi-qlnQp.js              0.32 kB │ gzip:   0.24 kB
+dist-demo/assets/control-6gq2NE8L.js              0.72 kB │ gzip:   0.43 kB
+dist-demo/assets/hooks-B6-cFPRL.js                4.58 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-BTtQWzC7.js       5.35 kB │ gzip:   2.48 kB
+dist-demo/assets/index-BzeJkPIz.js                8.31 kB │ gzip:   3.53 kB
+dist-demo/assets/index-D4wxYBK8.js                8.46 kB │ gzip:   3.35 kB
+dist-demo/assets/index-CQ3wgAza.js                9.81 kB │ gzip:   3.68 kB
+dist-demo/assets/index-BEu0kB9B.js               13.99 kB │ gzip:   5.69 kB
+dist-demo/assets/index-Du2dAxvn.js               14.58 kB │ gzip:   4.92 kB
+dist-demo/assets/index-7hh-Fk74.js               14.90 kB │ gzip:   5.66 kB
+dist-demo/assets/index-zqyQIwAL.js               16.56 kB │ gzip:   5.46 kB
+dist-demo/assets/index-D4tFHh6w.js               17.81 kB │ gzip:   6.26 kB
+dist-demo/assets/index-6X7W8iWx.js               18.33 kB │ gzip:   6.16 kB
+dist-demo/assets/index-DW5Wj0DC.js               18.48 kB │ gzip:   6.32 kB
+dist-demo/assets/index-COjUzDCu.js               22.53 kB │ gzip:   7.81 kB
+dist-demo/assets/index-c7QfYOud.js               24.21 kB │ gzip:   8.26 kB
+dist-demo/assets/index-EO5l09xn.js               24.36 kB │ gzip:   8.66 kB
+dist-demo/assets/index-WhmOTxQ_.js               29.75 kB │ gzip:   9.65 kB
+dist-demo/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-BkAQTP3H.js               33.87 kB │ gzip:  10.55 kB
+dist-demo/assets/index-BzrXwUPo.js               37.94 kB │ gzip:  10.46 kB
+dist-demo/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/schemas-Ct4RWo9M.js             80.75 kB │ gzip:  24.39 kB
+dist-demo/assets/index-CKbG4x-M.js               92.93 kB │ gzip:  29.39 kB
+dist-demo/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-BepI4YXI.js            159.35 kB │ gzip:  34.71 kB
+dist-demo/assets/browser-nmYSkQLK.js            255.64 kB │ gzip:  87.01 kB
+dist-demo/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist-demo/assets/contract-data-D-QqiNa-.js      309.77 kB │ gzip:  37.31 kB
+dist-demo/assets/charts-RcpaDpmM.js             313.03 kB │ gzip:  94.99 kB
+dist-demo/assets/mui-azn9KfGV.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 6.05s
+
+## repeat-production-build
+command=node "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" "--script-shell=cmd.exe" "run" "build"
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2061 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.19 kB │ gzip:   0.60 kB
+dist/assets/index-BQPx7lJM.css               3.56 kB │ gzip:   1.33 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-CVitQAxr.js              0.32 kB │ gzip:   0.25 kB
+dist/assets/hooks-CwC8uwcv.js                4.58 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-C5itp9Kk.js       5.35 kB │ gzip:   2.48 kB
+dist/assets/index-DjA2Aw-w.js                7.92 kB │ gzip:   3.16 kB
+dist/assets/index-SqadtB0N.js                8.31 kB │ gzip:   3.53 kB
+dist/assets/index-De9CQCeZ.js                9.81 kB │ gzip:   3.68 kB
+dist/assets/index-D6fePOtf.js               13.80 kB │ gzip:   5.63 kB
+dist/assets/index-v1M_Uy5r.js               14.52 kB │ gzip:   5.35 kB
+dist/assets/index-nUScZdf7.js               14.58 kB │ gzip:   4.92 kB
+dist/assets/index-CGUiD-8t.js               15.21 kB │ gzip:   5.85 kB
+dist/assets/index-CibZ1BPf.js               16.16 kB │ gzip:   5.51 kB
+dist/assets/index-BKtjqF65.js               16.40 kB │ gzip:   5.42 kB
+dist/assets/index-6VB04RKu.js               17.81 kB │ gzip:   6.26 kB
+dist/assets/index-B9dDGWMh.js               18.33 kB │ gzip:   6.16 kB
+dist/assets/index-DdHVJlRX.js               23.80 kB │ gzip:   8.11 kB
+dist/assets/index-C9ZUZMyr.js               24.13 kB │ gzip:   8.60 kB
+dist/assets/index-BGcFrXiD.js               29.24 kB │ gzip:   9.51 kB
+dist/assets/index-Ba68GzRa.js               31.62 kB │ gzip:   9.82 kB
+dist/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-DnAFEevS.js               37.94 kB │ gzip:  10.46 kB
+dist/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/schemas-Ct4RWo9M.js             80.75 kB │ gzip:  24.39 kB
+dist/assets/index-DWNlUT0X.js               89.08 kB │ gzip:  28.26 kB
+dist/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist/assets/contract-data-BIzYYkc1.js      303.99 kB │ gzip:  36.17 kB
+dist/assets/charts-CQ4oecFO.js             313.03 kB │ gzip:  94.99 kB
+dist/assets/mui-Bz_aCSm2.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 5.63s
+
+## repeat-demo-build
+command=node "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" "--script-shell=cmd.exe" "run" "build:demo"
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":11,"schemas":283,"operations":210,"routes":54}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2277 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.19 kB │ gzip:   0.60 kB
+dist-demo/assets/index-BQPx7lJM.css               3.56 kB │ gzip:   1.33 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/filters-Bi-qlnQp.js              0.32 kB │ gzip:   0.24 kB
+dist-demo/assets/control-6gq2NE8L.js              0.72 kB │ gzip:   0.43 kB
+dist-demo/assets/hooks-B6-cFPRL.js                4.58 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-BTtQWzC7.js       5.35 kB │ gzip:   2.48 kB
+dist-demo/assets/index-BzeJkPIz.js                8.31 kB │ gzip:   3.53 kB
+dist-demo/assets/index-D4wxYBK8.js                8.46 kB │ gzip:   3.35 kB
+dist-demo/assets/index-CQ3wgAza.js                9.81 kB │ gzip:   3.68 kB
+dist-demo/assets/index-BEu0kB9B.js               13.99 kB │ gzip:   5.69 kB
+dist-demo/assets/index-Du2dAxvn.js               14.58 kB │ gzip:   4.92 kB
+dist-demo/assets/index-7hh-Fk74.js               14.90 kB │ gzip:   5.66 kB
+dist-demo/assets/index-zqyQIwAL.js               16.56 kB │ gzip:   5.46 kB
+dist-demo/assets/index-D4tFHh6w.js               17.81 kB │ gzip:   6.26 kB
+dist-demo/assets/index-6X7W8iWx.js               18.33 kB │ gzip:   6.16 kB
+dist-demo/assets/index-DW5Wj0DC.js               18.48 kB │ gzip:   6.32 kB
+dist-demo/assets/index-COjUzDCu.js               22.53 kB │ gzip:   7.81 kB
+dist-demo/assets/index-c7QfYOud.js               24.21 kB │ gzip:   8.26 kB
+dist-demo/assets/index-EO5l09xn.js               24.36 kB │ gzip:   8.66 kB
+dist-demo/assets/index-WhmOTxQ_.js               29.75 kB │ gzip:   9.65 kB
+dist-demo/assets/query-5vm9EU1C.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-BkAQTP3H.js               33.87 kB │ gzip:  10.55 kB
+dist-demo/assets/index-BzrXwUPo.js               37.94 kB │ gzip:  10.46 kB
+dist-demo/assets/i18n-xB0mQYCC.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/schemas-Ct4RWo9M.js             80.75 kB │ gzip:  24.39 kB
+dist-demo/assets/index-CKbG4x-M.js               92.93 kB │ gzip:  29.39 kB
+dist-demo/assets/schema-validation-Bhr7oAQE.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-BepI4YXI.js            159.35 kB │ gzip:  34.71 kB
+dist-demo/assets/browser-nmYSkQLK.js            255.64 kB │ gzip:  87.01 kB
+dist-demo/assets/react-runtime-D0NtfbPC.js      279.78 kB │ gzip:  90.28 kB
+dist-demo/assets/contract-data-D-QqiNa-.js      309.77 kB │ gzip:  37.31 kB
+dist-demo/assets/charts-RcpaDpmM.js             313.03 kB │ gzip:  94.99 kB
+dist-demo/assets/mui-azn9KfGV.js                328.33 kB │ gzip: 100.02 kB
+✓ built in 6.21s
+
+## production-unavailable-smoke
+command=node "C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend\production-unavailable-smoke-current-20261008.mjs"
+cwd=C:\Users\Joker-PC\AppData\Local\Temp\botsales-components-clean-20261008-SEoMEy\BotSalesAI_Frontend
+exitCode=0
+[production-unavailable-smoke] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist","route":"/s/shop-demo/overview","apiUnavailable":true,"explicitErrorVisible":true,"automaticMockFallback":false,"sessionRequests":1,"mockWorkerRequests":0}
+
+artifactManifest={"productionAfterVerify":{"fileCount":35,"totalBytes":1940954,"treeSha256":"55a0a598e1a518d49878c9a9cc3e88e9ff52d34ea795fed4dc46d6f5982a8f50","workerIncluded":false,"files":[{"path":"app-icon.svg","bytes":373,"sha256":"d0ed30dd4410fde97ebac0d7be8f2a6329cde38effdd109dd219036b85fdab27"},{"path":"app-sw.js","bytes":1187,"sha256":"9080a6f5bfdd8753d64bc3a5632ee626517a79bd9d989edb3cc54f089e721936"},{"path":"assets/charts-CQ4oecFO.js","bytes":313031,"sha256":"441ffc9804f390e596000259d9097f8f983b7414a5ea769cf115f3cc2cc45d25"},{"path":"assets/contract-data-BIzYYkc1.js","bytes":303991,"sha256":"eefcaed6dd2aa9c9a486754efe19af940cfb9a4e45756f4929a3ae5523892ac8"},{"path":"assets/download-8lJFmiSZ.js","bytes":230,"sha256":"9a8e735d740169508ef12c9df76e70df3df3c2d783fdb88d301cd422e8cd426e"},{"path":"assets/draft-conflict-C5itp9Kk.js","bytes":5349,"sha256":"e2f2297f3d84193f3f0b9061ac07ab6af231efe2670e46ac920e1a419241c90e"},{"path":"assets/filters-CVitQAxr.js","bytes":316,"sha256":"0c31488c9c1bfdfbcf0c4407aeb5164f9ac034e2dc571cd2553f8a976afd78a8"},{"path":"assets/hooks-CwC8uwcv.js","bytes":4580,"sha256":"1ec6809fad038dd2cbd5edac9427bc14d5d98a8cac57c85395bd3365d2078da2"},{"path":"assets/i18n-xB0mQYCC.js","bytes":46142,"sha256":"13644fbf7cd7df2f1f5dbf8d9d8b4e67124bcb1c28b64855469888db1f87ad24"},{"path":"assets/index-6VB04RKu.js","bytes":17812,"sha256":"5bb87712ff3e0bf54aff10a7df5569360b522d4e39c15592f3fc533f975c9c2e"},{"path":"assets/index-B9dDGWMh.js","bytes":18328,"sha256":"13fd5f8df40c8c619040d10c279f40a445077a79696bd18931051d871efb5984"},{"path":"assets/index-BGcFrXiD.js","bytes":29238,"sha256":"8dca2c0f1013667292950f48a527340707862a17f6aa39e89a89b55ccc807721"},{"path":"assets/index-BKtjqF65.js","bytes":16402,"sha256":"f27627ec52525da31bf53a6c8682c43d2fb931712741493b7b1a1ff558cca45e"},{"path":"assets/index-BQPx7lJM.css","bytes":3564,"sha256":"a4ec85dc6c7b5fb62000019591a8aa24b0eeec962674aedf375462a82563b305"},{"path":"assets/index-Ba68GzRa.js","bytes":31618,"sha256":"c7bd799c9f43623b73cdc4ccb619c72907ea9e42be2ce130ba857c6c69bc5917"},{"path":"assets/index-C9ZUZMyr.js","bytes":24125,"sha256":"832592c98c7259db2b6fb5a68122967b2fbfa6ef781a88f80237804a89da8d1c"},{"path":"assets/index-CGUiD-8t.js","bytes":15206,"sha256":"bddeac962237fb0e2d9d6a39e6a447357cc2f0659fccd3ac2f51f8fe36799e43"},{"path":"assets/index-CibZ1BPf.js","bytes":16155,"sha256":"40b7af509efab509be6648ece2cf81d5611504a97f5e57145914a1389ad48cdf"},{"path":"assets/index-D6fePOtf.js","bytes":13799,"sha256":"19ba03e3305600b048af222a260585d3c4c75eb0871ad3a6ce42a6a9726430b1"},{"path":"assets/index-DWNlUT0X.js","bytes":89079,"sha256":"33351ce925ad77b6bc251c7c681c9f65a9fa128186ba864e89950f7df82d9c65"},{"path":"assets/index-DdHVJlRX.js","bytes":23802,"sha256":"12ddd8b134fc80b4001543faea0c02d86756da2012a6a9324e0e648a4e159868"},{"path":"assets/index-De9CQCeZ.js","bytes":9810,"sha256":"f94db62b3e79a54547bcd3de1e27f25d0d589ab3c24d6acca84bd5ed8bfc04ca"},{"path":"assets/index-DjA2Aw-w.js","bytes":7920,"sha256":"6afc83bea7a9180ad0afb1be3455507978104bc067ca6b720dd94129ca92e305"},{"path":"assets/index-DnAFEevS.js","bytes":37941,"sha256":"f7fce0417c2727e2c8d669841a90efa6106304bc94e141e18e91175bba4fa222"},{"path":"assets/index-SqadtB0N.js","bytes":8305,"sha256":"bdfab3a94e994446003276248ead55de041d87690e56c3578f4f545390c21883"},{"path":"assets/index-nUScZdf7.js","bytes":14582,"sha256":"656ae136c95d9517b7cbe4ec42da72caf600dba1141ff8bf9038018bfe349492"},{"path":"assets/index-v1M_Uy5r.js","bytes":14517,"sha256":"918c3b5a1040137837c687f16fa30f3ac95941f83f3d25c003a4883fc4177cd6"},{"path":"assets/mui-Bz_aCSm2.js","bytes":328326,"sha256":"f5e8d31741fcfacabe2e870a463acd5276073e9b78250aedc9b36cb40bcbcd1d"},{"path":"assets/query-5vm9EU1C.js","bytes":33154,"sha256":"59fc23875862ba142b1e9059d7a4ace925c491196d120b34a9c80b9b2744f83d"},{"path":"assets/react-runtime-D0NtfbPC.js","bytes":279779,"sha256":"cf962651294a083f09b7bb7e480d6094fcf60c8d1e0f68d93cf11e11edd45118"},{"path":"assets/schema-validation-Bhr7oAQE.js","bytes":149800,"sha256":"d15d3ecd00c25627b4b9c7e8a55997b20fd8a0480e3a3269b55473cff83b3647"},{"path":"assets/schemas-Ct4RWo9M.js","bytes":80749,"sha256":"ac69c8161e1991df96c06d5eb9ea91d64c742b5a7102604e4f81c03a69f8d30f"},{"path":"index.html","bytes":1185,"sha256":"d5a5371a0225435cc58e59379b8249596c1bc899369fd042b52502318c11ddd1"},{"path":"manifest.webmanifest","bytes":332,"sha256":"ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53"},{"path":"samples/products.csv","bytes":227,"sha256":"51b4eabb0beb11d93e7b86fd5ef252fa3c1dc4b20782f8eaf4cbac783e3109d5"}]},"demoFirstBuild":{"fileCount":39,"totalBytes":2389562,"treeSha256":"f5f0185836586940212fd28625916f847fb723e64a7ad809e23f2482d9591fe1","workerIncluded":true,"files":[{"path":"app-icon.svg","bytes":373,"sha256":"d0ed30dd4410fde97ebac0d7be8f2a6329cde38effdd109dd219036b85fdab27"},{"path":"app-sw.js","bytes":1187,"sha256":"9080a6f5bfdd8753d64bc3a5632ee626517a79bd9d989edb3cc54f089e721936"},{"path":"assets/browser-nmYSkQLK.js","bytes":255636,"sha256":"e5410f198b8bba2882ed728fb70aeb91a15cf48ac3406246fd7e76122dcafc63"},{"path":"assets/charts-RcpaDpmM.js","bytes":313031,"sha256":"902a10c7526d03091b8d6a53a4217b3714eb6319488abe363b789606eee71118"},{"path":"assets/contract-data-D-QqiNa-.js","bytes":309769,"sha256":"eaafc38117364ea7ab02b292c0f829c660f9e10401b8e042df0802cfd413b01b"},{"path":"assets/control-6gq2NE8L.js","bytes":724,"sha256":"d1b3243f08a4ffcda96aae0a55271275193cb754a547f55ed134e731b7a13c14"},{"path":"assets/download-CWiaXb8A.js","bytes":241,"sha256":"0e78970ab1b31fdcc54910e92fb351800f24b3a3a54e3f00ddf5a46b0ee2aefb"},{"path":"assets/draft-conflict-BTtQWzC7.js","bytes":5349,"sha256":"c2f32cf1142e81e1c30f9ed41750382d27da94c83a38ed335354e104379759d5"},{"path":"assets/filters-Bi-qlnQp.js","bytes":316,"sha256":"7b1e552ef7622a318c73d10894d594b097d77641707a17a20479df96c593d44e"},{"path":"assets/hooks-B6-cFPRL.js","bytes":4582,"sha256":"6ce03323a55a09fd0cd241d4d4c2dd5996397211772c178b0032963567933f7b"},{"path":"assets/i18n-xB0mQYCC.js","bytes":46142,"sha256":"13644fbf7cd7df2f1f5dbf8d9d8b4e67124bcb1c28b64855469888db1f87ad24"},{"path":"assets/index-6X7W8iWx.js","bytes":18328,"sha256":"40b19bf1f5519b626bdba332161b45fda913f9162520f3775d06849408140da4"},{"path":"assets/index-7hh-Fk74.js","bytes":14903,"sha256":"5bd6707af984a509bdbb6aacb1cc92eb6f53cd4f2ef3510730db53289aac6766"},{"path":"assets/index-BEu0kB9B.js","bytes":13985,"sha256":"6c7da657ead47e27797b7e54fde4ff982279851213e76694a7330d2250d1d1f7"},{"path":"assets/index-BQPx7lJM.css","bytes":3564,"sha256":"a4ec85dc6c7b5fb62000019591a8aa24b0eeec962674aedf375462a82563b305"},{"path":"assets/index-BkAQTP3H.js","bytes":33874,"sha256":"0a76ed200a23cfe4ee8813bd72d0bf6262c04ead3d9e9fe17faaa33d35e88045"},{"path":"assets/index-BzeJkPIz.js","bytes":8305,"sha256":"a55d182a54e70256fa443b2e45fcb2c7f091b76c2790c5a3263659f944174d9d"},{"path":"assets/index-BzrXwUPo.js","bytes":37941,"sha256":"050d06142a83791309f7319fd306ec6d85a659e253b0e99a5eec49a38116addd"},{"path":"assets/index-CKbG4x-M.js","bytes":92932,"sha256":"4c7987be29ae56ec5d6cd6c363db125f19665cccdc538112695a24383174fa9b"},{"path":"assets/index-COjUzDCu.js","bytes":22531,"sha256":"c16445ff57fcfc7dcea4d915186bb8a99fd6b91e798b099137f2407bf8ef630e"},{"path":"assets/index-CQ3wgAza.js","bytes":9805,"sha256":"6b4779e9bfa8c7ba88736eeaaccdc016bcde481cd5e9b02655a87c5165bc5b44"},{"path":"assets/index-D4tFHh6w.js","bytes":17812,"sha256":"81f423c10d86a01f35dc8852e1f4da9111ba22339c6649aa0db183990d383dbe"},{"path":"assets/index-D4wxYBK8.js","bytes":8461,"sha256":"2d9ff076ce03b71e6575605301436bba120b87e0065293078456ccb9f12fa06b"},{"path":"assets/index-DW5Wj0DC.js","bytes":18481,"sha256":"c0b156470e638ca559e9276c098e988e3213b854ba1141015dec1112c8b3fa19"},{"path":"assets/index-Du2dAxvn.js","bytes":14582,"sha256":"f56a5f0335f48e6375c6b22738728d71cba6afc10641ab0de3ba76388c1a0630"},{"path":"assets/index-EO5l09xn.js","bytes":24359,"sha256":"8a89a62940ce77484a0c4820a529453d2be28bebc289c41c980890b4b8041b30"},{"path":"assets/index-WhmOTxQ_.js","bytes":29746,"sha256":"95bfd9768b882147099dc826cebfbd3aeecf6b13e530dfe4a6b6b9a4c6d9fea7"},{"path":"assets/index-c7QfYOud.js","bytes":24211,"sha256":"9b21bcb9eedf267f19f03e6713a68dca920551d0e553fcad827ad14d9d077c62"},{"path":"assets/index-zqyQIwAL.js","bytes":16561,"sha256":"017eac14acc239874fa9fa0fe3e55ac490d91ec7049c3be9a14c926efc0f36e1"},{"path":"assets/mui-azn9KfGV.js","bytes":328326,"sha256":"23033088ba6e83e3b1b82eb11daf38061fab58b98a5c997b98d81ea0cbdbbc72"},{"path":"assets/query-5vm9EU1C.js","bytes":33154,"sha256":"59fc23875862ba142b1e9059d7a4ace925c491196d120b34a9c80b9b2744f83d"},{"path":"assets/react-runtime-D0NtfbPC.js","bytes":279779,"sha256":"cf962651294a083f09b7bb7e480d6094fcf60c8d1e0f68d93cf11e11edd45118"},{"path":"assets/schema-validation-Bhr7oAQE.js","bytes":149800,"sha256":"d15d3ecd00c25627b4b9c7e8a55997b20fd8a0480e3a3269b55473cff83b3647"},{"path":"assets/schemas-Ct4RWo9M.js","bytes":80749,"sha256":"ac69c8161e1991df96c06d5eb9ea91d64c742b5a7102604e4f81c03a69f8d30f"},{"path":"assets/service-BepI4YXI.js","bytes":159351,"sha256":"f34691f2561486f583155b602875b48510743be69750efd5877958382c12dbf1"},{"path":"index.html","bytes":1185,"sha256":"b23c7466bd3694ff37d693eb211a0d5d1362bdb7b52798b5d8ba95f8ed7af976"},{"path":"manifest.webmanifest","bytes":332,"sha256":"ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53"},{"path":"mockServiceWorker.js","bytes":8928,"sha256":"3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc"},{"path":"samples/products.csv","bytes":227,"sha256":"51b4eabb0beb11d93e7b86fd5ef252fa3c1dc4b20782f8eaf4cbac783e3109d5"}]},"productionRepeat":{"fileCount":35,"totalBytes":1940954,"treeSha256":"55a0a598e1a518d49878c9a9cc3e88e9ff52d34ea795fed4dc46d6f5982a8f50","workerIncluded":false,"files":[{"path":"app-icon.svg","bytes":373,"sha256":"d0ed30dd4410fde97ebac0d7be8f2a6329cde38effdd109dd219036b85fdab27"},{"path":"app-sw.js","bytes":1187,"sha256":"9080a6f5bfdd8753d64bc3a5632ee626517a79bd9d989edb3cc54f089e721936"},{"path":"assets/charts-CQ4oecFO.js","bytes":313031,"sha256":"441ffc9804f390e596000259d9097f8f983b7414a5ea769cf115f3cc2cc45d25"},{"path":"assets/contract-data-BIzYYkc1.js","bytes":303991,"sha256":"eefcaed6dd2aa9c9a486754efe19af940cfb9a4e45756f4929a3ae5523892ac8"},{"path":"assets/download-8lJFmiSZ.js","bytes":230,"sha256":"9a8e735d740169508ef12c9df76e70df3df3c2d783fdb88d301cd422e8cd426e"},{"path":"assets/draft-conflict-C5itp9Kk.js","bytes":5349,"sha256":"e2f2297f3d84193f3f0b9061ac07ab6af231efe2670e46ac920e1a419241c90e"},{"path":"assets/filters-CVitQAxr.js","bytes":316,"sha256":"0c31488c9c1bfdfbcf0c4407aeb5164f9ac034e2dc571cd2553f8a976afd78a8"},{"path":"assets/hooks-CwC8uwcv.js","bytes":4580,"sha256":"1ec6809fad038dd2cbd5edac9427bc14d5d98a8cac57c85395bd3365d2078da2"},{"path":"assets/i18n-xB0mQYCC.js","bytes":46142,"sha256":"13644fbf7cd7df2f1f5dbf8d9d8b4e67124bcb1c28b64855469888db1f87ad24"},{"path":"assets/index-6VB04RKu.js","bytes":17812,"sha256":"5bb87712ff3e0bf54aff10a7df5569360b522d4e39c15592f3fc533f975c9c2e"},{"path":"assets/index-B9dDGWMh.js","bytes":18328,"sha256":"13fd5f8df40c8c619040d10c279f40a445077a79696bd18931051d871efb5984"},{"path":"assets/index-BGcFrXiD.js","bytes":29238,"sha256":"8dca2c0f1013667292950f48a527340707862a17f6aa39e89a89b55ccc807721"},{"path":"assets/index-BKtjqF65.js","bytes":16402,"sha256":"f27627ec52525da31bf53a6c8682c43d2fb931712741493b7b1a1ff558cca45e"},{"path":"assets/index-BQPx7lJM.css","bytes":3564,"sha256":"a4ec85dc6c7b5fb62000019591a8aa24b0eeec962674aedf375462a82563b305"},{"path":"assets/index-Ba68GzRa.js","bytes":31618,"sha256":"c7bd799c9f43623b73cdc4ccb619c72907ea9e42be2ce130ba857c6c69bc5917"},{"path":"assets/index-C9ZUZMyr.js","bytes":24125,"sha256":"832592c98c7259db2b6fb5a68122967b2fbfa6ef781a88f80237804a89da8d1c"},{"path":"assets/index-CGUiD-8t.js","bytes":15206,"sha256":"bddeac962237fb0e2d9d6a39e6a447357cc2f0659fccd3ac2f51f8fe36799e43"},{"path":"assets/index-CibZ1BPf.js","bytes":16155,"sha256":"40b7af509efab509be6648ece2cf81d5611504a97f5e57145914a1389ad48cdf"},{"path":"assets/index-D6fePOtf.js","bytes":13799,"sha256":"19ba03e3305600b048af222a260585d3c4c75eb0871ad3a6ce42a6a9726430b1"},{"path":"assets/index-DWNlUT0X.js","bytes":89079,"sha256":"33351ce925ad77b6bc251c7c681c9f65a9fa128186ba864e89950f7df82d9c65"},{"path":"assets/index-DdHVJlRX.js","bytes":23802,"sha256":"12ddd8b134fc80b4001543faea0c02d86756da2012a6a9324e0e648a4e159868"},{"path":"assets/index-De9CQCeZ.js","bytes":9810,"sha256":"f94db62b3e79a54547bcd3de1e27f25d0d589ab3c24d6acca84bd5ed8bfc04ca"},{"path":"assets/index-DjA2Aw-w.js","bytes":7920,"sha256":"6afc83bea7a9180ad0afb1be3455507978104bc067ca6b720dd94129ca92e305"},{"path":"assets/index-DnAFEevS.js","bytes":37941,"sha256":"f7fce0417c2727e2c8d669841a90efa6106304bc94e141e18e91175bba4fa222"},{"path":"assets/index-SqadtB0N.js","bytes":8305,"sha256":"bdfab3a94e994446003276248ead55de041d87690e56c3578f4f545390c21883"},{"path":"assets/index-nUScZdf7.js","bytes":14582,"sha256":"656ae136c95d9517b7cbe4ec42da72caf600dba1141ff8bf9038018bfe349492"},{"path":"assets/index-v1M_Uy5r.js","bytes":14517,"sha256":"918c3b5a1040137837c687f16fa30f3ac95941f83f3d25c003a4883fc4177cd6"},{"path":"assets/mui-Bz_aCSm2.js","bytes":328326,"sha256":"f5e8d31741fcfacabe2e870a463acd5276073e9b78250aedc9b36cb40bcbcd1d"},{"path":"assets/query-5vm9EU1C.js","bytes":33154,"sha256":"59fc23875862ba142b1e9059d7a4ace925c491196d120b34a9c80b9b2744f83d"},{"path":"assets/react-runtime-D0NtfbPC.js","bytes":279779,"sha256":"cf962651294a083f09b7bb7e480d6094fcf60c8d1e0f68d93cf11e11edd45118"},{"path":"assets/schema-validation-Bhr7oAQE.js","bytes":149800,"sha256":"d15d3ecd00c25627b4b9c7e8a55997b20fd8a0480e3a3269b55473cff83b3647"},{"path":"assets/schemas-Ct4RWo9M.js","bytes":80749,"sha256":"ac69c8161e1991df96c06d5eb9ea91d64c742b5a7102604e4f81c03a69f8d30f"},{"path":"index.html","bytes":1185,"sha256":"d5a5371a0225435cc58e59379b8249596c1bc899369fd042b52502318c11ddd1"},{"path":"manifest.webmanifest","bytes":332,"sha256":"ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53"},{"path":"samples/products.csv","bytes":227,"sha256":"51b4eabb0beb11d93e7b86fd5ef252fa3c1dc4b20782f8eaf4cbac783e3109d5"}]},"demoRepeat":{"fileCount":39,"totalBytes":2389562,"treeSha256":"f5f0185836586940212fd28625916f847fb723e64a7ad809e23f2482d9591fe1","workerIncluded":true,"files":[{"path":"app-icon.svg","bytes":373,"sha256":"d0ed30dd4410fde97ebac0d7be8f2a6329cde38effdd109dd219036b85fdab27"},{"path":"app-sw.js","bytes":1187,"sha256":"9080a6f5bfdd8753d64bc3a5632ee626517a79bd9d989edb3cc54f089e721936"},{"path":"assets/browser-nmYSkQLK.js","bytes":255636,"sha256":"e5410f198b8bba2882ed728fb70aeb91a15cf48ac3406246fd7e76122dcafc63"},{"path":"assets/charts-RcpaDpmM.js","bytes":313031,"sha256":"902a10c7526d03091b8d6a53a4217b3714eb6319488abe363b789606eee71118"},{"path":"assets/contract-data-D-QqiNa-.js","bytes":309769,"sha256":"eaafc38117364ea7ab02b292c0f829c660f9e10401b8e042df0802cfd413b01b"},{"path":"assets/control-6gq2NE8L.js","bytes":724,"sha256":"d1b3243f08a4ffcda96aae0a55271275193cb754a547f55ed134e731b7a13c14"},{"path":"assets/download-CWiaXb8A.js","bytes":241,"sha256":"0e78970ab1b31fdcc54910e92fb351800f24b3a3a54e3f00ddf5a46b0ee2aefb"},{"path":"assets/draft-conflict-BTtQWzC7.js","bytes":5349,"sha256":"c2f32cf1142e81e1c30f9ed41750382d27da94c83a38ed335354e104379759d5"},{"path":"assets/filters-Bi-qlnQp.js","bytes":316,"sha256":"7b1e552ef7622a318c73d10894d594b097d77641707a17a20479df96c593d44e"},{"path":"assets/hooks-B6-cFPRL.js","bytes":4582,"sha256":"6ce03323a55a09fd0cd241d4d4c2dd5996397211772c178b0032963567933f7b"},{"path":"assets/i18n-xB0mQYCC.js","bytes":46142,"sha256":"13644fbf7cd7df2f1f5dbf8d9d8b4e67124bcb1c28b64855469888db1f87ad24"},{"path":"assets/index-6X7W8iWx.js","bytes":18328,"sha256":"40b19bf1f5519b626bdba332161b45fda913f9162520f3775d06849408140da4"},{"path":"assets/index-7hh-Fk74.js","bytes":14903,"sha256":"5bd6707af984a509bdbb6aacb1cc92eb6f53cd4f2ef3510730db53289aac6766"},{"path":"assets/index-BEu0kB9B.js","bytes":13985,"sha256":"6c7da657ead47e27797b7e54fde4ff982279851213e76694a7330d2250d1d1f7"},{"path":"assets/index-BQPx7lJM.css","bytes":3564,"sha256":"a4ec85dc6c7b5fb62000019591a8aa24b0eeec962674aedf375462a82563b305"},{"path":"assets/index-BkAQTP3H.js","bytes":33874,"sha256":"0a76ed200a23cfe4ee8813bd72d0bf6262c04ead3d9e9fe17faaa33d35e88045"},{"path":"assets/index-BzeJkPIz.js","bytes":8305,"sha256":"a55d182a54e70256fa443b2e45fcb2c7f091b76c2790c5a3263659f944174d9d"},{"path":"assets/index-BzrXwUPo.js","bytes":37941,"sha256":"050d06142a83791309f7319fd306ec6d85a659e253b0e99a5eec49a38116addd"},{"path":"assets/index-CKbG4x-M.js","bytes":92932,"sha256":"4c7987be29ae56ec5d6cd6c363db125f19665cccdc538112695a24383174fa9b"},{"path":"assets/index-COjUzDCu.js","bytes":22531,"sha256":"c16445ff57fcfc7dcea4d915186bb8a99fd6b91e798b099137f2407bf8ef630e"},{"path":"assets/index-CQ3wgAza.js","bytes":9805,"sha256":"6b4779e9bfa8c7ba88736eeaaccdc016bcde481cd5e9b02655a87c5165bc5b44"},{"path":"assets/index-D4tFHh6w.js","bytes":17812,"sha256":"81f423c10d86a01f35dc8852e1f4da9111ba22339c6649aa0db183990d383dbe"},{"path":"assets/index-D4wxYBK8.js","bytes":8461,"sha256":"2d9ff076ce03b71e6575605301436bba120b87e0065293078456ccb9f12fa06b"},{"path":"assets/index-DW5Wj0DC.js","bytes":18481,"sha256":"c0b156470e638ca559e9276c098e988e3213b854ba1141015dec1112c8b3fa19"},{"path":"assets/index-Du2dAxvn.js","bytes":14582,"sha256":"f56a5f0335f48e6375c6b22738728d71cba6afc10641ab0de3ba76388c1a0630"},{"path":"assets/index-EO5l09xn.js","bytes":24359,"sha256":"8a89a62940ce77484a0c4820a529453d2be28bebc289c41c980890b4b8041b30"},{"path":"assets/index-WhmOTxQ_.js","bytes":29746,"sha256":"95bfd9768b882147099dc826cebfbd3aeecf6b13e530dfe4a6b6b9a4c6d9fea7"},{"path":"assets/index-c7QfYOud.js","bytes":24211,"sha256":"9b21bcb9eedf267f19f03e6713a68dca920551d0e553fcad827ad14d9d077c62"},{"path":"assets/index-zqyQIwAL.js","bytes":16561,"sha256":"017eac14acc239874fa9fa0fe3e55ac490d91ec7049c3be9a14c926efc0f36e1"},{"path":"assets/mui-azn9KfGV.js","bytes":328326,"sha256":"23033088ba6e83e3b1b82eb11daf38061fab58b98a5c997b98d81ea0cbdbbc72"},{"path":"assets/query-5vm9EU1C.js","bytes":33154,"sha256":"59fc23875862ba142b1e9059d7a4ace925c491196d120b34a9c80b9b2744f83d"},{"path":"assets/react-runtime-D0NtfbPC.js","bytes":279779,"sha256":"cf962651294a083f09b7bb7e480d6094fcf60c8d1e0f68d93cf11e11edd45118"},{"path":"assets/schema-validation-Bhr7oAQE.js","bytes":149800,"sha256":"d15d3ecd00c25627b4b9c7e8a55997b20fd8a0480e3a3269b55473cff83b3647"},{"path":"assets/schemas-Ct4RWo9M.js","bytes":80749,"sha256":"ac69c8161e1991df96c06d5eb9ea91d64c742b5a7102604e4f81c03a69f8d30f"},{"path":"assets/service-BepI4YXI.js","bytes":159351,"sha256":"f34691f2561486f583155b602875b48510743be69750efd5877958382c12dbf1"},{"path":"index.html","bytes":1185,"sha256":"b23c7466bd3694ff37d693eb211a0d5d1362bdb7b52798b5d8ba95f8ed7af976"},{"path":"manifest.webmanifest","bytes":332,"sha256":"ea8e42e73426d3a399074bda5bc722b60955b8bb93d3be1d32425882fbb6ca53"},{"path":"mockServiceWorker.js","bytes":8928,"sha256":"3e3b8fd4d49f22241f1782e15474251074ab5e9ad129fdffc8a3192630941ccc"},{"path":"samples/products.csv","bytes":227,"sha256":"51b4eabb0beb11d93e7b86fd5ef252fa3c1dc4b20782f8eaf4cbac783e3109d5"}]},"productionMarkerMatches":[],"demoFixtureMarkers":["Joker Studio","shop-second"]}
+failure=none
+scope=FRONTEND_WITH_SYNTHETIC_MOCK_API; no live Backend/provider, hosted CI run, deployment, staging, or production-hosting claim.

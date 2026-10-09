@@ -1,0 +1,1475 @@
+{
+  "version": "2.0",
+  "operations": [
+    {
+      "operationId": "getCsrfToken",
+      "method": "GET",
+      "path": "/auth/csrf",
+      "permission": null,
+      "module": "workspace"
+    },
+    {
+      "operationId": "logout",
+      "method": "POST",
+      "path": "/auth/logout",
+      "permission": null,
+      "module": "workspace"
+    },
+    {
+      "operationId": "stepUp",
+      "method": "POST",
+      "path": "/auth/step-up",
+      "permission": null,
+      "module": "workspace"
+    },
+    {
+      "operationId": "getSession",
+      "method": "GET",
+      "path": "/session",
+      "permission": null,
+      "module": "workspace"
+    },
+    {
+      "operationId": "listShops",
+      "method": "GET",
+      "path": "/shops",
+      "permission": null,
+      "module": "workspace"
+    },
+    {
+      "operationId": "createShop",
+      "method": "POST",
+      "path": "/shops",
+      "permission": null,
+      "module": "workspace"
+    },
+    {
+      "operationId": "getShop",
+      "method": "GET",
+      "path": "/shops/{shopId}",
+      "permission": null,
+      "module": "workspace"
+    },
+    {
+      "operationId": "updateShop",
+      "method": "PATCH",
+      "path": "/shops/{shopId}",
+      "permission": "shop.manage",
+      "module": "workspace"
+    },
+    {
+      "operationId": "listMembers",
+      "method": "GET",
+      "path": "/shops/{shopId}/members",
+      "permission": "members.manage",
+      "module": "members"
+    },
+    {
+      "operationId": "inviteMember",
+      "method": "POST",
+      "path": "/shops/{shopId}/members",
+      "permission": "members.manage",
+      "module": "members"
+    },
+    {
+      "operationId": "updateMemberRoles",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/members/{memberId}",
+      "permission": "members.manage",
+      "module": "members"
+    },
+    {
+      "operationId": "revokeMembership",
+      "method": "DELETE",
+      "path": "/shops/{shopId}/members/{memberId}",
+      "permission": "members.manage",
+      "module": "members"
+    },
+    {
+      "operationId": "getMember",
+      "method": "GET",
+      "path": "/shops/{shopId}/members/{memberId}",
+      "permission": "members.manage",
+      "module": "members"
+    },
+    {
+      "operationId": "getDashboard",
+      "method": "GET",
+      "path": "/shops/{shopId}/dashboard",
+      "permission": "dashboard.read",
+      "module": "dashboard"
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "path": "/shops/{shopId}/products",
+      "permission": "catalog.read",
+      "module": "products"
+    },
+    {
+      "operationId": "createProduct",
+      "method": "POST",
+      "path": "/shops/{shopId}/products",
+      "permission": "catalog.write",
+      "module": "products"
+    },
+    {
+      "operationId": "getProduct",
+      "method": "GET",
+      "path": "/shops/{shopId}/products/{productId}",
+      "permission": "catalog.read",
+      "module": "products"
+    },
+    {
+      "operationId": "updateProduct",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/products/{productId}",
+      "permission": "catalog.write",
+      "module": "products"
+    },
+    {
+      "operationId": "archiveProduct",
+      "method": "POST",
+      "path": "/shops/{shopId}/products/{productId}/archive",
+      "permission": "catalog.write",
+      "module": "products"
+    },
+    {
+      "operationId": "listCategories",
+      "method": "GET",
+      "path": "/shops/{shopId}/categories",
+      "permission": "catalog.read",
+      "module": "categories"
+    },
+    {
+      "operationId": "createCategory",
+      "method": "POST",
+      "path": "/shops/{shopId}/categories",
+      "permission": "catalog.write",
+      "module": "categories"
+    },
+    {
+      "operationId": "getCategory",
+      "method": "GET",
+      "path": "/shops/{shopId}/categories/{categoryId}",
+      "permission": "catalog.read",
+      "module": "categories"
+    },
+    {
+      "operationId": "updateCategory",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/categories/{categoryId}",
+      "permission": "catalog.write",
+      "module": "categories"
+    },
+    {
+      "operationId": "archiveCategory",
+      "method": "POST",
+      "path": "/shops/{shopId}/categories/{categoryId}/archive",
+      "permission": "catalog.write",
+      "module": "categories"
+    },
+    {
+      "operationId": "listCustomers",
+      "method": "GET",
+      "path": "/shops/{shopId}/customers",
+      "permission": "customers.read",
+      "module": "customers"
+    },
+    {
+      "operationId": "createCustomer",
+      "method": "POST",
+      "path": "/shops/{shopId}/customers",
+      "permission": "customers.write",
+      "module": "customers"
+    },
+    {
+      "operationId": "getCustomer",
+      "method": "GET",
+      "path": "/shops/{shopId}/customers/{customerId}",
+      "permission": "customers.read",
+      "module": "customers"
+    },
+    {
+      "operationId": "updateCustomer",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/customers/{customerId}",
+      "permission": "customers.write",
+      "module": "customers"
+    },
+    {
+      "operationId": "listStockSnapshots",
+      "method": "GET",
+      "path": "/shops/{shopId}/inventory",
+      "permission": "inventory.read",
+      "module": "inventory"
+    },
+    {
+      "operationId": "listStockMovements",
+      "method": "GET",
+      "path": "/shops/{shopId}/inventory/movements",
+      "permission": "inventory.read",
+      "module": "inventory"
+    },
+    {
+      "operationId": "createInventoryAdjustment",
+      "method": "POST",
+      "path": "/shops/{shopId}/inventory/adjustments",
+      "permission": "inventory.adjust",
+      "module": "inventory"
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "path": "/shops/{shopId}/orders",
+      "permission": "orders.read",
+      "module": "orders"
+    },
+    {
+      "operationId": "createOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "getOrder",
+      "method": "GET",
+      "path": "/shops/{shopId}/orders/{orderId}",
+      "permission": "orders.read",
+      "module": "orders"
+    },
+    {
+      "operationId": "updateOrderDraft",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/orders/{orderId}",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "quoteOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/quote",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "confirmOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/confirm",
+      "permission": "orders.confirm",
+      "module": "orders"
+    },
+    {
+      "operationId": "cancelOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/cancel",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "payOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/pay",
+      "permission": "finance.post",
+      "module": "orders"
+    },
+    {
+      "operationId": "refundOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/refund",
+      "permission": "finance.refund",
+      "module": "orders"
+    },
+    {
+      "operationId": "listFinanceEntries",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/entries",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "createFinanceEntry",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/entries",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "getFinanceEntry",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/entries/{entryId}",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "updateFinanceEntry",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/finance/entries/{entryId}",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "postFinanceEntry",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/entries/{entryId}/post",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "reverseFinanceEntry",
+      "method": "POST",
+      "path": "/shops/{shopId}/finance/entries/{entryId}/reverse",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "getCashflow",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/cashflow",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "getProfitLoss",
+      "method": "GET",
+      "path": "/shops/{shopId}/finance/profit-loss",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listConversations",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations",
+      "permission": "conversations.read",
+      "module": "conversations"
+    },
+    {
+      "operationId": "getConversation",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations/{conversationId}",
+      "permission": "conversations.read",
+      "module": "conversations"
+    },
+    {
+      "operationId": "listMessages",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations/{conversationId}/messages",
+      "permission": "conversations.read",
+      "module": "conversations"
+    },
+    {
+      "operationId": "sendMessage",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/messages",
+      "permission": "conversations.reply",
+      "module": "conversations"
+    },
+    {
+      "operationId": "addInternalNote",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/notes",
+      "permission": "conversations.reply",
+      "module": "conversations"
+    },
+    {
+      "operationId": "takeoverConversation",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/takeover",
+      "permission": "conversations.assign",
+      "module": "conversations"
+    },
+    {
+      "operationId": "releaseConversation",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/release",
+      "permission": "conversations.assign",
+      "module": "conversations"
+    },
+    {
+      "operationId": "resolveConversation",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/resolve",
+      "permission": "conversations.assign",
+      "module": "conversations"
+    },
+    {
+      "operationId": "assignConversation",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/assign",
+      "permission": "conversations.assign",
+      "module": "conversations"
+    },
+    {
+      "operationId": "listKnowledge",
+      "method": "GET",
+      "path": "/shops/{shopId}/knowledge",
+      "permission": "knowledge.read",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "createKnowledge",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge",
+      "permission": "knowledge.write",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "getKnowledge",
+      "method": "GET",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}",
+      "permission": "knowledge.read",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "updateKnowledge",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}",
+      "permission": "knowledge.write",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "submitKnowledgeReview",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/submit-review",
+      "permission": "knowledge.write",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "publishKnowledge",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/publish",
+      "permission": "knowledge.publish",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "retireKnowledge",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/retire",
+      "permission": "knowledge.publish",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "listFeedback",
+      "method": "GET",
+      "path": "/shops/{shopId}/feedback",
+      "permission": "knowledge.read",
+      "module": "feedback"
+    },
+    {
+      "operationId": "createFeedback",
+      "method": "POST",
+      "path": "/shops/{shopId}/feedback",
+      "permission": "conversations.read",
+      "module": "feedback"
+    },
+    {
+      "operationId": "reviewFeedback",
+      "method": "POST",
+      "path": "/shops/{shopId}/feedback/{feedbackId}/review",
+      "permission": "knowledge.write",
+      "module": "feedback"
+    },
+    {
+      "operationId": "getBotConfig",
+      "method": "GET",
+      "path": "/shops/{shopId}/bot/config",
+      "permission": "bot.read",
+      "module": "bot"
+    },
+    {
+      "operationId": "updateBotDraft",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/bot/config",
+      "permission": "bot.configure",
+      "module": "bot"
+    },
+    {
+      "operationId": "runPlayground",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/playground",
+      "permission": "bot.configure",
+      "module": "bot"
+    },
+    {
+      "operationId": "listEvaluations",
+      "method": "GET",
+      "path": "/shops/{shopId}/bot/evaluations",
+      "permission": "bot.read",
+      "module": "bot"
+    },
+    {
+      "operationId": "createEvaluation",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/evaluations",
+      "permission": "bot.configure",
+      "module": "bot"
+    },
+    {
+      "operationId": "getEvaluation",
+      "method": "GET",
+      "path": "/shops/{shopId}/bot/evaluations/{evaluationId}",
+      "permission": "bot.read",
+      "module": "bot"
+    },
+    {
+      "operationId": "publishBotConfig",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/config/publish",
+      "permission": "bot.publish",
+      "module": "bot"
+    },
+    {
+      "operationId": "pauseBot",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/pause",
+      "permission": "bot.publish",
+      "module": "bot"
+    },
+    {
+      "operationId": "getProviderCatalog",
+      "method": "GET",
+      "path": "/shops/{shopId}/integrations/ai/catalog",
+      "permission": "integrations.read",
+      "module": "integrations"
+    },
+    {
+      "operationId": "listAIConnections",
+      "method": "GET",
+      "path": "/shops/{shopId}/integrations/ai",
+      "permission": "integrations.read",
+      "module": "integrations"
+    },
+    {
+      "operationId": "createAIConnection",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/ai",
+      "permission": "integrations.manage",
+      "module": "integrations"
+    },
+    {
+      "operationId": "getAIConnection",
+      "method": "GET",
+      "path": "/shops/{shopId}/integrations/ai/{connectionId}",
+      "permission": "integrations.read",
+      "module": "integrations"
+    },
+    {
+      "operationId": "updateAIConnection",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/integrations/ai/{connectionId}",
+      "permission": "integrations.manage",
+      "module": "integrations"
+    },
+    {
+      "operationId": "deleteAIConnection",
+      "method": "DELETE",
+      "path": "/shops/{shopId}/integrations/ai/{connectionId}",
+      "permission": "integrations.manage",
+      "module": "integrations"
+    },
+    {
+      "operationId": "testAIConnection",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/ai/{connectionId}/test",
+      "permission": "integrations.manage",
+      "module": "integrations"
+    },
+    {
+      "operationId": "listChannels",
+      "method": "GET",
+      "path": "/shops/{shopId}/integrations/channels",
+      "permission": "integrations.read",
+      "module": "integrations"
+    },
+    {
+      "operationId": "beginChannelConnect",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/channels/connect",
+      "permission": "integrations.manage",
+      "module": "integrations"
+    },
+    {
+      "operationId": "getChannel",
+      "method": "GET",
+      "path": "/shops/{shopId}/integrations/channels/{channelId}",
+      "permission": "integrations.read",
+      "module": "integrations"
+    },
+    {
+      "operationId": "reconnectChannel",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/channels/{channelId}/reconnect",
+      "permission": "integrations.manage",
+      "module": "integrations"
+    },
+    {
+      "operationId": "disconnectChannel",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/channels/{channelId}/disconnect",
+      "permission": "integrations.manage",
+      "module": "integrations"
+    },
+    {
+      "operationId": "checkChannelHealth",
+      "method": "POST",
+      "path": "/shops/{shopId}/integrations/channels/{channelId}/check",
+      "permission": "integrations.manage",
+      "module": "integrations"
+    },
+    {
+      "operationId": "uploadFile",
+      "method": "POST",
+      "path": "/shops/{shopId}/uploads",
+      "permission": null,
+      "module": "uploads"
+    },
+    {
+      "operationId": "getFile",
+      "method": "GET",
+      "path": "/shops/{shopId}/uploads/{fileId}",
+      "permission": null,
+      "module": "uploads"
+    },
+    {
+      "operationId": "createProductImport",
+      "method": "POST",
+      "path": "/shops/{shopId}/imports",
+      "permission": "catalog.import",
+      "module": "imports"
+    },
+    {
+      "operationId": "commitProductImport",
+      "method": "POST",
+      "path": "/shops/{shopId}/imports/{jobId}/commit",
+      "permission": "catalog.import",
+      "module": "imports"
+    },
+    {
+      "operationId": "getReportSummary",
+      "method": "GET",
+      "path": "/shops/{shopId}/reports",
+      "permission": "reports.read",
+      "module": "reports"
+    },
+    {
+      "operationId": "createExport",
+      "method": "POST",
+      "path": "/shops/{shopId}/exports",
+      "permission": "reports.export",
+      "module": "exports"
+    },
+    {
+      "operationId": "listJobs",
+      "method": "GET",
+      "path": "/shops/{shopId}/jobs",
+      "permission": "jobs.read",
+      "module": "jobs"
+    },
+    {
+      "operationId": "getJob",
+      "method": "GET",
+      "path": "/shops/{shopId}/jobs/{jobId}",
+      "permission": "jobs.read",
+      "module": "jobs"
+    },
+    {
+      "operationId": "listCommands",
+      "method": "GET",
+      "path": "/shops/{shopId}/commands",
+      "permission": "jobs.read",
+      "module": "commands"
+    },
+    {
+      "operationId": "getCommand",
+      "method": "GET",
+      "path": "/shops/{shopId}/commands/{commandId}",
+      "permission": "jobs.read",
+      "module": "commands"
+    },
+    {
+      "operationId": "listAuditEvents",
+      "method": "GET",
+      "path": "/shops/{shopId}/audit",
+      "permission": "audit.read",
+      "module": "audit"
+    },
+    {
+      "operationId": "getPrivacyPolicy",
+      "method": "GET",
+      "path": "/shops/{shopId}/privacy/policy",
+      "permission": "privacy.manage",
+      "module": "privacy"
+    },
+    {
+      "operationId": "updatePrivacyPolicy",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/privacy/policy",
+      "permission": "privacy.manage",
+      "module": "privacy"
+    },
+    {
+      "operationId": "listPrivacyRequests",
+      "method": "GET",
+      "path": "/shops/{shopId}/privacy/requests",
+      "permission": "privacy.manage",
+      "module": "privacy"
+    },
+    {
+      "operationId": "createPrivacyRequest",
+      "method": "POST",
+      "path": "/shops/{shopId}/privacy/requests",
+      "permission": "privacy.manage",
+      "module": "privacy"
+    },
+    {
+      "operationId": "approvePrivacyRequest",
+      "method": "POST",
+      "path": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+      "permission": "privacy.manage",
+      "module": "privacy"
+    },
+    {
+      "operationId": "subscribeEvents",
+      "method": "GET",
+      "path": "/shops/{shopId}/events",
+      "permission": null,
+      "module": "events"
+    },
+    {
+      "operationId": "listKnowledgeRevisions",
+      "method": "GET",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions",
+      "permission": "knowledge.read",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "createKnowledgeRevision",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions",
+      "permission": "knowledge.write",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "getKnowledgeRevision",
+      "method": "GET",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions/{revisionId}",
+      "permission": "knowledge.read",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "restoreKnowledgeRevision",
+      "method": "POST",
+      "path": "/shops/{shopId}/knowledge/{knowledgeId}/revisions/{revisionId}/restore",
+      "permission": "knowledge.write",
+      "module": "knowledge"
+    },
+    {
+      "operationId": "listBotRevisions",
+      "method": "GET",
+      "path": "/shops/{shopId}/bot/revisions",
+      "permission": "bot.read",
+      "module": "bot"
+    },
+    {
+      "operationId": "getBotRevision",
+      "method": "GET",
+      "path": "/shops/{shopId}/bot/revisions/{revisionId}",
+      "permission": "bot.read",
+      "module": "bot"
+    },
+    {
+      "operationId": "restoreBotRevision",
+      "method": "POST",
+      "path": "/shops/{shopId}/bot/revisions/{revisionId}/restore",
+      "permission": "bot.configure",
+      "module": "bot"
+    },
+    {
+      "operationId": "getInboxMetadata",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations/metadata",
+      "permission": "conversations.read",
+      "module": "conversations"
+    },
+    {
+      "operationId": "listWorkItems",
+      "method": "GET",
+      "path": "/shops/{shopId}/work-items",
+      "permission": "operations.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "getWorkItem",
+      "method": "GET",
+      "path": "/shops/{shopId}/work-items/{resourceId}",
+      "permission": "operations.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "listApprovals",
+      "method": "GET",
+      "path": "/shops/{shopId}/approvals",
+      "permission": "approvals.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "createApproval",
+      "method": "POST",
+      "path": "/shops/{shopId}/approvals",
+      "permission": "approvals.request",
+      "module": "operations"
+    },
+    {
+      "operationId": "getApproval",
+      "method": "GET",
+      "path": "/shops/{shopId}/approvals/{resourceId}",
+      "permission": "approvals.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "listDevices",
+      "method": "GET",
+      "path": "/shops/{shopId}/devices",
+      "permission": "notifications.manage",
+      "module": "notifications"
+    },
+    {
+      "operationId": "createDevice",
+      "method": "POST",
+      "path": "/shops/{shopId}/devices",
+      "permission": "notifications.manage",
+      "module": "notifications"
+    },
+    {
+      "operationId": "getDevice",
+      "method": "GET",
+      "path": "/shops/{shopId}/devices/{resourceId}",
+      "permission": "notifications.manage",
+      "module": "notifications"
+    },
+    {
+      "operationId": "listNotifications",
+      "method": "GET",
+      "path": "/shops/{shopId}/notifications",
+      "permission": "notifications.read",
+      "module": "notifications"
+    },
+    {
+      "operationId": "getNotification",
+      "method": "GET",
+      "path": "/shops/{shopId}/notifications/{resourceId}",
+      "permission": "notifications.read",
+      "module": "notifications"
+    },
+    {
+      "operationId": "listPrepJobs",
+      "method": "GET",
+      "path": "/shops/{shopId}/prep-jobs",
+      "permission": "fulfillment.read",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "getPrepJob",
+      "method": "GET",
+      "path": "/shops/{shopId}/prep-jobs/{resourceId}",
+      "permission": "fulfillment.read",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "listShipments",
+      "method": "GET",
+      "path": "/shops/{shopId}/shipments",
+      "permission": "fulfillment.read",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "createShipment",
+      "method": "POST",
+      "path": "/shops/{shopId}/shipments",
+      "permission": "fulfillment.write",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "getShipment",
+      "method": "GET",
+      "path": "/shops/{shopId}/shipments/{resourceId}",
+      "permission": "fulfillment.read",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "listReturnCases",
+      "method": "GET",
+      "path": "/shops/{shopId}/returns",
+      "permission": "orders.read",
+      "module": "orders"
+    },
+    {
+      "operationId": "createReturnCase",
+      "method": "POST",
+      "path": "/shops/{shopId}/returns",
+      "permission": "orders.return",
+      "module": "orders"
+    },
+    {
+      "operationId": "getReturnCase",
+      "method": "GET",
+      "path": "/shops/{shopId}/returns/{resourceId}",
+      "permission": "orders.read",
+      "module": "orders"
+    },
+    {
+      "operationId": "listSuppliers",
+      "method": "GET",
+      "path": "/shops/{shopId}/suppliers",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "createSupplier",
+      "method": "POST",
+      "path": "/shops/{shopId}/suppliers",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "getSupplier",
+      "method": "GET",
+      "path": "/shops/{shopId}/suppliers/{resourceId}",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "updateSupplier",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/suppliers/{resourceId}",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "listSupplierOffers",
+      "method": "GET",
+      "path": "/shops/{shopId}/supplier-offers",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "createSupplierOffer",
+      "method": "POST",
+      "path": "/shops/{shopId}/supplier-offers",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "getSupplierOffer",
+      "method": "GET",
+      "path": "/shops/{shopId}/supplier-offers/{resourceId}",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "listReorderRules",
+      "method": "GET",
+      "path": "/shops/{shopId}/reorder-rules",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "createReorderRule",
+      "method": "POST",
+      "path": "/shops/{shopId}/reorder-rules",
+      "permission": "procurement.manage",
+      "module": "procurement"
+    },
+    {
+      "operationId": "getReorderRule",
+      "method": "GET",
+      "path": "/shops/{shopId}/reorder-rules/{resourceId}",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "updateReorderRule",
+      "method": "PUT",
+      "path": "/shops/{shopId}/reorder-rules/{resourceId}",
+      "permission": "procurement.manage",
+      "module": "procurement"
+    },
+    {
+      "operationId": "listPurchaseSuggestions",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-suggestions",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "getPurchaseSuggestion",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-suggestions/{resourceId}",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "listPurchaseOrders",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-orders",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "createPurchaseOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "getPurchaseOrder",
+      "method": "GET",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "listGoodsReceipts",
+      "method": "GET",
+      "path": "/shops/{shopId}/goods-receipts",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "createGoodsReceipt",
+      "method": "POST",
+      "path": "/shops/{shopId}/goods-receipts",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "getGoodsReceipt",
+      "method": "GET",
+      "path": "/shops/{shopId}/goods-receipts/{resourceId}",
+      "permission": "procurement.read",
+      "module": "procurement"
+    },
+    {
+      "operationId": "listJournals",
+      "method": "GET",
+      "path": "/shops/{shopId}/journals",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "createJournal",
+      "method": "POST",
+      "path": "/shops/{shopId}/journals",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "getJournal",
+      "method": "GET",
+      "path": "/shops/{shopId}/journals/{resourceId}",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listBankTransactions",
+      "method": "GET",
+      "path": "/shops/{shopId}/bank-transactions",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "getBankTransaction",
+      "method": "GET",
+      "path": "/shops/{shopId}/bank-transactions/{resourceId}",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listReconciliationCases",
+      "method": "GET",
+      "path": "/shops/{shopId}/reconciliation-cases",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "getReconciliationCase",
+      "method": "GET",
+      "path": "/shops/{shopId}/reconciliation-cases/{resourceId}",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listCODSettlements",
+      "method": "GET",
+      "path": "/shops/{shopId}/cod-settlements",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "getCODSettlement",
+      "method": "GET",
+      "path": "/shops/{shopId}/cod-settlements/{resourceId}",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listDebtItems",
+      "method": "GET",
+      "path": "/shops/{shopId}/debts",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "getDebtItem",
+      "method": "GET",
+      "path": "/shops/{shopId}/debts/{resourceId}",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listAccountingPeriods",
+      "method": "GET",
+      "path": "/shops/{shopId}/periods",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "getAccountingPeriod",
+      "method": "GET",
+      "path": "/shops/{shopId}/periods/{resourceId}",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listAgentRoles",
+      "method": "GET",
+      "path": "/shops/{shopId}/agent-roles",
+      "permission": "bot.read",
+      "module": "bot"
+    },
+    {
+      "operationId": "getAgentRole",
+      "method": "GET",
+      "path": "/shops/{shopId}/agent-roles/{resourceId}",
+      "permission": "bot.read",
+      "module": "bot"
+    },
+    {
+      "operationId": "updateAgentRole",
+      "method": "PUT",
+      "path": "/shops/{shopId}/agent-roles/{resourceId}",
+      "permission": "bot.configure",
+      "module": "bot"
+    },
+    {
+      "operationId": "listBudgetPolicies",
+      "method": "GET",
+      "path": "/shops/{shopId}/budget-policies",
+      "permission": "operations.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "getBudgetPolicy",
+      "method": "GET",
+      "path": "/shops/{shopId}/budget-policies/{resourceId}",
+      "permission": "operations.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "updateBudgetPolicy",
+      "method": "PUT",
+      "path": "/shops/{shopId}/budget-policies/{resourceId}",
+      "permission": "operations.manage",
+      "module": "operations"
+    },
+    {
+      "operationId": "listDigests",
+      "method": "GET",
+      "path": "/shops/{shopId}/digests",
+      "permission": "operations.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "getDigest",
+      "method": "GET",
+      "path": "/shops/{shopId}/digests/{resourceId}",
+      "permission": "operations.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "listServiceCases",
+      "method": "GET",
+      "path": "/shops/{shopId}/service-cases",
+      "permission": "customers.read",
+      "module": "customers"
+    },
+    {
+      "operationId": "createServiceCase",
+      "method": "POST",
+      "path": "/shops/{shopId}/service-cases",
+      "permission": "customers.write",
+      "module": "customers"
+    },
+    {
+      "operationId": "getServiceCase",
+      "method": "GET",
+      "path": "/shops/{shopId}/service-cases/{resourceId}",
+      "permission": "customers.read",
+      "module": "customers"
+    },
+    {
+      "operationId": "recordCustomerConfirmation",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/{orderId}/customer-confirmations",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "claimWorkItem",
+      "method": "POST",
+      "path": "/shops/{shopId}/work-items/{resourceId}/claim",
+      "permission": "operations.claim",
+      "module": "operations"
+    },
+    {
+      "operationId": "updateWorkItem",
+      "method": "POST",
+      "path": "/shops/{shopId}/work-items/{resourceId}/actions",
+      "permission": "operations.manage",
+      "module": "operations"
+    },
+    {
+      "operationId": "decideApproval",
+      "method": "POST",
+      "path": "/shops/{shopId}/approvals/{resourceId}/decision",
+      "permission": "approvals.decide",
+      "module": "operations"
+    },
+    {
+      "operationId": "revokeDevice",
+      "method": "POST",
+      "path": "/shops/{shopId}/devices/{resourceId}/revoke",
+      "permission": "notifications.manage",
+      "module": "notifications"
+    },
+    {
+      "operationId": "testDevice",
+      "method": "POST",
+      "path": "/shops/{shopId}/devices/{resourceId}/test",
+      "permission": "notifications.manage",
+      "module": "notifications"
+    },
+    {
+      "operationId": "acknowledgeNotification",
+      "method": "POST",
+      "path": "/shops/{shopId}/notifications/{resourceId}/acknowledge",
+      "permission": "operations.claim",
+      "module": "notifications"
+    },
+    {
+      "operationId": "getNotificationPolicy",
+      "method": "GET",
+      "path": "/shops/{shopId}/notification-policy",
+      "permission": "notifications.read",
+      "module": "notifications"
+    },
+    {
+      "operationId": "updateNotificationPolicy",
+      "method": "PUT",
+      "path": "/shops/{shopId}/notification-policy",
+      "permission": "notifications.manage",
+      "module": "notifications"
+    },
+    {
+      "operationId": "beginTelegramPairing",
+      "method": "POST",
+      "path": "/shops/{shopId}/telegram-pairing",
+      "permission": "notifications.manage",
+      "module": "notifications"
+    },
+    {
+      "operationId": "pickPrepLine",
+      "method": "POST",
+      "path": "/shops/{shopId}/prep-jobs/{resourceId}/pick",
+      "permission": "fulfillment.write",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "packPrepJob",
+      "method": "POST",
+      "path": "/shops/{shopId}/prep-jobs/{resourceId}/pack",
+      "permission": "fulfillment.write",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "handoverShipment",
+      "method": "POST",
+      "path": "/shops/{shopId}/shipments/{resourceId}/handover",
+      "permission": "fulfillment.handover",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "recordShipmentEvent",
+      "method": "POST",
+      "path": "/shops/{shopId}/shipments/{resourceId}/events",
+      "permission": "fulfillment.write",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "inspectReturn",
+      "method": "POST",
+      "path": "/shops/{shopId}/returns/{resourceId}/inspect",
+      "permission": "inventory.adjust",
+      "module": "orders"
+    },
+    {
+      "operationId": "evaluateReorder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-suggestions/evaluate",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "requestPurchaseApproval",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}/request-approval",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "sendPurchaseOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}/send",
+      "permission": "procurement.send",
+      "module": "procurement"
+    },
+    {
+      "operationId": "confirmPurchaseOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}/confirm",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "postGoodsReceipt",
+      "method": "POST",
+      "path": "/shops/{shopId}/goods-receipts/{resourceId}/post",
+      "permission": "procurement.receive",
+      "module": "procurement"
+    },
+    {
+      "operationId": "postJournal",
+      "method": "POST",
+      "path": "/shops/{shopId}/journals/{resourceId}/post",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "reverseJournal",
+      "method": "POST",
+      "path": "/shops/{shopId}/journals/{resourceId}/reverse",
+      "permission": "finance.post",
+      "module": "finance"
+    },
+    {
+      "operationId": "matchSettlement",
+      "method": "POST",
+      "path": "/shops/{shopId}/reconciliation-cases/{resourceId}/match",
+      "permission": "finance.reconcile",
+      "module": "finance"
+    },
+    {
+      "operationId": "matchCODSettlement",
+      "method": "POST",
+      "path": "/shops/{shopId}/cod-settlements/{resourceId}/match",
+      "permission": "finance.reconcile",
+      "module": "finance"
+    },
+    {
+      "operationId": "closeAccountingPeriod",
+      "method": "POST",
+      "path": "/shops/{shopId}/periods/{resourceId}/close",
+      "permission": "finance.close",
+      "module": "finance"
+    },
+    {
+      "operationId": "controlAutomation",
+      "method": "POST",
+      "path": "/shops/{shopId}/automation-control",
+      "permission": "bot.pause",
+      "module": "operations"
+    },
+    {
+      "operationId": "getOperationsSummary",
+      "method": "GET",
+      "path": "/shops/{shopId}/operations-summary",
+      "permission": "operations.read",
+      "module": "operations"
+    },
+    {
+      "operationId": "getMarketingSummary",
+      "method": "GET",
+      "path": "/shops/{shopId}/marketing-summary",
+      "permission": "reports.read",
+      "module": "reports"
+    },
+    {
+      "operationId": "beginLogin",
+      "method": "POST",
+      "path": "/auth/start",
+      "permission": null,
+      "module": "workspace"
+    },
+    {
+      "operationId": "setSupplierStatus",
+      "method": "POST",
+      "path": "/shops/{shopId}/suppliers/{resourceId}/status",
+      "permission": "procurement.manage",
+      "module": "procurement"
+    },
+    {
+      "operationId": "cancelPurchaseOrder",
+      "method": "POST",
+      "path": "/shops/{shopId}/purchase-orders/{resourceId}/cancel",
+      "permission": "procurement.write",
+      "module": "procurement"
+    },
+    {
+      "operationId": "importBankStatement",
+      "method": "POST",
+      "path": "/shops/{shopId}/bank-transactions/import",
+      "permission": "finance.reconcile",
+      "module": "finance"
+    },
+    {
+      "operationId": "importCODStatement",
+      "method": "POST",
+      "path": "/shops/{shopId}/cod-settlements/import",
+      "permission": "finance.reconcile",
+      "module": "finance"
+    },
+    {
+      "operationId": "reopenAccountingPeriod",
+      "method": "POST",
+      "path": "/shops/{shopId}/periods/{resourceId}/reopen",
+      "permission": "finance.close",
+      "module": "finance"
+    },
+    {
+      "operationId": "setServiceCaseStatus",
+      "method": "POST",
+      "path": "/shops/{shopId}/service-cases/{resourceId}/status",
+      "permission": "customers.write",
+      "module": "customers"
+    },
+    {
+      "operationId": "completeLogin",
+      "method": "GET",
+      "path": "/auth/callback",
+      "permission": null,
+      "module": "workspace"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "cause": "Playwright Windows taskkill webServer teardown remained pending after all workers exited; C05 final run required closing only verified owned Vite subtree.",
+  "owner": "playwright.config.ts and tests/session/playwright-setup.ts",
+  "beforeSha256": "4036de67df0e8b32b5478d16f50ed93896367979141deec70ef2743d5abe219e",
+  "change": "Vite runs in the Playwright global setup process and is closed through its owning API. Dedicated local port; no reuse of user dev server.",
+  "verification": "Same owned regression suite must finish with an automatic CLI exit; final full suite remains C11."
+}
