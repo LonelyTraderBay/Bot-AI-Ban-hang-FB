@@ -1,9 +1,25 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { isolatedViteCacheDir } from '../../scripts/vite-cache.mjs';
 import { existsSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
+
+const completeDemoAssets: Plugin = {
+  name: 'complete-demo-assets',
+  apply: 'serve',
+  configureServer(server) {
+    server.middlewares.use((request, _response, next) => {
+      const destination = request.headers['sec-fetch-dest'];
+      if (request.method === 'GET' && (destination === 'script' || destination === 'style')) {
+        // MSW passthrough can expose a bodyless 304 to module loading in Firefox.
+        delete request.headers['if-none-match'];
+        delete request.headers['if-modified-since'];
+      }
+      next();
+    });
+  },
+};
 
 export default defineConfig(({ mode }) => {
   const repoRoot=fileURLToPath(new URL('../../',import.meta.url));
@@ -17,7 +33,7 @@ export default defineConfig(({ mode }) => {
   return {
     envDir: repoRoot,
     cacheDir,
-    plugins: [react(),{name:'exclude-mock-worker-from-live',writeBundle(options){if(mocks)return;const file=join(options.dir||'dist','mockServiceWorker.js');if(existsSync(file))unlinkSync(file);}}],
+    plugins: [react(),...(mocks ? [completeDemoAssets] : []),{name:'exclude-mock-worker-from-live',writeBundle(options){if(mocks)return;const file=join(options.dir||'dist','mockServiceWorker.js');if(existsSync(file))unlinkSync(file);}}],
     resolve: { alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@botsales/contracts': fileURLToPath(new URL('../../packages/contracts/src/index.ts', import.meta.url)),

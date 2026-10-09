@@ -27,7 +27,7 @@ export const customersMessages = {
         nameMax: 'Tên khách hàng không được vượt quá 160 ký tự.',
         phoneMax: 'Số điện thoại không được vượt quá 40 ký tự.',
         emailFormat: 'Nhập email đúng định dạng.',
-        notesMax: 'Ghi chú không được vượt quá 5.000 ký tự.',
+        notesMax: 'Ghi chú không được vượt quá 4.000 ký tự.',
     },
     detail: {
         fallbackTitle: 'Hồ sơ khách hàng',
