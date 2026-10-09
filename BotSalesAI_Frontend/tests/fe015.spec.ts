@@ -16,6 +16,7 @@ test.afterAll(async () => closeDemo?.());
 
 async function gotoDemo(page: import('@playwright/test').Page, path: string) {
     await page.goto(new URL(path, demoUrl).toString());
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).waitFor({ state: 'visible' });
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp, within?: import('@playwright/test').Locator) {
