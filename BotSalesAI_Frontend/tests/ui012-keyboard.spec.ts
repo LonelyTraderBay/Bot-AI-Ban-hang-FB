@@ -250,12 +250,14 @@ test('UI012 marketing chart keeps every category label visible beside its data t
             .filter(node => labels.includes((node.textContent || '').replace(/\s+/gu, ' ').trim()))
             .map(node => {
                 const rect = node.getBoundingClientRect();
-                return { x: rect.x, right: rect.right, fontSize: Number.parseFloat(getComputedStyle(node).fontSize) };
+                return { x: rect.x, right: rect.right, y: rect.y, bottom: rect.bottom, fontSize: Number.parseFloat(getComputedStyle(node).fontSize) };
             }), expectedLabels);
         expect(labelBounds).toHaveLength(expectedLabels.length);
         for (const bounds of labelBounds) {
             expect(bounds.x).toBeGreaterThanOrEqual(chartBounds!.x);
             expect(bounds.right).toBeLessThanOrEqual(chartBounds!.x + chartBounds!.width);
+            expect(bounds.y).toBeGreaterThanOrEqual(chartBounds!.y);
+            expect(bounds.bottom).toBeLessThanOrEqual(chartBounds!.y + chartBounds!.height);
             expect(bounds.fontSize).toBeGreaterThanOrEqual(14);
         }
         for (let index = 1; index < labelBounds.length; index += 1) {

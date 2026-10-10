@@ -16,7 +16,7 @@ test('the titled Fulfillment Panel owns its body inset and keeps one 12px header
     const pageErrors: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.message));
     const route = new URL('/s/shop-demo/shipments', demoUrl);
-    const observations: Array<{ width: number; headerContentBottom: number; firstContentTop: number; gap: number; bodyPaddingTop: number; bodyPaddingInlineStart: number; bodyPaddingBottom: number; firstContentPaddingTop: number }> = [];
+    const observations: Array<{ width: number; headerContentBottom: number; firstContentTop: number; gap: number; bodyPaddingTop: number; bodyPaddingInlineStart: number; bodyPaddingBottom: number; firstContentPaddingTop: number; firstContentMarginTop: number }> = [];
 
     for (const width of [390, 806, 1440]) {
         await page.setViewportSize({ width, height: 900 });
@@ -46,6 +46,7 @@ test('the titled Fulfillment Panel owns its body inset and keeps one 12px header
                 bodyPaddingInlineStart: Number.parseFloat(bodyStyle.paddingInlineStart),
                 bodyPaddingBottom: Number.parseFloat(bodyStyle.paddingBottom),
                 firstContentPaddingTop: Number.parseFloat(contentStyle.paddingTop),
+                firstContentMarginTop: Number.parseFloat(contentStyle.marginTop),
             };
         });
         expect(geometry, 'Panel body and its first content must be rendered').not.toBeNull();
@@ -63,7 +64,7 @@ test('the titled Fulfillment Panel owns its body inset and keeps one 12px header
         item.bodyPaddingTop !== 0 ||
         item.bodyPaddingInlineStart !== (item.width < 768 ? 12 : 16) ||
         item.bodyPaddingBottom !== (item.width < 768 ? 12 : 16) ||
-        item.firstContentPaddingTop !== 0,
+        item.firstContentMarginTop !== 0,
     );
     expect(mismatches, JSON.stringify(observations)).toEqual([]);
 });

@@ -4,7 +4,7 @@ import type { FormEvent } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, Link, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
 import type { ExportRequest, Job, MarketingBucket } from '@botsales/contracts';
 import { colors, tokens } from '@botsales/tokens';
 import { useApi, useCommand } from '../../shared/api/hooks';
@@ -21,28 +21,12 @@ const sourcePermissions: Record<ExportRequest['reportType'], string> = {
     inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read',
 };
 
-function MarketingReasonTick({ x = 0, y = 0, payload }: { x?: number; y?: number; payload?: { value?: unknown } }) {
+function MarketingReasonTick({ x = 0, y = 0, width = 0, visibleTicksCount = 1, payload }: { x?: number; y?: number; width?: number; visibleTicksCount?: number; payload?: { value?: unknown } }) {
     const value = typeof payload?.value === 'string' ? payload.value.trim() : '';
-    const lines: string[] = [];
-    let line = '';
-    for (const word of value.split(/\s+/u).filter(Boolean)) {
-        const pieces = [...word];
-        while (pieces.length) {
-            const piece = pieces.splice(0, 8).join('');
-            const candidate = line ? `${line} ${piece}` : piece;
-            if (line && [...candidate].length > 8) {
-                lines.push(line);
-                line = piece;
-            } else {
-                line = candidate;
-            }
-        }
-    }
-    if (line) lines.push(line);
-
-    return <text x={x} y={y} dy={12} textAnchor="middle" fill={colors.textSecondary} fontSize={tokens.fontSizes.body}>
-        {lines.map((text, index) => <tspan key={`${index}-${text}`} x={x} dy={index ? 14 : 0}>{text}{index < lines.length - 1 ? ' ' : ''}</tspan>)}
-    </text>;
+    const categoryLabelInset = 8;
+    const labelWidth = Math.max(1, width / Math.max(1, visibleTicksCount) - categoryLabelInset);
+    return <Text x={x} y={y} dy={12} width={labelWidth} breakAll verticalAnchor="start" textAnchor="middle" fill={colors.textSecondary}
+        style={{ fontSize: tokens.fontSizes.body, fontFamily: tokens.fontFamily }}>{value}</Text>;
 }
 
 export function ReportsPage() {
