@@ -1,0 +1,9 @@
+# Contract trước sửa source
+
+Artifact Chromium 11668701246 được tải và kiểm SHA256 `d32b28836dc2ad179c801861e226121f934c1540b2d67a731a23b9ba614df8fb`. Trace cho thấy test bắt đầu 1827449.954ms; waiter page 1835078.893ms và Ctrl-click 1835078.996–1835142.199ms. Không có event page thứ hai. HTML `/operations` HTTP200 lúc 1835135.947ms thuộc frame khác `frame@a27d9e3d55217c99b7955c5ee52458ad`; API đích trả 200 sau đó. Ảnh cuối trang gốc vẫn là Overview, frame `frame@90f8b6f11a1bd6287f13078b50aad5ff`. Test không hết budget vì tám tuple mất 180 giây: thao tác native diễn ra khoảng 8 giây sau bắt đầu, rồi chờ event còn thiếu.
+
+Ranh giới lỗi đã quan sát: native navigation được tải trong frame khác nhưng observer page không nhận target trong context đã trải qua tám lần thay fixture session/permissionVersion, shop query và scope teardown. Chưa chứng minh nguyên nhân nội bộ Playwright/CDP làm mất event; không gán lỗi app/API hoặc kết luận library defect. Nguyên bản local 4/4 PASS.
+
+Phương án: tách nguyên phép thử native Ctrl-click thành test riêng sử dụng context mặc định mới của Playwright. Ca permission giữ tám tuple, label/href/count, anchor A, target 44px, focus ring, hover, Tab, create link, observations/attachment và Axe. Ca native mới đọc session/dashboard HTTP200, kiểm cả ba quyền, primary href/label, rồi giữ nguyên Control-click, context page event, URL đích, đóng popup và trang gốc Overview. Không thêm retry, timeout, sleep, conditional skip, fallback, middle-click/Shift-click, thay dependency hoặc sửa app/fixture quyền.
+
+Tổng discovery dự kiến tăng từ 406 lên 407 ca mỗi engine, vẫn 69 file; chỉ ghi nhận số thực tế sau chạy. Kiểm chứng local và hosted SHA mới bắt buộc trước tuyên bố đã sửa. Native interaction vẫn chạy trên Chromium/Firefox; đây không phải native resize/zoom, screen-reader hoặc owner/Backend/production acceptance.
