@@ -16,6 +16,17 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
     await page.goto(new URL(route, demoUrl).toString());
 }
 
+async function gotoKnowledgeDetail(page: import('@playwright/test').Page) {
+    const detailResponse = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/knowledge/k3');
+    const revisionsResponse = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/knowledge/k3/revisions');
+    await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+    expect((await detailResponse).status()).toBe(200);
+    expect((await revisionsResponse).status()).toBe(200);
+    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
+}
+
 async function seedPendingFeedbackAndOpenReview(page: import('@playwright/test').Page) {
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
     await page.getByRole('button', { name: /^Đánh giá tin nhắn/ }).first().click();
@@ -63,7 +74,7 @@ test('Knowledge routes R23/R24/R25 fit every supported layout boundary', async (
         await expect(page.getByRole('table').first()).toBeVisible();
         await expectNoHorizontalOverflow(page, width);
 
-        await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+        await gotoKnowledgeDetail(page);
         await expect(page.getByRole('heading', { name: 'Chính sách đổi hàng', exact: true })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Lịch sử phiên bản', exact: true })).toBeVisible();
         await expectNoHorizontalOverflow(page, width);
@@ -83,7 +94,7 @@ test('Knowledge create, edit, and feedback-review dialogs remain inside mobile a
         await page.getByRole('dialog', { name: 'Nguồn kiến thức mới' }).waitFor();
         await expectDialogFits(page, width, height);
 
-        await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+        await gotoKnowledgeDetail(page);
         await page.getByRole('button', { name: 'Sửa bản nháp', exact: true }).click();
         await page.getByRole('dialog', { name: 'Sửa nháp' }).waitFor();
         await expectDialogFits(page, width, height);
