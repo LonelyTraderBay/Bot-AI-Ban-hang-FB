@@ -233,7 +233,13 @@ test('UI012 marketing chart keeps every category label visible beside its data t
 
     for (const viewport of [{ width: 1280, height: 720 }, { width: 320, height: 860 }]) {
         await page.setViewportSize(viewport);
+        const canonicalResponse = page.waitForResponse(response => {
+            const url = new URL(response.url());
+            return response.request().method() === 'GET' && url.pathname === '/api/v2/shops/shop-demo/marketing-summary'
+                && ['fromDate', 'toDate', 'bucket'].every(key => url.searchParams.has(key));
+        });
         await page.goto(new URL('/s/shop-demo/reports/marketing', demoUrl).toString());
+        expect((await canonicalResponse).status()).toBe(200);
         const chart = page.getByRole('img', { name: 'Biểu đồ lý do không chốt đơn, 3 nhóm' });
         const table = page.getByRole('table', { name: 'Lý do không chốt đơn' });
         await expect(chart).toBeVisible();
