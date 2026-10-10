@@ -144,12 +144,15 @@ test('Finance report, entry, journal, reconciliation and period dialogs remain i
         await expect(dialog.getByRole('textbox', { name: /Số tiền/ })).toBeVisible();
         await expectDialogWithinViewport(page, dialog, width, height);
         await page.keyboard.press('Escape');
+        await expect(dialog).toHaveCount(0);
 
         await gotoDemo(page, '/s/shop-demo/finance/entries');
         await page.getByRole('table').getByRole('button', { name: 'Chi tiết', exact: true }).first().click();
         dialog = page.getByRole('dialog').first();
         await expect(dialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeVisible();
         await expectDialogWithinViewport(page, dialog, width, height);
+        await dialog.getByRole('button', { name: 'Đóng', exact: true }).last().click();
+        await expect(dialog).toHaveCount(0);
 
         await gotoDemo(page, '/s/shop-demo/finance/profit-loss');
         await page.getByRole('button', { name: 'Tạo giải thích mô phỏng', exact: true }).click();
@@ -161,6 +164,7 @@ test('Finance report, entry, journal, reconciliation and period dialogs remain i
         await expect(dialog.getByRole('textbox', { name: 'Nợ' }).first()).toBeVisible();
         await expectDialogWithinViewport(page, dialog, width, height);
         await page.keyboard.press('Escape');
+        await expect(dialog).toHaveCount(0);
 
         await gotoDemo(page, '/s/shop-demo/finance/reconciliation');
         await page.getByRole('button', { name: 'Nhập bảng đối soát', exact: true }).click();
@@ -168,17 +172,38 @@ test('Finance report, entry, journal, reconciliation and period dialogs remain i
         await expect(dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' })).toBeVisible();
         await expectDialogWithinViewport(page, dialog, width, height);
         await page.keyboard.press('Escape');
+        await expect(dialog).toHaveCount(0);
 
+        const casesResponse = page.waitForResponse(response => response.request().method() === 'GET'
+            && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/reconciliation-cases');
         await gotoDemo(page, '/s/shop-demo/finance/reconciliation?tab=cases');
+        const casesResult = await casesResponse;
+        expect(casesResult.status()).toBe(200);
+        const casesPayload = await casesResult.json();
+        expect(Array.isArray(casesPayload.data)).toBe(true);
+        await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD', exact: true })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Ghép giao dịch', exact: true })).toHaveCount(casesPayload.data.length);
         const match = page.getByRole('button', { name: 'Ghép giao dịch', exact: true }).first();
         if (await match.isVisible().catch(() => false)) {
             await match.click();
             dialog = page.getByRole('dialog', { name: 'Ghép giao dịch với công nợ' });
             await expect(dialog.getByRole('textbox', { name: 'Giao dịch ngoài hệ thống' })).toBeVisible();
             await expectDialogWithinViewport(page, dialog, width, height);
+            await page.keyboard.press('Escape');
+            await expect(dialog).toHaveCount(0);
         }
 
+        const periodsResponse = page.waitForResponse(response => response.request().method() === 'GET'
+            && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/periods');
         await gotoDemo(page, '/s/shop-demo/finance/debts-periods');
+        const periodsResult = await periodsResponse;
+        expect(periodsResult.status()).toBe(200);
+        const periodsPayload = await periodsResult.json();
+        expect(Array.isArray(periodsPayload.data)).toBe(true);
+        await expect(page.getByRole('heading', { name: 'Công nợ & khóa kỳ', exact: true })).toBeVisible();
+        const closedPeriodCount = periodsPayload.data.filter((period: { state: string }) => period.state === 'closed').length;
+        await expect(page.getByRole('button', { name: 'Kiểm & khóa kỳ', exact: true })).toHaveCount(periodsPayload.data.length - closedPeriodCount);
+        await expect(page.getByRole('button', { name: 'Mở lại có phê duyệt', exact: true })).toHaveCount(closedPeriodCount);
         const closePeriod = page.getByRole('button', { name: 'Kiểm & khóa kỳ', exact: true }).first();
         if (await closePeriod.isVisible().catch(() => false)) {
             await closePeriod.click();
@@ -186,6 +211,7 @@ test('Finance report, entry, journal, reconciliation and period dialogs remain i
             await expect(dialog.getByRole('button', { name: 'Khóa kỳ kế toán', exact: true })).toBeVisible();
             await expectDialogWithinViewport(page, dialog, width, height);
             await page.keyboard.press('Escape');
+            await expect(dialog).toHaveCount(0);
         }
         const reopenPeriod = page.getByRole('button', { name: 'Mở lại có phê duyệt', exact: true }).first();
         if (await reopenPeriod.isVisible().catch(() => false)) {
@@ -193,6 +219,8 @@ test('Finance report, entry, journal, reconciliation and period dialogs remain i
             dialog = page.getByRole('dialog', { name: 'Mở lại kỳ đã khóa' });
             await expect(dialog.getByRole('textbox', { name: 'Mã phê duyệt đúng kỳ' })).toBeVisible();
             await expectDialogWithinViewport(page, dialog, width, height);
+            await page.keyboard.press('Escape');
+            await expect(dialog).toHaveCount(0);
         }
     }
 
