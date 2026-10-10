@@ -1,0 +1,15 @@
+# Kiểm tra nhận diện phiếu kiểm nhận đổi trả
+
+Ca F01 tạo một phiếu đổi trả mới, sửa bản nháp kiểm nhận rồi giả lập thay đổi phiên bản đồng thời. Kiểm thử nguyên bản bấm nút `Kiểm nhận` đầu tiên trong bảng. Kết quả create HTTP 201 chưa bảo đảm danh sách đã refetch, nên vị trí đầu có thể vẫn thuộc phiếu seed. Khi đó test thay đổi phiên bản của phiếu mới nhưng đang kiểm nhận phiếu cũ, nên dialog đối chiếu không xuất hiện.
+
+Probe Chromium 1280×900 trì hoãn đúng một GET danh sách sau create 6500ms; cả hai fixture cùng chờ initial list seed sẵn sàng. Nguyên bản tạo `returncase-10001` nhưng POST inspect `seed-returncase-10036` với expectedVersion 1, rồi FAIL cùng locator đối chiếu. Candidate chọn đúng `returncase-10001`, thực hiện đối chiếu và POST expectedVersion 2 với `Local physical inspection`, PASS. Raw callback/helpers được trích và transpile từ snapshot source; harness, network, trace, ảnh và kết quả giữ nguyên. Đây là bằng chứng có kiểm soát cục bộ; nguyên nhân hosted phải đối chiếu trace thực tế.
+
+Source chỉ sửa ca F01 trong `tests/frontend-corrections.spec.ts`: đăng ký initial list GET trước visit, chọn row có cell exact mã vừa tạo, kiểm detail GET200 đúng ID/version, chờ refetch GET200 version+1 và bản nháp vẫn giữ ghi nhận cục bộ, chờ nút đối chiếu rồi xác nhận. Final POST waiter phải đúng resourcePath/inspect. Giữ action áp dụng bị disabled trước lựa chọn, giữ bản nháp sau explicit comparison, expectedVersion+1, local reason và đóng editor sau success. Không thay app/model/API/mock/style/timeout/retry/threshold.
+
+Nguyên bản cục bộ 4/4 PASS không phủ định lỗi hosted. Sau sửa, 12/12 ca đạt: hai ca order/return liên quan, mỗi ca lặp ba lần trên Chromium và Firefox. Composition 41/41, layout 86/86, validator 11/11 đều exit 0. Full `verify` đạt 238 unit test, source gates và S17 COMPLETE với 275 fingerprint hiện hành. Discovery vẫn 406 ca trong 69 file cho mỗi engine.
+
+Run GitHub 38044074123 trên SHA `46d30b0b21cb477494ff9339f8365e29dbc56ce1` đã hoàn tất: Chromium 405 PASS/1 FAIL Dashboard; Firefox 404 PASS/2 FAIL Return và heading ban đầu của flow VS02. Cả hai full verify/audit/upload PASS; built-demo SKIPPED vì E2E FAIL. Raw logs/jobs/artifacts giữ đủ, không ghi là hosted PASS.
+
+Artifact Firefox 11668014780 đã được kiểm SHA256 `c1d444cbf653d0d62c3116e010b1f2d578e7a50e573281cddf26f5a81811abaf`. Trace Return xác nhận fixture đổi phiên bản `returncase-10001` (call 12516), nhưng detail/refetch/POST inspect đều dùng `seed-returncase-10036`. Inspect HTTP200 trước khi expect comparison hết 5000ms; đây là cùng lỗi chọn sai identity đã tái hiện trong probe. Request/response body mạng không có trong subset được trích, không dựng lại chúng; ID đích và fixture argument là bằng chứng trực tiếp. Trace zip và error-context nguyên byte được giữ cùng hash. SHA mới sau push giữ PENDING_AT_COMMIT cho đến khi có workflow đầy đủ trên đúng revision.
+
+Đây là kiểm thử Frontend/mock. Không ghi owner acceptance, native resize/zoom, screen-reader, Backend hoặc production PASS. Các FE receipt lịch sử được giữ nguyên; fingerprint/gate mới không tái chứng nhận các receipt đó.

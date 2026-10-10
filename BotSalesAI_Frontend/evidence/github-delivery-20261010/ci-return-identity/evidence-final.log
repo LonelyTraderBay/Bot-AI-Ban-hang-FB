@@ -1,0 +1,24 @@
+
+> botsales-frontend@0.1.0 test:evidence
+> node --test tests/ui-evidence-validator.test.mjs && node scripts/validate-ui-evidence.mjs evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json
+
+✔ accepts current fingerprints, honest open coverage, and explained N/A (5.5244ms)
+✔ rejects a stale source fingerprint (3.6066ms)
+✔ rejects a stale command log (3.4142ms)
+✔ rejects missing, absolute, and escaping source paths (2.6729ms)
+✔ rejects unrun, missing, duplicate, and nonzero command results marked PASS (3.0591ms)
+✔ rejects PASS when expected and observed results differ (2.7015ms)
+✔ rejects inconsistent coverage and N/A without a reason (2.9195ms)
+✔ rejects a baseline falsely dated after implementation started and detects changed baseline artifacts (6.1941ms)
+✔ COMPLETE cannot contain open coverage or failed commands (4.0447ms)
+✔ S19 must explicitly reconcile files, APIs, routes, rendered routes, slots, and states (4.9449ms)
+✔ rejects malformed top-level evidence instead of treating missing fields as success (2.1812ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 99.3934
+ui-evidence PASS: S17; 3 command/log record(s), 3 coverage row(s), 275 current fingerprint(s); status=COMPLETE

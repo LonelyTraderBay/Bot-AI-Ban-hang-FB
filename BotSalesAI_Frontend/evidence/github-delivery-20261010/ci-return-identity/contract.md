@@ -1,0 +1,5 @@
+# Contract trước Source edit identity/refetch
+
+Nguyên bản local 4/4 PASS, không thay thế FAIL hosted. Controlled Chromium trì hoãn đúng một list refetch sau create 6500ms, cùng precondition initial seed list đã sẵn sàng cho cả hai fixture. Nguyên bản FAIL cùng dialog/apply locator không tìm thấy: created ID returncase-10001 nhưng đã POST inspect seed-returncase-10036 với expectedVersion 1. Candidate PASS: chỉ inspect created ID returncase-10001 với expectedVersion 2 và Local physical inspection. Raw full test callback/helpers được trích/transpile từ snapshots; trace/network/ảnh giữ đầy đủ. Probe chứng minh race theo vị trí; chưa gán kết luận cho hosted cho tới trace.
+
+Thay đổi dự kiến trong duy nhất ca F01: chờ initial list GET200; chọn row có cell exact created ID, không chọn .first(); kiểm detail đúng ID/version; pulse phải có detail refetch GET200/version+1 và UI vẫn giữ local reason/show conflict; final POST phải đúng resourcePath/inspect. Giữ disabled comparison action trước explicit choice, whole-line keep-mine, expectedVersion+1 và close sau success. Không đổi app/model/API/mock/style/timeout/retry/threshold.
