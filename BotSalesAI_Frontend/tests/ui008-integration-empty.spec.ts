@@ -95,6 +95,7 @@ test('UI008 R29 pending channel query stays loading until its response arrives',
     await navigateClientSide(page, '/s/shop-demo/integrations/channels');
 
     const main = page.locator('main#main-content');
+    await main.getByRole('heading', { name: 'Kết nối Facebook', exact: true }).waitFor({ state: 'visible' });
     await expect(main.getByRole('progressbar')).toBeVisible();
     await expect(main.getByText('Chưa có Page kết nối.', { exact: false })).toHaveCount(0);
     const response = await channelsResponse;
