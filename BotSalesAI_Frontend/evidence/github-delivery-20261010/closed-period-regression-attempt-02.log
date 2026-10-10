@@ -1,0 +1,65 @@
+
+Running 6 tests using 1 worker
+
+(node:25244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\fe015.spec.ts:249:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (8.2s)
+(node:74232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [chromium] › tests\fe015.spec.ts:249:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (10.2s)
+(node:16832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [chromium] › tests\fe015.spec.ts:249:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (10.7s)
+(node:36256) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 4 [firefox] › tests\fe015.spec.ts:249:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (2.2m)
+(node:94704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  5 [firefox] › tests\fe015.spec.ts:249:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (35.2s)
+(node:63568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 6 [firefox] › tests\fe015.spec.ts:249:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation (27.1s)
+
+
+  1) [firefox] › tests\fe015.spec.ts:249:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('button[aria-controls="mock-tools-controls"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('button[aria-controls="mock-tools-controls"]') with timeout 5000ms
+      - waiting for locator('button[aria-controls="mock-tools-controls"]')
+
+
+       at session\demo-controls.ts:7
+
+       5 | export async function openDemoControls(page:Page){
+       6 |     const toggle=page.locator('button[aria-controls="mock-tools-controls"]');
+    >  7 |     await expect(toggle).toBeVisible();
+         |                          ^
+       8 |     if(await toggle.getAttribute('aria-expanded')!=='true')await toggle.click();
+       9 |     await expect(page.locator('#mock-tools-controls')).toBeVisible();
+      10 | }
+        at openDemoControls (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\session\demo-controls.ts:7:26)
+        at chooseOption (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:22:91)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe015.spec.ts:251:11
+
+    Error Context: test-results\playwright-94704-18ba933c-673d-4de3-9280-3c19326174ce\fe015-FE015-AC02-closed-ac-4f935-bles-journal-draft-creation-firefox-repeat1\error-context.md
+
+    Error Context: test-results\playwright-94704-18ba933c-673d-4de3-9280-3c19326174ce\fe015-FE015-AC02-closed-ac-4f935-bles-journal-draft-creation-firefox-repeat1\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-94704-18ba933c-673d-4de3-9280-3c19326174ce\fe015-FE015-AC02-closed-ac-4f935-bles-journal-draft-creation-firefox-repeat1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-94704-18ba933c-673d-4de3-9280-3c19326174ce\fe015-FE015-AC02-closed-ac-4f935-bles-journal-draft-creation-firefox-repeat1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [firefox] › tests\fe015.spec.ts:249:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation 
+  5 passed (4.4m)
