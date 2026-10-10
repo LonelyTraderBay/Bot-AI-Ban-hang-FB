@@ -1,0 +1,166 @@
+{
+  "recordedAt": "2026-10-10T15:14:39.563Z",
+  "previousRevision": "8b80b960a8f7baece3bc2a94ddff4a0c951018c6",
+  "fullVerifyExitCode": 0,
+  "unitTests": 238,
+  "sourceGateFixtures": {
+    "composition": 41,
+    "layout": 86,
+    "evidenceValidator": 11
+  },
+  "sourceFingerprints": 275,
+  "originalLocal": {
+    "passed": 8,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "targetedFinal": {
+    "cases": "Both R29/R30 route-layout and dialog-layout cases",
+    "perEngine": 6,
+    "total": 12,
+    "exitCode": 0
+  },
+  "controlledProbe": {
+    "engine": "chromium",
+    "original": "FAIL same initial heading",
+    "candidate": "PASS whole3viewport dialog callback",
+    "delayedRequestsPerFixture": 1,
+    "moduleDelayMs": 6500,
+    "writes": 0,
+    "sourceDefaultTimeoutMs": 30000,
+    "sourceExpectTimeoutMs": 5000
+  },
+  "controlledSecondNavigation": {
+    "original": "FAIL",
+    "candidate": "PASS",
+    "delayedModuleOrdinal": 3,
+    "delayMs": 6500,
+    "writes": 0
+  },
+  "hostedDiagnosis": {
+    "recordedAt": "2026-10-10T15:08:10.901Z",
+    "runId": 38056330563,
+    "jobId": 114225502854,
+    "sourceEditedBeforeTrace": false,
+    "failedCase": "R29/R30 dialog-layout openRoute initial Facebook heading",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "navigation": {
+      "start": 3097251.417,
+      "end": 3097831.415,
+      "waitUntil": "domcontentloaded"
+    },
+    "assertion": {
+      "start": 3097839.672,
+      "end": 3102845.605,
+      "timeoutMs": 5000
+    },
+    "moduleBeforeDeadline": {
+      "url": "http://127.0.0.1:36885/src/modules/integrations/index.tsx",
+      "start": 3098414.345,
+      "duration": 0,
+      "status": 200
+    },
+    "noNewChannelsGetRecorded": true,
+    "observedBoundary": "Second viewport390: DOMContentLoaded completes and integrations module200 is recorded before heading deadline, but main remains route-loading and no new listChannels GET starts. Prior320px channel/AI dialogs completed. Heading asserted before route/data mount was ready.",
+    "deeperCause": "UNKNOWN: trace does not establish why lazy route/dependency/render settlement is delayed; not solely transfer time of integrations module.",
+    "controlledProbeLimit": "Module delay6500ms simulates route readiness; not measured actual hosted module delay."
+  },
+  "discovery": {
+    "perEngine": 407,
+    "filesPerEngine": 69,
+    "total": 814
+  },
+  "priorHosted": {
+    "runId": 38056330563,
+    "chromium": {
+      "conclusion": "success",
+      "e2ePassed": 407,
+      "builtDemoPassed": 3,
+      "upload": "success"
+    },
+    "firefox": {
+      "conclusion": "failure",
+      "e2ePassed": 406,
+      "e2eFailed": 1,
+      "builtDemo": "SKIPPED"
+    }
+  },
+  "hosted": "PENDING_AT_COMMIT",
+  "sourceHashes": {
+    "BotSalesAI_Frontend/tests/ui-integrations-layout.spec.ts": "874ecc9cca75a45fd465aa91a7993583115e04556a9b254eb7f451f66d50c0d6"
+  },
+  "readOnlySourceHashes": {
+    "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "38274c759b4e67ddac2ab1481ee435a2574f7b16c8e6fa6586c3b73815d5ee8e",
+    "BotSalesAI_Frontend/apps/web/src/mocks/auxiliary.ts": "4c251fac239d36fc361a21e33cf647660c5fb061254eb429c7c7cdd52312765b",
+    "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "399cb9af12192a8ba41fb40cca4c831647f5fc57b563bd08fc2ffb469e242a55",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/hooks.ts": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213",
+    "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "12d6b0dbe0dca8b8c5262b37854ebc6407026d658a7a202a557fbb339db4c520",
+    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "e126fcc3e2d82a87e74fc7c2acd30abce46db7d02470ee058fa410c8fb20cb92",
+    "BotSalesAI_Frontend/packages/contracts/src/operations.json": "a1484b4aa4e6191559d80fbe8b012b4ca4ecd80cfc6283b309d6a8d350315f68",
+    "BotSalesAI_Frontend/playwright.config.ts": "ae4ab2e40f8d853ea6b12ae7b3ec9d613a2deead4567a7547e02b521901bb480"
+  },
+  "generatedHashes": {
+    "BotSalesAI_Frontend/evidence/boundaries.json": "074cdb9e33f905817f4ff9ef2b245109f320da7a9c69b657c34596d02beb84e1",
+    "BotSalesAI_Frontend/evidence/domain-tests.json": "a3bafa5a1f97a581e4e687ed4eb7e64d711c5afdb9bd5eb447c2b1b91b8159cd",
+    "BotSalesAI_Frontend/evidence/source-check.json": "11dc8fe77dffc14123dc0644998b3c8ce5e2883c600d5f51241a540c658b6554",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json": "cfaaf4e309e3025f4a412d64a0eb0b457c0c5c6b70f83ea8e86c8078eda7a8e5"
+  },
+  "hashes": {
+    "after.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "after.log": "07e1589e16792dbdd22c7090b42dd7c564250f70f51168bf187e55f5806dab20",
+    "baseline.md": "e888cf417d1e935e9a42969e8bfd63f4500e7ec835fc8917de91b41888a8716f",
+    "before.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "before.log": "61a50c8270a230725af2eb32f2de4a68476bd9d3357974d0137dd551a6e9b7e7",
+    "chromium-list.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "chromium-list.log": "b01ce666d78a76963142b71b636d227f720b89d0d246cf7509aa5c069f606b48",
+    "composition.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "composition.log": "614ef7d37936c8c30807dd352875063d89e0a053e2a64bf4a9a5eacebc04793b",
+    "contract-before-edit.md": "5146bd3d777bc26c1760b8a4bc173d2e12621554cc4f4c3249f9235704caccd0",
+    "evidence-final.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "evidence-final.log": "bc8e3564fcaf87ee6f3eceec55a73553a44dae1d4d7d89f961df47925b7bef5a",
+    "firefox-list.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "firefox-list.log": "82c4d779e5c8412b1fde795e3741738d843880ebe7c5048eef3999500aa9bfce",
+    "fixture-candidate.spec.ts.txt": "874ecc9cca75a45fd465aa91a7993583115e04556a9b254eb7f451f66d50c0d6",
+    "fixture-original.spec.ts.txt": "aa637449a82057131c448ec3129e6b5f7fdca9e7dbece6d243cdfd92366f0f65",
+    "hosted-artifacts.json": "99eb20bf08512ead6d9686ba8f45dab862364d888e34edba5e6c9d846010a593",
+    "hosted-chromium.log": "f351449577477330cfb5ff361b90b848e0269905ee48c2eea130b91fbe06caa3",
+    "hosted-diagnosis.json": "4f815b18dff049d688c3dc06919da533c5bb39a0f0439b2d817bd2be06953f47",
+    "hosted-firefox.log": "5f5de92220cae2a9cdf05b7d3085f664db2d55b31cfed8f77e62a80129d07e58",
+    "hosted-jobs.json": "1141a0fde131903cd8c953f0fb1675f75755a1fda2e3bf1a083a290d69f4d28f",
+    "layout.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "layout.log": "56aea1a2c41bb21cf2bc4d3a615b82ac91d61e235a0d5f0d5edc3ac8c13d832f",
+    "lazy-probe.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "lazy-probe.log": "067c0fae9ab110d3eafb951033400e61e24e82fed15f63385942a4cbf0bbb982",
+    "lazy-probe.mjs": "727ebc871a986ea093ecf634a2f3e862bec73febb44ed4772bd6c7708b41e609",
+    "REPORT.md": "9cceb3cc883723c08e865afb870f4e7e7410eae82336dc75882ada32d6f80156",
+    "second-navigation-probe.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "second-navigation-probe.log": "3a07b4749567b5658ca626e40f43a5c9bb4075cb2c3c368be43aa1d0720c57f6",
+    "second-navigation-probe.mjs": "15c33ab8c37235f7f07e9ce49847e1485bf5eb9830c127e12a9abbdafafef6c0",
+    "validator.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "validator.log": "9253fd95be2e5fecccc252500cf24c2bb6b475fd0ddab040c960729d7e1975af",
+    "verify.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "verify.log": "851669241f109c367a7122c86150b6cc4afb127ba65475db22b17986e91876a3",
+    "hosted-failure/artifact-selection.json": "33aef2f9a8b10c1d3917b171dd2188b486252d6a3e6bfd660d652bc581e8f88d",
+    "hosted-failure/diagnostic-facts.json": "6f918796987324b689986f0c75a9e4ce14e82cc1c7fa1169f8e3abe17cf41980",
+    "hosted-failure/error-context.md": "34b3a8d17ccfc806c36bdf89d5832a946e9c6365b26656c00f3cbdb444535293",
+    "hosted-failure/timeline.json": "9e8be5c0dd816eb2ad48c866a188714000691e4d933c6505115e447b0d113355",
+    "hosted-failure/trace.zip": "a86824910c35e1c936ff3ba02f201a2b51404d58713d508eed2d4ca9539ad87f",
+    "lazy-probe/candidate.network.json": "4380a07f4e18078140929a17b2a8892d65c74014961fceb34dda826075d03590",
+    "lazy-probe/candidate.zip": "08f43252b3d4a49062cb3ef3e6f1c8c1b7fc600f0337cb758d3602cf727b53f6",
+    "lazy-probe/original.html": "0ac282ce205ea0da7a2c79704969f54f11ce71e9291ca00c8f9f8408ae15bbbb",
+    "lazy-probe/original.network.json": "b0f2015b44a230a9c68b7ad64f3a8575efc7f039daf76d18acb030dad26d56ec",
+    "lazy-probe/original.png": "60112ae62edd432b2f5ee73a3d511242e30d3fc8b4159cfad8c4a8e5b7c2950a",
+    "lazy-probe/original.zip": "b077af9ab4f3eb70f16601825d60872fad56a6695dbd9ccce0912ea50850bd04",
+    "lazy-probe/results.json": "d3ba577ea7c4baf9625853a82457d79d7a741f64aa7085193765eb41c3435fe5",
+    "second-navigation-probe/candidate.network.json": "99864dcab44194865c458109382b00bbd956717239b8197145904e289541cb88",
+    "second-navigation-probe/candidate.zip": "62851a5add8e6d2393c8ac6f462c86bd143fe46d6ca3f17a2a7dfa9663645f88",
+    "second-navigation-probe/original.html": "0ac282ce205ea0da7a2c79704969f54f11ce71e9291ca00c8f9f8408ae15bbbb",
+    "second-navigation-probe/original.network.json": "2f051a7976966f027fdf27e3cc0d50180e0461e39a7ec40c624b858a5b4071fa",
+    "second-navigation-probe/original.png": "c2b25781a04757dc5047128c191ad733928a184a42e9c8186fc3369f6304b694",
+    "second-navigation-probe/original.zip": "74ac1a22f73e0422413a122b4ed91683e0ee08d9cbe45a90bb699a785a04a55e",
+    "second-navigation-probe/results.json": "7c96ec06a93fe24fcf9c6a79a61b3efa11ff645051a7971f104c7868dd7d7194"
+  }
+}
