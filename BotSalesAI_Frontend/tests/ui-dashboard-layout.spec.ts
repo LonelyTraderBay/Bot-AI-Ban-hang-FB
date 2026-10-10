@@ -14,7 +14,7 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => closeDemo?.());
 
-test('Shared consolidation Dashboard primary link respects all eight permission tuples and native anchor interactions', async ({ page, context }, info) => {
+test('Shared consolidation Dashboard primary link respects all eight permission tuples and native anchor interactions', async ({ page }, info) => {
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
     await expect(page.locator('main h1')).toBeVisible();
     const fixtureUrl = '/@fs/' + path.resolve('tests/design/shared-consolidation-fixture.ts').replaceAll('\\', '/');
@@ -50,13 +50,6 @@ test('Shared consolidation Dashboard primary link respects all eight permission 
             await primary.hover();
             await expect.poll(() => primary.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(style.background);
             if (create) { await primary.press('Tab'); await expect(createLink).toBeFocused(); }
-            if (ops && orders && create) {
-                const opened = context.waitForEvent('page');
-                await primary.click({ modifiers: ['Control'] });
-                const popup = await opened;
-                await popup.waitForURL(new URL(href, demoUrl).toString()); await popup.close();
-                expect(new URL(page.url()).pathname).toBe('/s/shop-demo/overview');
-            }
         }
         if (create) { await expect(createLink).toHaveAttribute('href', '/s/shop-demo/orders/new'); expect((await createLink.boundingBox())!.height).toBeGreaterThanOrEqual(44); }
         observations.push({ ...tuple, primary: ops ? 'operations' : orders ? 'orders' : null, createVisible: create });
@@ -64,6 +57,27 @@ test('Shared consolidation Dashboard primary link respects all eight permission 
     expect(observations).toHaveLength(8);
     expect((await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
     await info.attach('dashboard-permission-tuples', { body: JSON.stringify(observations), contentType: 'application/json' });
+});
+
+test('Shared consolidation Dashboard primary link opens a native modified-click page from a fresh authorized scope', async ({ page, context }) => {
+    const session = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/session');
+    const dashboard = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/dashboard');
+    await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    const current = await session; expect(current.status()).toBe(200);
+    const membership = (await current.json()).data.memberships.find((row: { shopId: string }) => row.shopId === 'shop-demo');
+    expect(membership.permissions).toEqual(expect.arrayContaining(['operations.read', 'orders.read', 'orders.write']));
+    expect((await dashboard).status()).toBe(200);
+    await expect(page.getByText('Dữ liệu cập nhật', { exact: false })).toBeVisible();
+    const primary = page.getByRole('link', { name: 'Xem việc cần làm', exact: true });
+    const href = '/s/shop-demo/operations';
+    await expect(primary).toHaveAttribute('href', href);
+    const opened = context.waitForEvent('page');
+    await primary.click({ modifiers: ['Control'] });
+    const popup = await opened;
+    await popup.waitForURL(new URL(href, demoUrl).toString()); await popup.close();
+    expect(new URL(page.url()).pathname).toBe('/s/shop-demo/overview');
 });
 
 test('dashboard hierarchy, CTA targets, and page width hold across supported breakpoints', async ({ page }) => {
