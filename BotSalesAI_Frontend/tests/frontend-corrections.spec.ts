@@ -434,6 +434,10 @@ test('F08 privacy bounds reject invalid days and long jurisdiction before HTTP',
     await expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled(); expect(writes).toEqual([]);
     await note.fill('n'.repeat(2000)); const saved = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().includes('/privacy/policy'));
     await page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true }).click(); expect((await saved).status()).toBe(200); expect(writes).toHaveLength(1);
+    const savedNotice = page.getByRole('status').filter({ hasText: 'Đã lưu bản nháp chính sách lưu trữ.' });
+    await expect(savedNotice).toBeVisible();
+    await expect(note).toHaveValue('n'.repeat(2000));
+    await expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled();
     for (const length of [4, 2001]) {
         await note.fill('😀'.repeat(length)); await expect(note).toHaveAttribute('aria-invalid', 'true');
         await expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled(); expect(writes).toHaveLength(1);
@@ -445,6 +449,7 @@ test('F08 privacy bounds reject invalid days and long jurisdiction before HTTP',
         await page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true }).click();
         const response = await unicodeSaved; expect(response.status()).toBe(200); expect((await response.json()).data.jurisdictionNote).toBe('😀'.repeat(length));
         expect(writes).toHaveLength(index + 2);
+        await expect(savedNotice).toBeVisible();
         await expect(note).toHaveValue('😀'.repeat(length));
         await expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled();
     }

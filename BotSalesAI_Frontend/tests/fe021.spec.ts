@@ -126,14 +126,15 @@ test('FE021 marketing filters preserve API-side aggregates, URL context and miss
     await page.getByLabel('Từ ngày').fill('2026-09-18');
     await page.getByLabel('Đến ngày').fill('2026-09-24');
     await chooseOption(page, 'Gộp theo', 'Tuần');
-    const filteredResponsePromise = page.waitForResponse(candidate => {
+    const isFilteredResponse = (candidate: import('@playwright/test').Response) => {
         const url = new URL(candidate.url());
         return candidate.request().method() === 'GET'
             && url.pathname.endsWith('/marketing-summary')
             && url.searchParams.get('fromDate') === '2026-09-18'
             && url.searchParams.get('toDate') === '2026-09-24'
             && url.searchParams.get('bucket') === 'week';
-    });
+    };
+    const filteredResponsePromise = page.waitForResponse(isFilteredResponse);
     await page.getByRole('button', { name: 'Áp dụng' }).click();
     const filteredResponse = await filteredResponsePromise;
     expect(filteredResponse.status()).toBe(200);
@@ -141,20 +142,28 @@ test('FE021 marketing filters preserve API-side aggregates, URL context and miss
     expect(filtered).toMatchObject({ knownAttributedOrders: 2, unknownAttributionOrders: 1, estimatedSpend: { amount: '400000', currency: 'VND' }, actualSpend: null });
     expect(filtered.trend).toHaveLength(2);
     await expect(page).toHaveURL(/fromDate=2026-09-18.*toDate=2026-09-24.*bucket=week/);
+    const reloadResponsePromise = page.waitForResponse(isFilteredResponse);
     await page.reload();
+    expect((await reloadResponsePromise).status()).toBe(200);
+    await expect(page.getByTestId('marketing-loss-chart')).toBeVisible();
     await expect(page.getByLabel('Từ ngày')).toHaveValue('2026-09-18');
     await expect(page.getByRole('combobox', { name: 'Gộp theo' })).toHaveText('Tuần');
 
     let marketingRequests = 0;
+    const marketingRequestUrls: string[] = [];
     page.on('request', request => {
-        if (new URL(request.url()).pathname.endsWith('/marketing-summary')) marketingRequests++;
+        if (new URL(request.url()).pathname.endsWith('/marketing-summary')) {
+            marketingRequests++;
+            marketingRequestUrls.push(request.url());
+        }
     });
     const beforeInvalidSubmit = marketingRequests;
     await page.getByLabel('Từ ngày').fill('2025-10-01');
     await page.getByLabel('Đến ngày').fill('2026-10-02');
     await page.getByRole('button', { name: 'Áp dụng' }).click();
     await expect(page.getByRole('alert').filter({ hasText: 'không được vượt quá 366 ngày' })).toBeVisible();
-    expect(marketingRequests).toBe(beforeInvalidSubmit);
+    expect(marketingRequests, `Unexpected marketing requests: ${JSON.stringify(marketingRequestUrls)}`).toBe(beforeInvalidSubmit);
+    await expect(page).toHaveURL(/fromDate=2026-09-18.*toDate=2026-09-24.*bucket=week/);
 });
 
 for (const heldPeriod of ['default', 'canonical'] as const) {
