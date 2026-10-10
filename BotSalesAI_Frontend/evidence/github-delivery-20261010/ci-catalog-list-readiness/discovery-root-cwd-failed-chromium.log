@@ -1,0 +1,56 @@
+
+Error: ENOENT: no such file or directory, open 'C:\Users\Joker-PC\Documents\Projects\botsales-kit\contracts\route-manifest.json'
+
+   at ui-composition-layout.spec.ts:6
+
+  4 |
+  5 | type Route = { id: string; path: string };
+> 6 | const routes = (JSON.parse(fs.readFileSync('../botsales-kit/contracts/route-manifest.json', 'utf8')) as { routes: Route[] }).routes;
+    |                               ^
+  7 | const ids: Record<string, string> = { conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001', knowledgeId: 'k1', jobId: 'missing-job' };
+  8 | let url = '';
+  9 | let closeDemo: (() => Promise<void>) | undefined;
+    at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-composition-layout.spec.ts:6:31
+
+Error: ENOENT: no such file or directory, open 'C:\Users\Joker-PC\Documents\Projects\botsales-kit\contracts\route-manifest.json'
+
+   at ui-shell-layout.spec.ts:11
+
+   9 |
+  10 | const root = process.cwd();
+> 11 | const manifest = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/route-manifest.json'), 'utf8')) as RouteManifest;
+     |                                ^
+  12 | const shellRoutes = manifest.routes.filter(route => route.path.startsWith('/s/'));
+  13 | const detailIds: Record<string, string> = {
+  14 |     conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001',
+    at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-shell-layout.spec.ts:11:32
+
+Error: ENOENT: no such file or directory, scandir 'C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\apps\web\src\modules'
+
+   at design\toolbar-impact.mjs:9
+
+   7 |     const calls = [];
+   8 |     const modules = path.join(root, 'apps/web/src/modules');
+>  9 |     const walk = directory => fs.readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
+     |                                  ^
+  10 |         const file = path.join(directory, entry.name);
+  11 |         return entry.isDirectory() ? walk(file) : /\.tsx$/.test(file) ? [file] : [];
+  12 |     });
+    at walk (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\design\toolbar-impact.mjs:9:34)
+    at toolbarImpact (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\design\toolbar-impact.mjs:13:24)
+    at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-toolbar-layout.spec.ts:9:16
+
+Error: ENOENT: no such file or directory, open 'C:\Users\Joker-PC\Documents\Projects\botsales-kit\contracts\route-manifest.json'
+
+   at ui028-w28-routes.spec.ts:11
+
+   9 |
+  10 | const root = process.cwd();
+> 11 | const manifest = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/route-manifest.json'), 'utf8')) as RouteManifest;
+     |                                ^
+  12 | const detailIds: Record<string, string> = {
+  13 |     conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001',
+  14 |     knowledgeId: 'k1', jobId: 'missing-job',
+    at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui028-w28-routes.spec.ts:11:32
+Listing tests:
+Total: 0 tests in 0 files

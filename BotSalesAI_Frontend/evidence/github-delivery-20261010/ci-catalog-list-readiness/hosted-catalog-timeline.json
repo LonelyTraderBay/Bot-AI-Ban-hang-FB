@@ -1,0 +1,390 @@
+{
+  "api": [
+    {
+      "url": "http://127.0.0.1:34821/api/v2/shops/shop-demo/products?limit=20",
+      "method": "GET",
+      "status": -1,
+      "start": 710566.058,
+      "time": 5.7700000000186265
+    },
+    {
+      "url": "http://127.0.0.1:34821/api/v2/shops/shop-demo/products?limit=20",
+      "method": "GET",
+      "status": 200,
+      "start": 710566.645,
+      "time": 57.074,
+      "firstProduct": [
+        {
+          "id": "p1",
+          "name": "Áo mẫu A"
+        },
+        {
+          "id": "p2",
+          "name": "Áo thun Essential"
+        }
+      ]
+    },
+    {
+      "url": "http://127.0.0.1:34821/api/v2/shops/shop-demo/products",
+      "method": "POST",
+      "status": 201,
+      "start": 711286.951,
+      "time": 50.626999999999995,
+      "firstProduct": {
+        "id": "product-10002",
+        "name": "Sản phẩm kiểm thử"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:34821/api/v2/shops/shop-demo/products/product-10002",
+      "method": "GET",
+      "status": 200,
+      "start": 711368.282,
+      "time": 32.618,
+      "firstProduct": {
+        "id": "product-10002",
+        "name": "Sản phẩm kiểm thử"
+      }
+    }
+  ],
+  "calls": [
+    {
+      "id": "call@12830",
+      "start": 707525.693,
+      "method": "goto",
+      "params": {
+        "url": "http://127.0.0.1:34821/s/shop-demo/products",
+        "waitUntil": "load"
+      }
+    },
+    {
+      "id": "call@12832",
+      "start": 709593.651,
+      "method": "expect",
+      "params": {
+        "selector": "internal:role=heading[name=\"Sản phẩm\"s]",
+        "expression": "to.be.visible",
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 5000
+      }
+    },
+    {
+      "id": "call@12834",
+      "start": 710759.282,
+      "method": "expect",
+      "params": {
+        "selector": "internal:text=\"Dữ liệu mô phỏng\"s",
+        "expression": "to.be.visible",
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 5000
+      }
+    },
+    {
+      "id": "call@12836",
+      "start": 710768.062,
+      "method": "click",
+      "params": {
+        "selector": "internal:role=button[name=\"Thêm sản phẩm\"s]",
+        "strict": true
+      }
+    },
+    {
+      "id": "call@12838",
+      "start": 710825.712,
+      "method": "fill",
+      "params": {
+        "selector": "internal:label=\"Tên sản phẩm\"s",
+        "strict": true,
+        "value": "Sản phẩm kiểm thử"
+      }
+    },
+    {
+      "id": "call@12840",
+      "start": 711143.434,
+      "method": "fill",
+      "params": {
+        "selector": "internal:label=\"SKU\"s",
+        "strict": true,
+        "value": "TEST-001"
+      }
+    },
+    {
+      "id": "call@12842",
+      "start": 711179.931,
+      "method": "fill",
+      "params": {
+        "selector": "internal:label=/Giá bán/",
+        "strict": true,
+        "value": "150000"
+      }
+    },
+    {
+      "id": "call@12844",
+      "start": 711212.214,
+      "method": "click",
+      "params": {
+        "selector": "internal:role=button[name=\"Lưu sản phẩm\"s]",
+        "strict": true
+      }
+    },
+    {
+      "id": "call@12846",
+      "start": 711299.824,
+      "method": "expect",
+      "params": {
+        "expression": "to.have.url",
+        "expectedText": [
+          {
+            "regexSource": "\\/products\\/product-",
+            "regexFlags": ""
+          }
+        ],
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 5000
+      }
+    },
+    {
+      "id": "call@12848",
+      "start": 711394.357,
+      "method": "expect",
+      "params": {
+        "selector": "internal:role=dialog[name=\"Rời màn hình chưa lưu?\"i]",
+        "expression": "to.have.count",
+        "expectedNumber": 0,
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 5000
+      }
+    },
+    {
+      "id": "call@12850",
+      "start": 711416.05,
+      "method": "click",
+      "params": {
+        "selector": "internal:role=link[name=\"Danh sách\"s]",
+        "strict": true
+      }
+    },
+    {
+      "id": "call@12852",
+      "start": 711598.303,
+      "method": "expect",
+      "params": {
+        "selector": "internal:text=\"Sản phẩm kiểm thử\"s",
+        "expression": "to.be.visible",
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 5000
+      }
+    }
+  ],
+  "completed": [
+    {
+      "id": "call@12828",
+      "end": 707522.649
+    },
+    {
+      "id": "call@12830",
+      "end": 709588.614
+    },
+    {
+      "id": "call@12832",
+      "end": 710745.639
+    },
+    {
+      "id": "call@12834",
+      "end": 710764.986
+    },
+    {
+      "id": "call@12836",
+      "end": 710816.974
+    },
+    {
+      "id": "call@12838",
+      "end": 711135.841
+    },
+    {
+      "id": "call@12840",
+      "end": 711173.999
+    },
+    {
+      "id": "call@12842",
+      "end": 711206.944
+    },
+    {
+      "id": "call@12844",
+      "end": 711290.833
+    },
+    {
+      "id": "call@12846",
+      "end": 711380.608
+    },
+    {
+      "id": "call@12848",
+      "end": 711407.45
+    },
+    {
+      "id": "call@12850",
+      "end": 711592.617
+    },
+    {
+      "id": "call@12852",
+      "end": 716601.347,
+      "error": "Expect failed"
+    }
+  ],
+  "logs": [
+    {
+      "id": "call@12846",
+      "time": 711380.569,
+      "message": "  locator resolved to <html lang=\"vi\">…</html>"
+    },
+    {
+      "id": "call@12848",
+      "time": 711400.033,
+      "message": "Expect \"toHaveCount\" getByRole('dialog', { name: 'Rời màn hình chưa lưu?' }) with timeout 5000ms"
+    },
+    {
+      "id": "call@12848",
+      "time": 711400.041,
+      "message": "waiting for getByRole('dialog', { name: 'Rời màn hình chưa lưu?' })"
+    },
+    {
+      "id": "call@12850",
+      "time": 711478.791,
+      "message": "waiting for getByRole('link', { name: 'Danh sách', exact: true })"
+    },
+    {
+      "id": "call@12850",
+      "time": 711499.898,
+      "message": "  locator resolved to <a tabindex=\"0\" data-discover=\"true\" href=\"/s/shop-demo/products\" class=\"MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-disableElevation MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-disableElevation css-3rosp-MuiButtonBase-root-MuiButton-root\">Danh sách</a>"
+    },
+    {
+      "id": "call@12850",
+      "time": 711505.368,
+      "message": "attempting click action"
+    },
+    {
+      "id": "call@12850",
+      "time": 711505.403,
+      "message": "  waiting for element to be visible, enabled and stable"
+    },
+    {
+      "id": "call@12850",
+      "time": 711520.893,
+      "message": "  element is visible, enabled and stable"
+    },
+    {
+      "id": "call@12850",
+      "time": 711520.902,
+      "message": "  scrolling into view if needed"
+    },
+    {
+      "id": "call@12850",
+      "time": 711528.012,
+      "message": "  done scrolling"
+    },
+    {
+      "id": "call@12850",
+      "time": 711545.735,
+      "message": "  performing click action"
+    },
+    {
+      "id": "call@12850",
+      "time": 711592.17,
+      "message": "  click action done"
+    },
+    {
+      "id": "call@12850",
+      "time": 711592.184,
+      "message": "  waiting for scheduled navigations to finish"
+    },
+    {
+      "id": "call@12850",
+      "time": 711592.54,
+      "message": "  navigations have finished"
+    },
+    {
+      "id": "call@12852",
+      "time": 711601.591,
+      "message": "Expect \"toBeVisible\" getByText('Sản phẩm kiểm thử', { exact: true }) with timeout 5000ms"
+    },
+    {
+      "id": "call@12852",
+      "time": 711601.597,
+      "message": "waiting for getByText('Sản phẩm kiểm thử', { exact: true })"
+    }
+  ],
+  "snapshots": [
+    {
+      "time": 711415.161,
+      "url": "http://127.0.0.1:34821/s/shop-demo/products/product-10002",
+      "hasCreatedName": false,
+      "hasSeedName": false,
+      "hasGuard": false
+    },
+    {
+      "time": 711478.206,
+      "url": "http://127.0.0.1:34821/s/shop-demo/products/product-10002",
+      "hasCreatedName": true,
+      "hasSeedName": false,
+      "hasGuard": false
+    },
+    {
+      "time": 711540.208,
+      "url": "http://127.0.0.1:34821/s/shop-demo/products/product-10002",
+      "hasCreatedName": false,
+      "hasSeedName": false,
+      "hasGuard": false
+    },
+    {
+      "time": 711596.97,
+      "url": "http://127.0.0.1:34821/s/shop-demo/products/product-10002",
+      "hasCreatedName": false,
+      "hasSeedName": false,
+      "hasGuard": false
+    },
+    {
+      "time": 711601.321,
+      "url": "http://127.0.0.1:34821/s/shop-demo/products/product-10002",
+      "hasCreatedName": false,
+      "hasSeedName": false,
+      "hasGuard": false
+    },
+    {
+      "time": 716604.216,
+      "url": "http://127.0.0.1:34821/s/shop-demo/products/product-10002",
+      "hasCreatedName": false,
+      "hasSeedName": false,
+      "hasGuard": false
+    }
+  ]
+}
