@@ -107,7 +107,7 @@ test('a thousand synthetic customers remain API-paginated in the built demo arti
     await openDemoControls(page);
     await page.getByRole('combobox', { name: 'Dataset mô phỏng' }).click();
     await page.getByRole('option', { name: '1.000 khách hàng tổng hợp' }).click();
-    await expect(page.getByRole('status')).toHaveText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.');
+    await expect(page.getByRole('status').filter({ hasText: /^Đã tải 1\.000 khách hàng/ })).toHaveText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.');
 
     const customersResponsePromise = page.waitForResponse(response => new URL(response.url()).pathname.startsWith('/api/v2/shops/shop-demo/customers'));
     const startedAt = Date.now();

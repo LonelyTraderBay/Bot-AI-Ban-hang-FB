@@ -15,7 +15,7 @@ test.afterAll(async () => {
 });
 
 test('demo conditional module requests return complete exports without changing live or non-asset caching', async ({ browser, request }) => {
-    const modulePath = `/@fs/${process.cwd().replaceAll('\\', '/')}/packages/contracts/src/generated.ts`;
+    const modulePath = `/@fs/${process.cwd().replaceAll('\\', '/').replace(/^\//u, '')}/packages/contracts/src/generated.ts`;
     const moduleUrl = new URL(modulePath, demoUrl).toString();
     const initial = await request.get(moduleUrl);
     expect(initial.status()).toBe(200);
