@@ -1,0 +1,103 @@
+
+Running 4 tests using 1 worker
+
+
+
+(node:69432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [chromium] › tests\fe021.spec.ts:161:5 › FE021 marketing filters preserve edits while the default period response is pending
+  1) [chromium] › tests\fe021.spec.ts:161:5 › FE021 marketing filters preserve edits while the default period response is pending 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByLabel('Từ ngày', { exact: true })
+    Expected: "2026-08-31"
+    Received: "2026-09-20"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByLabel('Từ ngày', { exact: true }) with timeout 5000ms
+      - waiting for getByLabel('Từ ngày', { exact: true })
+        14 × locator resolved to <input id="«rl»" type="date" value="2026-09-20" aria-invalid="false" aria-describedby="«rl»-helper-text" class="MuiInputBase-input MuiOutlinedInput-input css-1txw9lp-MuiInputBase-input-MuiOutlinedInput-input"/>
+           - unexpected value "2026-09-20"
+
+
+      209 |             await to.fill('2026-09-26');
+      210 |             await page.goBack();
+    > 211 |             await expect(from).toHaveValue('2026-08-31');
+          |                                ^
+      212 |             await expect(to).toHaveValue('2026-09-29');
+      213 |             await page.goForward();
+      214 |             await expect(from).toHaveValue('2026-09-18');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe021.spec.ts:211:32
+
+    Error Context: evidence\github-delivery-20261010\ci-marketing-filter\dirty-back-initial-results\fe021-FE021-marketing-filt-71722--period-response-is-pending-chromium\error-context.md
+
+    Error Context: evidence\github-delivery-20261010\ci-marketing-filter\dirty-back-initial-results\fe021-FE021-marketing-filt-71722--period-response-is-pending-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    evidence\github-delivery-20261010\ci-marketing-filter\dirty-back-initial-results\fe021-FE021-marketing-filt-71722--period-response-is-pending-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace evidence\github-delivery-20261010\ci-marketing-filter\dirty-back-initial-results\fe021-FE021-marketing-filt-71722--period-response-is-pending-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:7536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/4] [chromium] › tests\fe021.spec.ts:161:5 › FE021 marketing filters preserve edits while the canonical period response is pending
+(node:81812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/4] [firefox] › tests\fe021.spec.ts:161:5 › FE021 marketing filters preserve edits while the default period response is pending
+  2) [firefox] › tests\fe021.spec.ts:161:5 › FE021 marketing filters preserve edits while the default period response is pending 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByLabel('Từ ngày', { exact: true })
+    Expected: "2026-08-31"
+    Received: "2026-09-20"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByLabel('Từ ngày', { exact: true }) with timeout 5000ms
+      - waiting for getByLabel('Từ ngày', { exact: true })
+        14 × locator resolved to <input id="«rl»" type="date" value="2026-09-20" aria-invalid="false" aria-describedby="«rl»-helper-text" class="MuiInputBase-input MuiOutlinedInput-input css-1txw9lp-MuiInputBase-input-MuiOutlinedInput-input"/>
+           - unexpected value "2026-09-20"
+
+
+      209 |             await to.fill('2026-09-26');
+      210 |             await page.goBack();
+    > 211 |             await expect(from).toHaveValue('2026-08-31');
+          |                                ^
+      212 |             await expect(to).toHaveValue('2026-09-29');
+      213 |             await page.goForward();
+      214 |             await expect(from).toHaveValue('2026-09-18');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe021.spec.ts:211:32
+
+    Error Context: evidence\github-delivery-20261010\ci-marketing-filter\dirty-back-initial-results\fe021-FE021-marketing-filt-71722--period-response-is-pending-firefox\error-context.md
+
+    Error Context: evidence\github-delivery-20261010\ci-marketing-filter\dirty-back-initial-results\fe021-FE021-marketing-filt-71722--period-response-is-pending-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    evidence\github-delivery-20261010\ci-marketing-filter\dirty-back-initial-results\fe021-FE021-marketing-filt-71722--period-response-is-pending-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace evidence\github-delivery-20261010\ci-marketing-filter\dirty-back-initial-results\fe021-FE021-marketing-filt-71722--period-response-is-pending-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+(node:47928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[4/4] [firefox] › tests\fe021.spec.ts:161:5 › FE021 marketing filters preserve edits while the canonical period response is pending
+  2 failed
+    [chromium] › tests\fe021.spec.ts:161:5 › FE021 marketing filters preserve edits while the default period response is pending 
+    [firefox] › tests\fe021.spec.ts:161:5 › FE021 marketing filters preserve edits while the default period response is pending 
+  2 passed (52.3s)
