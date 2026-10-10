@@ -1,0 +1,228 @@
+{
+  "recordedAt": "2026-10-10T16:31:26.427Z",
+  "previousRevision": "1e3df01dad95696f407599aa9bd9f766757ee7bc",
+  "sourceEdited": false,
+  "sourceHashes": {
+    "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "1da96e22fba4fb4b2b8725fc21ae333b95943efcb7d3f3d54b398c720487f7bb"
+  },
+  "readOnlySourceHashes": {
+    "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "ef061bdf70abb1e9ba6cf7bb0ba6343fed34f7efa53ac46201e6384fda9c5d6a",
+    "BotSalesAI_Frontend/apps/web/src/mocks/orders.ts": "919d15a484214bceddf5ad242f30b96766a2a324de48d2484223cfac1ed3a411",
+    "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "399cb9af12192a8ba41fb40cca4c831647f5fc57b563bd08fc2ffb469e242a55",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/hooks.ts": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "9db680ef5ea17c796a824e5a04a88720f856001881d89ead17468f5518d57a5e",
+    "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "12d6b0dbe0dca8b8c5262b37854ebc6407026d658a7a202a557fbb339db4c520",
+    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "e126fcc3e2d82a87e74fc7c2acd30abce46db7d02470ee058fa410c8fb20cb92",
+    "BotSalesAI_Frontend/packages/contracts/src/operations.json": "a1484b4aa4e6191559d80fbe8b012b4ca4ecd80cfc6283b309d6a8d350315f68",
+    "BotSalesAI_Frontend/playwright.config.ts": "ae4ab2e40f8d853ea6b12ae7b3ec9d613a2deead4567a7547e02b521901bb480"
+  },
+  "renderBaseline": {
+    "browser": "firefox",
+    "mockMode": "default synthetic demo dataset",
+    "route": "/s/shop-demo/orders/DH-1001",
+    "state": "draft order version1 loaded",
+    "viewports": [
+      [
+        390,
+        900
+      ],
+      [
+        1280,
+        900
+      ]
+    ],
+    "screenshotsReviewed": true,
+    "artifacts": [
+      {
+        "path": "probe-final/baseline-loaded-390.png",
+        "sha256": "a22ca112f8ba661ae567b4aa5637a634a08ede2a38a81ddaed5c720b7ed6ce3e"
+      },
+      {
+        "path": "probe-final/baseline-loaded-1280.png",
+        "sha256": "4af030e9a95e5b38f3aef77f2816d6054f53e906f69384ee4a689b70772aeba5"
+      }
+    ]
+  },
+  "originalCLI": {
+    "passed": 8,
+    "exitCode": 0
+  },
+  "controlledProbes": [
+    {
+      "mode": "baseline",
+      "fixture": "original",
+      "status": "PASS",
+      "engine": "firefox",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 13326,
+      "moduleRequests": 0,
+      "delayedModuleOrdinal": null,
+      "delayedRequests": 0,
+      "delayMs": 0,
+      "dataDelays": [],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001/quote",
+          "body": null
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "fixture": "original",
+      "status": "FAIL",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Phiên bản 1', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByText('Phiên bản 1', { exact: true }) with timeout 5000ms\n  - waiting for getByText('Phiên bản 1', { exact: true })\n",
+      "engine": "firefox",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 12005,
+      "moduleRequests": 0,
+      "delayedModuleOrdinal": null,
+      "delayedRequests": 1,
+      "delayMs": 6500,
+      "dataDelays": [
+        {
+          "phase": "start",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001",
+          "at": 1791649774459,
+          "delayMs": 6500
+        },
+        {
+          "phase": "end",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001",
+          "at": 1791649780988,
+          "delayMs": 6500
+        }
+      ],
+      "writes": []
+    },
+    {
+      "mode": "data",
+      "fixture": "candidate",
+      "status": "PASS",
+      "engine": "firefox",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 17850,
+      "moduleRequests": 0,
+      "delayedModuleOrdinal": null,
+      "delayedRequests": 1,
+      "delayMs": 6500,
+      "dataDelays": [
+        {
+          "phase": "start",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001",
+          "at": 1791649786770,
+          "delayMs": 6500
+        },
+        {
+          "phase": "end",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001",
+          "at": 1791649793324,
+          "delayMs": 6500
+        }
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001/quote",
+          "body": null
+        }
+      ]
+    },
+    {
+      "mode": "lazy",
+      "fixture": "original",
+      "status": "FAIL",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Phiên bản 1', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByText('Phiên bản 1', { exact: true }) with timeout 5000ms\n  - waiting for getByText('Phiên bản 1', { exact: true })\n",
+      "engine": "chromium",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 11392,
+      "moduleRequests": 2,
+      "delayedModuleOrdinal": 2,
+      "delayedRequests": 1,
+      "delayMs": 6500,
+      "dataDelays": [],
+      "writes": []
+    },
+    {
+      "mode": "lazy",
+      "fixture": "candidate",
+      "status": "PASS",
+      "engine": "chromium",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 16518,
+      "moduleRequests": 6,
+      "delayedModuleOrdinal": 2,
+      "delayedRequests": 1,
+      "delayMs": 6500,
+      "dataDelays": [],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001/quote",
+          "body": null
+        }
+      ]
+    }
+  ],
+  "failedHarnessAttempts": {
+    "attempt01": "FAIL: delayed refetch beyond initial loading and Firefox interception0; kept raw",
+    "attempt02": "FAIL: cleanup awaited old order DOM after callback reached returns; kept raw"
+  },
+  "hostedTrace": "PENDING_JOB_COMPLETION"
+}

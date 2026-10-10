@@ -1,0 +1,361 @@
+{
+  "recordedAt": "2026-10-10T16:56:12.559Z",
+  "previousRevision": "1e3df01dad95696f407599aa9bd9f766757ee7bc",
+  "fullVerifyExitCode": 0,
+  "unitTests": 238,
+  "sourceGateFixtures": {
+    "composition": 41,
+    "layout": 86,
+    "evidenceValidator": 11
+  },
+  "sourceFingerprints": 275,
+  "originalLocal": {
+    "passed": 8,
+    "exitCode": 0
+  },
+  "targetedFinal": {
+    "cases": "Both Orders responsive route and draft/quote/return dialog callbacks",
+    "perEngine": 6,
+    "total": 12,
+    "exitCode": 0
+  },
+  "controlledProbes": [
+    {
+      "mode": "baseline",
+      "fixture": "original",
+      "status": "PASS",
+      "engine": "firefox",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 13326,
+      "moduleRequests": 0,
+      "delayedModuleOrdinal": null,
+      "delayedRequests": 0,
+      "delayMs": 0,
+      "dataDelays": [],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001/quote",
+          "body": null
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "fixture": "original",
+      "status": "FAIL",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Phiên bản 1', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByText('Phiên bản 1', { exact: true }) with timeout 5000ms\n  - waiting for getByText('Phiên bản 1', { exact: true })\n",
+      "engine": "firefox",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 12005,
+      "moduleRequests": 0,
+      "delayedModuleOrdinal": null,
+      "delayedRequests": 1,
+      "delayMs": 6500,
+      "dataDelays": [
+        {
+          "phase": "start",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001",
+          "at": 1791649774459,
+          "delayMs": 6500
+        },
+        {
+          "phase": "end",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001",
+          "at": 1791649780988,
+          "delayMs": 6500
+        }
+      ],
+      "writes": []
+    },
+    {
+      "mode": "data",
+      "fixture": "candidate",
+      "status": "PASS",
+      "engine": "firefox",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 17850,
+      "moduleRequests": 0,
+      "delayedModuleOrdinal": null,
+      "delayedRequests": 1,
+      "delayMs": 6500,
+      "dataDelays": [
+        {
+          "phase": "start",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001",
+          "at": 1791649786770,
+          "delayMs": 6500
+        },
+        {
+          "phase": "end",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001",
+          "at": 1791649793324,
+          "delayMs": 6500
+        }
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001/quote",
+          "body": null
+        }
+      ]
+    },
+    {
+      "mode": "lazy",
+      "fixture": "original",
+      "status": "FAIL",
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Phiên bản 1', { exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByText('Phiên bản 1', { exact: true }) with timeout 5000ms\n  - waiting for getByText('Phiên bản 1', { exact: true })\n",
+      "engine": "chromium",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 11392,
+      "moduleRequests": 2,
+      "delayedModuleOrdinal": 2,
+      "delayedRequests": 1,
+      "delayMs": 6500,
+      "dataDelays": [],
+      "writes": []
+    },
+    {
+      "mode": "lazy",
+      "fixture": "candidate",
+      "status": "PASS",
+      "engine": "chromium",
+      "wholeOrdersDialogCallback": true,
+      "detailViewport": [
+        390,
+        844
+      ],
+      "returnWidths": [
+        390,
+        1280
+      ],
+      "sourceDefaultTimeoutMs": 30000,
+      "sourceExpectTimeoutUnchanged": 5000,
+      "sourceTestTimeoutUnchanged": 180000,
+      "elapsedMs": 16518,
+      "moduleRequests": 6,
+      "delayedModuleOrdinal": 2,
+      "delayedRequests": 1,
+      "delayMs": 6500,
+      "dataDelays": [],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/v2/shops/shop-demo/orders/DH-1001/quote",
+          "body": null
+        }
+      ]
+    }
+  ],
+  "failedHarnessAttempts": {
+    "attempt01": "FAIL: delayed refetch beyond initial loading and Firefox interception0; kept raw",
+    "attempt02": "FAIL: cleanup awaited old order DOM after callback reached returns; kept raw"
+  },
+  "hostedDiagnosis": {
+    "recordedAt": "2026-10-10T16:46:32.691Z",
+    "runId": 38062907027,
+    "headSha": "1e3df01dad95696f407599aa9bd9f766757ee7bc",
+    "firefoxJobId": 114244623639,
+    "sourceEditedBeforeTrace": false,
+    "observedBoundary": "At390x844 Orders detail goto(load)3439697.724–3440602.275 completed; version1 expect3440610.859–3445614.853 exhausted5000ms whilemainstillroute-loading. No getOrder GET in selectedtrace. Orders module200 resource entry timestamp3445724.354 is after failedexpectdeadline. The test treated document load as lazyroute/data readiness.",
+    "deeperCause": "Exact hosted Vite/module/dependency scheduling cause UNKNOWN; the trace proves route/content not ready at assertion, not a Backend fault or a measured production loading SLA.",
+    "artifact": {
+      "id": 11676366480,
+      "sizeInBytes": 2111925,
+      "archiveSha256": "8bbc9a8769cad108494df1495afbc32bcdf4c3104f14da965a74afbb216cd84d"
+    },
+    "controlledProbeScope": "Initial getOrder data delay6500ms onFirefox and exactmodule ordinal2 delay6500ms onChromium; originalFAILversion1/candidatePASSwholecallback,1quoteonly; these are controlled timing models, not the actual hosted timings."
+  },
+  "discovery": {
+    "perEngine": 407,
+    "filesPerEngine": 69,
+    "total": 814
+  },
+  "priorHosted": {
+    "runId": 38062907027,
+    "chromium": {
+      "conclusion": "success",
+      "e2ePassed": 407,
+      "builtDemoPassed": 3,
+      "upload": "success"
+    },
+    "firefox": {
+      "conclusion": "failure",
+      "e2ePassed": 406,
+      "e2eFailed": 1,
+      "builtDemo": "SKIPPED"
+    }
+  },
+  "hosted": "PENDING_AT_COMMIT",
+  "sourceHashes": {
+    "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "4257132081ed12914a1af7d2c269245464691a804649ac301c457eb5d8262439"
+  },
+  "readOnlySourceHashes": {
+    "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "ef061bdf70abb1e9ba6cf7bb0ba6343fed34f7efa53ac46201e6384fda9c5d6a",
+    "BotSalesAI_Frontend/apps/web/src/mocks/orders.ts": "919d15a484214bceddf5ad242f30b96766a2a324de48d2484223cfac1ed3a411",
+    "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "399cb9af12192a8ba41fb40cca4c831647f5fc57b563bd08fc2ffb469e242a55",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/hooks.ts": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "9db680ef5ea17c796a824e5a04a88720f856001881d89ead17468f5518d57a5e",
+    "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "12d6b0dbe0dca8b8c5262b37854ebc6407026d658a7a202a557fbb339db4c520",
+    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "e126fcc3e2d82a87e74fc7c2acd30abce46db7d02470ee058fa410c8fb20cb92",
+    "BotSalesAI_Frontend/packages/contracts/src/operations.json": "a1484b4aa4e6191559d80fbe8b012b4ca4ecd80cfc6283b309d6a8d350315f68",
+    "BotSalesAI_Frontend/playwright.config.ts": "ae4ab2e40f8d853ea6b12ae7b3ec9d613a2deead4567a7547e02b521901bb480"
+  },
+  "generatedHashes": {
+    "BotSalesAI_Frontend/evidence/boundaries.json": "1a89afa6cb7dff0848b8cd637666af6a0a7d5ad1a173b7c4b4ed006336415283",
+    "BotSalesAI_Frontend/evidence/domain-tests.json": "c06c6d0a514bcc36a3e484002ef4fadf4872171aa4896d7f8fa3ff533aba94d3",
+    "BotSalesAI_Frontend/evidence/source-check.json": "3f8d3e7955674747a70c7a38fb962bc4fce4ddbd20e2fd1d36607df78ce93289",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json": "8053351d5504e6591801a226adbcfd596befb0118f431002e951a4afcf4a4403"
+  },
+  "hashes": {
+    "after-loaded-1280.html": "3c77fffb2384d3cae26b0cc10e11ba38f46f55cd0138d9d1fc5f08ac7d87311d",
+    "after-loaded-1280.png": "4af030e9a95e5b38f3aef77f2816d6054f53e906f69384ee4a689b70772aeba5",
+    "after-loaded-390.html": "3c77fffb2384d3cae26b0cc10e11ba38f46f55cd0138d9d1fc5f08ac7d87311d",
+    "after-loaded-390.png": "a22ca112f8ba661ae567b4aa5637a634a08ede2a38a81ddaed5c720b7ed6ce3e",
+    "after-render.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "after-render.json": "27065c4b7c49e418de0861feea5eee4a07f735e1bb7dd620f539d4bc159bdd26",
+    "after-render.log": "f94a7784dc2a2aa2da888903c8211febc0acd38cdd5bf0b68c51c0c515c76cb1",
+    "after-render.zip": "8da21de367d35d30a2d483752faa44ec63751eb51e7690f923f12b60c17a85b4",
+    "after.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "after.log": "9e12d5bbb653a07d38def58ba0fdbeee047f31efe69257b2f6a9bdd14a3610a4",
+    "baseline-provenance.json": "246ec9cef93e28f12a7bad6383fc46459bb41adf3180e292526a878b8ec1bb3d",
+    "baseline.md": "4651a067f30ad0ba0ae5908286d5b3ab7cdee975a334e53018d485f00b1fddaa",
+    "before.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "before.log": "20ac7ec5508bdaba7124207f2d359c1a793f85ffd0ded337e4cf30ae1ab39cd4",
+    "chromium-list.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "chromium-list.log": "b01ce666d78a76963142b71b636d227f720b89d0d246cf7509aa5c069f606b48",
+    "composition.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "composition.log": "be41234b3c0730a407d7c731ff12ca6a800f56bc846bd2c9a2b0047aaa1b074a",
+    "contract-before-edit.md": "88e918038044a27c2250043628a44f87efc3baa59164f199abe399736195c329",
+    "evidence-final.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "evidence-final.log": "aced40c50349dd5bd47846eb8fb2b5911b45d0380b2a4824ea54d319997e29ca",
+    "firefox-list.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "firefox-list.log": "82c4d779e5c8412b1fde795e3741738d843880ebe7c5048eef3999500aa9bfce",
+    "fixture-candidate.spec.ts.txt": "3f6b787cb49da0b5fdf9361a76b503a1afa3bab0052fa284d4d38c85b375a429",
+    "fixture-original.spec.ts.txt": "1da96e22fba4fb4b2b8725fc21ae333b95943efcb7d3f3d54b398c720487f7bb",
+    "hosted-artifact-selection.json": "b60fa80a7742dd2f5b70fd70c39c494876fea9ea3bd8d8c5c125ea9dc0b9d172",
+    "hosted-artifacts.json": "f925b67138b7cfa63b53aca4283586de4a2be93ad9837e293890120c2721107e",
+    "hosted-chromium.log": "bc61524c3b4e4aaf976bccd292c40cad6c61fe39bbd277d8bc934cadd8526525",
+    "hosted-diagnosis.json": "ff04160f640e93a833905d497d52182fe6ee318a32b7e1a652fcf02e540e650b",
+    "hosted-diagnostic-facts.json": "84e571c0a1f019f99ba00b92db3ff5af6fd90ee99b59ac2315c696ac4fded61a",
+    "hosted-error-context.md": "6573f4814e2687a9a78d0e8325b2e2928bcb5ec52ff134b61d56b59b503f050b",
+    "hosted-firefox.log": "d126e8538ee70256d15a3c539a20b35384b85606b5bedd19d63dc495b8db73a3",
+    "hosted-jobs.json": "6f718ac43b99255d4dad54f2d2827a1004e0d120e4d2a0b275a9c96566b251b5",
+    "hosted-timeline.json": "e373051b6cf8467ebd67e300b19d6a3555d82f9257be3763d52e538f1d6596d0",
+    "hosted-trace.zip": "3dfb8ff77aacf7d4349c76daa400bdc2413bdb7426d660dc1220bba824c38a0f",
+    "layout.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "layout.log": "4e127ff05be6f14e4401ef05a2eb4034c2f6bebaacf0f66f247e0f3017962245",
+    "paired-render-review.json": "0dfd68735a56270e0e14cdbbeaae930f64d0fdc786c31ca9c7c47554f89450cd",
+    "probe-attempt01-diagnosis.md": "ef40576bbea9f581365d00165358ea6baa93ad11382746fc626460c239a48b9e",
+    "probe-attempt01.exit": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "probe-attempt01.log": "76cdc21430bc071d3e7dd8d766e4af851fa14ef8cdae0fc353354ea65455265e",
+    "probe-attempt01.mjs": "68adcb7b86e339bb783cad6e36fb5e64312ec41f56da124b75e1ef7024fcf1a5",
+    "probe-attempt02-diagnosis.md": "5231057cd22d8276ce10f4ba6129325187a6cb992b505f5c111617e61f606b81",
+    "probe-attempt02.exit": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "probe-attempt02.log": "42b5d5d7d5a86deb121ec6d445bce43b22c7cf7b584df2ee08a9e36126ea02d5",
+    "probe-attempt02.mjs": "8818b87f6a0b033b3fe5f4563528d307f4118763f2f576b6b7883f701186574a",
+    "probe-final.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "probe-final.log": "0a9ae107ded175753e75cb642697bf0209920252c043d8b1f8c918d485e62fa5",
+    "probe-final.mjs": "e0966e491f47bd689e4b91009c3d20880c7af1396b92410b283e2be7d1a3c26f",
+    "probe-visual-review.md": "f8817e490be3bf21db41206e03e61736e6cd461b8091405a7e5bfdd4f860dd32",
+    "REPORT.md": "4eaae7aed891fdfbcddcf4166d58b5bc7732072c47af842ae481389476c4389c",
+    "validator.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "validator.log": "97fbc587b46e0420d28efa4ca5d85791d59b1099ae30742f7c1829f617341aa8",
+    "verify.exit": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "verify.log": "18782244dea99a19b44221180cd0635ded9680760cce6de5ce1c432e700671ac",
+    "probe-attempt01/baseline-loaded-1280.html": "3c77fffb2384d3cae26b0cc10e11ba38f46f55cd0138d9d1fc5f08ac7d87311d",
+    "probe-attempt01/baseline-loaded-1280.png": "4af030e9a95e5b38f3aef77f2816d6054f53e906f69384ee4a689b70772aeba5",
+    "probe-attempt01/baseline-loaded-390.html": "3c77fffb2384d3cae26b0cc10e11ba38f46f55cd0138d9d1fc5f08ac7d87311d",
+    "probe-attempt01/baseline-loaded-390.png": "a22ca112f8ba661ae567b4aa5637a634a08ede2a38a81ddaed5c720b7ed6ce3e",
+    "probe-attempt01/baseline-original.network.json": "66deb077faccdfe4a07e87dcc60d47be5f3d262502ab736e87a31ea2a05b4b9f",
+    "probe-attempt01/baseline-original.zip": "3953dd5f776fd7e00970c811159e84085493a1fc1992536ace18171496e75ed3",
+    "probe-attempt01/data-candidate.html": "e2c24f3befbef725d02c803c2c8e004dc663ec3311517be3a4bc64fea77646aa",
+    "probe-attempt01/data-candidate.network.json": "7065246c7b40f2b88d28191ea6ea20b6d1230fcba8d72e867d7ceb027727d7ab",
+    "probe-attempt01/data-candidate.png": "e851a6a5e15a5d610ba63799399c004cbb2be4820876244ff56c971c6b95bf99",
+    "probe-attempt01/data-candidate.zip": "985be7b52b832828824637b4f96697e99b56a9c73762e9d9e444aa75208edbb3",
+    "probe-attempt01/data-original.html": "a00cd696bca74fa0885d1743bf76bf589a4ef70421b4dd05b791672cb465f9c0",
+    "probe-attempt01/data-original.network.json": "9f8abc4f5b7b2add37e81a1767c29ab15ad5d496c1ad4595d372202745b7b9a0",
+    "probe-attempt01/data-original.png": "9dc2dcc400d9bf1fe1e8223efe46a16f6a3f5e497ec9a0e1e34b378cb461a5f3",
+    "probe-attempt01/data-original.zip": "1a140cd18a81c0d92650c60b9e1af1f20f13843ba96e5e3cfe1450511b3a2339",
+    "probe-attempt01/lazy-candidate.network.json": "ab58da71046c18834ec645946198bfdee3888b93a76cb41cadb8e200580660dc",
+    "probe-attempt01/lazy-candidate.zip": "e5448538a2e451079c371083e3f702ccde0782fbf008ae7f8a90dafcff844cb6",
+    "probe-attempt01/lazy-original.network.json": "f35a57d1d2f970eb8f234893f9b1172d1a3f3c7efc1740af9a672af4802c69fb",
+    "probe-attempt01/lazy-original.zip": "a8d09334e39c715bc47d352635b23ea890176eef84d15b75cfb9257bb3a06c9e",
+    "probe-attempt01/results.json": "506c8503dffe359505bf5663f33e4c4394db6e43ccce15a2f53d7af36e79d124",
+    "probe-attempt02/baseline-loaded-1280.html": "3c77fffb2384d3cae26b0cc10e11ba38f46f55cd0138d9d1fc5f08ac7d87311d",
+    "probe-attempt02/baseline-loaded-1280.png": "4af030e9a95e5b38f3aef77f2816d6054f53e906f69384ee4a689b70772aeba5",
+    "probe-attempt02/baseline-loaded-390.html": "3c77fffb2384d3cae26b0cc10e11ba38f46f55cd0138d9d1fc5f08ac7d87311d",
+    "probe-attempt02/baseline-loaded-390.png": "a22ca112f8ba661ae567b4aa5637a634a08ede2a38a81ddaed5c720b7ed6ce3e",
+    "probe-attempt02/baseline-original.network.json": "8d482a42c9a63e55aa07929df79d3b22e573b5d1c68addce20ee9dd0499ff9eb",
+    "probe-attempt02/baseline-original.zip": "2d5996643f65ada8b3fa2b3bebcbba5c45ab4a514010cbaecb384f5a64cba507",
+    "probe-attempt02/data-original.html": "a00cd696bca74fa0885d1743bf76bf589a4ef70421b4dd05b791672cb465f9c0",
+    "probe-attempt02/data-original.network.json": "2ef02267160e9cde03dffd158acfd634c0e66d0d7e7e9c1ec8faae06e6a490d8",
+    "probe-attempt02/data-original.png": "f884e721308781efaf901db1398955db46fb7efb3253a98b9d2fef9402b54d8f",
+    "probe-attempt02/data-original.zip": "e4169495920efaa87c0359515ddcbed9228776b7f2e91138108c7c09e2e2f76c",
+    "probe-attempt02/results.json": "29d07b23a5779a7ccb4c38378ffaee7ddbdb6ad924f65c762fe82e9f0b732b0a",
+    "probe-final/baseline-loaded-1280.html": "3c77fffb2384d3cae26b0cc10e11ba38f46f55cd0138d9d1fc5f08ac7d87311d",
+    "probe-final/baseline-loaded-1280.png": "4af030e9a95e5b38f3aef77f2816d6054f53e906f69384ee4a689b70772aeba5",
+    "probe-final/baseline-loaded-390.html": "3c77fffb2384d3cae26b0cc10e11ba38f46f55cd0138d9d1fc5f08ac7d87311d",
+    "probe-final/baseline-loaded-390.png": "a22ca112f8ba661ae567b4aa5637a634a08ede2a38a81ddaed5c720b7ed6ce3e",
+    "probe-final/baseline-original.network.json": "bb6f98acefb8735cc606cbd2023c492a4f7f61a9f1d9a8ffcd40abdf3d942188",
+    "probe-final/baseline-original.zip": "6595891dd027ad854965513cb3460ccbba9dfe4d8898b68c48b9c8f42b332145",
+    "probe-final/data-candidate.network.json": "3fb6a0ed812aa8eb4011c37175143ec4b4f07e5ef3d1aebf5f43a7e929568d0f",
+    "probe-final/data-candidate.zip": "3c3e15c6dbc056a174000fc6732ed443a88d09ccf20411a58a7d0e04a17b566b",
+    "probe-final/data-original.html": "a00cd696bca74fa0885d1743bf76bf589a4ef70421b4dd05b791672cb465f9c0",
+    "probe-final/data-original.network.json": "f881a02cfdac2faf347174c25f4a2dc3f40432cb23762a4570f82739bc85249c",
+    "probe-final/data-original.png": "8a82b22e91f2d6980585f80b6a767d4e09dde95065994cefcb2aad281ce9528c",
+    "probe-final/data-original.zip": "2d70958d3685de67748cdb2d597cda5c1e664dca057fd450aaaf505a8d9b6114",
+    "probe-final/lazy-candidate.network.json": "ac416e66d58cdb7977a8ff272d90b04676773771c01522e3c879a617f0b737a7",
+    "probe-final/lazy-candidate.zip": "bc934c033b83f20f815d2c1caf149c58a9577668b90bda258d59ad44ce20df6b",
+    "probe-final/lazy-original.html": "ee20ed6dd6d279b6281dde338e19f9c05d94a678c1d2501ea9dbf11e4ef0579c",
+    "probe-final/lazy-original.network.json": "d93592a757b4de3aa0cbff5ccd7bc67f71b44098a157b0a0fb50d9cecd4264a3",
+    "probe-final/lazy-original.png": "97a4a058849bf709446419b9da73c06556120410511c1ce5d39daca9a2f72e58",
+    "probe-final/lazy-original.zip": "daa3ac8011a38c45a5dc9b42042ee2fa3957fa2e53f2ba59ff9ef35f3b9dd2a9",
+    "probe-final/results.json": "dceee203bba69fd9510967c7817fa090a27abcc6795a1b6b74d599061f48eb90"
+  }
+}

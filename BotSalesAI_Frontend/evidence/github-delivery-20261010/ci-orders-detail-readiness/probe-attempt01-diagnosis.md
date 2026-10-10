@@ -1,0 +1,3 @@
+# Lượt probe đầu không đạt
+
+Giữ raw log/exit/results/trace/screenshot của orders-probe. Baseline Firefox toàn callback PASS. Original data-delay FAIL đúngversion1. Candidate tiếp tục tớiquote nhưng FAIL báo giá vì harness trì hoãn cảrefetchgetOrder sauquote, ra ngoài phạmvilần tải ban đầu; hai startdelay được ghi trongresults. Module route interception Firefox ghi0request và không tạo perturbation, vì vậy không có negativeproof ởnhánh đó. Không coi candidateFAIL làPASS. Probev2 chỉ delayinitialGETmộtlần perdetaildocument, moduleprobe dùngChromium đã kiểmkhả nănginterception ởcác tasktrước; source/default/expect/testtimeouts giữ nguyên. Trackedsourcechưa sửa.
