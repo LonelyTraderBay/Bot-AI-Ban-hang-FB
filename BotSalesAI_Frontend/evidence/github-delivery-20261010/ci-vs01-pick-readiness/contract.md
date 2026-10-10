@@ -1,0 +1,9 @@
+# Contract trước sửa source VS01
+
+Baseline HEAD54 `bcdf5414015fe045482278f3f115b53e9e7c4262`: CLI gốc4 lượt, 3 PASS/1 Chromium FAIL tại nút pick disabled, exit1; raw trace/error-context giữ nguyên trước source edit. Hosted Chromium406 PASS/1 VS01 FAIL, cùng vị trí; snapshot cuối scan trống và quantity1 dù fill đã hoàn tất.
+
+PrepDialog giữ scans/quantities trong state, không reset sau claim. Claim.execute chờ invalidation/refetch rồi mới hạ pending; EditDialog giữ DialogContent inert và progressbar `Đang lưu` khi pending. Trace scan fill bắt đầu khi claim reconciliation còn chạy. Probe trì hoãn đúng một listPrepJobs GET3000ms mỗi fixture: original FAIL do scan/quantity rỗng, không gửi pick; candidate PASS toàn callback, scanAO-002, quantity1 và pick expectedVersion2/orderLineIdol-1001. Observer15000ms chỉ ở harness, Source180000ms giữ nguyên. Lần collector đầu bị unhandled rejection từ response waiter đồng deadline với click đã lưu riêng exit1; không tính là gate app. Collector sau bắt rejection ngay nhưng vẫn trả original promise nguyên trạng, không đổi behavior/assertion.
+
+Thay duy nhất VS01: sau claim200, chờ progressbar lưu biến mất và không còn nội dung inert, rồi nhập SKU/số lượng; kiểm actual values và pick enabled trước đăng ký response/click. Giữ toàn bộ product/order/reservation/prep references, HTTP status, stock unchanged/reserved+1/available-1, pick body và UI1/1. VS02 readiness vừa sửa và các flow FE022 khác giữ nguyên. Audit pattern: FE013 đã chờ nút Đóng enabled, input editable và actual value sau claim; không sửa test đó. App/mock/shared dialog/hooks/API/config/dependency/timeout/retry/ngưỡng giữ nguyên.
+
+Gate cuối dự kiến12 lượt VS01+VS02, repeat3 mỗi engine; composition41, layout86, validator11, full verify/S17 và discovery407 mỗi engine. Hosted mới phải xác minh trên SHA sau push. Không ghi owner/native zoom/screen-reader/Backend/production acceptance.

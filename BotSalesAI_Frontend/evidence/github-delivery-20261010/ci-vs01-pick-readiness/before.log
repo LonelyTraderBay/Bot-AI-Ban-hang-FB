@@ -1,0 +1,82 @@
+
+Running 4 tests using 1 worker
+
+
+
+(node:62928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+
+(node:72984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/4] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+  1) [chromium] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: page.waitForResponse: Test timeout of 180000ms exceeded.
+
+      82 |     await dialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' }).fill('AO-002');
+      83 |     await dialog.getByRole('spinbutton', { name: 'Số lượng đã lấy' }).fill('1');
+    > 84 |     const pick = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pick'));
+         |                       ^
+      85 |     await dialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
+      86 |     const picked = await pick;
+      87 |     expect(picked.status()).toBe(200);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:84:23
+
+    Error: locator.click: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for getByRole('dialog', { name: 'Phiếu chuẩn bị DH-1001' }).getByRole('button', { name: 'Xác nhận dòng đã kiểm' })
+        - locator resolved to <button disabled tabindex="-1" type="button" class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-disableElevation Mui-disabled MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-disableElevation css-3rosp-MuiButtonBase-root-MuiButton-root">Xác nhận dòng đã kiểm</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        339 × waiting for element to be visible, enabled and stable
+            - element is not enabled
+          - retrying click action
+            - waiting 500ms
+
+
+      83 |     await dialog.getByRole('spinbutton', { name: 'Số lượng đã lấy' }).fill('1');
+      84 |     const pick = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pick'));
+    > 85 |     await dialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
+         |                                                                         ^
+      86 |     const picked = await pick;
+      87 |     expect(picked.status()).toBe(200);
+      88 |     expect(JSON.parse(picked.request().postData() || 'null')).toMatchObject({ orderLineId: 'ol-1001', scannedSku: 'AO-002', pickedQuantity: 1 });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:85:73
+
+    Error Context: test-results\playwright-72984-e67bd5ce-e237-4e3b-8b0a-1515a189a968\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium-repeat1\error-context.md
+
+    Error Context: test-results\playwright-72984-e67bd5ce-e237-4e3b-8b0a-1515a189a968\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium-repeat1\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-72984-e67bd5ce-e237-4e3b-8b0a-1515a189a968\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium-repeat1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-72984-e67bd5ce-e237-4e3b-8b0a-1515a189a968\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium-repeat1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:75312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/4] [firefox] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+(node:46400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/4] [firefox] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+  1 failed
+    [chromium] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked 
+  3 passed (3.7m)
