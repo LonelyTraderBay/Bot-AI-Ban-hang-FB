@@ -47,11 +47,26 @@ test('catalog create uses the HTTP mock and successful save clears the draft gua
     await page.getByLabel('Tên sản phẩm', { exact: true }).fill('Sản phẩm kiểm thử');
     await page.getByLabel('SKU', { exact: true }).fill('TEST-001');
     await page.getByLabel(/Giá bán/).fill('150000');
+    const createResponse = page.waitForResponse(response => response.request().method() === 'POST'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/products');
     await page.getByRole('button', { name: 'Lưu sản phẩm', exact: true }).click();
+    const created = await createResponse;
+    expect(created.status()).toBe(201);
+    const createdProduct = (await created.json()).data as { id: string; name: string };
+    expect(createdProduct.name).toBe('Sản phẩm kiểm thử');
 
     await expect(page).toHaveURL(/\/products\/product-/);
+    await expect(page).toHaveTitle('Chi tiết sản phẩm · BotSales AI');
+    await expect(page.locator('main#main-content')).toBeFocused();
     await expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' })).toHaveCount(0);
+    const listResponse = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/products');
     await page.getByRole('link', { name: 'Danh sách', exact: true }).click();
+    await expect(page).toHaveURL(/\/products$/);
+    await expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' })).toHaveCount(0);
+    const listed = await listResponse;
+    expect(listed.status()).toBe(200);
+    expect((await listed.json()).data).toContainEqual(expect.objectContaining(createdProduct));
     await expect(page.getByText('Sản phẩm kiểm thử', { exact: true })).toBeVisible();
 });
 
