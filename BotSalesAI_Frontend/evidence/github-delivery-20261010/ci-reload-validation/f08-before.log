@@ -1,0 +1,64 @@
+
+Running 4 tests using 1 worker
+
+
+
+(node:85408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [chromium] › tests\frontend-corrections.spec.ts:428:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+  1) [chromium] › tests\frontend-corrections.spec.ts:428:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByLabel('Căn cứ / thị trường áp dụng', { exact: true })
+    Expected: "true"
+    Received: "false"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveAttribute" getByLabel('Căn cứ / thị trường áp dụng', { exact: true }) with timeout 5000ms
+      - waiting for getByLabel('Căn cứ / thị trường áp dụng', { exact: true })
+        14 × locator resolved to <textarea id="«r16»" aria-invalid="false" aria-describedby="«r16»-helper-text" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputMultiline css-1n5pdcw-MuiInputBase-input-MuiOutlinedInput-input">nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn…</textarea>
+           - unexpected value "false"
+
+
+      436 |     await page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true }).click(); expect((await saved).status()).toBe(200); expect(writes).toHaveLength(1);
+      437 |     for (const length of [4, 2001]) {
+    > 438 |         await note.fill('😀'.repeat(length)); await expect(note).toHaveAttribute('aria-invalid', 'true');
+          |                                                                  ^
+      439 |         await expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled(); expect(writes).toHaveLength(1);
+      440 |     }
+      441 |     for (const [index, length] of [5, 2000].entries()) {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\frontend-corrections.spec.ts:438:66
+
+    Error Context: evidence\github-delivery-20261010\ci-reload-validation\f08-before-results\frontend-corrections-F08-p-5bf69-ng-jurisdiction-before-HTTP-chromium\error-context.md
+
+    Error Context: evidence\github-delivery-20261010\ci-reload-validation\f08-before-results\frontend-corrections-F08-p-5bf69-ng-jurisdiction-before-HTTP-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    evidence\github-delivery-20261010\ci-reload-validation\f08-before-results\frontend-corrections-F08-p-5bf69-ng-jurisdiction-before-HTTP-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace evidence\github-delivery-20261010\ci-reload-validation\f08-before-results\frontend-corrections-F08-p-5bf69-ng-jurisdiction-before-HTTP-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:53684) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/4] [chromium] › tests\frontend-corrections.spec.ts:428:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+
+(node:78280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/4] [firefox] › tests\frontend-corrections.spec.ts:428:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+
+(node:44172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[4/4] [firefox] › tests\frontend-corrections.spec.ts:428:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+  1 failed
+    [chromium] › tests\frontend-corrections.spec.ts:428:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP 
+  3 passed (42.2s)
