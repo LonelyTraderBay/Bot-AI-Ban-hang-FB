@@ -61,10 +61,19 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
 
     for (const width of widths) {
         await page.setViewportSize({ width, height: 900 });
+        const canonicalResponse = page.waitForResponse(response => {
+            const url = new URL(response.url());
+            return response.request().method() === 'GET' && url.pathname.endsWith('/marketing-summary')
+                && ['fromDate', 'toDate', 'bucket'].every(key => url.searchParams.has(key));
+        });
         await page.goto(new URL('/s/shop-demo/reports/marketing', demoUrl).toString());
+        expect((await canonicalResponse).status()).toBe(200);
         await expect(page.getByRole('heading', { name: 'Thông tin cho marketing' })).toBeVisible();
         await expect(page.getByTestId('marketing-loss-chart')).toBeVisible();
         await expect(page.getByRole('table', { name: 'Lý do không chốt đơn' })).toBeVisible();
+        const chartSvg = page.getByTestId('marketing-loss-chart').locator('svg.recharts-surface');
+        await expect(chartSvg).toBeVisible();
+        await expect(chartSvg.locator('text')).not.toHaveCount(0);
         const spacing = await page.evaluate(() => {
             const styleOf = (selector: string) => {
                 const element = document.querySelector<HTMLElement>(selector);
