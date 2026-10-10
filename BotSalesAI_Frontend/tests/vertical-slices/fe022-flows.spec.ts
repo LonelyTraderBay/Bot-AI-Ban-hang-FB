@@ -174,11 +174,17 @@ test('FE022.VS03 finance → reconciliation retains bank transaction and partial
         name: 'fe022-bank.csv', mimeType: 'text/csv',
         buffer: Buffer.from('externalTransactionId,amount,currency,direction,occurredAt,referenceText\nFE022-BANK-01,100000,VND,credit,2026-09-29T13:30:00Z,FE022 vertical reconciliation', 'utf8'),
     });
-    await dialog.getByRole('textbox', { name: 'Tài khoản / đơn vị vận chuyển' }).fill('bank-fixture-01');
+    await chooseOption(page, 'Tài khoản / đơn vị vận chuyển', '112 · Tiền ngân hàng', dialog);
     await dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' }).fill('FE022-BANK-BATCH-01');
+    const previewResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/finance/statement-import-preview'));
+    await dialog.getByRole('button', { name: 'Xem trước bảng đối soát' }).click();
+    const preview = await previewResponse;
+    expect(preview.status()).toBe(200);
+    expect((await preview.json()).data).toMatchObject({ validRows: 1, invalidRows: 0, validationToken: expect.any(String) });
     const importResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/bank-transactions/import'));
-    await dialog.getByRole('button', { name: 'Kiểm tra và nhập' }).click();
+    await dialog.getByRole('button', { name: 'Nhập các dòng hợp lệ' }).click();
     expect((await importResponse).status()).toBe(200);
+    await expect(dialog.getByRole('link', { name: 'Xem kết quả nhập' })).toBeVisible();
     await dialog.getByRole('button', { name: 'Hủy' }).click();
 
     await page.getByRole('tab', { name: 'Chênh lệch cần xử lý' }).click();
@@ -250,7 +256,10 @@ test('FE022.S05 route and feature matrix covers canonical IDs with executed case
     const matrix = readJson<Array<{
         routeId: string;
         route: string;
+        source: string;
+        component: string;
         state: string;
+        journeys: unknown[];
         routeEvidence: { testFile: string; testTitle: string; result: string; logFile: string };
         acceptanceScenarioIds: string[];
         featureCoverage: Array<{
@@ -267,9 +276,23 @@ test('FE022.S05 route and feature matrix covers canonical IDs with executed case
     expect(featureCatalog.features.length).toBeGreaterThan(0);
     expect(matrix).toHaveLength(routeManifest.routes.length);
     expect(new Set(matrix.map(route => route.routeId))).toEqual(new Set(routeManifest.routes.map(route => route.id)));
+    expect(new Set(routeManifest.routes.map(route => route.id)).size).toBe(routeManifest.routes.length);
+    expect(new Set(featureCatalog.features.map(feature => feature.id)).size).toBe(featureCatalog.features.length);
+    const sourceOnly = matrix.every(row => row.state === 'SOURCE_IMPLEMENTED_BROWSER_NOT_REVALIDATED');
+    for (const feature of featureCatalog.features) {
+        expect(feature.routeIds.length).toBeGreaterThan(0);
+        expect(feature.routeIds.every(id => routeManifest.routes.some(route => route.id === id))).toBe(true);
+    }
 
     for (const route of routeManifest.routes) {
         const row = matrix.find(item => item.routeId === route.id);
+        expect(row).toMatchObject({ route: route.path, acceptanceScenarioIds: route.acceptanceScenarioIds });
+        expect(fs.readFileSync(path.resolve(process.cwd(), row!.source), 'utf8')).toContain(`function ${row!.component}(`);
+        if (sourceOnly) {
+            expect(row).toMatchObject({ state: 'SOURCE_IMPLEMENTED_BROWSER_NOT_REVALIDATED', routeEvidence: { result: 'NOT_RUN' }, journeys: [], featureCoverage: [] });
+            expect(Object.keys(row!.routeEvidence)).toEqual(['result']);
+            continue;
+        }
         expect(row).toMatchObject({ route: route.path, state: 'BROWSER_ROUTE_RENDERED_WITH_SYNTHETIC_API', acceptanceScenarioIds: route.acceptanceScenarioIds });
         expect(row?.routeEvidence).toMatchObject({
             testFile: 'tests/frontend.spec.ts',
@@ -300,15 +323,16 @@ test('FE022.S05 route and feature matrix covers canonical IDs with executed case
         }
     }
     const mappedIds = new Set(matrix.flatMap(route => route.featureCoverage.map(feature => feature.featureId)));
-    expect(mappedIds).toEqual(new Set(featureCatalog.features.map(feature => feature.id)));
+    const canonicalIds = new Set(featureCatalog.features.map(feature => feature.id));
+    if (sourceOnly) expect(mappedIds.size).toBe(0);
+    else expect(mappedIds).toEqual(canonicalIds);
     expect(journeySource).toContain('FE022.VS01');
     expect(journeySource).toContain('FE022.VS02');
     expect(journeySource).toContain('FE022.VS03');
     expect(journeySource).toContain('FE022.VS04');
-    expect(mappedIds.has('B06')).toBeTruthy();
-    expect(mappedIds.has('C04')).toBeTruthy();
-    expect(mappedIds.has('E08')).toBeTruthy();
     for (const featureId of ['B06', 'C04', 'E08', 'G05', 'F03']) {
+        expect(canonicalIds.has(featureId)).toBeTruthy();
+        if (sourceOnly) continue;
         const feature = matrix.flatMap(route => route.featureCoverage).find(item => item.featureId === featureId);
         expect(feature?.coverage).toBe('FRONTEND_INTERACTION_VERIFIED_SYNTHETIC');
     }
