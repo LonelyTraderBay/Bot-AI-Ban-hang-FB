@@ -311,6 +311,11 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(workflow, /browser: \[chromium, firefox\]/);
     assert.match(workflow, /npm run test:e2e -- --project=\$\{\{ matrix\.browser \}\}/);
     assert.match(workflow, /playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}/);
+    const builtDemoSuffix = workflow.match(/playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}([^\s]*)/)[1];
+    const builtDemoConfig = fs.readFileSync(path.join(root, 'playwright.built-demo.config.ts'), 'utf8');
+    const builtDemoProjects = [...builtDemoConfig.matchAll(/\bname:\s*'([^']+)'/g)].map(match => match[1]);
+    for (const browser of ['chromium', 'firefox'])
+        assert.ok(builtDemoProjects.includes(browser + builtDemoSuffix), `Built-demo selector must resolve a configured project for ${browser}`);
     assert.match(workflow, /name: frontend-\$\{\{ matrix\.browser \}\}/, 'Each runner must upload a distinct revision-scoped artifact');
     assert.match(workflow, /if: \$\{\{ always\(\) \}\}/);
     assert.match(workflow, /upload-artifact/);

@@ -38,7 +38,7 @@ jobs:
       - run: npm run verify
       - run: npm run test:e2e -- --project=${{ matrix.browser }} --reporter=line
       - name: Verify the built demo (${{ matrix.browser }})
-        run: npx playwright test --config playwright.built-demo.config.ts --output test-results/built-demo --project=${{ matrix.browser }} --reporter=line
+        run: npx playwright test --config playwright.built-demo.config.ts --output test-results/built-demo --project=${{ matrix.browser }}-built-demo --reporter=line
       - name: Upload revision-scoped build and browser evidence
         if: ${{ always() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
