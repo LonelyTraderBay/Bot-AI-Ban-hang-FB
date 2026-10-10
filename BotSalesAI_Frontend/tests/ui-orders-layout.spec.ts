@@ -67,7 +67,10 @@ test('Orders draft, versioned quote, canonical address snapshot and return dialo
     await expect(page.getByRole('button', { name: 'Lưu đơn nháp', exact: true })).toBeEnabled();
     expect(writes).toEqual([]);
 
+    const orderDetail = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/orders/DH-1001');
     await page.goto(new URL('/s/shop-demo/orders/DH-1001', demoUrl).toString());
+    expect((await orderDetail).status()).toBe(200);
+    await page.locator('main#main-content').getByRole('progressbar', { name: 'Đang tải dữ liệu', exact: true }).waitFor({ state: 'hidden' });
     await expect(page.getByText('Phiên bản 1', { exact: true })).toBeVisible();
     const quoteResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/quote'));
     await page.getByRole('button', { name: 'Lấy báo giá hiện tại', exact: true }).click();
