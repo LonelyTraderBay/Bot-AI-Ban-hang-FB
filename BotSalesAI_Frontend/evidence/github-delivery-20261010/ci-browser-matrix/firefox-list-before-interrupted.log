@@ -1,0 +1,358 @@
+✔ canonical contracts validate and generate the API base path from OpenAPI (64.1157ms)
+✔ rejects drift in OpenAPI YAML and operation index projections (102.5007ms)
+✔ generated operation registry preserves required and optional query parameter metadata (28.1796ms)
+✔ rejects unresolved schema references before generation (42.0039ms)
+✔ rejects missing API version and a server URL outside same-origin path form (40.5767ms)
+✔ rejects route-to-operation drift without rewriting the canonical manifest (45.0224ms)
+✔ detects a stale generated file and accepts it after regeneration (4.4081ms)
+{
+  "taskId": "FE011",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    {
+      "id": "R15",
+      "path": "/s/:shopId/inventory",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockSnapshots",
+        "getShop"
+      ],
+      "action": {
+        "label": "Điều chỉnh tồn",
+        "operationId": "createInventoryAdjustment",
+        "permission": "inventory.adjust"
+      }
+    },
+    {
+      "id": "R16",
+      "path": "/s/:shopId/inventory/movements",
+      "permission": "inventory.read",
+      "reads": [
+        "listStockMovements"
+      ]
+    }
+  ],
+  "operations": [
+    "listStockSnapshots",
+    "listStockMovements",
+    "createInventoryAdjustment",
+    "getShop"
+  ],
+  "permissionBoundary": "Route reads require inventory.read; adjustment uses inventory.adjust; cost requires finance.read; product and order links are permission-gated.",
+  "commandSemantics": "202 CommandResponse; expectedVersion and unitCost are contract-required body properties; the shared client waits for terminal state and handles unknown outcomes.",
+  "checks": 17
+}
+✔ FE011 routes, permissions, operations and DTOs map to canonical contracts and current source (21.4601ms)
+{
+  "taskId": "FE012",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R17",
+    "R18",
+    "R19",
+    "R43"
+  ],
+  "operations": [
+    "listOrders",
+    "getOrder",
+    "getShop",
+    "listCustomers",
+    "listProducts",
+    "listConversations",
+    "createOrder",
+    "updateOrderDraft",
+    "quoteOrder",
+    "recordCustomerConfirmation",
+    "confirmOrder",
+    "cancelOrder",
+    "listReturnCases",
+    "getReturnCase",
+    "createReturnCase",
+    "inspectReturn",
+    "getCommand",
+    "handoverShipment",
+    "payOrder",
+    "refundOrder"
+  ],
+  "contractEvidence": "OrderDraft carries required IDs and 1..100 lines, integer quantity 1..1000000 and notes up to 2000; confirmation requires quote hash/version and customer message evidence; return inspection is line-scoped.",
+  "permissionBoundary": "Customer/product pickers are enabled only with read capability; write actions follow orders.write, orders.confirm, orders.return and inventory.adjust.",
+  "limitations": "No address CRUD endpoint is introduced; shippingAddressId remains an external verified ID and mock confirmation is only a demo simulation.",
+  "checks": 35
+}
+✔ FE012 routes, operations, permissions and DTO limits map to canonical contracts and orders source (45.136ms)
+{"taskId":"FE016","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R05","R06"],"operations":["listConversations","getConversation","listMessages","sendMessage","takeoverConversation","releaseConversation","resolveConversation","assignConversation","listFeedback","createFeedback","reviewFeedback","uploadFile","getFile","listCommands","getCommand","getInboxMetadata"],"knownGap":"Real media provider, antivirus scan, Meta policy and production storage remain outside Frontend/MSW verification.","checks":3}
+{
+  "taskId": "FE013",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "routes": [
+    "R41",
+    "R42"
+  ],
+  "operations": [
+    "listPrepJobs",
+    "getPrepJob",
+    "getWorkItem",
+    "claimWorkItem",
+    "pickPrepLine",
+    "packPrepJob",
+    "listShipments",
+    "getShipment",
+    "createShipment",
+    "handoverShipment",
+    "recordShipmentEvent"
+  ],
+  "permissionBoundary": "fulfillment.read gates route data, operations.claim gates WorkItem claim, fulfillment.write gates picks/pack/events/shipment creation, and fulfillment.handover gates stock-consuming handover.",
+  "stateBoundary": "Claim/pick/pack/handover/delivery/payment remain separate states; return eligibility continues to come from the order API.",
+  "checks": 54
+}
+✔ FE013 routes, permissions, DTOs and state transitions map to canonical contracts and fulfillment source (51.4434ms)
+{"taskId":"FE017","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R23","R24","R25"],"operations":15,"unresolvedContractField":"Knowledge.allowedActions","checks":4}
+✖ FE014 procurement routes, permissions, DTOs and current source follow canonical contracts (38.0639ms)
+{"taskId":"FE018","scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","routes":["R26","R27","R28","R51"],"operations":18,"checks":2,"knownRouteMappingGap":"R51 omits updateBudgetPolicy; UI uses canonical operation permission operations.manage"}
+✖ FE015 finance routes, capabilities, operations and DTOs follow canonical contracts (62.5496ms)
+✔ FE016 maps R05/R06 reads and mutations to canonical permissions and current inbox source (0.3462ms)
+✔ FE016 contract bounds list filters, safe message refs and versioned send payloads (0.415ms)
+✔ FE016 uses shell-owned resync and command recovery, and mock takeover enforces current version (0.1539ms)
+✔ FE017 R23-R25 operations and action permissions match canonical routes (0.3932ms)
+✖ FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field (1.4109ms)
+✔ FE017 price and availability source preview uses separately permissioned canonical APIs (0.089ms)
+✔ FE017 mock keeps published revisions immutable and feedback approval creates a draft revision (0.0591ms)
+✔ FE018 R26/R27/R28/R51 actions use canonical routes, operation IDs, and permissions (0.3099ms)
+✔ FE018 capability, tool permissions, human confirmation, and evaluation labels stay within declared schemas (0.1229ms)
+✖ FE020 source stays mapped to canonical operations, permissions, and safe missing-schedule boundary (2.7273ms)
+✔ FE020 mock enforces work-item capabilities and keeps integration readiness unknown (0.157ms)
+✔ CSS label gap accepts the canonical direct pixel constructor and its exact owner/property (944.5455ms)
+✔ CSS label gap cannot be used as an unrelated spacing property (954.2987ms)
+✔ CSS label gap rejects a raw pixel constructor argument (989.713ms)
+✔ CSS label gap cannot impersonate a role from another owner (942.5518ms)
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (940.3366ms)
+✔ rejects a CSS spacing role without a declared shared owner (942.5598ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (944.0873ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (947.5532ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (945.5745ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (2861.4874ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (2795.8747ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (3770.2388ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (1890.0968ms)
+✔ report mode inventories migration debt without turning findings into PASS (956.2863ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (9.8592ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (176.2577ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (170.9118ms)
+✔ uses the installed project compiler and the pinned version in this checkout (124.0685ms)
+✔ accepts a local compiler whose manifest, module and executable match the project (58.4157ms)
+✔ fails closed for missing local compiler without selecting a global fallback (18.6456ms)
+✔ fails closed for different installed package version without selecting a global fallback (20.4139ms)
+✔ fails closed for module version differs from its manifest without selecting a global fallback (24.0184ms)
+✔ fails closed for ancestor compiler silently resolved outside this project without selecting a global fallback (23.7941ms)
+✔ fails closed for missing compiler executable without selecting a global fallback (23.5465ms)
+✔ fails closed for unpinned project compiler requirement without selecting a global fallback (21.0896ms)
+✔ production composition gate detects const MUI alias and namespace layout role (627.6589ms)
+✔ production composition gate closes aliased barrel API props (394.7934ms)
+✔ production composition gate does not mistake shadowed local component for shared API (386.0125ms)
+✔ production composition gate keeps valid canonical barrel consumer (432.5571ms)
+✔ production visual gate rejects pretrusted-name spoof and parameter shadow (342.926ms)
+✔ production visual gate rejects a fake canonical module suffix (406.7934ms)
+✔ production visual gate inspects renamed genuine styled factory (369.2457ms)
+✔ production visual gate preserves canonical barrel aliases and finite palette selection (404.2762ms)
+✔ production visual gate rejects raw values hidden in a finite palette (355.8789ms)
+✔ production visual gate does not follow a global alias through parameter shadow (321.5407ms)
+✔ production composition geometry cannot resolve a shadowed global variable (313.3448ms)
+✔ finite semantic prop types do not grant trust to a different same-named parameter (311.4416ms)
+✔ opaque namespace composition selection cannot bypass closed props (333.7003ms)
+✔ opaque namespace style factory remains a visual binding failure (365.8359ms)
+✔ canonical renamed import and constant alias preserve owner and path (297.9645ms)
+✔ namespace and literal element access resolve canonical exports (313.1419ms)
+✔ barrel re-export resolves original component identity (302.1382ms)
+✔ parameter shadow does not inherit canonical import trust (273.5061ms)
+✔ fake trusted names and a module named visual are not canonical (315.6259ms)
+✔ mutable aliases, opaque keys and cyclic locals are not proven canonical (320.8834ms)
+✔ destructured constant and safe type syntax preserve provenance (391.3985ms)
+✔ installed MUI renamed styled resolves while local styled does not (290.2113ms)
+✔ JavaScript workers remain in the Program import closure (327.0296ms)
+✔ malformed element access is unproven rather than crashing the resolver (329.7053ms)
+✔ a tsconfig alias cannot label another dependency as genuine MUI (340.2778ms)
+✔ MUI re-export through a first-party barrel keeps library identity (362.9954ms)
+✔ constant property-key aliases preserve canonical element access (356.2005ms)
+✔ public layout mapping cannot be written through a direct consumer reference (499.9954ms)
+✔ public layout nested aliases remain readonly (439.8148ms)
+✔ public visual mapping already rejects consumer writes (179.0523ms)
+✔ canonical readonly style maps remain readable by consumers (444.8933ms)
+✔ canonical token space cannot be overwritten through an alias (140.632ms)
+✔ public color export cannot be overwritten (155.6889ms)
+✔ readonly token and color reads retain their public types (141.784ms)
+✔ P10/P15 catch alias and neutral-wrapper duplicate insets through fragments and conditionals (349.9749ms)
+✔ P20 resolves shared composition identities through a barrel and const component aliases (372.9254ms)
+✔ P11/P13 catch static element access roles on every MUI surface, including Paper (438.918ms)
+✔ P12 checks React createElement and JSX-runtime element factories (324.3233ms)
+✔ P14 resolves bodyMode literal aliases and fails closed when ownership is unknown (942.3325ms)
+✔ checks Panel ancestry when React elements are created natively (313.1104ms)
+✔ keeps independent nested surfaces and portaled dialogs as separate owners (731.8161ms)
+✔ accepts finite bodyMode branches and every mode in the public component contracts (1141.5167ms)
+✔ stops inherited gap ownership at Panels and independent bordered surfaces (631.9204ms)
+✔ tracks gaps through fragments, conditions and ready QueryState, but not inside DOM wrappers (366.9695ms)
+✔ applies the same finite modes and wrapper boundaries to native React factories (705.8762ms)
+✔ recognizes native outlined Paper and nested Box surface inset boundaries (606.2724ms)
+✔ fails closed when an unresolved custom wrapper obscures a semantic gap owner (331.8715ms)
+✔ rejects unsupported placement and rhythm values while accepting finite aliases and branches (731.417ms)
+✔ rejects unsupported finite values through React element factories (614.598ms)
+✔ accepts semantic composition, closed geometry and business-specific MUI primitives (13.0034ms)
+✔ rejects rebuilding each shared spacing owner at a consumer (12.1893ms)
+✔ follows aliases, local style variables, object spreads and namespace imports (12.6417ms)
+✔ rejects direct and spread spacing overrides on semantic components (10.4832ms)
+✔ rejects spacing or opaque spreads hidden in geometry (11.547ms)
+✔ allows the canonical owner implementation and fails closed on malformed source (10.3295ms)
+✔ rejects duplicated parent boundary and duplicated Panel inset (10.5893ms)
+✔ checks default MUI imports and fails closed for opaque geometry (10.6865ms)
+✔ distinguishes content grids from flex flows when reporting the shared owner (10.1334ms)
+✔ rejects page spacing for paired fields and peer Panels without a section gap owner (12.9569ms)
+✔ related sibling gaps belong to ActionGroup comfortable density, not consumer Stack styles (10.9829ms)
+✔ density profiles are finite and new spacing paths retain the shared owner (10.3369ms)
+✔ check-layout rejects missing-html at the UI entry boundary (597.2525ms)
+✔ check-layout rejects missing-style at the UI entry boundary (621.1707ms)
+✔ check-layout rejects inline-style at the UI entry boundary (605.4375ms)
+✔ check-layout rejects alias-mismatch at the UI entry boundary (597.8535ms)
+✔ check-visual-tokens rejects missing-html at the UI entry boundary (561.5316ms)
+✔ check-visual-tokens rejects missing-style at the UI entry boundary (597.4513ms)
+✔ check-visual-tokens rejects inline-style at the UI entry boundary (592.0894ms)
+✔ check-visual-tokens rejects alias-mismatch at the UI entry boundary (627.9385ms)
+✔ check-ui-composition rejects missing-html at the UI entry boundary (564.0274ms)
+✔ check-ui-composition rejects missing-style at the UI entry boundary (613.7921ms)
+✔ check-ui-composition rejects inline-style at the UI entry boundary (601.3999ms)
+✔ check-ui-composition rejects alias-mismatch at the UI entry boundary (604.2833ms)
+✔ DOM entry inspection never executes an inline script and detects decoded attributes (26.6949ms)
+✔ manifest icons are resolved and malformed manifest data fails closed (25.4251ms)
+✔ data and remote module sources cannot stand in for a scanned script entry (19.4388ms)
+✔ an unused alias map cannot prove the exported Vite configuration (17.1706ms)
+✔ a Vite HTML generator cannot inject an unscanned stylesheet through a hook (19.8536ms)
+✔ accepts current fingerprints, honest open coverage, and explained N/A (13.5174ms)
+✔ rejects a stale source fingerprint (15.3986ms)
+✔ rejects a stale command log (13.9995ms)
+✔ rejects missing, absolute, and escaping source paths (14.8563ms)
+✔ rejects unrun, missing, duplicate, and nonzero command results marked PASS (16.0534ms)
+✔ rejects PASS when expected and observed results differ (15.8511ms)
+✔ rejects inconsistent coverage and N/A without a reason (16.9267ms)
+✔ rejects a baseline falsely dated after implementation started and detects changed baseline artifacts (18.5444ms)
+✔ COMPLETE cannot contain open coverage or failed commands (17.6908ms)
+✔ S19 must explicitly reconcile files, APIs, routes, rendered routes, slots, and states (19.7791ms)
+✔ rejects malformed top-level evidence instead of treating missing fields as success (13.2148ms)
+✔ check-layout fails closed for relative missing import (622.2806ms)
+✔ check-layout fails closed for aliased missing import (602.3367ms)
+✔ check-layout fails closed for missing CSS import (594.2336ms)
+✔ check-layout fails closed for opaque dynamic import (690.4739ms)
+✔ check-visual-tokens fails closed for relative missing import (585.5443ms)
+✔ check-visual-tokens fails closed for aliased missing import (623.1456ms)
+✔ check-visual-tokens fails closed for missing CSS import (586.6872ms)
+✔ check-visual-tokens fails closed for opaque dynamic import (584.9582ms)
+✔ check-ui-composition fails closed for relative missing import (589.7152ms)
+✔ check-ui-composition fails closed for aliased missing import (596.7872ms)
+✔ check-ui-composition fails closed for missing CSS import (597.1969ms)
+✔ check-ui-composition fails closed for opaque dynamic import (599.9647ms)
+✔ scope follows a canonical package alias and classifies data assets separately (26.4329ms)
+✔ scope follows CSS imports and rejects a missing nested stylesheet (24.991ms)
+✔ missing and malformed tsconfig cannot silently supply default resolution (15.8759ms)
+✔ scope rejects discovered script sources omitted by the compiler config (25.3364ms)
+✔ config includes are discovered even when a package source has no app import yet (25.2932ms)
+✔ a first-party import cannot silently claim source outside the project (22.9986ms)
+✔ malformed CSS and unhandled stylesheet languages cannot be classified as harmless data (34.2727ms)
+✔ CSS asset URLs resolve with queries and fragments and reject missing files (38.1158ms)
+✔ native service worker scripts enter the source closure and missing URLs fail (33.9166ms)
+✔ Vite BASE_URL sample downloads enter asset coverage and missing samples fail (34.8939ms)
+✔ a declared MSW worker has a vendor owner and rejects modifications (48.8428ms)
+✔ CommonJS and TypeScript import-equals cannot hide missing first-party modules (44.1003ms)
+✔ canonical writes through casts and aliases fail outside style expressions (979.8763ms)
+✔ Object.assign cannot mutate canonical data but can copy to a fresh object (1959.2363ms)
+✔ layout gate rejects raw spacing on const alias of MUI component (934.0972ms)
+✔ canonical mutation gate follows global mutator aliases and reflection (945.0844ms)
+✔ local mutator names do not acquire global mutation identity (940.7685ms)
+✔ destructured mutators and call/apply retain canonical mutation checks (972.4786ms)
+✔ global mutator call/apply can copy canonical values into fresh objects (995.3548ms)
+✔ mutable aliases with possible canonical destinations fail closed (949.5487ms)
+✔ opaque apply arguments fail closed while unrelated mutable data stays valid (1850.8604ms)
+✔ canonical references inside containers and destructured aliases cannot be mutated (968.1125ms)
+✔ independent shallow copies of scalar canonical fields remain mutable (944.668ms)
+✔ array references and nested destructuring preserve canonical write provenance (960.7537ms)
+✔ array destinations distinguish independent elements from canonical references (936.3573ms)
+✔ array destructuring, dynamic indices and spread cannot hide canonical references (984.0128ms)
+✔ dynamic indices and destructuring of independent arrays stay mutable (945.5765ms)
+✔ function parameters cannot hide canonical mutation across source files (1038.9251ms)
+✔ read-only helpers and mutations of unrelated arguments remain valid (957.398ms)
+✔ returned canonical references remain protected across helper boundaries (971.2574ms)
+✔ helper returns of fresh scalar copies do not retain canonical destination identity (966.2915ms)
+✔ destructured object parameters cannot mutate canonical arguments (948.1382ms)
+✔ destructured object parameters retain independent argument mutability (938.6873ms)
+✔ default parameter and binding initializers cannot hide canonical mutations (963.9764ms)
+✔ fresh default parameter and binding copies remain mutable (985.1974ms)
+✔ rest parameters retain canonical argument write provenance (969.7031ms)
+✔ rest parameters distinguish independent positions from canonical siblings (1006.4154ms)
+✔ finite spread arguments preserve shifted positional and rest destinations (963.1358ms)
+✔ finite spread expansion keeps independent argument positions mutable (963.1527ms)
+✔ opaque spreads keep positional mutation destinations unknown (954.7084ms)
+✔ opaque spreads into read-only helpers do not invent mutation findings (953.2314ms)
+✔ array parameter patterns retain canonical positions including nested object arrays (979.0078ms)
+✔ array parameter patterns retain independent bound element mutability (958.6308ms)
+✔ layout gate rejects parameter shadow of canonical layout name (1063.9441ms)
+✔ layout gate follows genuine renamed styled factory (936.5749ms)
+✔ layout gate accepts canonical namespace, element access and barrel alias (940.7684ms)
+✔ layout gate does not mistake local component named Stack for MUI (945.3819ms)
+✔ layout gate inspects renamed installed Emotion css tag (936.682ms)
+✔ layout gate preserves genuine aliased Controller field forwarding (940.2536ms)
+✔ a same-named local Controller cannot exempt an unknown prop spread (970.3353ms)
+✔ genuine useForm registration survives property and destructured aliases (957.008ms)
+✔ a function named register cannot exempt injected style props (950.9802ms)
+✔ a bridge callback parameter cannot impersonate its private factor binding (944.1098ms)
+✔ opaque namespace component selection remains a strict binding failure (950.3405ms)
+✔ opaque namespace factory cannot hide style arguments (954.9104ms)
+✔ MUI re-export cannot hide raw spacing behind a first-party barrel (951.1869ms)
+✔ destructuring assignments cannot hide canonical write targets (964.3925ms)
+✔ destructuring assignments can update independent copied destinations (955.0516ms)
+✔ object rest retains nested canonical references while copying the outer object (997.9917ms)
+✔ rest scalar copies and replacement of container references stay mutable (942.2697ms)
+✔ shallow object spread preserves canonical child references and last-writer order (955.4118ms)
+✔ shallow spread with a later independent override stays mutable (960.7267ms)
+✔ exported mutable aliases retain assignments from their declaring file (954.149ms)
+✔ exported independent mutable data does not acquire canonical provenance (950.9666ms)
+✔ literal computed keys retain canonical container and parameter provenance (1089.3114ms)
+✔ literal computed keys do not taint independent selected properties (968.167ms)
+✔ Object.assign shallow copies retain canonical nested reference provenance (966.792ms)
+✔ Object.assign later independent overrides and scalar copies stay mutable (975.7012ms)
+✔ union and dynamic property selections retain possible canonical destinations (961.5828ms)
+✔ finite union property selections exclude canonical siblings not in the key set (962.5461ms)
+✔ union selection over Object.assign output retains canonical child provenance (956.3443ms)
+✔ union selection over independent Object.assign output remains mutable (958.6765ms)
+✔ Reflect.set call/apply checks the target argument rather than the assigned value (2890.9277ms)
+✔ aliased React createElement checks MUI and native style objects (1004.0001ms)
+✔ GlobalStyles.styles is checked and local createElement names stay local (1930.1242ms)
+✔ React JSX runtime factories cannot bypass MUI or native style checks (972.0654ms)
+✔ React cloneElement checks the cloned MUI element and preserves native props (3916.2679ms)
+✔ Emotion css props and object factories are inspected with native CSS semantics (2910.6896ms)
+✔ Inline style elements in JSX, React factories, DOM and the HTML entry fail closed (7840.1905ms)
+✔ DOM CSSOM spacing writes use semantic roles and reject opaque style strings (1937.2247ms)
+✔ HTML parsing and runtime stylesheet mutation cannot bypass the imported CSS boundary (2018.1843ms)
+✔ spacing shorthand values and responsive breakpoints preserve token and unit provenance (9616.4105ms)
+✔ function return producers cannot hide canonical children behind spreads (953.096ms)
+✔ producer spreads keep later independent child overrides writable (973.948ms)
+✔ Amount consumers declare wrapping outside DataTable columns and keep table money unbroken (76.0295ms)
+✔ the shared catalog covers every public React component and supporting Column type (50.2168ms)
+✔ SPC-067 covers discovered public Shared APIs without a fixed export count (12.5138ms)
+✔ every public React API has a direct rendered contract test (9.5025ms)
+✔ catalog declaration lines and stated JSX counts match resolved source symbols (113.778ms)
+✔ every shared React export has a resolved production consumer or an explicit zero-use lifecycle decision (75.1479ms)
+✔ required UI evidence and regression gates remain wired to root verify and the active parent workflow (16.7482ms)
+✔ composition prop allowlists match the TypeScript owners exactly (10.8331ms)
+✔ QueryState uses only the approved inline and section pending profiles (11.5202ms)
+✔ QueryState consumers reserve section loading for primary content and keep every other state inline by default (74.7189ms)
+✔ body modes, placement roles and geometry keys match the TypeScript contracts (15.7672ms)
+✔ Panel geometry and DataTable columns remain closed public contracts (16.1235ms)
+✔ shared component and composition props expose no arbitrary layout/style escape hatch (12.8322ms)
+✔ layout role types, runtime values, consumers and ownership documentation stay closed (3134.7259ms)
+✔ check-layout rejects missing source instead of returning an empty PASS (416.4581ms)
+✔ check-layout rejects empty source instead of returning an empty PASS (412.0521ms)
+✔ check-layout rejects generated-only source instead of returning an empty PASS (421.2214ms)
+✔ check-layout rejects jsx-parse source instead of returning an empty PASS (436.032ms)
+✔ check-visual-tokens rejects missing source instead of returning an empty PASS (446.2273ms)
+✔ check-visual-tokens rejects empty source instead of returning an empty PASS (471.6091ms)
+✔ check-visual-tokens rejects generated-only source instead of returning an empty PASS (400.794ms)
+✔ check-visual-tokens rejects jsx-parse source instead of returning an empty PASS (402.7301ms)
+✔ check-ui-composition rejects missing source instead of returning an empty PASS (399.5918ms)
+✔ check-ui-composition rejects empty source instead of returning an empty PASS (398.6242ms)
+✔ check-ui-composition rejects generated-only source instead of returning an empty PASS (403.6335ms)

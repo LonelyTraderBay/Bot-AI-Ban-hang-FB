@@ -1,0 +1,350 @@
+Listing tests:
+  [firefox] › accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+  [firefox] › accessibility\routes.spec.ts:84:1 › contained action buttons do not animate between contrasting enabled and disabled color pairs
+  [firefox] › artifacts\demo-preview.spec.ts:40:1 › the built demo artifact serves the React UI and synthetic API through preview
+  [firefox] › artifacts\demo-preview.spec.ts:104:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+  [firefox] › artifacts\demo-preview.spec.ts:143:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime
+  [firefox] › fe009.spec.ts:37:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route
+  [firefox] › fe009.spec.ts:59:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version
+  [firefox] › fe009.spec.ts:127:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save
+  [firefox] › fe009.spec.ts:144:1 › job detail follows an export created in the current synthetic shop and can refetch it
+  [firefox] › fe009.spec.ts:179:1 › FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified
+  [firefox] › fe009.spec.ts:192:1 › FE009.G05 consent management persists challenges without granting consent before customer action
+  [firefox] › fe009.spec.ts:202:1 › FE009.H06 audit screen distinguishes available fields from missing contract detail
+  [firefox] › fe009.spec.ts:211:1 › FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment
+  [firefox] › fe009.spec.ts:243:1 › team invitation and membership revoke stay shop-scoped and protect the active owner
+  [firefox] › fe009.spec.ts:279:1 › privacy delete requests remain pending approval with no frontend step-up shortcut
+  [firefox] › fe010.spec.ts:40:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP
+  [firefox] › fe010.spec.ts:110:1 › product update sends If-Match and keeps edits visible after a 412 conflict
+  [firefox] › fe010.spec.ts:142:1 › warehouse role can read catalog products but cannot edit product fields or price cost data
+  [firefox] › fe010.spec.ts:151:1 › categories create, search, update with a version, and render cursor pagination
+  [firefox] › fe010.spec.ts:180:1 › CSV preview reports row-level errors and commits only valid product rows
+  [firefox] › fe010.spec.ts:252:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible
+  [firefox] › fe010.spec.ts:284:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview
+  [firefox] › fe010.spec.ts:297:1 › demo upload rejects files over 5 MB before making an upload request
+  [firefox] › fe010.spec.ts:308:1 › product category lookup pages the full collection and preserves the selected category while editing
+  [firefox] › fe011.spec.ts:37:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+  [firefox] › fe011.spec.ts:56:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+  [firefox] › fe011.spec.ts:95:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+  [firefox] › fe011.spec.ts:125:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+  [firefox] › fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+  [firefox] › fe011.spec.ts:159:1 › FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source
+  [firefox] › fe011.spec.ts:187:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+  [firefox] › fe011.spec.ts:210:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+  [firefox] › fe012.spec.ts:37:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+  [firefox] › fe012.spec.ts:95:1 › FE012 canonical customer address choice completes the mock order flow with a versioned snapshot
+  [firefox] › fe012.spec.ts:124:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+  [firefox] › fe012.spec.ts:184:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+  [firefox] › fe012.spec.ts:201:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+  [firefox] › fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+  [firefox] › fe012.spec.ts:259:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+  [firefox] › fe012.spec.ts:279:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+  [firefox] › fe012.spec.ts:303:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+  [firefox] › fe012.spec.ts:356:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+  [firefox] › fe012.spec.ts:363:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+  [firefox] › fe013.spec.ts:42:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote
+  [firefox] › fe013.spec.ts:68:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once
+  [firefox] › fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+  [firefox] › fe013.spec.ts:259:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible
+  [firefox] › fe014.spec.ts:27:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent
+  [firefox] › fe014.spec.ts:79:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers
+  [firefox] › fe014.spec.ts:97:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+  [firefox] › fe014.spec.ts:156:1 › FE014.S03 auto-send requires an active matching purchase delegation
+  [firefox] › fe014.spec.ts:170:1 › FE014.S04 owner manages a paused purchase delegation only after rechecking the buyer role
+  [firefox] › fe014.spec.ts:217:1 › FE014.S03 manager without procurement.receive cannot open receipt actions
+  [firefox] › fe014.spec.ts:237:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once
+  [firefox] › fe014.spec.ts:308:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals
+  [firefox] › fe015.spec.ts:59:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates
+  [firefox] › fe015.spec.ts:109:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data
+  [firefox] › fe015.spec.ts:130:1 › UI003 report timestamps follow the active shop timezone
+  [firefox] › fe015.spec.ts:187:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values
+  [firefox] › fe015.spec.ts:215:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings
+  [firefox] › fe015.spec.ts:250:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation
+  [firefox] › fe015.spec.ts:274:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions
+  [firefox] › fe015.spec.ts:297:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page
+  [firefox] › fe015.spec.ts:424:1 › FE015.AC03 COD settlement matches net remittance plus documented fee
+  [firefox] › fe015.spec.ts:459:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible
+  [firefox] › fe015.spec.ts:485:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+  [firefox] › fe016.spec.ts:70:1 › UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports
+  [firefox] › fe016.spec.ts:103:1 › FE016 conversation keeps its composer visible while long demo context scrolls independently
+  [firefox] › fe016.spec.ts:210:1 › FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details
+  [firefox] › fe016.spec.ts:238:1 › Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery
+  [firefox] › fe016.spec.ts:298:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation
+  [firefox] › fe016.spec.ts:317:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change
+  [firefox] › fe016.spec.ts:406:1 › UI002 mobile keeps the list page while messages page and Back restores it
+  [firefox] › fe016.spec.ts:450:1 › UI002 Inbox search resets only the list cursor while a message page is open
+  [firefox] › fe016.spec.ts:507:1 › UI002 deep link, refresh and mobile Back preserve their own cursors
+  [firefox] › fe016.spec.ts:561:1 › UI002 list and message panel errors remain isolated
+  [firefox] › fe016.spec.ts:585:1 › UI002 send, invalidation and resync keep both cursors and send only once
+  [firefox] › fe016.spec.ts:645:1 › FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery
+  [firefox] › fe016.spec.ts:672:1 › FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft
+  [firefox] › fe016.spec.ts:705:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+  [firefox] › fe016.spec.ts:728:1 › FE016.AC04 role without customer/order permissions cannot open those cross-module references
+  [firefox] › fe016.spec.ts:739:1 › FE016.S03 stale takeover preserves reason and reports the version conflict
+  [firefox] › fe016.spec.ts:755:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount
+  [firefox] › fe016.spec.ts:769:1 › FE016.B08 capability-driven image, voice and document media upload and send by scoped file IDs
+  [firefox] › fe016.spec.ts:835:1 › FE016.B09 pending media send preserves newer text and blocks blind retry after unknown outcome
+  [firefox] › fe016.spec.ts:879:1 › FE016.B10 a channel without an explicit media policy keeps text composer and denies attachments
+  [firefox] › fe016.spec.ts:891:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft
+  [firefox] › fe016.spec.ts:907:1 › FE027.B02 inbox price and available stock preview uses current canonical mock reads
+  [firefox] › fe016.spec.ts:928:1 › FE027.B03 order capture links the active customer and conversation into the manual order form
+  [firefox] › fe016.spec.ts:938:1 › FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist
+  [firefox] › fe017-validation.spec.ts:15:1 › FE017 synthetic 422 keeps the knowledge draft fields and shows field errors
+  [firefox] › fe017.spec.ts:26:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+  [firefox] › fe017.spec.ts:117:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+  [firefox] › fe017.spec.ts:156:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+  [firefox] › fe017.spec.ts:189:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+  [firefox] › fe017.spec.ts:211:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+  [firefox] › fe017.spec.ts:244:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+  [firefox] › fe017.spec.ts:265:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+  [firefox] › fe017.spec.ts:280:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+  [firefox] › fe017.spec.ts:298:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+  [firefox] › fe018.spec.ts:130:1 › FE018.S01 maps routes and operations to the canonical OpenAPI permissions
+  [firefox] › fe018.spec.ts:147:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict
+  [firefox] › fe018.spec.ts:178:1 › FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft
+  [firefox] › fe018.spec.ts:202:1 › FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary
+  [firefox] › fe018.spec.ts:232:1 › FE018.AC03 playground sends no external message and preserves unknown cost and token values
+  [firefox] › fe018.spec.ts:254:1 › FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer
+  [firefox] › fe018.spec.ts:280:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion
+  [firefox] › fe018.spec.ts:294:1 › FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot
+  [firefox] › fe018.spec.ts:335:1 › FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results
+  [firefox] › fe018.spec.ts:363:1 › FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions
+  [firefox] › fe018.spec.ts:395:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+  [firefox] › fe018.spec.ts:411:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+  [firefox] › fe018.spec.ts:457:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+  [firefox] › fe019.spec.ts:21:1 › FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries
+  [firefox] › fe019.spec.ts:70:1 › FE019.AC01 AI secret is write-only, cleared after submit, and absent from stored/read data
+  [firefox] › fe019.spec.ts:117:1 › FE019.AC01 invalid mock credential is rejected, cleared from the form, and not submitted
+  [firefox] › fe019.spec.ts:138:1 › FE019.AC02 channel OAuth failure stays on the page and never marks a channel connected
+  [firefox] › fe019.spec.ts:172:1 › FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not request OS permission
+  [firefox] › fe019.spec.ts:251:1 › FE019.AC05 notification policy validates canonical numeric bounds before sending and acknowledges only allowed work
+  [firefox] › fe019.spec.ts:273:1 › FE019.A03 notification order link stays within the active shop scope
+  [firefox] › fe019.spec.ts:282:1 › FE019.A05 reminder policy saves shop-local schedule and quiet hours through the synthetic API
+  [firefox] › fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states
+  [firefox] › fe019.spec.ts:334:1 › FE027.A08 notification settings disclose server-only deduplication and callback safeguards
+  [firefox] › fe020.spec.ts:43:1 › FE020.AC01 approval detail is fetched and a changed source resource rejects the stale decision
+  [firefox] › fe020.spec.ts:89:1 › FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic
+  [firefox] › fe020.spec.ts:140:1 › FE020.AC03 role pause control uses the canonical versioned mock and never claims readiness
+  [firefox] › fe020.spec.ts:157:1 › FE020.F03 operations exception filter groups overdue, blocked, and unclaimed synthetic work
+  [firefox] › fe020.spec.ts:178:1 › FE020.F05 purchase delegation is bounded, saved paused, and requires a separate activation decision
+  [firefox] › fe020.spec.ts:209:1 › FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready
+  [firefox] › fe020.spec.ts:242:1 › FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate
+  [firefox] › fe021.spec.ts:34:1 › FE021 dashboard keeps independent panels usable and hides finance fields without finance.read
+  [firefox] › fe021.spec.ts:46:1 › FE021 timezone and privacy validation waits for interaction and blocks invalid writes
+  [firefox] › fe021.spec.ts:82:1 › FE021 approval and shipment work queues appear before sample previews
+  [firefox] › fe021.spec.ts:104:1 › FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend
+  [firefox] › fe021.spec.ts:160:1 › FE021 invalid marketing deep links mark the responsible field and never send the invalid range
+  [firefox] › fe021.spec.ts:174:1 › FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination
+  [firefox] › fe021.spec.ts:229:1 › FE021 mock rejects an export when reports.export lacks the source permission
+  [firefox] › fe021.spec.ts:249:1 › FE021 mock rejects an invalid report timezone before creating an export job
+  [firefox] › fe021.spec.ts:269:1 › FE021 ambiguous export result preserves the selected dates and never exposes a download
+  [firefox] › fe021.spec.ts:282:1 › FE021 empty report and marketing payloads render explicit empty states
+  [firefox] › fe021.spec.ts:301:1 › FE021 stale export conflict preserves dates and never exposes a download
+  [firefox] › frontend-corrections.spec.ts:18:1 › F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes
+  [firefox] › frontend-corrections.spec.ts:46:1 › F01 requires an explicit choice for a field changed by both editors
+  [firefox] › frontend-corrections.spec.ts:62:1 › F06 detects an order draft and blocks navigation until explicit discard
+  [firefox] › frontend-corrections.spec.ts:75:1 › F02 retains an unsaved product image through an unrelated refetch
+  [firefox] › frontend-corrections.spec.ts:87:1 › F03 retains notification-policy inputs through a background resync and navigation
+  [firefox] › frontend-corrections.spec.ts:98:1 › F05 keeps text typed while a previous internal note is pending
+  [firefox] › frontend-corrections.spec.ts:113:1 › F08 validates 4001 customer-note characters at the field and accepts 4000
+  [firefox] › frontend-corrections.spec.ts:147:1 › F07 routes the fulfillment footer close through the shared discard guard
+  [firefox] › frontend-corrections.spec.ts:161:1 › F09 refreshes new Inbox messages without refetching the visible product and stock snapshots
+  [firefox] › frontend-corrections.spec.ts:191:1 › F01 shop settings merges a server-only locale change and preserves edits typed during save
+  [firefox] › frontend-corrections.spec.ts:219:1 › F03 privacy policy preserves refetch drafts and compares before applying the newest version
+  [firefox] › frontend-corrections.spec.ts:236:1 › F01 category keeps a late edit after saving, and reopens with a clean current baseline
+  [firefox] › frontend-corrections.spec.ts:257:1 › F01 supplier preserves a concurrent server-only term and PATCHes the local name
+  [firefox] › frontend-corrections.spec.ts:274:1 › F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft
+  [firefox] › frontend-corrections.spec.ts:302:1 › F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion
+  [firefox] › frontend-corrections.spec.ts:328:1 › F01 order editor keeps its original version and compares whole line lists before PATCH
+  [firefox] › frontend-corrections.spec.ts:350:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+  [firefox] › frontend-corrections.spec.ts:375:1 › F01 analogous return-inspection draft does not adopt a refetched version without comparison
+  [firefox] › frontend-corrections.spec.ts:399:1 › F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content
+  [firefox] › frontend-corrections.spec.ts:428:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+  [firefox] › frontend-corrections.spec.ts:453:1 › F06 order custom close respects the draft guard and busy editors remain protected
+  [firefox] › frontend.spec.ts:41:1 › catalog create uses the HTTP mock and successful save clears the draft guard
+  [firefox] › frontend.spec.ts:58:1 › dirty drafts block in-app navigation and preserve input until the user decides
+  [firefox] › frontend.spec.ts:76:1 › all canonical routes render inside the real React demo application
+  [firefox] › frontend.spec.ts:101:1 › switching shops cancels a delayed request and loads only the new shop scope
+  [firefox] › frontend.spec.ts:119:1 › role changes remove restricted navigation and the route guard explains denied access
+  [firefox] › frontend.spec.ts:132:1 › deep links survive browser refresh and logout clears the mock session
+  [firefox] › frontend.spec.ts:145:1 › logout asks before discarding a draft and retains the session when logout fails
+  [firefox] › frontend.spec.ts:202:1 › mobile navigation opens, routes, and closes without viewport overflow
+  [firefox] › frontend.spec.ts:216:1 › chunk loading errors use the route recovery boundary
+  [firefox] › frontend.spec.ts:255:1 › live mode reports an unavailable session API without enabling mock data
+  [firefox] › route-role-matrix.spec.ts:44:1 › route read access matches canonical permissions for every demo role
+  [firefox] › security.spec.ts:36:1 › untrusted product text renders as text without activating markup
+  [firefox] › security.spec.ts:54:1 › catalog import rejects a non-CSV file before an upload request
+  [firefox] › security.spec.ts:72:1 › catalog import rejects files above the demo size limit before upload
+  [firefox] › security.spec.ts:90:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries
+  [firefox] › session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+  [firefox] › session\demo-worker-startup.spec.ts:17:1 › demo conditional module requests return complete exports without changing live or non-asset caching
+  [firefox] › session\demo-worker-startup.spec.ts:80:1 › demo startup explains the required setup when the browser blocks Service Workers
+  [firefox] › session\session-revocation.spec.ts:20:1 › session.revoked SSE closes the stream and clears the active shop session
+  [firefox] › session\session-unauthorized.spec.ts:17:1 › expired live session redirects to login and preserves the requested shop route
+  [firefox] › states\fe023.spec.ts:18:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard
+  [firefox] › states\fe023.spec.ts:36:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices
+  [firefox] › states\fe023.spec.ts:77:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path
+  [firefox] › states\fe023.spec.ts:107:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope
+  [firefox] › states\fe023.spec.ts:125:1 › FE023 a saved shop form resets its dirty baseline and reports success
+  [firefox] › states\route-empty-composition.spec.ts:29:1 › empty collection responses render accessible empty states on canonical list routes
+  [firefox] › states\route-error-composition.spec.ts:28:1 › every shop route composes the shared API error state with its page content
+  [firefox] › ui-bot-layout.spec.ts:42:1 › Bot routes R26/R27/R28/R51 fit the supported page-width boundaries
+  [firefox] › ui-bot-layout.spec.ts:52:1 › Bot config, evaluation, role and budget dialogs stay inside mobile and desktop viewports
+  [firefox] › ui-catalog-layout.spec.ts:15:1 › catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at mobile and desktop
+  [firefox] › ui-catalog-layout.spec.ts:67:1 › Imports review notice and demo controls keep the measured shared disclosure boundary at 806x884
+  [firefox] › ui-component-layout.spec.ts:40:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+  [firefox] › ui-component-layout.spec.ts:61:1 › A02 product editors align category and status faces independently from lookup metadata
+  [firefox] › ui-component-layout.spec.ts:84:1 › Shared outlined labels focus empty and populated native controls
+  [firefox] › ui-component-layout.spec.ts:99:1 › A02 variant fields retain readable widths when text doubles
+  [firefox] › ui-component-layout.spec.ts:130:1 › A03 import mapping preserves natural remove actions and editable mappings
+  [firefox] › ui-component-layout.spec.ts:150:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+  [firefox] › ui-component-layout.spec.ts:176:1 › A05 status height follows its own label while long labels remain fully readable
+  [firefox] › ui-component-layout.spec.ts:196:1 › A06 Empty wraps unbroken reference text and retains its keyboard action
+  [firefox] › ui-component-layout.spec.ts:209:1 › A07 canonical order address selection exposes full text and edit lines retain intrinsic actions
+  [firefox] › ui-composition-layout.spec.ts:13:1 › SPC-061/062 shared compositions own their gap and child boundaries on every canonical route
+  [firefox] › ui-composition-positive-ancestry.spec.ts:62:1 › S15 Dashboard conditional content keeps an independently bordered surface inside its Panel owner
+  [firefox] › ui-composition-positive-ancestry.spec.ts:103:1 › S15 catalog QueryState fragment keeps DataTable and Pager as peer children of one Panel
+  [firefox] › ui-composition-positive-ancestry.spec.ts:137:1 › S15 Knowledge action group wraps children without losing its shared action owner
+  [firefox] › ui-consent-management.spec.ts:16:1 › R35 creates a pending challenge from API and shows consent history without local opt-out state
+  [firefox] › ui-consent-management.spec.ts:36:1 › R61 confirms an opt-out through POST body, removes the token from URL and leaves service messages available
+  [firefox] › ui-consent-management.spec.ts:74:1 › R61 public confirmation remains keyboard-accessible and reflows at 320px
+  [firefox] › ui-customers-layout.spec.ts:30:1 › Customers R07/R08/R54 layouts fit the shell at every responsive boundary
+  [firefox] › ui-customers-layout.spec.ts:59:1 › Customer create and service-case dialogs stay in the viewport without submitting
+  [firefox] › ui-dashboard-layout.spec.ts:17:1 › Shared consolidation Dashboard primary link respects all eight permission tuples and native anchor interactions
+  [firefox] › ui-dashboard-layout.spec.ts:69:1 › dashboard hierarchy, CTA targets, and page width hold across supported breakpoints
+  [firefox] › ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data
+  [firefox] › ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap
+  [firefox] › ui-density-layout.spec.ts:33:1 › density demo disclosure retains state and always shows the synthetic warning
+  [firefox] › ui-density-layout.spec.ts:48:1 › density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm
+  [firefox] › ui-density-layout.spec.ts:60:1 › density simple category editor keeps labels, errors and keyboard reflow usable
+  [firefox] › ui-finance-layout.spec.ts:30:1 › Finance R20/R21/R22/R48/R49/R50 route layouts retain shell gutter without horizontal overflow from 320–1440px
+  [firefox] › ui-finance-layout.spec.ts:62:1 › titled Finance Panels keep one 12px header-to-first-content boundary
+  [firefox] › ui-finance-layout.spec.ts:129:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting
+  [firefox] › ui-finance-management.spec.ts:14:1 › C06 opening validates before HTTP and preserves added/removed list drafts through every close guard
+  [firefox] › ui-finance-management.spec.ts:19:1 › C06 opening UI posts only its reviewed version and reports/ledger drill down to real journal IDs
+  [firefox] › ui-finance-management.spec.ts:25:1 › C06 opening conflict retains whole lists and reconciles two changing server versions without forced retry
+  [firefox] › ui-finance-management.spec.ts:31:1 › C06 finance entry validation and refetch conflict keep the saved baseline and draft
+  [firefox] › ui-finance-management.spec.ts:35:1 › C06 all new financial routes and dialog use keyboard/axe and reflow at required widths
+  [firefox] › ui-fulfillment-layout.spec.ts:30:1 › Fulfillment R41/R42 preserve shell gutter and contain responsive route layouts from 320-1440px
+  [firefox] › ui-fulfillment-layout.spec.ts:59:1 › Fulfillment prep, shipment-create, detail and event dialogs fit mobile and desktop without submitting
+  [firefox] › ui-integrations-layout.spec.ts:40:1 › Integrations routes R29/R30 fit the supported page-width boundaries
+  [firefox] › ui-integrations-layout.spec.ts:50:1 › R29 disconnect and R30 create/edit credential dialogs stay inside mobile and desktop viewports
+  [firefox] › ui-inventory-layout.spec.ts:15:1 › Inventory R15/R16 preserve shared gutter and contain table overflow at 320-1440px
+  [firefox] › ui-inventory-layout.spec.ts:51:1 › Inventory filters reset cursor and preserve other URL state; adjustment validation sends no command
+  [firefox] › ui-knowledge-layout.spec.ts:56:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+  [firefox] › ui-knowledge-layout.spec.ts:76:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+  [firefox] › ui-master-resources.spec.ts:13:1 › C05 warehouses validate before HTTP, protect drafts and create/update/archive with visible results
+  [firefox] › ui-master-resources.spec.ts:26:1 › C05 warehouse conflicts keep the draft across two concurrent versions and require explicit reconciliation
+  [firefox] › ui-master-resources.spec.ts:34:1 › C05 accounts create and protect used fields; journal choices come from the same API lookup
+  [firefox] › ui-master-resources.spec.ts:40:1 › C05 customer address UI never replays a masked phone and orders load per-customer addresses
+  [firefox] › ui-master-resources.spec.ts:46:1 › C05 new management routes and address dialog reflow at all required widths with keyboard and axe
+  [firefox] › ui-master-resources.spec.ts:58:1 › C05 complete customer addresses create/archive through HTTP; masked mandatory fields prevent creation
+  [firefox] › ui-master-resources.spec.ts:77:1 › C05 an unknown warehouse creation keeps the draft and prevents a second request
+  [firefox] › ui-notifications-layout.spec.ts:40:1 › R39/R40 Notifications routes fit the supported page-width boundaries
+  [firefox] › ui-notifications-layout.spec.ts:50:1 › R40 revoke-device confirmation stays inside mobile and desktop viewports
+  [firefox] › ui-operations-layout.spec.ts:41:1 › R37/R38/R52 Operations routes fit the supported page-width boundaries
+  [firefox] › ui-operations-layout.spec.ts:51:1 › R52 role-control confirmation stays inside mobile and desktop viewports
+  [firefox] › ui-orders-layout.spec.ts:15:1 › Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px
+  [firefox] › ui-orders-layout.spec.ts:46:1 › Orders draft, versioned quote, canonical address snapshot and return dialogs keep their behavior without writes
+  [firefox] › ui-panel-layout.spec.ts:15:1 › the titled Fulfillment Panel owns its body inset and keeps one 12px header boundary
+  [firefox] › ui-procurement-layout.spec.ts:38:1 › Procurement R44-R47 preserve shared page gutter and contain responsive tables at 320-1440px
+  [firefox] › ui-procurement-layout.spec.ts:69:1 › Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes
+  [firefox] › ui-query-state-layout.spec.ts:68:5 › S12 R09 QueryState section profile preserves pending and ready layout
+  [firefox] › ui-query-state-layout.spec.ts:68:5 › S12 R11 QueryState inline profile preserves pending and ready layout
+  [firefox] › ui-shell-layout.spec.ts:45:1 › Shell keeps header, banner, main and footer on one responsive gutter
+  [firefox] › ui-shell-layout.spec.ts:106:1 › demo controls stay discoverable on mobile and usable on desktop
+  [firefox] › ui-shell-layout.spec.ts:124:1 › SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer
+  [firefox] › ui-shell-layout.spec.ts:149:1 › unmatched route fallback owns its page gutter without horizontal overflow
+  [firefox] › ui-toolbar-layout.spec.ts:33:1 › Shared Toolbar and demo tools keep labels clear when text doubles
+  [firefox] › ui-toolbar-layout.spec.ts:61:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+  [firefox] › ui-toolbar-layout.spec.ts:78:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths
+  [firefox] › ui-toolbar-layout.spec.ts:121:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow
+  [firefox] › ui-toolbar-layout.spec.ts:146:1 › Toolbar public extra slot cannot stretch a single-line submit action
+  [firefox] › ui-toolbar-layout.spec.ts:163:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup
+  [firefox] › ui-toolbar-layout.spec.ts:199:1 › Toolbar keeps Inventory apply/reset separate from search submission
+  [firefox] › ui-toolbar-layout.spec.ts:219:1 › Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination
+  [firefox] › ui-ux-completion.spec.ts:9:1 › UX01 setup feedback CTA reaches review workflow rather than dynamic knowledge detail
+  [firefox] › ui-ux-completion.spec.ts:15:1 › UX02 stock warnings describe low/zero stock without implying a server block
+  [firefox] › ui-ux-completion.spec.ts:22:1 › UX02 inventory receipts and accounting open periods have domain-specific names
+  [firefox] › ui-ux-completion.spec.ts:31:1 › UX04 onboarding protects the whole draft on leave and reload
+  [firefox] › ui-ux-completion.spec.ts:52:1 › UX04 acknowledged shop creation leaves without a false dirty warning
+  [firefox] › ui-ux-completion.spec.ts:60:1 › UX05 product detail returns to committed filters; direct links use the list fallback
+  [firefox] › ui-ux-completion.spec.ts:70:60 › UX05 customers list returns to its own filter context
+  [firefox] › ui-ux-completion.spec.ts:70:60 › UX05 orders list returns to its own filter context
+  [firefox] › ui-ux-completion.spec.ts:70:60 › UX05 knowledge list returns to its own filter context
+  [firefox] › ui-ux-completion.spec.ts:86:1 › UX03 category, member and AI deletion confirmations name the selected object and consequence
+  [firefox] › ui-ux-completion.spec.ts:108:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus
+  [firefox] › ui-ux-completion.spec.ts:126:1 › UX10 multi-table pages have distinct business names
+  [firefox] › ui-ux-completion.spec.ts:136:1 › UX06 AI capability names and states are readable in Vietnamese
+  [firefox] › ui-ux-completion.spec.ts:143:1 › UX15 detail captions reflow without splitting short words across all required viewports
+  [firefox] › ui-width-layout.spec.ts:29:1 › W01 AI single connection fills its collection at breakpoint edges and wide viewports
+  [firefox] › ui-width-layout.spec.ts:42:1 › W01 AI keeps two-column collection for two/three items and refetch preserves the new count
+  [firefox] › ui-width-layout.spec.ts:63:1 › W01 AI empty result keeps one accessible create action and no empty grid
+  [firefox] › ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 0 visible shops
+  [firefox] › ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 1 visible shops
+  [firefox] › ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 2 visible shops
+  [firefox] › ui-width-layout.spec.ts:72:35 › W01 workspace collection handles 3 visible shops
+  [firefox] › ui-width-layout.spec.ts:104:1 › W02 full-width form groups fill their panel and retain input/mapping/shipping behavior
+  [firefox] › ui-width-layout.spec.ts:144:1 › W03 notification protection notice occupies the full page row after the two panes
+  [firefox] › ui-width-layout.spec.ts:163:1 › W04 detail rows stay atomic in divided rhythm and plain containers
+  [firefox] › ui-workspace-layout.spec.ts:60:1 › workspace routes stay within the supported page-width boundaries
+  [firefox] › ui-workspace-layout.spec.ts:72:1 › team invite and privacy request dialogs remain usable without submitting
+  [firefox] › ui006-lookups.spec.ts:69:1 › UI006.C05 lookup and table cursors reach records after 150 synthetic suppliers, offers, and orders
+  [firefox] › ui006-lookups.spec.ts:215:1 › UI006.C04 bounded previews disclose their sample and link to full collections
+  [firefox] › ui006-lookups.spec.ts:232:1 › UI006.C02 selected order identity survives a failed search and cursor retry
+  [firefox] › ui007-query-states.spec.ts:30:1 › UI007 secondary order query loads independently while the customer profile remains available
+  [firefox] › ui007-query-states.spec.ts:60:1 › UI007 order query 503 is isolated from the primary customer query and retries only that query
+  [firefox] › ui007-query-states.spec.ts:94:1 › UI007 forbidden order query is an access state and a successful empty query is distinct
+  [firefox] › ui007-query-states.spec.ts:114:1 › UI007 supplier and offer failures keep purchase suggestions visible and have operation-specific recovery
+  [firefox] › ui007-query-states.spec.ts:150:1 › UI007 auto-send budget query is lazy, permission-aware, and blocks an unverified budget
+  [firefox] › ui008-integration-empty.spec.ts:57:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+  [firefox] › ui008-integration-empty.spec.ts:75:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+  [firefox] › ui008-integration-empty.spec.ts:90:1 › UI008 R29 pending channel query stays loading until its response arrives
+  [firefox] › ui008-integration-empty.spec.ts:108:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+  [firefox] › ui008-integration-empty.spec.ts:122:1 › UI008 R29 503 remains an error and recovers through its retry control
+  [firefox] › ui008-integration-empty.spec.ts:143:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+  [firefox] › ui008-integration-empty.spec.ts:161:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+  [firefox] › ui009-scope-regression.spec.ts:23:1 › UI009 delayed customer orders from the previous shop cannot leak into the new shop profile
+  [firefox] › ui010-dialog-draft.spec.ts:15:1 › UI010 a discarded confirmation reason is cleared before the dialog opens again
+  [firefox] › ui011-date-time.spec.ts:16:1 › UI011 report defaults use the active shop calendar month at a UTC month boundary
+  [firefox] › ui011-date-time.spec.ts:29:1 › UI011 journal effective date defaults to the active shop calendar date
+  [firefox] › ui011-date-time.spec.ts:41:1 › UI011 shipment event input and API instant use the shop timezone, not browser timezone
+  [firefox] › ui012-keyboard.spec.ts:42:1 › UI012 keyboard-only finance edit handles select, discard warning and focus return
+  [firefox] › ui012-keyboard.spec.ts:103:1 › UI012 keyboard validation focuses the field named by a synthetic 422 response
+  [firefox] › ui012-keyboard.spec.ts:160:1 › UI012 keyboard activates the CSV chooser and discards its selected file without upload
+  [firefox] › ui012-keyboard.spec.ts:200:1 › UI012 keyboard can reach and horizontally scroll the marketing chart data alternative
+  [firefox] › ui012-keyboard.spec.ts:227:1 › UI012 marketing chart keeps every category label visible beside its data table
+  [firefox] › ui012-keyboard.spec.ts:270:1 › UI012 inbox feedback actions identify their message and return focus after Escape
+  [firefox] › ui012-keyboard.spec.ts:303:1 › UI012 order draft does not announce an untouched required customer as invalid
+  [firefox] › ui012-keyboard.spec.ts:316:1 › UI012 human-confirmation policy copy wraps inside its alert at a 320 CSS-pixel viewport
+  [firefox] › ui012-keyboard.spec.ts:350:1 › UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible
+  [firefox] › ui013-url-state.spec.ts:19:1 › UI013 reconciliation tab deep links and survives refresh; malformed tab safely falls back
+  [firefox] › ui013-url-state.spec.ts:39:1 › UI013 finance date range deep link, edit, refresh and Back use shop-local filter state
+  [firefox] › ui013-url-state.spec.ts:70:1 › UI013 report type and export date filters are deep-linkable, refreshable and malformed values fall back safely
+  [firefox] › ui021-permission-edge.spec.ts:4:1 › privacy page keeps the customers link when the destination permission is present
+  [firefox] › ui021-permission-edge.spec.ts:19:1 › privacy page hides the customers link when the destination permission is missing
+  [firefox] › ui028-w24-inbox-layout.spec.ts:15:1 › UI028.W24 Inbox spacing roles remain consistent across breakpoints without losing draft state
+  [firefox] › ui028-w25-reports-layout.spec.ts:16:1 › UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desktop widths
+  [firefox] › ui028-w25-reports-layout.spec.ts:114:1 › UI028.W25 authorized report download link retains its 44px hit target
+  [firefox] › ui028-w28-routes.spec.ts:47:5 › UI028.W28 61 canonical routes render with measured 390px layout geometry
+  [firefox] › ui028-w28-routes.spec.ts:47:5 › UI028.W28 61 canonical routes render with measured 1440px layout geometry
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 320px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 390px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 767px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 768px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 1024px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 1279px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 1280px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 1440px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w29-reflow.spec.ts:30:5 › UI028.W29 1920px reflow retains representative actions and contains overflow
+  [firefox] › ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+  [firefox] › ui028-w30-stress.spec.ts:75:5 › UI028.W30 mobile-menu-long-label: 200% text and spacing stress at 390x560
+  [firefox] › ui028-w30-stress.spec.ts:75:5 › UI028.W30 report-long-id: 200% text and spacing stress at 640x450
+  [firefox] › ui028-w30-stress.spec.ts:75:5 › UI028.W30 inbox-long-composer: 200% text and spacing stress at 390x560
+  [firefox] › ui028-w30-stress.spec.ts:75:5 › UI028.W30 dialog-long-reason: 200% text and spacing stress at 320x480
+  [firefox] › vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+  [firefox] › vertical-slices\fe022-flows.spec.ts:92:1 › FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity
+  [firefox] › vertical-slices\fe022-flows.spec.ts:168:1 › FE022.VS03 finance → reconciliation retains bank transaction and partial debt allocation
+  [firefox] › vertical-slices\fe022-flows.spec.ts:210:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+  [firefox] › vertical-slices\fe022-flows.spec.ts:252:1 › FE022.S05 route and feature matrix covers canonical IDs with executed cases or explicit frontend gaps
+Total: 348 tests in 69 files
