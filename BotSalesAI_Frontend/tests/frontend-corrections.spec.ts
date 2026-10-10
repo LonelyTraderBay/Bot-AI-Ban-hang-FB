@@ -373,24 +373,40 @@ test('F06 guards added order rows, shop switch, logout and native reload; succes
 });
 
 test('F01 analogous return-inspection draft does not adopt a refetched version without comparison', async ({ page }) => {
+    const initialList = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/returns');
     await visit(page, 'returns');
+    expect((await initialList).status()).toBe(200);
     const fixture = await page.evaluate(async () => {
         const { db } = await import('/src/mocks/database.ts');
         const order = db.orders.find((item: { id: string; shopId: string; lines: Array<{ id: string }> }) => item.shopId === 'shop-demo' && !db.returns.some((returned: { orderId: string }) => returned.orderId === item.id)); order.fulfillmentState = 'delivered';
         return { id: order.id, lineId: order.lines[0].id };
     });
     const created = await mutate(page, 'returns', { orderId: fixture.id, reason: 'Synthetic received return', lines: [{ orderLineId: fixture.lineId, quantity: 1 }] }); expect(created.status, JSON.stringify(created.payload)).toBe(201);
-    await page.getByRole('button', { name: 'Kiểm nhận', exact: true }).first().click();
+    const resourcePath = '/api/v2/shops/shop-demo/returns/' + created.payload.data.id;
+    const detail = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === resourcePath);
+    const row = page.getByRole('table', { name: 'Yêu cầu đổi trả', exact: true }).getByRole('row')
+        .filter({ has: page.getByRole('cell', { name: created.payload.data.id, exact: true }) });
+    await row.getByRole('button', { name: 'Kiểm nhận', exact: true }).click();
+    const initialDetail = await detail; expect(initialDetail.status()).toBe(200);
+    expect((await initialDetail.json()).data).toMatchObject({ id: created.payload.data.id, version: created.payload.data.version });
     const editor = page.getByRole('dialog', { name: 'Kiểm nhận hàng trả', exact: true });
     await expect(editor.getByLabel('Ghi nhận kiểm tra')).toBeVisible(); await editor.getByLabel('Ghi nhận kiểm tra').fill('Local physical inspection');
     await page.evaluate(async returnId => { const { db } = await import('/src/mocks/database.ts'); const item = db.returns.find((item: { id: string }) => item.id === returnId); item.lines[0].disposition = 'damaged'; item.lines[0].reason = 'Concurrent case note'; item.version++; }, created.payload.data.id);
+    const refetch = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === resourcePath);
     await pulse(page);
+    const refreshed = await refetch; expect(refreshed.status()).toBe(200);
+    expect((await refreshed.json()).data).toMatchObject({ id: created.payload.data.id, version: created.payload.data.version + 1 });
+    await expect(editor.getByLabel('Ghi nhận kiểm tra')).toHaveValue('Local physical inspection');
+    await expect(editor.getByRole('button', { name: 'Đối chiếu', exact: true })).toBeVisible();
     await editor.getByRole('button', { name: 'Xác nhận kiểm nhận', exact: true }).click();
     const comparison = page.getByRole('dialog', { name: 'Đối chiếu thay đổi', exact: true });
     await expect(comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' })).toBeDisabled();
     await comparison.getByRole('combobox').click(); await page.getByRole('option', { name: 'Giữ bản nháp', exact: true }).click();
     await comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' }).click();
-    const sent = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/inspect'));
+    const sent = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname === resourcePath + '/inspect');
     await editor.getByRole('button', { name: 'Xác nhận kiểm nhận', exact: true }).click();
     expect((await sent).postDataJSON()).toMatchObject({ expectedVersion: created.payload.data.version + 1, lines: [{ reason: 'Local physical inspection' }] });
     await expect(editor).not.toBeVisible();
