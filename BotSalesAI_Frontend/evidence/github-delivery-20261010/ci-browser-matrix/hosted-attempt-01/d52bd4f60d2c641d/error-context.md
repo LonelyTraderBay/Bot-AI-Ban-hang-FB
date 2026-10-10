@@ -1,0 +1,417 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: session/demo-worker-startup.spec.ts >> demo conditional module requests return complete exports without changing live or non-asset caching
+- Location: tests/session/demo-worker-startup.spec.ts:17:1
+
+# Error details
+
+```
+Test timeout of 180000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Đến nội dung chính" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - navigation "Điều hướng chính" [ref=e5]:
+      - generic [ref=e7]:
+        - generic [ref=e12]:
+          - heading "BotSales AI" [level=6] [ref=e13]
+          - text: Đội ngũ vận hành cửa hàng
+        - link "Joker Studio · Shop mẫu ⌄" [ref=e15] [cursor=pointer]:
+          - /url: /workspaces
+          - text: Joker Studio · Shop mẫu
+          - generic [ref=e16]: ⌄
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - text: ĐIỀU HÀNH
+            - list [ref=e19]:
+              - listitem [ref=e20]:
+                - link [ref=e21] [cursor=pointer]:
+                  - /url: /s/shop-demo/overview
+                  - paragraph [ref=e26]: Tổng quan
+              - listitem [ref=e27]:
+                - link [ref=e28] [cursor=pointer]:
+                  - /url: /s/shop-demo/operations
+                  - paragraph [ref=e33]: Công việc hôm nay
+              - listitem [ref=e34]:
+                - link [ref=e35] [cursor=pointer]:
+                  - /url: /s/shop-demo/approvals
+                  - paragraph [ref=e40]: Cần phê duyệt
+          - generic [ref=e41]:
+            - text: BÁN HÀNG
+            - list [ref=e42]:
+              - listitem [ref=e43]:
+                - link [ref=e44] [cursor=pointer]:
+                  - /url: /s/shop-demo/inbox
+                  - paragraph [ref=e49]: Hộp thư khách hàng
+              - listitem [ref=e50]:
+                - link [ref=e51] [cursor=pointer]:
+                  - /url: /s/shop-demo/customers
+                  - paragraph [ref=e56]: Khách hàng
+              - listitem [ref=e57]:
+                - link [ref=e58] [cursor=pointer]:
+                  - /url: /s/shop-demo/orders
+                  - paragraph [ref=e66]: Đơn hàng
+              - listitem [ref=e67]:
+                - link [ref=e68] [cursor=pointer]:
+                  - /url: /s/shop-demo/fulfillment
+                  - paragraph [ref=e73]: Chuẩn bị hàng
+              - listitem [ref=e74]:
+                - link [ref=e75] [cursor=pointer]:
+                  - /url: /s/shop-demo/shipments
+                  - paragraph [ref=e80]: Vận đơn & giao hàng
+              - listitem [ref=e81]:
+                - link [ref=e82] [cursor=pointer]:
+                  - /url: /s/shop-demo/returns
+                  - paragraph [ref=e87]: Đổi trả
+              - listitem [ref=e88]:
+                - link [ref=e89] [cursor=pointer]:
+                  - /url: /s/shop-demo/service-cases
+                  - paragraph [ref=e94]: Chăm sóc sau bán
+          - generic [ref=e95]:
+            - text: HÀNG HÓA
+            - list [ref=e96]:
+              - listitem [ref=e97]:
+                - link [ref=e98] [cursor=pointer]:
+                  - /url: /s/shop-demo/products
+                  - paragraph [ref=e103]: Sản phẩm
+              - listitem [ref=e104]:
+                - link [ref=e105] [cursor=pointer]:
+                  - /url: /s/shop-demo/categories
+                  - paragraph [ref=e110]: Danh mục
+              - listitem [ref=e111]:
+                - link [ref=e112] [cursor=pointer]:
+                  - /url: /s/shop-demo/imports
+                  - paragraph [ref=e117]: Nhập dữ liệu
+              - listitem [ref=e118]:
+                - link [ref=e119] [cursor=pointer]:
+                  - /url: /s/shop-demo/inventory
+                  - paragraph [ref=e124]: Tồn kho
+              - listitem [ref=e125]:
+                - link [ref=e126] [cursor=pointer]:
+                  - /url: /s/shop-demo/inventory/movements
+                  - paragraph [ref=e131]: Lịch sử kho
+              - listitem [ref=e132]:
+                - link [ref=e133] [cursor=pointer]:
+                  - /url: /s/shop-demo/suppliers
+                  - paragraph [ref=e138]: Nhà cung cấp
+              - listitem [ref=e139]:
+                - link [ref=e140] [cursor=pointer]:
+                  - /url: /s/shop-demo/replenishment
+                  - paragraph [ref=e145]: Đề nghị nhập
+              - listitem [ref=e146]:
+                - link [ref=e147] [cursor=pointer]:
+                  - /url: /s/shop-demo/purchases
+                  - paragraph [ref=e152]: Đơn mua hàng
+              - listitem [ref=e153]:
+                - link [ref=e154] [cursor=pointer]:
+                  - /url: /s/shop-demo/receipts
+                  - paragraph [ref=e162]: Nhận hàng
+          - generic [ref=e163]:
+            - text: KẾ TOÁN
+            - list [ref=e164]:
+              - listitem [ref=e165]:
+                - link [ref=e166] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance
+                  - paragraph [ref=e171]: Thu chi
+              - listitem [ref=e172]:
+                - link [ref=e173] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/entries
+                  - paragraph [ref=e181]: Sổ thu chi
+              - listitem [ref=e182]:
+                - link [ref=e183] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/profit-loss
+                  - paragraph [ref=e188]: Lợi nhuận
+              - listitem [ref=e189]:
+                - link [ref=e190] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/journals
+                  - paragraph [ref=e198]: Chứng từ & sổ kép
+              - listitem [ref=e199]:
+                - link [ref=e200] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/accounts
+                  - paragraph [ref=e208]: Tài khoản kế toán
+              - listitem [ref=e209]:
+                - link [ref=e210] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/opening-balances
+                  - paragraph [ref=e218]: Mở sổ kế toán
+              - listitem [ref=e219]:
+                - link [ref=e220] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/ledger
+                  - paragraph [ref=e228]: Sổ cái
+              - listitem [ref=e229]:
+                - link [ref=e230] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/trial-balance
+                  - paragraph [ref=e235]: Cân đối phát sinh
+              - listitem [ref=e236]:
+                - link [ref=e237] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/balance-sheet
+                  - paragraph [ref=e242]: Cân đối quản trị
+              - listitem [ref=e243]:
+                - link [ref=e244] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/reconciliation
+                  - paragraph [ref=e249]: Đối soát
+              - listitem [ref=e250]:
+                - link [ref=e251] [cursor=pointer]:
+                  - /url: /s/shop-demo/finance/debts-periods
+                  - paragraph [ref=e256]: Công nợ & khóa kỳ
+          - generic [ref=e257]:
+            - text: ĐỘI NGŨ AI
+            - list [ref=e258]:
+              - listitem [ref=e259]:
+                - link [ref=e260] [cursor=pointer]:
+                  - /url: /s/shop-demo/bot/team
+                  - paragraph [ref=e265]: Bốn nhân viên AI
+              - listitem [ref=e266]:
+                - link [ref=e267] [cursor=pointer]:
+                  - /url: /s/shop-demo/bot
+                  - paragraph [ref=e272]: Cấu hình Admin
+              - listitem [ref=e273]:
+                - link [ref=e274] [cursor=pointer]:
+                  - /url: /s/shop-demo/bot/playground
+                  - paragraph [ref=e279]: Thử bot
+              - listitem [ref=e280]:
+                - link [ref=e281] [cursor=pointer]:
+                  - /url: /s/shop-demo/bot/evaluations
+                  - paragraph [ref=e286]: Chất lượng AI
+              - listitem [ref=e287]:
+                - link [ref=e288] [cursor=pointer]:
+                  - /url: /s/shop-demo/knowledge
+                  - paragraph [ref=e293]: Kiến thức cửa hàng
+              - listitem [ref=e294]:
+                - link [ref=e295] [cursor=pointer]:
+                  - /url: /s/shop-demo/knowledge/review
+                  - paragraph [ref=e300]: Phản hồi cần duyệt
+              - listitem [ref=e301]:
+                - link [ref=e302] [cursor=pointer]:
+                  - /url: /s/shop-demo/operations/digests
+                  - paragraph [ref=e307]: Bản tin & sức khỏe
+          - generic [ref=e308]:
+            - text: THÔNG BÁO & BÁO CÁO
+            - list [ref=e309]:
+              - listitem [ref=e310]:
+                - link [ref=e311] [cursor=pointer]:
+                  - /url: /s/shop-demo/notifications
+                  - paragraph [ref=e316]: Trung tâm thông báo
+              - listitem [ref=e317]:
+                - link [ref=e318] [cursor=pointer]:
+                  - /url: /s/shop-demo/notifications/devices
+                  - paragraph [ref=e323]: Điện thoại & lịch trực
+              - listitem [ref=e324]:
+                - link [ref=e325] [cursor=pointer]:
+                  - /url: /s/shop-demo/reports
+                  - paragraph [ref=e333]: Xuất báo cáo
+              - listitem [ref=e334]:
+                - link [ref=e335] [cursor=pointer]:
+                  - /url: /s/shop-demo/reports/marketing
+                  - paragraph [ref=e340]: Thông tin marketing
+          - generic [ref=e341]:
+            - text: CÀI ĐẶT
+            - list [ref=e342]:
+              - listitem [ref=e343]:
+                - link [ref=e344] [cursor=pointer]:
+                  - /url: /s/shop-demo/integrations/channels
+                  - paragraph [ref=e349]: Kết nối Facebook
+              - listitem [ref=e350]:
+                - link [ref=e351] [cursor=pointer]:
+                  - /url: /s/shop-demo/integrations/ai
+                  - paragraph [ref=e356]: Nhà cung cấp AI
+              - listitem [ref=e357]:
+                - link [ref=e358] [cursor=pointer]:
+                  - /url: /s/shop-demo/settings/team
+                  - paragraph [ref=e363]: Nhân sự & quyền
+              - listitem [ref=e364]:
+                - link [ref=e365] [cursor=pointer]:
+                  - /url: /s/shop-demo/settings/shop
+                  - paragraph [ref=e370]: Cửa hàng
+              - listitem [ref=e371]:
+                - link [ref=e372] [cursor=pointer]:
+                  - /url: /s/shop-demo/settings/warehouses
+                  - paragraph [ref=e377]: Quản trị kho
+              - listitem [ref=e378]:
+                - link [ref=e379] [cursor=pointer]:
+                  - /url: /s/shop-demo/settings/audit
+                  - paragraph [ref=e384]: Nhật ký
+              - listitem [ref=e385]:
+                - link [ref=e386] [cursor=pointer]:
+                  - /url: /s/shop-demo/settings/privacy
+                  - paragraph [ref=e391]: Quyền riêng tư
+        - separator [ref=e392]
+        - generic [ref=e393]:
+          - generic [ref=e394]: J
+          - generic [ref=e395]:
+            - paragraph [ref=e396]: Jokertrader · tài khoản mẫu
+            - text: Chủ shop
+          - button "Đăng xuất" [ref=e397] [cursor=pointer]
+    - generic [ref=e401]:
+      - banner [ref=e402]:
+        - generic [ref=e403]:
+          - navigation "Đường dẫn hiện tại" [ref=e405]: Không gian làm việc / Tổng quan
+          - generic [ref=e406]:
+            - generic [ref=e408]:
+              - textbox "Tìm màn hình" [ref=e411]:
+                - /placeholder: Tìm màn hình...
+              - group [aria-hidden]
+            - generic "Dữ liệu mô phỏng" [ref=e412]
+            - link "Thông báo" [ref=e414] [cursor=pointer]:
+              - /url: /s/shop-demo/notifications
+            - generic [ref=e417]: J
+      - generic [ref=e418]:
+        - alert [ref=e419]:
+          - generic [ref=e423]: "Frontend review: API được mô phỏng trong bộ nhớ, không gửi tin hoặc đặt hàng thật. Tải lại trang sẽ khởi tạo lại dữ liệu."
+          - button "Góp ý" [ref=e425] [cursor=pointer]
+        - generic [ref=e426]:
+          - button "Công cụ demo" [ref=e427] [cursor=pointer]
+          - generic [ref=e428]: owner · Bình thường · Dataset mặc định
+      - main [ref=e429]:
+        - generic [ref=e431]:
+          - generic [ref=e432]:
+            - text: KHÔNG GIAN ĐIỀU HÀNH
+            - heading "Chào Jokertrader, cửa hàng của bạn hôm nay." [level=1] [ref=e433]: Chào Jokertrader,cửa hàng của bạn hôm nay.
+            - paragraph [ref=e434]: Theo dõi việc cần xử lý, tiến độ đơn hàng và đội ngũ AI — tập trung vào những quyết định quan trọng.
+          - generic [ref=e435]:
+            - link "Xem việc cần làm" [ref=e436] [cursor=pointer]:
+              - /url: /s/shop-demo/operations
+            - link "Tạo đơn hàng" [ref=e439] [cursor=pointer]:
+              - /url: /s/shop-demo/orders/new
+        - generic [ref=e440]:
+          - generic [ref=e442]:
+            - heading "Tình hình hiện tại" [level=2] [ref=e443]
+            - paragraph [ref=e444]: Các KPI là trạng thái hiện tại do API trả về, không phải dự báo.
+          - generic [ref=e445]:
+            - generic [ref=e446]:
+              - paragraph [ref=e448]: Hội thoại đang mở
+              - link "4" [ref=e453] [cursor=pointer]:
+                - /url: /s/shop-demo/inbox
+              - generic [ref=e454]: Trạng thái hiện tại
+            - generic [ref=e455]:
+              - paragraph [ref=e457]: Đơn chờ xử lý
+              - link "1" [ref=e465] [cursor=pointer]:
+                - /url: /s/shop-demo/orders
+              - generic [ref=e466]: Theo trạng thái hiện tại của API
+            - generic [ref=e467]:
+              - paragraph [ref=e469]: Sản phẩm gần hết
+              - link "3" [ref=e474] [cursor=pointer]:
+                - /url: /s/shop-demo/inventory
+              - generic [ref=e475]: Theo ngưỡng tồn trong API
+            - generic [ref=e476]:
+              - paragraph [ref=e478]: Trợ lý bán hàng
+              - generic "paused" [ref=e483]: Tạm dừng
+              - generic [ref=e485]: Trạng thái do API cung cấp
+        - generic [ref=e486]:
+          - generic [ref=e487]:
+            - generic [ref=e489]:
+              - heading "Dòng tiền và doanh thu" [level=2] [ref=e490]
+              - paragraph [ref=e491]: Doanh thu ghi nhận và tiền đã thu là hai chỉ số khác nhau.
+            - generic [ref=e493]:
+              - generic [ref=e494]:
+                - paragraph [ref=e495]: Doanh thu đã ghi nhận
+                - heading "0 ₫" [level=4] [ref=e496]
+              - generic [ref=e497]:
+                - paragraph [ref=e498]: Tiền đã thu
+                - heading "0 ₫" [level=4] [ref=e499]
+              - link [ref=e500] [cursor=pointer]:
+                - /url: /s/shop-demo/finance/profit-loss
+          - generic [ref=e504]:
+            - generic [ref=e505]:
+              - generic [ref=e506]:
+                - heading "Đơn hàng gần đây" [level=2] [ref=e507]
+                - paragraph [ref=e508]: Mở đơn để xem trạng thái chuẩn bị, giao hàng và thanh toán.
+              - link [ref=e509] [cursor=pointer]:
+                - /url: /s/shop-demo/orders
+            - region "Đơn hàng gần đây" [ref=e513]:
+              - table "Đơn hàng gần đây" [ref=e514]:
+                - rowgroup [ref=e515]:
+                  - row [ref=e516]:
+                    - columnheader "Đơn hàng" [ref=e517]
+                    - columnheader "Giá trị" [ref=e518]
+                    - columnheader "Đơn" [ref=e519]
+                    - columnheader "Giao" [ref=e520]
+                - rowgroup [ref=e521]:
+                  - row [ref=e522]:
+                    - cell [ref=e523]:
+                      - generic [ref=e524]:
+                        - link [ref=e525] [cursor=pointer]:
+                          - /url: /s/shop-demo/orders/DH-DEMO-RETURN-02
+                        - generic [ref=e529]:
+                          - code [ref=e530]: DH-DEMO-RETURN-02
+                          - button "Sao chép mã đơn hàng" [ref=e531] [cursor=pointer]
+                    - cell "498.000 ₫" [ref=e534]
+                    - cell "Hoàn tất" [ref=e535]:
+                      - generic "completed" [ref=e536]: Hoàn tất
+                    - cell "Đã giao" [ref=e538]:
+                      - generic "delivered" [ref=e539]: Đã giao
+                  - row [ref=e541]:
+                    - cell [ref=e542]:
+                      - generic [ref=e543]:
+                        - link [ref=e544] [cursor=pointer]:
+                          - /url: /s/shop-demo/orders/DH-DEMO-PAID-01
+                        - generic [ref=e548]:
+                          - code [ref=e549]: DH-DEMO-PAID-01
+                          - button "Sao chép mã đơn hàng" [ref=e550] [cursor=pointer]
+                    - cell "249.000 ₫" [ref=e553]
+                    - cell "Hoàn tất" [ref=e554]:
+                      - generic "completed" [ref=e555]: Hoàn tất
+                    - cell "Hoàn một phần" [ref=e557]:
+                      - generic "part_returned" [ref=e558]: Hoàn một phần
+                  - row [ref=e560]:
+                    - cell [ref=e561]:
+                      - generic [ref=e562]:
+                        - link [ref=e563] [cursor=pointer]:
+                          - /url: /s/shop-demo/orders/DH-1001
+                        - generic [ref=e567]:
+                          - code [ref=e568]: DH-1001
+                          - button "Sao chép mã đơn hàng" [ref=e569] [cursor=pointer]
+                    - cell "249.000 ₫" [ref=e572]
+                    - cell "Bản nháp" [ref=e573]:
+                      - generic "draft" [ref=e574]: Bản nháp
+                    - cell "Chưa chuẩn bị" [ref=e576]:
+                      - generic "unfulfilled" [ref=e577]: Chưa chuẩn bị
+          - generic [ref=e579]:
+            - generic [ref=e580]:
+              - generic [ref=e581]:
+                - heading "Đội ngũ AI của cửa hàng" [level=2] [ref=e582]
+                - paragraph [ref=e583]: Trạng thái vai trò lấy từ API; trạng thái kết nối bên ngoài chưa được xác minh.
+              - link [ref=e584] [cursor=pointer]:
+                - /url: /s/shop-demo/bot/team
+            - generic [ref=e589]:
+              - generic [ref=e590]:
+                - paragraph [ref=e595]: Admin bán hàng
+                - generic "paused" [ref=e596]: Tạm dừng
+                - generic [ref=e598]: 3 công cụ được giao
+              - generic [ref=e599]:
+                - paragraph [ref=e604]: Kế toán
+                - generic "paused" [ref=e605]: Tạm dừng
+                - generic [ref=e607]: 2 công cụ được giao
+              - generic [ref=e608]:
+                - paragraph [ref=e613]: Kho & mua hàng
+                - generic "paused" [ref=e614]: Tạm dừng
+                - generic [ref=e616]: 2 công cụ được giao
+              - generic [ref=e617]:
+                - paragraph [ref=e622]: Trưởng nhóm
+                - generic "paused" [ref=e623]: Tạm dừng
+                - generic [ref=e625]: 2 công cụ được giao
+          - generic [ref=e626]:
+            - generic [ref=e628]:
+              - heading "Điều khiển trợ lý" [level=2] [ref=e629]
+              - paragraph [ref=e630]: Tạm dừng là thao tác có tác động; cần xác nhận và lý do.
+            - generic [ref=e632]:
+              - generic "paused" [ref=e633]: Tạm dừng
+              - button "Bot đã tạm dừng" [disabled]
+        - generic [ref=e635]:
+          - alert [ref=e636]:
+            - generic [ref=e640]: Môi trường mô phỏng. Các kết nối ngoài chưa hoạt động.
+          - generic [ref=e641]: Dữ liệu cập nhật 21:00 29/9/26 · Joker Studio · Shop mẫu
+      - contentinfo [ref=e642]:
+        - generic [ref=e643]: BotSales AI · Graphite Gold · Frontend
+        - button "Góp ý màn hình" [ref=e644] [cursor=pointer]
+```
