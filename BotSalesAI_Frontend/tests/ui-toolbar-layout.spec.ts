@@ -12,9 +12,12 @@ let closeDemo: (() => Promise<void>) | undefined;
 test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolationKey: 'toolbar-regression' }); demoUrl = server.url; closeDemo = server.close; });
 test.afterAll(async () => closeDemo?.());
 
-async function ready(page: Page, route: string) {
+async function ready(page: Page, route: string, readPath?: string) {
+    const response = readPath ? page.waitForResponse(result => result.request().method() === 'GET'
+        && new URL(result.url()).pathname === readPath) : undefined;
     await page.goto(demoUrl + route);
     await expect(page).toHaveURL(demoUrl + route);
+    if (response) expect((await response).status()).toBe(200);
     await expect(page.locator('main h1')).toBeVisible();
     await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
 }
@@ -34,7 +37,7 @@ test('Shared Toolbar and demo tools keep labels clear when text doubles', async 
     const observations = [];
     for (const width of [320, 390, 1280, 1440]) {
         await page.setViewportSize({ width, height: 1000 });
-        await ready(page, '/s/shop-demo/inbox');
+        await ready(page, '/s/shop-demo/inbox', '/api/v2/shops/shop-demo/conversations');
         await page.locator('button[aria-controls="mock-tools-controls"]').click();
         // Deterministic layout stress; native Firefox text zoom is verified separately.
         await page.evaluate(() => {
