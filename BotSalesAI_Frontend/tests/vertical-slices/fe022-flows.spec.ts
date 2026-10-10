@@ -90,7 +90,11 @@ test('FE022.VS01 catalog → stock → order → prep keeps product, reservation
 });
 
 test('FE022.VS02 procurement → approval → receipt → stock and payable preserves the purchase identity', async ({ page }) => {
+    const purchaseList = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/purchase-orders');
     await gotoDemo(page, '/s/shop-demo/purchases');
+    expect((await purchaseList).status()).toBe(200);
+    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
     await expect(page.getByRole('heading', { name: 'Đơn mua hàng', exact: true })).toBeVisible();
     const before = (await readList<{ variantId: string; onHand: number }>(page, 'inventory')).find(item => item.variantId === 'v-p1');
     expect(before).toBeTruthy();
