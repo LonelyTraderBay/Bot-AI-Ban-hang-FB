@@ -201,7 +201,9 @@ test('F01 shop settings merges a server-only locale change and preserves edits t
     await page.getByRole('button', { name: 'Lưu cấu hình', exact: true }).click();
     const comparison = page.getByRole('dialog', { name: 'Đối chiếu thay đổi', exact: true });
     await comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' }).click();
-    await expect(page.getByLabel('Ngôn ngữ', { exact: true })).toHaveValue('en-US');
+    await expect(page.getByLabel('Ngôn ngữ giao diện', { exact: true })).toHaveValue('Tiếng Việt');
+    await expect(page.getByLabel('Ngôn ngữ giao diện', { exact: true })).toBeDisabled();
+    await expect(page.getByText('Giao diện hiện chỉ hỗ trợ tiếng Việt. Locale lưu trong API: en-US.', { exact: true })).toBeVisible();
     await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('updateShop', 800));
     const sent = page.waitForRequest(request => request.method() === 'PATCH' && new URL(request.url()).pathname === '/api/v2/shops/shop-demo');
     const completed = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo');

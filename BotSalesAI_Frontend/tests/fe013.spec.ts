@@ -164,7 +164,12 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await replay.getByRole('button', { name: 'Tạo bản vận chuyển' }).click();
     expect((await duplicateCreate).status()).toBe(409);
     await expect(replay.getByRole('alert').filter({ hasText: 'Đơn đã có vận đơn' })).toBeVisible();
+    await replay.getByRole('textbox', { name: 'Mã đơn vị vận chuyển (trống = thủ công)', exact: true }).fill('carrier-demo');
     await replay.getByRole('button', { name: 'Hủy', exact: true }).click();
+    const discardDuplicate = page.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?', exact: true });
+    await expect(discardDuplicate).toBeVisible();
+    await discardDuplicate.getByRole('button', { name: 'Bỏ thay đổi', exact: true }).click();
+    await expect(replay).toBeHidden();
 
     const shipmentRow = page.getByRole('row').filter({ hasText: 'DH-1001' });
     await expect(shipmentRow).toBeVisible();

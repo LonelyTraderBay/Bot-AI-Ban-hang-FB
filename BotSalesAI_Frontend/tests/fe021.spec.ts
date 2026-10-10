@@ -75,7 +75,7 @@ test('FE021 timezone and privacy validation waits for interaction and blocks inv
     await retentionDays.blur();
     await expect(retentionDays).toHaveAttribute('aria-invalid', 'true');
     await expect(page.getByText('Nhập số nguyên từ 1 đến 36.500 ngày.', { exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Lưu bản nháp chính sách' }).click();
+    await expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách' })).toBeDisabled();
     expect(mutationRequests).toBe(0);
 });
 
