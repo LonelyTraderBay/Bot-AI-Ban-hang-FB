@@ -1,0 +1,58 @@
+
+Running 4 tests using 1 worker
+
+
+
+(node:51740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [chromium] › tests\ui-finance-layout.spec.ts:129:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting
+
+
+(node:13772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2/4] [chromium] › tests\ui-finance-layout.spec.ts:129:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting
+(node:75980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/4] [firefox] › tests\ui-finance-layout.spec.ts:129:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting
+  1) [firefox] › tests\ui-finance-layout.spec.ts:129:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: page.goto: Test timeout of 180000ms exceeded.
+    Call log:
+      - navigating to "http://127.0.0.1:63566/s/shop-demo/finance/debts-periods", waiting until "load"
+
+
+      14 |
+      15 | async function gotoDemo(page: import('@playwright/test').Page, route: string) {
+    > 16 |     await page.goto(new URL(route, demoUrl).toString());
+         |                ^
+      17 | }
+      18 |
+      19 | async function expectDialogWithinViewport(page: import('@playwright/test').Page, dialog: import('@playwright/test').Locator, width: number, height: number) {
+        at gotoDemo (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-finance-layout.spec.ts:16:16)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-finance-layout.spec.ts:181:15
+
+    Error Context: test-results\playwright-75980-c3828e0b-d6a8-4b0d-8869-0043ffb02a12\ui-finance-layout-Finance--21674-viewport-without-submitting-firefox\error-context.md
+
+    Error Context: test-results\playwright-75980-c3828e0b-d6a8-4b0d-8869-0043ffb02a12\ui-finance-layout-Finance--21674-viewport-without-submitting-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-75980-c3828e0b-d6a8-4b0d-8869-0043ffb02a12\ui-finance-layout-Finance--21674-viewport-without-submitting-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-75980-c3828e0b-d6a8-4b0d-8869-0043ffb02a12\ui-finance-layout-Finance--21674-viewport-without-submitting-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+(node:76560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[4/4] [firefox] › tests\ui-finance-layout.spec.ts:129:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting
+  1 failed
+    [firefox] › tests\ui-finance-layout.spec.ts:129:1 › Finance report, entry, journal, reconciliation and period dialogs remain in the viewport without submitting 
+  3 passed (4.2m)
