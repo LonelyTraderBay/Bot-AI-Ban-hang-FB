@@ -18,7 +18,12 @@ const routes = [
 ];
 
 async function openRoute(page: import('@playwright/test').Page, route: string, heading: string) {
+    const initial = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === route.replace('/s/', '/api/v2/shops/'));
+    const catalog = route === '/s/shop-demo/integrations/ai' ? page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/integrations/ai/catalog') : undefined;
     await page.goto(new URL(route, demoUrl).toString(), { waitUntil: 'domcontentloaded' });
+    expect((await initial).status()).toBe(200);
+    if (catalog) expect((await catalog).status()).toBe(200);
+    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
     await expect(page.getByRole('heading', { name: heading })).toBeVisible();
 }
 
