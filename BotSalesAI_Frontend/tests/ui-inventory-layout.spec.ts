@@ -16,15 +16,19 @@ test('Inventory R15/R16 preserve shared gutter and contain table overflow at 320
     const pageErrors: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.message));
     const routes = [
-        { id: 'R15', path: '/s/shop-demo/inventory', heading: 'Tồn kho', region: 'Tồn kho theo vị trí' },
-        { id: 'R16', path: '/s/shop-demo/inventory/movements', heading: 'Lịch sử kho', region: 'Lịch sử biến động kho' },
+        { id: 'R15', path: '/s/shop-demo/inventory', api: '/api/v2/shops/shop-demo/inventory', heading: 'Tồn kho', region: 'Tồn kho theo vị trí' },
+        { id: 'R16', path: '/s/shop-demo/inventory/movements', api: '/api/v2/shops/shop-demo/inventory/movements', heading: 'Lịch sử kho', region: 'Lịch sử biến động kho' },
     ];
     const observations = [];
 
     for (const width of [320, 390, 768, 1280, 1440]) {
         await page.setViewportSize({ width, height: 900 });
         for (const route of routes) {
+            const listResponse = page.waitForResponse(response => response.request().method() === 'GET'
+                && new URL(response.url()).pathname === route.api);
             await page.goto(new URL(route.path, demoUrl).toString());
+            expect((await listResponse).status()).toBe(200);
+            await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
             await expect(page.getByRole('table', { name: route.region })).toBeVisible();
             await expect(page.locator('main#main-content')).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
