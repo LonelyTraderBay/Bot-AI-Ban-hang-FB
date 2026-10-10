@@ -14,6 +14,7 @@ process.env.BOTSALES_VITE_CACHE_DIR = cacheDir;
 
 export default defineConfig({
     testDir: './tests',
+    testMatch: ['**/*.spec.ts'],
     testIgnore: ['**/built-demo-regression.spec.ts'],
     outputDir: path.join(projectRoot, 'test-results', runId),
     fullyParallel: false,

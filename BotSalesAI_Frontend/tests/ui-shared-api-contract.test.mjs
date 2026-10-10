@@ -306,9 +306,17 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(workflow, /npm run verify/);
     assert.match(workflow, /npm run test:e2e/);
     assert.match(workflow, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
-    assert.match(workflow, /timeout-minutes: 75/);
+    assert.match(workflow, /timeout-minutes: 120/);
+    assert.match(workflow, /fail-fast: false/);
+    assert.match(workflow, /browser: \[chromium, firefox\]/);
+    assert.match(workflow, /npm run test:e2e -- --project=\$\{\{ matrix\.browser \}\}/);
+    assert.match(workflow, /playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}/);
+    assert.match(workflow, /name: frontend-\$\{\{ matrix\.browser \}\}/, 'Each runner must upload a distinct revision-scoped artifact');
     assert.match(workflow, /if: \$\{\{ always\(\) \}\}/);
     assert.match(workflow, /upload-artifact/);
+    const browserConfig = fs.readFileSync(path.join(root, 'playwright.config.ts'), 'utf8');
+    assert.match(browserConfig, /testMatch: \['\*\*\/\*\.spec\.ts'\]/, 'Browser discovery must not execute node:test unit fixtures');
+    assert.match(browserConfig, /workers: 1/, 'Browser isolation remains sequential within each runner');
 });
 
 test('composition prop allowlists match the TypeScript owners exactly', () => {
