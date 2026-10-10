@@ -1,0 +1,365 @@
+
+Running 54 tests using 1 worker
+
+
+
+(node:75572) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/54] [chromium] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+[2/54] [chromium] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+[3/54] [chromium] › tests\ui008-integration-empty.spec.ts:57:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+[4/54] [chromium] › tests\ui008-integration-empty.spec.ts:75:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+[5/54] [chromium] › tests\ui008-integration-empty.spec.ts:90:1 › UI008 R29 pending channel query stays loading until its response arrives
+[6/54] [chromium] › tests\ui008-integration-empty.spec.ts:109:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+[7/54] [chromium] › tests\ui008-integration-empty.spec.ts:123:1 › UI008 R29 503 remains an error and recovers through its retry control
+[8/54] [chromium] › tests\ui008-integration-empty.spec.ts:144:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+[9/54] [chromium] › tests\ui008-integration-empty.spec.ts:162:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+
+(node:35096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[10/54] [chromium] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+[11/54] [chromium] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+[12/54] [chromium] › tests\ui008-integration-empty.spec.ts:57:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+[13/54] [chromium] › tests\ui008-integration-empty.spec.ts:75:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+[14/54] [chromium] › tests\ui008-integration-empty.spec.ts:90:1 › UI008 R29 pending channel query stays loading until its response arrives
+[15/54] [chromium] › tests\ui008-integration-empty.spec.ts:109:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+[16/54] [chromium] › tests\ui008-integration-empty.spec.ts:123:1 › UI008 R29 503 remains an error and recovers through its retry control
+[17/54] [chromium] › tests\ui008-integration-empty.spec.ts:144:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+[18/54] [chromium] › tests\ui008-integration-empty.spec.ts:162:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+(node:46736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[19/54] [chromium] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+[20/54] [chromium] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+[21/54] [chromium] › tests\ui008-integration-empty.spec.ts:57:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+[22/54] [chromium] › tests\ui008-integration-empty.spec.ts:75:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+[23/54] [chromium] › tests\ui008-integration-empty.spec.ts:90:1 › UI008 R29 pending channel query stays loading until its response arrives
+[24/54] [chromium] › tests\ui008-integration-empty.spec.ts:109:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+[25/54] [chromium] › tests\ui008-integration-empty.spec.ts:123:1 › UI008 R29 503 remains an error and recovers through its retry control
+[26/54] [chromium] › tests\ui008-integration-empty.spec.ts:144:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+[27/54] [chromium] › tests\ui008-integration-empty.spec.ts:162:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+
+
+(node:89436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[28/54] [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+  1) [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 304
+
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+    > 25 |     expect((await detailResponse).status()).toBe(200);
+         |                                             ^
+      26 |     expect((await revisionsResponse).status()).toBe(200);
+      27 |     await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
+      28 | }
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:25:45)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:77:9
+
+    Error: page.waitForResponse: Test ended.
+
+      20 |     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET'
+      21 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3'));
+    > 22 |     const revisionsResponse = page.waitForResponse(response => response.request().method() === 'GET'
+         |                                    ^
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+      25 |     expect((await detailResponse).status()).toBe(200);
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:22:36)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:77:15
+
+    Error Context: test-results\playwright-89436-085cf3f0-bc31-4342-9cca-0c4b1d064f41\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox\error-context.md
+
+    Error Context: test-results\playwright-89436-085cf3f0-bc31-4342-9cca-0c4b1d064f41\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-89436-085cf3f0-bc31-4342-9cca-0c4b1d064f41\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-89436-085cf3f0-bc31-4342-9cca-0c4b1d064f41\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:77012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[29/54] [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+  2) [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 304
+
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+    > 25 |     expect((await detailResponse).status()).toBe(200);
+         |                                             ^
+      26 |     expect((await revisionsResponse).status()).toBe(200);
+      27 |     await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
+      28 | }
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:25:45)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:97:9
+
+    Error: page.waitForResponse: Test ended.
+
+      20 |     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET'
+      21 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3'));
+    > 22 |     const revisionsResponse = page.waitForResponse(response => response.request().method() === 'GET'
+         |                                    ^
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+      25 |     expect((await detailResponse).status()).toBe(200);
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:22:36)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:97:15
+
+    Error Context: test-results\playwright-77012-4aef82aa-27c8-476b-85f0-c697ecd849cb\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox\error-context.md
+
+    Error Context: test-results\playwright-77012-4aef82aa-27c8-476b-85f0-c697ecd849cb\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-77012-4aef82aa-27c8-476b-85f0-c697ecd849cb\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-77012-4aef82aa-27c8-476b-85f0-c697ecd849cb\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:33828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[30/54] [firefox] › tests\ui008-integration-empty.spec.ts:57:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+[31/54] [firefox] › tests\ui008-integration-empty.spec.ts:75:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+[32/54] [firefox] › tests\ui008-integration-empty.spec.ts:90:1 › UI008 R29 pending channel query stays loading until its response arrives
+[33/54] [firefox] › tests\ui008-integration-empty.spec.ts:109:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+[34/54] [firefox] › tests\ui008-integration-empty.spec.ts:123:1 › UI008 R29 503 remains an error and recovers through its retry control
+[35/54] [firefox] › tests\ui008-integration-empty.spec.ts:144:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+[36/54] [firefox] › tests\ui008-integration-empty.spec.ts:162:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+
+(node:37008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[37/54] [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+  3) [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 304
+
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+    > 25 |     expect((await detailResponse).status()).toBe(200);
+         |                                             ^
+      26 |     expect((await revisionsResponse).status()).toBe(200);
+      27 |     await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
+      28 | }
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:25:45)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:77:9
+
+    Error: page.waitForResponse: Test ended.
+
+      20 |     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET'
+      21 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3'));
+    > 22 |     const revisionsResponse = page.waitForResponse(response => response.request().method() === 'GET'
+         |                                    ^
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+      25 |     expect((await detailResponse).status()).toBe(200);
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:22:36)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:77:15
+
+    Error Context: test-results\playwright-37008-f1b83913-e8d0-48e7-8d07-1acbe8315b71\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox-repeat1\error-context.md
+
+    Error Context: test-results\playwright-37008-f1b83913-e8d0-48e7-8d07-1acbe8315b71\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox-repeat1\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-37008-f1b83913-e8d0-48e7-8d07-1acbe8315b71\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox-repeat1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-37008-f1b83913-e8d0-48e7-8d07-1acbe8315b71\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox-repeat1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:31216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[38/54] [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+  4) [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 304
+
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+    > 25 |     expect((await detailResponse).status()).toBe(200);
+         |                                             ^
+      26 |     expect((await revisionsResponse).status()).toBe(200);
+      27 |     await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
+      28 | }
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:25:45)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:97:9
+
+    Error: page.waitForResponse: Test ended.
+
+      20 |     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET'
+      21 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3'));
+    > 22 |     const revisionsResponse = page.waitForResponse(response => response.request().method() === 'GET'
+         |                                    ^
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+      25 |     expect((await detailResponse).status()).toBe(200);
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:22:36)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:97:15
+
+    Error Context: test-results\playwright-31216-c8607322-c5d2-4b30-acef-8352c11de7b6\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox-repeat1\error-context.md
+
+    Error Context: test-results\playwright-31216-c8607322-c5d2-4b30-acef-8352c11de7b6\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox-repeat1\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-31216-c8607322-c5d2-4b30-acef-8352c11de7b6\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox-repeat1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-31216-c8607322-c5d2-4b30-acef-8352c11de7b6\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox-repeat1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:3292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[39/54] [firefox] › tests\ui008-integration-empty.spec.ts:57:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+[40/54] [firefox] › tests\ui008-integration-empty.spec.ts:75:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+[41/54] [firefox] › tests\ui008-integration-empty.spec.ts:90:1 › UI008 R29 pending channel query stays loading until its response arrives
+[42/54] [firefox] › tests\ui008-integration-empty.spec.ts:109:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+[43/54] [firefox] › tests\ui008-integration-empty.spec.ts:123:1 › UI008 R29 503 remains an error and recovers through its retry control
+[44/54] [firefox] › tests\ui008-integration-empty.spec.ts:144:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+[45/54] [firefox] › tests\ui008-integration-empty.spec.ts:162:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+
+(node:64832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[46/54] [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary
+  5) [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 304
+
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+    > 25 |     expect((await detailResponse).status()).toBe(200);
+         |                                             ^
+      26 |     expect((await revisionsResponse).status()).toBe(200);
+      27 |     await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
+      28 | }
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:25:45)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:77:9
+
+    Error: page.waitForResponse: Test ended.
+
+      20 |     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET'
+      21 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3'));
+    > 22 |     const revisionsResponse = page.waitForResponse(response => response.request().method() === 'GET'
+         |                                    ^
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+      25 |     expect((await detailResponse).status()).toBe(200);
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:22:36)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:77:15
+
+    Error Context: test-results\playwright-64832-d77d843c-49af-46a3-b6af-e23a667ca890\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox-repeat2\error-context.md
+
+    Error Context: test-results\playwright-64832-d77d843c-49af-46a3-b6af-e23a667ca890\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox-repeat2\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-64832-d77d843c-49af-46a3-b6af-e23a667ca890\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox-repeat2\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-64832-d77d843c-49af-46a3-b6af-e23a667ca890\ui-knowledge-layout-Knowle-e033d-y-supported-layout-boundary-firefox-repeat2\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:66156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[47/54] [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports
+  6) [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 304
+
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+    > 25 |     expect((await detailResponse).status()).toBe(200);
+         |                                             ^
+      26 |     expect((await revisionsResponse).status()).toBe(200);
+      27 |     await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
+      28 | }
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:25:45)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:97:9
+
+    Error: page.waitForResponse: Test ended.
+
+      20 |     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET'
+      21 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3'));
+    > 22 |     const revisionsResponse = page.waitForResponse(response => response.request().method() === 'GET'
+         |                                    ^
+      23 |         && new URL(response.url()).pathname.endsWith('/knowledge/k3/revisions'));
+      24 |     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
+      25 |     expect((await detailResponse).status()).toBe(200);
+        at gotoKnowledgeDetail (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:22:36)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-knowledge-layout.spec.ts:97:15
+
+    Error Context: test-results\playwright-66156-8a824a4c-49b7-4a5a-8ed2-c88163f15ca1\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox-repeat2\error-context.md
+
+    Error Context: test-results\playwright-66156-8a824a4c-49b7-4a5a-8ed2-c88163f15ca1\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox-repeat2\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-66156-8a824a4c-49b7-4a5a-8ed2-c88163f15ca1\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox-repeat2\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-66156-8a824a4c-49b7-4a5a-8ed2-c88163f15ca1\ui-knowledge-layout-Knowle-205b6-obile-and-desktop-viewports-firefox-repeat2\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:90076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[48/54] [firefox] › tests\ui008-integration-empty.spec.ts:57:1 › UI008 R29 successful empty collection exposes an accessible state and one permission-guarded connect CTA
+[49/54] [firefox] › tests\ui008-integration-empty.spec.ts:75:1 › UI008 R29 read-only bot_admin sees the empty state without a manage action
+[50/54] [firefox] › tests\ui008-integration-empty.spec.ts:90:1 › UI008 R29 pending channel query stays loading until its response arrives
+[51/54] [firefox] › tests\ui008-integration-empty.spec.ts:109:1 › UI008 R29 forbidden channel query is not presented as empty or retryable
+[52/54] [firefox] › tests\ui008-integration-empty.spec.ts:123:1 › UI008 R29 503 remains an error and recovers through its retry control
+[53/54] [firefox] › tests\ui008-integration-empty.spec.ts:144:1 › UI008 R30 successful empty AI connection cards show a first-use state and one add CTA
+[54/54] [firefox] › tests\ui008-integration-empty.spec.ts:162:1 › UI008 R30 read-only bot_admin sees the empty state without an add action
+  6 failed
+    [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary 
+    [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports 
+    [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary 
+    [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports 
+    [firefox] › tests\ui-knowledge-layout.spec.ts:67:1 › Knowledge routes R23/R24/R25 fit every supported layout boundary 
+    [firefox] › tests\ui-knowledge-layout.spec.ts:87:1 › Knowledge create, edit, and feedback-review dialogs remain inside mobile and desktop viewports 
+  48 passed (5.1m)
