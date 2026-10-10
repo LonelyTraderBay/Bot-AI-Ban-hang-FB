@@ -217,6 +217,8 @@ export function MarketingPage() {
     const m = data.data?.data;
     const marketingPeriod = m?.period;
     const [draft, setDraft] = useState({ fromDate: fromParam, toDate: toParam, bucket: bucketParam });
+    const draftTouched = useRef(false);
+    const pendingDefaultSearch = useRef<string | null>(null);
     const [showFilterError, setShowFilterError] = useState(false);
     const fromRef = useRef<HTMLInputElement>(null);
     const toRef = useRef<HTMLInputElement>(null);
@@ -225,19 +227,27 @@ export function MarketingPage() {
     const visibleFilterError = showFilterError ? draftError : appliedError;
 
     useEffect(() => {
-        if (marketingPeriod) {
-            setDraft({ fromDate: marketingPeriod.fromDate, toDate: marketingPeriod.toDate, bucket: marketingPeriod.bucket });
-            const next = new URLSearchParams({ fromDate: marketingPeriod.fromDate, toDate: marketingPeriod.toDate, bucket: marketingPeriod.bucket });
-            if (next.toString() !== search) setParams(next, { replace: true });
-        }
-    }, [marketingPeriod, search, setParams]);
-
-    useEffect(() => {
+        const isDefaultNormalization = pendingDefaultSearch.current === search;
+        if (isDefaultNormalization) pendingDefaultSearch.current = null;
+        // Initial URL normalization must preserve edits made before the navigation finishes.
+        if (isDefaultNormalization && draftTouched.current) return;
+        draftTouched.current = false;
         const current = new URLSearchParams(search);
         if (!current.has('fromDate') && !current.has('toDate')) return;
         setDraft({ fromDate: current.get('fromDate') || '', toDate: current.get('toDate') || '', bucket: current.get('bucket') || 'day' });
         setShowFilterError(false);
     }, [search]);
+
+    useEffect(() => {
+        // URL navigation owns the draft; API defaults only initialize an untouched implicit filter.
+        if (marketingPeriod && !hasDateFilter && !draftTouched.current) {
+            const next = new URLSearchParams({ fromDate: marketingPeriod.fromDate, toDate: marketingPeriod.toDate, bucket: marketingPeriod.bucket });
+            if (next.toString() !== search) {
+                pendingDefaultSearch.current = next.toString();
+                setParams(next, { replace: true });
+            }
+        }
+    }, [marketingPeriod, hasDateFilter, search, setParams]);
 
     const applyFilter = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -249,6 +259,8 @@ export function MarketingPage() {
         }
         const next = new URLSearchParams({ fromDate: draft.fromDate, toDate: draft.toDate, bucket: draft.bucket });
         setShowFilterError(false);
+        draftTouched.current = false;
+        pendingDefaultSearch.current = null;
         setParams(next);
     };
 
@@ -258,9 +270,9 @@ export function MarketingPage() {
         <Panel title="Khoảng thời gian báo cáo" subtitle={`Ngày được tính theo lịch ${shop.timezone} của cửa hàng.`} bodyMode="inset" afterGap="section">
             <FormFields component="form" onSubmit={applyFilter} data-testid="marketing-range-form">
                 <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-end' }} sx={layoutSx.toolbar.controlGap}>
-                    <TextField inputRef={fromRef} type="date" label="Từ ngày" value={draft.fromDate} onChange={event => setDraft(value => ({ ...value, fromDate: event.target.value }))} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'fromDate'} helperText={visibleFilterError?.field === 'fromDate' ? visibleFilterError.message : 'Ngày bắt đầu, tính cả ngày đã chọn.'} />
-                    <TextField inputRef={toRef} type="date" label="Đến ngày" value={draft.toDate} onChange={event => setDraft(value => ({ ...value, toDate: event.target.value }))} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'toDate'} helperText={visibleFilterError?.field === 'toDate' ? visibleFilterError.message : 'Tối đa 366 ngày, tính cả hai đầu.'} />
-                    <TextField inputRef={bucketRef} select label="Gộp theo" value={draft.bucket} onChange={event => setDraft(value => ({ ...value, bucket: event.target.value }))} error={visibleFilterError?.field === 'bucket'} helperText={visibleFilterError?.field === 'bucket' ? visibleFilterError.message : 'Chọn ngày, tuần hoặc tháng.'}>
+                    <TextField inputRef={fromRef} type="date" label="Từ ngày" value={draft.fromDate} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, fromDate: event.target.value })); }} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'fromDate'} helperText={visibleFilterError?.field === 'fromDate' ? visibleFilterError.message : 'Ngày bắt đầu, tính cả ngày đã chọn.'} />
+                    <TextField inputRef={toRef} type="date" label="Đến ngày" value={draft.toDate} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, toDate: event.target.value })); }} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'toDate'} helperText={visibleFilterError?.field === 'toDate' ? visibleFilterError.message : 'Tối đa 366 ngày, tính cả hai đầu.'} />
+                    <TextField inputRef={bucketRef} select label="Gộp theo" value={draft.bucket} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, bucket: event.target.value })); }} error={visibleFilterError?.field === 'bucket'} helperText={visibleFilterError?.field === 'bucket' ? visibleFilterError.message : 'Chọn ngày, tuần hoặc tháng.'}>
                         <MenuItem value="day">Ngày</MenuItem><MenuItem value="week">Tuần</MenuItem><MenuItem value="month">Tháng</MenuItem>
                     </TextField>
                     <Button type="submit" variant="contained">Áp dụng</Button>

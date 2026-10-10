@@ -157,6 +157,71 @@ test('FE021 marketing filters preserve API-side aggregates, URL context and miss
     expect(marketingRequests).toBe(beforeInvalidSubmit);
 });
 
+for (const heldPeriod of ['default', 'canonical'] as const) {
+    test(`FE021 marketing filters preserve edits while the ${heldPeriod} period response is pending`, async ({ page }) => {
+        await page.addInitScript(period => {
+            const state = window as unknown as { marketingPeriodPending?: boolean; releaseMarketingPeriod?: () => void };
+            const nativeFetch = window.fetch.bind(window);
+            const gate = new Promise<void>(resolve => { state.releaseMarketingPeriod = resolve; });
+            window.fetch = async (...args: Parameters<typeof fetch>) => {
+                const input = args[0];
+                const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url, location.href);
+                const response = await nativeFetch(...args);
+                const canonical = url.searchParams.get('fromDate') === '2026-08-31' && url.searchParams.get('toDate') === '2026-09-29';
+                if (url.pathname.endsWith('/marketing-summary') && (period === 'canonical' ? canonical : !url.searchParams.has('fromDate'))) {
+                    state.marketingPeriodPending = true;
+                    await gate;
+                }
+                return response;
+            };
+        }, heldPeriod);
+
+        for (const width of [1280, 320]) {
+            await page.setViewportSize({ width, height: 900 });
+            await gotoDemo(page, '/s/shop-demo/reports/marketing');
+            await page.waitForFunction(() => (window as unknown as { marketingPeriodPending?: boolean }).marketingPeriodPending === true);
+            const from = page.getByLabel('Từ ngày', { exact: true });
+            const to = page.getByLabel('Đến ngày', { exact: true });
+            await from.fill('2026-09-18');
+            await to.fill('2026-09-24');
+            await chooseOption(page, 'Gộp theo', 'Tuần');
+            await page.evaluate(() => (window as unknown as { releaseMarketingPeriod: () => void }).releaseMarketingPeriod());
+            await expect(page.getByTestId('marketing-loss-chart')).toBeVisible();
+            await expect(from).toHaveValue('2026-09-18');
+            await expect(to).toHaveValue('2026-09-24');
+            await expect(page.getByRole('combobox', { name: 'Gộp theo' })).toHaveText('Tuần');
+
+            const filtered = page.waitForResponse(response => {
+                const url = new URL(response.url());
+                return response.request().method() === 'GET' && url.pathname.endsWith('/marketing-summary')
+                    && url.searchParams.get('fromDate') === '2026-09-18' && url.searchParams.get('toDate') === '2026-09-24'
+                    && url.searchParams.get('bucket') === 'week';
+            });
+            await page.getByRole('button', { name: 'Áp dụng', exact: true }).click();
+            const result = await filtered;
+            expect(result.status()).toBe(200);
+            expect((await result.json()).data).toMatchObject({
+                period: { fromDate: '2026-09-18', toDate: '2026-09-24', bucket: 'week' },
+                knownAttributedOrders: 2, unknownAttributionOrders: 1, actualSpend: null,
+            });
+            await expect(page).toHaveURL(/fromDate=2026-09-18.*toDate=2026-09-24.*bucket=week/);
+            await from.fill('2026-09-20');
+            await to.fill('2026-09-26');
+            await page.goBack();
+            await expect(from).toHaveValue('2026-08-31');
+            await expect(to).toHaveValue('2026-09-29');
+            await page.goForward();
+            await expect(from).toHaveValue('2026-09-18');
+            await expect(page.getByRole('combobox', { name: 'Gộp theo' })).toHaveText('Tuần');
+            await test.info().attach(`marketing-filter-${heldPeriod}-${width}.json`, {
+                body: JSON.stringify({ heldPeriod, width, fromDate: await from.inputValue(), toDate: await to.inputValue(),
+                    bucket: await page.getByRole('combobox', { name: 'Gộp theo' }).innerText(), url: page.url(), apiStatus: result.status() }),
+                contentType: 'application/json',
+            });
+        }
+    });
+}
+
 test('FE021 invalid marketing deep links mark the responsible field and never send the invalid range', async ({ page }) => {
     let marketingRequests = 0;
     page.on('request', request => {
