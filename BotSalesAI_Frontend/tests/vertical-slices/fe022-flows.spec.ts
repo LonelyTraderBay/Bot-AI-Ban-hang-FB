@@ -79,8 +79,13 @@ test('FE022.VS01 catalog → stock → order → prep keeps product, reservation
     const claim = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/claim'));
     await dialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' }).click();
     expect((await claim).status()).toBe(200);
+    await expect(dialog.getByRole('progressbar', { name: 'Đang lưu', exact: true })).toHaveCount(0);
+    await expect(dialog.locator('[inert]')).toHaveCount(0);
     await dialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' }).fill('AO-002');
+    await expect(dialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toHaveValue('AO-002');
     await dialog.getByRole('spinbutton', { name: 'Số lượng đã lấy' }).fill('1');
+    await expect(dialog.getByRole('spinbutton', { name: 'Số lượng đã lấy' })).toHaveValue('1');
+    await expect(dialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' })).toBeEnabled();
     const pick = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pick'));
     await dialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
     const picked = await pick;
