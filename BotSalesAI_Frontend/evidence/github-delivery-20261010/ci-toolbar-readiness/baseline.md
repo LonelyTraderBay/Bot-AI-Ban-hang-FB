@@ -1,0 +1,5 @@
+# Baseline readiness nhãn Toolbar
+
+Revision trước sửa: 31e129221935f45e73ea51a780148a97c23e336a. Run 38039816312 Firefox job 114177644171 ghi một lỗi tại Shared Toolbar and demo tools keep labels clear when text doubles: ready() kiểm main h1 sau goto/URL, timeout 5000ms, chưa tìm thấy phần tử. Chưa kết luận nguyên nhân cuối cho tới trace hosted. Chromium hiện đã qua ca này.
+
+Owner: tests/ui-toolbar-layout.spec.ts, helper ready() và ca doubled-labels. Consumer impact của thay đổi dự kiến chỉ ca này: chờ GET exact listConversations của shop-demo trước heading/geometry. API đã đối chiếu từ module Inbox và OpenAPI. Giữ bốn viewport 320/390/1280/1440, text stress x2, ba nhãn demo-tools/một nhãn toolbar, zero overlap/outsideField, static label/transform, natural height, collapsed legends và page overflow. Không thay app/API/mock/CSS/timeout/retry/threshold hoặc miễn gate. Đang chạy nguyên bản local và controlled lazy-module delay; sẽ giữ cả PASS/FAIL thật. Phạm vi Frontend/mock, không tăng acceptance.

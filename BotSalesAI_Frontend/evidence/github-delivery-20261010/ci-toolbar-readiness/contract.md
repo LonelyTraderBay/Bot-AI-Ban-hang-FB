@@ -1,0 +1,5 @@
+# Contract trước sửa readiness Toolbar
+
+Local nguyên bản đạt 4/4; không thay thế lỗi hosted. Controlled Chromium lazy-module delay 6500ms có đúng một request bị trì hoãn ở mỗi fixture. Helper nguyên bản FAIL cùng locator main h1 và timeout 5000ms; candidate chờ GET exact conversations PASS và giữ đủ ba nhãn demo-tools/một nhãn toolbar, stress x2, bounds/natural height/legend/overflow tại 320px. Helper được trích và transpile từ snapshot nguyên bản/candidate; raw source, harness, network, trace và ảnh lỗi sẽ được giữ. Probe chỉ chứng minh boundary readiness tại 320px trên Chromium; targeted thật sẽ kiểm cả bốn viewport và hai browser.
+
+Thay đổi dự kiến: ready() nhận readPath tùy chọn, đăng ký waiter GET exact trước goto, yêu cầu HTTP 200 trước heading. Chỉ ca doubled-text truyền /api/v2/shops/shop-demo/conversations; các caller khác giữ hành vi cũ. Giữ toàn bộ assertion geometry và loader, không đổi app/mock/API/style/timeout/retry/threshold. Trace hosted chưa có cho tới job hoàn tất; cần đối chiếu trước báo cáo/commit bằng chứng.

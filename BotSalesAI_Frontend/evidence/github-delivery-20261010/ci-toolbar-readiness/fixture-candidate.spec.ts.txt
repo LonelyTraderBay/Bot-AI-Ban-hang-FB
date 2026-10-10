@@ -1,0 +1,252 @@
+import path from 'node:path';
+import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import { toolbarImpact } from './design/toolbar-impact.mjs';
+import { startDemoServer } from './session/demo-server.mjs';
+import { ownedLabelGeometry } from './design/owned-label-geometry.mjs';
+
+const impact = toolbarImpact(path.resolve('.'));
+let demoUrl = '';
+let closeDemo: (() => Promise<void>) | undefined;
+test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolationKey: 'toolbar-regression' }); demoUrl = server.url; closeDemo = server.close; });
+test.afterAll(async () => closeDemo?.());
+
+async function ready(page: Page, route: string, readPath?: string) {
+    const response = readPath ? page.waitForResponse(result => result.request().method() === 'GET'
+        && new URL(result.url()).pathname === readPath) : undefined;
+    await page.goto(demoUrl + route);
+    await expect(page).toHaveURL(demoUrl + route);
+    if (response) expect((await response).status()).toBe(200);
+    await expect(page.locator('main h1')).toBeVisible();
+    await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
+}
+async function searchGeometry(page: Page) {
+    return page.getByRole('textbox', { name: 'Tìm kiếm', exact: true }).evaluate(input => {
+        const form = input.closest('form')!;
+        const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+        const style = getComputedStyle(button), range = document.createRange();
+        range.selectNodeContents(button);
+        const naturalHeight = Math.max(parseFloat(style.minHeight), range.getBoundingClientRect().height +
+            parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) + parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth));
+        return { buttonHeight: button.getBoundingClientRect().height, naturalHeight, formHeight: form.getBoundingClientRect().height };
+    });
+}
+
+test('Shared Toolbar and demo tools keep labels clear when text doubles', async ({ page }, info) => {
+    const observations = [];
+    for (const width of [320, 390, 1280, 1440]) {
+        await page.setViewportSize({ width, height: 1000 });
+        await ready(page, '/s/shop-demo/inbox', '/api/v2/shops/shop-demo/conversations');
+        await page.locator('button[aria-controls="mock-tools-controls"]').click();
+        // Deterministic layout stress; native Firefox text zoom is verified separately.
+        await page.evaluate(() => {
+            const sizes = [...document.querySelectorAll<HTMLElement>('*')].map(element => [element, parseFloat(getComputedStyle(element).fontSize)] as const);
+            for (const [element, size] of sizes) if (Number.isFinite(size)) element.style.fontSize = `${size * 2}px`;
+        });
+        const labels = await page.evaluate(ownedLabelGeometry);
+        observations.push({ width, labels });
+        await info.attach(`doubled-labels-${width}`, { body: JSON.stringify(labels), contentType: 'application/json' });
+        expect(labels.filter(label => label.owner === 'demo-tools')).toHaveLength(3);
+        expect(labels.filter(label => label.owner === 'toolbar')).toHaveLength(1);
+        expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([]);
+        for (const label of labels) {
+            expect(label.labelPosition).toBe('static');
+            expect(label.labelTransform).toBe('none');
+            expect(label.fieldBounds.height).toBeLessThanOrEqual(label.naturalHeight + 1);
+            expect(label.legends.every(width => width <= 1)).toBe(true);
+        }
+        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    }
+    await info.attach('doubled-text-label-layout', { body: JSON.stringify(observations), contentType: 'application/json' });
+});
+
+test('Toolbar geometry: multiline category lookup cannot stretch the search button', async ({ page }, info) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await ready(page, '/s/shop-demo/products');
+    await expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible();
+    const geometry = await searchGeometry(page);
+    await info.attach('toolbar-geometry', { body: JSON.stringify(geometry), contentType: 'application/json' });
+    expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1);
+    const primary = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true }).locator('xpath=ancestor::form');
+    await expect(primary.getByRole('combobox', { name: 'Trạng thái', exact: true })).toBeVisible();
+    await expect(primary.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toHaveCount(0);
+    const filters = page.getByRole('group', { name: 'Bộ lọc danh mục', exact: true });
+    await expect(filters).toBeVisible();
+    const search = await primary.boundingBox(), secondary = await filters.boundingBox();
+    expect(secondary!.y).toBeGreaterThanOrEqual(search!.y + search!.height);
+    expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
+});
+
+test('Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths', async ({ page }, info) => {
+    test.setTimeout(180_000);
+    const observations = [];
+    for (const width of [320, 390, 768, 1280, 1440]) for (const route of ['inbox', 'inbox/cv1']) {
+        await page.setViewportSize({ width, height: 1000 });
+        await ready(page, `/s/shop-demo/${route}`);
+        const filters = page.locator('[aria-label="Bộ lọc hội thoại"]');
+        await expect(filters).toHaveAttribute('data-ui-composition', 'field-group');
+        await expect(filters).toHaveAttribute('role', 'group');
+        await expect(filters.getByRole('combobox', { includeHidden: true })).toHaveCount(4);
+        const hiddenList = route.includes('/') && width < 1280;
+        if (hiddenList) {
+            await expect(filters).toBeHidden();
+        } else {
+            await expect(filters).toBeVisible();
+            const geometry = await filters.evaluate(element => {
+                const toolbar = element.parentElement!;
+                const form = toolbar.querySelector('form')!;
+                const box = (node: Element) => { const r = node.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; };
+                const controls = [...element.querySelectorAll('.MuiTextField-root')].map(box);
+                return { outsideForm: !element.closest('form'), sharedParent: form.parentElement === toolbar,
+                    filter: box(element), form: box(form), controls, gap: parseFloat(getComputedStyle(toolbar).rowGap),
+                    inset: { left: parseFloat(getComputedStyle(element).paddingLeft), top: parseFloat(getComputedStyle(element).paddingTop) },
+                    scrollWidth: document.documentElement.scrollWidth };
+            });
+            expect(geometry.outsideForm).toBe(true);
+            expect(geometry.sharedParent).toBe(true);
+            expect(geometry.inset).toEqual({ left: 0, top: 0 });
+            expect(Math.abs(geometry.filter.left - geometry.form.left)).toBeLessThanOrEqual(0.5);
+            expect(Math.abs(geometry.filter.right - geometry.form.right)).toBeLessThanOrEqual(0.5);
+            expect(Math.abs(geometry.filter.top - geometry.form.bottom - geometry.gap)).toBeLessThanOrEqual(0.5);
+            for (const control of geometry.controls) {
+                expect(control.left).toBeGreaterThanOrEqual(geometry.filter.left - 0.5);
+                expect(control.right).toBeLessThanOrEqual(geometry.filter.right + 0.5);
+            }
+            expect(geometry.scrollWidth).toBeLessThanOrEqual(width);
+            observations.push({ route, width, hiddenList, geometry });
+        }
+        if (width === 320 || width === 1440) expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([]);
+    }
+    await info.attach('inbox-filter-ownership', { body: JSON.stringify(observations), contentType: 'application/json' });
+});
+
+test('Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow', async ({ page }, info) => {
+    test.setTimeout(300_000);
+    const observations = [], errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    for (const width of [320, 1440]) for (const route of impact.routes) {
+        await page.setViewportSize({ width, height: 900 });
+        await ready(page, route.path);
+        const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true, includeHidden: true });
+        await expect(search).toHaveCount(Number(route.supportsSearch));
+        const hiddenDetailList = route.id === 'R06' && width === 320;
+        let geometry = null;
+        if (route.supportsSearch && !hiddenDetailList) {
+            await expect(search).toBeVisible();
+            geometry = await searchGeometry(page);
+            expect(geometry.buttonHeight, `${route.id} ${width}px`).toBeLessThanOrEqual(geometry.naturalHeight + 1);
+        } else if (hiddenDetailList) await expect(search).toBeHidden();
+        const documentWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+        expect(documentWidth, `${route.id} document at ${width}px`).toBeLessThanOrEqual(width);
+        observations.push({ id: route.id, width, supportsSearch: route.supportsSearch, hiddenDetailList, geometry, documentWidth });
+    }
+    expect(observations).toHaveLength(impact.routes.length * 2);
+    expect(errors).toEqual([]);
+    await info.attach('toolbar-impact-matrix', { body: JSON.stringify({ impact, observations }), contentType: 'application/json' });
+});
+
+test('Toolbar public extra slot cannot stretch a single-line submit action', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await ready(page, '/s/shop-demo/products');
+    const fixtureUrl = '/@fs/' + path.resolve('tests/design/toolbar-render-fixture.tsx').replaceAll('\\', '/');
+    await page.evaluate(async moduleUrl => {
+        const container = document.createElement('section');
+        container.id = 'toolbar-render-fixture';
+        document.querySelector('main')!.replaceChildren(container);
+        const fixture = await import(/* @vite-ignore */ moduleUrl);
+        fixture.mountToolbarFixture(container);
+    }, fixtureUrl);
+    await expect(page.getByRole('textbox', { name: 'Lọc hai' })).toBeVisible();
+    const geometry = await searchGeometry(page);
+    expect(geometry.formHeight).toBeGreaterThan(geometry.buttonHeight * 2);
+    expect(geometry.buttonHeight).toBeLessThanOrEqual(geometry.naturalHeight + 1);
+});
+
+test('Toolbar preserves Products URL filters, search submit, clear and independent category lookup', async ({ page }) => {
+    await ready(page, '/s/shop-demo/products');
+    const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
+    await search.fill('unsubmitted draft');
+    await page.getByRole('combobox', { name: 'Trạng thái', exact: true }).click();
+    await page.getByRole('option', { name: 'Đang bán', exact: true }).click();
+    await expect(page).toHaveURL(/status=active/);
+    expect(new URL(page.url()).searchParams.has('q')).toBe(false);
+    // Existing URL changes resynchronize the q draft; independent filters never submit it.
+    await expect(search).toHaveValue('');
+    await search.fill('Áo');
+    await expect(search).toHaveValue('Áo');
+    await search.press('Enter');
+    await expect(page).toHaveURL(/q=/);
+    expect(new URL(page.url()).searchParams.get('q')).toBe('Áo');
+    await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
+    await expect(search).toBeFocused();
+    expect(new URL(page.url()).searchParams.get('status')).toBe('active');
+    expect(new URL(page.url()).searchParams.has('q')).toBe(false);
+    const categories = page.getByRole('textbox', { name: 'Tìm danh mục', exact: true });
+    await categories.fill('danh mục không có');
+    await expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0);
+    await categories.press('Enter');
+    expect(new URL(page.url()).searchParams.has('q')).toBe(false);
+    await categories.fill('');
+    await expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible();
+    await page.getByRole('combobox', { name: 'Danh mục', exact: true }).click();
+    await page.getByRole('option', { name: 'Quần', exact: true }).click();
+    const selected = new URL(page.url()).searchParams.get('categoryId');
+    expect(selected).toBeTruthy();
+    await categories.fill('danh mục không có');
+    await expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toHaveCount(0);
+    await expect(page.getByRole('combobox', { name: /^Danh mục(?: |$)/ })).toContainText('Quần');
+    expect(new URL(page.url()).searchParams.get('categoryId')).toBe(selected);
+});
+
+test('Toolbar keeps Inventory apply/reset separate from search submission', async ({ page }) => {
+    for (const route of ['/s/shop-demo/inventory', '/s/shop-demo/inventory/movements']) {
+        await ready(page, route);
+        const warehouse = page.getByRole('combobox', { name: /^Kho(?: |$)/ });
+        await warehouse.click();
+        await page.getByRole('option', { name: 'MAIN · Kho chính · dữ liệu tổng hợp', exact: true }).click();
+        await warehouse.press('Enter');
+        await expect(page.getByRole('listbox')).toBeVisible();
+        await page.keyboard.press('Enter');
+        await expect(page.getByRole('listbox')).toHaveCount(0);
+        expect(new URL(page.url()).searchParams.has('q')).toBe(false);
+        expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false);
+        await page.getByRole('button', { name: 'Áp dụng bộ lọc', exact: true }).click();
+        expect(new URL(page.url()).searchParams.get('warehouseId')).toBe('warehouse-01');
+        await page.getByRole('button', { name: 'Xóa bộ lọc', exact: true }).click();
+        expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false);
+        await expect(warehouse.locator('..').locator('input')).toHaveValue('');
+    }
+});
+
+test('Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await ready(page, '/s/shop-demo/products');
+    const fixtureUrl = '/@fs/' + path.resolve('tests/design/toolbar-render-fixture.tsx').replaceAll('\\', '/');
+    await page.evaluate(async url => { (await import(/* @vite-ignore */ url)).installCategoryLookupBranches(); }, fixtureUrl);
+    const baseline = await searchGeometry(page);
+    const lookup = page.getByRole('textbox', { name: 'Tìm danh mục', exact: true });
+    await lookup.fill('Toolbar lookup');
+    const more = page.getByRole('button', { name: 'Tải thêm danh mục', exact: true });
+    await expect(more).toBeEnabled();
+    await expect(page.getByText('Đã tải 20 lựa chọn', { exact: true })).toBeVisible();
+    for (const count of [40, 60, 61]) {
+        await expect(more).toBeEnabled();
+        await more.click();
+        await expect(more).toBeDisabled();
+        await expect(more).toHaveText('Đang tải…');
+        expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight);
+        await page.evaluate(async url => { (await import(/* @vite-ignore */ url)).releaseCategoryPage(); }, fixtureUrl);
+        await expect(page.getByText(`Đã tải ${count} lựa chọn`, { exact: true })).toBeVisible();
+    }
+    await expect(more).toHaveCount(0);
+    await lookup.fill('toolbar-lookup-error');
+    const retry = page.getByRole('button', { name: 'Thử lại danh mục', exact: true });
+    await expect(retry).toBeVisible();
+    expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight);
+    await page.evaluate(async url => { (await import(/* @vite-ignore */ url)).recoverCategoryLookup(); }, fixtureUrl);
+    await retry.click();
+    await expect(retry).toHaveCount(0);
+    await expect(lookup).toHaveValue('toolbar-lookup-error');
+    expect((await searchGeometry(page)).buttonHeight).toBe(baseline.buttonHeight);
+});
