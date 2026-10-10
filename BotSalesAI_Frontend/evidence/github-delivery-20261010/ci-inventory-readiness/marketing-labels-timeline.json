@@ -1,0 +1,284 @@
+{
+  "label": "marketing-labels",
+  "resources": [
+    {
+      "url": "http://127.0.0.1:36649/api/v2/session",
+      "status": 200,
+      "start": 3925703.51,
+      "time": 0
+    },
+    {
+      "url": "http://127.0.0.1:36649/api/v2/shops/shop-demo",
+      "status": 200,
+      "start": 3925736.229,
+      "time": 0
+    },
+    {
+      "url": "http://127.0.0.1:36649/api/v2/shops/shop-demo/events",
+      "status": -1,
+      "start": 3925995.409,
+      "time": 0.10000000009313226
+    },
+    {
+      "url": "http://127.0.0.1:36649/api/v2/shops/shop-demo/marketing-summary",
+      "status": 200,
+      "start": 3926533.754,
+      "time": 0
+    },
+    {
+      "url": "http://127.0.0.1:36649/api/v2/shops/shop-demo/marketing-summary?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "status": 200,
+      "start": 3927266.792,
+      "time": 0
+    },
+    {
+      "url": "http://127.0.0.1:36649/api/v2/shops/shop-demo/events",
+      "status": 200,
+      "start": 3926140.531,
+      "time": 0
+    }
+  ],
+  "calls": [
+    {
+      "id": "call@9309",
+      "start": 3924619.221,
+      "method": "newPage",
+      "params": {}
+    },
+    {
+      "id": "call@9311",
+      "start": 3924871.307,
+      "method": "setViewportSize",
+      "params": {
+        "viewportSize": {
+          "width": 1280,
+          "height": 720
+        }
+      }
+    },
+    {
+      "id": "call@9313",
+      "start": 3924887.518,
+      "method": "goto",
+      "params": {
+        "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing",
+        "waitUntil": "load"
+      }
+    },
+    {
+      "id": "call@9315",
+      "start": 3925568.821,
+      "method": "expect",
+      "params": {
+        "selector": "internal:role=img[name=\"Biểu đồ lý do không chốt đơn, 3 nhóm\"i]",
+        "expression": "to.be.visible",
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 5000
+      }
+    },
+    {
+      "id": "call@9317",
+      "start": 3926985.223,
+      "method": "expect",
+      "params": {
+        "selector": "internal:role=table[name=\"Lý do không chốt đơn\"i]",
+        "expression": "to.be.visible",
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 5000
+      }
+    },
+    {
+      "id": "call@9319",
+      "start": 3927023.184,
+      "method": "evalOnSelectorAll",
+      "params": {
+        "selector": "internal:role=img[name=\"Biểu đồ lý do không chốt đơn, 3 nhóm\"i] >> svg text",
+        "expression": "(ee) => ee.map((e) => e.textContent || \"\")",
+        "isFunction": true,
+        "arg": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        }
+      }
+    },
+    {
+      "id": "call@9321",
+      "start": 3927095.588,
+      "method": "expect",
+      "params": {
+        "selector": "internal:role=table[name=\"Lý do không chốt đơn\"i] >> internal:role=row",
+        "expression": "to.have.count",
+        "expectedNumber": 4,
+        "expectedValue": {
+          "value": {
+            "v": "undefined"
+          },
+          "handles": []
+        },
+        "isNot": false,
+        "timeout": 5000
+      }
+    },
+    {
+      "id": "call@9323",
+      "start": 3927161.255,
+      "method": "waitForSelector",
+      "params": {
+        "selector": "internal:role=img[name=\"Biểu đồ lý do không chốt đơn, 3 nhóm\"i]",
+        "strict": true,
+        "state": "attached"
+      }
+    }
+  ],
+  "completed": [
+    {
+      "id": "call@9309",
+      "end": 3924867.78
+    },
+    {
+      "id": "call@9311",
+      "end": 3924885.467
+    },
+    {
+      "id": "call@9313",
+      "end": 3925562.176
+    },
+    {
+      "id": "call@9315",
+      "end": 3926949.426
+    },
+    {
+      "id": "call@9317",
+      "end": 3927012.658
+    },
+    {
+      "id": "call@9319",
+      "end": 3927084.042
+    },
+    {
+      "id": "call@9321",
+      "end": 3927149.76
+    },
+    {
+      "id": "call@9323",
+      "end": 3927242.085
+    }
+  ],
+  "frames": [
+    {
+      "time": 3925575.723,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": false,
+        "svg": false
+      }
+    },
+    {
+      "time": 3926978.759,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": true,
+        "svg": true
+      }
+    },
+    {
+      "time": 3926996.438,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": true,
+        "svg": false
+      }
+    },
+    {
+      "time": 3927021.469,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": false,
+        "svg": false
+      }
+    },
+    {
+      "time": 3927030.413,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": false,
+        "svg": false
+      }
+    },
+    {
+      "time": 3927092.498,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": false,
+        "svg": false
+      }
+    },
+    {
+      "time": 3927127.587,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": false,
+        "svg": false
+      }
+    },
+    {
+      "time": 3927159.815,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": false,
+        "svg": false
+      }
+    },
+    {
+      "time": 3927168.252,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": false,
+        "svg": false
+      }
+    },
+    {
+      "time": 3927248.644,
+      "url": "http://127.0.0.1:36649/s/shop-demo/reports/marketing?fromDate=2026-08-31&toDate=2026-09-29&bucket=day",
+      "literalMarkersOnly": {
+        "loading": false,
+        "inventory": false,
+        "chart": false,
+        "svg": false
+      }
+    }
+  ],
+  "frameNote": "Playwright frame snapshots may use references to prior snapshots; literalMarkersOnly is a raw text search, not a reconstructed DOM assertion. The full error-context and trace are authoritative."
+}
