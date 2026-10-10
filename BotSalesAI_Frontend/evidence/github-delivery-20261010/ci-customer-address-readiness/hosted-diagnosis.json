@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-10-10T13:28:32.972Z",
+  "runId": 38050319695,
+  "jobId": 114207967139,
+  "failedCase": "C05 initial customer address table",
+  "sourceEditedBeforeTrace": false,
+  "assertion": {
+    "start": 3180690.935,
+    "end": 3185692.203,
+    "timeoutMs": 5000
+  },
+  "observedUI": "Đang tải cửa hàng",
+  "apiResources": [
+    {
+      "url": "http://127.0.0.1:35353/api/v2/session",
+      "method": "GET",
+      "status": 200,
+      "start": 3180827.339,
+      "duration": 0,
+      "requestBody": null,
+      "responseBody": null
+    },
+    {
+      "url": "http://127.0.0.1:35353/api/v2/shops/shop-demo",
+      "method": "GET",
+      "status": 200,
+      "start": 3180858.128,
+      "duration": 0,
+      "requestBody": null,
+      "responseBody": null
+    },
+    {
+      "url": "http://127.0.0.1:35353/api/v2/shops/shop-demo/events",
+      "method": "GET",
+      "status": 200,
+      "start": 3185744.583,
+      "duration": 0,
+      "requestBody": null,
+      "responseBody": null
+    }
+  ],
+  "noCustomerOrAddressRequestRecorded": true,
+  "observedBoundary": "Table assertion starts after document load while shop initialization is pending, before customer detail/address data lifecycle begins.",
+  "deeperShopQuerySchedulingCause": "UNKNOWN",
+  "moduleDelayProbeScope": "Synthetic route delay only; does not identify real hosted shop delay cause."
+}

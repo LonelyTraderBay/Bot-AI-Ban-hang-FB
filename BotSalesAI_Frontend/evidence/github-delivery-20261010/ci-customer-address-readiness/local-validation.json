@@ -1,0 +1,179 @@
+{
+  "recordedAt": "2026-10-10T13:34:40.048Z",
+  "previousRevision": "b2770caab2cae0e4db83c3680a370f64c1390113",
+  "fullVerifyExitCode": 0,
+  "unitTests": 238,
+  "sourceGateFixtures": {
+    "composition": 41,
+    "layout": 86,
+    "evidenceValidator": 11
+  },
+  "sourceFingerprints": 275,
+  "originalLocal": {
+    "passed": 4,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "targetedFinal": {
+    "perEngine": 3,
+    "total": 6,
+    "exitCode": 0
+  },
+  "controlledProbe": {
+    "engine": "chromium",
+    "original": "FAIL same table timeout",
+    "candidate": "PASS whole C05 and label-only PATCH",
+    "wholeC05Callback": true,
+    "delayedRequestsPerFixture": 1,
+    "moduleDelayMs": 6500,
+    "sourceDefaultTimeoutMs": 15000,
+    "sourceExpectTimeoutMs": 5000
+  },
+  "controlledShopProbe": {
+    "original": "FAIL",
+    "candidate": "PASS",
+    "responseDelayMs": 6500,
+    "wholeC05Callback": true
+  },
+  "hostedDiagnosis": {
+    "recordedAt": "2026-10-10T13:28:32.972Z",
+    "runId": 38050319695,
+    "jobId": 114207967139,
+    "failedCase": "C05 initial customer address table",
+    "sourceEditedBeforeTrace": false,
+    "assertion": {
+      "start": 3180690.935,
+      "end": 3185692.203,
+      "timeoutMs": 5000
+    },
+    "observedUI": "Đang tải cửa hàng",
+    "apiResources": [
+      {
+        "url": "http://127.0.0.1:35353/api/v2/session",
+        "method": "GET",
+        "status": 200,
+        "start": 3180827.339,
+        "duration": 0,
+        "requestBody": null,
+        "responseBody": null
+      },
+      {
+        "url": "http://127.0.0.1:35353/api/v2/shops/shop-demo",
+        "method": "GET",
+        "status": 200,
+        "start": 3180858.128,
+        "duration": 0,
+        "requestBody": null,
+        "responseBody": null
+      },
+      {
+        "url": "http://127.0.0.1:35353/api/v2/shops/shop-demo/events",
+        "method": "GET",
+        "status": 200,
+        "start": 3185744.583,
+        "duration": 0,
+        "requestBody": null,
+        "responseBody": null
+      }
+    ],
+    "noCustomerOrAddressRequestRecorded": true,
+    "observedBoundary": "Table assertion starts after document load while shop initialization is pending, before customer detail/address data lifecycle begins.",
+    "deeperShopQuerySchedulingCause": "UNKNOWN",
+    "moduleDelayProbeScope": "Synthetic route delay only; does not identify real hosted shop delay cause."
+  },
+  "discovery": {
+    "perEngine": 407,
+    "filesPerEngine": 69,
+    "total": 814
+  },
+  "priorHosted": {
+    "runId": 38050319695,
+    "chromium": {
+      "e2ePassed": 406,
+      "e2eFailed": 1,
+      "failedCase": "FE022.VS01",
+      "builtDemo": "SKIPPED"
+    },
+    "firefox": {
+      "e2ePassed": 406,
+      "e2eFailed": 1,
+      "failedCase": "C05 address initialization",
+      "builtDemo": "SKIPPED"
+    },
+    "conclusion": "failure"
+  },
+  "hosted": "PENDING_AT_COMMIT",
+  "sourceHashes": {
+    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "20f8aaa0495a3ab6bf222017d3c581fe69f179df507c8f0ca1957aaed5907571"
+  },
+  "readOnlySourceHashes": {
+    "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "f6fdd17a85aeb828beb68326f763c7cf7fd9eb819f0618a8119784cb187fdbbc",
+    "BotSalesAI_Frontend/apps/web/src/modules/customers/addresses.tsx": "4c81fc0c8eea9ccf270895f9e2e0ad92fd8b6d7b7418561e99955176f8592305",
+    "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "ef061bdf70abb1e9ba6cf7bb0ba6343fed34f7efa53ac46201e6384fda9c5d6a",
+    "BotSalesAI_Frontend/apps/web/src/mocks/masters.ts": "2c64a80ad678bb7e4144ca9e5473586fd1293eb3b050cdab0498c72f34281622",
+    "BotSalesAI_Frontend/apps/web/src/shared/api/hooks.ts": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213",
+    "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "12d6b0dbe0dca8b8c5262b37854ebc6407026d658a7a202a557fbb339db4c520",
+    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "e126fcc3e2d82a87e74fc7c2acd30abce46db7d02470ee058fa410c8fb20cb92",
+    "BotSalesAI_Frontend/packages/contracts/src/operations.json": "a1484b4aa4e6191559d80fbe8b012b4ca4ecd80cfc6283b309d6a8d350315f68"
+  },
+  "generatedHashes": {
+    "BotSalesAI_Frontend/evidence/boundaries.json": "5cf52b2e8deddec0d6368bc784990fb19fbf1c5879ffbc9bfe2efff0cbc9acef",
+    "BotSalesAI_Frontend/evidence/domain-tests.json": "64fe2a8960e96d581d7b27a2f63dceba4e11939d59db84b1424c157f2a1fa93d",
+    "BotSalesAI_Frontend/evidence/source-check.json": "badae96a57604f11c6f83a0f58d9c8f17604de028cdd7b9e89c998808fdec113",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json": "21a78dba6108196f460923f929e45d76e1a947f5f149e7cf34a56eaff7809b86"
+  },
+  "hashes": {
+    "after.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "after.log": "e8f161c1778eeff36e210461fb7cbb43db24de3dd3cdfb1e79c7e41c6ba19441",
+    "baseline.md": "8dc7a6a1bcb71032aece09c8dd205fec64a2c8819bddc0701787ca68d0c39eb3",
+    "before.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "before.log": "5362705f92cc677c8a5cba56382396c9f08a8778cf5090d37bfe0ea5b29a51f2",
+    "chromium-list.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "chromium-list.log": "6384f943ffda477a05bba40c50cf53882e7d6b8b0f977053233a9ca581f6e31f",
+    "composition.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "composition.log": "a15d0449aebfb41eaa9aff798eef24a3024cc66ab4340d3a5acb7f0f6919443b",
+    "contract-before-edit.md": "0880e52851538fc80a8b5171d62f7f5183f79938c5f6ff46bbd3cf7a53017255",
+    "evidence-final.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "evidence-final.log": "504674ffe7f5f9a7791f04c419cd5d65415ab8fbd33d82c355704ebec20d2985",
+    "firefox-list.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "firefox-list.log": "1053e62b842649338d17b1f9ef5a06e5713cc8e85173f0b3eadef292da71120a",
+    "fixture-candidate.spec.ts.txt": "20f8aaa0495a3ab6bf222017d3c581fe69f179df507c8f0ca1957aaed5907571",
+    "fixture-original.spec.ts.txt": "f209cda719581da35c2f646c9ebef849017bb1b79d0fd1def991300167829d46",
+    "hosted-artifacts.json": "1c55db832bab5e0e59ec99bd62fecc4be57318c6274415f6e2b859f39364fd84",
+    "hosted-chromium.log": "bebe95af6378be7059e655205248dbd2da21a0bcf1d4684bcfe158bf67f3082a",
+    "hosted-diagnosis.json": "f92d83f9b35121df9a7622f5f09214ed8a11ccd4a5eeeeeb00d8b8465fbf4da2",
+    "hosted-firefox.log": "bb30607d78351a312aa5ebe61994a3289408a66ad3b43fa28eaef729560aecf4",
+    "hosted-jobs.json": "b089b0af7cb40f6729b4ea05544e51c15fd6b09985be3f0ec5a22158d1b73e2a",
+    "layout.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "layout.log": "d8779cccc2b0279b10f06ff873c10b44232d528754ce786bf0b233f952f9cab2",
+    "lazy-probe.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "lazy-probe.log": "5e4840205ac0e5d0a4f88a54600afaea74658a26457f3ddb51e662f670f1ff2a",
+    "lazy-probe.mjs": "cfd133a7c0bdd525a75f5ad5e5dd3befe5ebe1c40ee50fa5eb0f72a9523e95ee",
+    "REPORT.md": "8f69e5c1ae9be9d9b5ffed9c8d83227292f65b7f57f1b346a6be0d9aca6e377d",
+    "store-probe.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "store-probe.log": "8f0eb13156ef4724ab7f6b975ad6f2d755b9d3748198a6b3190c659bf1146d17",
+    "store-probe.mjs": "911bf2ae0c7f9d1f5bf04b41ba2dbb159cf3ae8f18243f017631b64ae0321082",
+    "validator.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "validator.log": "0c14eab3807b62430c70087868238501eb5f8f260cca48c7330ce550b7653a1a",
+    "verify.exit": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+    "verify.log": "bd275f74f879f5d4550358be68682118fa4992159635285def04777ebc7a5b62",
+    "hosted-failure/artifact-selection.json": "a25d70cc778454b2579f726b7401dd2f5724feab0f34076d2b07020c9612289f",
+    "hosted-failure/error-context.md": "9d25cdfe948ae83f25bf5f5edf85c4c0c03ed4ddf15b4e87fd3c0eeff7e6ff78",
+    "hosted-failure/timeline.json": "8855c305327a053b6e21787ce8faa6a5793b9b887ef94b59d8e35d18b659e239",
+    "hosted-failure/trace.zip": "0b1d14ff9db6b2581affdde39106867aaedb87cc8edbdb5adfab5538e076c84a",
+    "lazy-probe/candidate.network.json": "ff2fde64e1e772f00c84769298cbeb83fccc994efa3881d7601d8cd2c79af814",
+    "lazy-probe/candidate.zip": "181d2f3119113e875476beb580c5bbb00da5684259937b314aa04b05d7534bcb",
+    "lazy-probe/original.html": "27610f3b3d49e6776926495ed296f65e044a430c95f2f7b1af3cc7ee1da153da",
+    "lazy-probe/original.network.json": "7d6b70615de7ea650de1866a41ca2dba3346fa670bdf73d2d79bb1f254f5a4ed",
+    "lazy-probe/original.png": "1561f6f438daaf2258db05c81d8a6798f5527f5e8f502ce97dc0b2bb19fc0aa0",
+    "lazy-probe/original.zip": "000c68e6eb962839b3f62d4197dc32cabb5a293919269566e02aa6ec180a0ee1",
+    "lazy-probe/results.json": "052aef6ecb7c45415dea701f3888b797d9917d8a3e318bd9d5fb8ff9e0cdcc4c",
+    "store-probe/candidate.network.json": "3b760458b82716a7ac3078887b634ec8849f659520f175a006f68130f83af091",
+    "store-probe/candidate.zip": "7be2efba736930a5904f6cb79cd0ddbe70a8b391293ca81d3e4f711645fa0aa5",
+    "store-probe/original.html": "8c9894bc0ba04a0bba1f80556c7b8e22a1b3eb51f06e7354b4b87197cc12da14",
+    "store-probe/original.network.json": "06ad6c3c7bf1aac15f37594a544be7ad2c854505245b6c92bbdb9564b4c86de9",
+    "store-probe/original.png": "005f952a4a92347ef3377801e533dd9f47b9d6596b93a134273eccefcb85f2ba",
+    "store-probe/original.zip": "a94e874247e48f6a40879b8a62fbe69b7b55a3ac9df9a59f86fce579ce018c08",
+    "store-probe/results.json": "2c4b67cf4577107d07f5eb880840440f22ff6ca4d7a6e8eb47cbf6a04b60b7c8"
+  }
+}
