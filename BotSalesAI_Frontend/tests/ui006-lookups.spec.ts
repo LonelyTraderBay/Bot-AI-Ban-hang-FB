@@ -67,28 +67,21 @@ async function collectPagedCount(page: import('@playwright/test').Page, collecti
 }
 
 test('UI006.C05 lookup and table cursors reach records after 150 synthetic suppliers, offers, and orders', async ({ page }) => {
-    await gotoDemo(page, '/s/shop-demo/purchases');
-    await expect(page.getByRole('heading', { name: 'Đơn mua hàng', exact: true })).toBeVisible();
+    await gotoDemo(page, '/s/shop-demo/settings/warehouses');
+    await expect(page.getByRole('heading', { name: 'Quản trị kho', exact: true })).toBeVisible();
 
     const seeded = await page.evaluate(async () => {
-        const csrfResponse = await fetch('/api/v2/auth/csrf');
-        const csrf = (await csrfResponse.json()).data.csrfToken as string;
-        async function write(path: string, body: unknown, key: string) {
-            const response = await fetch(`/api/v2/shops/shop-demo/${path}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf, 'Idempotency-Key': key },
-                body: JSON.stringify(body),
-            });
-            const envelope = await response.json();
-            if (!response.ok) throw new Error(`${path} returned ${response.status}: ${envelope.detail || JSON.stringify(envelope)}`);
-            return envelope.data;
-        }
+        const { insert } = await import('/src/mocks/database.ts');
+        const targetSupplierId = 'ui006-supplier-001';
+        const targetOfferId = 'ui006-offer-001';
+        const targetOrderId = 'ui006-order-001';
 
-        let targetSupplierId = '';
-        let targetOfferId = '';
+        // This case measures cursor reads, so seed valid mock rows without unrelated serial POSTs.
         for (let index = 1; index <= 150; index++) {
             const suffix = String(index).padStart(3, '0');
-            const supplier = await write('suppliers', {
+            const supplierId = `ui006-supplier-${suffix}`;
+            insert('suppliers', 'Supplier', 'shop-demo', {
+                id: supplierId,
                 name: `UI006 nhà cung cấp ${suffix}`,
                 contactLabel: `UI006 liên hệ ${suffix}`,
                 currency: 'VND',
@@ -96,45 +89,43 @@ test('UI006.C05 lookup and table cursors reach records after 150 synthetic suppl
                 paymentTerms: 'Thanh toán theo xác nhận mẫu',
                 sendMethod: 'manual',
                 approvedAdapterId: null,
-            }, `ui006-supplier-${suffix}`);
-            const offer = await write('supplier-offers', {
-                supplierId: supplier.id,
+                status: index === 1 ? 'approved' : 'draft',
+            });
+            insert('offers', 'SupplierOffer', 'shop-demo', {
+                id: `ui006-offer-${suffix}`,
+                supplierId,
                 variantId: 'v-p1',
                 unitCost: { amount: '123456', currency: 'VND' },
                 minimumQuantity: 1,
                 packSize: 1,
                 leadTimeDays: 1,
                 validUntil: null,
-            }, `ui006-offer-${suffix}`);
-            if (index === 1) {
-                await write(`suppliers/${supplier.id}/status`, {
-                    expectedVersion: supplier.version,
-                    status: 'approved',
-                    reason: 'UI006 acceptance fixture approval',
-                }, 'ui006-approve-final-supplier');
-                targetSupplierId = supplier.id;
-                targetOfferId = offer.id;
-            }
-        }
-
-        let targetOrderId = '';
-        for (let index = 1; index <= 150; index++) {
-            const suffix = String(index).padStart(3, '0');
-            const order = await write('orders', {
+            });
+            insert('orders', 'Order', 'shop-demo', {
+                id: `ui006-order-${suffix}`,
                 customerId: 'c1',
                 conversationId: null,
                 warehouseId: 'warehouse-01',
-                lines: [{ variantId: 'v-p1', quantity: 1 }],
-                notes: `UI006 synthetic cursor record ${suffix}`,
+                orderState: 'draft',
+                fulfillmentState: 'unfulfilled',
+                paymentState: 'unpaid',
+                lines: [],
+                total: { amount: '123456', currency: 'VND' },
+                allowedActions: [],
+                redactedFields: [],
+                prepTaskId: null,
+                shipmentIds: [],
                 paymentMethod: 'cod',
+                customerConfirmationId: null,
                 shippingAddressId: null,
-            }, `ui006-order-${suffix}`);
-            if (index === 1) targetOrderId = order.id;
+                recognitionPolicyVersion: 'synthetic-policy-1',
+            });
         }
 
         return { targetSupplierId, targetOfferId, targetOrderId };
     });
-
+    await clickNavigation(page, 'Đơn mua hàng');
+    await expect(page.getByRole('heading', { name: 'Đơn mua hàng', exact: true })).toBeVisible();
     const [supplierCount, offerCount, orderCount] = await Promise.all([
         collectPagedCount(page, 'suppliers'),
         collectPagedCount(page, 'supplier-offers'),

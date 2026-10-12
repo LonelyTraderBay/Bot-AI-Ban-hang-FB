@@ -49,8 +49,16 @@ test('C05 customer address UI never replays a masked phone and orders load per-c
 test('C05 new management routes and address dialog reflow at all required widths with keyboard and axe',async({page,browserName})=>{
     for(const width of [320,390,768,1280,1440]) {
         await page.setViewportSize({width,height:900});
-        for(const route of ['settings/warehouses','finance/accounts','customers/c1']) {
-            await page.goto(url+'/s/shop-demo/'+route);await expect(page.locator('main h1')).toBeVisible();await page.getByRole('table').first().waitFor();
+        for(const route of [
+            {path:'settings/warehouses',endpoints:['/warehouses']},
+            {path:'finance/accounts',endpoints:['/accounts']},
+            {path:'customers/c1',endpoints:['/customers/c1','/customers/c1/addresses']},
+        ]) {
+            const dataResponses=route.endpoints.map(endpoint=>page.waitForResponse(response=>response.request().method()==='GET'&&new URL(response.url()).pathname.endsWith(endpoint)));
+            await page.goto(url+'/s/shop-demo/'+route.path);
+            const responses=await Promise.all(dataResponses);
+            for(const response of responses) expect([200,304],`${route.path} ${response.status()}`).toContain(response.status());
+            await expect(page.locator('main h1')).toBeVisible();await page.getByRole('table').first().waitFor();
             expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth),`${route}@${width}`).toBeLessThanOrEqual(1);
             expect((await new AxeBuilder({page}).include('main').analyze()).violations).toEqual([]);
         }

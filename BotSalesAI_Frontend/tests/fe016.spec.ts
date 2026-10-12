@@ -285,11 +285,13 @@ test('Shared consolidation Inbox preserves selected filters and composer draft t
     expect(new URL(page.url()).searchParams.has('status')).toBe(false);
     await expect(status).toBeFocused();
     const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
-    await search.fill('Linh'); await search.press('Enter');
-    expect(new URL(page.url()).searchParams.get('q')).toBe('Linh');
+    await expect(search).toHaveValue('');
+    await search.fill('Linh'); await expect(search).toHaveValue('Linh'); await search.press('Enter');
+    await expect(page).toHaveURL(url => url.searchParams.get('q') === 'Linh');
     await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
-    expect(new URL(page.url()).searchParams.has('q')).toBe(false);
-    expect(new URL(page.url()).searchParams.get('channelId')).toBe('fb-01');
+    await expect(page).toHaveURL(url => !url.searchParams.has('q')
+        && url.searchParams.get('channelId') === 'fb-01'
+        && url.searchParams.get('assignedUserId') === 'user-demo');
     await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
     await info.attach('metadata-draft-branches', { body: JSON.stringify(results), contentType: 'application/json' });
     await draft.fill('');
