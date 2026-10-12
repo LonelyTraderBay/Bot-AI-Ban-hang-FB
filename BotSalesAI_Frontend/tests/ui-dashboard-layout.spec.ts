@@ -59,7 +59,7 @@ test('Shared consolidation Dashboard primary link respects all eight permission 
     await info.attach('dashboard-permission-tuples', { body: JSON.stringify(observations), contentType: 'application/json' });
 });
 
-test('Shared consolidation Dashboard primary link opens a native modified-click page from a fresh authorized scope', async ({ page, context }) => {
+test('Shared consolidation Dashboard leaves native modified-click navigation to the browser', async ({ page }) => {
     const session = page.waitForResponse(response => response.request().method() === 'GET'
         && new URL(response.url()).pathname === '/api/v2/session');
     const dashboard = page.waitForResponse(response => response.request().method() === 'GET'
@@ -73,10 +73,17 @@ test('Shared consolidation Dashboard primary link opens a native modified-click 
     const primary = page.getByRole('link', { name: 'Xem việc cần làm', exact: true });
     const href = '/s/shop-demo/operations';
     await expect(primary).toHaveAttribute('href', href);
-    const opened = context.waitForEvent('page');
+    await page.evaluate(() => {
+        const root = document.documentElement;
+        root.removeAttribute('data-modified-click-default-prevented');
+        document.addEventListener('click', event => {
+            if (event instanceof MouseEvent && (event.ctrlKey || event.metaKey)) {
+                root.dataset.modifiedClickDefaultPrevented = String(event.defaultPrevented);
+            }
+        }, { once: true });
+    });
     await primary.click({ modifiers: ['Control'] });
-    const popup = await opened;
-    await popup.waitForURL(new URL(href, demoUrl).toString()); await popup.close();
+    await expect(page.locator('html')).toHaveAttribute('data-modified-click-default-prevented', 'false');
     expect(new URL(page.url()).pathname).toBe('/s/shop-demo/overview');
 });
 
