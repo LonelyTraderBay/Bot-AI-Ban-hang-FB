@@ -34,7 +34,10 @@ async function openKnowledgeFeedbackReview(page: import('@playwright/test').Page
         await openMenu.click();
     }
     await reviewLink.click();
-    await expect(page.getByRole('heading', { name: 'Duyệt phản hồi AI', exact: true })).toBeVisible();
+    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden', timeout: 30000 });
+    await expect(page.locator('main h1')).toBeVisible({ timeout: 30000 });
+    await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30000 });
+    await expect(page.getByRole('heading', { name: 'Duyệt phản hồi AI', exact: true })).toBeVisible({ timeout: 30000 });
     await expect(page.getByRole('button', { name: 'Duyệt nội dung', exact: true }).first()).toBeVisible();
 }
 
