@@ -58,7 +58,10 @@ test('C05 new management routes and address dialog reflow at all required widths
             await page.goto(url+'/s/shop-demo/'+route.path);
             const responses=await Promise.all(dataResponses);
             for(const response of responses) expect([200,304],`${route.path} ${response.status()}`).toContain(response.status());
-            await expect(page.locator('main h1')).toBeVisible();await page.getByRole('table').first().waitFor();
+            await page.getByRole('progressbar',{name:'Đang tải màn hình',exact:true}).waitFor({state:'hidden',timeout:30_000});
+            await expect(page.locator('main h1')).toBeVisible({timeout:30_000});
+            await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0,{timeout:30_000});
+            await page.getByRole('table').first().waitFor();
             expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth),`${route}@${width}`).toBeLessThanOrEqual(1);
             expect((await new AxeBuilder({page}).include('main').analyze()).violations).toEqual([]);
         }
