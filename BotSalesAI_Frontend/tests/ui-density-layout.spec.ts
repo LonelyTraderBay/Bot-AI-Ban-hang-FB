@@ -5,7 +5,7 @@ import {startDemoServer} from './session/demo-server.mjs';
 let origin='', close:(()=>Promise<void>)|undefined;
 test.beforeAll(async()=>{const server=await startDemoServer({cacheIsolationKey:'density-contract'});origin=server.url;close=server.close;});
 test.afterAll(async()=>close?.());
-async function ready(page:import('@playwright/test').Page, route:string){await page.goto(origin+'/s/shop-demo/'+route);await expect(page.locator('main h1')).toBeVisible();await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0);}
+async function ready(page:import('@playwright/test').Page, route:string){await page.goto(origin+'/s/shop-demo/'+route);await expect(page.getByRole('progressbar',{name:'Đang tải màn hình',exact:true})).toBeHidden({timeout:30000});await expect(page.locator('main h1')).toBeVisible({timeout:30000});await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0,{timeout:30000});}
 
 test('density table saves row space while preserving action target and data',async({page})=>{
  for(const width of [320,806,1440]){
