@@ -24,8 +24,9 @@ const completeDemoAssets: Plugin = {
 export default defineConfig(({ mode }) => {
   const repoRoot=fileURLToPath(new URL('../../',import.meta.url));
   const env = loadEnv(mode, repoRoot, '');
+  // Stable mode-scoped cache lets direct dev servers reuse Vite optimization output between runs.
   const cacheDir = process.env.BOTSALES_VITE_CACHE_DIR
-    || isolatedViteCacheDir(repoRoot, 'direct-vite', String(process.pid));
+    || isolatedViteCacheDir(repoRoot, 'direct-vite', 'mode-' + mode);
   const mocks = mode === 'demo';
   if (mode === 'production' && env.VITE_ENABLE_MOCKS === 'true') {
     throw new Error('Production không được bật mô phỏng. Dùng build:demo cho bản review.');
