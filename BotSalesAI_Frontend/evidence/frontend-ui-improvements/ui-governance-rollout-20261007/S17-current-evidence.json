@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Fresh S17 gates after Orders dialog test waits exact getOrder GET200 and main QueryState loading hidden before unchanged version1/quote/confirmation/return assertions. Actual hosted trace reviewed before source edit; observed boundary: At390x844 Orders detail goto(load)3439697.724–3440602.275 completed; version1 expect3440610.859–3445614.853 exhausted5000ms whilemainstillroute-loading. No getOrder GET in selectedtrace. Orders module200 resource entry timestamp3445724.354 is after failedexpectdeadline. The test treated document load as lazyroute/data readiness.; deeper cause: Exact hosted Vite/module/dependency scheduling cause UNKNOWN; the trace proves route/content not ready at assertion, not a Backend fault or a measured production loading SLA.. OriginalCLI8PASS and loadedFirefox390/1280 baseline; controlled initialGETdata-delayFirefox/module-delayChromium6500ms originalFAILversion1/candidatePASSwholecallback; failed harness attempts retained. Final12 both tests repeat3 both engines. Preserve20route observations/draft selections/quoteonly/noorder-or-return writes/2returnviewport bounds/quantity1.5disabled/Escape. App/mock/contracts/config/dependencies/default30/expect5/test180/retry/threshold unchanged. No owner/nativezoom/screenreader/Backend/production recertification. Refresh 2026-10-12 on local Windows with Node 24.19.0/npm 11.17.0: composition 41/41 and checker 0 findings; layout 86/86 and checker 0 findings with 1 documented exception; evidence-validator unit tests 11/11 and S17 manifest validation PASS. This is local repository evidence only; it does not certify backend, staging, production, or UAT. Additional refresh after commit 23cc8275: C06 setup now returns from Sổ cái through the application link after applying finance-empty instead of mutating history directly. Focused C06 passed 4/4 local runs (two Chromium and two Firefox). Re-run on Windows Node 24.19.0/npm 11.17.0: composition 41/41 and 91 source files/0 findings; layout 86/86 and 93 source files/0 findings/1 documented exception. Local frontend evidence only. Evidence validator re-run: 11/11 fixtures and S17 validation PASS; 275 current fingerprints, status COMPLETE.",
-  "recordedAt": "2026-10-12T05:38:51.857Z",
+  "scope": "Fresh S17 gates after Orders dialog test waits exact getOrder GET200 and main QueryState loading hidden before unchanged version1/quote/confirmation/return assertions. Actual hosted trace reviewed before source edit; observed boundary: At390x844 Orders detail goto(load)3439697.724–3440602.275 completed; version1 expect3440610.859–3445614.853 exhausted5000ms whilemainstillroute-loading. No getOrder GET in selectedtrace. Orders module200 resource entry timestamp3445724.354 is after failedexpectdeadline. The test treated document load as lazyroute/data readiness.; deeper cause: Exact hosted Vite/module/dependency scheduling cause UNKNOWN; the trace proves route/content not ready at assertion, not a Backend fault or a measured production loading SLA.. OriginalCLI8PASS and loadedFirefox390/1280 baseline; controlled initialGETdata-delayFirefox/module-delayChromium6500ms originalFAILversion1/candidatePASSwholecallback; failed harness attempts retained. Final12 both tests repeat3 both engines. Preserve20route observations/draft selections/quoteonly/noorder-or-return writes/2returnviewport bounds/quantity1.5disabled/Escape. App/mock/contracts/config/dependencies/default30/expect5/test180/retry/threshold unchanged. No owner/nativezoom/screenreader/Backend/production recertification. Refresh 2026-10-12 on local Windows with Node 24.19.0/npm 11.17.0: composition 41/41 and checker 0 findings; layout 86/86 and checker 0 findings with 1 documented exception; evidence-validator unit tests 11/11 and S17 manifest validation PASS. This is local repository evidence only; it does not certify backend, staging, production, or UAT. Additional refresh after commit 23cc8275: C06 setup now returns from Sổ cái through the application link after applying finance-empty instead of mutating history directly. Focused C06 passed 4/4 local runs (two Chromium and two Firefox). Re-run on Windows Node 24.19.0/npm 11.17.0: composition 41/41 and 91 source files/0 findings; layout 86/86 and 93 source files/0 findings/1 documented exception. Local frontend evidence only. Evidence validator re-run: 11/11 fixtures and S17 validation PASS; 275 current fingerprints, status COMPLETE. Additional refresh after Firefox R25 failure: wait for the feedback dialog to close after POST 201, then use the application navigation link. Focused Knowledge layout suite passed 4/4 locally (2 Chromium, 2 Firefox); frontend-only evidence.",
+  "recordedAt": "2026-10-12T07:19:11.340Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -38,7 +38,19 @@
       "observed": "11/11 fixtures PASS; S17 evidence validation PASS",
       "log": {
         "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/validator.log",
-        "sha256": "ba4720f5d1955fe3929f0cb7bcc8566fe60d2874e0ff8d1ade4f87096c959d6e"
+        "sha256": "45a3b88e304991a839995f4927a0669870050d211a644a444d2244c83b0c2c94"
+      }
+    },
+    {
+      "id": "knowledge-layout-e2e",
+      "command": "node node_modules/playwright/cli.js test tests/ui-knowledge-layout.spec.ts --project=chromium --project=firefox --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "4 tests PASS (2 Chromium, 2 Firefox)",
+      "observed": "4 tests PASS (2 Chromium, 2 Firefox)",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/knowledge-layout-playwright.log",
+        "sha256": "97500637d280f39c80f33d84e480964ed4e3e3d4d2b0016dd134ea6474ec50f6"
       }
     }
   ],
@@ -301,7 +313,7 @@
     "BotSalesAI_Frontend/tests/ui-import-scope.test.mjs": "02d21b1e9efd724c9c0539a6a61bc2ac1f1a9cda9a9fb5513892e9e2bb414fe4",
     "BotSalesAI_Frontend/tests/ui-integrations-layout.spec.ts": "874ecc9cca75a45fd465aa91a7993583115e04556a9b254eb7f451f66d50c0d6",
     "BotSalesAI_Frontend/tests/ui-inventory-layout.spec.ts": "3ec58e1ad8fdaff03921c5a3f488b3e33ead8763baec9067e2cf489cb1aaf2c7",
-    "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "ee89ab869aecfa733965a15ce5c73b7159e62e5f507dfcf7d2474d2a4bbe966c",
+    "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "a8608df4e4fea3089fba90dfe83e27f7dcd919199decb696977b33be2d031749",
     "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
     "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "f0545811d6cc6ae34dafaa05d80013c827a76384050590f5602e0168f70a0f0c",
     "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "530164987f5ab5654620927b4d489979ab285543b2629fa4b30cfa17cfa60dec",
