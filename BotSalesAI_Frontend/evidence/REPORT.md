@@ -1,5 +1,11 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Đối chiếu CI run #29 — 13/10/2026
+
+Run [#29](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38283700738) trên `8fc1d3bc` đã qua `npm run verify` ở cả hai runner. Chromium đạt 407/407 E2E và built-demo 3/3. Firefox đạt 406/407; `ui-master-resources.spec.ts` C05 thất bại khi route `/settings/warehouses` còn progressbar `Đang tải màn hình` ở viewport 1440×900, dù GET `/warehouses` đã trả 200. `main h1` chưa hiện trong cửa sổ chờ mặc định 5 giây nên test chưa tới các kiểm tra kích thước hoặc axe; trace không cho thấy lỗi API hay tràn ngang.
+
+Test C05 hiện chờ progressbar route ẩn, `main h1` xuất hiện và progress trong `main` kết thúc (giới hạn 30 giây), rồi giữ nguyên các kiểm tra bảng, tràn ngang và axe. Retest cục bộ đã chạy hai lần trên mỗi browser, đạt 4/4 trong 2.7 phút. Đây là readiness của test route; không đổi mã ứng dụng/API. Local `npm.cmd run verify` cũng đã qua toàn workspace: 238 Vitest tests, layout 41/41, visual-token 5/5 (92 source files, 0 findings), UI composition 41/41 (91 source files, 0 findings), evidence fixtures 11/11. Hosted result cho revision đã sửa vẫn đang chờ run mới.
+
 ## Đối chiếu CI run #28 — 13/10/2026
 
 Run [#28](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38274966705) trên `2a396c1f` đã qua `npm run verify`; Chromium E2E đạt 406/407. UI006.C05 hết thời gian chờ 180 giây khi helper bấm nút “Tải thêm báo giá” đang disabled trong lúc trang cuối tải xong. Trace cho thấy đã tải đủ 158 báo giá rồi nút bị gỡ khỏi dialog; nguyên nhân là helper chưa đợi UI kết thúc trạng thái loading, không phải lỗi API/bố cục.
