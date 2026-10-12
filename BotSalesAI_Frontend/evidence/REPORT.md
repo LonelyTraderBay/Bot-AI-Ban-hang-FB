@@ -1,5 +1,11 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Đối chiếu CI run #28 — 13/10/2026
+
+Run [#28](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38274966705) trên `2a396c1f` đã qua `npm run verify`; Chromium E2E đạt 406/407. UI006.C05 hết thời gian chờ 180 giây khi helper bấm nút “Tải thêm báo giá” đang disabled trong lúc trang cuối tải xong. Trace cho thấy đã tải đủ 158 báo giá rồi nút bị gỡ khỏi dialog; nguyên nhân là helper chưa đợi UI kết thúc trạng thái loading, không phải lỗi API/bố cục.
+
+Test helper đã chờ nút được bật hoặc biến mất trước khi bấm, trong commit local `f034b3cf`. `npm run test:e2e` chạy setup, build production và build demo đạt; focused UI006.C05 đạt 2/2 trên Chromium và Firefox. Log: [focused E2E](github-delivery-20261013/s17-freshness/ui006-c05-lookup-readiness-postfix-e2e.log), [S17 validator](github-delivery-20261013/s17-freshness/ui006-c05-evidence-validator.log). Firefox full suite của run #28 còn chạy tại thời điểm này; kết quả hosted cho revision đã sửa được đối chiếu ở run kế tiếp.
+
 ## GitHub delivery follow-up — 12/10/2026
 
 Commit `e096f014` cập nhật readiness của test route Operations sau khi [run #25](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38256665304) ghi nhận Firefox 406/407: `/s/shop-demo/operations/digests` vẫn hiện progressbar route chính ở viewport 1280px sau assertion heading 5 giây. Trace không tới assertion tràn ngang; không có bằng chứng lỗi UI bố cục hoặc API. Test nay đợi progressbar ẩn, `main h1` hiện và progress indicator trong main kết thúc trước khi giữ nguyên assertion heading/kích thước.
