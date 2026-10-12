@@ -21,13 +21,14 @@ function panel(page: import('@playwright/test').Page, title: string) {
 }
 
 test('UI009 delayed customer orders from the previous shop cannot leak into the new shop profile', async ({ page }) => {
-    const observedOrderRequests: Array<{ shopId: string; customerId: string | null }> = [];
+    const observedCustomerOrderRequests: Array<{ shopId: string; customerId: string }> = [];
     let staleRequestState: 'pending' | 'finished' | 'failed' = 'pending';
     page.on('request', request => {
         if (request.method() !== 'GET') return;
         const url = new URL(request.url());
         const match = url.pathname.match(/\/api\/v2\/shops\/([^/]+)\/orders$/);
-        if (match) observedOrderRequests.push({ shopId: match[1], customerId: url.searchParams.get('customerId') });
+        const customerId = url.searchParams.get('customerId');
+        if (match && customerId) observedCustomerOrderRequests.push({ shopId: match[1], customerId });
     });
     page.on('requestfinished', request => {
         const url = new URL(request.url());
@@ -84,11 +85,11 @@ test('UI009 delayed customer orders from the previous shop cannot leak into the 
     await expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible();
     await expect(ordersPanel.getByText('b-DH-1001', { exact: true })).toBeVisible();
     await expect(ordersPanel.getByText('DH-DEMO-PAID-01', { exact: true })).toHaveCount(0);
-    expect(observedOrderRequests).toEqual(expect.arrayContaining([
+    expect(observedCustomerOrderRequests).toEqual(expect.arrayContaining([
         { shopId: 'shop-demo', customerId: 'c1' },
         { shopId: 'shop-second', customerId: 'b-c1' },
     ]));
-    expect(observedOrderRequests.every(request =>
+    expect(observedCustomerOrderRequests.every(request =>
         (request.shopId === 'shop-demo' && request.customerId === 'c1')
         || (request.shopId === 'shop-second' && request.customerId === 'b-c1'),
     )).toBe(true);
@@ -98,7 +99,7 @@ test('UI009 delayed customer orders from the previous shop cannot leak into the 
             newRequest: { shopId: 'shop-second', customerId: 'b-c1', status: currentResponse.status() },
             renderedOrders: ['b-DH-1001'],
             forbiddenOldShopOrders: ['DH-DEMO-PAID-01'],
-            observedOrderRequests,
+            observedCustomerOrderRequests,
         }, null, 2),
         contentType: 'application/json',
     });
