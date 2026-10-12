@@ -24,6 +24,10 @@ async function clickNavigation(page: import('@playwright/test').Page, label: str
 async function loadAllLookup(page: import('@playwright/test').Page, dialog: import('@playwright/test').Locator, label: string, collection: string) {
     for (let pageNumber = 0; pageNumber < 20; pageNumber++) {
         const button = dialog.getByRole('button', { name: `Tải thêm ${label}`, exact: true });
+        await expect.poll(async () => {
+            const count = await button.count();
+            return count === 0 || await button.isEnabled();
+        }, { timeout: 10_000 }).toBe(true);
         if (!(await button.count())) return;
         const response = page.waitForResponse(result => result.request().method() === 'GET'
             && new URL(result.url()).pathname.endsWith(`/${collection}`)
