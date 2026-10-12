@@ -128,9 +128,10 @@ test('SPC-055/057 demo-control labels keep a clear gap on every Shell route cons
     for (const route of shellRoutes) {
         const pathname = routePath(route);
         await page.goto(new URL(pathname, demoUrl).toString(), { waitUntil: 'domcontentloaded' });
+        await page.getByRole('progressbar', { name: 'Đang tải cửa hàng', exact: true }).waitFor({ state: 'hidden', timeout: 30000 });
         const alert = page.locator('header').locator('xpath=following-sibling::*[1]').locator('.MuiAlert-root');
         const controls = page.locator('#mock-tools-controls');
-        await expect(alert).toBeVisible();
+        await expect(alert).toBeVisible({ timeout: 30000 });
         await page.locator('button[aria-controls="mock-tools-controls"]').click();
         await expect(controls).toBeVisible();
 
