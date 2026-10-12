@@ -20,7 +20,10 @@ const routes = [
 
 async function openRoute(page: import('@playwright/test').Page, route: string, heading: string) {
     await page.goto(new URL(route, demoUrl).toString(), { waitUntil: 'domcontentloaded' });
-    await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden', timeout: 30000 });
+    await expect(page.locator('main h1')).toBeVisible({ timeout: 30000 });
+    await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30000 });
+    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible({ timeout: 30000 });
 }
 
 async function expectDocumentFits(page: import('@playwright/test').Page, width: number) {
