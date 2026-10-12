@@ -18,8 +18,9 @@ async function ready(page: Page, route: string, readPath?: string) {
     await page.goto(demoUrl + route);
     await expect(page).toHaveURL(demoUrl + route);
     if (response) expect((await response).status()).toBe(200);
-    await expect(page.locator('main h1')).toBeVisible();
-    await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
+    await expect(page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true })).toBeHidden({ timeout: 30000 });
+    await expect(page.locator('main h1')).toBeVisible({ timeout: 30000 });
+    await expect(page.locator('main .MuiCircularProgress-root, main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30000 });
 }
 async function searchGeometry(page: Page) {
     return page.getByRole('textbox', { name: 'Tìm kiếm', exact: true }).evaluate(input => {
