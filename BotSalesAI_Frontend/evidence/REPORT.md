@@ -1,5 +1,13 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## GitHub delivery follow-up — 12/10/2026
+
+Commit `e096f014` cập nhật readiness của test route Operations sau khi [run #25](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38256665304) ghi nhận Firefox 406/407: `/s/shop-demo/operations/digests` vẫn hiện progressbar route chính ở viewport 1280px sau assertion heading 5 giây. Trace không tới assertion tràn ngang; không có bằng chứng lỗi UI bố cục hoặc API. Test nay đợi progressbar ẩn, `main h1` hiện và progress indicator trong main kết thúc trước khi giữ nguyên assertion heading/kích thước.
+
+Run [#26](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38264524844) trên commit này hoàn thành các bước trước evidence gate, nhưng cả hai browser job dừng tại S17 vì fingerprint cũ của `tests/ui-operations-layout.spec.ts`; E2E bị skip. Manifest và fingerprint đã được làm mới trong commit evidence kế tiếp. Kiểm tra local: Operations 4/4 Chromium+Firefox; evidence fixtures 11/11; S17 validator PASS với 10 records và 275 fingerprints. Log: [Operations E2E](github-delivery-20261012/s17-freshness/operations-layout-readiness-e2e.log), [evidence validator](github-delivery-20261012/s17-freshness/operations-layout-evidence-validator.log), [S17 manifest](frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json).
+
+Đây là ghi nhận lịch sử của run #25/#26; kết quả hosted trên commit evidence được báo riêng theo run GitHub tương ứng. Kiểm chứng này chỉ bao phủ Frontend với dữ liệu mock; không xác nhận backend, staging, production, UAT hoặc branch-protection enforcement.
+
 ## Đối chiếu bàn giao GitHub — 10/10/2026
 
 Source đã có thêm thay đổi UX/nghiệp vụ sau snapshot density bên dưới. Kết quả kiểm tra bàn giao, các lần FAIL và bản sửa regression được ghi riêng tại [báo cáo trước push](github-delivery-20261010/REPORT.md). GitHub Actions của revision được đối chiếu sau push; không suy hosted PASS từ cấu hình workflow hoặc kết quả local.
