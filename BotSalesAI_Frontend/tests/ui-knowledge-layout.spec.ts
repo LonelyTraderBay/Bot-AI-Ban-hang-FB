@@ -27,6 +27,17 @@ async function gotoKnowledgeDetail(page: import('@playwright/test').Page) {
     await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
 }
 
+async function openKnowledgeFeedbackReview(page: import('@playwright/test').Page) {
+    const reviewLink = page.getByRole('link', { name: 'Phản hồi cần duyệt', exact: true });
+    const openMenu = page.getByRole('button', { name: 'Mở menu', exact: true });
+    if (await openMenu.isVisible()) {
+        await openMenu.click();
+    }
+    await reviewLink.click();
+    await expect(page.getByRole('heading', { name: 'Duyệt phản hồi AI', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Duyệt nội dung', exact: true }).first()).toBeVisible();
+}
+
 async function seedPendingFeedbackAndOpenReview(page: import('@playwright/test').Page) {
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
     await page.getByRole('button', { name: /^Đánh giá tin nhắn/ }).first().click();
@@ -35,12 +46,8 @@ async function seedPendingFeedbackAndOpenReview(page: import('@playwright/test')
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/feedback'));
     await dialog.getByRole('button', { name: 'Lưu phản hồi', exact: true }).click();
     expect((await responseWait).status()).toBe(201);
-    await page.evaluate(() => {
-        window.history.pushState({}, '', '/s/shop-demo/knowledge/review');
-        window.dispatchEvent(new PopStateEvent('popstate'));
-    });
-    await expect(page.getByRole('heading', { name: 'Duyệt phản hồi AI', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Duyệt nội dung', exact: true }).first()).toBeVisible();
+    await dialog.waitFor({ state: 'hidden' });
+    await openKnowledgeFeedbackReview(page);
 }
 
 async function expectNoHorizontalOverflow(page: import('@playwright/test').Page, width: number) {
