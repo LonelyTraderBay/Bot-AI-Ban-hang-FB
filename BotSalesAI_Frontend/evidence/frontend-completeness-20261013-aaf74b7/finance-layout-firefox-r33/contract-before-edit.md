@@ -1,0 +1,9 @@
+# Firefox Finance layout readiness — evidence before edit
+
+- Repository revision before change: `791c73514e01b367f6d30f1eddf2f9d179b58702` (`main`, pushed).
+- Current test source SHA-256: `DC4CB85DC77E6D1053CFE20414DB260F3EB54B7C436C5B5E8DCF778DA79FDBE9`.
+- Hosted observation: GitHub Actions run [#33](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38408809610), Firefox job `115335408911`, artifact `11826662403`; 438/439 E2E passed. The sole failure was `tests/ui-finance-layout.spec.ts:30` on the R22 `Lợi nhuận quản trị` heading assertion.
+- Artifact `test-results/playwright-5838-5c26e405-b0ea-46aa-a450-224427d3f373/ui-finance-layout-Finance--cbb7e-al-overflow-from-320–1440px-firefox/error-context.md` records the correct Finance breadcrumb and route but shows `main` containing status/progressbar `Đang tải màn hình` when the heading assertion timed out. Shell navigation, mock notice, and app shell were present; this is direct DOM evidence that the route was still loading at assertion time.
+- `apps/web/src/app/router.tsx:146-147` defines the route loading state and its accessible progressbar name `Đang tải màn hình`; line 191 uses this fallback for lazy route pages.
+- Before this edit, `tests/ui-finance-layout.spec.ts:15-17` navigated and returned immediately, then line 47 asserted the heading. Existing `ui-inventory-layout.spec.ts:31`, `ui-integrations-layout.spec.ts:26`, and `ui-operations-layout.spec.ts:23` already wait for the same route progressbar to become hidden before measuring layout.
+- Intended change: make the Finance layout navigation helper wait for that existing route-loading signal to disappear, without changing route, app, mock, API, or layout behavior. Verification will rerun Finance layout in both browser engines, then the required Frontend `verify` and hosted workflow.
