@@ -1,203 +1,59 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Fresh S17 gates after Orders dialog test waits exact getOrder GET200 and main QueryState loading hidden before unchanged version1/quote/confirmation/return assertions. Actual hosted trace reviewed before source edit; observed boundary: At390x844 Orders detail goto(load)3439697.724–3440602.275 completed; version1 expect3440610.859–3445614.853 exhausted5000ms whilemainstillroute-loading. No getOrder GET in selectedtrace. Orders module200 resource entry timestamp3445724.354 is after failedexpectdeadline. The test treated document load as lazyroute/data readiness.; deeper cause: Exact hosted Vite/module/dependency scheduling cause UNKNOWN; the trace proves route/content not ready at assertion, not a Backend fault or a measured production loading SLA.. OriginalCLI8PASS and loadedFirefox390/1280 baseline; controlled initialGETdata-delayFirefox/module-delayChromium6500ms originalFAILversion1/candidatePASSwholecallback; failed harness attempts retained. Final12 both tests repeat3 both engines. Preserve20route observations/draft selections/quoteonly/noorder-or-return writes/2returnviewport bounds/quantity1.5disabled/Escape. App/mock/contracts/config/dependencies/default30/expect5/test180/retry/threshold unchanged. No owner/nativezoom/screenreader/Backend/production recertification. Refresh 2026-10-12 on local Windows with Node 24.19.0/npm 11.17.0: composition 41/41 and checker 0 findings; layout 86/86 and checker 0 findings with 1 documented exception; evidence-validator unit tests 11/11 and S17 manifest validation PASS. This is local repository evidence only; it does not certify backend, staging, production, or UAT. Additional refresh after commit 23cc8275: C06 setup now returns from Sổ cái through the application link after applying finance-empty instead of mutating history directly. Focused C06 passed 4/4 local runs (two Chromium and two Firefox). Re-run on Windows Node 24.19.0/npm 11.17.0: composition 41/41 and 91 source files/0 findings; layout 86/86 and 93 source files/0 findings/1 documented exception. Local frontend evidence only. Evidence validator re-run: 11/11 fixtures and S17 validation PASS; 275 current fingerprints, status COMPLETE. Additional refresh after Firefox R25 failure: wait for the feedback dialog to close after POST 201, then use the application navigation link. Focused Knowledge layout suite passed 4/4 locally (2 Chromium, 2 Firefox); frontend-only evidence. Additional refresh after Firefox density-layout trace: await the route Suspense progress bar to hide and allow bounded readiness before checking main h1. Focused density layout suite passed 10/10 locally (5 Chromium, 5 Firefox); frontend-only evidence. Additional hosted Firefox review: run 38226439136 had no main h1 within the 5s immediately after page.goto on /s/shop-demo/products; 406/407 passed. The log establishes route content was not ready at assertion, but not an application defect or the exact hosted scheduling cause. The toolbar readiness helper now waits for route Suspense progress, bounded h1 visibility and main data progress to clear. Focused toolbar tests passed 16/16 locally (8 Chromium, 8 Firefox). This is local synthetic frontend evidence; hosted CI remains a separate result. Additional hosted Firefox run 38234965535 on 814e91d6 failed 405/407. Its trace showed the extra GET /api/v2/shops/shop-second/orders?limit=5 was the expected dashboard request during shop switch, without customerId; the customer profile requests remained scoped to shop-demo/c1 and shop-second/b-c1, the stale old-shop request was canceled, and rendered data contained only b-DH-1001. UI009 now observes customer-filtered requests only while retaining exact old/new scope and rendered-data assertions. The finance C06 trace showed its initial heading assertion ran before the lazy route rendered; its helper now waits for the route progress bar, h1, and main data progress to clear. Focused local rerun passed 4/4 across Chromium and Firefox; no application source or backend behavior changed. Additional hosted Firefox run 38245722238 on 1f558546 passed 406/407; Chromium passed 407/407 and built-demo 3/3. The Firefox failure was Knowledge routes R23/R24/R25 at 1280px: after clicking the native /knowledge/review link, the URL had changed but the inbox view remained while the lazy route was loading; the test expected the review heading with the default 5-second timeout. No application source or API behavior failed. The helper now waits for route progress and main content readiness before asserting the review heading. Focused local Knowledge tests passed 4/4 across Chromium and Firefox. Additional hosted Firefox run 38256665304 on ec85a627: 406/407 passed; the Operations digests route still displayed the main route-loading progressbar at 1280px after the test default 5-second heading assertion. The trace did not reach the page-width assertion and does not show rendered overflow. The route helper now waits up to 30 seconds for route progress to hide, main h1 to appear, and main progress indicators to clear before checking the exact heading; no application/API code changed. Focused local Operations checks passed 2/2 in Firefox and 4/4 across Chromium and Firefox. Hosted run 38264524844 on e096f014 reached the final S17 evidence gate but both browser jobs failed because this source fingerprint had not been refreshed; the fingerprint and local logs are updated in this evidence refresh. Additional hosted run 38265782456 on d60b0eb5: Chromium 406/407. The trace shows the modified click completed on a native operations anchor but produced no BrowserContext page event in headless Linux before the 180-second test deadline; the URL remained on the dashboard. This does not establish an app route/API failure. The regression now verifies that the router leaves Ctrl/Meta-modified click default behavior unprevented and keeps the original dashboard route; focused Chromium+Firefox retest passed 2/2 locally. Browser-chrome tab creation is outside this headless check. Further review of hosted run 38265782456 on d60b0eb5: Firefox also passed 406/407; the Shell-route layout test reached /s/shop-demo/inbox/cv1 while the DOM still contained only the global “Đang tải cửa hàng” progressbar after the default 5-second alert assertion. This is bootstrap readiness evidence, not a banner-layout failure. The test now waits for that progressbar to hide and gives the alert a bounded 30-second readiness window; no application/API code changed. Focused route-loop retest passed 2/2 across Chromium and Firefox locally. Run #27 therefore ended with one failure in each browser and built-demo skipped. Additional refresh on 2026-10-13 after GitHub run 38274966705 on 2a396c1f: Chromium passed 406/407; UI006.C05 timed out during the final offers-page transition. The trace showed 158 offers loaded and the busy load-more button removed before the helper click. The helper now waits for the button to become enabled or be removed; focused local rerun passed 2/2 on Chromium and Firefox. Application/API source is unchanged. Firefox was still in progress when this record was prepared; hosted results for the corrected SHA are separate. Additional hosted run 38283700738 on 8fc1d3bc: npm run verify passed in both browsers; Chromium E2E 407/407 and built-demo 3/3; Firefox E2E 406/407 due C05 route readiness at 1440x900 after the warehouse API returned 200 while the route progressbar remained visible. The test now waits for route progress to hide, main h1 to appear, and main progress indicators to clear before unchanged layout/axe assertions. Local repeat-each=2 passed four cases across both browsers; a hosted result for the corrected source is pending. Full local workspace npm run verify after the C05 route-readiness fix passed: 238 Vitest tests, layout 41/41, visual-token 5/5 and 92 source files/0 findings, UI composition 41/41 and 91 source files/0 findings, evidence fixtures 11/11. This local aggregate run does not substitute for hosted CI.",
-  "recordedAt": "2026-10-12T19:12:46Z",
+  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures executed on this source. Prior application/browser records remain historical in s17-before-completion.json; full current application proof is recorded separately.",
+  "recordedAt": "2026-10-13T10:01:06.905Z",
   "status": "COMPLETE",
   "checks": [
     {
-      "id": "contracts",
-      "command": "npm run test:ui-composition",
-      "exitCode": 0,
-      "result": "PASS",
-      "expected": "41/41 fixtures PASS; 91 source files, 0 findings",
-      "observed": "41/41 fixtures PASS; 91 source files, 0 findings",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/composition.log",
-        "sha256": "c12c0f045bbad4bdf5583cb5209889448a72392f65c6120fd7b442e28ea7d6d0"
-      }
-    },
-    {
       "id": "layout",
-      "command": "npm run test:layout",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run test:layout",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "86/86 fixtures PASS; 93 source files, 0 findings, 1 exception used",
-      "observed": "86/86 fixtures PASS; 93 source files, 0 findings, 1 exception used",
+      "expected": "86/86 current fixtures PASS; source checker 0 findings",
+      "observed": "86/86 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/layout.log",
-        "sha256": "0b3c5ab3fe32287c782b3c97b4e6d895a1fef0590bd5275e2cb7833faa5c9c81"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-layout-r6.log",
+        "sha256": "274e0263aa18364438a8bccca4868181fc03ea7558ca1c89a7d34f47ad21fc83"
       }
     },
     {
-      "id": "workspace-verify-after-c05-fix",
-      "command": "npm.cmd run verify",
+      "id": "contracts",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run test:ui-composition",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "Workspace verify passes; 238 Vitest tests; layout 41/41; visual-token 5/5 and 92 source files/0 findings; UI composition 41/41 and 91 source files/0 findings; evidence fixtures 11/11.",
-      "observed": "Workspace verify passes; 238 Vitest tests; layout 41/41; visual-token 5/5 and 92 source files/0 findings; UI composition 41/41 and 91 source files/0 findings; evidence fixtures 11/11.",
+      "expected": "41/41 current fixtures PASS; source checker 0 findings",
+      "observed": "41/41 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261013/s17-freshness/c05-route-layout-verify.log",
-        "sha256": "c802903b13b90ced4829cd9b42a0499ca6a0f8df7b331271e7303ddcd1c26eb6"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-composition-r6.log",
+        "sha256": "e0f07d110220da399cb46902b3ca5b0649f1352414cd1da009c2bcb362db075e"
       }
     },
     {
       "id": "evidence-validator",
-      "command": "npm.cmd run test:evidence",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/ui-evidence-validator.test.mjs",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "11/11 fixtures PASS; S17 validation PASS (15 checks, 275 fingerprints)",
-      "observed": "11/11 fixtures PASS; S17 validation PASS (15 checks, 275 fingerprints)",
+      "expected": "11/11 current fixtures PASS",
+      "observed": "11/11 current fixtures PASS",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261013/s17-freshness/c05-route-layout-evidence-validator.log",
-        "sha256": "635d31b7f8eb914aa5bc7003cbf4ebaa712e855c9ed9ddc041e6cf8c96aec834"
-      }
-    },
-    {
-      "id": "knowledge-layout-e2e",
-      "command": "node node_modules/playwright/cli.js test tests/ui-knowledge-layout.spec.ts --project=chromium --project=firefox --reporter=line",
-      "exitCode": 0,
-      "result": "PASS",
-      "expected": "4 tests PASS (2 Chromium, 2 Firefox)",
-      "observed": "4 tests PASS (2 Chromium, 2 Firefox)",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/knowledge-layout-playwright.log",
-        "sha256": "97500637d280f39c80f33d84e480964ed4e3e3d4d2b0016dd134ea6474ec50f6"
-      }
-    },
-    {
-      "id": "density-layout-e2e",
-      "command": "node node_modules/playwright/cli.js test tests/ui-density-layout.spec.ts --project=chromium --project=firefox --reporter=line",
-      "exitCode": 0,
-      "result": "PASS",
-      "expected": "10 tests PASS (5 Chromium, 5 Firefox)",
-      "observed": "10 tests PASS (5 Chromium, 5 Firefox)",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/density-layout-playwright.log",
-        "sha256": "b2b65f77a9bac084241f2c6224eaa1ed493f7737be1c0cb6b410fb513804475e"
-      }
-    },
-    {
-      "id": "toolbar-layout-e2e",
-      "command": "node node_modules/playwright/cli.js test tests/ui-toolbar-layout.spec.ts --project=chromium --project=firefox --reporter=line",
-      "exitCode": 0,
-      "result": "PASS",
-      "expected": "16 passed (3.0m)",
-      "observed": "16 passed (3.0m)",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/toolbar-layout-playwright.log",
-        "sha256": "ce9bc1777ba66229ed214d08ebf03c64b921026e044a45e095764132bbacabb9"
-      }
-    },
-    {
-      "id": "finance-ui009-e2e",
-      "command": "node node_modules/playwright/cli.js test tests/ui-finance-management.spec.ts tests/ui009-scope-regression.spec.ts --project=chromium --project=firefox --grep \"C06 opening validates before HTTP|UI009 delayed customer orders\" --reporter=line",
-      "expected": "4/4 passed (C06 opening-route readiness and UI009 customer-order scope on Chromium and Firefox)",
-      "observed": "4/4 passed (C06 opening-route readiness and UI009 customer-order scope on Chromium and Firefox)",
-      "exitCode": 0,
-      "result": "PASS",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/finance-ui009-playwright.log",
-        "sha256": "75fea37c7a611797455257b38e8fc0f21363b96cc6351d4f0196dc5cd0b54ad1"
-      }
-    },
-    {
-      "id": "knowledge-layout-post-hosted-fix-e2e",
-      "command": "node node_modules/playwright/cli.js test tests/ui-knowledge-layout.spec.ts --project=chromium --project=firefox --reporter=line",
-      "expected": "4 passed (1.4m)",
-      "observed": "4 passed (1.4m)",
-      "exitCode": 0,
-      "result": "PASS",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/knowledge-layout-post-hosted-fix.log",
-        "sha256": "c1448c31c753782bf9f61a44d66693c1f6ba9b7aeca4347c1e65cbe5a856e393"
-      }
-    },
-    {
-      "id": "operations-layout-firefox-post-hosted-fix-e2e",
-      "command": "npm.cmd run test:e2e -- --project=firefox tests/ui-operations-layout.spec.ts --reporter=line",
-      "expected": "2 tests passed",
-      "observed": "2 tests passed",
-      "exitCode": 0,
-      "result": "PASS",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/operations-layout-readiness-firefox.log",
-        "sha256": "accf342735bb6def35687135f3460e37bfbe684d473313cb24eab272b349adef"
-      }
-    },
-    {
-      "id": "operations-layout-crossbrowser-post-fix-e2e",
-      "command": "npm.cmd run test:e2e -- --project=chromium --project=firefox tests/ui-operations-layout.spec.ts --reporter=line",
-      "expected": "4 tests passed",
-      "observed": "4 tests passed",
-      "exitCode": 0,
-      "result": "PASS",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/operations-layout-readiness-e2e.log",
-        "sha256": "f22db98c9e68ce445de7a4cbe80eb767425319d2103e73d06adfc9260f351812"
-      }
-    },
-    {
-      "id": "dashboard-modified-click-post-hosted-fix-e2e",
-      "command": "npm.cmd run test:e2e -- --project=chromium --project=firefox tests/ui-dashboard-layout.spec.ts --grep modified-click --reporter=line",
-      "expected": "2 tests passed",
-      "observed": "2 tests passed",
-      "exitCode": 0,
-      "result": "PASS",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/dashboard-modified-click-postfix-e2e.log",
-        "sha256": "ef73a8bfd4ae3ada85236c20f62031a9dadd31c089336d3c645ff63b58d4dd70"
-      }
-    },
-    {
-      "id": "shell-route-readiness-postfix-e2e",
-      "command": "npm.cmd run test:e2e -- --project=chromium --project=firefox tests/ui-shell-layout.spec.ts --grep \"SPC-055/057 demo-control labels\" --reporter=line",
-      "expected": "2 tests passed",
-      "observed": "2 tests passed",
-      "exitCode": 0,
-      "result": "PASS",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261012/s17-freshness/shell-route-readiness-postfix-e2e.log",
-        "sha256": "65b8ac3a70af7ab4994538316cd060f207bab35266fa1058ca7b71b8d589c079"
-      }
-    },
-    {
-      "id": "ui006-c05-lookup-readiness-postfix-e2e",
-      "command": "npm.cmd run test:e2e -- --project=chromium --project=firefox tests/ui006-lookups.spec.ts --grep \"C05 lookup and table cursors\" --reporter=line",
-      "expected": "2 tests passed",
-      "observed": "2 tests passed",
-      "exitCode": 0,
-      "result": "PASS",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261013/s17-freshness/ui006-c05-lookup-readiness-postfix-e2e.log",
-        "sha256": "803b9e922fafcf4e218b54526fc9007e65dae501fecf974221cc411adc6cdd7d"
-      }
-    },
-    {
-      "id": "master-resources-layout-readiness-postfix-e2e",
-      "command": "npm.cmd run test:e2e -- --project=chromium --project=firefox --repeat-each=2 tests/ui-master-resources.spec.ts --grep 'C05 new management routes and address dialog reflow' --reporter=line",
-      "exitCode": 0,
-      "result": "PASS",
-      "expected": "4 passed (2 Chromium, 2 Firefox; repeat-each=2)",
-      "observed": "4 passed (2 Chromium, 2 Firefox; repeat-each=2)",
-      "log": {
-        "path": "BotSalesAI_Frontend/evidence/github-delivery-20261013/s17-freshness/c05-route-layout-readiness-postfix-e2e.log",
-        "sha256": "a91175fc6f43f1f5c996ff39305d2b3b72df991be3b2c4a3056cf0d30208c33a"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-validator-fixtures-r6.log",
+        "sha256": "9d773642b4f9d92353d42431d0e4a4017e45460865916ee7de679da0e257e616"
       }
     }
   ],
   "coverage": [
     {
-      "name": "contracts",
-      "expected": 41,
-      "observed": 41,
+      "name": "layout",
+      "expected": 86,
+      "observed": 86,
       "missing": 0,
       "result": "COMPLETE"
     },
     {
-      "name": "layout",
-      "expected": 86,
-      "observed": 86,
+      "name": "contracts",
+      "expected": 41,
+      "observed": 41,
       "missing": 0,
       "result": "COMPLETE"
     },
@@ -249,13 +105,13 @@
     "BotSalesAI_Frontend/apps/web/src/mocks/privacy.ts": "8d31769c7c124dbe1db96e98100c178767be7fb2bbf491253aa673fc805ea443",
     "BotSalesAI_Frontend/apps/web/src/mocks/procurement.ts": "ebb52ca3f76ce64cc1c65aba249bd7e7ce2894ed72f9dbff3f350a3665b701be",
     "BotSalesAI_Frontend/apps/web/src/mocks/seed.json": "946c0a4d5b58617575a0d4bbd0acf970fea2c9170769b8f371e73ccd305bb9c8",
-    "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "399cb9af12192a8ba41fb40cca4c831647f5fc57b563bd08fc2ffb469e242a55",
-    "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "60ad209947cdd0956d4ae0407ea0a84ee7e1fe82e46cb402755f470b2c6f8679",
+    "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "f086bccc5fac03a2f44e582107b091776d7d7a4213c2b71955d5fa256c8e209e",
+    "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "e4b52e657085caf1c0d31a7a6570c0262dba6aa5b3f1a13e090d09bb2fa27344",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "28dd46f898fd4f276f6c0db2c4bf056182ed70dc4eac4b63ac3fcf77a975e686",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "4299df8f130704dd77fdea5aa605f7b9c3ac64458c29be035c247aa13268f5c6",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/addresses.tsx": "4c81fc0c8eea9ccf270895f9e2e0ad92fd8b6d7b7418561e99955176f8592305",
-    "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "f6fdd17a85aeb828beb68326f763c7cf7fd9eb819f0618a8119784cb187fdbbc",
+    "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "4eec3535d4a8fad6fb4d4beac1eb9994bb88c9c72d348a988ae6f45ee8ab73c4",
     "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "690ab38c5282bb5d8368a16ea4efbd8791ff9ba2e4107cf7ff1f7e737705baca",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/accounts.tsx": "77be37cccfd6cacd6ec3bce2277d29117a1a51914ea1a3f2c22d97eb6d9f9869",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/entry-editor.tsx": "7c8bca51ea7fc49556246d09a90cf09fd98eba6cf39b7cc88451b54cea1818e7",
@@ -268,18 +124,18 @@
     "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx": "e577201756d6b1d212acce383daf0b3fb9806e5615819d5c26d39ae434c7f896",
     "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "fcfff677c7f0fd5c58fc28b378cd436d432fe7975e23b6f56c97e22402b4ffed",
     "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "03db63e83a60293ee4bfe8567252e3d873fa34265d7cd09674d0db0c1859e6dd",
-    "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "38274c759b4e67ddac2ab1481ee435a2574f7b16c8e6fa6586c3b73815d5ee8e",
+    "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "5b33cd7cea2a62e2e89480fa061ea2c2be8d5d846d0dfcf6329aa91b88d63d4e",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "298181cf4dc69c68959a02067d740d2b06ad9f60174baccfe34f9158bd54a45b",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/warehouses.tsx": "f9dfdc374cf28993f736d82d63afc121c282936843ab08590a4d06983b6604b6",
     "BotSalesAI_Frontend/apps/web/src/modules/knowledge/index.tsx": "8c139294f8643da4cfd00d9941bc589abd05ccea72b9f48142ae3a679b740200",
-    "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx": "ac4ec5b2a34dd65ccdf6ba193fcb2dc5fed53e7eb6319707866555206646d292",
+    "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx": "8fcba3b8ca2eae3e7efb2fa5fda9e375b47aedf1a5dac460348d161d31bb8577",
     "BotSalesAI_Frontend/apps/web/src/modules/notifications/push-capabilities.ts": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
-    "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx": "7515e3d6782c0a018dfaf997d0905610e56428c685b0f1731b1b67adbaa72fa4",
+    "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx": "eece85ec20768d64ea2607ef170aaa50b956fe6fcd015a9d44e0375146945304",
     "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "ef061bdf70abb1e9ba6cf7bb0ba6343fed34f7efa53ac46201e6384fda9c5d6a",
     "BotSalesAI_Frontend/apps/web/src/modules/procurement/index.tsx": "02494b22aaa2897512a5e160f339ad6e5605cb34b6ffdcb0f80be7f5305a6839",
     "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx": "094e80e042587ae9390d4dc091cc756c8bc261c4c6871f2767bc5e13624eefc8",
     "BotSalesAI_Frontend/apps/web/src/modules/reports/report-utils.ts": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
-    "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx": "f414cc038f718fa79f3b10eaeac9224916a016e5cb39fce8430af6c894a7b37d",
+    "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx": "14da7aaf43aa9f9bf14417da8da30e42d33af9b53c1df3878b43f759c02c805e",
     "BotSalesAI_Frontend/apps/web/src/shared/api/client.ts": "14f723eb00cb9e7e5e244b440c1de7dfd534be499c991cf25288b5a7506c65ae",
     "BotSalesAI_Frontend/apps/web/src/shared/api/client.type-contracts.ts": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e",
     "BotSalesAI_Frontend/apps/web/src/shared/api/errors.ts": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227",
@@ -296,11 +152,11 @@
     "BotSalesAI_Frontend/apps/web/src/shared/model/list-return.ts": "1ec5a32a482a728d7398290a6d2347b7d2a279646af6f1074fc2821ac9a6b5a0",
     "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
     "BotSalesAI_Frontend/apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "9db680ef5ea17c796a824e5a04a88720f856001881d89ead17468f5518d57a5e",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "e322102faa55371356e855fd16967d2a8bd07a6606a2d99dae7323247782f314",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "d37882fa1fec836317e8db306a182ded40a5a920f02567aec6eeff696681ee3e",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "e8026fd493550329bb0fc4f7cc51d870222bf625fc061d464eee9ed540f4b149",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "ddd4cb3d12ebdb421b4ff8b1aaed39317a6b6312190acb7d8263a3f819af0ca6",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "6564f5a0abef7c573d06b1e3260e42eda511dc64241ddc4b9f87ad7b7b1c95b3",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "4f0c1e67c38d2b07b335279436e1b7f72559c890c5241d95937d6e4d01d7607a",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
@@ -377,27 +233,27 @@
     "BotSalesAI_Frontend/tests/domain-scenarios.cjs": "a4b6977835d0c551ad59dd17ac6a580a7af026689686c3f6b09d58e14a1d856f",
     "BotSalesAI_Frontend/tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
     "BotSalesAI_Frontend/tests/fe009.spec.ts": "66424fb9db972021716a768124d80da469502c131fd5d965083009e2e7d26af4",
-    "BotSalesAI_Frontend/tests/fe010.spec.ts": "7f2ad94eb164b9504ab4633aa2642ef84c1141c318d4109723dcb430f1b1e1d8",
+    "BotSalesAI_Frontend/tests/fe010.spec.ts": "22d9cb1dce0e60f4e7fff71b3cef214d96927f8ecf45719bc07a922c9e17d550",
     "BotSalesAI_Frontend/tests/fe011-source-map.test.mjs": "422db817da901192ee2a80924aebef3115ddf7c00b45ae4297e58ce782e9fef9",
     "BotSalesAI_Frontend/tests/fe011.spec.ts": "1b42ce41f05b3fadc3607b652769a511a27da1c0d519016af15c789a8d836b8c",
     "BotSalesAI_Frontend/tests/fe012-source-map.test.mjs": "096636c823514b1da90192a0a55a22cea800fa5c1de225ec60fd3ecb9b4bb98c",
     "BotSalesAI_Frontend/tests/fe012.spec.ts": "d2599e9df4d37db9099caf7f115d14a7bbd811c42f655cc1ff6191adaa994a52",
     "BotSalesAI_Frontend/tests/fe013-source-map.test.mjs": "2f3086d0beee91d8890cfd352ce09df8034d0071e1516ca14e23e7565fa24260",
     "BotSalesAI_Frontend/tests/fe013.spec.ts": "bfe2c2c8b26d0e0e2f76ece4e002e10b1502c53aa24a9bc2540af020dce11b87",
-    "BotSalesAI_Frontend/tests/fe014-source-map.test.mjs": "1c090f6f03dee833a1ab1e116eef77a420ae3d563b5aaac295aa4aa610fddb0d",
+    "BotSalesAI_Frontend/tests/fe014-source-map.test.mjs": "cced9f897b0765024a3990412d1cbcd4989cd38fc5bedc571037e8096fa3a5d0",
     "BotSalesAI_Frontend/tests/fe014.spec.ts": "1410b62e30af0001c2f2d6bee3b663a1f6d3cabc7d62df12591b56dde98b70a9",
-    "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "9e1cb4e6a7e0209a73b88fb3b088a88f79327893f2704e3f2e558993a6c3cacd",
+    "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "d9fecd32da5996ade5cb41a635dda25c8b8e88791064867cd81f98aeff5dd837",
     "BotSalesAI_Frontend/tests/fe015.spec.ts": "c0d1075e9c2e0153b6200e4187ceeb519cdecff086d19faf66549ea927a667d9",
     "BotSalesAI_Frontend/tests/fe016-source-map.test.mjs": "15359771691c02c534f4b998305cb67772c72c5e65468bd832ae79c59cf47d3e",
     "BotSalesAI_Frontend/tests/fe016.spec.ts": "752acebb290f9ddd156bd0fac77e8753b4d151564e6327b674744260f5b5654a",
-    "BotSalesAI_Frontend/tests/fe017-source-map.test.mjs": "c6b5cca99c48eca7accd8f83cc8474d67f17b14d5d6ade9b397c03429fa56e99",
+    "BotSalesAI_Frontend/tests/fe017-source-map.test.mjs": "99cb021a63bea6f384d8d206cbdc3b6918827cb2ce10027f8ef9fb1374875a56",
     "BotSalesAI_Frontend/tests/fe017-validation.spec.ts": "44f86fc257a9dd645b0255562bff0c1177801a330a92c4dd4f7872b7d4e87e98",
     "BotSalesAI_Frontend/tests/fe017.spec.ts": "2282d63dcc655430ecad77d334eefdc234accf5177af33714c1afacd66e82b12",
     "BotSalesAI_Frontend/tests/fe018-source-map.test.mjs": "f4bf77135fddc7b141a598e184cf7569c0fdafeca3d4c050f86671c40f4d3fc8",
     "BotSalesAI_Frontend/tests/fe018.spec.ts": "446c859cdfa6629cd304e775f6797a9b429cd87b7c0b1d35012851c532b6245c",
     "BotSalesAI_Frontend/tests/fe019.spec.ts": "7498e770cf25e2b934a2e77b65c610543943b4b22acc1fcb41bcb24d9a6ba1fa",
-    "BotSalesAI_Frontend/tests/fe020-source-map.test.mjs": "89d244277f25a2d15cb93ca3836a53b0811c09ce6f7544fb1dbabbcd9cef7b5e",
-    "BotSalesAI_Frontend/tests/fe020.spec.ts": "8d2b92e5ea777bc6d70659783b42f8f6404e0e7a24db54c51e3d4ce3b9ea7bfd",
+    "BotSalesAI_Frontend/tests/fe020-source-map.test.mjs": "388f9c32dc92bf6fbb8070606ad0b93f034e2426f6fcb44ac805e87bae7cb1f0",
+    "BotSalesAI_Frontend/tests/fe020.spec.ts": "cf3c5e542fd3bfbb44ae974ba0947cdca3db2d9cdffbfee2de14169d9bdf8b0b",
     "BotSalesAI_Frontend/tests/fe021.spec.ts": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7",
     "BotSalesAI_Frontend/tests/fixtures/finance-management-network.mjs": "a3b1594efbaa86164b6537a5860af89a07e591b8c959f984fc6fb65485a5463b",
     "BotSalesAI_Frontend/tests/fixtures/master-resource-network.mjs": "912277e26b0f268506b7abc01773d15a354be98659314c1fa3cc3c1ae7e6879c",
@@ -478,17 +334,21 @@
     "BotSalesAI_Frontend/tests/ux-confirmation-consumers.test.mjs": "f610f5bce899259d03cca4266db35b0c485e7d6e5f2638e0c104e68a161f43aa",
     "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts": "ea4ede6772292060cf7f5e05adfeb43016b8495525c8503fbd2d625a53297b16",
     "BotSalesAI_Frontend/tests/vertical-slices/generate-fe022-evidence.mjs": "6efafd7ba45c64267690620aeff0d6cb38dd23614edda2df9088da2dbeb4d048",
-    "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+    "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
     "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "35b8c496508d754f820e53782d729ef5330fd88897dd2150a205800a3a5bceae",
-    "BotSalesAI_Frontend/package.json": "0aad8fc27c96e732a6a2de50a34d56504b5363a425bc563244e049ac74a19625",
+    "BotSalesAI_Frontend/package.json": "bc3dd1bde58b7bb242c69fa0a7ba33882b29c4da2022dff6a8b29715c13ef073",
     "BotSalesAI_Frontend/package-lock.json": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a",
-    "BotSalesAI_Frontend/playwright.config.ts": "ae4ab2e40f8d853ea6b12ae7b3ec9d613a2deead4567a7547e02b521901bb480",
-    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "1141ea054c988f9547f975bd0d41613d71e85ce5470b13aa76d0b7d66aa7f7e0",
+    "BotSalesAI_Frontend/playwright.config.ts": "4e99117ba27bd1fa4b6e6bc2423df8c1efa97ec962ff83d48f2e3e830a0d45c9",
+    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "a8c878adf90429511c46afecd182afd9623be4ff54ef2d5fffd321dd986acfcf",
     "BotSalesAI_Frontend/apps/web/vite.config.ts": "6807da5538ceee93218580b9dad4b72d116feeffb9b397a43322ea9e9808aab5",
     "BotSalesAI_Frontend/apps/web/tsconfig.json": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1",
     "BotSalesAI_Frontend/apps/web/vitest.config.ts": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e",
     ".github/workflows/frontend.yml": "276a2fcd854b8dc31f88883efa4a07a780525a94188027ce2e6869f93ee6ec36",
-    ".gitattributes": "460edb3fe7bc671c463b78491f521bb8030097f5c1454f86d2e270e90a87f54e"
+    ".gitattributes": "460edb3fe7bc671c463b78491f521bb8030097f5c1454f86d2e270e90a87f54e",
+    "BotSalesAI_Frontend/tests/frontend-completeness.spec.ts": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
+    "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
+    "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
+    "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -496,6 +356,7 @@
     "Hosted CI and branch protection are not certified by local runs.",
     "The delivery refresh does not re-certify the historical FE ledger, S19 browser matrix, human acceptance, screen-reader speech, Backend or production. Hosted CI is reported separately from its actual run.",
     "Headless Chromium on GitHub did not emit a new BrowserContext page for a Ctrl-click on a native anchor in run 38265782456; the revised application-level test verifies that the router does not prevent the modified-click default, not that browser chrome creates a tab.",
-    "Run 38274966705 on 2a396c1f is not a final hosted result: Chromium had one UI006.C05 timeout and Firefox was cancelled by the newer push. Run 38283700738 on 8fc1d3bc passed Chromium but had one Firefox C05 route-readiness failure; the corrected test has only local focused evidence until a later hosted run passes."
+    "Run 38274966705 on 2a396c1f is not a final hosted result: Chromium had one UI006.C05 timeout and Firefox was cancelled by the newer push. Run 38283700738 on 8fc1d3bc passed Chromium but had one Firefox C05 route-readiness failure; the corrected test has only local focused evidence until a later hosted run passes.",
+    "This refresh verifies governance fixtures only. Full FE/browser/native/cold evidence is separate; Backend, owner acceptance, speech and hosted CI are not certified."
   ]
 }

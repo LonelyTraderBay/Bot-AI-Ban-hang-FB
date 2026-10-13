@@ -1,0 +1,49 @@
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs tests/session/demo-server-cache-lifecycle.test.mjs tests/session/playwright-run-isolation.test.mjs
+
+{
+  "checkedAt": "2026-10-13T09:58:44.405Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 85,
+  "operationCalls": 271,
+  "routes": 61,
+  "issues": [],
+  "status": "PASS"
+}
+✔ run cache closes once after success and preserves sibling run caches (10.3799ms)
+✔ early nonzero exit cleans only its run cache (5.0727ms)
+✔ signal exit cleans its run cache (3.6142ms)
+✔ spawn failure without a child process cleans the unique run cache (4.1868ms)
+✔ timeout keeps cache while child is alive and later exit triggers cleanup (43.8565ms)
+✔ Playwright API server teardown removes its run cache and preserves sibling cache (5.0483ms)
+✔ Playwright setup failure before server creation removes its run cache (3.6218ms)
+✔ Playwright server close failure preserves its run cache (3.3695ms)
+✔ cache paths reject dot-segment traversal (1.02ms)
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/clean-install-r2/BotSalesAI_Frontend/playwright.built-demo.config.ts:11
+if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(runId)) throw new Error('Invalid built-demo run ID.');
+                                                       ^
+
+Error: Invalid built-demo run ID.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/clean-install-r2/BotSalesAI_Frontend/playwright.built-demo.config.ts:11:56
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/clean-install-r2/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.19.0
+✔ Playwright workers reuse their parent output/cache ID while independent runs remain isolated (768.4376ms)
+✔ built-demo artifacts use a stable private run directory instead of cleaning the parent test-results (748.0822ms)
+✔ built-demo rejects an inherited output ID that could escape the artifact root (233.1375ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (1.1361ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (157.5964ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (158.3341ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1804.3935

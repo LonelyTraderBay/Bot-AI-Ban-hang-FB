@@ -1,0 +1,608 @@
+{
+  "taskId": "FE026",
+  "stepId": "S03",
+  "executedAt": "2026-10-13T10:07:11.761Z",
+  "facts": [
+    {
+      "name": "Canonical criterion and whole-task acceptance self-review",
+      "action": "Chạy clean install/type/lint/unit/contract/build và demo build trên target/lock; kiểm bundle và network smoke.",
+      "verification": "Production không request MSW hoặc nhúng mocks/secret; demo chạy React thật với MSW. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "acceptanceCases": [
+        "FE026.AC01 — Cả dist và dist-demo build đúng chế độ; mock isolation được kiểm thực.",
+        "FE026.AC02 — UAT/browser test chạy được trên artifact demo preview.",
+        "FE026.AC03 — Có log clean gate hoặc CI run thật; cấu hình CI không được báo đã chạy."
+      ],
+      "scopeInterpretation": "Current named owner assertions and actual executions are reviewed against each acceptance. Legacy 54 routes use the current 61-route manifest; approved C05/C06 contracts supersede old address/account catalog gaps. Privacy/OIDC remains unavailable under FE009.S03; manual speech/owner acceptance are not forged."
+    },
+    {
+      "name": "Current route/operation owners",
+      "routes": [],
+      "operationIds": [],
+      "sourceCrosswalk": {
+        "apiTotal": 245,
+        "required": 224,
+        "referenced": 222,
+        "missing": [
+          {
+            "id": "stepUp",
+            "url": "/auth/step-up",
+            "method": "post"
+          },
+          {
+            "id": "approvePrivacyRequest",
+            "url": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+            "method": "post"
+          }
+        ],
+        "limits": "stepUp/approvePrivacyRequest deliberately unavailable under FE009.S03 OIDC policy; reference coverage is not code completion."
+      }
+    },
+    {
+      "name": "Executed owner browser cases",
+      "proof": [
+        {
+          "file": "tests/artifacts/demo-preview.spec.ts",
+          "sha256": "3d522e81d9c649f9f999aba7cb4a942523c7ac7f310ad1830aecc914d6765ef0",
+          "assertions": [
+            {
+              "line": 44,
+              "text": "expect(response.status()).toBe(200)"
+            },
+            {
+              "line": 45,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 46,
+              "text": "expect(page.locator('main h1').first()).toBeVisible()"
+            },
+            {
+              "line": 76,
+              "text": "expect(initialGzipBytes).toBeLessThanOrEqual(500 * 1024)"
+            },
+            {
+              "line": 77,
+              "text": "expect(largestGzipBytes).toBeLessThanOrEqual(200 * 1024)"
+            },
+            {
+              "line": 106,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 110,
+              "text": "expect(page.getByRole('status').filter({ hasText: /^Đã tải 1\\.000 khách hàng/ })).toHaveText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.')"
+            },
+            {
+              "line": 116,
+              "text": "expect(response.status()).toBe(200)"
+            },
+            {
+              "line": 120,
+              "text": "expect(renderedRows).toHaveCount(21)"
+            },
+            {
+              "line": 121,
+              "text": "expect(page.locator('a[href*=\"perf-customer-\"]').first()).toBeVisible()"
+            },
+            {
+              "line": 136,
+              "text": "expect(envelope.page).toMatchObject({ limit: 20, total: 1004, hasMore: true })"
+            },
+            {
+              "line": 146,
+              "text": "expect(files.some(file => path.basename(file) === 'mockServiceWorker.js')).toBe(false)"
+            },
+            {
+              "line": 149,
+              "text": "expect(bundles).not.toContain(marker)"
+            },
+            {
+              "line": 150,
+              "text": "expect(bundles).not.toContain('service worker mô phỏng')"
+            }
+          ],
+          "cases": [
+            {
+              "title": "the built demo artifact serves the React UI and synthetic API through preview",
+              "line": 40,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 807
+            },
+            {
+              "title": "a thousand synthetic customers remain API-paginated in the built demo artifact",
+              "line": 104,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 897
+            },
+            {
+              "title": "the production artifact contains neither the mock worker asset nor MSW fixtures/runtime",
+              "line": 143,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 24
+            },
+            {
+              "title": "the built demo artifact serves the React UI and synthetic API through preview",
+              "line": 40,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1174
+            },
+            {
+              "title": "a thousand synthetic customers remain API-paginated in the built demo artifact",
+              "line": 104,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1280
+            },
+            {
+              "title": "the production artifact contains neither the mock worker asset nor MSW fixtures/runtime",
+              "line": 143,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 10
+            }
+          ]
+        }
+      ],
+      "negativeExecutions": 0
+    },
+    {
+      "name": "Executed unit owners",
+      "proof": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "e1ed34a5c53b5f9947dc6ab4226b84497e86169fbd78431075739533b7bfcb78",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current dependency gates",
+      "unit": 242,
+      "domain": 117,
+      "sourceMaps": 16,
+      "fullBrowser": 878,
+      "builtArtifact": 6,
+      "coldStages": 13,
+      "limits": "Distinct suite counts are not added into a percentage."
+    },
+    {
+      "name": "Native affected-owner review",
+      "proof": [
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r5.json",
+          "sha256": "a10db819544603176e0493b08ef25eaae1d843acec49c97191ddacf7c562e77d",
+          "count": 8
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/native-text-only-200-current-r6.json",
+          "sha256": "18f699cb737e55b316658ec64bf92166b8586236d082e16fcce1587ce7c9601b",
+          "count": 16
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r7.json",
+          "sha256": "0e1173776db95ab8a4bcb2dad62e3dcc0f865552856393c327276d467236d208",
+          "count": 8
+        }
+      ],
+      "scope": "Eight affected detail views; Chromium and installed Chrome browser zoom, Firefox native text-only zoom. Full browser suite covers all existing consumers. Historical global native matrices are not re-certified."
+    },
+    {
+      "name": "Cold source and artifacts",
+      "artifact": "cold-artifacts-final.json",
+      "lockSha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "name": "Review and acceptance boundary",
+      "handoff": "ACCEPTANCE_GUIDE.md",
+      "architecture": "ARCHITECTURE_REVIEW.md",
+      "quality": "quality-gates-final.json",
+      "rawPremiumScanner": "FAIL_EXIT_1: all 14 actual semantic actions reviewed in premium-semantic-review.json; no scanner PASS or owner approval claimed",
+      "ownerAcceptance": "PENDING",
+      "screenReaderSpeech": "NOT_RUN",
+      "hostedCI": "NOT_RUN",
+      "backend": "OUTSIDE_SCOPE"
+    },
+    {
+      "name": "Criterion-specific proof selection",
+      "step": "S03",
+      "verification": "Production không request MSW hoặc nhúng mocks/secret; demo chạy React thật với MSW. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "interpretation": "This foundation/cross-module/handoff criterion is self-reviewed against its exact action/verification and the named source, owner assertions, toolchain/gate/artifact and handoff proofs above; no points are inferred solely from a shared suite total.",
+      "selectedOperationLocations": [],
+      "selectedBrowserCases": [
+        {
+          "title": "the built demo artifact serves the React UI and synthetic API through preview",
+          "line": 40,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 807
+        },
+        {
+          "title": "a thousand synthetic customers remain API-paginated in the built demo artifact",
+          "line": 104,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 897
+        },
+        {
+          "title": "the production artifact contains neither the mock worker asset nor MSW fixtures/runtime",
+          "line": 143,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 24
+        },
+        {
+          "title": "the built demo artifact serves the React UI and synthetic API through preview",
+          "line": 40,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1174
+        },
+        {
+          "title": "a thousand synthetic customers remain API-paginated in the built demo artifact",
+          "line": 104,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1280
+        },
+        {
+          "title": "the production artifact contains neither the mock worker asset nor MSW fixtures/runtime",
+          "line": 143,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 10
+        }
+      ],
+      "ownerSourceAssertions": [
+        {
+          "file": "tests/artifacts/demo-preview.spec.ts",
+          "sha256": "3d522e81d9c649f9f999aba7cb4a942523c7ac7f310ad1830aecc914d6765ef0",
+          "assertionLines": [
+            44,
+            45,
+            46,
+            76,
+            77,
+            106,
+            110,
+            116,
+            120,
+            121,
+            136,
+            146,
+            149,
+            150
+          ]
+        }
+      ],
+      "policyLimits": "Manual speech/owner acceptance/hosted CI are not fabricated."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "final-verify-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:01:06.981Z",
+      "finishedAt": "2026-10-13T10:04:18.552Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-verify-r3.log",
+        "sha256": "8a2bc419fb81685bf2f6f73645aff8438ed20f8e15a7c43d3788f60eec4537c5"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-unit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:35.330Z",
+      "finishedAt": "2026-10-13T07:02:42.025Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log",
+        "sha256": "d28976d231b13835d4807b6afa47ed16e8bbb728e2d40f2da4809d9a935b1dab"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-source-maps-r4",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:04:18.629Z",
+      "finishedAt": "2026-10-13T10:04:18.788Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-source-maps-r4.log",
+        "sha256": "1f11d1774f5a281c635e13a5103ffea8cd1a15a8dbe8cb3ce221e7101b67c567"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-e2e-r8",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config evidence\\frontend-completeness-20261013-aaf74b7\\final-supported-matrix.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:17:44.501Z",
+      "finishedAt": "2026-10-13T09:38:22.202Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+        "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:38:46.673Z",
+      "finishedAt": "2026-10-13T09:42:01.737Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-built-demo.log",
+        "sha256": "8e58d50eaf56c321c12b6b624c93f1b3b4179be1d9d32fb07c3d02ce68886c04"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-kit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" ../botsales-kit/scripts/validate-kit.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.394Z",
+      "finishedAt": "2026-10-13T07:02:42.544Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-kit-r3.log",
+        "sha256": "88d853cfe1cce38738a93c30a9da799eadb00b50cb751133587d7295c3f2886d"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-doctor-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run doctor",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.639Z",
+      "finishedAt": "2026-10-13T07:02:42.844Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-doctor-r3.log",
+        "sha256": "672964dbb21e82e121d2af5d557c6560d07f6fcdea96a2be8052b7f46d0f2d1c"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-dependencies-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.935Z",
+      "finishedAt": "2026-10-13T07:02:43.508Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-dependencies-r3.log",
+        "sha256": "1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-audit-r2",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" audit --omit=dev --json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:43.608Z",
+      "finishedAt": "2026-10-13T07:02:44.665Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-audit-r2.log",
+        "sha256": "4a77064eea4b56a1382b7b3ad1421f3ce4a7543523f17a326dfe5228010c49a9"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-browser-200-r5",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-browser-200.mjs r5",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:02.022Z",
+      "finishedAt": "2026-10-13T08:33:13.731Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-browser-200-r5.log",
+        "sha256": "3f2f3eb12ddff66c9e359c294c84b623f3ed75f48956e653ab4b6a33d00d8164"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-text-200-r6",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-text-200.mjs r6",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:13.814Z",
+      "finishedAt": "2026-10-13T08:33:43.758Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-text-200-r6.log",
+        "sha256": "8e8676f76e6e02fd961003167805795c22200a6745357631ac5fc4a28e6156fd"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-chrome-200-r7",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence/frontend-completeness-20261013-aaf74b7/native-browser-200.mjs r7 chrome",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:26:48.144Z",
+      "finishedAt": "2026-10-13T08:27:18.715Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-chrome-200-r7.log",
+        "sha256": "9b4a1a82d84492f12d76006e0fedf42e7bdb35ba51497e4c586d8d57d2a92453"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "metadata-generator-after-fix",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/vertical-slices/generate-route-implementation.mjs evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:55:55.856Z",
+      "finishedAt": "2026-10-13T09:55:55.931Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-generator-after-fix.log",
+        "sha256": "fd1826c8ac72da4d1a8aaac2e8e62d989ace259dd77388fb9081df5ff288f911"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "metadata-state-role-final",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/states/generate-route-state-roles.mjs --unit-log evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log --browser-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log --role-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.232Z",
+      "finishedAt": "2026-10-13T09:56:19.304Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-state-role-final.log",
+        "sha256": "650607a21ec011c9328898177b3fa064353754aa73c88648b5cc3f263d7f11d8"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --grep FE022.S05 --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.602Z",
+      "finishedAt": "2026-10-13T09:56:22.344Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-generated-map-e2e.log",
+        "sha256": "96c8bbaf23ab8e6e47268e6ebc57cd3964806280ceea464fc7635512c9e7c996"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-marketing-boundaries",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/vitest/vitest.mjs run --config evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.config.ts evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.test.ts --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:03:53.279Z",
+      "finishedAt": "2026-10-13T10:03:54.078Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-marketing-boundaries.log",
+        "sha256": "1d1bad3f9cbb3ae44d5a0890a01cf9b6158739a4fb71945ef8395844ef1757a1"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    }
+  ],
+  "sourceSnapshotSha256": "17c7e9e49259a302452d30815ea36cf24a7071e1c0863caa83111467a85c4424"
+}

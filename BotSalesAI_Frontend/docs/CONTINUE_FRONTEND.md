@@ -1,17 +1,13 @@
 # Tiếp tục Frontend — 08/10/2026
 
 <!-- CORRECTIONS_CURRENT -->
-## Phạm vi hiện hành — UX và nghiệp vụ bổ sung 09/10/2026
+## Bằng chứng source cuối — 13/10/2026
 
-Đang thực hiện UX01–UX15 và sáu nhóm chức năng theo [kế hoạch UI §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). Baseline và impact tại [contract](../evidence/frontend-ux-completion-20261009/CONTRACT.md). Trạng thái chỉ đọc từ kế hoạch; các gate của đợt trước không chứng minh source đang sửa đã hoàn tất. FE vẫn có 140 checkpoint; freshness phải đọc lại bằng CLI canonical.
+[Báo cáo](../evidence/frontend-completeness-20261013-aaf74b7/REPORT.md), [nghiệm thu](../evidence/frontend-completeness-20261013-aaf74b7/ACCEPTANCE_GUIDE.md), [quality matrix](../evidence/frontend-completeness-20261013-aaf74b7/quality-gates-final.json). Trạng thái UI chỉ ở [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). Full browser 878/878, unit 242/242, domain/HTTP 117/117, built-demo 6/6 và 244 route opens; full matrix Chrome 155/Firefox 155, mỗi engine 439 cases. Hash ứng dụng/mock/test/config giữ nguyên từ full PASS; bốn tên test trong generator báo cáo sửa sau đó và được kiểm riêng (proof-tool-delta.json). UA Chrome 153 do preset; binary đo thực là Chrome 155. Cold 13/13; production 35 file/demo 39 file trùng checksum. Native affected detail: Chromium 8/8, Firefox text-only 16/16 và installed Chrome 8/8.
 
-Phạm vi Frontend + contract canonical + MSW tổng hợp. Nghiệm thu local cuối đợt chưa được xác nhận; Backend/provider/production có mốc riêng.
+61 route/16 module và 64 feature có owner; API references 222/224 (99,11%), giữ mẫu số và hai operation stepUp/approvePrivacyRequest unavailable theo FE009.S03 OIDC policy. Không lấy references/test ratio làm tỷ lệ correctness. Đọc CLI canonical cho FE freshness; các snapshot 140/140 cũ không thay trạng thái hiện tại.
 
-## HISTORICAL_SNAPSHOT — kết quả — thu gọn spacing 09/10/2026
-
-[Báo cáo](../evidence/frontend-spacing-density-20261009/REPORT.md), [case nghiệm thu](../evidence/frontend-spacing-density-20261009/ACCEPTANCE_GUIDE.md): **READY_FOR_ACCEPTANCE_LOCAL_SCOPE**. Full624/624,181unit,41contracts,6built-demo,216route observations/70focused cases,16deep native/108label probes đạt trên source của đợt density. Canonical140/140,0stale/blocked; xem CLI và receipt để đọc freshness. Trạng thái chỉ ở UI plan §16.6/16.20; các kết quả614/175/40 trước density là HISTORICAL_SNAPSHOT.
-
-Scope local Frontend/mock; speech/hosted CI NOT_RUN, user acceptance PENDING; Backend/provider/production ngoài scope.
+Rubric 7/9 fully verified; FE-G05 speech/human NOT_RUN, FE-G09 user acceptance PENDING; hosted CI NOT_RUN. Raw premium scanner FAIL/14 có semantic action review riêng, không scanner PASS hoặc accepted exception mới. Scope React/MSW local; Backend/provider/staging/production chưa xác minh. Baseline FAIL/partial runs và lịch sử được giữ trong hồ sơ.
 <!-- END_CORRECTIONS_CURRENT -->
 
 ## HISTORICAL_SNAPSHOT — hồ sơ trước đợt F01–F09

@@ -1,0 +1,1250 @@
+{
+  "taskId": "FE007",
+  "stepId": "S02",
+  "executedAt": "2026-10-13T10:07:10.317Z",
+  "facts": [
+    {
+      "name": "Canonical criterion and whole-task acceptance self-review",
+      "action": "Hoàn thiện shell/navigation/query keys principal/shop/permissionVersion/filter; auth flow dùng mock protocol theo contract.",
+      "verification": "Một Router/QueryClient/theme provider; 401/403 không giả empty success. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "acceptanceCases": [
+        "FE007.AC01 — Query/cache/stream scope không rò giữa user/shop.",
+        "FE007.AC02 — Deep links/mobile navigation và dirty drafts được bảo toàn.",
+        "FE007.AC03 — Auth giả có nhãn; không nhận OIDC/server authorization đã kiểm thật."
+      ],
+      "scopeInterpretation": "Current named owner assertions and actual executions are reviewed against each acceptance. Legacy 54 routes use the current 61-route manifest; approved C05/C06 contracts supersede old address/account catalog gaps. Privacy/OIDC remains unavailable under FE009.S03; manual speech/owner acceptance are not forged."
+    },
+    {
+      "name": "Current route/operation owners",
+      "routes": [],
+      "operationIds": [],
+      "sourceCrosswalk": {
+        "apiTotal": 245,
+        "required": 224,
+        "referenced": 222,
+        "missing": [
+          {
+            "id": "stepUp",
+            "url": "/auth/step-up",
+            "method": "post"
+          },
+          {
+            "id": "approvePrivacyRequest",
+            "url": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+            "method": "post"
+          }
+        ],
+        "limits": "stepUp/approvePrivacyRequest deliberately unavailable under FE009.S03 OIDC policy; reference coverage is not code completion."
+      }
+    },
+    {
+      "name": "Executed owner browser cases",
+      "proof": [
+        {
+          "file": "tests/frontend.spec.ts",
+          "sha256": "7b641c124314b44777bfe00ecef65f602fdffd146eeea8dc299713bf4208fd8f",
+          "assertions": [
+            {
+              "line": 43,
+              "text": "expect(page.getByRole('heading', { name: 'Sản phẩm', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 44,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 54,
+              "text": "expect(created.status()).toBe(201)"
+            },
+            {
+              "line": 56,
+              "text": "expect(createdProduct.name).toBe('Sản phẩm kiểm thử')"
+            },
+            {
+              "line": 58,
+              "text": "expect(page).toHaveURL(/\\/products\\/product-/)"
+            },
+            {
+              "line": 59,
+              "text": "expect(page).toHaveTitle('Chi tiết sản phẩm · BotSales AI')"
+            },
+            {
+              "line": 60,
+              "text": "expect(page.locator('main#main-content')).toBeFocused()"
+            },
+            {
+              "line": 61,
+              "text": "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' })).toHaveCount(0)"
+            },
+            {
+              "line": 65,
+              "text": "expect(page).toHaveURL(/\\/products$/)"
+            },
+            {
+              "line": 66,
+              "text": "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' })).toHaveCount(0)"
+            },
+            {
+              "line": 68,
+              "text": "expect(listed.status()).toBe(200)"
+            },
+            {
+              "line": 69,
+              "text": "expect((await listed.json()).data).toContainEqual(expect.objectContaining(createdProduct))"
+            },
+            {
+              "line": 69,
+              "text": "expect.objectContaining(createdProduct)"
+            },
+            {
+              "line": 70,
+              "text": "expect(page.getByText('Sản phẩm kiểm thử', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 80,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 82,
+              "text": "expect(name).toHaveValue('Bản nháp chưa lưu')"
+            },
+            {
+              "line": 85,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 87,
+              "text": "expect(page).toHaveURL(/\\/categories$/)"
+            },
+            {
+              "line": 88,
+              "text": "expect(page.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 101,
+              "text": "expect(main, `${route.id} should mount the shop-scoped page`).toBeVisible()"
+            },
+            {
+              "line": 102,
+              "text": "expect(main.getByRole('heading').first(), `${route.id} should render page content`).toBeVisible()"
+            },
+            {
+              "line": 103,
+              "text": "expect(main.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }), `${route.id} should not fall through to the router error boundary`).toHaveCount(0)"
+            },
+            {
+              "line": 104,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true }), `${route.id} should disclose the synthetic data source`).toBeVisible()"
+            },
+            {
+              "line": 107,
+              "text": "expect(heading, `${route.id} should render its public page content`).toBeVisible()"
+            },
+            {
+              "line": 108,
+              "text": "expect(page.getByRole('heading', { name: 'Không thể mở màn hình', exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 109,
+              "text": "expect(page.getByRole('heading', { name: 'Không tìm thấy trang', exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 111,
+              "text": "expect(page.getByText('Chưa khởi động được ứng dụng', { exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 113,
+              "text": "expect(errors).toEqual([])"
+            },
+            {
+              "line": 120,
+              "text": "expect(page).toHaveURL(/\\/shop-demo\\/products$/)"
+            },
+            {
+              "line": 122,
+              "text": "expect(page.getByRole('heading', { name: 'Chọn cửa hàng', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 124,
+              "text": "expect(page).toHaveURL(/\\/s\\/shop-second\\/overview$/)"
+            },
+            {
+              "line": 128,
+              "text": "expect(firstProduct).toHaveAttribute('href', '/s/shop-second/products/b-p1')"
+            },
+            {
+              "line": 130,
+              "text": "expect(firstProduct).toHaveAttribute('href', '/s/shop-second/products/b-p1')"
+            },
+            {
+              "line": 131,
+              "text": "expect(page.locator('a[href=\"/s/shop-demo/products/p1\"]')).toHaveCount(0)"
+            },
+            {
+              "line": 137,
+              "text": "expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Lợi nhuận' })).toHaveCount(0)"
+            },
+            {
+              "line": 143,
+              "text": "expect(page.getByText(/Bạn không có quyền truy cập màn hình này trong/)).toBeVisible()"
+            },
+            {
+              "line": 144,
+              "text": "expect(page.getByText(/Việc kiểm quyền thực thi vẫn thuộc backend/)).toBeVisible()"
+            },
+            {
+              "line": 149,
+              "text": "expect(page.getByRole('heading', { name: 'Đơn DH-DEMO-PAID-01' })).toBeVisible()"
+            },
+            {
+              "line": 151,
+              "text": "expect(page.getByRole('heading', { name: 'Đơn DH-DEMO-PAID-01' })).toBeVisible()"
+            },
+            {
+              "line": 155,
+              "text": "expect((await logoutResponse).status()).toBe(204)"
+            },
+            {
+              "line": 156,
+              "text": "expect(page.getByRole('heading', { name: 'Chào mừng trở lại' })).toBeVisible()"
+            },
+            {
+              "line": 157,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 199,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 201,
+              "text": "expect(name).toHaveValue('Bản nháp trước khi đăng xuất')"
+            },
+            {
+              "line": 204,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 206,
+              "text": "expect(page.getByRole('alert').filter({ hasText: 'Chưa xác minh được đăng xuất' })).toBeVisible()"
+            },
+            {
+              "line": 207,
+              "text": "expect(name).toHaveValue('Bản nháp trước khi đăng xuất')"
+            },
+            {
+              "line": 208,
+              "text": "expect(page.getByText('API thật', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 210,
+              "text": "expect(dialog).toHaveCount(0)"
+            },
+            {
+              "line": 211,
+              "text": "expect(page).toHaveURL(/\\/s\\/shop-demo\\/products\\/new$/)"
+            },
+            {
+              "line": 222,
+              "text": "expect(productLink).toBeVisible()"
+            },
+            {
+              "line": 224,
+              "text": "expect(page).toHaveURL(/\\/products$/)"
+            },
+            {
+              "line": 225,
+              "text": "expect(page.getByRole('heading', { name: 'Sản phẩm', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 226,
+              "text": "expect(page.getByRole('button', { name: 'Mở menu' })).toBeVisible()"
+            },
+            {
+              "line": 228,
+              "text": "expect(width.scroll).toBeLessThanOrEqual(width.client + 1)"
+            },
+            {
+              "line": 260,
+              "text": "expect(page).toHaveURL(/\\/notifications$/)"
+            },
+            {
+              "line": 261,
+              "text": "expect(page.getByRole('heading', { name: 'Không thể mở màn hình' })).toBeVisible()"
+            },
+            {
+              "line": 262,
+              "text": "expect(page.locator('main#main-content')).toHaveCount(1)"
+            },
+            {
+              "line": 263,
+              "text": "expect(failedChunks).toBeGreaterThan(0)"
+            },
+            {
+              "line": 264,
+              "text": "expect(page.getByText(/Bản nháp chưa gửi không được coi là đã lưu/)).toBeVisible()"
+            },
+            {
+              "line": 272,
+              "text": "expect(page.getByRole('alert').filter({ hasText: 'Không thể kết nối API phiên đăng nhập' })).toBeVisible()"
+            },
+            {
+              "line": 273,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 274,
+              "text": "expect(page.getByText(/không tự chuyển sang dữ liệu mô phỏng/)).toBeVisible()"
+            }
+          ],
+          "cases": [
+            {
+              "title": "catalog create uses the HTTP mock and successful save clears the draft guard",
+              "line": 41,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2487
+            },
+            {
+              "title": "dirty drafts block in-app navigation and preserve input until the user decides",
+              "line": 73,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2340
+            },
+            {
+              "title": "all canonical routes render inside the real React demo application",
+              "line": 91,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 46738
+            },
+            {
+              "title": "switching shops cancels a delayed request and loads only the new shop scope",
+              "line": 116,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 5621
+            },
+            {
+              "title": "role changes remove restricted navigation and the route guard explains denied access",
+              "line": 134,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1231
+            },
+            {
+              "title": "deep links survive browser refresh and logout clears the mock session",
+              "line": 147,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2743
+            },
+            {
+              "title": "logout asks before discarding a draft and retains the session when logout fails",
+              "line": 160,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2303
+            },
+            {
+              "title": "mobile navigation opens, routes, and closes without viewport overflow",
+              "line": 217,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1301
+            },
+            {
+              "title": "chunk loading errors use the route recovery boundary",
+              "line": 231,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 871
+            },
+            {
+              "title": "live mode reports an unavailable session API without enabling mock data",
+              "line": 270,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 366
+            },
+            {
+              "title": "catalog create uses the HTTP mock and successful save clears the draft guard",
+              "line": 41,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2107
+            },
+            {
+              "title": "dirty drafts block in-app navigation and preserve input until the user decides",
+              "line": 73,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2616
+            },
+            {
+              "title": "all canonical routes render inside the real React demo application",
+              "line": 91,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 50589
+            },
+            {
+              "title": "switching shops cancels a delayed request and loads only the new shop scope",
+              "line": 116,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 6008
+            },
+            {
+              "title": "role changes remove restricted navigation and the route guard explains denied access",
+              "line": 134,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1458
+            },
+            {
+              "title": "deep links survive browser refresh and logout clears the mock session",
+              "line": 147,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2872
+            },
+            {
+              "title": "logout asks before discarding a draft and retains the session when logout fails",
+              "line": 160,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5794
+            },
+            {
+              "title": "mobile navigation opens, routes, and closes without viewport overflow",
+              "line": 217,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1770
+            },
+            {
+              "title": "chunk loading errors use the route recovery boundary",
+              "line": 231,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 928
+            },
+            {
+              "title": "live mode reports an unavailable session API without enabling mock data",
+              "line": 270,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 359
+            }
+          ]
+        },
+        {
+          "file": "tests/session/session-revocation.spec.ts",
+          "sha256": "e9066f0af951ca3397b240c52453287bbb1c3a8119676a49f51df9b2276748c4",
+          "assertions": [
+            {
+              "line": 23,
+              "text": "expect(membership).toBeDefined()"
+            },
+            {
+              "line": 24,
+              "text": "expect(shop).toBeDefined()"
+            },
+            {
+              "line": 76,
+              "text": "expect(page.getByText('API thật', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 77,
+              "text": "expect(page.getByRole('heading', { name: /Chào .*cửa hàng của bạn hôm nay/ })).toBeVisible()"
+            },
+            {
+              "line": 82,
+              "text": "expect(page.getByRole('heading', { name: 'Chào mừng trở lại', exact: true })).toBeVisible({ timeout: 15000 })"
+            },
+            {
+              "line": 83,
+              "text": "expect.poll(() => sessionReads).toBeGreaterThanOrEqual(2)"
+            },
+            {
+              "line": 83,
+              "text": "expect.poll(() => sessionReads)"
+            },
+            {
+              "line": 84,
+              "text": "expect.poll(() => eventRequests).toBeGreaterThanOrEqual(1)"
+            },
+            {
+              "line": 84,
+              "text": "expect.poll(() => eventRequests)"
+            },
+            {
+              "line": 85,
+              "text": "expect(eventRequests).toBeLessThanOrEqual(2)"
+            },
+            {
+              "line": 86,
+              "text": "expect(new URL(page.url()).pathname).toBe('/login')"
+            },
+            {
+              "line": 87,
+              "text": "expect(new URL(page.url()).searchParams.get('returnTo')).toBe('/s/shop-demo/overview')"
+            }
+          ],
+          "cases": [
+            {
+              "title": "session.revoked SSE closes the stream and clears the active shop session",
+              "line": 20,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2017
+            },
+            {
+              "title": "session.revoked SSE closes the stream and clears the active shop session",
+              "line": 20,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1918
+            }
+          ]
+        },
+        {
+          "file": "tests/ui009-scope-regression.spec.ts",
+          "sha256": "866d54ef16d28ff669fd9f611415097a1b13540bfd8057e117fd056b353b37b5",
+          "assertions": [
+            {
+              "line": 43,
+              "text": "expect(page.getByRole('heading', { name: 'Khách hàng', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 56,
+              "text": "expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 59,
+              "text": "expect(panel(page, 'Đơn hàng gần đây').getByRole('progressbar')).toBeVisible({ timeout: 1_000 })"
+            },
+            {
+              "line": 68,
+              "text": "expect(page.getByRole('heading', { name: 'Chọn cửa hàng' })).toBeVisible()"
+            },
+            {
+              "line": 71,
+              "text": "expect(page.getByRole('heading', { name: 'Khách hàng', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 81,
+              "text": "expect(currentResponse.status()).toBe(200)"
+            },
+            {
+              "line": 82,
+              "text": "expect.poll(() => staleRequestState, { timeout: 7000 }).not.toBe('pending')"
+            },
+            {
+              "line": 82,
+              "text": "expect.poll(() => staleRequestState, { timeout: 7000 })"
+            },
+            {
+              "line": 85,
+              "text": "expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 86,
+              "text": "expect(ordersPanel.getByText('b-DH-1001', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 87,
+              "text": "expect(ordersPanel.getByText('DH-DEMO-PAID-01', { exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 88,
+              "text": "expect(observedCustomerOrderRequests).toEqual(expect.arrayContaining([\n        { shopId: 'shop-demo', customerId: 'c1' },\n        { shopId: 'shop-second', customerId: 'b-c1' },\n    ]))"
+            },
+            {
+              "line": 88,
+              "text": "expect.arrayContaining([\n        { shopId: 'shop-demo', customerId: 'c1' },\n        { shopId: 'shop-second', customerId: 'b-c1' },\n    ])"
+            },
+            {
+              "line": 92,
+              "text": "expect(observedCustomerOrderRequests.every(request =>\n        (request.shopId === 'shop-demo' && request.customerId === 'c1')\n        || (request.shopId === 'shop-second' && request.customerId === 'b-c1'),\n    )).toBe(true)"
+            }
+          ],
+          "cases": [
+            {
+              "title": "UI009 delayed customer orders from the previous shop cannot leak into the new shop profile",
+              "line": 23,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3203
+            },
+            {
+              "title": "UI009 delayed customer orders from the previous shop cannot leak into the new shop profile",
+              "line": 23,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3799
+            }
+          ]
+        }
+      ],
+      "negativeExecutions": 10
+    },
+    {
+      "name": "Executed unit owners",
+      "proof": [
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "e1ed34a5c53b5f9947dc6ab4226b84497e86169fbd78431075739533b7bfcb78",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current dependency gates",
+      "unit": 242,
+      "domain": 117,
+      "sourceMaps": 16,
+      "fullBrowser": 878,
+      "builtArtifact": 6,
+      "coldStages": 13,
+      "limits": "Distinct suite counts are not added into a percentage."
+    },
+    {
+      "name": "Native affected-owner review",
+      "proof": [
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r5.json",
+          "sha256": "a10db819544603176e0493b08ef25eaae1d843acec49c97191ddacf7c562e77d",
+          "count": 8
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/native-text-only-200-current-r6.json",
+          "sha256": "18f699cb737e55b316658ec64bf92166b8586236d082e16fcce1587ce7c9601b",
+          "count": 16
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r7.json",
+          "sha256": "0e1173776db95ab8a4bcb2dad62e3dcc0f865552856393c327276d467236d208",
+          "count": 8
+        }
+      ],
+      "scope": "Eight affected detail views; Chromium and installed Chrome browser zoom, Firefox native text-only zoom. Full browser suite covers all existing consumers. Historical global native matrices are not re-certified."
+    },
+    {
+      "name": "Cold source and artifacts",
+      "artifact": "cold-artifacts-final.json",
+      "lockSha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "name": "Review and acceptance boundary",
+      "handoff": "ACCEPTANCE_GUIDE.md",
+      "architecture": "ARCHITECTURE_REVIEW.md",
+      "quality": "quality-gates-final.json",
+      "rawPremiumScanner": "FAIL_EXIT_1: all 14 actual semantic actions reviewed in premium-semantic-review.json; no scanner PASS or owner approval claimed",
+      "ownerAcceptance": "PENDING",
+      "screenReaderSpeech": "NOT_RUN",
+      "hostedCI": "NOT_RUN",
+      "backend": "OUTSIDE_SCOPE"
+    },
+    {
+      "name": "Criterion-specific proof selection",
+      "step": "S02",
+      "verification": "Một Router/QueryClient/theme provider; 401/403 không giả empty success. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "interpretation": "This foundation/cross-module/handoff criterion is self-reviewed against its exact action/verification and the named source, owner assertions, toolchain/gate/artifact and handoff proofs above; no points are inferred solely from a shared suite total.",
+      "selectedOperationLocations": [],
+      "selectedBrowserCases": [
+        {
+          "title": "catalog create uses the HTTP mock and successful save clears the draft guard",
+          "line": 41,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2487
+        },
+        {
+          "title": "dirty drafts block in-app navigation and preserve input until the user decides",
+          "line": 73,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2340
+        },
+        {
+          "title": "all canonical routes render inside the real React demo application",
+          "line": 91,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 46738
+        },
+        {
+          "title": "switching shops cancels a delayed request and loads only the new shop scope",
+          "line": 116,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 5621
+        },
+        {
+          "title": "role changes remove restricted navigation and the route guard explains denied access",
+          "line": 134,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1231
+        },
+        {
+          "title": "deep links survive browser refresh and logout clears the mock session",
+          "line": 147,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2743
+        },
+        {
+          "title": "logout asks before discarding a draft and retains the session when logout fails",
+          "line": 160,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2303
+        },
+        {
+          "title": "mobile navigation opens, routes, and closes without viewport overflow",
+          "line": 217,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1301
+        },
+        {
+          "title": "chunk loading errors use the route recovery boundary",
+          "line": 231,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 871
+        },
+        {
+          "title": "live mode reports an unavailable session API without enabling mock data",
+          "line": 270,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 366
+        },
+        {
+          "title": "catalog create uses the HTTP mock and successful save clears the draft guard",
+          "line": 41,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2107
+        },
+        {
+          "title": "dirty drafts block in-app navigation and preserve input until the user decides",
+          "line": 73,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2616
+        },
+        {
+          "title": "all canonical routes render inside the real React demo application",
+          "line": 91,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 50589
+        },
+        {
+          "title": "switching shops cancels a delayed request and loads only the new shop scope",
+          "line": 116,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 6008
+        },
+        {
+          "title": "role changes remove restricted navigation and the route guard explains denied access",
+          "line": 134,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1458
+        },
+        {
+          "title": "deep links survive browser refresh and logout clears the mock session",
+          "line": 147,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2872
+        },
+        {
+          "title": "logout asks before discarding a draft and retains the session when logout fails",
+          "line": 160,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5794
+        },
+        {
+          "title": "mobile navigation opens, routes, and closes without viewport overflow",
+          "line": 217,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1770
+        },
+        {
+          "title": "chunk loading errors use the route recovery boundary",
+          "line": 231,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 928
+        },
+        {
+          "title": "live mode reports an unavailable session API without enabling mock data",
+          "line": 270,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 359
+        },
+        {
+          "title": "session.revoked SSE closes the stream and clears the active shop session",
+          "line": 20,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2017
+        },
+        {
+          "title": "session.revoked SSE closes the stream and clears the active shop session",
+          "line": 20,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1918
+        },
+        {
+          "title": "UI009 delayed customer orders from the previous shop cannot leak into the new shop profile",
+          "line": 23,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3203
+        },
+        {
+          "title": "UI009 delayed customer orders from the previous shop cannot leak into the new shop profile",
+          "line": 23,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3799
+        }
+      ],
+      "ownerSourceAssertions": [
+        {
+          "file": "tests/frontend.spec.ts",
+          "sha256": "7b641c124314b44777bfe00ecef65f602fdffd146eeea8dc299713bf4208fd8f",
+          "assertionLines": [
+            43,
+            44,
+            54,
+            56,
+            58,
+            59,
+            60,
+            61,
+            65,
+            66,
+            68,
+            69,
+            69,
+            70,
+            80,
+            82,
+            85,
+            87,
+            88,
+            101,
+            102,
+            103,
+            104,
+            107,
+            108,
+            109,
+            111,
+            113,
+            120,
+            122,
+            124,
+            128,
+            130,
+            131,
+            137,
+            143,
+            144,
+            149,
+            151,
+            155,
+            156,
+            157,
+            199,
+            201,
+            204,
+            206,
+            207,
+            208,
+            210,
+            211,
+            222,
+            224,
+            225,
+            226,
+            228,
+            260,
+            261,
+            262,
+            263,
+            264,
+            272,
+            273,
+            274
+          ]
+        },
+        {
+          "file": "tests/session/session-revocation.spec.ts",
+          "sha256": "e9066f0af951ca3397b240c52453287bbb1c3a8119676a49f51df9b2276748c4",
+          "assertionLines": [
+            23,
+            24,
+            76,
+            77,
+            82,
+            83,
+            83,
+            84,
+            84,
+            85,
+            86,
+            87
+          ]
+        },
+        {
+          "file": "tests/ui009-scope-regression.spec.ts",
+          "sha256": "866d54ef16d28ff669fd9f611415097a1b13540bfd8057e117fd056b353b37b5",
+          "assertionLines": [
+            43,
+            56,
+            59,
+            68,
+            71,
+            81,
+            82,
+            82,
+            85,
+            86,
+            87,
+            88,
+            88,
+            92
+          ]
+        }
+      ],
+      "policyLimits": "Manual speech/owner acceptance/hosted CI are not fabricated."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "final-verify-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:01:06.981Z",
+      "finishedAt": "2026-10-13T10:04:18.552Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-verify-r3.log",
+        "sha256": "8a2bc419fb81685bf2f6f73645aff8438ed20f8e15a7c43d3788f60eec4537c5"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-unit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:35.330Z",
+      "finishedAt": "2026-10-13T07:02:42.025Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log",
+        "sha256": "d28976d231b13835d4807b6afa47ed16e8bbb728e2d40f2da4809d9a935b1dab"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-source-maps-r4",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:04:18.629Z",
+      "finishedAt": "2026-10-13T10:04:18.788Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-source-maps-r4.log",
+        "sha256": "1f11d1774f5a281c635e13a5103ffea8cd1a15a8dbe8cb3ce221e7101b67c567"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-e2e-r8",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config evidence\\frontend-completeness-20261013-aaf74b7\\final-supported-matrix.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:17:44.501Z",
+      "finishedAt": "2026-10-13T09:38:22.202Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+        "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:38:46.673Z",
+      "finishedAt": "2026-10-13T09:42:01.737Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-built-demo.log",
+        "sha256": "8e58d50eaf56c321c12b6b624c93f1b3b4179be1d9d32fb07c3d02ce68886c04"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-kit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" ../botsales-kit/scripts/validate-kit.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.394Z",
+      "finishedAt": "2026-10-13T07:02:42.544Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-kit-r3.log",
+        "sha256": "88d853cfe1cce38738a93c30a9da799eadb00b50cb751133587d7295c3f2886d"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-doctor-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run doctor",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.639Z",
+      "finishedAt": "2026-10-13T07:02:42.844Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-doctor-r3.log",
+        "sha256": "672964dbb21e82e121d2af5d557c6560d07f6fcdea96a2be8052b7f46d0f2d1c"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-dependencies-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.935Z",
+      "finishedAt": "2026-10-13T07:02:43.508Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-dependencies-r3.log",
+        "sha256": "1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-audit-r2",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" audit --omit=dev --json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:43.608Z",
+      "finishedAt": "2026-10-13T07:02:44.665Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-audit-r2.log",
+        "sha256": "4a77064eea4b56a1382b7b3ad1421f3ce4a7543523f17a326dfe5228010c49a9"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-browser-200-r5",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-browser-200.mjs r5",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:02.022Z",
+      "finishedAt": "2026-10-13T08:33:13.731Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-browser-200-r5.log",
+        "sha256": "3f2f3eb12ddff66c9e359c294c84b623f3ed75f48956e653ab4b6a33d00d8164"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-text-200-r6",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-text-200.mjs r6",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:13.814Z",
+      "finishedAt": "2026-10-13T08:33:43.758Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-text-200-r6.log",
+        "sha256": "8e8676f76e6e02fd961003167805795c22200a6745357631ac5fc4a28e6156fd"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-chrome-200-r7",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence/frontend-completeness-20261013-aaf74b7/native-browser-200.mjs r7 chrome",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:26:48.144Z",
+      "finishedAt": "2026-10-13T08:27:18.715Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-chrome-200-r7.log",
+        "sha256": "9b4a1a82d84492f12d76006e0fedf42e7bdb35ba51497e4c586d8d57d2a92453"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "metadata-generator-after-fix",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/vertical-slices/generate-route-implementation.mjs evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:55:55.856Z",
+      "finishedAt": "2026-10-13T09:55:55.931Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-generator-after-fix.log",
+        "sha256": "fd1826c8ac72da4d1a8aaac2e8e62d989ace259dd77388fb9081df5ff288f911"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "metadata-state-role-final",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/states/generate-route-state-roles.mjs --unit-log evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log --browser-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log --role-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.232Z",
+      "finishedAt": "2026-10-13T09:56:19.304Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-state-role-final.log",
+        "sha256": "650607a21ec011c9328898177b3fa064353754aa73c88648b5cc3f263d7f11d8"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --grep FE022.S05 --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.602Z",
+      "finishedAt": "2026-10-13T09:56:22.344Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-generated-map-e2e.log",
+        "sha256": "96c8bbaf23ab8e6e47268e6ebc57cd3964806280ceea464fc7635512c9e7c996"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-marketing-boundaries",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/vitest/vitest.mjs run --config evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.config.ts evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.test.ts --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:03:53.279Z",
+      "finishedAt": "2026-10-13T10:03:54.078Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-marketing-boundaries.log",
+        "sha256": "1d1bad3f9cbb3ae44d5a0890a01cf9b6158739a4fb71945ef8395844ef1757a1"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    }
+  ],
+  "sourceSnapshotSha256": "469010699568dab3fe0322bdfca86f903c6473ddd2cd61b04e75d3bb74746b1f"
+}

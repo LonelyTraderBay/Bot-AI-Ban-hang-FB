@@ -1,0 +1,4146 @@
+{
+  "taskId": "FE025",
+  "stepId": "S04",
+  "executedAt": "2026-10-13T10:07:11.700Z",
+  "facts": [
+    {
+      "name": "Canonical criterion and whole-task acceptance self-review",
+      "action": "Chạy Playwright/axe và kiểm thủ công keyboard/focus/screenreader phù hợp, ghi browser/platform thật.",
+      "verification": "Critical violations trong scope được xử lý; mock data không thay kiểm hành vi browser. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "acceptanceCases": [
+        "FE025.AC01 — UI theo viewport/docs và keyboard/focus/a11y có evidence.",
+        "FE025.AC02 — Bundle/performance đo trên dataset/môi trường xác định.",
+        "FE025.AC03 — Browser support và phần chưa kiểm ghi trung thực."
+      ],
+      "scopeInterpretation": "Current named owner assertions and actual executions are reviewed against each acceptance. Legacy 54 routes use the current 61-route manifest; approved C05/C06 contracts supersede old address/account catalog gaps. Privacy/OIDC remains unavailable under FE009.S03; manual speech/owner acceptance are not forged."
+    },
+    {
+      "name": "Current route/operation owners",
+      "routes": [
+        {
+          "id": "R01",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "LoginPage"
+        },
+        {
+          "id": "R02",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "WorkspacesPage"
+        },
+        {
+          "id": "R03",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "OnboardingPage"
+        },
+        {
+          "id": "R04",
+          "source": "apps/web/src/modules/dashboard/index.tsx",
+          "component": "DashboardPage"
+        },
+        {
+          "id": "R05",
+          "source": "apps/web/src/modules/inbox/index.tsx",
+          "component": "InboxPage"
+        },
+        {
+          "id": "R06",
+          "source": "apps/web/src/modules/inbox/index.tsx",
+          "component": "InboxPage"
+        },
+        {
+          "id": "R07",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "CustomersPage"
+        },
+        {
+          "id": "R08",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "CustomerPage"
+        },
+        {
+          "id": "R09",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductsPage"
+        },
+        {
+          "id": "R10",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductEditorPage"
+        },
+        {
+          "id": "R11",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "ProductEditorPage"
+        },
+        {
+          "id": "R12",
+          "source": "apps/web/src/modules/catalog/index.tsx",
+          "component": "CategoriesPage"
+        },
+        {
+          "id": "R13",
+          "source": "apps/web/src/modules/catalog/imports.tsx",
+          "component": "ImportsPage"
+        },
+        {
+          "id": "R14",
+          "source": "apps/web/src/modules/catalog/imports.tsx",
+          "component": "ImportResultPage"
+        },
+        {
+          "id": "R15",
+          "source": "apps/web/src/modules/inventory/index.tsx",
+          "component": "InventoryPage"
+        },
+        {
+          "id": "R16",
+          "source": "apps/web/src/modules/inventory/index.tsx",
+          "component": "MovementsPage"
+        },
+        {
+          "id": "R17",
+          "source": "apps/web/src/modules/orders/index.tsx",
+          "component": "OrdersPage"
+        },
+        {
+          "id": "R18",
+          "source": "apps/web/src/modules/orders/index.tsx",
+          "component": "NewOrderPage"
+        },
+        {
+          "id": "R19",
+          "source": "apps/web/src/modules/orders/index.tsx",
+          "component": "OrderDetailPage"
+        },
+        {
+          "id": "R20",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "CashflowPage"
+        },
+        {
+          "id": "R21",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "EntriesPage"
+        },
+        {
+          "id": "R22",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "ProfitLossPage"
+        },
+        {
+          "id": "R23",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "KnowledgePage"
+        },
+        {
+          "id": "R24",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "KnowledgeDetailPage"
+        },
+        {
+          "id": "R25",
+          "source": "apps/web/src/modules/knowledge/index.tsx",
+          "component": "FeedbackPage"
+        },
+        {
+          "id": "R26",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "BotConfigPage"
+        },
+        {
+          "id": "R27",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "PlaygroundPage"
+        },
+        {
+          "id": "R28",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "EvaluationsPage"
+        },
+        {
+          "id": "R29",
+          "source": "apps/web/src/modules/integrations/index.tsx",
+          "component": "ChannelsPage"
+        },
+        {
+          "id": "R30",
+          "source": "apps/web/src/modules/integrations/index.tsx",
+          "component": "AIProvidersPage"
+        },
+        {
+          "id": "R31",
+          "source": "apps/web/src/modules/reports/index.tsx",
+          "component": "ReportsPage"
+        },
+        {
+          "id": "R32",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "TeamPage"
+        },
+        {
+          "id": "R33",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "ShopSettingsPage"
+        },
+        {
+          "id": "R34",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "AuditPage"
+        },
+        {
+          "id": "R35",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "PrivacyPage"
+        },
+        {
+          "id": "R36",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "JobPage"
+        },
+        {
+          "id": "R37",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "OperationsPage"
+        },
+        {
+          "id": "R38",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "ApprovalsPage"
+        },
+        {
+          "id": "R39",
+          "source": "apps/web/src/modules/notifications/index.tsx",
+          "component": "NotificationsPage"
+        },
+        {
+          "id": "R40",
+          "source": "apps/web/src/modules/notifications/index.tsx",
+          "component": "DevicesPage"
+        },
+        {
+          "id": "R41",
+          "source": "apps/web/src/modules/fulfillment/index.tsx",
+          "component": "FulfillmentPage"
+        },
+        {
+          "id": "R42",
+          "source": "apps/web/src/modules/fulfillment/index.tsx",
+          "component": "ShipmentsPage"
+        },
+        {
+          "id": "R43",
+          "source": "apps/web/src/modules/orders/index.tsx",
+          "component": "ReturnsPage"
+        },
+        {
+          "id": "R44",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "SuppliersPage"
+        },
+        {
+          "id": "R45",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "ReplenishmentPage"
+        },
+        {
+          "id": "R46",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "PurchasesPage"
+        },
+        {
+          "id": "R47",
+          "source": "apps/web/src/modules/procurement/index.tsx",
+          "component": "ReceiptsPage"
+        },
+        {
+          "id": "R48",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "JournalsPage"
+        },
+        {
+          "id": "R49",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "ReconciliationPage"
+        },
+        {
+          "id": "R50",
+          "source": "apps/web/src/modules/finance/index.tsx",
+          "component": "DebtsPage"
+        },
+        {
+          "id": "R51",
+          "source": "apps/web/src/modules/bot/index.tsx",
+          "component": "AgentTeamPage"
+        },
+        {
+          "id": "R52",
+          "source": "apps/web/src/modules/operations/index.tsx",
+          "component": "DigestsPage"
+        },
+        {
+          "id": "R53",
+          "source": "apps/web/src/modules/reports/index.tsx",
+          "component": "MarketingPage"
+        },
+        {
+          "id": "R54",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "ServiceCasesPage"
+        }
+      ],
+      "operationIds": [
+        "acknowledgeNotification",
+        "addInternalNote",
+        "approvePrivacyRequest",
+        "archiveCategory",
+        "archiveProduct",
+        "assignConversation",
+        "beginChannelConnect",
+        "beginLogin",
+        "beginTelegramPairing",
+        "cancelOrder",
+        "checkChannelHealth",
+        "claimWorkItem",
+        "closeAccountingPeriod",
+        "commitProductImport",
+        "confirmOrder",
+        "confirmPurchaseOrder",
+        "controlAutomation",
+        "createAIConnection",
+        "createCategory",
+        "createCustomer",
+        "createDevice",
+        "createEvaluation",
+        "createExport",
+        "createFeedback",
+        "createFinanceEntry",
+        "createGoodsReceipt",
+        "createInventoryAdjustment",
+        "createJournal",
+        "createKnowledge",
+        "createKnowledgeRevision",
+        "createOrder",
+        "createPrivacyRequest",
+        "createProduct",
+        "createProductImport",
+        "createPurchaseOrder",
+        "createReorderRule",
+        "createReturnCase",
+        "createServiceCase",
+        "createShipment",
+        "createShop",
+        "createSupplier",
+        "createSupplierOffer",
+        "decideApproval",
+        "deleteAIConnection",
+        "disconnectChannel",
+        "evaluateReorder",
+        "getAIConnection",
+        "getApproval",
+        "getBotConfig",
+        "getBotRevision",
+        "getCashflow",
+        "getCategory",
+        "getChannel",
+        "getCommand",
+        "getConversation",
+        "getCsrfToken",
+        "getCustomer",
+        "getDashboard",
+        "getEvaluation",
+        "getFile",
+        "getFinanceEntry",
+        "getGoodsReceipt",
+        "getInboxMetadata",
+        "getJob",
+        "getJournal",
+        "getKnowledge",
+        "getKnowledgeRevision",
+        "getMarketingSummary",
+        "getMember",
+        "getNotification",
+        "getNotificationPolicy",
+        "getOperationsSummary",
+        "getOrder",
+        "getPrepJob",
+        "getPrivacyPolicy",
+        "getProduct",
+        "getProfitLoss",
+        "getProviderCatalog",
+        "getPurchaseOrder",
+        "getReportSummary",
+        "getReturnCase",
+        "getServiceCase",
+        "getSession",
+        "getShipment",
+        "getShop",
+        "getSupplier",
+        "handoverShipment",
+        "importBankStatement",
+        "importCODStatement",
+        "inspectReturn",
+        "inviteMember",
+        "listAIConnections",
+        "listAccountingPeriods",
+        "listAgentRoles",
+        "listApprovals",
+        "listAuditEvents",
+        "listBankTransactions",
+        "listBotRevisions",
+        "listBudgetPolicies",
+        "listCODSettlements",
+        "listCategories",
+        "listChannels",
+        "listConversations",
+        "listCustomers",
+        "listDebtItems",
+        "listDevices",
+        "listDigests",
+        "listEvaluations",
+        "listFeedback",
+        "listFinanceEntries",
+        "listGoodsReceipts",
+        "listJobs",
+        "listJournals",
+        "listKnowledge",
+        "listKnowledgeRevisions",
+        "listMembers",
+        "listMessages",
+        "listNotifications",
+        "listOrders",
+        "listPrepJobs",
+        "listPrivacyRequests",
+        "listProducts",
+        "listPurchaseOrders",
+        "listPurchaseSuggestions",
+        "listReconciliationCases",
+        "listReorderRules",
+        "listReturnCases",
+        "listServiceCases",
+        "listShipments",
+        "listShops",
+        "listStockMovements",
+        "listStockSnapshots",
+        "listSupplierOffers",
+        "listSuppliers",
+        "listWorkItems",
+        "matchCODSettlement",
+        "matchSettlement",
+        "packPrepJob",
+        "pauseBot",
+        "payOrder",
+        "pickPrepLine",
+        "postFinanceEntry",
+        "postGoodsReceipt",
+        "postJournal",
+        "publishBotConfig",
+        "publishKnowledge",
+        "quoteOrder",
+        "reconnectChannel",
+        "recordShipmentEvent",
+        "refundOrder",
+        "releaseConversation",
+        "reopenAccountingPeriod",
+        "requestPurchaseApproval",
+        "resolveConversation",
+        "restoreBotRevision",
+        "restoreKnowledgeRevision",
+        "retireKnowledge",
+        "reverseFinanceEntry",
+        "reverseJournal",
+        "reviewFeedback",
+        "revokeDevice",
+        "revokeMembership",
+        "runPlayground",
+        "sendMessage",
+        "sendPurchaseOrder",
+        "setServiceCaseStatus",
+        "setSupplierStatus",
+        "stepUp",
+        "submitKnowledgeReview",
+        "takeoverConversation",
+        "testAIConnection",
+        "testDevice",
+        "updateAIConnection",
+        "updateAgentRole",
+        "updateBotDraft",
+        "updateCategory",
+        "updateCustomer",
+        "updateFinanceEntry",
+        "updateKnowledge",
+        "updateMemberRoles",
+        "updateNotificationPolicy",
+        "updateOrderDraft",
+        "updatePrivacyPolicy",
+        "updateProduct",
+        "updateReorderRule",
+        "updateShop",
+        "updateSupplier",
+        "updateWorkItem",
+        "uploadFile"
+      ],
+      "sourceCrosswalk": {
+        "apiTotal": 245,
+        "required": 224,
+        "referenced": 222,
+        "missing": [
+          {
+            "id": "stepUp",
+            "url": "/auth/step-up",
+            "method": "post"
+          },
+          {
+            "id": "approvePrivacyRequest",
+            "url": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+            "method": "post"
+          }
+        ],
+        "limits": "stepUp/approvePrivacyRequest deliberately unavailable under FE009.S03 OIDC policy; reference coverage is not code completion."
+      }
+    },
+    {
+      "name": "Executed owner browser cases",
+      "proof": [
+        {
+          "file": "tests/artifacts/demo-preview.spec.ts",
+          "sha256": "3d522e81d9c649f9f999aba7cb4a942523c7ac7f310ad1830aecc914d6765ef0",
+          "assertions": [
+            {
+              "line": 44,
+              "text": "expect(response.status()).toBe(200)"
+            },
+            {
+              "line": 45,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 46,
+              "text": "expect(page.locator('main h1').first()).toBeVisible()"
+            },
+            {
+              "line": 76,
+              "text": "expect(initialGzipBytes).toBeLessThanOrEqual(500 * 1024)"
+            },
+            {
+              "line": 77,
+              "text": "expect(largestGzipBytes).toBeLessThanOrEqual(200 * 1024)"
+            },
+            {
+              "line": 106,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 110,
+              "text": "expect(page.getByRole('status').filter({ hasText: /^Đã tải 1\\.000 khách hàng/ })).toHaveText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.')"
+            },
+            {
+              "line": 116,
+              "text": "expect(response.status()).toBe(200)"
+            },
+            {
+              "line": 120,
+              "text": "expect(renderedRows).toHaveCount(21)"
+            },
+            {
+              "line": 121,
+              "text": "expect(page.locator('a[href*=\"perf-customer-\"]').first()).toBeVisible()"
+            },
+            {
+              "line": 136,
+              "text": "expect(envelope.page).toMatchObject({ limit: 20, total: 1004, hasMore: true })"
+            },
+            {
+              "line": 146,
+              "text": "expect(files.some(file => path.basename(file) === 'mockServiceWorker.js')).toBe(false)"
+            },
+            {
+              "line": 149,
+              "text": "expect(bundles).not.toContain(marker)"
+            },
+            {
+              "line": 150,
+              "text": "expect(bundles).not.toContain('service worker mô phỏng')"
+            }
+          ],
+          "cases": [
+            {
+              "title": "the built demo artifact serves the React UI and synthetic API through preview",
+              "line": 40,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 807
+            },
+            {
+              "title": "a thousand synthetic customers remain API-paginated in the built demo artifact",
+              "line": 104,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 897
+            },
+            {
+              "title": "the production artifact contains neither the mock worker asset nor MSW fixtures/runtime",
+              "line": 143,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 24
+            },
+            {
+              "title": "the built demo artifact serves the React UI and synthetic API through preview",
+              "line": 40,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1174
+            },
+            {
+              "title": "a thousand synthetic customers remain API-paginated in the built demo artifact",
+              "line": 104,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1280
+            },
+            {
+              "title": "the production artifact contains neither the mock worker asset nor MSW fixtures/runtime",
+              "line": 143,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 10
+            }
+          ]
+        },
+        {
+          "file": "tests/ui012-keyboard.spec.ts",
+          "sha256": "1eecd48b9437f899a7e41d6f192cf8c01a8f56ccc7d5dcc8e145d2285755dfee",
+          "assertions": [
+            {
+              "line": 20,
+              "text": "expect(target, `control should be reachable within ${limit} Tab presses`).toBeFocused()"
+            },
+            {
+              "line": 51,
+              "text": "expect(page.locator('#root')).not.toBeEmpty()"
+            },
+            {
+              "line": 52,
+              "text": "expect(page.getByRole('heading', { name: 'Sổ thu chi', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 53,
+              "text": "expect(main).toBeVisible()"
+            },
+            {
+              "line": 55,
+              "text": "expect(skipLink).toBeFocused()"
+            },
+            {
+              "line": 57,
+              "text": "expect(page).toHaveURL(/#main-content$/)"
+            },
+            {
+              "line": 58,
+              "text": "expect(main).toBeFocused()"
+            },
+            {
+              "line": 65,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 70,
+              "text": "expect(listbox).toBeVisible()"
+            },
+            {
+              "line": 73,
+              "text": "expect(kind).toContainText('Thu tiền')"
+            },
+            {
+              "line": 74,
+              "text": "expect(kind).toBeFocused()"
+            },
+            {
+              "line": 80,
+              "text": "expect(discard).toBeVisible()"
+            },
+            {
+              "line": 82,
+              "text": "expect(discard).toHaveCount(0)"
+            },
+            {
+              "line": 83,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 84,
+              "text": "expect(kind).toContainText('Thu tiền')"
+            },
+            {
+              "line": 90,
+              "text": "expect(amount).toHaveValue('1250')"
+            },
+            {
+              "line": 94,
+              "text": "expect(discard).toBeVisible()"
+            },
+            {
+              "line": 98,
+              "text": "expect(dialog).toHaveCount(0)"
+            },
+            {
+              "line": 99,
+              "text": "expect(trigger).toBeFocused()"
+            },
+            {
+              "line": 100,
+              "text": "expect(writes).toEqual([])"
+            },
+            {
+              "line": 128,
+              "text": "expect(page.getByRole('heading', { name: 'Kiến thức cửa hàng', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 131,
+              "text": "expect(skipLink).toBeFocused()"
+            },
+            {
+              "line": 133,
+              "text": "expect(main).toBeFocused()"
+            },
+            {
+              "line": 139,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 152,
+              "text": "expect(alert).toBeVisible()"
+            },
+            {
+              "line": 153,
+              "text": "expect(await page.evaluate(() => (window as Window & { __ui012Synthetic422: boolean }).__ui012Synthetic422)).toBe(true)"
+            },
+            {
+              "line": 154,
+              "text": "expect(content).toBeFocused()"
+            },
+            {
+              "line": 155,
+              "text": "expect(content).toHaveAttribute('aria-invalid', 'true')"
+            },
+            {
+              "line": 156,
+              "text": "expect(alert).toContainText('Nội dung: Hãy rà soát nội dung nguồn.')"
+            },
+            {
+              "line": 157,
+              "text": "expect(alert).not.toContainText('content:')"
+            },
+            {
+              "line": 167,
+              "text": "expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 170,
+              "text": "expect(skipLink).toBeFocused()"
+            },
+            {
+              "line": 172,
+              "text": "expect(main).toBeFocused()"
+            },
+            {
+              "line": 178,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 185,
+              "text": "expect(dialog.getByRole('button', { name: 'ui012-keyboard.csv', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 191,
+              "text": "expect(discard).toBeVisible()"
+            },
+            {
+              "line": 195,
+              "text": "expect(dialog).toHaveCount(0)"
+            },
+            {
+              "line": 196,
+              "text": "expect(trigger).toBeFocused()"
+            },
+            {
+              "line": 197,
+              "text": "expect(writes).toEqual([])"
+            },
+            {
+              "line": 204,
+              "text": "expect(page.getByRole('heading', { name: 'Thông tin cho marketing', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 208,
+              "text": "expect(chart).toBeVisible()"
+            },
+            {
+              "line": 209,
+              "text": "expect(table.getByRole('row').nth(1)).toBeVisible()"
+            },
+            {
+              "line": 210,
+              "text": "expect(region).toBeVisible()"
+            },
+            {
+              "line": 214,
+              "text": "expect(skipLink).toBeFocused()"
+            },
+            {
+              "line": 216,
+              "text": "expect(main).toBeFocused()"
+            },
+            {
+              "line": 218,
+              "text": "expect(region).toBeFocused()"
+            },
+            {
+              "line": 220,
+              "text": "expect(await region.evaluate(element => (element as HTMLElement).scrollWidth > (element as HTMLElement).clientWidth)).toBe(true)"
+            },
+            {
+              "line": 223,
+              "text": "expect(after).toBeGreaterThan(before)"
+            },
+            {
+              "line": 224,
+              "text": "expect(await page.evaluate(() => document.documentElement.scrollLeft)).toBe(0)"
+            },
+            {
+              "line": 242,
+              "text": "expect((await canonicalResponse).status()).toBe(200)"
+            },
+            {
+              "line": 245,
+              "text": "expect(chart).toBeVisible()"
+            },
+            {
+              "line": 246,
+              "text": "expect(table).toBeVisible()"
+            },
+            {
+              "line": 249,
+              "text": "expect(chartLabels).toEqual(expect.arrayContaining(expectedLabels))"
+            },
+            {
+              "line": 249,
+              "text": "expect.arrayContaining(expectedLabels)"
+            },
+            {
+              "line": 250,
+              "text": "expect(table.getByRole('row')).toHaveCount(4)"
+            },
+            {
+              "line": 254,
+              "text": "expect(chartBounds).not.toBeNull()"
+            },
+            {
+              "line": 261,
+              "text": "expect(labelBounds).toHaveLength(expectedLabels.length)"
+            },
+            {
+              "line": 263,
+              "text": "expect(bounds.x).toBeGreaterThanOrEqual(chartBounds!.x)"
+            },
+            {
+              "line": 264,
+              "text": "expect(bounds.right).toBeLessThanOrEqual(chartBounds!.x + chartBounds!.width)"
+            },
+            {
+              "line": 265,
+              "text": "expect(bounds.y).toBeGreaterThanOrEqual(chartBounds!.y)"
+            },
+            {
+              "line": 266,
+              "text": "expect(bounds.bottom).toBeLessThanOrEqual(chartBounds!.y + chartBounds!.height)"
+            },
+            {
+              "line": 267,
+              "text": "expect(bounds.fontSize).toBeGreaterThanOrEqual(14)"
+            },
+            {
+              "line": 270,
+              "text": "expect(labelBounds[index - 1].right).toBeLessThanOrEqual(labelBounds[index].x)"
+            },
+            {
+              "line": 272,
+              "text": "expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)"
+            },
+            {
+              "line": 285,
+              "text": "expect(actions).toHaveCount(2)"
+            },
+            {
+              "line": 287,
+              "text": "expect(actionNames.every(name => name.startsWith('Đánh giá tin nhắn'))).toBe(true)"
+            },
+            {
+              "line": 288,
+              "text": "expect(new Set(actionNames).size).toBe(actionNames.length)"
+            },
+            {
+              "line": 289,
+              "text": "expect(actionNames).toContainEqual(expect.stringContaining('Shop ơi áo thun còn size L không?'))"
+            },
+            {
+              "line": 289,
+              "text": "expect.stringContaining('Shop ơi áo thun còn size L không?')"
+            },
+            {
+              "line": 292,
+              "text": "expect(actions.first()).toBeFocused()"
+            },
+            {
+              "line": 295,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 297,
+              "text": "expect(ratingField).toBeFocused()"
+            },
+            {
+              "line": 299,
+              "text": "expect(dialog).toHaveCount(0)"
+            },
+            {
+              "line": 300,
+              "text": "expect(actions.first()).toBeFocused()"
+            },
+            {
+              "line": 302,
+              "text": "expect(mutationRequests).toEqual([])"
+            },
+            {
+              "line": 311,
+              "text": "expect(page.getByRole('heading', { name: 'Tạo đơn hàng', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 314,
+              "text": "expect(customer).toBeVisible()"
+            },
+            {
+              "line": 315,
+              "text": "expect(customer).not.toHaveAttribute('aria-invalid', 'true')"
+            },
+            {
+              "line": 316,
+              "text": "expect(customer).toHaveAttribute('aria-required', 'true')"
+            },
+            {
+              "line": 317,
+              "text": "expect(customer).not.toHaveClass(/Mui-error/)"
+            },
+            {
+              "line": 318,
+              "text": "expect(page.getByText('Chọn khách hàng để lưu đơn nháp.', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 319,
+              "text": "expect(page.getByRole('button', { name: 'Lưu đơn nháp' })).toBeDisabled()"
+            },
+            {
+              "line": 327,
+              "text": "expect(alert).toBeVisible()"
+            },
+            {
+              "line": 328,
+              "text": "expect(alert).toContainText('Lưu bản nháp không thay đổi cấu hình đang chạy hoặc tự chốt đơn.')"
+            },
+            {
+              "line": 351,
+              "text": "expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth + 1)"
+            },
+            {
+              "line": 352,
+              "text": "expect(layout.clippedTextRects).toEqual([])"
+            },
+            {
+              "line": 353,
+              "text": "expect(layout.documentScrollWidth).toBeLessThanOrEqual(layout.documentClientWidth + 1)"
+            },
+            {
+              "line": 359,
+              "text": "expect(action).toBeVisible()"
+            },
+            {
+              "line": 365,
+              "text": "expect(bounds).not.toBeNull()"
+            },
+            {
+              "line": 372,
+              "text": "expect(hoverColor).toBe('rgb(255, 219, 140)')"
+            },
+            {
+              "line": 373,
+              "text": "expect(pressedColor).toBe('rgb(223, 174, 79)')"
+            },
+            {
+              "line": 374,
+              "text": "expect(pressedColor).not.toBe(hoverColor)"
+            },
+            {
+              "line": 375,
+              "text": "expect(hoverContrast).toBeGreaterThanOrEqual(4.5)"
+            },
+            {
+              "line": 376,
+              "text": "expect(pressedContrast).toBeGreaterThanOrEqual(4.5)"
+            },
+            {
+              "line": 381,
+              "text": "expect(skipLink).toBeFocused()"
+            },
+            {
+              "line": 384,
+              "text": "expect(action).toBeFocused()"
+            },
+            {
+              "line": 385,
+              "text": "expect(await action.evaluate(element => element.matches(':focus-visible'))).toBe(true)"
+            }
+          ],
+          "cases": [
+            {
+              "title": "UI012 keyboard-only finance edit handles select, discard warning and focus return",
+              "line": 42,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2786
+            },
+            {
+              "title": "UI012 keyboard validation focuses the field named by a synthetic 422 response",
+              "line": 103,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3011
+            },
+            {
+              "title": "UI012 keyboard activates the CSV chooser and discards its selected file without upload",
+              "line": 160,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1935
+            },
+            {
+              "title": "UI012 keyboard can reach and horizontally scroll the marketing chart data alternative",
+              "line": 200,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1733
+            },
+            {
+              "title": "UI012 marketing chart keeps every category label visible beside its data table",
+              "line": 227,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2167
+            },
+            {
+              "title": "UI012 inbox feedback actions identify their message and return focus after Escape",
+              "line": 276,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2836
+            },
+            {
+              "title": "UI012 order draft does not announce an untouched required customer as invalid",
+              "line": 309,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1334
+            },
+            {
+              "title": "UI012 human-confirmation policy copy wraps inside its alert at a 320 CSS-pixel viewport",
+              "line": 322,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1289
+            },
+            {
+              "title": "UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible",
+              "line": 356,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3090
+            },
+            {
+              "title": "UI012 keyboard-only finance edit handles select, discard warning and focus return",
+              "line": 42,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3045
+            },
+            {
+              "title": "UI012 keyboard validation focuses the field named by a synthetic 422 response",
+              "line": 103,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3634
+            },
+            {
+              "title": "UI012 keyboard activates the CSV chooser and discards its selected file without upload",
+              "line": 160,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2184
+            },
+            {
+              "title": "UI012 keyboard can reach and horizontally scroll the marketing chart data alternative",
+              "line": 200,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2075
+            },
+            {
+              "title": "UI012 marketing chart keeps every category label visible beside its data table",
+              "line": 227,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2745
+            },
+            {
+              "title": "UI012 inbox feedback actions identify their message and return focus after Escape",
+              "line": 276,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2819
+            },
+            {
+              "title": "UI012 order draft does not announce an untouched required customer as invalid",
+              "line": 309,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1587
+            },
+            {
+              "title": "UI012 human-confirmation policy copy wraps inside its alert at a 320 CSS-pixel viewport",
+              "line": 322,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1335
+            },
+            {
+              "title": "UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible",
+              "line": 356,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4130
+            }
+          ]
+        },
+        {
+          "file": "tests/frontend-completeness.spec.ts",
+          "sha256": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
+          "assertions": [
+            {
+              "line": 50,
+              "text": "expect(page.getByRole('heading', { name: detail.heading, exact: true })).toBeVisible()"
+            },
+            {
+              "line": 51,
+              "text": "expect(page.locator('main [role=\"progressbar\"]')).toHaveCount(0)"
+            },
+            {
+              "line": 52,
+              "text": "expect(await page.evaluate(() => (window as ProbeWindow).detailProbe.calls)).toBe(0)"
+            },
+            {
+              "line": 60,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 61,
+              "text": "expect(page.getByRole('dialog')).toHaveCount(1)"
+            },
+            {
+              "line": 71,
+              "text": "expect.poll(() => page.evaluate(() => (window as ProbeWindow).detailProbe.calls)).toBe(1)"
+            },
+            {
+              "line": 71,
+              "text": "expect.poll(() => page.evaluate(() => (window as ProbeWindow).detailProbe.calls))"
+            },
+            {
+              "line": 72,
+              "text": "expect(dialog.getByRole('progressbar')).toBeVisible()"
+            },
+            {
+              "line": 73,
+              "text": "expect(dialog.getByText('fetched-' + detail.id, { exact: false })).toHaveCount(0)"
+            },
+            {
+              "line": 74,
+              "text": "expect.poll(() => page.evaluate(() => typeof (window as ProbeWindow).detailProbe.release)).toBe('function')"
+            },
+            {
+              "line": 74,
+              "text": "expect.poll(() => page.evaluate(() => typeof (window as ProbeWindow).detailProbe.release))"
+            },
+            {
+              "line": 76,
+              "text": "expect(dialog.getByText('fetched-' + detail.id, { exact: false })).toBeVisible()"
+            },
+            {
+              "line": 77,
+              "text": "expect(dialog.getByRole('progressbar')).toHaveCount(0)"
+            },
+            {
+              "line": 80,
+              "text": "expect(region).toBeFocused()"
+            },
+            {
+              "line": 84,
+              "text": "expect.poll(() => region.evaluate(element => element.scrollTop)).toBeGreaterThan(scrollBefore.top)"
+            },
+            {
+              "line": 84,
+              "text": "expect.poll(() => region.evaluate(element => element.scrollTop))"
+            },
+            {
+              "line": 87,
+              "text": "expect(geometry.width).toBeLessThanOrEqual(geometry.viewport)"
+            },
+            {
+              "line": 88,
+              "text": "expect(geometry.overflow).toBeLessThanOrEqual(1)"
+            },
+            {
+              "line": 90,
+              "text": "expect(axe.violations).toEqual([])"
+            },
+            {
+              "line": 94,
+              "text": "expect(dialog).toHaveCount(0)"
+            },
+            {
+              "line": 95,
+              "text": "expect(page.getByRole('button', { name: detail.button, exact: true }).first()).toBeFocused()"
+            },
+            {
+              "line": 102,
+              "text": "expect(dialog.getByRole('alert').filter({ hasText: 'DETAIL_FETCH_FAILURE' })).toBeVisible({ timeout: 15000 })"
+            },
+            {
+              "line": 103,
+              "text": "expect(dialog.getByRole('progressbar')).toHaveCount(0)"
+            },
+            {
+              "line": 104,
+              "text": "expect(dialog.getByText('fetched-' + detail.id, { exact: false })).toHaveCount(0)"
+            },
+            {
+              "line": 105,
+              "text": "expect(dialog.getByRole('button', { name: 'Thử lại', exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 106,
+              "text": "expect(dialog.getByRole('button', { name: 'Thử lại', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 108,
+              "text": "expect(dialog).toHaveCount(0)"
+            }
+          ],
+          "cases": [
+            {
+              "title": "Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4501
+            },
+            {
+              "title": "Completion R26 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1769
+            },
+            {
+              "title": "Completion R26 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1659
+            },
+            {
+              "title": "Completion R26 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2940
+            },
+            {
+              "title": "Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4251
+            },
+            {
+              "title": "Completion R28 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1793
+            },
+            {
+              "title": "Completion R28 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1793
+            },
+            {
+              "title": "Completion R28 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3092
+            },
+            {
+              "title": "Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4002
+            },
+            {
+              "title": "Completion R29 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1662
+            },
+            {
+              "title": "Completion R29 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1717
+            },
+            {
+              "title": "Completion R29 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2951
+            },
+            {
+              "title": "Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4074
+            },
+            {
+              "title": "Completion R30 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1651
+            },
+            {
+              "title": "Completion R30 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1747
+            },
+            {
+              "title": "Completion R30 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2918
+            },
+            {
+              "title": "Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4134
+            },
+            {
+              "title": "Completion R32 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1659
+            },
+            {
+              "title": "Completion R32 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1688
+            },
+            {
+              "title": "Completion R32 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3045
+            },
+            {
+              "title": "Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3327
+            },
+            {
+              "title": "Completion R39 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1615
+            },
+            {
+              "title": "Completion R39 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1630
+            },
+            {
+              "title": "Completion R39 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2979
+            },
+            {
+              "title": "Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3358
+            },
+            {
+              "title": "Completion R54 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1635
+            },
+            {
+              "title": "Completion R54 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1732
+            },
+            {
+              "title": "Completion R54 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2927
+            },
+            {
+              "title": "Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4026
+            },
+            {
+              "title": "Completion R37 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1679
+            },
+            {
+              "title": "Completion R37 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1765
+            },
+            {
+              "title": "Completion R37 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2943
+            },
+            {
+              "title": "Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4918
+            },
+            {
+              "title": "Completion R26 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1783
+            },
+            {
+              "title": "Completion R26 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1781
+            },
+            {
+              "title": "Completion R26 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2962
+            },
+            {
+              "title": "Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4747
+            },
+            {
+              "title": "Completion R28 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1954
+            },
+            {
+              "title": "Completion R28 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1953
+            },
+            {
+              "title": "Completion R28 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3219
+            },
+            {
+              "title": "Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3846
+            },
+            {
+              "title": "Completion R29 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5214
+            },
+            {
+              "title": "Completion R29 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1870
+            },
+            {
+              "title": "Completion R29 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3022
+            },
+            {
+              "title": "Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4412
+            },
+            {
+              "title": "Completion R30 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1754
+            },
+            {
+              "title": "Completion R30 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1735
+            },
+            {
+              "title": "Completion R30 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3129
+            },
+            {
+              "title": "Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4668
+            },
+            {
+              "title": "Completion R32 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2042
+            },
+            {
+              "title": "Completion R32 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1750
+            },
+            {
+              "title": "Completion R32 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5914
+            },
+            {
+              "title": "Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4340
+            },
+            {
+              "title": "Completion R39 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1730
+            },
+            {
+              "title": "Completion R39 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1783
+            },
+            {
+              "title": "Completion R39 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3019
+            },
+            {
+              "title": "Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4340
+            },
+            {
+              "title": "Completion R54 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1757
+            },
+            {
+              "title": "Completion R54 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1736
+            },
+            {
+              "title": "Completion R54 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3048
+            },
+            {
+              "title": "Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4207
+            },
+            {
+              "title": "Completion R37 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4925
+            },
+            {
+              "title": "Completion R37 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1915
+            },
+            {
+              "title": "Completion R37 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3046
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-component-layout.spec.ts",
+          "sha256": "c80528252c42d565c0a174122193c51740e3453e81799e856ae0ba39aea8be73",
+          "assertions": [
+            {
+              "line": 15,
+              "text": "expect(page.locator('main h1')).toBeVisible()"
+            },
+            {
+              "line": 28,
+              "text": "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)"
+            },
+            {
+              "line": 37,
+              "text": "expect(page.getByRole('button', { name: 'Tiếp tục', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 45,
+              "text": "expect(page.getByRole('button', { name: 'Bỏ dòng 1', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 50,
+              "text": "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)"
+            },
+            {
+              "line": 54,
+              "text": "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 56,
+              "text": "expect(page.getByRole('combobox', { name: 'Sản phẩm 2', exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 66,
+              "text": "expect(page.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 67,
+              "text": "expect(page.getByText('Đã tải 3 lựa chọn', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 69,
+              "text": "expect(Math.abs(geometry.category.y - geometry.status.y)).toBeLessThanOrEqual(1)"
+            },
+            {
+              "line": 70,
+              "text": "expect(geometry.status.y).toBeGreaterThan(geometry.category.y)"
+            },
+            {
+              "line": 74,
+              "text": "expect(page.getByText('Không tìm thấy danh mục phù hợp.', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 75,
+              "text": "expect(page.getByRole('textbox', { name: 'Tên sản phẩm', exact: true })).toHaveValue('Bản nháp cần giữ')"
+            },
+            {
+              "line": 78,
+              "text": "expect(Math.abs(category!.y - status!.y)).toBeLessThanOrEqual(1)"
+            },
+            {
+              "line": 93,
+              "text": "expect(control).toBeFocused()"
+            },
+            {
+              "line": 94,
+              "text": "expect(control).toHaveValue(value)"
+            },
+            {
+              "line": 105,
+              "text": "expect(name).toBeVisible()"
+            },
+            {
+              "line": 114,
+              "text": "expect(labels.length).toBeGreaterThanOrEqual(3)"
+            },
+            {
+              "line": 115,
+              "text": "expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([])"
+            },
+            {
+              "line": 116,
+              "text": "expect(label.fieldBounds.right - label.fieldBounds.left).toBeGreaterThanOrEqual(120)"
+            },
+            {
+              "line": 118,
+              "text": "expect(name).toHaveValue('Bản nháp biến thể cần giữ')"
+            },
+            {
+              "line": 121,
+              "text": "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial + 1)"
+            },
+            {
+              "line": 123,
+              "text": "expect(page.getByRole('textbox', { name: 'Tên / màu / kích cỡ', exact: true })).toHaveCount(initial)"
+            },
+            {
+              "line": 124,
+              "text": "expect(name).toHaveValue('Bản nháp biến thể cần giữ')"
+            },
+            {
+              "line": 135,
+              "text": "expect(remove).toHaveCount(5)"
+            },
+            {
+              "line": 138,
+              "text": "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)"
+            },
+            {
+              "line": 142,
+              "text": "expect(remove).toHaveCount(4)"
+            },
+            {
+              "line": 143,
+              "text": "expect(remove).toHaveCount(5)"
+            },
+            {
+              "line": 144,
+              "text": "expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('Mã SKU đã sửa')"
+            },
+            {
+              "line": 155,
+              "text": "expect(amount).toHaveCount(2)"
+            },
+            {
+              "line": 156,
+              "text": "expect(page.getByText(expected.negative, { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 157,
+              "text": "expect(await amount.first().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('normal')"
+            },
+            {
+              "line": 158,
+              "text": "expect(await amount.last().evaluate(node => getComputedStyle(node).whiteSpace)).toBe('nowrap')"
+            },
+            {
+              "line": 164,
+              "text": "expect(clipping).toBe(false)"
+            },
+            {
+              "line": 167,
+              "text": "expect(overflow).toBe(true)"
+            },
+            {
+              "line": 170,
+              "text": "expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before)"
+            },
+            {
+              "line": 170,
+              "text": "expect.poll(() => table.evaluate(node => node.scrollLeft))"
+            },
+            {
+              "line": 171,
+              "text": "expect(await table.evaluate(node => node.scrollLeft)).toBe(before)"
+            },
+            {
+              "line": 172,
+              "text": "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+            },
+            {
+              "line": 184,
+              "text": "expect(geometry.actual).toBeLessThanOrEqual(Math.max(geometry.minimum, geometry.label) + 1)"
+            },
+            {
+              "line": 186,
+              "text": "expect(geometry.actual).toBeLessThanOrEqual(intrinsicSize.natural + 1)"
+            },
+            {
+              "line": 188,
+              "text": "expect(long).toHaveText('Chưa xác định')"
+            },
+            {
+              "line": 189,
+              "text": "expect(long.locator('..')).toHaveAttribute('title','Trạng thái chưa biết ' + 'A'.repeat(120))"
+            },
+            {
+              "line": 190,
+              "text": "expect(await long.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)"
+            },
+            {
+              "line": 192,
+              "text": "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+            },
+            {
+              "line": 199,
+              "text": "expect(page.getByRole('status')).toContainText('Mã tham chiếu: ' + 'A'.repeat(120))"
+            },
+            {
+              "line": 201,
+              "text": "expect(await text.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true)"
+            },
+            {
+              "line": 204,
+              "text": "expect(action).toBeFocused()"
+            },
+            {
+              "line": 205,
+              "text": "expect((await new AxeBuilder({ page }).include('main').analyze()).violations).toEqual([])"
+            },
+            {
+              "line": 216,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 218,
+              "text": "expect(address).toBeVisible()"
+            },
+            {
+              "line": 219,
+              "text": "expect(dialog.getByRole('combobox', { name: /^Địa chỉ giao hàng(?: |$)/ })).toBeVisible()"
+            },
+            {
+              "line": 220,
+              "text": "expect(dialog.getByRole('combobox', { name: /^Thanh toán/ })).toHaveCount(0)"
+            },
+            {
+              "line": 221,
+              "text": "expect(dialog.getByRole('group', { name: 'Thanh toán', exact: true })).toContainText('Thu khi giao (COD)')"
+            },
+            {
+              "line": 222,
+              "text": "expect(addressText).toHaveText(expected)"
+            },
+            {
+              "line": 223,
+              "text": "expect(await addressText.evaluate(node => node.scrollWidth <= node.clientWidth + 1 && getComputedStyle(node).textOverflow !== 'ellipsis')).toBe(true)"
+            },
+            {
+              "line": 228,
+              "text": "expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1)"
+            },
+            {
+              "line": 229,
+              "text": "expect(addressText).toHaveText(original!)"
+            },
+            {
+              "line": 231,
+              "text": "expect((await new AxeBuilder({ page }).include('[role=\"dialog\"]').analyze()).violations).toEqual([])"
+            },
+            {
+              "line": 233,
+              "text": "expect(option).toBeVisible()"
+            },
+            {
+              "line": 235,
+              "text": "expect(await option.evaluate(node => {\n            const paper = node.closest('.MuiPaper-root')!.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node);\n            return getComputedStyle(node).whiteSpace === 'normal' && [...range.getClientRects()].every(rect => rect.left >= paper.left - 1 && rect.right <= paper.right + 1);\n        })).toBe(true)"
+            },
+            {
+              "line": 239,
+              "text": "expect(page.getByRole('listbox')).toHaveCount(0)"
+            }
+          ],
+          "cases": [
+            {
+              "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+              "line": 40,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4898
+            },
+            {
+              "title": "A02 product editors align category and status faces independently from lookup metadata",
+              "line": 61,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 9648
+            },
+            {
+              "title": "Shared outlined labels focus empty and populated native controls",
+              "line": 84,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1723
+            },
+            {
+              "title": "A02 variant fields retain readable widths when text doubles",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 9997
+            },
+            {
+              "title": "A03 import mapping preserves natural remove actions and editable mappings",
+              "line": 130,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3811
+            },
+            {
+              "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+              "line": 150,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4572
+            },
+            {
+              "title": "A05 status height follows its own label while long labels remain fully readable",
+              "line": 176,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3991
+            },
+            {
+              "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+              "line": 196,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4396
+            },
+            {
+              "title": "A07 canonical order address selection exposes full text and edit lines retain intrinsic actions",
+              "line": 209,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 9075
+            },
+            {
+              "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+              "line": 40,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5488
+            },
+            {
+              "title": "A02 product editors align category and status faces independently from lookup metadata",
+              "line": 61,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 10366
+            },
+            {
+              "title": "Shared outlined labels focus empty and populated native controls",
+              "line": 84,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1986
+            },
+            {
+              "title": "A02 variant fields retain readable widths when text doubles",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 12300
+            },
+            {
+              "title": "A03 import mapping preserves natural remove actions and editable mappings",
+              "line": 130,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4562
+            },
+            {
+              "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+              "line": 150,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5053
+            },
+            {
+              "title": "A05 status height follows its own label while long labels remain fully readable",
+              "line": 176,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4789
+            },
+            {
+              "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+              "line": 196,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 10006
+            },
+            {
+              "title": "A07 canonical order address selection exposes full text and edit lines retain intrinsic actions",
+              "line": 209,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 9839
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-density-layout.spec.ts",
+          "sha256": "76ac6f6570cc2375fd2f97e9264214ea94f99a9e1802c6541aaa95caa42b87a1",
+          "assertions": [
+            {
+              "line": 8,
+              "text": "expect(page.getByRole('progressbar',{name:'Đang tải màn hình',exact:true})).toBeHidden({timeout:30000})"
+            },
+            {
+              "line": 8,
+              "text": "expect(page.locator('main h1')).toBeVisible({timeout:30000})"
+            },
+            {
+              "line": 8,
+              "text": "expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0,{timeout:30000})"
+            },
+            {
+              "line": 13,
+              "text": "expect(cells.first()).toHaveCSS('padding-top','8px')"
+            },
+            {
+              "line": 13,
+              "text": "expect(cells.first()).toHaveCSS('padding-left','12px')"
+            },
+            {
+              "line": 14,
+              "text": "expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44)"
+            },
+            {
+              "line": 15,
+              "text": "expect(page.getByText('DEMO-001',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 15,
+              "text": "expect(page.getByText('150.000 ₫',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 16,
+              "text": "expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width)"
+            },
+            {
+              "line": 17,
+              "text": "expect(link).toBeFocused()"
+            },
+            {
+              "line": 18,
+              "text": "expect(height).toBeGreaterThanOrEqual(60)"
+            },
+            {
+              "line": 18,
+              "text": "expect(height).toBeLessThanOrEqual(63)"
+            },
+            {
+              "line": 25,
+              "text": "expect(facts).toHaveCount(1)"
+            },
+            {
+              "line": 25,
+              "text": "expect(facts).toHaveCSS('gap','0px')"
+            },
+            {
+              "line": 26,
+              "text": "expect(facts.locator(':scope > [data-ui-detail-line]')).toHaveCount(7)"
+            },
+            {
+              "line": 27,
+              "text": "expect(row.locator(':scope > .MuiBox-root').first()).toHaveCSS('padding-top','8px')"
+            },
+            {
+              "line": 27,
+              "text": "expect(row.locator('.MuiDivider-root')).toHaveCount(1)"
+            },
+            {
+              "line": 28,
+              "text": "expect((await facts.boundingBox())!.height).toBeCloseTo(266,0)"
+            },
+            {
+              "line": 28,
+              "text": "expect((await panel.boundingBox())!.width).toBeGreaterThan(1100)"
+            },
+            {
+              "line": 29,
+              "text": "expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width)"
+            },
+            {
+              "line": 37,
+              "text": "expect(tools).toBeHidden()"
+            },
+            {
+              "line": 37,
+              "text": "expect(toggle).toHaveAttribute('aria-expanded','false')"
+            },
+            {
+              "line": 38,
+              "text": "expect(page.getByRole('alert').filter({hasText:'Frontend review: API được mô phỏng'})).toBeVisible()"
+            },
+            {
+              "line": 39,
+              "text": "expect(tools).toBeVisible()"
+            },
+            {
+              "line": 41,
+              "text": "expect(page.getByText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.')).toBeVisible()"
+            },
+            {
+              "line": 42,
+              "text": "expect(tools).toBeHidden()"
+            },
+            {
+              "line": 43,
+              "text": "expect(page.locator('[data-testid=\"mock-tools-summary\"]')).toContainText('1.000 khách hàng')"
+            },
+            {
+              "line": 44,
+              "text": "expect(page.getByRole('combobox',{name:'Dataset mô phỏng'})).toContainText('1.000 khách hàng')"
+            },
+            {
+              "line": 51,
+              "text": "expect(page.locator('main')).toHaveCSS('padding-top','16px')"
+            },
+            {
+              "line": 54,
+              "text": "expect(geometry.gap).toBeCloseTo(12,0)"
+            },
+            {
+              "line": 54,
+              "text": "expect(geometry.bodyTop).toBe('0px')"
+            },
+            {
+              "line": 54,
+              "text": "expect(geometry.bodyInline).toBe(width<768?'12px':'16px')"
+            },
+            {
+              "line": 55,
+              "text": "expect(page.locator('[data-ui-composition=\"form-fields\"]').first()).toHaveCSS('gap','16px')"
+            },
+            {
+              "line": 56,
+              "text": "expect(reading).toHaveAttribute('data-ui-density','comfortable')"
+            },
+            {
+              "line": 56,
+              "text": "expect(reading.locator(':scope > :last-child')).toHaveCSS('padding-left',width<768?'16px':'24px')"
+            },
+            {
+              "line": 63,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 63,
+              "text": "expect(dialog.locator('[data-ui-composition=\"form-fields\"]')).toHaveCSS('gap','12px')"
+            },
+            {
+              "line": 64,
+              "text": "expect(dialog.locator('.MuiDialogContent-root')).toHaveCSS('padding-left','16px')"
+            },
+            {
+              "line": 65,
+              "text": "expect(name).toBeFocused()"
+            },
+            {
+              "line": 67,
+              "text": "expect((await new AxeBuilder({page}).include('[role=\"dialog\"]').withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([])"
+            },
+            {
+              "line": 68,
+              "text": "expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width)"
+            },
+            {
+              "line": 70,
+              "text": "expect(warning).toBeVisible()"
+            },
+            {
+              "line": 71,
+              "text": "expect(warning.locator(selector)).toHaveCSS('padding-left',width<768?'16px':'24px')"
+            },
+            {
+              "line": 72,
+              "text": "expect(warning.locator('.MuiDialogActions-root')).toHaveCSS('padding','12px')"
+            },
+            {
+              "line": 72,
+              "text": "expect(warning.locator('.MuiDialogActions-root')).toHaveCSS('gap','8px')"
+            },
+            {
+              "line": 73,
+              "text": "expect(name).toHaveValue('Bản nháp phải được giữ')"
+            },
+            {
+              "line": 74,
+              "text": "expect(dialog).toBeHidden()"
+            },
+            {
+              "line": 76,
+              "text": "expect(navigation).toBeVisible()"
+            },
+            {
+              "line": 77,
+              "text": "expect(navigation.locator(selector)).toHaveCSS('padding-left',width<768?'16px':'24px')"
+            },
+            {
+              "line": 78,
+              "text": "expect(navigation.locator('.MuiDialogActions-root')).toHaveCSS('padding','12px')"
+            },
+            {
+              "line": 78,
+              "text": "expect(navigation.locator('.MuiDialogActions-root')).toHaveCSS('gap','8px')"
+            },
+            {
+              "line": 79,
+              "text": "expect(page.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Giữ nháp điều hướng')"
+            }
+          ],
+          "cases": [
+            {
+              "title": "density table saves row space while preserving action target and data",
+              "line": 10,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4197
+            },
+            {
+              "title": "density divided facts list has one row inset and no additional inter-row gap",
+              "line": 22,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2167
+            },
+            {
+              "title": "density demo disclosure retains state and always shows the synthetic warning",
+              "line": 33,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 6021
+            },
+            {
+              "title": "density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm",
+              "line": 48,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 5705
+            },
+            {
+              "title": "density simple category editor keeps labels, errors and keyboard reflow usable",
+              "line": 60,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 8105
+            },
+            {
+              "title": "density table saves row space while preserving action target and data",
+              "line": 10,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3982
+            },
+            {
+              "title": "density divided facts list has one row inset and no additional inter-row gap",
+              "line": 22,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2345
+            },
+            {
+              "title": "density demo disclosure retains state and always shows the synthetic warning",
+              "line": 33,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5533
+            },
+            {
+              "title": "density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm",
+              "line": 48,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 6258
+            },
+            {
+              "title": "density simple category editor keeps labels, errors and keyboard reflow usable",
+              "line": 60,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 9491
+            }
+          ]
+        },
+        {
+          "file": "tests/ui-shell-layout.spec.ts",
+          "sha256": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
+          "assertions": [
+            {
+              "line": 49,
+              "text": "expect(page.locator('main#main-content')).toBeVisible()"
+            },
+            {
+              "line": 86,
+              "text": "expect(metrics.headerHeight).toBe(viewport.header)"
+            },
+            {
+              "line": 87,
+              "text": "expect(metrics.headerContentLeft).toBe(metrics.navigationWidth + viewport.gutter)"
+            },
+            {
+              "line": 88,
+              "text": "expect(metrics.headerContentRight).toBe(viewport.width - viewport.gutter)"
+            },
+            {
+              "line": 89,
+              "text": "expect(metrics.mainLeft).toBe(metrics.navigationWidth + viewport.gutter)"
+            },
+            {
+              "line": 90,
+              "text": "expect(metrics.mainRight).toBe(viewport.width - viewport.gutter)"
+            },
+            {
+              "line": 91,
+              "text": "expect(metrics.bannerLeft).toBe(metrics.navigationWidth + viewport.gutter)"
+            },
+            {
+              "line": 92,
+              "text": "expect(metrics.bannerRight).toBe(viewport.width - viewport.gutter)"
+            },
+            {
+              "line": 93,
+              "text": "expect(metrics.footerLeft).toBe(metrics.navigationWidth + viewport.gutter)"
+            },
+            {
+              "line": 94,
+              "text": "expect(metrics.footerRight).toBe(viewport.width - viewport.gutter)"
+            },
+            {
+              "line": 95,
+              "text": "expect(metrics.footerBlockInset).toBe('8px')"
+            },
+            {
+              "line": 96,
+              "text": "expect(metrics.mainFlexGrow).toBe('1')"
+            },
+            {
+              "line": 97,
+              "text": "expect(metrics.mainBlockInset).toEqual(['16px', '16px'])"
+            },
+            {
+              "line": 98,
+              "text": "expect(metrics.contentColumn).toEqual({ display: 'flex', direction: 'column' })"
+            },
+            {
+              "line": 99,
+              "text": "expect(metrics.document.scrollWidth).toBe(metrics.document.clientWidth)"
+            },
+            {
+              "line": 100,
+              "text": "expect(metrics.accountName.whiteSpace).toBe('normal')"
+            },
+            {
+              "line": 101,
+              "text": "expect(metrics.accountName.overflowWrap).toBe('anywhere')"
+            },
+            {
+              "line": 102,
+              "text": "expect(metrics.accountName.scrollWidth).toBeLessThanOrEqual(metrics.accountName.clientWidth + 1)"
+            },
+            {
+              "line": 111,
+              "text": "expect(toggle).toBeVisible()"
+            },
+            {
+              "line": 112,
+              "text": "expect(controls).toBeHidden()"
+            },
+            {
+              "line": 114,
+              "text": "expect(page.getByRole('button', { name: 'Ẩn công cụ demo' })).toHaveAttribute('aria-expanded', 'true')"
+            },
+            {
+              "line": 115,
+              "text": "expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toBeVisible()"
+            },
+            {
+              "line": 116,
+              "text": "expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible()"
+            },
+            {
+              "line": 117,
+              "text": "expect(page.getByRole('combobox', { name: 'Dataset mô phỏng' })).toBeVisible()"
+            },
+            {
+              "line": 120,
+              "text": "expect(toggle).toBeVisible()"
+            },
+            {
+              "line": 121,
+              "text": "expect(controls).toBeVisible()"
+            },
+            {
+              "line": 134,
+              "text": "expect(alert).toBeVisible({ timeout: 30000 })"
+            },
+            {
+              "line": 136,
+              "text": "expect(controls).toBeVisible()"
+            },
+            {
+              "line": 145,
+              "text": "expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).not.toBeNull()"
+            },
+            {
+              "line": 146,
+              "text": "expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).toBeGreaterThanOrEqual(8)"
+            },
+            {
+              "line": 153,
+              "text": "expect(page.getByRole('heading', { name: 'Không tìm thấy trang' })).toBeVisible()"
+            },
+            {
+              "line": 155,
+              "text": "expect(fallback).toHaveCSS('padding-left', '16px')"
+            },
+            {
+              "line": 156,
+              "text": "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390)"
+            }
+          ],
+          "cases": [
+            {
+              "title": "Shell keeps header, banner, main and footer on one responsive gutter",
+              "line": 45,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1770
+            },
+            {
+              "title": "demo controls stay discoverable on mobile and usable on desktop",
+              "line": 106,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 715
+            },
+            {
+              "title": "SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer",
+              "line": 124,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 29432
+            },
+            {
+              "title": "unmatched route fallback owns its page gutter without horizontal overflow",
+              "line": 150,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 410
+            },
+            {
+              "title": "Shell keeps header, banner, main and footer on one responsive gutter",
+              "line": 45,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1813
+            },
+            {
+              "title": "demo controls stay discoverable on mobile and usable on desktop",
+              "line": 106,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 834
+            },
+            {
+              "title": "SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer",
+              "line": 124,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 34697
+            },
+            {
+              "title": "unmatched route fallback owns its page gutter without horizontal overflow",
+              "line": 150,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 457
+            }
+          ]
+        }
+      ],
+      "negativeExecutions": 58
+    },
+    {
+      "name": "Executed unit owners",
+      "proof": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "e1ed34a5c53b5f9947dc6ab4226b84497e86169fbd78431075739533b7bfcb78",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current dependency gates",
+      "unit": 242,
+      "domain": 117,
+      "sourceMaps": 16,
+      "fullBrowser": 878,
+      "builtArtifact": 6,
+      "coldStages": 13,
+      "limits": "Distinct suite counts are not added into a percentage."
+    },
+    {
+      "name": "Native affected-owner review",
+      "proof": [
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r5.json",
+          "sha256": "a10db819544603176e0493b08ef25eaae1d843acec49c97191ddacf7c562e77d",
+          "count": 8
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/native-text-only-200-current-r6.json",
+          "sha256": "18f699cb737e55b316658ec64bf92166b8586236d082e16fcce1587ce7c9601b",
+          "count": 16
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r7.json",
+          "sha256": "0e1173776db95ab8a4bcb2dad62e3dcc0f865552856393c327276d467236d208",
+          "count": 8
+        }
+      ],
+      "scope": "Eight affected detail views; Chromium and installed Chrome browser zoom, Firefox native text-only zoom. Full browser suite covers all existing consumers. Historical global native matrices are not re-certified."
+    },
+    {
+      "name": "Cold source and artifacts",
+      "artifact": "cold-artifacts-final.json",
+      "lockSha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "name": "Review and acceptance boundary",
+      "handoff": "ACCEPTANCE_GUIDE.md",
+      "architecture": "ARCHITECTURE_REVIEW.md",
+      "quality": "quality-gates-final.json",
+      "rawPremiumScanner": "FAIL_EXIT_1: all 14 actual semantic actions reviewed in premium-semantic-review.json; no scanner PASS or owner approval claimed",
+      "ownerAcceptance": "PENDING",
+      "screenReaderSpeech": "NOT_RUN",
+      "hostedCI": "NOT_RUN",
+      "backend": "OUTSIDE_SCOPE"
+    },
+    {
+      "name": "Criterion-specific proof selection",
+      "step": "S04",
+      "verification": "Critical violations trong scope được xử lý; mock data không thay kiểm hành vi browser. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "interpretation": "This foundation/cross-module/handoff criterion is self-reviewed against its exact action/verification and the named source, owner assertions, toolchain/gate/artifact and handoff proofs above; no points are inferred solely from a shared suite total.",
+      "selectedOperationLocations": [],
+      "selectedBrowserCases": [
+        {
+          "title": "the built demo artifact serves the React UI and synthetic API through preview",
+          "line": 40,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 807
+        },
+        {
+          "title": "a thousand synthetic customers remain API-paginated in the built demo artifact",
+          "line": 104,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 897
+        },
+        {
+          "title": "the production artifact contains neither the mock worker asset nor MSW fixtures/runtime",
+          "line": 143,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 24
+        },
+        {
+          "title": "the built demo artifact serves the React UI and synthetic API through preview",
+          "line": 40,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1174
+        },
+        {
+          "title": "a thousand synthetic customers remain API-paginated in the built demo artifact",
+          "line": 104,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1280
+        },
+        {
+          "title": "the production artifact contains neither the mock worker asset nor MSW fixtures/runtime",
+          "line": 143,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 10
+        },
+        {
+          "title": "UI012 keyboard-only finance edit handles select, discard warning and focus return",
+          "line": 42,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2786
+        },
+        {
+          "title": "UI012 keyboard validation focuses the field named by a synthetic 422 response",
+          "line": 103,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3011
+        },
+        {
+          "title": "UI012 keyboard activates the CSV chooser and discards its selected file without upload",
+          "line": 160,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1935
+        },
+        {
+          "title": "UI012 keyboard can reach and horizontally scroll the marketing chart data alternative",
+          "line": 200,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1733
+        },
+        {
+          "title": "UI012 marketing chart keeps every category label visible beside its data table",
+          "line": 227,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2167
+        },
+        {
+          "title": "UI012 inbox feedback actions identify their message and return focus after Escape",
+          "line": 276,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2836
+        },
+        {
+          "title": "UI012 order draft does not announce an untouched required customer as invalid",
+          "line": 309,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1334
+        },
+        {
+          "title": "UI012 human-confirmation policy copy wraps inside its alert at a 320 CSS-pixel viewport",
+          "line": 322,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1289
+        },
+        {
+          "title": "UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible",
+          "line": 356,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3090
+        },
+        {
+          "title": "UI012 keyboard-only finance edit handles select, discard warning and focus return",
+          "line": 42,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3045
+        },
+        {
+          "title": "UI012 keyboard validation focuses the field named by a synthetic 422 response",
+          "line": 103,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3634
+        },
+        {
+          "title": "UI012 keyboard activates the CSV chooser and discards its selected file without upload",
+          "line": 160,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2184
+        },
+        {
+          "title": "UI012 keyboard can reach and horizontally scroll the marketing chart data alternative",
+          "line": 200,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2075
+        },
+        {
+          "title": "UI012 marketing chart keeps every category label visible beside its data table",
+          "line": 227,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2745
+        },
+        {
+          "title": "UI012 inbox feedback actions identify their message and return focus after Escape",
+          "line": 276,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2819
+        },
+        {
+          "title": "UI012 order draft does not announce an untouched required customer as invalid",
+          "line": 309,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1587
+        },
+        {
+          "title": "UI012 human-confirmation policy copy wraps inside its alert at a 320 CSS-pixel viewport",
+          "line": 322,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1335
+        },
+        {
+          "title": "UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible",
+          "line": 356,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4130
+        },
+        {
+          "title": "Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4501
+        },
+        {
+          "title": "Completion R26 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1769
+        },
+        {
+          "title": "Completion R26 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1659
+        },
+        {
+          "title": "Completion R26 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2940
+        },
+        {
+          "title": "Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4251
+        },
+        {
+          "title": "Completion R28 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1793
+        },
+        {
+          "title": "Completion R28 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1793
+        },
+        {
+          "title": "Completion R28 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3092
+        },
+        {
+          "title": "Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4002
+        },
+        {
+          "title": "Completion R29 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1662
+        },
+        {
+          "title": "Completion R29 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1717
+        },
+        {
+          "title": "Completion R29 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2951
+        },
+        {
+          "title": "Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4074
+        },
+        {
+          "title": "Completion R30 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1651
+        },
+        {
+          "title": "Completion R30 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1747
+        },
+        {
+          "title": "Completion R30 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2918
+        },
+        {
+          "title": "Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4134
+        },
+        {
+          "title": "Completion R32 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1659
+        },
+        {
+          "title": "Completion R32 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1688
+        },
+        {
+          "title": "Completion R32 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3045
+        },
+        {
+          "title": "Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3327
+        },
+        {
+          "title": "Completion R39 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1615
+        },
+        {
+          "title": "Completion R39 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1630
+        },
+        {
+          "title": "Completion R39 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2979
+        },
+        {
+          "title": "Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3358
+        },
+        {
+          "title": "Completion R54 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1635
+        },
+        {
+          "title": "Completion R54 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1732
+        },
+        {
+          "title": "Completion R54 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2927
+        },
+        {
+          "title": "Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4026
+        },
+        {
+          "title": "Completion R37 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1679
+        },
+        {
+          "title": "Completion R37 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1765
+        },
+        {
+          "title": "Completion R37 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2943
+        },
+        {
+          "title": "Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4918
+        },
+        {
+          "title": "Completion R26 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1783
+        },
+        {
+          "title": "Completion R26 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1781
+        },
+        {
+          "title": "Completion R26 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2962
+        },
+        {
+          "title": "Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4747
+        },
+        {
+          "title": "Completion R28 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1954
+        },
+        {
+          "title": "Completion R28 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1953
+        },
+        {
+          "title": "Completion R28 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3219
+        },
+        {
+          "title": "Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3846
+        },
+        {
+          "title": "Completion R29 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5214
+        },
+        {
+          "title": "Completion R29 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1870
+        },
+        {
+          "title": "Completion R29 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3022
+        },
+        {
+          "title": "Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4412
+        },
+        {
+          "title": "Completion R30 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1754
+        },
+        {
+          "title": "Completion R30 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1735
+        },
+        {
+          "title": "Completion R30 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3129
+        },
+        {
+          "title": "Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4668
+        },
+        {
+          "title": "Completion R32 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2042
+        },
+        {
+          "title": "Completion R32 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1750
+        },
+        {
+          "title": "Completion R32 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5914
+        },
+        {
+          "title": "Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4340
+        },
+        {
+          "title": "Completion R39 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1730
+        },
+        {
+          "title": "Completion R39 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1783
+        },
+        {
+          "title": "Completion R39 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3019
+        },
+        {
+          "title": "Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4340
+        },
+        {
+          "title": "Completion R54 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1757
+        },
+        {
+          "title": "Completion R54 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1736
+        },
+        {
+          "title": "Completion R54 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3048
+        },
+        {
+          "title": "Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4207
+        },
+        {
+          "title": "Completion R37 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4925
+        },
+        {
+          "title": "Completion R37 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1915
+        },
+        {
+          "title": "Completion R37 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3046
+        },
+        {
+          "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+          "line": 40,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4898
+        },
+        {
+          "title": "A02 product editors align category and status faces independently from lookup metadata",
+          "line": 61,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 9648
+        },
+        {
+          "title": "Shared outlined labels focus empty and populated native controls",
+          "line": 84,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1723
+        },
+        {
+          "title": "A02 variant fields retain readable widths when text doubles",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 9997
+        },
+        {
+          "title": "A03 import mapping preserves natural remove actions and editable mappings",
+          "line": 130,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3811
+        },
+        {
+          "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+          "line": 150,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4572
+        },
+        {
+          "title": "A05 status height follows its own label while long labels remain fully readable",
+          "line": 176,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3991
+        },
+        {
+          "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+          "line": 196,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4396
+        },
+        {
+          "title": "A07 canonical order address selection exposes full text and edit lines retain intrinsic actions",
+          "line": 209,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 9075
+        },
+        {
+          "title": "A01 order lines keep intrinsic remove actions with clean and invalid quantities",
+          "line": 40,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5488
+        },
+        {
+          "title": "A02 product editors align category and status faces independently from lookup metadata",
+          "line": 61,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 10366
+        },
+        {
+          "title": "Shared outlined labels focus empty and populated native controls",
+          "line": 84,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1986
+        },
+        {
+          "title": "A02 variant fields retain readable widths when text doubles",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 12300
+        },
+        {
+          "title": "A03 import mapping preserves natural remove actions and editable mappings",
+          "line": 130,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4562
+        },
+        {
+          "title": "A04 full precision money wraps outside tables and remains unbroken in the named scroll region",
+          "line": 150,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5053
+        },
+        {
+          "title": "A05 status height follows its own label while long labels remain fully readable",
+          "line": 176,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4789
+        },
+        {
+          "title": "A06 Empty wraps unbroken reference text and retains its keyboard action",
+          "line": 196,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 10006
+        },
+        {
+          "title": "A07 canonical order address selection exposes full text and edit lines retain intrinsic actions",
+          "line": 209,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 9839
+        },
+        {
+          "title": "density table saves row space while preserving action target and data",
+          "line": 10,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4197
+        },
+        {
+          "title": "density divided facts list has one row inset and no additional inter-row gap",
+          "line": 22,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2167
+        },
+        {
+          "title": "density demo disclosure retains state and always shows the synthetic warning",
+          "line": 33,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 6021
+        },
+        {
+          "title": "density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm",
+          "line": 48,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 5705
+        },
+        {
+          "title": "density simple category editor keeps labels, errors and keyboard reflow usable",
+          "line": 60,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 8105
+        },
+        {
+          "title": "density table saves row space while preserving action target and data",
+          "line": 10,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3982
+        },
+        {
+          "title": "density divided facts list has one row inset and no additional inter-row gap",
+          "line": 22,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2345
+        },
+        {
+          "title": "density demo disclosure retains state and always shows the synthetic warning",
+          "line": 33,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5533
+        },
+        {
+          "title": "density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm",
+          "line": 48,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 6258
+        },
+        {
+          "title": "density simple category editor keeps labels, errors and keyboard reflow usable",
+          "line": 60,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 9491
+        },
+        {
+          "title": "Shell keeps header, banner, main and footer on one responsive gutter",
+          "line": 45,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1770
+        },
+        {
+          "title": "demo controls stay discoverable on mobile and usable on desktop",
+          "line": 106,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 715
+        },
+        {
+          "title": "SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer",
+          "line": 124,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 29432
+        },
+        {
+          "title": "unmatched route fallback owns its page gutter without horizontal overflow",
+          "line": 150,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 410
+        },
+        {
+          "title": "Shell keeps header, banner, main and footer on one responsive gutter",
+          "line": 45,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1813
+        },
+        {
+          "title": "demo controls stay discoverable on mobile and usable on desktop",
+          "line": 106,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 834
+        },
+        {
+          "title": "SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer",
+          "line": 124,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 34697
+        },
+        {
+          "title": "unmatched route fallback owns its page gutter without horizontal overflow",
+          "line": 150,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 457
+        }
+      ],
+      "ownerSourceAssertions": [
+        {
+          "file": "tests/artifacts/demo-preview.spec.ts",
+          "sha256": "3d522e81d9c649f9f999aba7cb4a942523c7ac7f310ad1830aecc914d6765ef0",
+          "assertionLines": [
+            44,
+            45,
+            46,
+            76,
+            77,
+            106,
+            110,
+            116,
+            120,
+            121,
+            136,
+            146,
+            149,
+            150
+          ]
+        },
+        {
+          "file": "tests/ui012-keyboard.spec.ts",
+          "sha256": "1eecd48b9437f899a7e41d6f192cf8c01a8f56ccc7d5dcc8e145d2285755dfee",
+          "assertionLines": [
+            20,
+            51,
+            52,
+            53,
+            55,
+            57,
+            58,
+            65,
+            70,
+            73,
+            74,
+            80,
+            82,
+            83,
+            84,
+            90,
+            94,
+            98,
+            99,
+            100,
+            128,
+            131,
+            133,
+            139,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            167,
+            170,
+            172,
+            178,
+            185,
+            191,
+            195,
+            196,
+            197,
+            204,
+            208,
+            209,
+            210,
+            214,
+            216,
+            218,
+            220,
+            223,
+            224,
+            242,
+            245,
+            246,
+            249,
+            249,
+            250,
+            254,
+            261,
+            263,
+            264,
+            265,
+            266,
+            267,
+            270,
+            272,
+            285,
+            287,
+            288,
+            289,
+            289,
+            292,
+            295,
+            297,
+            299,
+            300,
+            302,
+            311,
+            314,
+            315,
+            316,
+            317,
+            318,
+            319,
+            327,
+            328,
+            351,
+            352,
+            353,
+            359,
+            365,
+            372,
+            373,
+            374,
+            375,
+            376,
+            381,
+            384,
+            385
+          ]
+        },
+        {
+          "file": "tests/frontend-completeness.spec.ts",
+          "sha256": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
+          "assertionLines": [
+            50,
+            51,
+            52,
+            60,
+            61,
+            71,
+            71,
+            72,
+            73,
+            74,
+            74,
+            76,
+            77,
+            80,
+            84,
+            84,
+            87,
+            88,
+            90,
+            94,
+            95,
+            102,
+            103,
+            104,
+            105,
+            106,
+            108
+          ]
+        },
+        {
+          "file": "tests/ui-component-layout.spec.ts",
+          "sha256": "c80528252c42d565c0a174122193c51740e3453e81799e856ae0ba39aea8be73",
+          "assertionLines": [
+            15,
+            28,
+            37,
+            45,
+            50,
+            54,
+            56,
+            66,
+            67,
+            69,
+            70,
+            74,
+            75,
+            78,
+            93,
+            94,
+            105,
+            114,
+            115,
+            116,
+            118,
+            121,
+            123,
+            124,
+            135,
+            138,
+            142,
+            143,
+            144,
+            155,
+            156,
+            157,
+            158,
+            164,
+            167,
+            170,
+            170,
+            171,
+            172,
+            184,
+            186,
+            188,
+            189,
+            190,
+            192,
+            199,
+            201,
+            204,
+            205,
+            216,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            228,
+            229,
+            231,
+            233,
+            235,
+            239
+          ]
+        },
+        {
+          "file": "tests/ui-density-layout.spec.ts",
+          "sha256": "76ac6f6570cc2375fd2f97e9264214ea94f99a9e1802c6541aaa95caa42b87a1",
+          "assertionLines": [
+            8,
+            8,
+            8,
+            13,
+            13,
+            14,
+            15,
+            15,
+            16,
+            17,
+            18,
+            18,
+            25,
+            25,
+            26,
+            27,
+            27,
+            28,
+            28,
+            29,
+            37,
+            37,
+            38,
+            39,
+            41,
+            42,
+            43,
+            44,
+            51,
+            54,
+            54,
+            54,
+            55,
+            56,
+            56,
+            63,
+            63,
+            64,
+            65,
+            67,
+            68,
+            70,
+            71,
+            72,
+            72,
+            73,
+            74,
+            76,
+            77,
+            78,
+            78,
+            79
+          ]
+        },
+        {
+          "file": "tests/ui-shell-layout.spec.ts",
+          "sha256": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
+          "assertionLines": [
+            49,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            111,
+            112,
+            114,
+            115,
+            116,
+            117,
+            120,
+            121,
+            134,
+            136,
+            145,
+            146,
+            153,
+            155,
+            156
+          ]
+        }
+      ],
+      "policyLimits": "Manual speech/owner acceptance/hosted CI are not fabricated."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "final-verify-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:01:06.981Z",
+      "finishedAt": "2026-10-13T10:04:18.552Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-verify-r3.log",
+        "sha256": "8a2bc419fb81685bf2f6f73645aff8438ed20f8e15a7c43d3788f60eec4537c5"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-unit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:35.330Z",
+      "finishedAt": "2026-10-13T07:02:42.025Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log",
+        "sha256": "d28976d231b13835d4807b6afa47ed16e8bbb728e2d40f2da4809d9a935b1dab"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-source-maps-r4",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:04:18.629Z",
+      "finishedAt": "2026-10-13T10:04:18.788Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-source-maps-r4.log",
+        "sha256": "1f11d1774f5a281c635e13a5103ffea8cd1a15a8dbe8cb3ce221e7101b67c567"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-e2e-r8",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config evidence\\frontend-completeness-20261013-aaf74b7\\final-supported-matrix.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:17:44.501Z",
+      "finishedAt": "2026-10-13T09:38:22.202Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+        "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:38:46.673Z",
+      "finishedAt": "2026-10-13T09:42:01.737Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-built-demo.log",
+        "sha256": "8e58d50eaf56c321c12b6b624c93f1b3b4179be1d9d32fb07c3d02ce68886c04"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-kit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" ../botsales-kit/scripts/validate-kit.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.394Z",
+      "finishedAt": "2026-10-13T07:02:42.544Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-kit-r3.log",
+        "sha256": "88d853cfe1cce38738a93c30a9da799eadb00b50cb751133587d7295c3f2886d"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-doctor-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run doctor",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.639Z",
+      "finishedAt": "2026-10-13T07:02:42.844Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-doctor-r3.log",
+        "sha256": "672964dbb21e82e121d2af5d557c6560d07f6fcdea96a2be8052b7f46d0f2d1c"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-dependencies-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.935Z",
+      "finishedAt": "2026-10-13T07:02:43.508Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-dependencies-r3.log",
+        "sha256": "1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-audit-r2",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" audit --omit=dev --json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:43.608Z",
+      "finishedAt": "2026-10-13T07:02:44.665Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-audit-r2.log",
+        "sha256": "4a77064eea4b56a1382b7b3ad1421f3ce4a7543523f17a326dfe5228010c49a9"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-browser-200-r5",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-browser-200.mjs r5",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:02.022Z",
+      "finishedAt": "2026-10-13T08:33:13.731Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-browser-200-r5.log",
+        "sha256": "3f2f3eb12ddff66c9e359c294c84b623f3ed75f48956e653ab4b6a33d00d8164"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-text-200-r6",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-text-200.mjs r6",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:13.814Z",
+      "finishedAt": "2026-10-13T08:33:43.758Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-text-200-r6.log",
+        "sha256": "8e8676f76e6e02fd961003167805795c22200a6745357631ac5fc4a28e6156fd"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-chrome-200-r7",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence/frontend-completeness-20261013-aaf74b7/native-browser-200.mjs r7 chrome",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:26:48.144Z",
+      "finishedAt": "2026-10-13T08:27:18.715Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-chrome-200-r7.log",
+        "sha256": "9b4a1a82d84492f12d76006e0fedf42e7bdb35ba51497e4c586d8d57d2a92453"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "metadata-generator-after-fix",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/vertical-slices/generate-route-implementation.mjs evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:55:55.856Z",
+      "finishedAt": "2026-10-13T09:55:55.931Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-generator-after-fix.log",
+        "sha256": "fd1826c8ac72da4d1a8aaac2e8e62d989ace259dd77388fb9081df5ff288f911"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "metadata-state-role-final",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/states/generate-route-state-roles.mjs --unit-log evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log --browser-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log --role-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.232Z",
+      "finishedAt": "2026-10-13T09:56:19.304Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-state-role-final.log",
+        "sha256": "650607a21ec011c9328898177b3fa064353754aa73c88648b5cc3f263d7f11d8"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --grep FE022.S05 --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.602Z",
+      "finishedAt": "2026-10-13T09:56:22.344Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-generated-map-e2e.log",
+        "sha256": "96c8bbaf23ab8e6e47268e6ebc57cd3964806280ceea464fc7635512c9e7c996"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-marketing-boundaries",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/vitest/vitest.mjs run --config evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.config.ts evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.test.ts --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:03:53.279Z",
+      "finishedAt": "2026-10-13T10:03:54.078Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-marketing-boundaries.log",
+        "sha256": "1d1bad3f9cbb3ae44d5a0890a01cf9b6158739a4fb71945ef8395844ef1757a1"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    }
+  ],
+  "sourceSnapshotSha256": "e51747a67fda222db7d1bbc42425b68e23aa68566eb71f7afe5f11e7ddb14031"
+}

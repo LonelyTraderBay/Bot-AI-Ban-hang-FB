@@ -1,0 +1,58 @@
+{
+  "recordedAt": "2026-10-13T09:58:31.004Z",
+  "scope": "ONE_REPORT_GENERATOR_METADATA_CHANGE_AFTER_FULL_RUNTIME_PROOF",
+  "file": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+  "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+  "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+  "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+  "backup": {
+    "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/route-generator-before-fix.mjs",
+    "sha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46"
+  },
+  "exactChanges": [
+    {
+      "before": "FE014.S03 auto-send cannot be configured without an enabled procurement budget",
+      "after": "FE014.S03 auto-send requires an active matching purchase delegation",
+      "occurrences": 1
+    },
+    {
+      "before": "FE009.G05 marketing consent preview is interactive but never claims server opt-out",
+      "after": "FE009.G05 consent management persists challenges without granting consent before customer action",
+      "occurrences": 1
+    },
+    {
+      "before": "FE021 marketing chart and table match the same synthetic API fixture and preserve missing actual spend",
+      "after": "FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend",
+      "occurrences": 2
+    }
+  ],
+  "fullRuntime": {
+    "record": "final-e2e-r8.record.json",
+    "sha256": "61710be3f296d077cce935ac82794d24b83e3d96e61efac4b6c53e94220e3db8",
+    "capturedSourceDrift": [],
+    "currentInputDifferences": [
+      {
+        "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+        "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+        "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1"
+      }
+    ],
+    "unchangedInputs": 302
+  },
+  "freshProof": [
+    {
+      "stage": "metadata-generator-after-fix",
+      "recordSha256": "5fe66718de497b61511f9c21c62eeabb461869715a47266e824eb2a026fdc987"
+    },
+    {
+      "stage": "metadata-state-role-final",
+      "recordSha256": "5de194f87dba0e6cfdd1e761ac4de16268c372ef98e614116d9d176517eaea63"
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "recordSha256": "3cd096cf0bb8021ffaa65891f4d1b7bd14d2ded93f2450045f8acc5f240268a3"
+    }
+  ],
+  "reason": "The full browser run passed the current test titles; the offline route report generator still referenced four historical titles. No app, mock, browser test, runtime config, assertion or dependency changed. This script checks the complete diff against those exact title replacements and every other full-run input against its original hash. The generator is invoked by the offline FE022 evidence tool, not app runtime or browser fixtures. Fresh generator/map/source/verify and cold proof are recorded separately.",
+  "limits": "Original execution records remain immutable. Zero drift during a run is distinct from this single verified post-run report-tool change."
+}

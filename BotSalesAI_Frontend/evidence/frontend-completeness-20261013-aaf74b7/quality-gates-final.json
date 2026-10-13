@@ -1,0 +1,728 @@
+{
+  "recordedAt": "2026-10-13T10:05:50.234Z",
+  "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
+  "browserBinary": {
+    "project": "chromium",
+    "channel": "chrome",
+    "version": "155.0.8059.40",
+    "deviceUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36"
+  },
+  "deviceUserAgents": [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0"
+  ],
+  "proofToolDelta": {
+    "recordedAt": "2026-10-13T09:58:31.004Z",
+    "scope": "ONE_REPORT_GENERATOR_METADATA_CHANGE_AFTER_FULL_RUNTIME_PROOF",
+    "file": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+    "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+    "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+    "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+    "backup": {
+      "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/route-generator-before-fix.mjs",
+      "sha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46"
+    },
+    "exactChanges": [
+      {
+        "before": "FE014.S03 auto-send cannot be configured without an enabled procurement budget",
+        "after": "FE014.S03 auto-send requires an active matching purchase delegation",
+        "occurrences": 1
+      },
+      {
+        "before": "FE009.G05 marketing consent preview is interactive but never claims server opt-out",
+        "after": "FE009.G05 consent management persists challenges without granting consent before customer action",
+        "occurrences": 1
+      },
+      {
+        "before": "FE021 marketing chart and table match the same synthetic API fixture and preserve missing actual spend",
+        "after": "FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend",
+        "occurrences": 2
+      }
+    ],
+    "fullRuntime": {
+      "record": "final-e2e-r8.record.json",
+      "sha256": "61710be3f296d077cce935ac82794d24b83e3d96e61efac4b6c53e94220e3db8",
+      "capturedSourceDrift": [],
+      "currentInputDifferences": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1"
+        }
+      ],
+      "unchangedInputs": 302
+    },
+    "freshProof": [
+      {
+        "stage": "metadata-generator-after-fix",
+        "recordSha256": "5fe66718de497b61511f9c21c62eeabb461869715a47266e824eb2a026fdc987"
+      },
+      {
+        "stage": "metadata-state-role-final",
+        "recordSha256": "5de194f87dba0e6cfdd1e761ac4de16268c372ef98e614116d9d176517eaea63"
+      },
+      {
+        "stage": "final-generated-map-e2e",
+        "recordSha256": "3cd096cf0bb8021ffaa65891f4d1b7bd14d2ded93f2450045f8acc5f240268a3"
+      }
+    ],
+    "reason": "The full browser run passed the current test titles; the offline route report generator still referenced four historical titles. No app, mock, browser test, runtime config, assertion or dependency changed. This script checks the complete diff against those exact title replacements and every other full-run input against its original hash. The generator is invoked by the offline FE022 evidence tool, not app runtime or browser fixtures. Fresh generator/map/source/verify and cold proof are recorded separately.",
+    "limits": "Original execution records remain immutable. Zero drift during a run is distinct from this single verified post-run report-tool change."
+  },
+  "fullyVerifiedGates": 7,
+  "totalGates": 9,
+  "ownerAcceptance": "PENDING",
+  "screenReaderSpeech": "NOT_RUN",
+  "hostedCI": "NOT_RUN",
+  "backend": "OUTSIDE_SCOPE",
+  "gates": [
+    {
+      "id": "FE-G01",
+      "result": "PASS",
+      "proof": [
+        "cold-install-final.json",
+        "cold-artifacts-final.json",
+        "final-doctor-r3.record.json",
+        "final-dependencies-r3.record.json"
+      ]
+    },
+    {
+      "id": "FE-G02",
+      "result": "PASS",
+      "proof": [
+        "final-verify-r3.record.json",
+        "final-source-maps-r4.record.json",
+        "ARCHITECTURE_REVIEW.md"
+      ]
+    },
+    {
+      "id": "FE-G03",
+      "result": "PASS",
+      "proof": [
+        "final-verify-r3.record.json",
+        "final-unit-r3.record.json",
+        "final-kit-r3.record.json"
+      ],
+      "domainChecks": 117,
+      "unitCases": 242
+    },
+    {
+      "id": "FE-G04",
+      "result": "PASS",
+      "proof": [
+        "final-e2e-r8.record.json",
+        "final-generated-map-e2e.record.json",
+        "../../docs/route-implementation.json",
+        "../../docs/route-state-role-matrix.json"
+      ],
+      "routes": 61,
+      "featureLinks": 64,
+      "stateRoleSummary": {
+        "routes": 61,
+        "roles": 7,
+        "canonicalRouteStates": [
+          "loading",
+          "empty",
+          "error",
+          "forbidden",
+          "stale_or_offline",
+          "success",
+          "command_unknown",
+          "capability_unavailable"
+        ],
+        "passingGlobalStateCases": 19,
+        "routeMountSmoke": "PASS",
+        "routeSuccessComposition": "PASS",
+        "routeSpecificSuccessRoutes": 61,
+        "routeEmptyComposition": "PASS",
+        "routeSpecificEmptyRoutes": 9,
+        "routeSpecificStateCells": 182,
+        "observedDeniedRouteRoleCase": "viewer@R22",
+        "routeRoleBrowserMatrix": "PASS",
+        "passedRouteRoleCases": 399
+      },
+      "limit": "Feature links and suite counts alone are not acceptance; named owner/flow cases are bound in checkpoint receipts."
+    },
+    {
+      "id": "FE-G05",
+      "result": "PARTIAL",
+      "automated": "PASS",
+      "manualSpeech": "NOT_RUN",
+      "humanConformance": "NOT_RUN",
+      "proof": [
+        "final-e2e-r8.record.json",
+        "actual-browser-zoom-200-current-r5.json",
+        "native-text-only-200-current-r6.json",
+        "actual-browser-zoom-200-current-r7.json"
+      ],
+      "limit": "No full WCAG or all-device/browser certification. Full suite engines installed Chrome 155/Playwright Firefox 155, 439 cases each; installed Chrome also has native zoom proof. Earlier incomplete/failed full Chromium 153 runs are retained; current bundled supplemental native/build checks have their own PASS records. Installed Firefox 157 inventory is not an execution claim."
+    },
+    {
+      "id": "FE-G06",
+      "result": "PASS",
+      "proof": [
+        "final-e2e-r8.record.json",
+        "final-unit-r3.record.json",
+        "final-audit-r2.record.json"
+      ],
+      "limit": "Frontend/mock authorization/redaction/isolation; not server authorization or DB proof."
+    },
+    {
+      "id": "FE-G07",
+      "result": "PASS",
+      "proof": [
+        "final-e2e-r8.record.json",
+        "cold-artifacts-final.json"
+      ],
+      "limit": "Executed artifact preview gzip budgets 500 KiB initial/200 KiB largest; identified synthetic 1000-customer pagination; local measurements are not backend/production SLO."
+    },
+    {
+      "id": "FE-G08",
+      "result": "PASS_LOCAL_EQUIVALENT",
+      "proof": [
+        "cold-install-final.json",
+        "cold-artifacts-final.json",
+        "final-built-demo.record.json",
+        "final-root-demo-build.record.json"
+      ],
+      "hostedCI": "NOT_RUN"
+    },
+    {
+      "id": "FE-G09",
+      "result": "PARTIAL",
+      "technicalUAT": "PASS",
+      "handoff": "PREPARED",
+      "ownerAcceptance": "PENDING",
+      "proof": [
+        "final-e2e-r8.record.json",
+        "ACCEPTANCE_GUIDE.md"
+      ]
+    }
+  ],
+  "staticPremium": {
+    "rawResult": "FAIL_EXIT_1",
+    "findings": 14,
+    "semanticSourceReview": "premium-semantic-review.json",
+    "exception": "13 historical accepted-review findings only; no new owner exception or scanner PASS claimed"
+  },
+  "records": [
+    {
+      "stage": "final-verify-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-verify-r3.log",
+        "sha256": "8a2bc419fb81685bf2f6f73645aff8438ed20f8e15a7c43d3788f60eec4537c5"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-unit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log",
+        "sha256": "d28976d231b13835d4807b6afa47ed16e8bbb728e2d40f2da4809d9a935b1dab"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-source-maps-r4",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-source-maps-r4.log",
+        "sha256": "1f11d1774f5a281c635e13a5103ffea8cd1a15a8dbe8cb3ce221e7101b67c567"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-e2e-r8",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config evidence\\frontend-completeness-20261013-aaf74b7\\final-supported-matrix.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+        "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-root-demo-build",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run build:demo",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-root-demo-build.log",
+        "sha256": "4d8157c56bb18e19cffd9144dfa693dd436656d34391908f4f4182942e7499cc"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-built-demo.log",
+        "sha256": "8e58d50eaf56c321c12b6b624c93f1b3b4179be1d9d32fb07c3d02ce68886c04"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --grep FE022.S05 --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-generated-map-e2e.log",
+        "sha256": "96c8bbaf23ab8e6e47268e6ebc57cd3964806280ceea464fc7635512c9e7c996"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-native-chrome-200-r7",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence/frontend-completeness-20261013-aaf74b7/native-browser-200.mjs r7 chrome",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-chrome-200-r7.log",
+        "sha256": "9b4a1a82d84492f12d76006e0fedf42e7bdb35ba51497e4c586d8d57d2a92453"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-browser-200-r5",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-browser-200.mjs r5",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-browser-200-r5.log",
+        "sha256": "3f2f3eb12ddff66c9e359c294c84b623f3ed75f48956e653ab4b6a33d00d8164"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-text-200-r6",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-text-200.mjs r6",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-text-200-r6.log",
+        "sha256": "8e8676f76e6e02fd961003167805795c22200a6745357631ac5fc4a28e6156fd"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-kit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" ../botsales-kit/scripts/validate-kit.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-kit-r3.log",
+        "sha256": "88d853cfe1cce38738a93c30a9da799eadb00b50cb751133587d7295c3f2886d"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-doctor-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run doctor",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-doctor-r3.log",
+        "sha256": "672964dbb21e82e121d2af5d557c6560d07f6fcdea96a2be8052b7f46d0f2d1c"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-dependencies-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-dependencies-r3.log",
+        "sha256": "1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-audit-r2",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" audit --omit=dev --json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-audit-r2.log",
+        "sha256": "4a77064eea4b56a1382b7b3ad1421f3ce4a7543523f17a326dfe5228010c49a9"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "metadata-generator-after-fix",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/vertical-slices/generate-route-implementation.mjs evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-generator-after-fix.log",
+        "sha256": "fd1826c8ac72da4d1a8aaac2e8e62d989ace259dd77388fb9081df5ff288f911"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "metadata-state-role-final",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/states/generate-route-state-roles.mjs --unit-log evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log --browser-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log --role-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-state-role-final.log",
+        "sha256": "650607a21ec011c9328898177b3fa064353754aa73c88648b5cc3f263d7f11d8"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "browser-binary-probe-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config evidence/frontend-completeness-20261013-aaf74b7/browser-fixture-probe.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/browser-binary-probe-e2e.log",
+        "sha256": "e1955fb4c79c10220c196f8eb24bccde8e9d8ca16f8a7a0dde47ea9df966e550"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-marketing-boundaries",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/vitest/vitest.mjs run --config evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.config.ts evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.test.ts --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-marketing-boundaries.log",
+        "sha256": "1d1bad3f9cbb3ae44d5a0890a01cf9b6158739a4fb71945ef8395844ef1757a1"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    }
+  ],
+  "browserRuns": [
+    {
+      "stage": "final-e2e-r8",
+      "stats": {
+        "startTime": "2026-10-13T08:17:44.827Z",
+        "duration": 4837299.452,
+        "expected": 878,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "stage": "final-built-demo",
+      "stats": {
+        "startTime": "2026-10-13T09:38:46.995Z",
+        "duration": 194708.158,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "stats": {
+        "startTime": "2026-10-13T09:56:19.879Z",
+        "duration": 2429.219,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "native": [
+    {
+      "file": "actual-browser-zoom-200-current-r5.json",
+      "count": 8,
+      "method": {
+        "browser": "Playwright-bundled Chromium, headless Chromium channel, fresh temporary profile",
+        "mechanism": "Temporary Manifest V3 extension calls chrome.tabs.setZoom(tabId, 2) and independently reads chrome.tabs.getZoom(tabId)",
+        "baselineViewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "targetZoomFactor": 2,
+        "note": "The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2.",
+        "screenshot": "CDP captures the current viewport without a CSS-pixel clip; native zoom and scroll offsets are retained. Playwright clip offset mismatch reproduced separately in native-capture-diagnostic.json.",
+        "browserVersion": "153.0.8010.12"
+      },
+      "sha256": "a10db819544603176e0493b08ef25eaae1d843acec49c97191ddacf7c562e77d"
+    },
+    {
+      "file": "native-text-only-200-current-r6.json",
+      "count": 16,
+      "method": {
+        "browser": "Playwright-bundled Firefox 155.0, headless, fresh temporary profile, direct WebDriver BiDi session over loopback",
+        "mechanism": "Temporary unsigned Firefox WebExtension sets browser.browserSettings.zoomFullPage=false and browser.tabs.setZoom(tabId, 2); extension reads both settings back. This is Firefox native Zoom Text Only, not CSS/font-size/viewport/device-scale emulation.",
+        "source": "Mozilla documents Zoom Text Only and browserSettings.zoomFullPage=false as applying zoom to text only.",
+        "reference": "https://support.mozilla.org/en-US/kb/font-size-and-zoom-increase-size-of-web-pages; https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/browserSettings/zoomFullPage",
+        "browserProfile": "Fresh profile under OS temporary directory; browser.zoom.full and browser.zoom.siteSpecific are controlled only by the temporary extension and discarded on close.",
+        "expected": "At fixed CSS viewport and DPR, representative computed text sizes reach 2x; text wraps without clipping/overlap, page does not overflow horizontally, target controls remain visible/focusable, no frontend write request or uncaught page error occurs.",
+        "baseZoomFactor": 1,
+        "targetZoomFactor": 2,
+        "scenarios": [
+          {
+            "id": "R26-320",
+            "route": "/s/shop-demo/bot",
+            "viewport": {
+              "width": 320,
+              "height": 900
+            }
+          },
+          {
+            "id": "R26-1440",
+            "route": "/s/shop-demo/bot",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            }
+          },
+          {
+            "id": "R28-320",
+            "route": "/s/shop-demo/bot/evaluations",
+            "viewport": {
+              "width": 320,
+              "height": 900
+            }
+          },
+          {
+            "id": "R28-1440",
+            "route": "/s/shop-demo/bot/evaluations",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            }
+          },
+          {
+            "id": "R29-320",
+            "route": "/s/shop-demo/integrations/channels",
+            "viewport": {
+              "width": 320,
+              "height": 900
+            }
+          },
+          {
+            "id": "R29-1440",
+            "route": "/s/shop-demo/integrations/channels",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            }
+          },
+          {
+            "id": "R30-320",
+            "route": "/s/shop-demo/integrations/ai",
+            "viewport": {
+              "width": 320,
+              "height": 900
+            }
+          },
+          {
+            "id": "R30-1440",
+            "route": "/s/shop-demo/integrations/ai",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            }
+          },
+          {
+            "id": "R32-320",
+            "route": "/s/shop-demo/settings/team",
+            "viewport": {
+              "width": 320,
+              "height": 900
+            }
+          },
+          {
+            "id": "R32-1440",
+            "route": "/s/shop-demo/settings/team",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            }
+          },
+          {
+            "id": "R39-320",
+            "route": "/s/shop-demo/notifications",
+            "viewport": {
+              "width": 320,
+              "height": 900
+            }
+          },
+          {
+            "id": "R39-1440",
+            "route": "/s/shop-demo/notifications",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            }
+          },
+          {
+            "id": "R54-320",
+            "route": "/s/shop-demo/service-cases",
+            "viewport": {
+              "width": 320,
+              "height": 900
+            }
+          },
+          {
+            "id": "R54-1440",
+            "route": "/s/shop-demo/service-cases",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            }
+          },
+          {
+            "id": "R37-320",
+            "route": "/s/shop-demo/operations",
+            "viewport": {
+              "width": 320,
+              "height": 900
+            }
+          },
+          {
+            "id": "R37-1440",
+            "route": "/s/shop-demo/operations",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            }
+          }
+        ],
+        "browserVersion": "155.0",
+        "webdriverBuildId": "20260902192955"
+      },
+      "sha256": "18f699cb737e55b316658ec64bf92166b8586236d082e16fcce1587ce7c9601b"
+    },
+    {
+      "file": "actual-browser-zoom-200-current-r7.json",
+      "count": 8,
+      "method": {
+        "browser": "Installed Google Chrome, headless, fresh temporary profile",
+        "mechanism": "Chrome Settings WebUI calls chrome.settingsPrivate.setDefaultZoom(factor) and reads chrome.settingsPrivate.getDefaultZoom(callback) in the isolated profile",
+        "baselineViewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "targetZoomFactor": 2,
+        "note": "The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2.",
+        "screenshot": "CDP captures the current viewport without a CSS-pixel clip; native zoom and scroll offsets are retained. Playwright clip offset mismatch reproduced separately in native-capture-diagnostic.json.",
+        "browserVersion": "155.0.8059.40"
+      },
+      "sha256": "0e1173776db95ab8a4bcb2dad62e3dcc0f865552856393c327276d467236d208"
+    }
+  ]
+}

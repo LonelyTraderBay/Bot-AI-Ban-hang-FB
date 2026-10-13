@@ -1,0 +1,982 @@
+{
+  "taskId": "FE013",
+  "stepId": "S03",
+  "executedAt": "2026-10-13T10:07:10.788Z",
+  "facts": [
+    {
+      "name": "Canonical criterion and whole-task acceptance self-review",
+      "action": "Kiểm claim stale/already-assigned, partial stock, pack validation, dispatch unknown, không gộp packed/delivered hoặc tự giải phóng reservation.",
+      "verification": "Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "acceptanceCases": [
+        "FE013.AC01 — Claim đúng role/version; cạnh tranh mô phỏng hiện conflict rõ.",
+        "FE013.AC02 — Pick/pack/handed_over/delivered phân biệt, filter giữ việc chưa nhận.",
+        "FE013.AC03 — Replay/unknown không tạo giao hàng lại; return/refund obligation hiển thị từ mock API.",
+        "FE013.AC04 — Mock HTTP có nhãn synthetic; API/permissions/token không bị bịa hoặc sửa ngầm.",
+        "FE013.AC05 — Source/type/lint/boundaries và tests liên quan chạy thật, không nhận feature hoàn chỉnh chỉ vì route có component."
+      ],
+      "scopeInterpretation": "Current named owner assertions and actual executions are reviewed against each acceptance. Legacy 54 routes use the current 61-route manifest; approved C05/C06 contracts supersede old address/account catalog gaps. Privacy/OIDC remains unavailable under FE009.S03; manual speech/owner acceptance are not forged."
+    },
+    {
+      "name": "Current route/operation owners",
+      "routes": [
+        {
+          "id": "R41",
+          "source": "apps/web/src/modules/fulfillment/index.tsx",
+          "component": "FulfillmentPage"
+        },
+        {
+          "id": "R42",
+          "source": "apps/web/src/modules/fulfillment/index.tsx",
+          "component": "ShipmentsPage"
+        }
+      ],
+      "operationIds": [
+        "createShipment",
+        "getPrepJob",
+        "getShipment",
+        "handoverShipment",
+        "listPrepJobs",
+        "listShipments",
+        "packPrepJob",
+        "pickPrepLine",
+        "recordShipmentEvent"
+      ],
+      "sourceCrosswalk": {
+        "apiTotal": 245,
+        "required": 224,
+        "referenced": 222,
+        "missing": [
+          {
+            "id": "stepUp",
+            "url": "/auth/step-up",
+            "method": "post"
+          },
+          {
+            "id": "approvePrivacyRequest",
+            "url": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+            "method": "post"
+          }
+        ],
+        "limits": "stepUp/approvePrivacyRequest deliberately unavailable under FE009.S03 OIDC policy; reference coverage is not code completion."
+      }
+    },
+    {
+      "name": "Executed owner browser cases",
+      "proof": [
+        {
+          "file": "tests/fe013.spec.ts",
+          "sha256": "bfe2c2c8b26d0e0e2f76ece4e002e10b1502c53aa24a9bc2540af020dce11b87",
+          "assertions": [
+            {
+              "line": 29,
+              "text": "expect(page.getByRole('heading', { name: 'Đơn DH-1001', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 32,
+              "text": "expect((await quote).status()).toBe(200)"
+            },
+            {
+              "line": 35,
+              "text": "expect((await consent).status()).toBe(200)"
+            },
+            {
+              "line": 38,
+              "text": "expect((await confirmation).status()).toBe(202)"
+            },
+            {
+              "line": 39,
+              "text": "expect(page.getByRole('link', { name: 'Chuẩn bị đơn' })).toBeVisible()"
+            },
+            {
+              "line": 49,
+              "text": "expect(page.getByRole('heading', { name: 'Vận đơn & giao hàng', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 51,
+              "text": "expect(page.getByRole('heading', { name: 'Xem thử phí và vùng giao hàng', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 52,
+              "text": "expect(page.getByText(/DỮ LIỆU MÔ PHỎNG/)).toBeVisible()"
+            },
+            {
+              "line": 53,
+              "text": "expect(page.getByText(/Ước tính mẫu:.*VND/)).toBeVisible()"
+            },
+            {
+              "line": 56,
+              "text": "expect(page.getByText(/không được phục vụ; không hiển thị báo giá/)).toBeVisible()"
+            },
+            {
+              "line": 57,
+              "text": "expect(page.getByText(/Ước tính mẫu:/)).toHaveCount(0)"
+            },
+            {
+              "line": 61,
+              "text": "expect(page.getByText(/Báo giá mẫu đã hết hiệu lực/)).toBeVisible()"
+            },
+            {
+              "line": 64,
+              "text": "expect(page.getByText(/Thiếu địa chỉ giao hàng/)).toBeVisible()"
+            },
+            {
+              "line": 65,
+              "text": "expect(writes).toEqual([])"
+            },
+            {
+              "line": 78,
+              "text": "expect(prepRow).toBeVisible()"
+            },
+            {
+              "line": 82,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toBeVisible()"
+            },
+            {
+              "line": 88,
+              "text": "expect(JSON.parse(rejectedRequest.postData() || 'null')).toEqual({ expectedVersion: 1 })"
+            },
+            {
+              "line": 89,
+              "text": "expect(rejectedRequest.headers()['idempotency-key']).toBeTruthy()"
+            },
+            {
+              "line": 90,
+              "text": "expect((await rejectedClaim).status()).toBe(412)"
+            },
+            {
+              "line": 91,
+              "text": "expect(prepDialog.getByRole('alert').filter({ hasText: 'thay đổi bởi người khác' })).toBeVisible()"
+            },
+            {
+              "line": 92,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toBeVisible()"
+            },
+            {
+              "line": 93,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Tải lại trạng thái' })).toBeVisible()"
+            },
+            {
+              "line": 95,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Tải lại trạng thái' })).toHaveCount(0)"
+            },
+            {
+              "line": 104,
+              "text": "expect(JSON.parse(claimReq.postData() || 'null')).toEqual({ expectedVersion: 1 })"
+            },
+            {
+              "line": 105,
+              "text": "expect(claimReq.headers()['idempotency-key']).toBeTruthy()"
+            },
+            {
+              "line": 106,
+              "text": "expect((await claimResponse).status()).toBe(200)"
+            },
+            {
+              "line": 107,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' })).toBeVisible()"
+            },
+            {
+              "line": 109,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeEnabled()"
+            },
+            {
+              "line": 110,
+              "text": "expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toBeEditable()"
+            },
+            {
+              "line": 114,
+              "text": "expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toHaveValue('SKU-SAI')"
+            },
+            {
+              "line": 116,
+              "text": "expect((await wrongSku).status()).toBe(422)"
+            },
+            {
+              "line": 117,
+              "text": "expect(prepDialog.getByRole('alert').filter({ hasText: 'Mã SKU không khớp' })).toBeVisible()"
+            },
+            {
+              "line": 118,
+              "text": "expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toHaveValue('SKU-SAI')"
+            },
+            {
+              "line": 122,
+              "text": "expect(quantity).toHaveAttribute('aria-invalid', 'true')"
+            },
+            {
+              "line": 123,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' })).toBeDisabled()"
+            },
+            {
+              "line": 129,
+              "text": "expect((await partialPick).status()).toBe(200)"
+            },
+            {
+              "line": 130,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeEnabled()"
+            },
+            {
+              "line": 131,
+              "text": "expect(prepDialog.getByText('0/1', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 132,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Xác nhận đã đóng gói' })).toBeDisabled()"
+            },
+            {
+              "line": 138,
+              "text": "expect((await completedPick).status()).toBe(200)"
+            },
+            {
+              "line": 139,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Xác nhận đã đóng gói' })).toBeEnabled()"
+            },
+            {
+              "line": 145,
+              "text": "expect((await packResponse).status()).toBe(200)"
+            },
+            {
+              "line": 146,
+              "text": "expect(prepDialog.getByText('Đã đóng gói', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 150,
+              "text": "expect(createDialog.getByRole('combobox', { name: 'Đơn đã đóng gói' })).toHaveText('DH-1001')"
+            },
+            {
+              "line": 155,
+              "text": "expect(JSON.parse(shipmentCreate.postData() || 'null')).toMatchObject({ orderId: 'DH-1001', warehouseId: 'warehouse-01', carrierId: null, orderLineIds: ['ol-1001'] })"
+            },
+            {
+              "line": 156,
+              "text": "expect(shipmentCreate.headers()['idempotency-key']).toBeTruthy()"
+            },
+            {
+              "line": 157,
+              "text": "expect((await createResponse).status()).toBe(201)"
+            },
+            {
+              "line": 165,
+              "text": "expect((await duplicateCreate).status()).toBe(409)"
+            },
+            {
+              "line": 166,
+              "text": "expect(replay.getByRole('alert').filter({ hasText: 'Đơn đã có vận đơn' })).toBeVisible()"
+            },
+            {
+              "line": 170,
+              "text": "expect(discardDuplicate).toBeVisible()"
+            },
+            {
+              "line": 172,
+              "text": "expect(replay).toBeHidden()"
+            },
+            {
+              "line": 175,
+              "text": "expect(shipmentRow).toBeVisible()"
+            },
+            {
+              "line": 178,
+              "text": "expect(handoverDialog.getByText('Chưa có sự kiện.', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 183,
+              "text": "expect(JSON.parse(handoverReq.postData() || 'null')).toMatchObject({ expectedVersion: 1 })"
+            },
+            {
+              "line": 184,
+              "text": "expect(handoverReq.headers()['idempotency-key']).toBeTruthy()"
+            },
+            {
+              "line": 185,
+              "text": "expect((await handoverResponse).status()).toBe(202)"
+            },
+            {
+              "line": 187,
+              "text": "expect(shipmentDetailDialog.getByRole('heading', { name: 'Chi tiết vận đơn' })).toBeVisible()"
+            },
+            {
+              "line": 188,
+              "text": "expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/handover'))).toHaveLength(1)"
+            },
+            {
+              "line": 190,
+              "text": "expect(shipmentDetailDialog.getByText('Đã bàn giao', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 199,
+              "text": "expect((await eventResponse).status()).toBe(200)"
+            },
+            {
+              "line": 201,
+              "text": "expect(deliveredRow).toContainText('Đã giao')"
+            },
+            {
+              "line": 202,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 203,
+              "text": "expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/handover'))).toHaveLength(1)"
+            },
+            {
+              "line": 205,
+              "text": "expect(page.getByRole('heading', { name: 'Đơn DH-1001', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 206,
+              "text": "expect(page.getByText('Đã giao', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 207,
+              "text": "expect(page.getByText('Chưa thu', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 208,
+              "text": "expect(page.getByRole('link', { name: 'Tạo yêu cầu trả hàng' })).toBeVisible()"
+            },
+            {
+              "line": 209,
+              "text": "expect(page.getByRole('button', { name: 'Ghi nhận tiền đã thu' })).toBeVisible()"
+            },
+            {
+              "line": 216,
+              "text": "expect(prepRow).toBeVisible()"
+            },
+            {
+              "line": 221,
+              "text": "expect((await claim).status()).toBe(200)"
+            },
+            {
+              "line": 222,
+              "text": "expect(prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeEnabled()"
+            },
+            {
+              "line": 223,
+              "text": "expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toBeEditable()"
+            },
+            {
+              "line": 225,
+              "text": "expect(prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' })).toHaveValue('AO-002')"
+            },
+            {
+              "line": 229,
+              "text": "expect((await pick).status()).toBe(200)"
+            },
+            {
+              "line": 234,
+              "text": "expect((await pack).status()).toBe(200)"
+            },
+            {
+              "line": 240,
+              "text": "expect((await create).status()).toBe(201)"
+            },
+            {
+              "line": 244,
+              "text": "expect(shipmentRow).toBeVisible()"
+            },
+            {
+              "line": 253,
+              "text": "expect((await handover).status()).toBe(202)"
+            },
+            {
+              "line": 254,
+              "text": "expect(handoverDialog.getByRole('alert').filter({ hasText: 'Mã lệnh cần kiểm tra' })).toBeVisible()"
+            },
+            {
+              "line": 255,
+              "text": "expect(handoverDialog.getByRole('button', { name: 'Xác nhận bàn giao' })).toBeDisabled()"
+            },
+            {
+              "line": 256,
+              "text": "expect(handoverRequests).toHaveLength(1)"
+            },
+            {
+              "line": 264,
+              "text": "expect(row).toBeVisible()"
+            },
+            {
+              "line": 267,
+              "text": "expect(dialog.getByRole('alert').filter({ hasText: 'không có quyền nhận' })).toBeVisible()"
+            },
+            {
+              "line": 268,
+              "text": "expect(dialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toHaveCount(0)"
+            },
+            {
+              "line": 278,
+              "text": "expect(viewportResults.map(view => [view.width, view.documentWidth <= view.viewportWidth])).toEqual([[320, true], [390, true], [768, true], [1440, true]])"
+            },
+            {
+              "line": 281,
+              "text": "expect(audit.violations.map(issue => issue.id)).toEqual([])"
+            },
+            {
+              "line": 282,
+              "text": "expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible()"
+            }
+          ],
+          "cases": [
+            {
+              "title": "FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote",
+              "line": 42,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3417
+            },
+            {
+              "title": "FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once",
+              "line": 68,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 9125
+            },
+            {
+              "title": "FE013.AC03 unknown handover cannot be repeated before command reconciliation",
+              "line": 212,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4813
+            },
+            {
+              "title": "FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible",
+              "line": 259,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3361
+            },
+            {
+              "title": "FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote",
+              "line": 42,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3635
+            },
+            {
+              "title": "FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once",
+              "line": 68,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 10314
+            },
+            {
+              "title": "FE013.AC03 unknown handover cannot be repeated before command reconciliation",
+              "line": 212,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5621
+            },
+            {
+              "title": "FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible",
+              "line": 259,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3981
+            }
+          ]
+        }
+      ],
+      "negativeExecutions": 2
+    },
+    {
+      "name": "Executed unit owners",
+      "proof": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "e1ed34a5c53b5f9947dc6ab4226b84497e86169fbd78431075739533b7bfcb78",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current dependency gates",
+      "unit": 242,
+      "domain": 117,
+      "sourceMaps": 16,
+      "fullBrowser": 878,
+      "builtArtifact": 6,
+      "coldStages": 13,
+      "limits": "Distinct suite counts are not added into a percentage."
+    },
+    {
+      "name": "Native affected-owner review",
+      "proof": [
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r5.json",
+          "sha256": "a10db819544603176e0493b08ef25eaae1d843acec49c97191ddacf7c562e77d",
+          "count": 8
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/native-text-only-200-current-r6.json",
+          "sha256": "18f699cb737e55b316658ec64bf92166b8586236d082e16fcce1587ce7c9601b",
+          "count": 16
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r7.json",
+          "sha256": "0e1173776db95ab8a4bcb2dad62e3dcc0f865552856393c327276d467236d208",
+          "count": 8
+        }
+      ],
+      "scope": "Eight affected detail views; Chromium and installed Chrome browser zoom, Firefox native text-only zoom. Full browser suite covers all existing consumers. Historical global native matrices are not re-certified."
+    },
+    {
+      "name": "Cold source and artifacts",
+      "artifact": "cold-artifacts-final.json",
+      "lockSha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "name": "Review and acceptance boundary",
+      "handoff": "ACCEPTANCE_GUIDE.md",
+      "architecture": "ARCHITECTURE_REVIEW.md",
+      "quality": "quality-gates-final.json",
+      "rawPremiumScanner": "FAIL_EXIT_1: all 14 actual semantic actions reviewed in premium-semantic-review.json; no scanner PASS or owner approval claimed",
+      "ownerAcceptance": "PENDING",
+      "screenReaderSpeech": "NOT_RUN",
+      "hostedCI": "NOT_RUN",
+      "backend": "OUTSIDE_SCOPE"
+    },
+    {
+      "name": "Criterion-specific proof selection",
+      "step": "S03",
+      "verification": "Luồng âm giữ dữ liệu người dùng và hiện lý do phù hợp; không hành động vượt allowedActions hoặc báo thành công giả. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "interpretation": "Named negative owner assertions preserve draft, permission/version/unavailable/unknown behavior; no password step-up or unsupported policy bypass.",
+      "selectedOperationLocations": [],
+      "selectedBrowserCases": [
+        {
+          "title": "FE013.AC03 unknown handover cannot be repeated before command reconciliation",
+          "line": 212,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4813
+        },
+        {
+          "title": "FE013.AC03 unknown handover cannot be repeated before command reconciliation",
+          "line": 212,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5621
+        }
+      ],
+      "ownerSourceAssertions": [
+        {
+          "file": "tests/fe013.spec.ts",
+          "sha256": "bfe2c2c8b26d0e0e2f76ece4e002e10b1502c53aa24a9bc2540af020dce11b87",
+          "assertionLines": [
+            29,
+            32,
+            35,
+            38,
+            39,
+            49,
+            51,
+            52,
+            53,
+            56,
+            57,
+            61,
+            64,
+            65,
+            78,
+            82,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            95,
+            104,
+            105,
+            106,
+            107,
+            109,
+            110,
+            114,
+            116,
+            117,
+            118,
+            122,
+            123,
+            129,
+            130,
+            131,
+            132,
+            138,
+            139,
+            145,
+            146,
+            150,
+            155,
+            156,
+            157,
+            165,
+            166,
+            170,
+            172,
+            175,
+            178,
+            183,
+            184,
+            185,
+            187,
+            188,
+            190,
+            199,
+            201,
+            202,
+            203,
+            205,
+            206,
+            207,
+            208,
+            209,
+            216,
+            221,
+            222,
+            223,
+            225,
+            229,
+            234,
+            240,
+            244,
+            253,
+            254,
+            255,
+            256,
+            264,
+            267,
+            268,
+            278,
+            281,
+            282
+          ]
+        }
+      ],
+      "policyLimits": "Manual speech/owner acceptance/hosted CI are not fabricated."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "final-verify-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:01:06.981Z",
+      "finishedAt": "2026-10-13T10:04:18.552Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-verify-r3.log",
+        "sha256": "8a2bc419fb81685bf2f6f73645aff8438ed20f8e15a7c43d3788f60eec4537c5"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-unit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:35.330Z",
+      "finishedAt": "2026-10-13T07:02:42.025Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log",
+        "sha256": "d28976d231b13835d4807b6afa47ed16e8bbb728e2d40f2da4809d9a935b1dab"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-source-maps-r4",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:04:18.629Z",
+      "finishedAt": "2026-10-13T10:04:18.788Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-source-maps-r4.log",
+        "sha256": "1f11d1774f5a281c635e13a5103ffea8cd1a15a8dbe8cb3ce221e7101b67c567"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-e2e-r8",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config evidence\\frontend-completeness-20261013-aaf74b7\\final-supported-matrix.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:17:44.501Z",
+      "finishedAt": "2026-10-13T09:38:22.202Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+        "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:38:46.673Z",
+      "finishedAt": "2026-10-13T09:42:01.737Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-built-demo.log",
+        "sha256": "8e58d50eaf56c321c12b6b624c93f1b3b4179be1d9d32fb07c3d02ce68886c04"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-kit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" ../botsales-kit/scripts/validate-kit.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.394Z",
+      "finishedAt": "2026-10-13T07:02:42.544Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-kit-r3.log",
+        "sha256": "88d853cfe1cce38738a93c30a9da799eadb00b50cb751133587d7295c3f2886d"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-doctor-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run doctor",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.639Z",
+      "finishedAt": "2026-10-13T07:02:42.844Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-doctor-r3.log",
+        "sha256": "672964dbb21e82e121d2af5d557c6560d07f6fcdea96a2be8052b7f46d0f2d1c"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-dependencies-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.935Z",
+      "finishedAt": "2026-10-13T07:02:43.508Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-dependencies-r3.log",
+        "sha256": "1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-audit-r2",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" audit --omit=dev --json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:43.608Z",
+      "finishedAt": "2026-10-13T07:02:44.665Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-audit-r2.log",
+        "sha256": "4a77064eea4b56a1382b7b3ad1421f3ce4a7543523f17a326dfe5228010c49a9"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-browser-200-r5",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-browser-200.mjs r5",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:02.022Z",
+      "finishedAt": "2026-10-13T08:33:13.731Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-browser-200-r5.log",
+        "sha256": "3f2f3eb12ddff66c9e359c294c84b623f3ed75f48956e653ab4b6a33d00d8164"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-text-200-r6",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-text-200.mjs r6",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:13.814Z",
+      "finishedAt": "2026-10-13T08:33:43.758Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-text-200-r6.log",
+        "sha256": "8e8676f76e6e02fd961003167805795c22200a6745357631ac5fc4a28e6156fd"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-chrome-200-r7",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence/frontend-completeness-20261013-aaf74b7/native-browser-200.mjs r7 chrome",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:26:48.144Z",
+      "finishedAt": "2026-10-13T08:27:18.715Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-chrome-200-r7.log",
+        "sha256": "9b4a1a82d84492f12d76006e0fedf42e7bdb35ba51497e4c586d8d57d2a92453"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "metadata-generator-after-fix",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/vertical-slices/generate-route-implementation.mjs evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:55:55.856Z",
+      "finishedAt": "2026-10-13T09:55:55.931Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-generator-after-fix.log",
+        "sha256": "fd1826c8ac72da4d1a8aaac2e8e62d989ace259dd77388fb9081df5ff288f911"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "metadata-state-role-final",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/states/generate-route-state-roles.mjs --unit-log evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log --browser-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log --role-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.232Z",
+      "finishedAt": "2026-10-13T09:56:19.304Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-state-role-final.log",
+        "sha256": "650607a21ec011c9328898177b3fa064353754aa73c88648b5cc3f263d7f11d8"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --grep FE022.S05 --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.602Z",
+      "finishedAt": "2026-10-13T09:56:22.344Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-generated-map-e2e.log",
+        "sha256": "96c8bbaf23ab8e6e47268e6ebc57cd3964806280ceea464fc7635512c9e7c996"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-marketing-boundaries",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/vitest/vitest.mjs run --config evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.config.ts evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.test.ts --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:03:53.279Z",
+      "finishedAt": "2026-10-13T10:03:54.078Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-marketing-boundaries.log",
+        "sha256": "1d1bad3f9cbb3ae44d5a0890a01cf9b6158739a4fb71945ef8395844ef1757a1"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    }
+  ],
+  "sourceSnapshotSha256": "e51747a67fda222db7d1bbc42425b68e23aa68566eb71f7afe5f11e7ddb14031"
+}

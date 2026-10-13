@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W32",
+  "recordedAt": "2026-10-06",
+  "scope": "Frontend-only React demo with synthetic MSW; built-artifact preview plus Chromium and Firefox regression",
+  "result": "PASS_WITH_TARGETED_RETESTS",
+  "artifact": {
+    "path": "apps/web/dist-demo",
+    "sha256": "6f4120d693536fd4f9ca8d417604c9d4cc16cfc2bcc46ccddbbec25405d978f2",
+    "fileCount": 38,
+    "builtDemoSmoke": {
+      "passed": 2,
+      "failed": 0,
+      "browsers": ["Chromium", "Firefox"],
+      "sessionApiStatus": 200,
+      "mockWorkerStatus": 200,
+      "pageErrors": 0,
+      "apiWrites": 0,
+      "log": "built-demo-artifact-smoke-current-20261006.log"
+    },
+    "routeMatrix": {
+      "routeCount": 54,
+      "viewports": [390, 1440],
+      "browsers": ["Chromium", "Firefox"],
+      "observations": 216,
+      "passed": 216,
+      "failed": 0,
+      "pageErrors": 0,
+      "artifactHashMatched": true,
+      "log": "built-demo-routes-current-20261006.log"
+    }
+  },
+  "defaultDemoRegression": {
+    "runner": "npm.cmd run test:e2e",
+    "total": 484,
+    "firstRunPassed": 480,
+    "firstRunFailed": 4,
+    "elapsed": "56.5m",
+    "failureCause": "Four FE016/W28 mobile assertions were loaded from stale test source before their responsive-label selectors were updated; no application page errors were reported.",
+    "log": "full-regression-current-20261006.log"
+  },
+  "targetedRetest": {
+    "runner": "node node_modules/@playwright/test/cli.js test tests/fe016.spec.ts tests/ui028-w28-routes.spec.ts --grep 'UI015 mobile demo tools|UI028.W28 54 canonical routes render with measured 390px layout geometry'",
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "browsers": ["Chromium", "Firefox"],
+    "fe016MobileDisclosure": "PASS",
+    "w28MobileRouteGeometry": {
+      "routesPerBrowser": 54,
+      "viewport": 390,
+      "issues": 0,
+      "pageErrors": 0
+    },
+    "log": "targeted-current-20261006.log"
+  },
+  "additionalCoverage": {
+    "w28RouteGeometry": "54 routes at 390px and 1440px in Chromium and Firefox; 216 current observations, zero issues/page errors",
+    "w29Responsive": "18 browser-width cases across 9 widths from 320px to 1920px; zero issues/page errors",
+    "w30SyntheticStress": "10/10 DOM text/spacing stress scenarios; native text resize 200% and actual browser zoom 200% remain NOT_RUN"
+  },
+  "limitations": [
+    "The 484-case default suite was not one clean pass: 480 passed, and the four stale-selector failures passed in a separate current-source targeted run.",
+    "The default full regression uses the local demo Vite server; built-artifact proof is separately limited to the isolated port 4174 smoke and route matrix.",
+    "Local frontend/mock evidence only; no Backend, provider, persistence, hosted CI, staging, production or owner-acceptance claim.",
+    "W30 remains IN_PROGRESS until native text resize and actual browser zoom evidence exists."
+  ],
+  "noProgressLedgerWrite": true
+}

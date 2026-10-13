@@ -1,0 +1,632 @@
+{
+  "recordedAt": "2026-10-13T10:05:50.233Z",
+  "scope": "Current C10 contract/source/owner/execution self-review, not new acceptance policy",
+  "contract": "evidence/frontend-ux-completion-20261009/C10-CONTRACT.md",
+  "contractSha256": "28a70454a5766ec5299bdfa9779f890f858bc1e6a11d0b27dba03bed01a79a7b",
+  "clauses": [
+    {
+      "contractClause": 1,
+      "review": "Canonical date/bucket validation, incomplete/invalid/reversed and 366/367 boundaries",
+      "browser": [
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend",
+          "line": 104,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 invalid marketing deep links mark the responsible field and never send the invalid range",
+          "line": 234,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend",
+          "line": 104,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 invalid marketing deep links mark the responsible field and never send the invalid range",
+          "line": 234,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        }
+      ],
+      "unit": [
+        {
+          "file": "apps/web/tests/marketing-report.test.ts",
+          "sha256": "877477f15070a43f1c65d0422b99616e930bd9b638023d0bbb821f8bc5b04e06",
+          "executedCases": [
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > defaults to 30 inclusive shop-local calendar days and returns API aggregates 12ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > uses the shop-local current date when the UTC instant crosses midnight locally 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > filters inclusively on the API side and keeps unavailable spend null 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > groups days into calendar weeks clipped to the requested inclusive range 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > groups by calendar month and returns zero/null values for empty periods 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > does not borrow sample marketing data across shops 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-02-30\",\"toDate\":\"2026-03-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-02\",\"toDate\":\"2026-09-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2025-10-01\",\"toDate\":\"2026-10-02\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-01\",\"toDate\":\"2026-09-10\",\"bucket\":\"quarter\"} 0ms"
+          ]
+        }
+      ],
+      "boundaryProof": {
+        "stage": "final-marketing-boundaries",
+        "log": {
+          "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-marketing-boundaries.log",
+          "sha256": "1d1bad3f9cbb3ae44d5a0890a01cf9b6158739a4fb71945ef8395844ef1757a1"
+        },
+        "recordSha256": "635e0585be62e7cc0b091d7e01d384f32237870a53493ca2855dc92f21f7d4cb",
+        "cases": 2
+      }
+    },
+    {
+      "contractClause": 2,
+      "review": "API aggregates/buckets/null actual spend, no client filtering",
+      "browser": [
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend",
+          "line": 104,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend",
+          "line": 104,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        }
+      ],
+      "unit": [
+        {
+          "file": "apps/web/tests/marketing-report.test.ts",
+          "sha256": "877477f15070a43f1c65d0422b99616e930bd9b638023d0bbb821f8bc5b04e06",
+          "executedCases": [
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > defaults to 30 inclusive shop-local calendar days and returns API aggregates 12ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > uses the shop-local current date when the UTC instant crosses midnight locally 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > filters inclusively on the API side and keeps unavailable spend null 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > groups days into calendar weeks clipped to the requested inclusive range 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > groups by calendar month and returns zero/null values for empty periods 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > does not borrow sample marketing data across shops 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-02-30\",\"toDate\":\"2026-03-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-02\",\"toDate\":\"2026-09-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2025-10-01\",\"toDate\":\"2026-10-02\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-01\",\"toDate\":\"2026-09-10\",\"bucket\":\"quarter\"} 0ms"
+          ]
+        }
+      ]
+    },
+    {
+      "contractClause": 3,
+      "review": "Shop-local default and URL/deep-link/held-response behavior",
+      "browser": [
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend",
+          "line": 104,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve edits while the default period response is pending",
+          "line": 170,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve edits while the canonical period response is pending",
+          "line": 170,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 invalid marketing deep links mark the responsible field and never send the invalid range",
+          "line": 234,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend",
+          "line": 104,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve edits while the default period response is pending",
+          "line": 170,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 marketing filters preserve edits while the canonical period response is pending",
+          "line": 170,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 invalid marketing deep links mark the responsible field and never send the invalid range",
+          "line": 234,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        }
+      ],
+      "unit": [
+        {
+          "file": "apps/web/tests/marketing-report.test.ts",
+          "sha256": "877477f15070a43f1c65d0422b99616e930bd9b638023d0bbb821f8bc5b04e06",
+          "executedCases": [
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > defaults to 30 inclusive shop-local calendar days and returns API aggregates 12ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > uses the shop-local current date when the UTC instant crosses midnight locally 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > filters inclusively on the API side and keeps unavailable spend null 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > groups days into calendar weeks clipped to the requested inclusive range 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > groups by calendar month and returns zero/null values for empty periods 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > does not borrow sample marketing data across shops 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-02-30\",\"toDate\":\"2026-03-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-02\",\"toDate\":\"2026-09-01\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2025-10-01\",\"toDate\":\"2026-10-02\"} 1ms",
+            "✓ apps/web/tests/marketing-report.test.ts > Marketing report read model > rejects invalid range or bucket {\"fromDate\":\"2026-09-01\",\"toDate\":\"2026-09-10\",\"bucket\":\"quarter\"} 0ms"
+          ]
+        }
+      ]
+    },
+    {
+      "contractClause": 4,
+      "review": "Bounded real cursor history/filter/deep-link/first fallback",
+      "browser": [
+        {
+          "file": "tests/ui006-lookups.spec.ts",
+          "title": "UI006.C05 lookup and table cursors reach records after 150 synthetic suppliers, offers, and orders",
+          "line": 73,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792"
+        },
+        {
+          "file": "tests/ui006-lookups.spec.ts",
+          "title": "UI006.C02 selected order identity survives a failed search and cursor retry",
+          "line": 227,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792"
+        },
+        {
+          "file": "tests/ui006-lookups.spec.ts",
+          "title": "UI006.C05 lookup and table cursors reach records after 150 synthetic suppliers, offers, and orders",
+          "line": 73,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792"
+        },
+        {
+          "file": "tests/ui006-lookups.spec.ts",
+          "title": "UI006.C02 selected order identity survives a failed search and cursor retry",
+          "line": 227,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792"
+        }
+      ],
+      "unit": [
+        {
+          "file": "apps/web/tests/components.test.tsx",
+          "sha256": "d7ed38c56a6e1ddfb65de0584d43a5c18713c7bfe64303c79be3cbc7f3d8c039",
+          "executedCases": [
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > maps the approved dark tokens, typography, radii, and responsive breakpoints 2ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > keeps primary, secondary, status, and control contrast above their design thresholds 1ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > applies semantic token surfaces to standard alerts 43ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > loads canonical dark tokens and bootstrap before application JavaScript 1ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > keeps the application theme and source palette dark-only and token-owned 14ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > rejects copied HEX values and non-dark theme modes with negative fixtures 13ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps copyable identifiers wrapped, spaced by the semantic role, and announces clipboard feedback 56ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses the canonical touch target for primary controls 9ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses the approved card radius rather than MUI spacing-scaled radius 7ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > renders semantic status text and a keyboard-navigable, named table region 18ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps contextual empty actions inside the shared table empty state 14ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps status and empty states understandable without relying on color 10ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > shows a reserved loading state and a retryable error state 67ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses semantic layout roles for empty, loading, and notice states 23ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > sets dialog insets and action gap explicitly instead of inheriting button margins 66ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > clears search, cursor, and returns focus while preserving other filters 348ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > binds list query fields and search controls to each OpenAPI operation 15ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > moves between cursor pages without dropping unrelated query filters 203ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps a deep-linked cursor usable with an explicit first-list fallback 62ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > disables next when the page claims more results but has no usable cursor (null) 11ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > disables next when the page claims more results but has no usable cursor () 10ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > does not submit an unfinished IME composition 12ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > associates form errors with the visible label and returns focus after dialog close 310ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > has no axe violations in the shared table, status, and search states 87ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > reflows the real mock application from 320px to 1440px and passes browser axe 3101ms"
+          ]
+        },
+        {
+          "file": "apps/web/tests/pager-retention.test.tsx",
+          "sha256": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
+          "executedCases": [
+            "✓ apps/web/tests/pager-retention.test.tsx > bounds one long list to 100 recent cursors and keeps an honest first-page fallback with its filters 707ms"
+          ]
+        }
+      ]
+    },
+    {
+      "contractClause": 5,
+      "review": "Date-only calendar without instant shift; timezone on report instants",
+      "browser": [
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination",
+          "line": 248,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination",
+          "line": 248,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        }
+      ],
+      "unit": [
+        {
+          "file": "apps/web/tests/format.test.ts",
+          "sha256": "636404127056d9e4dc74d46014705d89e013bd8d6f2be8a0419b3f8522ec910e",
+          "executedCases": [
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > counts and limits Unicode code points consistently with customer and privacy contracts 4ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > formats the same instant using the required shop timezone 10ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > formats date-only values as calendar dates without timezone shifting 1ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > formats exact amounts without floating point rounding 0ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > does not turn missing amounts into zero 0ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > rejects external return path //evil.example 0ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > rejects external return path /\\evil.example 0ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > rejects external return path https://evil.example 0ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > rejects NUL bytes in internal return paths 0ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > quotes spreadsheet formula cells 0ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > rejects malformed amount contracts 1ms",
+            "✓ apps/web/tests/format.test.ts > Frontend boundary helpers > accepts opaque contract IDs and rejects path traversal values 1ms"
+          ]
+        },
+        {
+          "file": "apps/web/tests/report-utils.test.ts",
+          "sha256": "ed3a365e175bfd161ad4141f58b584df8563392cfdb95e56748ae91ccf7e3fb8",
+          "executedCases": [
+            "✓ apps/web/tests/report-utils.test.ts > report date and download boundaries > converts inclusive date-only filters using the shop timezone 11ms",
+            "✓ apps/web/tests/report-utils.test.ts > report date and download boundaries > preserves daylight-saving offsets across the selected local day 0ms",
+            "✓ apps/web/tests/report-utils.test.ts > report date and download boundaries > uses the shared first local-day instant when midnight is skipped 0ms",
+            "✓ apps/web/tests/report-utils.test.ts > report date and download boundaries > derives defaults from the API snapshot in the shop timezone 0ms",
+            "✓ apps/web/tests/report-utils.test.ts > report date and download boundaries > limits download names to report enums and date-only values 1ms",
+            "✓ apps/web/tests/report-utils.test.ts > report date and download boundaries > rejects unsafe schemes and insecure external download targets 0ms"
+          ]
+        }
+      ]
+    },
+    {
+      "contractClause": 6,
+      "review": "R38/R42 queues before supporting preview",
+      "browser": [
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 approval and shipment work queues appear before sample previews",
+          "line": 82,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 approval and shipment work queues appear before sample previews",
+          "line": 82,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        }
+      ],
+      "unit": []
+    },
+    {
+      "contractClause": 7,
+      "review": "Permission-scoped identities and honest unresolved/selected context",
+      "browser": [
+        {
+          "file": "tests/fe009.spec.ts",
+          "title": "FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment",
+          "line": 211,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "66424fb9db972021716a768124d80da469502c131fd5d965083009e2e7d26af4"
+        },
+        {
+          "file": "tests/fe009.spec.ts",
+          "title": "FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment",
+          "line": 211,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "66424fb9db972021716a768124d80da469502c131fd5d965083009e2e7d26af4"
+        },
+        {
+          "file": "tests/ui006-lookups.spec.ts",
+          "title": "UI006.C02 selected order identity survives a failed search and cursor retry",
+          "line": 227,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792"
+        },
+        {
+          "file": "tests/ui006-lookups.spec.ts",
+          "title": "UI006.C02 selected order identity survives a failed search and cursor retry",
+          "line": 227,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792"
+        }
+      ],
+      "unit": []
+    },
+    {
+      "contractClause": 8,
+      "review": "Vietnamese field validation after interaction and zero invalid writes",
+      "browser": [
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 timezone and privacy validation waits for interaction and blocks invalid writes",
+          "line": 46,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 invalid marketing deep links mark the responsible field and never send the invalid range",
+          "line": 234,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 timezone and privacy validation waits for interaction and blocks invalid writes",
+          "line": 46,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 invalid marketing deep links mark the responsible field and never send the invalid range",
+          "line": 234,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        }
+      ],
+      "unit": [
+        {
+          "file": "apps/web/tests/components.test.tsx",
+          "sha256": "d7ed38c56a6e1ddfb65de0584d43a5c18713c7bfe64303c79be3cbc7f3d8c039",
+          "executedCases": [
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > maps the approved dark tokens, typography, radii, and responsive breakpoints 2ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > keeps primary, secondary, status, and control contrast above their design thresholds 1ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > applies semantic token surfaces to standard alerts 43ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > loads canonical dark tokens and bootstrap before application JavaScript 1ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > keeps the application theme and source palette dark-only and token-owned 14ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > rejects copied HEX values and non-dark theme modes with negative fixtures 13ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps copyable identifiers wrapped, spaced by the semantic role, and announces clipboard feedback 56ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses the canonical touch target for primary controls 9ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses the approved card radius rather than MUI spacing-scaled radius 7ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > renders semantic status text and a keyboard-navigable, named table region 18ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps contextual empty actions inside the shared table empty state 14ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps status and empty states understandable without relying on color 10ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > shows a reserved loading state and a retryable error state 67ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses semantic layout roles for empty, loading, and notice states 23ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > sets dialog insets and action gap explicitly instead of inheriting button margins 66ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > clears search, cursor, and returns focus while preserving other filters 348ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > binds list query fields and search controls to each OpenAPI operation 15ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > moves between cursor pages without dropping unrelated query filters 203ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps a deep-linked cursor usable with an explicit first-list fallback 62ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > disables next when the page claims more results but has no usable cursor (null) 11ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > disables next when the page claims more results but has no usable cursor () 10ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > does not submit an unfinished IME composition 12ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > associates form errors with the visible label and returns focus after dialog close 310ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > has no axe violations in the shared table, status, and search states 87ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > reflows the real mock application from 320px to 1440px and passes browser axe 3101ms"
+          ]
+        }
+      ]
+    },
+    {
+      "contractClause": 9,
+      "review": "Acknowledged inline status and preservation of error/unknown drafts",
+      "browser": [
+        {
+          "file": "tests/fe011.spec.ts",
+          "title": "FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it",
+          "line": 141,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "1b42ce41f05b3fadc3607b652769a511a27da1c0d519016af15c789a8d836b8c"
+        },
+        {
+          "file": "tests/fe011.spec.ts",
+          "title": "FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it",
+          "line": 141,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "1b42ce41f05b3fadc3607b652769a511a27da1c0d519016af15c789a8d836b8c"
+        },
+        {
+          "file": "tests/frontend-corrections.spec.ts",
+          "title": "F01 shop settings merges a server-only locale change and preserves edits typed during save",
+          "line": 191,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "5a34dff86ca626c1fcf2e35b67fac61bfef0091f8673c22ab87cd07ed737899e"
+        },
+        {
+          "file": "tests/frontend-corrections.spec.ts",
+          "title": "F01 shop settings merges a server-only locale change and preserves edits typed during save",
+          "line": 191,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "5a34dff86ca626c1fcf2e35b67fac61bfef0091f8673c22ab87cd07ed737899e"
+        },
+        {
+          "file": "tests/states/fe023.spec.ts",
+          "title": "FE023 a saved shop form resets its dirty baseline and reports success",
+          "line": 125,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "4eff86d75c1b83a2725a6e527e92eb7b8615c1c9fd4224042a3de685edc9b1f0"
+        },
+        {
+          "file": "tests/states/fe023.spec.ts",
+          "title": "FE023 a saved shop form resets its dirty baseline and reports success",
+          "line": 125,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "4eff86d75c1b83a2725a6e527e92eb7b8615c1c9fd4224042a3de685edc9b1f0"
+        }
+      ],
+      "unit": []
+    },
+    {
+      "contractClause": 10,
+      "review": "No-match, first-use, missing data, permission and error are distinct",
+      "browser": [
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 empty report and marketing payloads render explicit empty states",
+          "line": 356,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/fe021.spec.ts",
+          "title": "FE021 empty report and marketing payloads render explicit empty states",
+          "line": 356,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7"
+        },
+        {
+          "file": "tests/ui006-lookups.spec.ts",
+          "title": "UI006.C02 selected order identity survives a failed search and cursor retry",
+          "line": 227,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792"
+        },
+        {
+          "file": "tests/ui006-lookups.spec.ts",
+          "title": "UI006.C02 selected order identity survives a failed search and cursor retry",
+          "line": 227,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792"
+        },
+        {
+          "file": "tests/ui007-query-states.spec.ts",
+          "title": "UI007 forbidden order query is an access state and a successful empty query is distinct",
+          "line": 94,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "406bddf053179938782f0e1c42df42f0b1292aa64bd7f2a6dd7f399e55bf31c9"
+        },
+        {
+          "file": "tests/ui007-query-states.spec.ts",
+          "title": "UI007 forbidden order query is an access state and a successful empty query is distinct",
+          "line": 94,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "406bddf053179938782f0e1c42df42f0b1292aa64bd7f2a6dd7f399e55bf31c9"
+        },
+        {
+          "file": "tests/ui008-integration-empty.spec.ts",
+          "title": "UI008 R30 successful empty AI connection cards show a first-use state and one add CTA",
+          "line": 144,
+          "project": "chromium",
+          "status": "passed",
+          "sha256": "53cde55000619af3f0bf10baa0fa78718b85299e080f6417b1046d4406a0efe0"
+        },
+        {
+          "file": "tests/ui008-integration-empty.spec.ts",
+          "title": "UI008 R30 successful empty AI connection cards show a first-use state and one add CTA",
+          "line": 144,
+          "project": "firefox",
+          "status": "passed",
+          "sha256": "53cde55000619af3f0bf10baa0fa78718b85299e080f6417b1046d4406a0efe0"
+        }
+      ],
+      "unit": [
+        {
+          "file": "apps/web/tests/components.test.tsx",
+          "sha256": "d7ed38c56a6e1ddfb65de0584d43a5c18713c7bfe64303c79be3cbc7f3d8c039",
+          "executedCases": [
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > maps the approved dark tokens, typography, radii, and responsive breakpoints 2ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > keeps primary, secondary, status, and control contrast above their design thresholds 1ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > applies semantic token surfaces to standard alerts 43ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > loads canonical dark tokens and bootstrap before application JavaScript 1ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > keeps the application theme and source palette dark-only and token-owned 14ms",
+            "✓ apps/web/tests/components.test.tsx > Graphite Gold theme contract > rejects copied HEX values and non-dark theme modes with negative fixtures 13ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps copyable identifiers wrapped, spaced by the semantic role, and announces clipboard feedback 56ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses the canonical touch target for primary controls 9ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses the approved card radius rather than MUI spacing-scaled radius 7ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > renders semantic status text and a keyboard-navigable, named table region 18ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps contextual empty actions inside the shared table empty state 14ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps status and empty states understandable without relying on color 10ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > shows a reserved loading state and a retryable error state 67ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > uses semantic layout roles for empty, loading, and notice states 23ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > sets dialog insets and action gap explicitly instead of inheriting button margins 66ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > clears search, cursor, and returns focus while preserving other filters 348ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > binds list query fields and search controls to each OpenAPI operation 15ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > moves between cursor pages without dropping unrelated query filters 203ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > keeps a deep-linked cursor usable with an explicit first-list fallback 62ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > disables next when the page claims more results but has no usable cursor (null) 11ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > disables next when the page claims more results but has no usable cursor () 10ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > does not submit an unfinished IME composition 12ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > associates form errors with the visible label and returns focus after dialog close 310ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > has no axe violations in the shared table, status, and search states 87ms",
+            "✓ apps/web/tests/components.test.tsx > Accessible shared presentation > reflows the real mock application from 320px to 1440px and passes browser axe 3101ms"
+          ]
+        }
+      ]
+    }
+  ],
+  "result": "VERIFIED_SCOPED",
+  "unitRecord": "final-unit-r3.record.json",
+  "boundaryRecord": "final-marketing-boundaries.record.json",
+  "negativeBefore": "pager-negative-before.log",
+  "limits": "Clause review binds named current source assertions and immutable executions; case counts or keyword grouping do not substitute for acceptance. Browser evidence is supported Chrome 155/Firefox 155 with synthetic MSW; manual speech, owner acceptance, backend and hosted CI are not certified."
+}

@@ -1,0 +1,1827 @@
+{
+  "taskId": "FE003",
+  "stepId": "S03",
+  "executedAt": "2026-10-13T10:07:10.012Z",
+  "facts": [
+    {
+      "name": "Canonical criterion and whole-task acceptance self-review",
+      "action": "Kiểm cấu hình Vitest/RTL/MSW/Playwright/axe thực; thu baseline có lỗi mà không tắt suite.",
+      "verification": "Test runner và config được nạp; testfail ghi CHƯA ĐẠT, không nhận gate PASS. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "acceptanceCases": [
+        "FE003.AC01 — Lệnh/checkpoint dùng nguồn hiện có và ledger frontend.",
+        "FE003.AC02 — Không no-op hoặc test chưa chạy được đăng ký PASS.",
+        "FE003.AC03 — Giữ báo cáo lịch sử có ngày/môi trường."
+      ],
+      "scopeInterpretation": "Current named owner assertions and actual executions are reviewed against each acceptance. Legacy 54 routes use the current 61-route manifest; approved C05/C06 contracts supersede old address/account catalog gaps. Privacy/OIDC remains unavailable under FE009.S03; manual speech/owner acceptance are not forged."
+    },
+    {
+      "name": "Current route/operation owners",
+      "routes": [],
+      "operationIds": [],
+      "sourceCrosswalk": {
+        "apiTotal": 245,
+        "required": 224,
+        "referenced": 222,
+        "missing": [
+          {
+            "id": "stepUp",
+            "url": "/auth/step-up",
+            "method": "post"
+          },
+          {
+            "id": "approvePrivacyRequest",
+            "url": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+            "method": "post"
+          }
+        ],
+        "limits": "stepUp/approvePrivacyRequest deliberately unavailable under FE009.S03 OIDC policy; reference coverage is not code completion."
+      }
+    },
+    {
+      "name": "Executed owner browser cases",
+      "proof": [
+        {
+          "file": "tests/frontend-corrections.spec.ts",
+          "sha256": "5a34dff86ca626c1fcf2e35b67fac61bfef0091f8673c22ab87cd07ed737899e",
+          "assertions": [
+            {
+              "line": 9,
+              "text": "expect(page.locator('main')).toBeVisible()"
+            },
+            {
+              "line": 16,
+              "text": "expect((await mutate(page, 'customers', { displayName: 'Synthetic refresh event', phone: null, email: null, notes: '' })).status).toBe(201)"
+            },
+            {
+              "line": 22,
+              "text": "expect(name).toHaveValue('Linh (khách mẫu)')"
+            },
+            {
+              "line": 27,
+              "text": "expect((await mutate(page, 'customers/c1', { notes: 'Concurrent server note' }, 'PATCH', current.version)).status).toBe(200)"
+            },
+            {
+              "line": 29,
+              "text": "expect(name).toHaveValue('Local draft')"
+            },
+            {
+              "line": 29,
+              "text": "expect(notes).toHaveValue(originalNotes)"
+            },
+            {
+              "line": 32,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 33,
+              "text": "expect(dialog.getByText('Concurrent server note', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 35,
+              "text": "expect(notes).toHaveValue('Concurrent server note')"
+            },
+            {
+              "line": 39,
+              "text": "expect(request.headers()['if-match']).toBe(`\"${current.version + 1}\"`)"
+            },
+            {
+              "line": 40,
+              "text": "expect(request.postDataJSON()).toEqual({ displayName: 'Local draft' })"
+            },
+            {
+              "line": 41,
+              "text": "expect(page.getByRole('heading', { name: 'Local draft', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 43,
+              "text": "expect(stored.notes).toBe('Concurrent server note')"
+            },
+            {
+              "line": 48,
+              "text": "expect(page.getByLabel('Tên khách hàng', { exact: true })).toHaveValue('Linh (khách mẫu)')"
+            },
+            {
+              "line": 50,
+              "text": "expect((await mutate(page, 'customers/c1', { displayName: 'Theirs' }, 'PATCH', 1)).status).toBe(200)"
+            },
+            {
+              "line": 51,
+              "text": "expect(page.getByRole('button', { name: 'Đối chiếu', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 55,
+              "text": "expect(apply).toBeDisabled()"
+            },
+            {
+              "line": 58,
+              "text": "expect(apply).toBeEnabled()"
+            },
+            {
+              "line": 59,
+              "text": "expect(page.getByLabel('Tên khách hàng', { exact: true })).toHaveValue('Mine')"
+            },
+            {
+              "line": 67,
+              "text": "expect(warning).toBeVisible()"
+            },
+            {
+              "line": 69,
+              "text": "expect(page.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Keep this order draft')"
+            },
+            {
+              "line": 72,
+              "text": "expect(page).toHaveURL(/\\/orders$/)"
+            },
+            {
+              "line": 77,
+              "text": "expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A')"
+            },
+            {
+              "line": 79,
+              "text": "expect(page.getByText('1 tệp được gắn với sản phẩm', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 82,
+              "text": "expect(page.getByText('1 tệp được gắn với sản phẩm', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 84,
+              "text": "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 90,
+              "text": "expect(minutes).toHaveValue('')"
+            },
+            {
+              "line": 93,
+              "text": "expect(minutes).toHaveValue('17')"
+            },
+            {
+              "line": 95,
+              "text": "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 103,
+              "text": "expect(text).toHaveValue(submittedText)"
+            },
+            {
+              "line": 108,
+              "text": "expect(submittedResponse.status()).toBe(201)"
+            },
+            {
+              "line": 108,
+              "text": "expect((await submittedResponse.json()).data.text).toBe(submittedText)"
+            },
+            {
+              "line": 109,
+              "text": "expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeEnabled()"
+            },
+            {
+              "line": 110,
+              "text": "expect(text).toHaveValue('Typed next while pending')"
+            },
+            {
+              "line": 122,
+              "text": "expect(dialog.getByText('Ghi chú không được vượt quá 4.000 ký tự.', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 123,
+              "text": "expect(posted).toBe(false)"
+            },
+            {
+              "line": 126,
+              "text": "expect(dialog.getByText('Ghi chú không được vượt quá 4.000 ký tự.', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 127,
+              "text": "expect(posted).toBe(false)"
+            },
+            {
+              "line": 132,
+              "text": "expect(created.status()).toBe(201)"
+            },
+            {
+              "line": 134,
+              "text": "expect(payload.data.notes).toBe('a'.repeat(4000))"
+            },
+            {
+              "line": 135,
+              "text": "expect(page).toHaveURL(demoUrl + '/s/shop-demo/customers/' + payload.data.id)"
+            },
+            {
+              "line": 142,
+              "text": "expect(unicodeCreated.status()).toBe(201)"
+            },
+            {
+              "line": 143,
+              "text": "expect(unicodePayload.data.notes).toBe('😀'.repeat(4000))"
+            },
+            {
+              "line": 144,
+              "text": "expect(page).toHaveURL(demoUrl + '/s/shop-demo/customers/' + unicodePayload.data.id)"
+            },
+            {
+              "line": 156,
+              "text": "expect(warning).toBeVisible()"
+            },
+            {
+              "line": 158,
+              "text": "expect(dialog.getByLabel('Nhập/quét SKU thực tế')).toHaveValue('Unsaved scan')"
+            },
+            {
+              "line": 174,
+              "text": "expect(page.getByRole('table', { name: 'Nguồn giá và tồn trong hộp thư', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 186,
+              "text": "expect(page.getByText('Synthetic normal SSE message', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 187,
+              "text": "expect(requests.filter(path => /\\/(products|inventory\\/snapshots|customers|orders|shipments|service-cases)(\\/|$)/.test(path))).toEqual([])"
+            },
+            {
+              "line": 194,
+              "text": "expect(name).not.toHaveValue('')"
+            },
+            {
+              "line": 200,
+              "text": "expect(changed).toBe(200)"
+            },
+            {
+              "line": 204,
+              "text": "expect(page.getByLabel('Ngôn ngữ giao diện', { exact: true })).toHaveValue('Tiếng Việt')"
+            },
+            {
+              "line": 205,
+              "text": "expect(page.getByLabel('Ngôn ngữ giao diện', { exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 206,
+              "text": "expect(page.getByText('Giao diện hiện chỉ hỗ trợ tiếng Việt. Locale lưu trong API: en-US.', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 211,
+              "text": "expect((await sent).postDataJSON()).toEqual({ name: 'Submitted shop' })"
+            },
+            {
+              "line": 213,
+              "text": "expect(page.getByRole('button', { name: 'Lưu cấu hình', exact: true })).toBeEnabled()"
+            },
+            {
+              "line": 214,
+              "text": "expect(name).toHaveValue('Typed later shop')"
+            },
+            {
+              "line": 216,
+              "text": "expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 224,
+              "text": "expect((await mutate(page, 'privacy/policy', { jurisdictionNote: 'Synthetic server jurisdiction' }, 'PATCH', current.version)).status).toBe(200)"
+            },
+            {
+              "line": 228,
+              "text": "expect(days).toHaveValue('180')"
+            },
+            {
+              "line": 229,
+              "text": "expect(page.getByLabel('Căn cứ / thị trường áp dụng')).toHaveValue('Synthetic server jurisdiction')"
+            },
+            {
+              "line": 232,
+              "text": "expect(request.postDataJSON()).toEqual({ chatRetentionDays: 180 })"
+            },
+            {
+              "line": 233,
+              "text": "expect(request.headers()['if-match']).toBe(`\"${current.version + 1}\"`)"
+            },
+            {
+              "line": 240,
+              "text": "expect(name).toBeEnabled()"
+            },
+            {
+              "line": 245,
+              "text": "expect(dialog.getByRole('button', { name: 'Lưu', exact: true })).toBeEnabled()"
+            },
+            {
+              "line": 246,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 246,
+              "text": "expect(name).toHaveValue('Late category')"
+            },
+            {
+              "line": 250,
+              "text": "expect(dialog).not.toBeVisible()"
+            },
+            {
+              "line": 252,
+              "text": "expect(name).toHaveValue('Submitted category')"
+            },
+            {
+              "line": 254,
+              "text": "expect(dialog).not.toBeVisible()"
+            },
+            {
+              "line": 260,
+              "text": "expect(dialog.getByLabel('Tên nhà cung cấp', { exact: true })).toBeEnabled()"
+            },
+            {
+              "line": 263,
+              "text": "expect((await mutate(page, 'suppliers/' + current.id, { expectedVersion: current.version, paymentTerms: 'Concurrent terms' }, 'PATCH', current.version)).status).toBe(200)"
+            },
+            {
+              "line": 267,
+              "text": "expect(dialog.getByLabel('Điều kiện thanh toán', { exact: true })).toHaveValue('Concurrent terms')"
+            },
+            {
+              "line": 270,
+              "text": "expect((await sent).postDataJSON()).toEqual({ expectedVersion: current.version + 1, name: 'Local supplier' })"
+            },
+            {
+              "line": 271,
+              "text": "expect(dialog).not.toBeVisible()"
+            },
+            {
+              "line": 281,
+              "text": "expect(page.getByText('Ghi chú không được vượt quá 4.000 ký tự.', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 281,
+              "text": "expect(writes).toBe(0)"
+            },
+            {
+              "line": 285,
+              "text": "expect((await rejected).status()).toBe(422)"
+            },
+            {
+              "line": 286,
+              "text": "expect(notes).toHaveValue('b'.repeat(4000))"
+            },
+            {
+              "line": 290,
+              "text": "expect(page.getByText('Ghi chú không được vượt quá 4.000 ký tự.', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 290,
+              "text": "expect(writes).toBe(previousWrites)"
+            },
+            {
+              "line": 293,
+              "text": "expect((await unicodeRejected).status()).toBe(422)"
+            },
+            {
+              "line": 294,
+              "text": "expect(notes).toHaveValue('😀'.repeat(4000))"
+            },
+            {
+              "line": 297,
+              "text": "expect((await accepted).status()).toBe(200)"
+            },
+            {
+              "line": 298,
+              "text": "expect(notes).toHaveValue('😀'.repeat(4000))"
+            },
+            {
+              "line": 299,
+              "text": "expect(await page.evaluate(async () => (await (await fetch('/api/v2/shops/shop-demo/customers/c1')).json()).data.notes)).toBe('😀'.repeat(4000))"
+            },
+            {
+              "line": 309,
+              "text": "expect(page.getByLabel('Nội dung trả lời khách')).toHaveValue('Mode switched while pending')"
+            },
+            {
+              "line": 313,
+              "text": "expect((await unknown).status()).toBe(503)"
+            },
+            {
+              "line": 314,
+              "text": "expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 316,
+              "text": "expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 324,
+              "text": "expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeEnabled()"
+            },
+            {
+              "line": 325,
+              "text": "expect(page.getByLabel('Ghi chú cho nhóm')).toHaveValue('Retained unknown draft')"
+            },
+            {
+              "line": 331,
+              "text": "expect(current).toBeTruthy()"
+            },
+            {
+              "line": 336,
+              "text": "expect(newWarehouse.status).toBe(201)"
+            },
+            {
+              "line": 338,
+              "text": "expect((await mutate(page, 'orders/' + current.id, { warehouseId }, 'PATCH', current.version)).status).toBe(200)"
+            },
+            {
+              "line": 341,
+              "text": "expect(comparison.getByRole('combobox', { name: /^Chọn dữ liệu: Dòng đơn hàng/ })).toBeVisible()"
+            },
+            {
+              "line": 343,
+              "text": "expect(editor.getByRole('combobox', { name: /^Kho xuất(?: |$)/ }).locator('..').locator('input')).toHaveValue(warehouseId)"
+            },
+            {
+              "line": 346,
+              "text": "expect(request.postDataJSON()).toEqual({ notes: 'Local order note' })"
+            },
+            {
+              "line": 346,
+              "text": "expect(request.headers()['if-match']).toBe(`\"${current.version + 1}\"`)"
+            },
+            {
+              "line": 347,
+              "text": "expect(editor).not.toBeVisible()"
+            },
+            {
+              "line": 353,
+              "text": "expect(await page.evaluate(async () => (await fetch('/api/v2/session')).status)).toBe(200)"
+            },
+            {
+              "line": 358,
+              "text": "expect(warning).toBeVisible()"
+            },
+            {
+              "line": 360,
+              "text": "expect(warning).toBeVisible()"
+            },
+            {
+              "line": 364,
+              "text": "expect(browserDialog.type()).toBe('beforeunload')"
+            },
+            {
+              "line": 365,
+              "text": "expect(page.getByLabel('Sản phẩm 2', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 371,
+              "text": "expect(response.status(), JSON.stringify(payload)).toBe(201)"
+            },
+            {
+              "line": 372,
+              "text": "expect(page).toHaveURL(demoUrl + '/s/shop-demo/orders/' + payload.data.id)"
+            },
+            {
+              "line": 372,
+              "text": "expect(warning).not.toBeVisible()"
+            },
+            {
+              "line": 379,
+              "text": "expect((await initialList).status()).toBe(200)"
+            },
+            {
+              "line": 385,
+              "text": "expect(created.status, JSON.stringify(created.payload)).toBe(201)"
+            },
+            {
+              "line": 392,
+              "text": "expect(initialDetail.status()).toBe(200)"
+            },
+            {
+              "line": 393,
+              "text": "expect((await initialDetail.json()).data).toMatchObject({ id: created.payload.data.id, version: created.payload.data.version })"
+            },
+            {
+              "line": 395,
+              "text": "expect(editor.getByLabel('Ghi nhận kiểm tra')).toBeVisible()"
+            },
+            {
+              "line": 400,
+              "text": "expect(refreshed.status()).toBe(200)"
+            },
+            {
+              "line": 401,
+              "text": "expect((await refreshed.json()).data).toMatchObject({ id: created.payload.data.id, version: created.payload.data.version + 1 })"
+            },
+            {
+              "line": 402,
+              "text": "expect(editor.getByLabel('Ghi nhận kiểm tra')).toHaveValue('Local physical inspection')"
+            },
+            {
+              "line": 403,
+              "text": "expect(editor.getByRole('button', { name: 'Đối chiếu', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 406,
+              "text": "expect(comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' })).toBeDisabled()"
+            },
+            {
+              "line": 411,
+              "text": "expect((await sent).postDataJSON()).toMatchObject({ expectedVersion: created.payload.data.version + 1, lines: [{ reason: 'Local physical inspection' }] })"
+            },
+            {
+              "line": 412,
+              "text": "expect(editor).not.toBeVisible()"
+            },
+            {
+              "line": 418,
+              "text": "expect((await mutate(page, 'customers/c1', { displayName: 'Server second', notes: 'LongContent'.repeat(350) }, 'PATCH', 1)).status).toBe(200)"
+            },
+            {
+              "line": 423,
+              "text": "expect(comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' })).toBeEnabled()"
+            },
+            {
+              "line": 424,
+              "text": "expect((await mutate(page, 'customers/c1', { displayName: 'Server third' }, 'PATCH', 2)).status).toBe(200)"
+            },
+            {
+              "line": 425,
+              "text": "expect(comparison.getByText('Server third', { exact: true })).toBeVisible()"
+            },
+            {
+              "line": 426,
+              "text": "expect(comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' })).toBeDisabled()"
+            },
+            {
+              "line": 427,
+              "text": "expect.poll(() => comparison.evaluate(element => {\r\n        for (let current: Element | null = element; current; current = current.parentElement)\r\n            if (Number(getComputedStyle(current).opacity) !== 1) return false;\r\n        return true;\r\n    })).toBe(true)"
+            },
+            {
+              "line": 427,
+              "text": "expect.poll(() => comparison.evaluate(element => {\r\n        for (let current: Element | null = element; current; current = current.parentElement)\r\n            if (Number(getComputedStyle(current).opacity) !== 1) return false;\r\n        return true;\r\n    }))"
+            },
+            {
+              "line": 433,
+              "text": "expect(accessibility.violations).toEqual([])"
+            },
+            {
+              "line": 436,
+              "text": "expect(geometry.width).toBeLessThanOrEqual(320)"
+            },
+            {
+              "line": 436,
+              "text": "expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth + 1)"
+            },
+            {
+              "line": 439,
+              "text": "expect(comparison).not.toBeVisible()"
+            },
+            {
+              "line": 440,
+              "text": "expect(page.getByLabel('Tên khách hàng', { exact: true })).toHaveValue('Mine')"
+            },
+            {
+              "line": 448,
+              "text": "expect(days).toHaveAttribute('aria-invalid', 'true')"
+            },
+            {
+              "line": 448,
+              "text": "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 449,
+              "text": "expect(note).toHaveAttribute('aria-invalid', 'true')"
+            },
+            {
+              "line": 450,
+              "text": "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 450,
+              "text": "expect(writes).toEqual([])"
+            },
+            {
+              "line": 452,
+              "text": "expect((await saved).status()).toBe(200)"
+            },
+            {
+              "line": 452,
+              "text": "expect(writes).toHaveLength(1)"
+            },
+            {
+              "line": 454,
+              "text": "expect(savedNotice).toBeVisible()"
+            },
+            {
+              "line": 455,
+              "text": "expect(note).toHaveValue('n'.repeat(2000))"
+            },
+            {
+              "line": 456,
+              "text": "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 458,
+              "text": "expect(note).toHaveAttribute('aria-invalid', 'true')"
+            },
+            {
+              "line": 459,
+              "text": "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 459,
+              "text": "expect(writes).toHaveLength(1)"
+            },
+            {
+              "line": 463,
+              "text": "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeEnabled()"
+            },
+            {
+              "line": 466,
+              "text": "expect(response.status()).toBe(200)"
+            },
+            {
+              "line": 466,
+              "text": "expect((await response.json()).data.jurisdictionNote).toBe('😀'.repeat(length))"
+            },
+            {
+              "line": 467,
+              "text": "expect(writes).toHaveLength(index + 2)"
+            },
+            {
+              "line": 468,
+              "text": "expect(savedNotice).toBeVisible()"
+            },
+            {
+              "line": 469,
+              "text": "expect(note).toHaveValue('😀'.repeat(length))"
+            },
+            {
+              "line": 470,
+              "text": "expect(page.getByRole('button', { name: 'Lưu bản nháp chính sách', exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 480,
+              "text": "expect(warning).toBeVisible()"
+            },
+            {
+              "line": 481,
+              "text": "expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Unsaved order close')"
+            },
+            {
+              "line": 484,
+              "text": "expect(editor.getByRole('button', { name: 'Đóng chỉnh sửa', exact: true })).toBeDisabled()"
+            },
+            {
+              "line": 485,
+              "text": "expect(editor).toBeVisible()"
+            },
+            {
+              "line": 485,
+              "text": "expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Late order change')"
+            }
+          ],
+          "cases": [
+            {
+              "title": "F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes",
+              "line": 18,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2229
+            },
+            {
+              "title": "F01 requires an explicit choice for a field changed by both editors",
+              "line": 46,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1600
+            },
+            {
+              "title": "F06 detects an order draft and blocks navigation until explicit discard",
+              "line": 62,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1607
+            },
+            {
+              "title": "F02 retains an unsaved product image through an unrelated refetch",
+              "line": 75,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1255
+            },
+            {
+              "title": "F03 retains notification-policy inputs through a background resync and navigation",
+              "line": 87,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1160
+            },
+            {
+              "title": "F05 keeps text typed while a previous internal note is pending",
+              "line": 98,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1878
+            },
+            {
+              "title": "F08 validates 4001 customer-note characters at the field and accepts 4000",
+              "line": 113,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1684
+            },
+            {
+              "title": "F07 routes the fulfillment footer close through the shared discard guard",
+              "line": 147,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1260
+            },
+            {
+              "title": "F09 refreshes new Inbox messages without refetching the visible product and stock snapshots",
+              "line": 161,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1575
+            },
+            {
+              "title": "F01 shop settings merges a server-only locale change and preserves edits typed during save",
+              "line": 191,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2082
+            },
+            {
+              "title": "F03 privacy policy preserves refetch drafts and compares before applying the newest version",
+              "line": 219,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1768
+            },
+            {
+              "title": "F01 category keeps a late edit after saving, and reopens with a clean current baseline",
+              "line": 236,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2977
+            },
+            {
+              "title": "F01 supplier preserves a concurrent server-only term and PATCHes the local name",
+              "line": 257,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1443
+            },
+            {
+              "title": "F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft",
+              "line": 274,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1567
+            },
+            {
+              "title": "F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion",
+              "line": 302,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2027
+            },
+            {
+              "title": "F01 order editor keeps its original version and compares whole line lists before PATCH",
+              "line": 328,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1940
+            },
+            {
+              "title": "F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard",
+              "line": 350,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 14011
+            },
+            {
+              "title": "F01 analogous return-inspection draft does not adopt a refetched version without comparison",
+              "line": 375,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2146
+            },
+            {
+              "title": "F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content",
+              "line": 415,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2196
+            },
+            {
+              "title": "F08 privacy bounds reject invalid days and long jurisdiction before HTTP",
+              "line": 444,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2184
+            },
+            {
+              "title": "F06 order custom close respects the draft guard and busy editors remain protected",
+              "line": 474,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3666
+            },
+            {
+              "title": "F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes",
+              "line": 18,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2679
+            },
+            {
+              "title": "F01 requires an explicit choice for a field changed by both editors",
+              "line": 46,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2154
+            },
+            {
+              "title": "F06 detects an order draft and blocks navigation until explicit discard",
+              "line": 62,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1770
+            },
+            {
+              "title": "F02 retains an unsaved product image through an unrelated refetch",
+              "line": 75,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1513
+            },
+            {
+              "title": "F03 retains notification-policy inputs through a background resync and navigation",
+              "line": 87,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1255
+            },
+            {
+              "title": "F05 keeps text typed while a previous internal note is pending",
+              "line": 98,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2353
+            },
+            {
+              "title": "F08 validates 4001 customer-note characters at the field and accepts 4000",
+              "line": 113,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2140
+            },
+            {
+              "title": "F07 routes the fulfillment footer close through the shared discard guard",
+              "line": 147,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5063
+            },
+            {
+              "title": "F09 refreshes new Inbox messages without refetching the visible product and stock snapshots",
+              "line": 161,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1804
+            },
+            {
+              "title": "F01 shop settings merges a server-only locale change and preserves edits typed during save",
+              "line": 191,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2334
+            },
+            {
+              "title": "F03 privacy policy preserves refetch drafts and compares before applying the newest version",
+              "line": 219,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1875
+            },
+            {
+              "title": "F01 category keeps a late edit after saving, and reopens with a clean current baseline",
+              "line": 236,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3257
+            },
+            {
+              "title": "F01 supplier preserves a concurrent server-only term and PATCHes the local name",
+              "line": 257,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2072
+            },
+            {
+              "title": "F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft",
+              "line": 274,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1999
+            },
+            {
+              "title": "F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion",
+              "line": 302,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2584
+            },
+            {
+              "title": "F01 order editor keeps its original version and compares whole line lists before PATCH",
+              "line": 328,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2392
+            },
+            {
+              "title": "F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard",
+              "line": 350,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 14252
+            },
+            {
+              "title": "F01 analogous return-inspection draft does not adopt a refetched version without comparison",
+              "line": 375,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5719
+            },
+            {
+              "title": "F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content",
+              "line": 415,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3085
+            },
+            {
+              "title": "F08 privacy bounds reject invalid days and long jurisdiction before HTTP",
+              "line": 444,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3061
+            },
+            {
+              "title": "F06 order custom close respects the draft guard and busy editors remain protected",
+              "line": 474,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3399
+            }
+          ]
+        }
+      ],
+      "negativeExecutions": 8
+    },
+    {
+      "name": "Executed unit owners",
+      "proof": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "e1ed34a5c53b5f9947dc6ab4226b84497e86169fbd78431075739533b7bfcb78",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current dependency gates",
+      "unit": 242,
+      "domain": 117,
+      "sourceMaps": 16,
+      "fullBrowser": 878,
+      "builtArtifact": 6,
+      "coldStages": 13,
+      "limits": "Distinct suite counts are not added into a percentage."
+    },
+    {
+      "name": "Native affected-owner review",
+      "proof": [
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r5.json",
+          "sha256": "a10db819544603176e0493b08ef25eaae1d843acec49c97191ddacf7c562e77d",
+          "count": 8
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/native-text-only-200-current-r6.json",
+          "sha256": "18f699cb737e55b316658ec64bf92166b8586236d082e16fcce1587ce7c9601b",
+          "count": 16
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r7.json",
+          "sha256": "0e1173776db95ab8a4bcb2dad62e3dcc0f865552856393c327276d467236d208",
+          "count": 8
+        }
+      ],
+      "scope": "Eight affected detail views; Chromium and installed Chrome browser zoom, Firefox native text-only zoom. Full browser suite covers all existing consumers. Historical global native matrices are not re-certified."
+    },
+    {
+      "name": "Cold source and artifacts",
+      "artifact": "cold-artifacts-final.json",
+      "lockSha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "name": "Review and acceptance boundary",
+      "handoff": "ACCEPTANCE_GUIDE.md",
+      "architecture": "ARCHITECTURE_REVIEW.md",
+      "quality": "quality-gates-final.json",
+      "rawPremiumScanner": "FAIL_EXIT_1: all 14 actual semantic actions reviewed in premium-semantic-review.json; no scanner PASS or owner approval claimed",
+      "ownerAcceptance": "PENDING",
+      "screenReaderSpeech": "NOT_RUN",
+      "hostedCI": "NOT_RUN",
+      "backend": "OUTSIDE_SCOPE"
+    },
+    {
+      "name": "Criterion-specific proof selection",
+      "step": "S03",
+      "verification": "Test runner và config được nạp; testfail ghi CHƯA ĐẠT, không nhận gate PASS. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "interpretation": "This foundation/cross-module/handoff criterion is self-reviewed against its exact action/verification and the named source, owner assertions, toolchain/gate/artifact and handoff proofs above; no points are inferred solely from a shared suite total.",
+      "selectedOperationLocations": [],
+      "selectedBrowserCases": [
+        {
+          "title": "F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes",
+          "line": 18,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2229
+        },
+        {
+          "title": "F01 requires an explicit choice for a field changed by both editors",
+          "line": 46,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1600
+        },
+        {
+          "title": "F06 detects an order draft and blocks navigation until explicit discard",
+          "line": 62,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1607
+        },
+        {
+          "title": "F02 retains an unsaved product image through an unrelated refetch",
+          "line": 75,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1255
+        },
+        {
+          "title": "F03 retains notification-policy inputs through a background resync and navigation",
+          "line": 87,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1160
+        },
+        {
+          "title": "F05 keeps text typed while a previous internal note is pending",
+          "line": 98,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1878
+        },
+        {
+          "title": "F08 validates 4001 customer-note characters at the field and accepts 4000",
+          "line": 113,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1684
+        },
+        {
+          "title": "F07 routes the fulfillment footer close through the shared discard guard",
+          "line": 147,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1260
+        },
+        {
+          "title": "F09 refreshes new Inbox messages without refetching the visible product and stock snapshots",
+          "line": 161,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1575
+        },
+        {
+          "title": "F01 shop settings merges a server-only locale change and preserves edits typed during save",
+          "line": 191,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2082
+        },
+        {
+          "title": "F03 privacy policy preserves refetch drafts and compares before applying the newest version",
+          "line": 219,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1768
+        },
+        {
+          "title": "F01 category keeps a late edit after saving, and reopens with a clean current baseline",
+          "line": 236,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2977
+        },
+        {
+          "title": "F01 supplier preserves a concurrent server-only term and PATCHes the local name",
+          "line": 257,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1443
+        },
+        {
+          "title": "F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft",
+          "line": 274,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1567
+        },
+        {
+          "title": "F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion",
+          "line": 302,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2027
+        },
+        {
+          "title": "F01 order editor keeps its original version and compares whole line lists before PATCH",
+          "line": 328,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1940
+        },
+        {
+          "title": "F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard",
+          "line": 350,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 14011
+        },
+        {
+          "title": "F01 analogous return-inspection draft does not adopt a refetched version without comparison",
+          "line": 375,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2146
+        },
+        {
+          "title": "F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content",
+          "line": 415,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2196
+        },
+        {
+          "title": "F08 privacy bounds reject invalid days and long jurisdiction before HTTP",
+          "line": 444,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2184
+        },
+        {
+          "title": "F06 order custom close respects the draft guard and busy editors remain protected",
+          "line": 474,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3666
+        },
+        {
+          "title": "F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes",
+          "line": 18,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2679
+        },
+        {
+          "title": "F01 requires an explicit choice for a field changed by both editors",
+          "line": 46,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2154
+        },
+        {
+          "title": "F06 detects an order draft and blocks navigation until explicit discard",
+          "line": 62,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1770
+        },
+        {
+          "title": "F02 retains an unsaved product image through an unrelated refetch",
+          "line": 75,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1513
+        },
+        {
+          "title": "F03 retains notification-policy inputs through a background resync and navigation",
+          "line": 87,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1255
+        },
+        {
+          "title": "F05 keeps text typed while a previous internal note is pending",
+          "line": 98,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2353
+        },
+        {
+          "title": "F08 validates 4001 customer-note characters at the field and accepts 4000",
+          "line": 113,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2140
+        },
+        {
+          "title": "F07 routes the fulfillment footer close through the shared discard guard",
+          "line": 147,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5063
+        },
+        {
+          "title": "F09 refreshes new Inbox messages without refetching the visible product and stock snapshots",
+          "line": 161,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1804
+        },
+        {
+          "title": "F01 shop settings merges a server-only locale change and preserves edits typed during save",
+          "line": 191,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2334
+        },
+        {
+          "title": "F03 privacy policy preserves refetch drafts and compares before applying the newest version",
+          "line": 219,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1875
+        },
+        {
+          "title": "F01 category keeps a late edit after saving, and reopens with a clean current baseline",
+          "line": 236,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3257
+        },
+        {
+          "title": "F01 supplier preserves a concurrent server-only term and PATCHes the local name",
+          "line": 257,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2072
+        },
+        {
+          "title": "F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft",
+          "line": 274,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1999
+        },
+        {
+          "title": "F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion",
+          "line": 302,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2584
+        },
+        {
+          "title": "F01 order editor keeps its original version and compares whole line lists before PATCH",
+          "line": 328,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2392
+        },
+        {
+          "title": "F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard",
+          "line": 350,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 14252
+        },
+        {
+          "title": "F01 analogous return-inspection draft does not adopt a refetched version without comparison",
+          "line": 375,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5719
+        },
+        {
+          "title": "F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content",
+          "line": 415,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3085
+        },
+        {
+          "title": "F08 privacy bounds reject invalid days and long jurisdiction before HTTP",
+          "line": 444,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3061
+        },
+        {
+          "title": "F06 order custom close respects the draft guard and busy editors remain protected",
+          "line": 474,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3399
+        }
+      ],
+      "ownerSourceAssertions": [
+        {
+          "file": "tests/frontend-corrections.spec.ts",
+          "sha256": "5a34dff86ca626c1fcf2e35b67fac61bfef0091f8673c22ab87cd07ed737899e",
+          "assertionLines": [
+            9,
+            16,
+            22,
+            27,
+            29,
+            29,
+            32,
+            33,
+            35,
+            39,
+            40,
+            41,
+            43,
+            48,
+            50,
+            51,
+            55,
+            58,
+            59,
+            67,
+            69,
+            72,
+            77,
+            79,
+            82,
+            84,
+            90,
+            93,
+            95,
+            103,
+            108,
+            108,
+            109,
+            110,
+            122,
+            123,
+            126,
+            127,
+            132,
+            134,
+            135,
+            142,
+            143,
+            144,
+            156,
+            158,
+            174,
+            186,
+            187,
+            194,
+            200,
+            204,
+            205,
+            206,
+            211,
+            213,
+            214,
+            216,
+            224,
+            228,
+            229,
+            232,
+            233,
+            240,
+            245,
+            246,
+            246,
+            250,
+            252,
+            254,
+            260,
+            263,
+            267,
+            270,
+            271,
+            281,
+            281,
+            285,
+            286,
+            290,
+            290,
+            293,
+            294,
+            297,
+            298,
+            299,
+            309,
+            313,
+            314,
+            316,
+            324,
+            325,
+            331,
+            336,
+            338,
+            341,
+            343,
+            346,
+            346,
+            347,
+            353,
+            358,
+            360,
+            364,
+            365,
+            371,
+            372,
+            372,
+            379,
+            385,
+            392,
+            393,
+            395,
+            400,
+            401,
+            402,
+            403,
+            406,
+            411,
+            412,
+            418,
+            423,
+            424,
+            425,
+            426,
+            427,
+            427,
+            433,
+            436,
+            436,
+            439,
+            440,
+            448,
+            448,
+            449,
+            450,
+            450,
+            452,
+            452,
+            454,
+            455,
+            456,
+            458,
+            459,
+            459,
+            463,
+            466,
+            466,
+            467,
+            468,
+            469,
+            470,
+            480,
+            481,
+            484,
+            485,
+            485
+          ]
+        }
+      ],
+      "policyLimits": "Manual speech/owner acceptance/hosted CI are not fabricated."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "final-verify-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:01:06.981Z",
+      "finishedAt": "2026-10-13T10:04:18.552Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-verify-r3.log",
+        "sha256": "8a2bc419fb81685bf2f6f73645aff8438ed20f8e15a7c43d3788f60eec4537c5"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-unit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:35.330Z",
+      "finishedAt": "2026-10-13T07:02:42.025Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log",
+        "sha256": "d28976d231b13835d4807b6afa47ed16e8bbb728e2d40f2da4809d9a935b1dab"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-source-maps-r4",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:04:18.629Z",
+      "finishedAt": "2026-10-13T10:04:18.788Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-source-maps-r4.log",
+        "sha256": "1f11d1774f5a281c635e13a5103ffea8cd1a15a8dbe8cb3ce221e7101b67c567"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-e2e-r8",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config evidence\\frontend-completeness-20261013-aaf74b7\\final-supported-matrix.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:17:44.501Z",
+      "finishedAt": "2026-10-13T09:38:22.202Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+        "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:38:46.673Z",
+      "finishedAt": "2026-10-13T09:42:01.737Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-built-demo.log",
+        "sha256": "8e58d50eaf56c321c12b6b624c93f1b3b4179be1d9d32fb07c3d02ce68886c04"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-kit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" ../botsales-kit/scripts/validate-kit.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.394Z",
+      "finishedAt": "2026-10-13T07:02:42.544Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-kit-r3.log",
+        "sha256": "88d853cfe1cce38738a93c30a9da799eadb00b50cb751133587d7295c3f2886d"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-doctor-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run doctor",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.639Z",
+      "finishedAt": "2026-10-13T07:02:42.844Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-doctor-r3.log",
+        "sha256": "672964dbb21e82e121d2af5d557c6560d07f6fcdea96a2be8052b7f46d0f2d1c"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-dependencies-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.935Z",
+      "finishedAt": "2026-10-13T07:02:43.508Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-dependencies-r3.log",
+        "sha256": "1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-audit-r2",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" audit --omit=dev --json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:43.608Z",
+      "finishedAt": "2026-10-13T07:02:44.665Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-audit-r2.log",
+        "sha256": "4a77064eea4b56a1382b7b3ad1421f3ce4a7543523f17a326dfe5228010c49a9"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-browser-200-r5",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-browser-200.mjs r5",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:02.022Z",
+      "finishedAt": "2026-10-13T08:33:13.731Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-browser-200-r5.log",
+        "sha256": "3f2f3eb12ddff66c9e359c294c84b623f3ed75f48956e653ab4b6a33d00d8164"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-text-200-r6",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-text-200.mjs r6",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:13.814Z",
+      "finishedAt": "2026-10-13T08:33:43.758Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-text-200-r6.log",
+        "sha256": "8e8676f76e6e02fd961003167805795c22200a6745357631ac5fc4a28e6156fd"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-chrome-200-r7",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence/frontend-completeness-20261013-aaf74b7/native-browser-200.mjs r7 chrome",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:26:48.144Z",
+      "finishedAt": "2026-10-13T08:27:18.715Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-chrome-200-r7.log",
+        "sha256": "9b4a1a82d84492f12d76006e0fedf42e7bdb35ba51497e4c586d8d57d2a92453"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "metadata-generator-after-fix",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/vertical-slices/generate-route-implementation.mjs evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:55:55.856Z",
+      "finishedAt": "2026-10-13T09:55:55.931Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-generator-after-fix.log",
+        "sha256": "fd1826c8ac72da4d1a8aaac2e8e62d989ace259dd77388fb9081df5ff288f911"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "metadata-state-role-final",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/states/generate-route-state-roles.mjs --unit-log evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log --browser-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log --role-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.232Z",
+      "finishedAt": "2026-10-13T09:56:19.304Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-state-role-final.log",
+        "sha256": "650607a21ec011c9328898177b3fa064353754aa73c88648b5cc3f263d7f11d8"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --grep FE022.S05 --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.602Z",
+      "finishedAt": "2026-10-13T09:56:22.344Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-generated-map-e2e.log",
+        "sha256": "96c8bbaf23ab8e6e47268e6ebc57cd3964806280ceea464fc7635512c9e7c996"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-marketing-boundaries",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/vitest/vitest.mjs run --config evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.config.ts evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.test.ts --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:03:53.279Z",
+      "finishedAt": "2026-10-13T10:03:54.078Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-marketing-boundaries.log",
+        "sha256": "1d1bad3f9cbb3ae44d5a0890a01cf9b6158739a4fb71945ef8395844ef1757a1"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    }
+  ],
+  "sourceSnapshotSha256": "be7d184a91fd413fb5ee135f51280438ffaf25b8ff2ea2beeadb23b3e3918ffd"
+}

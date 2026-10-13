@@ -1,0 +1,2382 @@
+{
+  "taskId": "FE009",
+  "stepId": "S05",
+  "executedAt": "2026-10-13T10:07:10.520Z",
+  "facts": [
+    {
+      "name": "Canonical criterion and whole-task acceptance self-review",
+      "action": "Chạy browser luồng task trên React demo với mock HTTP; ghi route/state/role/scenario test IDs, kết quả và log của diff.",
+      "verification": "Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "acceptanceCases": [
+        "FE009.AC01 — Hai shops/roles có dữ liệu tách biệt; membership bị thu hồi không fallback shop khác.",
+        "FE009.AC02 — Form khách giữ input sau 422/412 và refetch; danh sách/tìm kiếm/phân trang đúng.",
+        "FE009.AC03 — Privacy destruction không có đường tắt; thao tác chưa có protocol được giải thích rõ.",
+        "FE009.AC04 — Mock HTTP có nhãn synthetic; API/permissions/token không bị bịa hoặc sửa ngầm.",
+        "FE009.AC05 — Source/type/lint/boundaries và tests liên quan chạy thật, không nhận feature hoàn chỉnh chỉ vì route có component."
+      ],
+      "scopeInterpretation": "Current named owner assertions and actual executions are reviewed against each acceptance. Legacy 54 routes use the current 61-route manifest; approved C05/C06 contracts supersede old address/account catalog gaps. Privacy/OIDC remains unavailable under FE009.S03; manual speech/owner acceptance are not forged."
+    },
+    {
+      "name": "Current route/operation owners",
+      "routes": [
+        {
+          "id": "R01",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "LoginPage"
+        },
+        {
+          "id": "R02",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "WorkspacesPage"
+        },
+        {
+          "id": "R03",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "OnboardingPage"
+        },
+        {
+          "id": "R07",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "CustomersPage"
+        },
+        {
+          "id": "R08",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "CustomerPage"
+        },
+        {
+          "id": "R32",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "TeamPage"
+        },
+        {
+          "id": "R33",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "ShopSettingsPage"
+        },
+        {
+          "id": "R34",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "AuditPage"
+        },
+        {
+          "id": "R35",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "PrivacyPage"
+        },
+        {
+          "id": "R36",
+          "source": "apps/web/src/modules/workspace/index.tsx",
+          "component": "JobPage"
+        },
+        {
+          "id": "R54",
+          "source": "apps/web/src/modules/customers/index.tsx",
+          "component": "ServiceCasesPage"
+        }
+      ],
+      "operationIds": [
+        "approvePrivacyRequest",
+        "beginLogin",
+        "createCustomer",
+        "createPrivacyRequest",
+        "createServiceCase",
+        "createShop",
+        "getCommand",
+        "getCsrfToken",
+        "getCustomer",
+        "getJob",
+        "getMember",
+        "getPrivacyPolicy",
+        "getServiceCase",
+        "getSession",
+        "getShop",
+        "inviteMember",
+        "listAuditEvents",
+        "listCustomers",
+        "listMembers",
+        "listPrivacyRequests",
+        "listServiceCases",
+        "listShops",
+        "revokeMembership",
+        "setServiceCaseStatus",
+        "stepUp",
+        "updateCustomer",
+        "updateMemberRoles",
+        "updatePrivacyPolicy",
+        "updateShop"
+      ],
+      "sourceCrosswalk": {
+        "apiTotal": 245,
+        "required": 224,
+        "referenced": 222,
+        "missing": [
+          {
+            "id": "stepUp",
+            "url": "/auth/step-up",
+            "method": "post"
+          },
+          {
+            "id": "approvePrivacyRequest",
+            "url": "/shops/{shopId}/privacy/requests/{privacyRequestId}/approve",
+            "method": "post"
+          }
+        ],
+        "limits": "stepUp/approvePrivacyRequest deliberately unavailable under FE009.S03 OIDC policy; reference coverage is not code completion."
+      }
+    },
+    {
+      "name": "Executed owner browser cases",
+      "proof": [
+        {
+          "file": "tests/fe009.spec.ts",
+          "sha256": "66424fb9db972021716a768124d80da469502c131fd5d965083009e2e7d26af4",
+          "assertions": [
+            {
+              "line": 40,
+              "text": "expect(page.getByRole('heading',{name:'Chọn cửa hàng',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 41,
+              "text": "expect(page.getByText('Joker Studio · Shop mẫu',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 42,
+              "text": "expect(page.getByText('Cửa hàng mẫu thứ hai',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 45,
+              "text": "expect(page.getByRole('heading',{name:'Tạo cửa hàng',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 50,
+              "text": "expect(page).toHaveURL(/\\/s\\/shop-[^/]+\\/overview$/)"
+            },
+            {
+              "line": 52,
+              "text": "expect(JSON.parse(createCall?.body||'null')).toMatchObject({name:'Workspace kiểm thử FE009',currency:'LAK',timezone:'Asia/Vientiane',locale:'vi-VN'})"
+            },
+            {
+              "line": 53,
+              "text": "expect(page.getByRole('navigation',{name:'Điều hướng chính'}).getByRole('link',{name:/Workspace kiểm thử FE009/})).toBeVisible()"
+            },
+            {
+              "line": 55,
+              "text": "expect(page.getByRole('heading',{name:'Workspace kiểm thử FE009',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 56,
+              "text": "expect(page.getByText('LAK · Asia/Vientiane',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 62,
+              "text": "expect(page.getByRole('heading',{name:'Khách hàng',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 63,
+              "text": "expect(page.getByRole('table',{name:'Danh sách khách hàng'})).toBeVisible()"
+            },
+            {
+              "line": 64,
+              "text": "expect(page.getByRole('columnheader',{name:'Liên hệ'})).toBeVisible()"
+            },
+            {
+              "line": 71,
+              "text": "expect(dialog.getByText('Nhập email đúng định dạng.',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 72,
+              "text": "expect(name).toHaveValue('Khách FE009 mới')"
+            },
+            {
+              "line": 73,
+              "text": "expect(calls.filter(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/customers'))).toHaveLength(0)"
+            },
+            {
+              "line": 75,
+              "text": "expect(dialog.getByLabel('Số điện thoại (không bắt buộc)')).toBeVisible()"
+            },
+            {
+              "line": 76,
+              "text": "expect(dialog.getByLabel('Ghi chú (không bắt buộc)')).toBeVisible()"
+            },
+            {
+              "line": 80,
+              "text": "expect(page).toHaveURL(/\\/customers\\/customer-/)"
+            },
+            {
+              "line": 81,
+              "text": "expect(page.getByRole('heading',{name:'Khách FE009 mới',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 82,
+              "text": "expect(page.getByRole('heading',{name:'Thông tin khách hàng'})).toBeVisible()"
+            },
+            {
+              "line": 84,
+              "text": "expect(JSON.parse(createCall?.body||'null')).toMatchObject({displayName:'Khách FE009 mới',phone:'02012345678',email:'fe009@example.test'})"
+            },
+            {
+              "line": 85,
+              "text": "expect(page.getByLabel('Số điện thoại (không bắt buộc)')).toHaveValue('02012345678')"
+            },
+            {
+              "line": 92,
+              "text": "expect((await staleSave).status()).toBe(412)"
+            },
+            {
+              "line": 94,
+              "text": "expect(comparison).toBeVisible()"
+            },
+            {
+              "line": 95,
+              "text": "expect(comparison.getByText(updatedName,{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 96,
+              "text": "expect(calls.filter(call=>call.method==='PATCH'&&call.path.includes('/shops/shop-demo/customers/'))).toHaveLength(1)"
+            },
+            {
+              "line": 98,
+              "text": "expect(page.getByLabel('Tên khách hàng')).toHaveValue(updatedName)"
+            },
+            {
+              "line": 99,
+              "text": "expect(calls.filter(call=>call.method==='PATCH'&&call.path.includes('/shops/shop-demo/customers/'))).toHaveLength(1)"
+            },
+            {
+              "line": 104,
+              "text": "expect(page.getByRole('heading',{name:updatedName,exact:true})).toBeVisible()"
+            },
+            {
+              "line": 106,
+              "text": "expect(customerPatches).toHaveLength(2)"
+            },
+            {
+              "line": 107,
+              "text": "expect(customerPatches.every(call=>Boolean(call.headers['if-match']))).toBe(true)"
+            },
+            {
+              "line": 108,
+              "text": "expect(customerPatches[1].headers['if-match']).toBe(`\"${latestVersion}\"`)"
+            },
+            {
+              "line": 109,
+              "text": "expect(JSON.parse(customerPatches[1].body||'null')).toMatchObject({displayName:updatedName})"
+            },
+            {
+              "line": 111,
+              "text": "expect(page).toHaveURL(/\\/customers$/)"
+            },
+            {
+              "line": 114,
+              "text": "expect(page.getByRole('link',{name:'Hồ sơ',exact:true})).toHaveCount(1)"
+            },
+            {
+              "line": 115,
+              "text": "expect(page.getByText(updatedName,{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 116,
+              "text": "expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled()"
+            },
+            {
+              "line": 123,
+              "text": "expect(page.getByRole('link',{name:'Hồ sơ',exact:true})).toHaveCount(0)"
+            },
+            {
+              "line": 124,
+              "text": "expect(page.getByText(updatedName,{exact:true})).toHaveCount(0)"
+            },
+            {
+              "line": 130,
+              "text": "expect(page.getByRole('heading',{name:'Linh (khách mẫu)',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 132,
+              "text": "expect(phone).toBeDisabled()"
+            },
+            {
+              "line": 133,
+              "text": "expect(page.getByText(/Một số trường bị ẩn theo quyền/)).toBeVisible()"
+            },
+            {
+              "line": 134,
+              "text": "expect(page.getByRole('heading',{name:'Yêu cầu hỗ trợ'})).toBeVisible()"
+            },
+            {
+              "line": 135,
+              "text": "expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)"
+            },
+            {
+              "line": 139,
+              "text": "expect(page.getByRole('heading',{name:'Linh đã cập nhật',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 140,
+              "text": "expect(phone).toBeDisabled()"
+            },
+            {
+              "line": 141,
+              "text": "expect(phone).toHaveValue('09•• ••• 121')"
+            },
+            {
+              "line": 153,
+              "text": "expect(page.getByRole('heading',{name:'Báo cáo & xuất dữ liệu',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 155,
+              "text": "expect(exportButton).toBeEnabled()"
+            },
+            {
+              "line": 159,
+              "text": "expect(jobLink).toBeVisible()"
+            },
+            {
+              "line": 162,
+              "text": "expect(jobId).toMatch(/^job-/)"
+            },
+            {
+              "line": 164,
+              "text": "expect(JSON.parse(exportRequest?.body||'null')).toMatchObject({reportType:'orders',format:'csv',timezone:'Asia/Vientiane'})"
+            },
+            {
+              "line": 167,
+              "text": "expect(page).toHaveURL(new RegExp(`/s/shop-demo/jobs/${jobId}$`))"
+            },
+            {
+              "line": 168,
+              "text": "expect(page.getByRole('heading',{name:`Công việc ${jobId}`,exact:true})).toBeVisible()"
+            },
+            {
+              "line": 169,
+              "text": "expect(page.getByRole('heading',{name:'Kết quả xử lý',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 170,
+              "text": "expect(page.getByRole('button',{name:'Mở kết quả xuất',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 171,
+              "text": "expect(requests.some(request=>request.method==='GET'&&request.path===`/api/v2/shops/shop-demo/jobs/${jobId}`)).toBe(true)"
+            },
+            {
+              "line": 176,
+              "text": "expect.poll(jobGetCount).toBe(beforeRefetch+1)"
+            },
+            {
+              "line": 176,
+              "text": "expect.poll(jobGetCount)"
+            },
+            {
+              "line": 183,
+              "text": "expect(page.getByRole('heading',{name:'Checklist thiết lập vận hành',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 184,
+              "text": "expect(page.getByText(/Quốc gia kinh doanh không được suy ra từ múi giờ/)).toBeVisible()"
+            },
+            {
+              "line": 185,
+              "text": "expect(page.getByText('Quốc gia và giờ kinh doanh',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 186,
+              "text": "expect(page.getByText('Chưa có trường cấu hình trong contract',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 187,
+              "text": "expect(page.getByRole('link',{name:'Xem preview phí giao',exact:true})).toHaveAttribute('href','/s/shop-demo/shipments')"
+            },
+            {
+              "line": 188,
+              "text": "expect(page.getByRole('link',{name:'Quản lý thành viên',exact:true})).toHaveAttribute('href','/s/shop-demo/settings/team')"
+            },
+            {
+              "line": 189,
+              "text": "expect(writes).toEqual([])"
+            },
+            {
+              "line": 195,
+              "text": "expect(page).toHaveURL(/\\/settings\\/privacy$/)"
+            },
+            {
+              "line": 196,
+              "text": "expect(page.getByRole('heading',{name:'Consent marketing và xác nhận lại',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 197,
+              "text": "expect(page.getByRole('table',{name:'Lịch sử consent khách hàng'})).toBeVisible()"
+            },
+            {
+              "line": 198,
+              "text": "expect(page.getByRole('checkbox',{name:/Ngừng liên hệ marketing/})).toHaveCount(0)"
+            },
+            {
+              "line": 199,
+              "text": "expect(page.getByText(/Tạo yêu cầu chỉ tạo challenge đang chờ; không bật consent/)).toBeVisible()"
+            },
+            {
+              "line": 204,
+              "text": "expect(page.getByRole('heading',{name:'Nhật ký hoạt động',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 207,
+              "text": "expect(auditTable.getByRole('columnheader',{name:header,exact:true})).toBeVisible()"
+            },
+            {
+              "line": 208,
+              "text": "expect(page.getByRole('alert').filter({hasText:'Loại actor, phiên bản policy/config và snapshot chi tiết chưa có trong DTO'})).toBeVisible()"
+            },
+            {
+              "line": 214,
+              "text": "expect(page.getByRole('heading',{name:'Chăm sóc sau bán',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 220,
+              "text": "expect(relatedOrder).toBeEnabled()"
+            },
+            {
+              "line": 223,
+              "text": "expect(relatedOrder).not.toContainText('DH-DEMO-PAID-01')"
+            },
+            {
+              "line": 230,
+              "text": "expect(dialog).toHaveCount(0)"
+            },
+            {
+              "line": 231,
+              "text": "expect(page.getByText('Khách muốn kiểm tra tình trạng yêu cầu trả một phần đơn.',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 233,
+              "text": "expect(JSON.parse(createCall?.body||'null')).toMatchObject({customerId:'c1',orderId:'DH-DEMO-PAID-01',kind:'return_request'})"
+            },
+            {
+              "line": 234,
+              "text": "expect(page.getByRole('link',{name:'DH-DEMO-PAID-01',exact:true}).last()).toBeVisible()"
+            },
+            {
+              "line": 237,
+              "text": "expect(page.getByRole('heading',{name:'Linh (khách mẫu)',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 238,
+              "text": "expect(page.getByRole('heading',{name:'Vận đơn liên quan',exact:true})).toBeVisible()"
+            },
+            {
+              "line": 239,
+              "text": "expect(page.getByText('seed-shipment-10021',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 240,
+              "text": "expect(page.getByRole('link',{name:'DH-DEMO-PAID-01',exact:true}).last()).toBeVisible()"
+            },
+            {
+              "line": 248,
+              "text": "expect(rows.first()).toBeVisible()"
+            },
+            {
+              "line": 250,
+              "text": "expect(initialMemberCount).toBeGreaterThan(1)"
+            },
+            {
+              "line": 252,
+              "text": "expect(ownerRow.getByRole('button',{name:'Thu hồi'})).toBeDisabled()"
+            },
+            {
+              "line": 258,
+              "text": "expect(invite).toHaveCount(0)"
+            },
+            {
+              "line": 259,
+              "text": "expect(rows).toHaveCount(initialMemberCount+1)"
+            },
+            {
+              "line": 261,
+              "text": "expect(JSON.parse(inviteCall?.body||'null')).toMatchObject({email:'fe009-member@example.test',roles:['viewer']})"
+            },
+            {
+              "line": 266,
+              "text": "expect(confirm).toBeVisible()"
+            },
+            {
+              "line": 268,
+              "text": "expect(warehouseRow.getByText('Đã thu hồi',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 269,
+              "text": "expect(ownerRow.getByText('Đang hoạt động',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 271,
+              "text": "expect(revokeCall).toBeDefined()"
+            },
+            {
+              "line": 272,
+              "text": "expect(revokeCall?.headers['if-match']).toBeTruthy()"
+            },
+            {
+              "line": 275,
+              "text": "expect(page.getByRole('alert').filter({hasText:'Bạn không có quyền truy cập màn hình này'})).toBeVisible()"
+            },
+            {
+              "line": 276,
+              "text": "expect(page.getByRole('button',{name:'Mời nhân viên',exact:true})).toHaveCount(0)"
+            },
+            {
+              "line": 282,
+              "text": "expect(page.getByText(/Phê duyệt yêu cầu xóa cần xác thực nâng cao của backend/)).toBeVisible()"
+            },
+            {
+              "line": 289,
+              "text": "expect(dialog).toHaveCount(0)"
+            },
+            {
+              "line": 290,
+              "text": "expect(page.getByText('Chờ phê duyệt',{exact:true})).toBeVisible()"
+            },
+            {
+              "line": 291,
+              "text": "expect(page.getByRole('button',{name:/duyệt ngay|xóa ngay|xác nhận xóa/i})).toHaveCount(0)"
+            },
+            {
+              "line": 293,
+              "text": "expect(JSON.parse(privacyCall?.body||'null')).toMatchObject({customerId:'c1',kind:'delete',reason:'Khách gửi yêu cầu xóa, chờ xác minh theo chính sách lưu giữ.'})"
+            }
+          ],
+          "cases": [
+            {
+              "title": "workspace onboarding creates a shop with an active membership and returns to its scoped route",
+              "line": 37,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3087
+            },
+            {
+              "title": "customer create validates fields, submits through mock HTTP, and preserves edits after a stale version",
+              "line": 59,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4436
+            },
+            {
+              "title": "customer detail keeps redacted contact fields read-only and does not overwrite them on save",
+              "line": 127,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1587
+            },
+            {
+              "title": "job detail follows an export created in the current synthetic shop and can refetch it",
+              "line": 144,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1663
+            },
+            {
+              "title": "FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified",
+              "line": 179,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1307
+            },
+            {
+              "title": "FE009.G05 consent management persists challenges without granting consent before customer action",
+              "line": 192,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1565
+            },
+            {
+              "title": "FE009.H06 audit screen distinguishes available fields from missing contract detail",
+              "line": 202,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1313
+            },
+            {
+              "title": "FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment",
+              "line": 211,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 5688
+            },
+            {
+              "title": "team invitation and membership revoke stay shop-scoped and protect the active owner",
+              "line": 243,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2751
+            },
+            {
+              "title": "privacy delete requests remain pending approval with no frontend step-up shortcut",
+              "line": 279,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2987
+            },
+            {
+              "title": "workspace onboarding creates a shop with an active membership and returns to its scoped route",
+              "line": 37,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3109
+            },
+            {
+              "title": "customer create validates fields, submits through mock HTTP, and preserves edits after a stale version",
+              "line": 59,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4731
+            },
+            {
+              "title": "customer detail keeps redacted contact fields read-only and does not overwrite them on save",
+              "line": 127,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1679
+            },
+            {
+              "title": "job detail follows an export created in the current synthetic shop and can refetch it",
+              "line": 144,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2055
+            },
+            {
+              "title": "FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified",
+              "line": 179,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1411
+            },
+            {
+              "title": "FE009.G05 consent management persists challenges without granting consent before customer action",
+              "line": 192,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2233
+            },
+            {
+              "title": "FE009.H06 audit screen distinguishes available fields from missing contract detail",
+              "line": 202,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1442
+            },
+            {
+              "title": "FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment",
+              "line": 211,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5995
+            },
+            {
+              "title": "team invitation and membership revoke stay shop-scoped and protect the active owner",
+              "line": 243,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3121
+            },
+            {
+              "title": "privacy delete requests remain pending approval with no frontend step-up shortcut",
+              "line": 279,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3724
+            }
+          ]
+        },
+        {
+          "file": "tests/frontend-completeness.spec.ts",
+          "sha256": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
+          "assertions": [
+            {
+              "line": 50,
+              "text": "expect(page.getByRole('heading', { name: detail.heading, exact: true })).toBeVisible()"
+            },
+            {
+              "line": 51,
+              "text": "expect(page.locator('main [role=\"progressbar\"]')).toHaveCount(0)"
+            },
+            {
+              "line": 52,
+              "text": "expect(await page.evaluate(() => (window as ProbeWindow).detailProbe.calls)).toBe(0)"
+            },
+            {
+              "line": 60,
+              "text": "expect(dialog).toBeVisible()"
+            },
+            {
+              "line": 61,
+              "text": "expect(page.getByRole('dialog')).toHaveCount(1)"
+            },
+            {
+              "line": 71,
+              "text": "expect.poll(() => page.evaluate(() => (window as ProbeWindow).detailProbe.calls)).toBe(1)"
+            },
+            {
+              "line": 71,
+              "text": "expect.poll(() => page.evaluate(() => (window as ProbeWindow).detailProbe.calls))"
+            },
+            {
+              "line": 72,
+              "text": "expect(dialog.getByRole('progressbar')).toBeVisible()"
+            },
+            {
+              "line": 73,
+              "text": "expect(dialog.getByText('fetched-' + detail.id, { exact: false })).toHaveCount(0)"
+            },
+            {
+              "line": 74,
+              "text": "expect.poll(() => page.evaluate(() => typeof (window as ProbeWindow).detailProbe.release)).toBe('function')"
+            },
+            {
+              "line": 74,
+              "text": "expect.poll(() => page.evaluate(() => typeof (window as ProbeWindow).detailProbe.release))"
+            },
+            {
+              "line": 76,
+              "text": "expect(dialog.getByText('fetched-' + detail.id, { exact: false })).toBeVisible()"
+            },
+            {
+              "line": 77,
+              "text": "expect(dialog.getByRole('progressbar')).toHaveCount(0)"
+            },
+            {
+              "line": 80,
+              "text": "expect(region).toBeFocused()"
+            },
+            {
+              "line": 84,
+              "text": "expect.poll(() => region.evaluate(element => element.scrollTop)).toBeGreaterThan(scrollBefore.top)"
+            },
+            {
+              "line": 84,
+              "text": "expect.poll(() => region.evaluate(element => element.scrollTop))"
+            },
+            {
+              "line": 87,
+              "text": "expect(geometry.width).toBeLessThanOrEqual(geometry.viewport)"
+            },
+            {
+              "line": 88,
+              "text": "expect(geometry.overflow).toBeLessThanOrEqual(1)"
+            },
+            {
+              "line": 90,
+              "text": "expect(axe.violations).toEqual([])"
+            },
+            {
+              "line": 94,
+              "text": "expect(dialog).toHaveCount(0)"
+            },
+            {
+              "line": 95,
+              "text": "expect(page.getByRole('button', { name: detail.button, exact: true }).first()).toBeFocused()"
+            },
+            {
+              "line": 102,
+              "text": "expect(dialog.getByRole('alert').filter({ hasText: 'DETAIL_FETCH_FAILURE' })).toBeVisible({ timeout: 15000 })"
+            },
+            {
+              "line": 103,
+              "text": "expect(dialog.getByRole('progressbar')).toHaveCount(0)"
+            },
+            {
+              "line": 104,
+              "text": "expect(dialog.getByText('fetched-' + detail.id, { exact: false })).toHaveCount(0)"
+            },
+            {
+              "line": 105,
+              "text": "expect(dialog.getByRole('button', { name: 'Thử lại', exact: true })).toHaveCount(0)"
+            },
+            {
+              "line": 106,
+              "text": "expect(dialog.getByRole('button', { name: 'Thử lại', exact: true })).toBeVisible()"
+            },
+            {
+              "line": 108,
+              "text": "expect(dialog).toHaveCount(0)"
+            }
+          ],
+          "cases": [
+            {
+              "title": "Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4501
+            },
+            {
+              "title": "Completion R26 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1769
+            },
+            {
+              "title": "Completion R26 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1659
+            },
+            {
+              "title": "Completion R26 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2940
+            },
+            {
+              "title": "Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4251
+            },
+            {
+              "title": "Completion R28 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1793
+            },
+            {
+              "title": "Completion R28 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1793
+            },
+            {
+              "title": "Completion R28 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3092
+            },
+            {
+              "title": "Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4002
+            },
+            {
+              "title": "Completion R29 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1662
+            },
+            {
+              "title": "Completion R29 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1717
+            },
+            {
+              "title": "Completion R29 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2951
+            },
+            {
+              "title": "Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4074
+            },
+            {
+              "title": "Completion R30 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1651
+            },
+            {
+              "title": "Completion R30 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1747
+            },
+            {
+              "title": "Completion R30 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2918
+            },
+            {
+              "title": "Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4134
+            },
+            {
+              "title": "Completion R32 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1659
+            },
+            {
+              "title": "Completion R32 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1688
+            },
+            {
+              "title": "Completion R32 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3045
+            },
+            {
+              "title": "Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3327
+            },
+            {
+              "title": "Completion R39 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1615
+            },
+            {
+              "title": "Completion R39 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1630
+            },
+            {
+              "title": "Completion R39 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2979
+            },
+            {
+              "title": "Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 3358
+            },
+            {
+              "title": "Completion R54 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1635
+            },
+            {
+              "title": "Completion R54 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1732
+            },
+            {
+              "title": "Completion R54 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2927
+            },
+            {
+              "title": "Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 4026
+            },
+            {
+              "title": "Completion R37 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1679
+            },
+            {
+              "title": "Completion R37 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 1765
+            },
+            {
+              "title": "Completion R37 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "chromium",
+              "status": "passed",
+              "durationMs": 2943
+            },
+            {
+              "title": "Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4918
+            },
+            {
+              "title": "Completion R26 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1783
+            },
+            {
+              "title": "Completion R26 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1781
+            },
+            {
+              "title": "Completion R26 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2962
+            },
+            {
+              "title": "Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4747
+            },
+            {
+              "title": "Completion R28 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1954
+            },
+            {
+              "title": "Completion R28 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1953
+            },
+            {
+              "title": "Completion R28 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3219
+            },
+            {
+              "title": "Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3846
+            },
+            {
+              "title": "Completion R29 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5214
+            },
+            {
+              "title": "Completion R29 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1870
+            },
+            {
+              "title": "Completion R29 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3022
+            },
+            {
+              "title": "Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4412
+            },
+            {
+              "title": "Completion R30 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1754
+            },
+            {
+              "title": "Completion R30 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1735
+            },
+            {
+              "title": "Completion R30 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3129
+            },
+            {
+              "title": "Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4668
+            },
+            {
+              "title": "Completion R32 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 2042
+            },
+            {
+              "title": "Completion R32 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1750
+            },
+            {
+              "title": "Completion R32 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 5914
+            },
+            {
+              "title": "Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4340
+            },
+            {
+              "title": "Completion R39 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1730
+            },
+            {
+              "title": "Completion R39 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1783
+            },
+            {
+              "title": "Completion R39 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3019
+            },
+            {
+              "title": "Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4340
+            },
+            {
+              "title": "Completion R54 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1757
+            },
+            {
+              "title": "Completion R54 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1736
+            },
+            {
+              "title": "Completion R54 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3048
+            },
+            {
+              "title": "Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+              "line": 66,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4207
+            },
+            {
+              "title": "Completion R37 detail handles 403 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 4925
+            },
+            {
+              "title": "Completion R37 detail handles 404 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 1915
+            },
+            {
+              "title": "Completion R37 detail handles 503 without pretending list data is fetched detail",
+              "line": 99,
+              "project": "firefox",
+              "status": "passed",
+              "durationMs": 3046
+            }
+          ]
+        }
+      ],
+      "negativeExecutions": 2
+    },
+    {
+      "name": "Executed unit owners",
+      "proof": [
+        {
+          "file": "apps/web/tests/versioned-draft.test.tsx",
+          "sha256": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
+          "cases": [
+            "F01/F02/F03 keeps the baseline version and draft across unrelated and conflicting server changes",
+            "F01 requires choices for both-side changes and treats arrays as one field",
+            "F01 rejects outdated comparison choices when the server changes again",
+            "F01 removes newly hidden fields from comparison and outgoing patches",
+            "F05-style save completion preserves edits made after submission and commits the authoritative version",
+            "fingerprints ignore object key order but preserve array order, null and empty values",
+            "F01 releases a dismissed editor baseline before reopening the same resource with newer data"
+          ]
+        },
+        {
+          "file": "apps/web/tests/command-lifetime.test.tsx",
+          "sha256": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
+          "cases": [
+            "F04 rejects a retained execute function from a previous scope before HTTP",
+            "F04 does not report success when the scope closes while authoritative cache refresh is pending",
+            "F04 rejects a pre-aborted execution without sending or recording an unknown mutation",
+            "F04 only completes after authoritative success while the StrictMode scope remains alive"
+          ]
+        },
+        {
+          "file": "apps/web/tests/scope-events.test.tsx",
+          "sha256": "e1ed34a5c53b5f9947dc6ab4226b84497e86169fbd78431075739533b7bfcb78",
+          "cases": [
+            "F09 narrows identified Inbox events and ignores duplicate/out-of-order/foreign-shop events",
+            "F09 revocation closes the stream and refreshes the session even when its sequence is old",
+            "F09 rejects callbacks from a disposed stream after shop/permission changes or unmount"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current dependency gates",
+      "unit": 242,
+      "domain": 117,
+      "sourceMaps": 16,
+      "fullBrowser": 878,
+      "builtArtifact": 6,
+      "coldStages": 13,
+      "limits": "Distinct suite counts are not added into a percentage."
+    },
+    {
+      "name": "Native affected-owner review",
+      "proof": [
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r5.json",
+          "sha256": "a10db819544603176e0493b08ef25eaae1d843acec49c97191ddacf7c562e77d",
+          "count": 8
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/native-text-only-200-current-r6.json",
+          "sha256": "18f699cb737e55b316658ec64bf92166b8586236d082e16fcce1587ce7c9601b",
+          "count": 16
+        },
+        {
+          "path": "evidence/frontend-completeness-20261013-aaf74b7/actual-browser-zoom-200-current-r7.json",
+          "sha256": "0e1173776db95ab8a4bcb2dad62e3dcc0f865552856393c327276d467236d208",
+          "count": 8
+        }
+      ],
+      "scope": "Eight affected detail views; Chromium and installed Chrome browser zoom, Firefox native text-only zoom. Full browser suite covers all existing consumers. Historical global native matrices are not re-certified."
+    },
+    {
+      "name": "Cold source and artifacts",
+      "artifact": "cold-artifacts-final.json",
+      "lockSha256": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a"
+    },
+    {
+      "name": "Review and acceptance boundary",
+      "handoff": "ACCEPTANCE_GUIDE.md",
+      "architecture": "ARCHITECTURE_REVIEW.md",
+      "quality": "quality-gates-final.json",
+      "rawPremiumScanner": "FAIL_EXIT_1: all 14 actual semantic actions reviewed in premium-semantic-review.json; no scanner PASS or owner approval claimed",
+      "ownerAcceptance": "PENDING",
+      "screenReaderSpeech": "NOT_RUN",
+      "hostedCI": "NOT_RUN",
+      "backend": "OUTSIDE_SCOPE"
+    },
+    {
+      "name": "Criterion-specific proof selection",
+      "step": "S05",
+      "verification": "Acceptance dưới đây có bằng chứng browser phù hợp; labels/keyboard/responsive áp dụng; không đòi backend thật. Ghi command/cwd/exit code, expected/observed, log/hash và source snapshot thực. Scope FRONTEND_WITH_SYNTHETIC_MOCK_API; không dùng kết quả prototype hoặc backend chưa chạy.",
+      "interpretation": "Named current owner browser executions, responsive/keyboard/permission cases and declared limits; generated maps trace current routes and preserve scope gaps.",
+      "selectedOperationLocations": [],
+      "selectedBrowserCases": [
+        {
+          "title": "workspace onboarding creates a shop with an active membership and returns to its scoped route",
+          "line": 37,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3087
+        },
+        {
+          "title": "customer create validates fields, submits through mock HTTP, and preserves edits after a stale version",
+          "line": 59,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4436
+        },
+        {
+          "title": "customer detail keeps redacted contact fields read-only and does not overwrite them on save",
+          "line": 127,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1587
+        },
+        {
+          "title": "job detail follows an export created in the current synthetic shop and can refetch it",
+          "line": 144,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1663
+        },
+        {
+          "title": "FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified",
+          "line": 179,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1307
+        },
+        {
+          "title": "FE009.G05 consent management persists challenges without granting consent before customer action",
+          "line": 192,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1565
+        },
+        {
+          "title": "FE009.H06 audit screen distinguishes available fields from missing contract detail",
+          "line": 202,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1313
+        },
+        {
+          "title": "FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment",
+          "line": 211,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 5688
+        },
+        {
+          "title": "team invitation and membership revoke stay shop-scoped and protect the active owner",
+          "line": 243,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2751
+        },
+        {
+          "title": "privacy delete requests remain pending approval with no frontend step-up shortcut",
+          "line": 279,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2987
+        },
+        {
+          "title": "workspace onboarding creates a shop with an active membership and returns to its scoped route",
+          "line": 37,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3109
+        },
+        {
+          "title": "customer create validates fields, submits through mock HTTP, and preserves edits after a stale version",
+          "line": 59,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4731
+        },
+        {
+          "title": "customer detail keeps redacted contact fields read-only and does not overwrite them on save",
+          "line": 127,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1679
+        },
+        {
+          "title": "job detail follows an export created in the current synthetic shop and can refetch it",
+          "line": 144,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2055
+        },
+        {
+          "title": "FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified",
+          "line": 179,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1411
+        },
+        {
+          "title": "FE009.G05 consent management persists challenges without granting consent before customer action",
+          "line": 192,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2233
+        },
+        {
+          "title": "FE009.H06 audit screen distinguishes available fields from missing contract detail",
+          "line": 202,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1442
+        },
+        {
+          "title": "FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment",
+          "line": 211,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5995
+        },
+        {
+          "title": "team invitation and membership revoke stay shop-scoped and protect the active owner",
+          "line": 243,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3121
+        },
+        {
+          "title": "privacy delete requests remain pending approval with no frontend step-up shortcut",
+          "line": 279,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3724
+        },
+        {
+          "title": "Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4501
+        },
+        {
+          "title": "Completion R26 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1769
+        },
+        {
+          "title": "Completion R26 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1659
+        },
+        {
+          "title": "Completion R26 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2940
+        },
+        {
+          "title": "Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4251
+        },
+        {
+          "title": "Completion R28 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1793
+        },
+        {
+          "title": "Completion R28 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1793
+        },
+        {
+          "title": "Completion R28 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3092
+        },
+        {
+          "title": "Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4002
+        },
+        {
+          "title": "Completion R29 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1662
+        },
+        {
+          "title": "Completion R29 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1717
+        },
+        {
+          "title": "Completion R29 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2951
+        },
+        {
+          "title": "Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4074
+        },
+        {
+          "title": "Completion R30 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1651
+        },
+        {
+          "title": "Completion R30 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1747
+        },
+        {
+          "title": "Completion R30 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2918
+        },
+        {
+          "title": "Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4134
+        },
+        {
+          "title": "Completion R32 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1659
+        },
+        {
+          "title": "Completion R32 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1688
+        },
+        {
+          "title": "Completion R32 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3045
+        },
+        {
+          "title": "Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3327
+        },
+        {
+          "title": "Completion R39 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1615
+        },
+        {
+          "title": "Completion R39 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1630
+        },
+        {
+          "title": "Completion R39 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2979
+        },
+        {
+          "title": "Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 3358
+        },
+        {
+          "title": "Completion R54 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1635
+        },
+        {
+          "title": "Completion R54 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1732
+        },
+        {
+          "title": "Completion R54 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2927
+        },
+        {
+          "title": "Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 4026
+        },
+        {
+          "title": "Completion R37 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1679
+        },
+        {
+          "title": "Completion R37 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 1765
+        },
+        {
+          "title": "Completion R37 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "chromium",
+          "status": "passed",
+          "durationMs": 2943
+        },
+        {
+          "title": "Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4918
+        },
+        {
+          "title": "Completion R26 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1783
+        },
+        {
+          "title": "Completion R26 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1781
+        },
+        {
+          "title": "Completion R26 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2962
+        },
+        {
+          "title": "Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4747
+        },
+        {
+          "title": "Completion R28 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1954
+        },
+        {
+          "title": "Completion R28 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1953
+        },
+        {
+          "title": "Completion R28 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3219
+        },
+        {
+          "title": "Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3846
+        },
+        {
+          "title": "Completion R29 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5214
+        },
+        {
+          "title": "Completion R29 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1870
+        },
+        {
+          "title": "Completion R29 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3022
+        },
+        {
+          "title": "Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4412
+        },
+        {
+          "title": "Completion R30 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1754
+        },
+        {
+          "title": "Completion R30 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1735
+        },
+        {
+          "title": "Completion R30 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3129
+        },
+        {
+          "title": "Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4668
+        },
+        {
+          "title": "Completion R32 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 2042
+        },
+        {
+          "title": "Completion R32 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1750
+        },
+        {
+          "title": "Completion R32 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 5914
+        },
+        {
+          "title": "Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4340
+        },
+        {
+          "title": "Completion R39 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1730
+        },
+        {
+          "title": "Completion R39 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1783
+        },
+        {
+          "title": "Completion R39 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3019
+        },
+        {
+          "title": "Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4340
+        },
+        {
+          "title": "Completion R54 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1757
+        },
+        {
+          "title": "Completion R54 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1736
+        },
+        {
+          "title": "Completion R54 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3048
+        },
+        {
+          "title": "Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports",
+          "line": 66,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4207
+        },
+        {
+          "title": "Completion R37 detail handles 403 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 4925
+        },
+        {
+          "title": "Completion R37 detail handles 404 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 1915
+        },
+        {
+          "title": "Completion R37 detail handles 503 without pretending list data is fetched detail",
+          "line": 99,
+          "project": "firefox",
+          "status": "passed",
+          "durationMs": 3046
+        }
+      ],
+      "ownerSourceAssertions": [
+        {
+          "file": "tests/fe009.spec.ts",
+          "sha256": "66424fb9db972021716a768124d80da469502c131fd5d965083009e2e7d26af4",
+          "assertionLines": [
+            40,
+            41,
+            42,
+            45,
+            50,
+            52,
+            53,
+            55,
+            56,
+            62,
+            63,
+            64,
+            71,
+            72,
+            73,
+            75,
+            76,
+            80,
+            81,
+            82,
+            84,
+            85,
+            92,
+            94,
+            95,
+            96,
+            98,
+            99,
+            104,
+            106,
+            107,
+            108,
+            109,
+            111,
+            114,
+            115,
+            116,
+            123,
+            124,
+            130,
+            132,
+            133,
+            134,
+            135,
+            139,
+            140,
+            141,
+            153,
+            155,
+            159,
+            162,
+            164,
+            167,
+            168,
+            169,
+            170,
+            171,
+            176,
+            176,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            195,
+            196,
+            197,
+            198,
+            199,
+            204,
+            207,
+            208,
+            214,
+            220,
+            223,
+            230,
+            231,
+            233,
+            234,
+            237,
+            238,
+            239,
+            240,
+            248,
+            250,
+            252,
+            258,
+            259,
+            261,
+            266,
+            268,
+            269,
+            271,
+            272,
+            275,
+            276,
+            282,
+            289,
+            290,
+            291,
+            293
+          ]
+        },
+        {
+          "file": "tests/frontend-completeness.spec.ts",
+          "sha256": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
+          "assertionLines": [
+            50,
+            51,
+            52,
+            60,
+            61,
+            71,
+            71,
+            72,
+            73,
+            74,
+            74,
+            76,
+            77,
+            80,
+            84,
+            84,
+            87,
+            88,
+            90,
+            94,
+            95,
+            102,
+            103,
+            104,
+            105,
+            106,
+            108
+          ]
+        }
+      ],
+      "policyLimits": "stepUp/approvePrivacyRequest unavailable as required by FE009.S03, not implemented or removed from denominator."
+    }
+  ],
+  "executionRecords": [
+    {
+      "stage": "final-verify-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run verify",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:01:06.981Z",
+      "finishedAt": "2026-10-13T10:04:18.552Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-verify-r3.log",
+        "sha256": "8a2bc419fb81685bf2f6f73645aff8438ed20f8e15a7c43d3788f60eec4537c5"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-unit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" test -- --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:35.330Z",
+      "finishedAt": "2026-10-13T07:02:42.025Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log",
+        "sha256": "d28976d231b13835d4807b6afa47ed16e8bbb728e2d40f2da4809d9a935b1dab"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-source-maps-r4",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" --test tests/fe011-source-map.test.mjs tests/fe012-source-map.test.mjs tests/fe013-source-map.test.mjs tests/fe014-source-map.test.mjs tests/fe015-source-map.test.mjs tests/fe016-source-map.test.mjs tests/fe017-source-map.test.mjs tests/fe018-source-map.test.mjs tests/fe020-source-map.test.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:04:18.629Z",
+      "finishedAt": "2026-10-13T10:04:18.788Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-source-maps-r4.log",
+        "sha256": "1f11d1774f5a281c635e13a5103ffea8cd1a15a8dbe8cb3ce221e7101b67c567"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-e2e-r8",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config evidence\\frontend-completeness-20261013-aaf74b7\\final-supported-matrix.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:17:44.501Z",
+      "finishedAt": "2026-10-13T09:38:22.202Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+        "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-built-demo",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test --config playwright.built-demo.config.ts --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:38:46.673Z",
+      "finishedAt": "2026-10-13T09:42:01.737Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-built-demo.log",
+        "sha256": "8e58d50eaf56c321c12b6b624c93f1b3b4179be1d9d32fb07c3d02ce68886c04"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-kit-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" ../botsales-kit/scripts/validate-kit.mjs",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.394Z",
+      "finishedAt": "2026-10-13T07:02:42.544Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-kit-r3.log",
+        "sha256": "88d853cfe1cce38738a93c30a9da799eadb00b50cb751133587d7295c3f2886d"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-doctor-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" run doctor",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.639Z",
+      "finishedAt": "2026-10-13T07:02:42.844Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-doctor-r3.log",
+        "sha256": "672964dbb21e82e121d2af5d557c6560d07f6fcdea96a2be8052b7f46d0f2d1c"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-dependencies-r3",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" ls --all",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:42.935Z",
+      "finishedAt": "2026-10-13T07:02:43.508Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-dependencies-r3.log",
+        "sha256": "1547b4c816afc52c63f9396fcf38087f3d190d889196fe40de8c42207bdeffb6"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-audit-r2",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" audit --omit=dev --json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T07:02:43.608Z",
+      "finishedAt": "2026-10-13T07:02:44.665Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-audit-r2.log",
+        "sha256": "4a77064eea4b56a1382b7b3ad1421f3ce4a7543523f17a326dfe5228010c49a9"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-browser-200-r5",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-browser-200.mjs r5",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:02.022Z",
+      "finishedAt": "2026-10-13T08:33:13.731Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-browser-200-r5.log",
+        "sha256": "3f2f3eb12ddff66c9e359c294c84b623f3ed75f48956e653ab4b6a33d00d8164"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-text-200-r6",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence\\frontend-completeness-20261013-aaf74b7\\native-text-200.mjs r6",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:33:13.814Z",
+      "finishedAt": "2026-10-13T08:33:43.758Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-text-200-r6.log",
+        "sha256": "8e8676f76e6e02fd961003167805795c22200a6745357631ac5fc4a28e6156fd"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "final-native-chrome-200-r7",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" evidence/frontend-completeness-20261013-aaf74b7/native-browser-200.mjs r7 chrome",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T08:26:48.144Z",
+      "finishedAt": "2026-10-13T08:27:18.715Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-native-chrome-200-r7.log",
+        "sha256": "9b4a1a82d84492f12d76006e0fedf42e7bdb35ba51497e4c586d8d57d2a92453"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": [
+        {
+          "path": "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs",
+          "beforeSha256": "92b0859475b342654958d330cf897ec9e32fb947a5d566a5d70588c2a2906a46",
+          "afterSha256": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
+          "proof": "proof-tool-delta.json"
+        }
+      ]
+    },
+    {
+      "stage": "metadata-generator-after-fix",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/vertical-slices/generate-route-implementation.mjs evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:55:55.856Z",
+      "finishedAt": "2026-10-13T09:55:55.931Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-generator-after-fix.log",
+        "sha256": "fd1826c8ac72da4d1a8aaac2e8e62d989ace259dd77388fb9081df5ff288f911"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "metadata-state-role-final",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" tests/states/generate-route-state-roles.mjs --unit-log evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log --browser-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log --role-log evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.232Z",
+      "finishedAt": "2026-10-13T09:56:19.304Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/metadata-state-role-final.log",
+        "sha256": "650607a21ec011c9328898177b3fa064353754aa73c88648b5cc3f263d7f11d8"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-generated-map-e2e",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --grep FE022.S05 --reporter=line,json",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T09:56:19.602Z",
+      "finishedAt": "2026-10-13T09:56:22.344Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-generated-map-e2e.log",
+        "sha256": "96c8bbaf23ab8e6e47268e6ebc57cd3964806280ceea464fc7635512c9e7c996"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    },
+    {
+      "stage": "final-marketing-boundaries",
+      "command": "\"C:\\Program Files\\nodejs\\node.exe\" node_modules/vitest/vitest.mjs run --config evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.config.ts evidence/frontend-completeness-20261013-aaf74b7/marketing-boundaries.test.ts --reporter=verbose",
+      "cwd": "C:\\Users\\Joker-PC\\Documents\\Projects\\Bot-AI-Ban-hang-FB\\BotSalesAI_Frontend",
+      "startedAt": "2026-10-13T10:03:53.279Z",
+      "finishedAt": "2026-10-13T10:03:54.078Z",
+      "exitCode": 0,
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261013-aaf74b7/final-marketing-boundaries.log",
+        "sha256": "1d1bad3f9cbb3ae44d5a0890a01cf9b6158739a4fb71945ef8395844ef1757a1"
+      },
+      "sourceDrift": [],
+      "postRunProofToolChanges": []
+    }
+  ],
+  "sourceSnapshotSha256": "e51747a67fda222db7d1bbc42425b68e23aa68566eb71f7afe5f11e7ddb14031"
+}
