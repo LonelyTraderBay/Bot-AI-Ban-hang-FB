@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2026-10-09T05:11:37.568Z",
+  "generatedAt": "2026-10-13T09:56:19.277Z",
   "scope": "FRONTEND_WITH_SYNTHETIC_MOCK_API",
   "sourceOfTruth": [
     "../botsales-kit/contracts/route-manifest.json",
@@ -8,20 +8,20 @@
   ],
   "inputs": [
     {
-      "path": "evidence/frontend-spacing-density-20261009/runs/density-1791517338471-44912/unit.log",
-      "sha256": "d1928a0902ebc21f0c0780bc9467ca4e0f52beb179b91314a6cf1533aee097a8"
+      "path": "evidence/frontend-completeness-20261013-aaf74b7/final-unit-r3.log",
+      "sha256": "d28976d231b13835d4807b6afa47ed16e8bbb728e2d40f2da4809d9a935b1dab"
     },
     {
-      "path": "evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
-      "sha256": "8c35ba10b993a303946c89addd4dcb04c7fc718f5cff8daa5a74f2e3fd8fe85d"
+      "path": "evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
     },
     {
-      "path": "evidence/frontend-spacing-density-20261009/runs/density-1791517621537-90700/e2e.log",
-      "sha256": "8c35ba10b993a303946c89addd4dcb04c7fc718f5cff8daa5a74f2e3fd8fe85d"
+      "path": "evidence/frontend-completeness-20261013-aaf74b7/final-e2e-r8.log",
+      "sha256": "4df155342262679e50ff87ba18546ecfa9e135817bcb376b2006d1ec575cbc6b"
     }
   ],
   "summary": {
-    "routes": 54,
+    "routes": 61,
     "roles": 7,
     "canonicalRouteStates": [
       "loading",
@@ -36,13 +36,13 @@
     "passingGlobalStateCases": 19,
     "routeMountSmoke": "PASS",
     "routeSuccessComposition": "PASS",
-    "routeSpecificSuccessRoutes": 54,
+    "routeSpecificSuccessRoutes": 61,
     "routeEmptyComposition": "PASS",
     "routeSpecificEmptyRoutes": 9,
-    "routeSpecificStateCells": 163,
+    "routeSpecificStateCells": 182,
     "observedDeniedRouteRoleCase": "viewer@R22",
     "routeRoleBrowserMatrix": "PASS",
-    "passedRouteRoleCases": 357
+    "passedRouteRoleCases": 399
   },
   "globalStateCases": [
     {
@@ -834,11 +834,11 @@
           "routeSpecificBehavior": "NOT_CLAIMED"
         },
         "empty": {
-          "result": "NOT_APPLICABLE",
+          "result": "SHARED_UI_TESTED",
           "evidence": [
-            "This route has no collection response to render as an empty list."
+            "apps/web/tests/components.test.tsx#empty"
           ],
-          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+          "routeSpecificBehavior": "NOT_CLAIMED"
         },
         "error": {
           "result": "ROUTE_SPECIFIC_TESTED",
@@ -871,11 +871,11 @@
           "routeSpecificBehavior": "ASSERTED"
         },
         "command_unknown": {
-          "result": "NOT_APPLICABLE",
+          "result": "SHARED_UI_TESTED",
           "evidence": [
-            "This route has no command response that can become unknown."
+            "apps/web/tests/states/fe023-state.test.tsx#unknown-result"
           ],
-          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+          "routeSpecificBehavior": "NOT_CLAIMED"
         },
         "capability_unavailable": {
           "result": "SHARED_UI_TESTED",
@@ -4731,6 +4731,578 @@
           "result": "SHARED_UI_TESTED",
           "evidence": [
             "apps/web/tests/states/fe023-state.test.tsx#stale-refetch"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "success": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/frontend.spec.ts#all-route-smoke"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "command_unknown": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route has no command response that can become unknown."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        },
+        "capability_unavailable": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#capability-unavailable"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        }
+      }
+    },
+    {
+      "id": "R55",
+      "path": "/s/:shopId/settings/warehouses",
+      "title": "Quản trị kho",
+      "readPermission": "inventory.read",
+      "access": {
+        "owner": "ALLOWED_BY_CATALOG",
+        "manager": "ALLOWED_BY_CATALOG",
+        "sales": "ALLOWED_BY_CATALOG",
+        "warehouse": "ALLOWED_BY_CATALOG",
+        "accountant": "DENIED_BY_CATALOG",
+        "bot_admin": "DENIED_BY_CATALOG",
+        "viewer": "ALLOWED_BY_CATALOG"
+      },
+      "roleEvidence": {
+        "owner": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "manager": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "sales": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "warehouse": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "accountant": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "bot_admin": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "viewer": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED"
+      },
+      "states": {
+        "loading": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#loading"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "empty": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/components.test.tsx#empty"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "error": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/states/route-error-composition.spec.ts#route-error-composition",
+            "apps/web/tests/components.test.tsx#error-retry"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "forbidden": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/route-role-matrix.spec.ts#route-forbidden-composition",
+            "apps/web/tests/states/fe023-state.test.tsx#forbidden"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "stale_or_offline": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#stale-refetch"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "success": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/frontend.spec.ts#all-route-smoke"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "command_unknown": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#unknown-result"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "capability_unavailable": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#capability-unavailable"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        }
+      }
+    },
+    {
+      "id": "R56",
+      "path": "/s/:shopId/finance/accounts",
+      "title": "Tài khoản kế toán",
+      "readPermission": "finance.read",
+      "access": {
+        "owner": "ALLOWED_BY_CATALOG",
+        "manager": "ALLOWED_BY_CATALOG",
+        "sales": "DENIED_BY_CATALOG",
+        "warehouse": "DENIED_BY_CATALOG",
+        "accountant": "ALLOWED_BY_CATALOG",
+        "bot_admin": "DENIED_BY_CATALOG",
+        "viewer": "DENIED_BY_CATALOG"
+      },
+      "roleEvidence": {
+        "owner": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "manager": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "sales": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "warehouse": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "accountant": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "bot_admin": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "viewer": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED"
+      },
+      "states": {
+        "loading": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#loading"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "empty": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/components.test.tsx#empty"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "error": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/states/route-error-composition.spec.ts#route-error-composition",
+            "apps/web/tests/components.test.tsx#error-retry"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "forbidden": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/route-role-matrix.spec.ts#route-forbidden-composition",
+            "apps/web/tests/states/fe023-state.test.tsx#forbidden"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "stale_or_offline": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#stale-refetch"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "success": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/frontend.spec.ts#all-route-smoke"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "command_unknown": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#unknown-result"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "capability_unavailable": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#capability-unavailable"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        }
+      }
+    },
+    {
+      "id": "R57",
+      "path": "/s/:shopId/finance/opening-balances",
+      "title": "Mở sổ kế toán",
+      "readPermission": "finance.read",
+      "access": {
+        "owner": "ALLOWED_BY_CATALOG",
+        "manager": "ALLOWED_BY_CATALOG",
+        "sales": "DENIED_BY_CATALOG",
+        "warehouse": "DENIED_BY_CATALOG",
+        "accountant": "ALLOWED_BY_CATALOG",
+        "bot_admin": "DENIED_BY_CATALOG",
+        "viewer": "DENIED_BY_CATALOG"
+      },
+      "roleEvidence": {
+        "owner": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "manager": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "sales": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "warehouse": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "accountant": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "bot_admin": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "viewer": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED"
+      },
+      "states": {
+        "loading": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#loading"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "empty": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/components.test.tsx#empty"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "error": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/states/route-error-composition.spec.ts#route-error-composition",
+            "apps/web/tests/components.test.tsx#error-retry"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "forbidden": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/route-role-matrix.spec.ts#route-forbidden-composition",
+            "apps/web/tests/states/fe023-state.test.tsx#forbidden"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "stale_or_offline": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#stale-refetch"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "success": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/frontend.spec.ts#all-route-smoke"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "command_unknown": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#unknown-result"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "capability_unavailable": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#capability-unavailable"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        }
+      }
+    },
+    {
+      "id": "R58",
+      "path": "/s/:shopId/finance/ledger",
+      "title": "Sổ cái",
+      "readPermission": "finance.read",
+      "access": {
+        "owner": "ALLOWED_BY_CATALOG",
+        "manager": "ALLOWED_BY_CATALOG",
+        "sales": "DENIED_BY_CATALOG",
+        "warehouse": "DENIED_BY_CATALOG",
+        "accountant": "ALLOWED_BY_CATALOG",
+        "bot_admin": "DENIED_BY_CATALOG",
+        "viewer": "DENIED_BY_CATALOG"
+      },
+      "roleEvidence": {
+        "owner": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "manager": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "sales": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "warehouse": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "accountant": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "bot_admin": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "viewer": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED"
+      },
+      "states": {
+        "loading": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#loading"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "empty": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/components.test.tsx#empty"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "error": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/states/route-error-composition.spec.ts#route-error-composition",
+            "apps/web/tests/components.test.tsx#error-retry"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "forbidden": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/route-role-matrix.spec.ts#route-forbidden-composition",
+            "apps/web/tests/states/fe023-state.test.tsx#forbidden"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "stale_or_offline": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#stale-refetch"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "success": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/frontend.spec.ts#all-route-smoke"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "command_unknown": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route has no command response that can become unknown."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        },
+        "capability_unavailable": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route exposes no write/action capability."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        }
+      }
+    },
+    {
+      "id": "R59",
+      "path": "/s/:shopId/finance/trial-balance",
+      "title": "Cân đối phát sinh",
+      "readPermission": "finance.read",
+      "access": {
+        "owner": "ALLOWED_BY_CATALOG",
+        "manager": "ALLOWED_BY_CATALOG",
+        "sales": "DENIED_BY_CATALOG",
+        "warehouse": "DENIED_BY_CATALOG",
+        "accountant": "ALLOWED_BY_CATALOG",
+        "bot_admin": "DENIED_BY_CATALOG",
+        "viewer": "DENIED_BY_CATALOG"
+      },
+      "roleEvidence": {
+        "owner": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "manager": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "sales": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "warehouse": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "accountant": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "bot_admin": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "viewer": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED"
+      },
+      "states": {
+        "loading": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#loading"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "empty": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route has no collection response to render as an empty list."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        },
+        "error": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/states/route-error-composition.spec.ts#route-error-composition",
+            "apps/web/tests/components.test.tsx#error-retry"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "forbidden": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/route-role-matrix.spec.ts#route-forbidden-composition",
+            "apps/web/tests/states/fe023-state.test.tsx#forbidden"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "stale_or_offline": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#stale-refetch"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "success": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/frontend.spec.ts#all-route-smoke"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "command_unknown": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route has no command response that can become unknown."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        },
+        "capability_unavailable": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route exposes no write/action capability."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        }
+      }
+    },
+    {
+      "id": "R60",
+      "path": "/s/:shopId/finance/balance-sheet",
+      "title": "Cân đối quản trị",
+      "readPermission": "finance.read",
+      "access": {
+        "owner": "ALLOWED_BY_CATALOG",
+        "manager": "ALLOWED_BY_CATALOG",
+        "sales": "DENIED_BY_CATALOG",
+        "warehouse": "DENIED_BY_CATALOG",
+        "accountant": "ALLOWED_BY_CATALOG",
+        "bot_admin": "DENIED_BY_CATALOG",
+        "viewer": "DENIED_BY_CATALOG"
+      },
+      "roleEvidence": {
+        "owner": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "manager": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "sales": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "warehouse": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "accountant": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "bot_admin": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED",
+        "viewer": "ROUTE_READ_PERMISSION_BROWSER_MATRIX_TESTED"
+      },
+      "states": {
+        "loading": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#loading"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "empty": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route has no collection response to render as an empty list."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        },
+        "error": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/states/route-error-composition.spec.ts#route-error-composition",
+            "apps/web/tests/components.test.tsx#error-retry"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "forbidden": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/route-role-matrix.spec.ts#route-forbidden-composition",
+            "apps/web/tests/states/fe023-state.test.tsx#forbidden"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "stale_or_offline": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/states/fe023-state.test.tsx#stale-refetch"
+          ],
+          "routeSpecificBehavior": "NOT_CLAIMED"
+        },
+        "success": {
+          "result": "ROUTE_SPECIFIC_TESTED",
+          "evidence": [
+            "tests/frontend.spec.ts#all-route-smoke"
+          ],
+          "routeSpecificBehavior": "ASSERTED"
+        },
+        "command_unknown": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route has no command response that can become unknown."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        },
+        "capability_unavailable": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route exposes no write/action capability."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        }
+      }
+    },
+    {
+      "id": "R61",
+      "path": "/consent/confirm",
+      "title": "Xác nhận quyền marketing",
+      "readPermission": null,
+      "access": {
+        "owner": "PUBLIC",
+        "manager": "PUBLIC",
+        "sales": "PUBLIC",
+        "warehouse": "PUBLIC",
+        "accountant": "PUBLIC",
+        "bot_admin": "PUBLIC",
+        "viewer": "PUBLIC"
+      },
+      "roleEvidence": {
+        "owner": "ROUTE_MOUNT_SMOKE_ONLY",
+        "manager": "NOT_TESTED_FOR_THIS_ROUTE",
+        "sales": "NOT_TESTED_FOR_THIS_ROUTE",
+        "warehouse": "NOT_TESTED_FOR_THIS_ROUTE",
+        "accountant": "NOT_TESTED_FOR_THIS_ROUTE",
+        "bot_admin": "NOT_TESTED_FOR_THIS_ROUTE",
+        "viewer": "NOT_TESTED_FOR_THIS_ROUTE"
+      },
+      "states": {
+        "loading": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route has no route-owned read operation to delay."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        },
+        "empty": {
+          "result": "NOT_APPLICABLE",
+          "evidence": [
+            "This route has no collection response to render as an empty list."
+          ],
+          "routeSpecificBehavior": "NOT_APPLICABLE_BY_ROUTE_CONTRACT"
+        },
+        "error": {
+          "result": "SHARED_UI_TESTED",
+          "evidence": [
+            "apps/web/tests/components.test.tsx#error-retry"
           ],
           "routeSpecificBehavior": "NOT_CLAIMED"
         },

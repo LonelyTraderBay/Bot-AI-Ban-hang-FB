@@ -65,10 +65,10 @@ test('FE014 procurement routes, permissions, DTOs and current source follow cano
     match(procurement, /disabled=\{unresolvedSend\}[\s\S]*Gửi đơn mua/, 'purchase send action disappears while a prior result remains unresolved');
     match(procurement, /if \(error instanceof UnknownResultError\) setAction\(null\)/, 'unknown send closes its confirmation dialog and preserves the error in the purchase detail');
     match(procurement, /permission="procurement\.send"/, 'send permission is distinct from purchase write');
-    match(procurement, /Không bao gồm quyền chuyển tiền|không cho phép tự chuyển tiền/, 'purchase actions do not imply payment permission');
+    match(procurement, /Không bao gồm quyền chuyển tiền|không cho phép tự chuyển tiền|Không chuyển tiền;/, 'purchase actions do not imply payment permission');
     match(mock, /p\.warehouseId === rule\.warehouseId/, 'reorder projection scopes active PO quantities to warehouse and SKU');
     match(mock, /Quy tắc min-max; đã trừ hàng đang đặt\. Không phải dự báo AI\./, 'mock discloses rule-based suggestion without invented forecast confidence');
-    match(mock, /policy\.kind === 'procurement' && policy\.enabled && !!policy\.limitAmount/, 'mock auto-send requires an active, limited procurement budget in the current shop');
+    match(mock, /policy\.kind === 'procurement' && policy\.enabled === true && !!policy\.limitAmount && !!approval/, 'mock auto-send requires an active, limited procurement budget in the current shop');
     match(mock, /ensure\(supplier\.status === 'approved'/, 'mock rejects unapproved suppliers for purchase');
     match(mock, /ensure\(num\(l\.quantity\) >= num\(offer\.minimumQuantity\) && num\(l\.quantity\) % num\(offer\.packSize\) === 0/, 'mock enforces supplier MOQ and pack-size constraints');
     match(mock, /ensure\(p\.status === 'approved' && a\.status === 'approved'[\s\S]*a\.resourceVersion === p\.version/, 'mock rejects stale or mismatched purchase approval');

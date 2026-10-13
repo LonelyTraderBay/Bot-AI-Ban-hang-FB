@@ -45,7 +45,7 @@ test('FE017 R23-R25 operations and action permissions match canonical routes', (
 test('FE017 uses the user-approved permission and lifecycle UI substitute without inventing a Knowledge DTO field', () => {
     const fileUpload = openapi.components.schemas.FileUpload;
     assert.deepEqual(fileUpload.required, ['file', 'purpose']);
-    assert.deepEqual(fileUpload.properties.purpose.enum, ['product_image', 'product_import', 'knowledge_source']);
+    assert.deepEqual(fileUpload.properties.purpose.enum, ['product_image', 'product_import', 'knowledge_source', 'bank_statement', 'cod_statement', 'conversation_media']);
     const knowledge = openapi.components.schemas.Knowledge;
     assert.ok(knowledge.properties.status);
     assert.equal(knowledge.properties.allowedActions, undefined, 'do not invent an uncontracted action property');

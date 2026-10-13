@@ -5,7 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
 import { isolatedViteCacheDir } from './scripts/vite-cache.mjs';
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
-const runId = `playwright-${process.pid}-${randomUUID()}`;
+const runId = process.env.BOTSALES_PLAYWRIGHT_RUN_ID || `playwright-${process.pid}-${randomUUID()}`;
+process.env.BOTSALES_PLAYWRIGHT_RUN_ID = runId;
 const cacheDir = isolatedViteCacheDir(projectRoot, 'playwright-webserver', runId);
 
 // Playwright workers inherit this ID; per-test Vite servers use a separate cache role.

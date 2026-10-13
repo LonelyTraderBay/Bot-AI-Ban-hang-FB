@@ -163,7 +163,7 @@ test('FE020.F03 operations exception filter groups overdue, blocked, and unclaim
     const panel = page.getByTestId('operation-exceptions');
     await expect(panel).toContainText('Chỉ lọc trang dữ liệu hiện đang tải');
     await panel.getByRole('button', { name: /Chỉ xem ngoại lệ/ }).click();
-    const table = page.getByRole('table');
+    const table = page.getByRole('table', { name: 'Công việc vận hành', exact: true });
     for (const sourceRef of ['DEMO-SHIPMENT-LATE', 'DEMO-BANK-MISMATCH', 'DEMO-ORDER-UNCLAIMED'])
         await expect(table.getByRole('row').filter({ hasText: sourceRef })).toBeVisible();
     await expect(table.getByRole('row').filter({ hasText: 'DH-DEMO-PAID-01' })).toHaveCount(0);

@@ -16,6 +16,7 @@ test('FE015 finance routes, capabilities, operations and DTOs follow canonical c
         readText('../apps/web/src/shared/api/hooks.ts'),
         readText('../../botsales-kit/execution/frontend-evidence/FE015/S01-route-operation-map.md'),
     ]);
+    const currentUi = await readText('../apps/web/src/modules/finance/entry-editor.tsx') + await readText('../apps/web/src/modules/finance/statement-import.tsx') + ui + await readText('../apps/web/src/modules/finance/journal-editor.tsx') + await readText('../apps/web/src/modules/finance/accounts.tsx');
     const checks = [];
     const eq = (actual, expected, label) => { assert.deepEqual(actual, expected, label); checks.push(label); };
     const ok = (condition, label) => { assert.ok(condition, label); checks.push(label); };
@@ -26,7 +27,7 @@ test('FE015 finance routes, capabilities, operations and DTOs follow canonical c
         ['R21', '/s/:shopId/finance/entries', ['listFinanceEntries', 'getFinanceEntry', 'getCommand'], 'finance.read'],
         ['R22', '/s/:shopId/finance/profit-loss', ['getProfitLoss'], 'finance.read'],
         ['R48', '/s/:shopId/finance/journals', ['listJournals', 'getJournal'], 'finance.read'],
-        ['R49', '/s/:shopId/finance/reconciliation', ['listReconciliationCases', 'listBankTransactions', 'listCODSettlements'], 'finance.read'],
+        ['R49', '/s/:shopId/finance/reconciliation', ['listReconciliationCases', 'listBankTransactions', 'listCODSettlements', 'listStatementFormats'], 'finance.read'],
         ['R50', '/s/:shopId/finance/debts-periods', ['listDebtItems', 'listAccountingPeriods'], 'finance.read'],
     ];
     for (const [id, path, reads, permission] of expected) {
@@ -36,7 +37,7 @@ test('FE015 finance routes, capabilities, operations and DTOs follow canonical c
         for (const op of route.readOperations) {
             ok(operations[op], `${op} exists in generated operation registry`);
             if (op === 'getCommand') match(hooks, /request\('getCommand'/, `${op} recovery lookup uses shared request client`);
-            else match(ui, new RegExp(`useApi\\('${op}'`), `${op} is called through shared API hook`);
+            else match(currentUi, new RegExp(`use(?:Api|PagedApi)\\('${op}'`), `${op} is called through shared API hook`);
         }
     }
     const mutationOwners = new Map([
@@ -50,12 +51,12 @@ test('FE015 finance routes, capabilities, operations and DTOs follow canonical c
         const canonical = Object.values(openapi.paths).flatMap(item => Object.values(item)).find(item => item.operationId === op);
         ok(canonical, `${op} exists in canonical OpenAPI`);
         eq(canonical['x-permission'], permission, `${op} permission matches OpenAPI`);
-        match(ui, new RegExp(`useCommand\\('${op}'`), `${op} is dispatched via command hook`);
+        match(currentUi, new RegExp(`useCommand\\('${op}'`), `${op} is dispatched via command hook`);
     }
     eq(plan.tasks.find(task => task.id === 'FE015').routeIds, expected.map(([id]) => id), 'task route list matches mapped routes');
     eq(plan.tasks.find(task => task.id === 'FE015').operationIds.slice().sort(), [
         ...expected.flatMap(([, , reads]) => reads), ...mutationOwners.keys(),
-    ].filter((id, index, ids) => ids.indexOf(id) === index).sort(), 'task operation list matches read/write map');
+    ].filter((id, index, ids) => id !== 'listStatementFormats' && ids.indexOf(id) === index).sort(), 'original API 2.0 task operation list matches its original read/write map; current statement formats are checked independently above');
     for (const id of plan.tasks.find(task => task.id === 'FE015').operationIds)
         ok(operations[id] || id === 'getCommand', `${id} resolves to canonical operation`);
 
@@ -70,13 +71,15 @@ test('FE015 finance routes, capabilities, operations and DTOs follow canonical c
     match(ui, /useApi\('getCashflow', \{ query: report\.query \}/, 'cashflow sends from/to/timezone');
     match(ui, /useApi\('getProfitLoss', \{ query: report\.query \}/, 'P&L sends from/to/timezone');
     match(ui, /function decimalUnits[\s\S]*BigInt/, 'journal balance validation uses exact integer decimal units');
-    match(ui, /listAccountingPeriods[\s\S]*periodOpen/, 'journal editor reads and enforces accounting period state');
+    match(currentUi, /useApi\('listAccountingPeriods'\)/, 'journal editor reads accounting periods through shared transport');
+    match(currentUi, /if\(period\?\.state!=='open'\)\{form\.setError/ , 'journal editor enforces the current open period before submission');
     match(ui, /useApi\('getFinanceEntry'/, 'entry detail loads the canonical resource before edit/post/reverse');
-    match(ui, /chưa có API danh mục tài khoản/i, 'UI discloses missing account catalog');
+    match(currentUi, /usePagedApi\('listAccounts',\{query:\{status:'active'\}\}\)/, 'journal editor uses the current canonical active account catalog');
+    eq(operations.listAccounts.permission, 'finance.read', 'account catalog retains separate canonical read permission');
     match(mock, /input\.query\.get\('from'\)/, 'reports validate query parameters in mock service');
     match(mock, /case 'getCashflow': return cashflow\(shopId, reportWindow\(input\)\)/, 'cashflow mock receives query window');
     match(mock, /case 'getProfitLoss': return profitLoss\(shopId, reportWindow\(input\)\)/, 'P&L mock receives query window');
-    match(mock, /timestamp >= window\.start && timestamp < window\.end/, 'mock enforces half-open report period');
+    match(await readText('../apps/web/src/mocks/accounting.ts'), /journalInstant\(shopId,j\)>=window\.start&&journalInstant\(shopId,j\)<window\.end/, 'mock enforces half-open report period');
     assert.ok(checks.length >= 70, `expected broad contract/source map; got ${checks.length}`);
     console.log(`FE015 source map: ${checks.length} contract/source assertions passed`);
 });

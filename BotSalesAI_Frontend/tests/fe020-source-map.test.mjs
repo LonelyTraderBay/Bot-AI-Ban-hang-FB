@@ -14,7 +14,7 @@ test('FE020 source stays mapped to canonical operations, permissions, and safe m
     const routes = new Map(routeManifest.routes.map(route => [route.id, route]));
     assert.deepEqual(routes.get('R37')?.readOperations, ['getOperationsSummary', 'listWorkItems']);
     assert.equal(routes.get('R37')?.actions.find(action => action.operationId === 'updateWorkItem')?.permission, 'operations.manage');
-    assert.deepEqual(routes.get('R38')?.readOperations, ['listApprovals', 'getApproval']);
+    assert.deepEqual(routes.get('R38')?.readOperations, ['listApprovals', 'getApproval', 'listPurchaseDelegations', 'listPurchaseDelegationReservations']);
     assert.equal(routes.get('R38')?.actions.find(action => action.operationId === 'decideApproval')?.permission, 'approvals.decide');
     assert.deepEqual(routes.get('R52')?.readOperations, ['listDigests', 'getOperationsSummary']);
     assert.equal(routes.get('R52')?.actions.find(action => action.operationId === 'controlAutomation')?.permission, 'bot.pause');

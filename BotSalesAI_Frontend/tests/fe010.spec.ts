@@ -73,8 +73,12 @@ test('product editor validates positive prices, protects image-only drafts, and 
     await expect(skus.nth(1)).toHaveValue('FE010-PRODUCT-L');
     await expect(page.getByText('1 tệp được gắn với sản phẩm',{exact:true})).toBeVisible();
 
+    const savedProductRead = page.waitForResponse(response => response.request().method() === 'GET' && /^\/api\/v2\/shops\/shop-demo\/products\/product-[^/]+$/.test(new URL(response.url()).pathname));
     await page.getByRole('button',{name:'Lưu sản phẩm',exact:true}).click();
     await expect(page).toHaveURL(/\/products\/product-/);
+    expect((await savedProductRead).status()).toBe(200);
+    await expect(page.locator('main [role="progressbar"]')).toHaveCount(0);
+    await expect(name).toHaveValue('Sản phẩm FE010');
     const createCall=calls.find(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/products'));
     const payload=JSON.parse(createCall?.body||'null');
     expect(payload).toMatchObject({name:'Sản phẩm FE010',categoryId:'cat-0',status:'draft'});
@@ -87,6 +91,7 @@ test('product editor validates positive prices, protects image-only drafts, and 
     expect(payload.variants[0]).not.toHaveProperty('unitCost');
 
     await page.getByRole('link',{name:'Danh sách',exact:true}).click();
+    await expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible();
     await page.getByLabel('Tìm kiếm').fill('FE010-PRODUCT-L');
     await page.getByRole('button',{name:'Tìm kiếm',exact:true}).click();
     await expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible();
