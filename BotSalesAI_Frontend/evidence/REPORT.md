@@ -1,5 +1,13 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Sửa timeout ma trận composition Firefox — 14/10/2026
+
+GitHub run [#36](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38452316672) trên `c29297d0e685e977a5037adfe28d83c825ebc635` đạt Chromium 439/439 E2E; Firefox đạt 438/439 rồi hết ngân sách 300 giây ở bài SPC-061/062. Trace ghi 117 lượt tải route trong ma trận 122 lượt; route cuối R56 ở viewport 1440px mới bắt đầu tải khoảng 3 giây trước khi deadline của toàn bài hết. Endpoint mock `finance/accounts` đã trả HTTP 200 ở lượt trước. Đây là timeout tích lũy của một bài quét nhiều route, không phải bằng chứng backend thật.
+
+Ma trận nay thành hai bài độc lập theo viewport; cả hai vẫn kiểm đủ 61 route, heading, loader, khoảng cách, lề con, gutter, overflow và lỗi trang. Mỗi route có timeout tải riêng 30 giây và mỗi viewport có ngân sách 240 giây. Chạy focused local đạt Firefox 2/2 trong 2,5 phút và Chromium 2/2 trong 2,1 phút, tổng cộng 122 tổ hợp mỗi browser. Không đổi UI runtime, API hay dữ liệu mock.
+
+Full `npm run verify` đạt exit 0 trên Node 24.19.0/npm 11.17.0: generator 15 outputs/346 schemas/245 operations/61 routes; source 85 files/271 API calls/61 routes; boundaries 723 imports/10 negative fixtures; domain 117/117; Vitest 242/242; production build 2.077 modules; layout 86/86, visual-token 5/5, composition 41/41, S17 validator 11/11 và 280 fingerprint hiện hành. Logs/records: [Firefox](frontend-completeness-20261014-aaf74b7/composition-r36-firefox-e2e.log), [Chromium](frontend-completeness-20261014-aaf74b7/composition-r36-chromium-e2e.log), [full verify](frontend-completeness-20261014-aaf74b7/verify-r36-final.log), [S17 manifest](frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json). Bản sửa mới đã qua xác minh browser và source cục bộ; hosted CI trên SHA mới đang chờ sau push. Backend, staging, production và owner UAT chưa được xác nhận.
+
 ## Khắc phục readiness test Orders sau Firefox run #35 — 14/10/2026
 
 Run [#35](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38439113706) trên `972cb799c3f71a2d4d64bd4d5aa059acd2da3e74`: Chromium đạt 439/439 E2E và built-demo 3/3; Firefox đạt 438/439. Lỗi ở test hình học Orders, khi heading `Đơn hàng` vắng mặt trong lúc snapshot `main` vẫn có progressbar route `Đang tải màn hình`; Shell/session loader đã kết thúc nên wait cũ không đợi route lazy-load. Trace artifact của run là [Firefox artifact](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38439113706/artifacts/11838773636). Bằng chứng chỉ ra race readiness trong test; không thấy API response hoặc lỗi sản phẩm xác nhận.
