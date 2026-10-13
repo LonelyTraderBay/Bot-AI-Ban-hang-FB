@@ -31,17 +31,18 @@ test('density divided facts list has one row inset and no additional inter-row g
 });
 
 test('density demo disclosure retains state and always shows the synthetic warning',async({page})=>{
- for(const width of [390,806,1440]){
-  await page.setViewportSize({width,height:900});await ready(page,'products');
-  const tools=page.locator('#mock-tools-controls'), toggle=page.getByRole('button',{name:'Công cụ demo',exact:true});
+ await page.setViewportSize({width:390,height:900});await ready(page,'products');
+ const tools=page.locator('#mock-tools-controls'), toggle=page.getByRole('button',{name:'Công cụ demo',exact:true});
+ for(const [index,width] of [390,806,1440].entries()){
+  if(index>0)await page.setViewportSize({width,height:900});
   await expect(tools).toBeHidden();await expect(toggle).toHaveAttribute('aria-expanded','false');
   await expect(page.getByRole('alert').filter({hasText:'Frontend review: API được mô phỏng'})).toBeVisible();
   await toggle.focus();await page.keyboard.press('Enter');await expect(tools).toBeVisible();
-  await page.getByRole('combobox',{name:'Dataset mô phỏng'}).click();await page.getByRole('option',{name:'1.000 khách hàng tổng hợp',exact:true}).click();
-  await expect(page.getByText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.')).toBeVisible();
+  if(index===0){await page.getByRole('combobox',{name:'Dataset mô phỏng'}).click();await page.getByRole('option',{name:'1.000 khách hàng tổng hợp',exact:true}).click();await expect(page.getByText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.')).toBeVisible();}
   await page.getByRole('button',{name:'Ẩn công cụ demo',exact:true}).click();await expect(tools).toBeHidden();
   await expect(page.locator('[data-testid="mock-tools-summary"]')).toContainText('1.000 khách hàng');
   await page.getByRole('button',{name:'Công cụ demo',exact:true}).click();await expect(page.getByRole('combobox',{name:'Dataset mô phỏng'})).toContainText('1.000 khách hàng');
+  await page.getByRole('button',{name:'Ẩn công cụ demo',exact:true}).click();await expect(tools).toBeHidden();
  }
 });
 
