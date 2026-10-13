@@ -27,6 +27,7 @@ test('Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px', a
         await page.setViewportSize({ width, height: 900 });
         for (const route of routes) {
             await page.goto(new URL(route.path, demoUrl).toString());
+            await page.getByRole('progressbar', { name: /^Đang tải (phiên làm việc|cửa hàng)$/ }).waitFor({ state: 'hidden' });
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
             const main = page.locator('main#main-content');
             await expect(main).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
