@@ -1,5 +1,15 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Tái kiểm tra Firefox run #34 — 14/10/2026
+
+Run [#34](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38423525475) trên `0345b9ffb04c551e4de6b372743c15dcccc46a51` đạt Chromium 439/439 và built-demo 3/3; Firefox đạt 438/439. Trace của test disclosure mật độ cho thấy lượt 390px qua; ở 806px thao tác chọn dataset kết thúc và trang Products đã sẵn sàng nhưng thông báo chưa hiện trong timeout 5 giây. Test cũ tải lại trang và lặp việc dựng dataset 1.000 khách hàng cùng refresh ở từng độ rộng, dù mục tiêu là kiểm tra trạng thái disclosure.
+
+Test nay tải Products và chọn dataset một lần, rồi resize cùng Shell qua 390/806/1440px; ở mỗi độ rộng vẫn xác nhận cảnh báo dữ liệu tổng hợp, mở/đóng disclosure và giá trị dataset được giữ. Không đổi React, API, mock data hay assertion bố cục. Lượt focused disclosure lặp 3 lần mỗi browser đạt 6/6; toàn bộ `ui-density-layout.spec.ts` đạt 10/10 trên Chromium và Firefox.
+
+`npm run verify` trên Node 24.19.0 đạt exit 0: generator 15 outputs/346 schemas/245 operations/61 routes; source audit 85 files/271 API calls/61 routes; boundaries 723 imports và 10/10 negative fixtures; domain 117/117; Vitest 242/242; production build 2.077 modules; layout 86/86 (93 source files/0 findings/1 exception); visual-token 5/5 (92 files/0 findings); composition 41/41 (91 files/0 findings); S17 validator 11/11 và 280 fingerprints. Bản sửa chỉ được xác minh với Frontend/mock local ở thời điểm ghi nhận; run #34 vẫn là kết quả SHA cũ và không được tính thành CI xanh cho bản sửa.
+
+Evidence: [baseline trước sửa](frontend-completeness-20261014-aaf74b7/density-disclosure-firefox-r34/contract-before-edit.md), [3 lượt mỗi browser](frontend-completeness-20261014-aaf74b7/density-disclosure-firefox-r34/focused-r34-repeat3.log), [toàn bộ density spec](frontend-completeness-20261014-aaf74b7/density-disclosure-firefox-r34/full-density-r34.log), [full verify](frontend-completeness-20261014-aaf74b7/verify-r34.log), [S17 layout](frontend-completeness-20261014-aaf74b7/density-r34-layout.log), [S17 composition](frontend-completeness-20261014-aaf74b7/density-r34-composition.log), [S17 validator fixtures](frontend-completeness-20261014-aaf74b7/density-r34-evidence-node.log). Backend, staging, production, owner UAT và hosted check của SHA mới không được các lượt local này xác nhận.
+
 ## Đối chiếu CI run #33 và sửa readiness Finance — 13/10/2026
 
 Run [#33](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38408809610) trên `791c73514e01b367f6d30f1eddf2f9d179b58702`: Chromium đạt 439/439 E2E và built-demo 3/3; Firefox đạt 438/439. Lỗi duy nhất ở R22 `Lợi nhuận quản trị`: DOM artifact vẫn có breadcrumb Finance nhưng `main` còn progressbar `Đang tải màn hình` khi test đòi heading. Router dùng progressbar này làm fallback cho lazy route; bằng chứng trước sửa ghi lại DOM, source và fingerprint. Run #33 vì vậy chỉ xác nhận revision cũ, không được tính là hosted PASS cho bản sửa.

@@ -1,0 +1,10 @@
+# Contract and baseline before edit — R34 density disclosure
+
+- Revision: 0345b9ffb04c551e4de6b372743c15dcccc46a51 (`origin/main`), GitHub Actions run #34: https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38423525475
+- Scope: Frontend mock demo controls and the Playwright regression at `tests/ui-density-layout.spec.ts`; no backend or real API behavior.
+- Intended contract from current source: choosing a mock dataset updates the selected option, applies `setMockControl`, refreshes scoped session data, then exposes a status. The test also checks that collapsing/reopening the disclosure retains the chosen dataset and synthetic-data warning.
+- Current source owners: `apps/web/src/app/Shell.tsx` (`MockTools.change` and disclosure state), `apps/web/src/mocks/control.ts` (`setMockControl`), `tests/ui-density-layout.spec.ts` (browser expectation).
+- Hosted observation: Firefox run #34 passed its first 390px iteration; at 806px the dataset option click completed, the Products heading/table were ready, but the status locator remained absent through the 5s assertion. Artifact: `%TEMP%/codex-ci-density-firefox-trace.zip`; extracted trace is in the same temp folder. This records the symptom, not its root cause.
+- Baseline fingerprints: test `76AC6F6570CC2375FD2F97E9264214EA94F99A9E1802C6541AAA95CAA42B87A1`; Shell `E126FCC3E2D82A87E74FC7C2ACD30ABCE46DB7D02470EE058FA410C8FB20CB92`; mock control `53B30CCF85357683A168A1FC8760A3F18A30A8AFF5BBBBB61C7BF419389AC3CC`.
+- Baseline git scope: no tracked Frontend source/evidence edits at inspection time; existing untracked historical evidence is preserved.
+- Next evidence required before choosing an edit: reproduce the exact Firefox case locally and inspect whether dataset selection and `refresh()` complete. Keep UI behavior unchanged unless runtime proves an application defect.
