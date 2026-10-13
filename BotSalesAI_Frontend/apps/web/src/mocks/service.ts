@@ -135,6 +135,18 @@ function read(op: string, input: Input): unknown {
         return {
             shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'].filter(type => grantedPermissions(role).includes(({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[type] || '')), warnings: ['Dữ liệu mô phỏng trong phiên, không có tài khoản quảng cáo thật.']
         };
+    // This simulator has one actor (user-demo). Fail closed for command kinds whose
+    // originating mutation permission cannot be established from the canonical contract.
+    // A real server must additionally enforce actor/object and field-level ownership.
+    const canReadCommand = (command: Row) => {
+        const origin = opMap[str(command.kind)];
+        return Boolean(origin && origin.method !== 'GET' && origin.permission && input.permissions?.includes(origin.permission));
+    };
+    if (op === 'getCommand') {
+        const command = find('commands', input.id, shopId);
+        ensure(canReadCommand(command), 'Bạn không có quyền xem nguồn của thao tác này.', 403, 'FORBIDDEN');
+        return command;
+    }
     const responseSchema = opMap[op]?.responseSchema;
     const schema = responseSchema?.replace(/ListResponse$|Response$/, '');
     const collection = schema ? schemaToCollection[schema] : undefined;
@@ -142,6 +154,7 @@ function read(op: string, input: Input): unknown {
         return undefined;
     if (responseSchema?.endsWith('ListResponse')) {
         let data = all(collection, shopId);
+        if (op === 'listCommands') data = data.filter(canReadCommand);
         if (input.path.conversationId)
             data = data.filter(r => r.conversationId === input.path.conversationId);
         if (input.path.knowledgeId)

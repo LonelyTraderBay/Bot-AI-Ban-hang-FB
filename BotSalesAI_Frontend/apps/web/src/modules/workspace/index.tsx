@@ -165,17 +165,27 @@ const roleLabels: Record<Role, string> = {
 export function TeamPage() {
     const { session, shop } = useScope();
     const list = useApi('listMembers', { query: useListQuery('listMembers') });
+    const [memberId, setMemberId] = useState('');
+    const detail = useApi('getMember', { path: { memberId } }, Boolean(memberId));
     const invite = useCommand('inviteMember', ['listMembers']);
-    const update = useCommand('updateMemberRoles', ['listMembers']);
-    const revoke = useCommand('revokeMembership', ['listMembers']);
+    const update = useCommand('updateMemberRoles', ['listMembers', 'getMember']);
+    const revoke = useCommand('revokeMembership', ['listMembers', 'getMember']);
     const [edit, setEdit] = useState<Membership | null | undefined>(), [email, setEmail] = useState(''), [roles, setRoles] = useState<Role[]>(['viewer']), [remove, setRemove] = useState<Membership | null>(null), [savedMessage, setSavedMessage] = useState('');
     const open = (m: Membership | null) => { setSavedMessage(''); setEdit(m); setEmail(''); setRoles(m?.roles || ['viewer']); };
     return <><PageHeader title="Nhân sự & phân quyền" subtitle="Vai trò là bộ quyền mặc định; API quyết định quyền hiệu lực ở từng thao tác." actions={<MutationButton permission="members.manage" variant="contained" onClick={() => open(null)}>Mời nhân viên</MutationButton>}/>{savedMessage && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>{savedMessage}</Alert>}<Panel><Toolbar operation="listMembers" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable label="Nhân sự và quyền truy cập" rows={list.data.data} rowKey={m => m.id} columns={[
         { key: 'user', label: 'Nhân viên', render: m => m.userId === session.user.id ? session.user.displayName : `Mã nhân sự: ${m.userId}` }, { key: 'roles', label: 'Vai trò', render: m => m.roles.map(r => roleLabels[r]).join(', ') }, { key: 'status', label: 'Trạng thái', render: m => <Status value={m.status}/> }, { key: 'perms', label: 'Quyền hiệu lực', render: m => `${m.permissions.length} quyền · v${m.permissionVersion}` },
         {
-            key: 'actions', label: '', render: m => <Stack direction="row"><MutationButton permission="members.manage" onClick={() => open(m)}>Sửa quyền</MutationButton><MutationButton permission="members.manage" color="error" disabled={m.userId === session.user.id || m.status === 'revoked'} onClick={() => setRemove(m)}>Thu hồi</MutationButton></Stack>
+            key: 'actions', label: '', render: m => <ActionGroup direction="row"><Button onClick={() => setMemberId(m.id)}>Chi tiết nhân sự</Button><MutationButton permission="members.manage" onClick={() => open(m)}>Sửa quyền</MutationButton><MutationButton permission="members.manage" color="error" disabled={m.userId === session.user.id || m.status === 'revoked'} onClick={() => setRemove(m)}>Thu hồi</MutationButton></ActionGroup>
         }
     ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
+ <EditDialog open={!!memberId} title="Chi tiết nhân sự" onClose={() => setMemberId('')} actions={<Button onClick={() => setMemberId('')}>Đóng</Button>}>
+    <QueryState query={detail}>{detail.data && <SurfaceContent>
+        <DetailLine label="Nhân viên">{detail.data.data.userId === session.user.id ? session.user.displayName : 'Mã nhân sự: ' + detail.data.data.userId}</DetailLine>
+        <DetailLine label="Mã thành viên">{detail.data.data.id}</DetailLine><DetailLine label="Trạng thái"><Status value={detail.data.data.status}/></DetailLine>
+        <DetailLine label="Vai trò">{detail.data.data.roles.map(role => roleLabels[role]).join(', ')}</DetailLine>
+        <DetailLine label="Phiên bản quyền">{detail.data.data.permissionVersion}</DetailLine><DetailLine label="Quyền hiệu lực">{detail.data.data.permissions.join(', ') || 'Không có quyền'}</DetailLine>
+    </SurfaceContent>}</QueryState>
+ </EditDialog>
  <EditDialog open={edit !== undefined} title={edit ? 'Cập nhật quyền' : 'Mời nhân viên'} onClose={() => setEdit(undefined)} busy={invite.pending || update.pending} actions={<Button variant="contained" disabled={!roles.length || (!edit && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) || invite.pending || update.pending} onClick={async () => { try {
         if (edit) {
             await update.execute({ path: { memberId: edit.id }, version: edit.permissionVersion, body: { roles } });

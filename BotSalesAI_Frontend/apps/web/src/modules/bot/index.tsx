@@ -13,18 +13,33 @@ export function BotConfigPage() {
     const get = useApi('getBotConfig');
     const connections = useApi('listAIConnections', {}, true);
     const versions = useApi('listBotRevisions');
-    const update = useCommand('updateBotDraft', ['getBotConfig', 'listBotRevisions']);
-    const publish = useCommand('publishBotConfig', ['getBotConfig']);
+    const update = useCommand('updateBotDraft', ['getBotConfig', 'listBotRevisions', 'getBotRevision']);
+    const publish = useCommand('publishBotConfig', ['getBotConfig', 'listBotRevisions', 'getBotRevision']);
     const pause = useCommand('pauseBot', ['getBotConfig']);
-    const restore = useCommand('restoreBotRevision', ['getBotConfig', 'listBotRevisions']);
+    const restore = useCommand('restoreBotRevision', ['getBotConfig', 'listBotRevisions', 'getBotRevision']);
+    const [revisionId, setRevisionId] = useState('');
+    const revision = useApi('getBotRevision', { path: { revisionId } }, Boolean(revisionId));
     const b = get.data?.data;
     const [editing, setEdit] = useState<BotConfig | null>(null), [instructions, setInstructions] = useState(''), [connection, setConnection] = useState(''), [budget, setBudget] = useState(''), [steps, setSteps] = useState('4'), [knowledge, setKnowledge] = useState(''), [action, setAction] = useState<'publish' | 'pause' | null>(null), [evalId, setEval] = useState(''), [reason, setReason] = useState(''), [restoreVersion, setRestore] = useState<BotRevision | null>(null);
     return <><PageHeader title="Điều khiển Admin AI" subtitle="Tách cấu hình đang chạy và cấu hình đang soạn. Không bật tự động chỉ vì lưu prompt." actions={<RouteLink to={`/s/${shop.id}/bot/playground`}>Thử bot</RouteLink>}/><QueryState query={get} pendingProfile="section">{b && <Panel title="Cấu hình hiện hành" action={<Status value={b.status}/>} bodyMode="inset"><Box><DetailLine label="Bản nháp">{b.draftRevision}</DetailLine><DetailLine label="Bản đang chạy">{b.liveRevision || 'Chưa có'}</DetailLine><DetailLine label="Mã kết nối AI">{b.connectionId || 'Chưa chọn'}</DetailLine><DetailLine label="Giới hạn chi phí mỗi ngày"><Amount wrap value={b.dailyBudget}/></DetailLine><DetailLine label="Giới hạn bước công cụ">{b.maxToolSteps}</DetailLine><DetailLine label="Xuất bản lúc">{dateTime(b.publishedAt, shop.timezone)}</DetailLine><Typography sx={[layoutSx.page.sectionBefore, layoutSx.page.sectionAfter, { whiteSpace: 'pre-wrap' }]}>{b.instructions || 'Chưa có chỉ dẫn.'}</Typography><Alert severity="info">Đơn do AI đề xuất vẫn cần người có quyền kiểm tra và xác nhận. Lưu bản nháp không thay đổi cấu hình đang chạy hoặc tự chốt đơn.</Alert><ActionGroup direction="row" beforeGap="form"><MutationButton permission="bot.configure" onClick={() => { setEdit(b); setInstructions(b.instructions); setConnection(b.connectionId || ''); setBudget(b.dailyBudget?.amount || ''); setSteps(String(b.maxToolSteps)); setKnowledge(b.knowledgeRevisionIds.join('\n')); }}>Sửa bản nháp</MutationButton><MutationButton permission="bot.publish" variant="contained" onClick={() => setAction('publish')}>Duyệt & xuất bản</MutationButton><MutationButton permission="bot.publish" color="error" onClick={() => setAction('pause')}>Tạm dừng bot</MutationButton></ActionGroup></Box></Panel>}</QueryState><Panel title="Các phiên bản" beforeGap={"section"}><QueryState query={versions} pendingProfile="section"><DataTable label="Lịch sử cấu hình AI" rows={versions.data?.data || []} rowKey={r => `${r.id}-${r.revision}`} columns={[
         { key: 'revision', label: 'Phiên bản', render: r => `#${r.revision}` }, { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> }, { key: 'updated', label: 'Cập nhật', render: r => dateTime(r.updatedAt, shop.timezone) },
         {
-            key: 'action', label: '', render: r => <MutationButton permission="bot.configure" onClick={() => setRestore(r)}>Khôi phục vào nháp</MutationButton>
+            key: 'action', label: '', render: r => <ActionGroup direction="row"><Button onClick={() => setRevisionId(r.id)}>Xem phiên bản</Button><MutationButton permission="bot.configure" onClick={() => setRestore(r)}>Khôi phục vào nháp</MutationButton></ActionGroup>
         }
     ]}/></QueryState></Panel>
+ <EditDialog open={!!revisionId} title="Chi tiết phiên bản AI" onClose={() => setRevisionId('')} actions={<Button onClick={() => setRevisionId('')}>Đóng</Button>}>
+    <QueryState query={revision}>{revision.data && <SurfaceContent>
+        <DetailLine label="Phiên bản">#{revision.data.data.revision}</DetailLine>
+        <DetailLine label="Trạng thái"><Status value={revision.data.data.status}/></DetailLine>
+        <DetailLine label="Cập nhật">{dateTime(revision.data.data.updatedAt, shop.timezone)}</DetailLine>
+        <DetailLine label="Mã kết nối AI">{revision.data.data.connectionId || 'Chưa chọn'}</DetailLine>
+        <DetailLine label="Phiên bản kiến thức">{revision.data.data.knowledgeRevisionIds.join(', ') || 'Chưa có'}</DetailLine>
+        <DetailLine label="Giới hạn chi phí mỗi ngày"><Amount wrap value={revision.data.data.dailyBudget}/></DetailLine>
+        <DetailLine label="Giới hạn bước công cụ">{revision.data.data.maxToolSteps}</DetailLine>
+        <DetailLine label="Người xác nhận đơn">{revision.data.data.requireHumanOrderConfirmation ? 'Bắt buộc' : 'Theo chính sách máy chủ'}</DetailLine>
+        <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{revision.data.data.instructions || 'Chưa có chỉ dẫn.'}</Typography>
+    </SurfaceContent>}</QueryState>
+ </EditDialog>
  <EditDialog open={!!editing} title="Cấu hình bản nháp" onClose={() => setEdit(null)} busy={update.pending} actions={<Button variant="contained" disabled={!editing || !instructions || !connection || !budget || update.pending} onClick={async () => { if (!editing)
         return; try {
         await update.execute({ version: editing.version, body: {
@@ -56,6 +71,7 @@ export function EvaluationsPage() {
     const bot = useApi('getBotConfig');
     const create = useCommand('createEvaluation', ['listEvaluations']);
     const [open, setOpen] = useState(false), [dataset, setDataset] = useState(''), [knowledge, setKnowledge] = useState(''), [selected, setSelected] = useState<Evaluation | null>(null);
+    const detail = useApi('getEvaluation', { path: { evaluationId: selected?.id || '' } }, Boolean(selected));
     return <><PageHeader title="Đánh giá AI" subtitle="Kết quả gắn cấu hình, dữ liệu kiểm thử và phiên bản kiến thức." actions={<MutationButton permission="bot.configure" variant="contained" onClick={() => setOpen(true)}>Chạy đánh giá</MutationButton>}/>{__MOCK__ && <Alert severity="warning" sx={layoutSx.notice.afterGap}>Chế độ mô phỏng chỉ kiểm quy trình, không đánh giá chất lượng mô hình AI thật.</Alert>}<Panel><Toolbar operation="listEvaluations" /><QueryState query={list} pendingProfile="section"><DataTable label="Lịch sử đánh giá AI" rows={list.data?.data || []} rowKey={r => r.id} empty="Chưa có lần đánh giá nào. Có thể chạy đánh giá cấu hình nháp từ nút phía trên." columns={[
         { key: 'id', label: 'Lần đánh giá', render: r => <Button onClick={() => setSelected(r)}>{r.id}</Button> }, { key: 'config', label: 'Bản cấu hình', render: r => r.configRevision }, { key: 'dataset', label: 'Bộ kiểm thử', render: r => r.datasetVersion }, { key: 'count', label: 'Đạt / tổng', render: r => `${r.passedCases} / ${r.totalCases}` }, { key: 'critical', label: 'Lỗi trọng yếu', render: r => r.criticalFailures }, { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> }
     ]}/></QueryState><Pager page={list.data?.page}/></Panel>
@@ -64,7 +80,7 @@ export function EvaluationsPage() {
         setSelected(r.data);
         setOpen(false);
     }
-    catch { /* visible */ } }}>Bắt đầu</Button>}><ErrorNotice error={create.error}/><FormFields ><TextField label="Phiên bản bộ kiểm thử đã đăng ký" value={dataset} onChange={e => setDataset(e.target.value)}/><TextField label="Mã bản kiến thức (tùy chọn)" value={knowledge} onChange={e => setKnowledge(e.target.value)}/><Alert severity="info">Mã bộ kiểm thử phải do backend xác minh. Không tự gọi tỷ lệ 100% là chứng nhận chất lượng.</Alert></FormFields></EditDialog><EditDialog open={!!selected} title="Chi tiết đánh giá" onClose={() => setSelected(null)} actions={<Button onClick={() => setSelected(null)}>Đóng</Button>}>{selected && <><DetailLine label="Mã">{selected.id}</DetailLine><DetailLine label="Bộ dữ liệu">{selected.datasetVersion}</DetailLine><DetailLine label="Bản cấu hình">{selected.configRevision}</DetailLine><DetailLine label="Kết quả"><Status value={selected.status}/></DetailLine><DetailLine label="Số ca">{selected.passedCases} / {selected.totalCases}</DetailLine><DetailLine label="Lỗi trọng yếu">{selected.criticalFailures}</DetailLine>{selected.reportJobId && <RouteLink to={`/s/${shop.id}/jobs/${selected.reportJobId}`}>Báo cáo chi tiết</RouteLink>}</>}</EditDialog></>;
+    catch { /* visible */ } }}>Bắt đầu</Button>}><ErrorNotice error={create.error}/><FormFields ><TextField label="Phiên bản bộ kiểm thử đã đăng ký" value={dataset} onChange={e => setDataset(e.target.value)}/><TextField label="Mã bản kiến thức (tùy chọn)" value={knowledge} onChange={e => setKnowledge(e.target.value)}/><Alert severity="info">Mã bộ kiểm thử phải do backend xác minh. Không tự gọi tỷ lệ 100% là chứng nhận chất lượng.</Alert></FormFields></EditDialog><EditDialog open={!!selected} title="Chi tiết đánh giá" onClose={() => setSelected(null)} actions={<ActionGroup direction="row"><Button disabled={detail.isFetching} onClick={() => void detail.refetch()}>Cập nhật kết quả</Button><Button onClick={() => setSelected(null)}>Đóng</Button></ActionGroup>}><QueryState query={detail}>{detail.data && <SurfaceContent><DetailLine label="Mã">{detail.data.data.id}</DetailLine><DetailLine label="Bộ dữ liệu">{detail.data.data.datasetVersion}</DetailLine><DetailLine label="Bản cấu hình">{detail.data.data.configRevision}</DetailLine><DetailLine label="Kết quả"><Status value={detail.data.data.status}/></DetailLine><DetailLine label="Số ca">{detail.data.data.passedCases} / {detail.data.data.totalCases}</DetailLine><DetailLine label="Lỗi trọng yếu">{detail.data.data.criticalFailures}</DetailLine>{detail.data.data.reportJobId && <RouteLink to={`/s/${shop.id}/jobs/${detail.data.data.reportJobId}`}>Báo cáo chi tiết</RouteLink>}</SurfaceContent>}</QueryState></EditDialog></>;
 }
 const roleNames = { sales_admin: 'Admin bán hàng', accountant: 'Kế toán', warehouse_buyer: 'Kho & mua hàng', supervisor: 'Trưởng nhóm' };
 export function AgentTeamPage() {

@@ -2,6 +2,7 @@ import {label as businessLabel} from '@/shared/model/labels';
 import { PageSections } from '../../shared/ui/composition';
 import { ActionGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { visualSx } from '@/shared/ui/visual';
 import { Alert, Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { layoutSx } from '../../shared/ui/layout';
@@ -21,6 +22,38 @@ const roleNames: Record<AgentRole['kind'], string> = {
     supervisor: 'Trưởng nhóm',
 };
 
+const commandNames: Record<string, string> = {
+    createInventoryAdjustment: 'Điều chỉnh tồn kho', postFinanceEntry: 'Ghi nhận thu chi', postGoodsReceipt: 'Nhận hàng',
+    sendPurchaseOrder: 'Gửi đơn mua', refundOrder: 'Hoàn tiền', payOrder: 'Ghi nhận thanh toán', handoverShipment: 'Bàn giao vận đơn', confirmOrder: 'Xác nhận đơn',
+};
+function CommandsPanel() {
+    const { shop } = useScope();
+    const [params] = useSearchParams();
+    const list = useApi('listCommands', { query: { limit: 10, cursor: params.get('commandCursor') || undefined } });
+    const [commandId, setCommandId] = useState('');
+    const detail = useApi('getCommand', { path: { commandId } }, Boolean(commandId));
+    return <Panel title="Trạng thái thao tác" beforeGap="section">
+        <SurfaceContent bodyMode="inset"><Typography color="text.secondary">Trạng thái do API trả về. Kết quả chưa rõ cần kiểm tra riêng; xem lịch sử không mở khóa thao tác đang chờ đối soát.</Typography></SurfaceContent>
+        <QueryState query={list} pendingProfile="section">{list.data && <>
+            <DataTable label="Trạng thái thao tác" rows={list.data.data} rowKey={command => command.id} empty="Chưa có thao tác được phép xem trong trang này." columns={[
+                { key: 'kind', label: 'Thao tác', render: command => commandNames[command.kind] || 'Thao tác khác' },
+                { key: 'status', label: 'Trạng thái', render: command => <Status value={command.status}/> },
+                { key: 'updated', label: 'Cập nhật', render: command => dateTime(command.updatedAt, shop.timezone) },
+                { key: 'detail', label: '', render: command => <Button onClick={() => setCommandId(command.id)}>Chi tiết thao tác</Button> },
+            ]}/><Pager page={list.data.page} cursorParam="commandCursor"/>
+        </>}</QueryState>
+        <EditDialog open={!!commandId} title="Chi tiết trạng thái thao tác" onClose={() => setCommandId('')} actions={<ActionGroup direction="row"><Button disabled={detail.isFetching} onClick={() => void detail.refetch()}>Kiểm tra trạng thái</Button><Button onClick={() => setCommandId('')}>Đóng</Button></ActionGroup>}>
+            <QueryState query={detail}>{detail.data && <SurfaceContent>
+                <DetailLine label="Mã thao tác">{detail.data.data.id}</DetailLine><DetailLine label="Thao tác">{commandNames[detail.data.data.kind] || 'Thao tác khác'}</DetailLine>
+                <DetailLine label="Trạng thái"><Status value={detail.data.data.status}/></DetailLine><DetailLine label="Cập nhật">{dateTime(detail.data.data.updatedAt, shop.timezone)}</DetailLine>
+                <DetailLine label="Đối tượng kết quả">{detail.data.data.result ? detail.data.data.result.type + ' · ' + detail.data.data.result.id : 'Chưa có kết quả được xác minh'}</DetailLine>
+                {detail.data.data.status === 'unknown' && <Alert severity="warning">Kết quả chưa rõ. Không gửi lại hoặc coi là thất bại chỉ dựa vào thời gian chờ.</Alert>}
+                {detail.data.data.problem && <Alert severity="error">Thao tác có lỗi; đối chiếu mã thao tác trong quy trình xử lý được cấp quyền.</Alert>}
+            </SurfaceContent>}</QueryState>
+        </EditDialog>
+    </Panel>;
+}
+
 export function OperationsPage() {
     const { shop, session } = useScope();
     const list = useApi('listWorkItems', { query: useListQuery('listWorkItems') });
@@ -33,6 +66,7 @@ export function OperationsPage() {
     const [assignee, setAssignee] = useState('');
     const [exceptionsOnly, setExceptionsOnly] = useState(false);
     const canManageMembers = useCan('members.manage');
+    const canReadCommands = useCan('jobs.read');
     const [memberSearchInput, setMemberSearchInput] = useState(''), [memberSearch, setMemberSearch] = useState('');
     useEffect(() => {
         const timer = window.setTimeout(() => setMemberSearch(memberSearchInput.trim()), 250);
@@ -112,6 +146,7 @@ export function OperationsPage() {
                 </>}
             </QueryState>
         </Panel>
+        {canReadCommands && <CommandsPanel/>}
         <EditDialog open={!!item} title="Cập nhật công việc" onClose={() => setItem(null)} busy={update.pending} actions={<Button variant="contained" disabled={!item || !availableActions.includes(action) || codePointLength(reason.trim()) < 5 || (action === 'reassign' && !assignee) || update.pending} onClick={async () => {
             if (!item || !availableActions.includes(action)) return;
             try {

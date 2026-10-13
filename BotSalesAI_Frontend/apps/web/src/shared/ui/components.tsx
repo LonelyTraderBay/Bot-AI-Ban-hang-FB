@@ -246,6 +246,7 @@ export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filt
 }
 const cursorHistoryByList = new Map<string, Array<string | null>>();
 const MAX_CURSOR_HISTORY_LISTS = 100;
+const MAX_CURSORS_PER_LIST = 100;
 
 function cursorHistoryKey(pathname: string, params: URLSearchParams, cursorParam: string) {
     const filters = new URLSearchParams(params);
@@ -256,7 +257,7 @@ function cursorHistoryKey(pathname: string, params: URLSearchParams, cursorParam
 
 function rememberCursorHistory(key: string, cursors: Array<string | null>) {
     cursorHistoryByList.delete(key);
-    cursorHistoryByList.set(key, cursors);
+    cursorHistoryByList.set(key, cursors.slice(-MAX_CURSORS_PER_LIST));
     while (cursorHistoryByList.size > MAX_CURSOR_HISTORY_LISTS) {
         const oldest = cursorHistoryByList.keys().next().value;
         if (oldest === undefined) break;
@@ -485,7 +486,7 @@ export function EditDialog({ open, title, description, onClose, children, action
         setDiscardOpen(false);
     };
     return <>
-        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={`${titleId}-heading`} sx={[density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset, { display: 'flex', alignItems: 'flex-start' }]}><Box component="span" id={titleId} sx={{ minWidth: 0, flex: 1, overflowWrap: 'anywhere' }}>{title}</Box><IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ flexShrink: 0 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} inert={busy && !allowEditsWhileBusy} dividers sx={density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{typeof actions === 'function' ? actions({ requestClose, busy }) : actions}</DialogActions></Dialog>
+        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={`${titleId}-heading`} sx={[density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset, { display: 'flex', alignItems: 'flex-start' }]}><Box component="span" id={titleId} sx={{ minWidth: 0, flex: 1, overflowWrap: 'anywhere' }}>{title}</Box><IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ flexShrink: 0 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} tabIndex={0} role="region" aria-labelledby={titleId} inert={busy && !allowEditsWhileBusy} dividers sx={density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{typeof actions === 'function' ? actions({ requestClose, busy }) : actions}</DialogActions></Dialog>
         <Dialog open={open && discardOpen} onClose={() => setDiscardOpen(false)} aria-labelledby={`${titleId}-draft-warning`} aria-describedby={`${titleId}-draft-description`} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onExited: () => {
             if (!discardConfirmedRef.current)
                 return;
