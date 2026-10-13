@@ -1,5 +1,11 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Đối chiếu CI run #32 và sửa đồng bộ route Orders — 13/10/2026
+
+Run [#32](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38391744865) trên `e9c879627e5520603c061afcf530981de490282b`: Chromium đạt 439/439 E2E và built-demo 3/3; Firefox đạt 438/439. Lỗi duy nhất nằm ở `ui-orders-layout.spec.ts`: sau `page.goto`, test hết thời gian chờ heading 5 giây. Snapshot Firefox ghi nhận Shell vẫn hiển thị progressbar `Đang tải phiên làm việc`, route chưa được mount; test Orders kế tiếp vẫn chạy qua. Evidence này chỉ ra race khởi tạo session trong test, không chỉ ra lỗi contract, mock order hay UI Orders.
+
+Test route matrix nay chờ progressbar session/cửa hàng hiện có trong Shell ẩn trước khi giữ nguyên assertion heading và geometry. Không đổi React, mock, API hay dữ liệu. Focused Playwright chạy 3 lần mỗi browser, 20 tổ hợp route/viewport mỗi lượt, đạt 6/6; log: [focused run](frontend-completeness-20261013-aaf74b7/orders-layout-firefox-r32/focused-r32.log). `npm.cmd run verify` đạt exit 0 trên cùng mã: generator 15 outputs/346 schemas/245 operations/61 routes; source 85 files/271 API calls/61 routes; boundaries 723 imports/10 fixtures; domain 117/117; Vitest 242/242; production build; layout 86/86; visual-token 5/5 (92 files/0 findings); composition 41/41 (91 files/0 findings); S17 evidence 11/11 fixtures, 280 fingerprints. Log: [full verify](frontend-completeness-20261013-aaf74b7/orders-layout-firefox-r32/verify-r32.log). Đây là local mock/browser evidence; run #32 vẫn được giữ là thất bại Firefox trên revision cũ, và revision sửa cần được kiểm tra bằng hosted run riêng.
+
 ## Đối chiếu CI run #29 — 13/10/2026
 
 Run [#29](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38283700738) trên `8fc1d3bc` đã qua `npm run verify` ở cả hai runner. Chromium đạt 407/407 E2E và built-demo 3/3. Firefox đạt 406/407; `ui-master-resources.spec.ts` C05 thất bại khi route `/settings/warehouses` còn progressbar `Đang tải màn hình` ở viewport 1440×900, dù GET `/warehouses` đã trả 200. `main h1` chưa hiện trong cửa sổ chờ mặc định 5 giây nên test chưa tới các kiểm tra kích thước hoặc axe; trace không cho thấy lỗi API hay tràn ngang.
