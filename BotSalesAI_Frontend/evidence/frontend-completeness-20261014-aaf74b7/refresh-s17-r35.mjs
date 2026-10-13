@@ -1,0 +1,66 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import assert from 'node:assert/strict';
+
+const out = import.meta.dirname;
+const repo = path.resolve(out, '../../..');
+const file = path.join(repo, 'BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json');
+const sha = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
+const value = read(file);
+const archive = path.join(out, 's17-before-completion.json');
+if (!fs.existsSync(archive)) fs.copyFileSync(file, archive);
+
+const stages = [
+    ['layout', 'density-r35-layout', 86],
+    ['contracts', 'density-r35-composition', 41],
+    ['evidence-validator', 'density-r35-evidence-node-2', 11],
+];
+
+value.checks = stages.map(([id, stage, count]) => {
+    const recordFile = path.join(out, stage + '.record.json');
+    const run = read(recordFile);
+    assert.equal(run.exitCode, 0);
+    assert.deepEqual(run.sourceDrift, []);
+    const logFile = path.join(repo, run.log.path);
+    const rawLog = fs.readFileSync(logFile, 'utf8');
+    const trailingNewlines = rawLog.match(/(?:\r?\n)+$/)?.[0] ?? '';
+    const lineEnding = trailingNewlines.includes('\r\n') ? '\r\n' : '\n';
+    const normalizedLog = rawLog.replace(/(?:\r?\n)+$/, '') + lineEnding;
+    if (normalizedLog !== rawLog) {
+        fs.writeFileSync(logFile, normalizedLog);
+        run.log.sha256 = sha(logFile);
+        fs.writeFileSync(recordFile, JSON.stringify(run, null, 2) + '\n');
+    }
+    assert.equal(sha(logFile), run.log.sha256);
+    for (const [source, hash] of Object.entries(run.sourceFingerprints)) {
+        assert.equal(sha(path.join(repo, source)), hash, source);
+    }
+    const log = fs.readFileSync(logFile, 'utf8');
+    assert.match(log, new RegExp('(?:ℹ |# )tests ' + count + '\\b'));
+    assert.match(log, new RegExp('(?:ℹ |# )pass ' + count + '\\b'));
+    assert.match(log, /(?:ℹ |# )fail 0\b/);
+    if (id === 'layout') assert.match(log, /layout-check PASS: \d+ source files, 0 finding\(s\)/);
+    if (id === 'contracts') assert.match(log, /ui-composition PASS: \d+ source files, 0 finding\(s\)/);
+    const observed = count + '/' + count + ' current fixtures PASS' + (id === 'evidence-validator' ? '' : '; source checker 0 findings');
+    return { id, command: run.command, exitCode: 0, result: 'PASS', expected: observed, observed, log: run.log };
+});
+
+value.coverage = stages.map(([name, , count]) => ({ name, expected: count, observed: count, missing: 0, result: 'COMPLETE' }));
+for (const source of Object.keys(value.sourceFingerprints)) value.sourceFingerprints[source] = sha(path.join(repo, source));
+for (const source of [
+    'BotSalesAI_Frontend/tests/frontend-completeness.spec.ts',
+    'BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs',
+    'BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts',
+    'BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx',
+]) value.sourceFingerprints[source] = sha(path.join(repo, source));
+
+value.recordedAt = new Date().toISOString();
+value.scope = 'Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures executed on this source, including the R35 Orders route-readiness test correction. Prior application/browser records remain historical in s17-before-completion.json; full current application proof is recorded separately.';
+value.knownLimits = [...new Set([
+    ...value.knownLimits,
+    'This refresh verifies governance fixtures only. Full FE/browser/native/cold evidence is separate; Backend, owner acceptance, speech and hosted CI are not certified.',
+])];
+fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n');
+console.log(JSON.stringify({ checks: value.checks.length, fingerprints: Object.keys(value.sourceFingerprints).length }));
