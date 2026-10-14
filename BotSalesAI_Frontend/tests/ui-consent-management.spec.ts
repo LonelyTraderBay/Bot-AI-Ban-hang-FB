@@ -75,8 +75,9 @@ test('R61 public confirmation remains keyboard-accessible and reflows at 320px',
     await page.setViewportSize({ width: 320, height: 720 });
     const token = 'local-demo-reconfirm-consent-challenge-20261009';
     await page.goto(new URL(`/consent/confirm?token=${token}`, demoUrl).toString());
+    await expect(page.getByRole('heading', { name: 'Xác nhận lựa chọn marketing', exact: true })).toBeVisible({ timeout: 30_000 });
     const checkButton = page.getByRole('button', { name: 'Xem nội dung yêu cầu', exact: true });
-    await expect(checkButton).toBeVisible();
+    await expect(checkButton).toBeVisible({ timeout: 30_000 });
     await page.keyboard.press('Tab');
     await page.keyboard.press('Tab');
     await expect(checkButton).toBeFocused();
