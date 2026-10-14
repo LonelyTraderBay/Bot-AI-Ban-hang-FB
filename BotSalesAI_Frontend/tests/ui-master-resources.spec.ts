@@ -12,7 +12,12 @@ async function mutate(page:Page,path:string,body:unknown,version?:number){return
 
 test('C05 warehouses validate before HTTP, protect drafts and create/update/archive with visible results',async({page})=>{
     const creates:string[]=[];page.on('request',r=>{if(r.method()==='POST'&&new URL(r.url()).pathname.endsWith('/warehouses'))creates.push(r.postData()||'');});
-    await page.goto(url+'/s/shop-demo/settings/warehouses');await expect(page.getByRole('heading',{name:'Quản trị kho',exact:true})).toBeVisible();
+    await page.goto(url+'/s/shop-demo/settings/warehouses',{waitUntil:'domcontentloaded'});
+    await page.getByRole('progressbar',{name:/^Đang tải (phiên làm việc|cửa hàng)$/}).waitFor({state:'hidden',timeout:30_000});
+    await page.getByRole('progressbar',{name:'Đang tải màn hình',exact:true}).waitFor({state:'hidden',timeout:30_000});
+    await expect(page.locator('main h1')).toBeVisible({timeout:30_000});
+    await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0,{timeout:30_000});
+    await expect(page.getByRole('heading',{name:'Quản trị kho',exact:true})).toBeVisible({timeout:30_000});
     await page.getByRole('button',{name:'Thêm kho',exact:true}).click();const dialog=page.getByRole('dialog',{name:'Thêm kho',exact:true});
     await dialog.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(dialog.getByText('Nhập mã kho.',{exact:true})).toBeVisible();expect(creates).toHaveLength(0);await expect(dialog.getByLabel('Mã kho', {exact:true})).toBeFocused();
     await dialog.getByLabel('Mã kho',{exact:true}).fill('UX-TEST');await dialog.getByLabel('Tên kho',{exact:true}).fill(' '+ 'A'.repeat(160));await dialog.getByLabel('Địa điểm kho',{exact:true}).fill('Địa điểm kho tổng hợp');await dialog.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(dialog.getByText('Tên kho tối đa 160 ký tự.',{exact:true})).toBeVisible();expect(creates).toHaveLength(0);
