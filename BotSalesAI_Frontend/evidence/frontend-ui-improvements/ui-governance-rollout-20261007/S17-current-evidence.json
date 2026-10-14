@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun after GitHub run #44 exposed a Firefox Dashboard lazy-route readiness timeout in the test. The current code changes only increase initial heading waits from 5s to 15s in the Notifications and Dashboard layout tests; application source is unchanged. Hosted outcome for the follow-up SHA is pending; this does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-14T19:45:59.893Z",
+  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun on P1 code SHA 5a617531 after GitHub run #45 exposed a Firefox Finance lazy-route readiness timeout. The application source is unchanged; the test now allows up to 15 seconds for the existing Sổ cái heading after route navigation and keeps all business assertions. Hosted matrix results are recorded separately; this record does not certify backend, owner acceptance, speech or production.",
+  "recordedAt": "2026-10-14T21:37:26.222Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -13,8 +13,8 @@
       "expected": "86/86 current fixtures PASS; source checker 0 findings",
       "observed": "86/86 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/layout-dashboard-timeoutfix-current.log",
-        "sha256": "bcb8dfd5c9060397ab93848f7e446dc237ae8deaf0b9e3a16b9d36220c981281"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/layout-finance-r45-current.log",
+        "sha256": "e7eaa5c234144440b4baa773e50fbe1932e26dfa8003f5418823d25997d88012"
       }
     },
     {
@@ -25,8 +25,8 @@
       "expected": "41/41 current fixtures PASS; source checker 0 findings",
       "observed": "41/41 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/composition-dashboard-timeoutfix-current.log",
-        "sha256": "543ee5ab5bbd8bca33fbbafe81c46fc90eefbadea80b2f37e2cde8ede0ee95a2"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/composition-finance-r45-current.log",
+        "sha256": "5fbcb060a1cbb600caa6beece25b4b3da2dfaba23a90fb49021c3dec9d5d4c75"
       }
     },
     {
@@ -37,8 +37,8 @@
       "expected": "11/11 current fixtures PASS",
       "observed": "11/11 current fixtures PASS",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/evidence-validator-dashboard-timeoutfix-current.log",
-        "sha256": "76ff20582f9097ec6ffb0a584b959681dcb262b81f5936d4a9e5c4e0e0e247d1"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/evidence-validator-finance-r45-current.log",
+        "sha256": "a6a09f5580307d408b2d9c2ab50a74cc3c3be3dfc70260634be2988a6dc759f2"
       }
     }
   ],
@@ -296,7 +296,7 @@
     "BotSalesAI_Frontend/tests/ui-entry-scope.test.mjs": "34855f434ee80ada00c0969f6949c1c268ccfae9c798c66d5d8c67675bb81cb1",
     "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
     "BotSalesAI_Frontend/tests/ui-finance-layout.spec.ts": "2495b0de5bd0af212eb1192675f45de2ddb6247d50ce7b796e3c1414f28177c9",
-    "BotSalesAI_Frontend/tests/ui-finance-management.spec.ts": "7f99a407e7739f61c7d197a2ad75b8e3e01f91a1a6a2f6f4f8f1504766dba5b3",
+    "BotSalesAI_Frontend/tests/ui-finance-management.spec.ts": "7978d00d4c09f40c7de6ef476ee55f46b1f3438bada0046ee9114355eabab387",
     "BotSalesAI_Frontend/tests/ui-fulfillment-layout.spec.ts": "68b82ff1df3a270997fea89c942450187aae11083b9b06700464ee8b79044ea6",
     "BotSalesAI_Frontend/tests/ui-import-scope.test.mjs": "02d21b1e9efd724c9c0539a6a61bc2ac1f1a9cda9a9fb5513892e9e2bb414fe4",
     "BotSalesAI_Frontend/tests/ui-integrations-layout.spec.ts": "874ecc9cca75a45fd465aa91a7993583115e04556a9b254eb7f451f66d50c0d6",
@@ -370,6 +370,10 @@
     "GitHub run #43 on SHA fae1a07d89f9e727b073a62dfbeb570aa88edca7: Firefox attempts 1 and 2 ended by hosted runner shutdown at 347/440 and 341/440. Attempt 3 reached 439/440 and failed the Notifications route heading assertion after its default 5-second wait; the trace final frame shows the route rendered shortly after the assertion timed out. See run artifact 11908494708.",
     "The Notifications layout test now waits up to 15 seconds for its existing heading assertion. The focused Firefox test passed three repeated local runs; this does not establish Linux hosted behavior. A follow-up GitHub run on the corrected SHA is pending.",
     "GitHub run #44 on SHA 9b18f748f00faf5c50b9d101afb00e41a1baf467: Firefox attempt 1 ended by runner shutdown at 341/440. Attempt 2 reached 439/440 and failed only the Dashboard heading assertion at its default 5-second wait; 439 other Firefox tests passed. See run artifact 11924345669.",
-    "The Dashboard layout test now waits up to 15 seconds for its existing initial heading assertion. The focused Firefox test passed three repeated local runs; the hosted rerun for this updated SHA is pending."
+    "The Dashboard layout test now waits up to 15 seconds for its existing initial heading assertion. The focused Firefox test passed three repeated local runs; the hosted rerun for this updated SHA is pending.",
+    "The Notifications layout test waits up to 15 seconds for its existing heading assertion. GitHub run #45 included this fix and passed the Notifications case within its 439 passing Firefox tests; the run still failed the Finance route test recorded below.",
+    "The Dashboard layout test waits up to 15 seconds for its existing initial heading assertion. GitHub run #45 included this fix and passed the Dashboard case within its 439 passing Firefox tests; the run still failed the Finance route test recorded below.",
+    "GitHub run #45 on SHA 66bbdb5a41fb74b6d33eef669773abd5c65442c0 passed Chromium and 439/440 Firefox tests. The only Firefox failure was C06 in tests/ui-finance-management.spec.ts: after navigation, the URL was /s/shop-demo/finance/ledger but the Sổ cái heading had not replaced the previous heading within Playwright’s default 5-second expect timeout. Firefox artifact 11930235639, SHA-256 b2249a0fc9ed0bf15ca87c9c03483d335ba52f6ca32d4422a8067b0024851f18.",
+    "The Finance C06 heading assertion now waits up to 15 seconds without changing the route, data, or business assertions. It passed three repeated local Firefox runs; the complete Finance spec passed 5/5 locally. Local runs do not establish hosted Linux behavior."
   ]
 }
