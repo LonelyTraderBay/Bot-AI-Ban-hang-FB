@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun on P1 code SHA 5a617531 after GitHub run #45 exposed a Firefox Finance lazy-route readiness timeout. The application source is unchanged; the test now allows up to 15 seconds for the existing Sổ cái heading after route navigation and keeps all business assertions. Hosted matrix results are recorded separately; this record does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-14T21:37:26.222Z",
+  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures refreshed after GitHub runs #46 and #47 exposed stale evidence fingerprints in intermediate commits. Application source is unchanged from P1 code SHA 5a617531; C06 allows up to 15 seconds for the existing Sổ cái heading after route navigation and keeps all business assertions. Hosted matrix results are recorded separately; this record does not certify backend, owner acceptance, speech or production.",
+  "recordedAt": "2026-10-14T21:49:56.665Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -26,7 +26,7 @@
       "observed": "41/41 current fixtures PASS; source checker 0 findings",
       "log": {
         "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/composition-finance-r45-current.log",
-        "sha256": "5fbcb060a1cbb600caa6beece25b4b3da2dfaba23a90fb49021c3dec9d5d4c75"
+        "sha256": "0620269cb873891901a125f929a7c9bf8a1936e7135949e74bd26a3420ea8084"
       }
     },
     {
@@ -349,7 +349,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "3221bd0f0f364d10d72a3fd50877874ca0585497c4e44b7587c99c350c13588b"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "686478457c18cd1ac35fe7c52a13b13be1184a0eb2edfb963d377eec192d753a"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -374,6 +374,8 @@
     "The Notifications layout test waits up to 15 seconds for its existing heading assertion. GitHub run #45 included this fix and passed the Notifications case within its 439 passing Firefox tests; the run still failed the Finance route test recorded below.",
     "The Dashboard layout test waits up to 15 seconds for its existing initial heading assertion. GitHub run #45 included this fix and passed the Dashboard case within its 439 passing Firefox tests; the run still failed the Finance route test recorded below.",
     "GitHub run #45 on SHA 66bbdb5a41fb74b6d33eef669773abd5c65442c0 passed Chromium and 439/440 Firefox tests. The only Firefox failure was C06 in tests/ui-finance-management.spec.ts: after navigation, the URL was /s/shop-demo/finance/ledger but the Sổ cái heading had not replaced the previous heading within Playwright’s default 5-second expect timeout. Firefox artifact 11930235639, SHA-256 b2249a0fc9ed0bf15ca87c9c03483d335ba52f6ca32d4422a8067b0024851f18.",
-    "The Finance C06 heading assertion now waits up to 15 seconds without changing the route, data, or business assertions. It passed three repeated local Firefox runs; the complete Finance spec passed 5/5 locally. Local runs do not establish hosted Linux behavior."
+    "The Finance C06 heading assertion now waits up to 15 seconds without changing the route, data, or business assertions. It passed three repeated local Firefox runs; the complete Finance spec passed 5/5 locally. Local runs do not establish hosted Linux behavior.",
+    "GitHub run #46 on P1 SHA 5a61753145c1213e15f18c435ed317baee25575b stopped during npm run verify because the hosted checkout found the old S17 source fingerprint for tests/ui-finance-management.spec.ts; browser E2E and built-demo steps were skipped. The S17 refresh followed in P2.",
+    "GitHub run #47 on P2 SHA 4de81f55076221aeda7e0ec101ab0dae8f051435 stopped during npm run verify because REPORT.md and composition-finance-r45-current.log changed after the S17 refresh; the hosted validator reported stale sourceFingerprints[BotSalesAI_Frontend/evidence/REPORT.md] and checks[1].log. Browser E2E and built-demo steps were skipped. This record refreshes S17 after those final edits."
   ]
 }
