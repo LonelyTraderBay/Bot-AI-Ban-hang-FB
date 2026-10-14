@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun on unchanged Frontend source revision 4b514d35023048d488637adebc967aa2238247f8 while investigating the R42 hosted Firefox viewport predicate timeout. Browser behavior and hosted outcome are recorded separately; this does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-14T12:39:17.449Z",
+  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun after GitHub run #43 exposed a Firefox Notifications lazy-route readiness timeout in the test. The only code change is a 5s to 15s wait in the Notifications layout test; application source is unchanged. Hosted outcome for the follow-up SHA is pending; this does not certify backend, owner acceptance, speech or production.",
+  "recordedAt": "2026-10-14T16:32:48.368Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -13,20 +13,20 @@
       "expected": "86/86 current fixtures PASS; source checker 0 findings",
       "observed": "86/86 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/layout-r43-cleanpath.log",
-        "sha256": "941d4f158c770f0059723ad9b7fd090d923584c06f36498a88065e7c41d31a9f"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/layout-notifications-timeoutfix-current.log",
+        "sha256": "953f0669947b65353a85b6b1862e51fb5e33ee2457e65af8e077c6ba81dcf19a"
       }
     },
     {
       "id": "contracts",
-      "command": "npm run test:ui-composition",
+      "command": "npm.cmd run test:ui-composition",
       "exitCode": 0,
       "result": "PASS",
       "expected": "41/41 current fixtures PASS; source checker 0 findings",
       "observed": "41/41 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/composition-r43.log",
-        "sha256": "cd8e68d6621916e28a6a4c700cad2e7c0fd8fba90dba8fff3a123cd2aa493097"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/composition-notifications-timeoutfix-current.log",
+        "sha256": "a6f5ffe540a7bccb0e304b6be507f365937616e2a30d870a5144adc42a85f38b"
       }
     },
     {
@@ -37,8 +37,8 @@
       "expected": "11/11 current fixtures PASS",
       "observed": "11/11 current fixtures PASS",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/evidence-validator-r43.log",
-        "sha256": "d927dcf868c366933669f1b481a31e8e8266a4d1bd85e1e43927322b4e539ee5"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/evidence-validator-notifications-timeoutfix-current.log",
+        "sha256": "4580238b595fd1efecc95edd6f3810b87642ff839f2b4c98d84add3c831a852f"
       }
     }
   ],
@@ -304,7 +304,7 @@
     "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "591b833bae530b19fb231d3aacab2058d4546d2e2648cdaf603c5b973b4a33f6",
     "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
     "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "3ece9b26145b3b4f50268720d4420f43fb00e1037fcb8d00f7fdb1401299b579",
-    "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "530164987f5ab5654620927b4d489979ab285543b2629fa4b30cfa17cfa60dec",
+    "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "cd6fb47b6ee1d72fe8da67c64b65224ff23b12e81ea7189f7f141450b5f9a0d8",
     "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "94c540c0f6b4fe680fdf20bb0bf321ebe5cbff500004e4aea5fd4d476f367d31",
     "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "73c1af2cb38a16f47add09dd4e6134f2d4578d5528b38696db87b4eb8e30cba6",
     "BotSalesAI_Frontend/tests/ui-panel-layout.spec.ts": "6f5980d08a44ac6bd2b746703704e6eb369441e318cb2edaa1138c35f1c3d8e6",
@@ -349,7 +349,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "fe840e2d96341051313d00b50388afe3024f6ffc3a90161c7071f02b73244570"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "d0450ca757690c194fdfa17b55a5abccfedebe25a10686612bd884b2f8ddb0d9"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -366,6 +366,8 @@
     "GitHub run #41 attempt 2 tested the preceding R41 source at SHA 932e39fc50afbe0d72dcf3dfee281e0b3739f40a: Chromium E2E and built-demo passed; Firefox E2E had one R61 readiness assertion failure (439/440) and Firefox built-demo was skipped. Attempt 1 had a hosted runner communication failure.",
     "The R61 route-readiness change is test-only. Local Firefox repeat and the full consent spec in Firefox and Chromium passed; GitHub CI on the R42 commits remains the hosted verification.",
     "GitHub run #42 attempt 1 on SHA 4b514d35023048d488637adebc967aa2238247f8 passed verify in both browsers and Chromium E2E/built-demo, but Firefox E2E had one failure at the 768px approvals document-width poll. Trace records the evaluation as unanswered before the 5-second predicate timeout, not a measured over-width value; see the linked R43 contract and artifact.",
-    "The same Firefox CI job is being re-run as attempt 2. Local Windows Firefox R37/R38/R52 viewport coverage passes 2/2, with a separate 768px probe measuring document width exactly 768; neither local result establishes Linux hosted behavior."
+    "The same Firefox CI job is being re-run as attempt 2. Local Windows Firefox R37/R38/R52 viewport coverage passes 2/2, with a separate 768px probe measuring document width exactly 768; neither local result establishes Linux hosted behavior.",
+    "GitHub run #43 on SHA fae1a07d89f9e727b073a62dfbeb570aa88edca7: Firefox attempts 1 and 2 ended by hosted runner shutdown at 347/440 and 341/440. Attempt 3 reached 439/440 and failed the Notifications route heading assertion after its default 5-second wait; the trace final frame shows the route rendered shortly after the assertion timed out. See run artifact 11908494708.",
+    "The Notifications layout test now waits up to 15 seconds for its existing heading assertion. The focused Firefox test passed three repeated local runs; this does not establish Linux hosted behavior. A follow-up GitHub run on the corrected SHA is pending."
   ]
 }

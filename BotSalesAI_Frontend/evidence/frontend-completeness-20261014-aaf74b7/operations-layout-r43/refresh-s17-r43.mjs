@@ -11,9 +11,9 @@ const sha256 = file => createHash('sha256').update(fs.readFileSync(file)).digest
 const readJson = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 
 const stages = [
-    { id: 'layout', command: 'npm.cmd run test:layout', log: 'layout-r43-cleanpath.log', count: 86, sourceCheck: /layout-check PASS: \d+ source files, 0 finding\(s\)/ },
-    { id: 'contracts', command: 'npm run test:ui-composition', log: 'composition-r43.log', count: 41, sourceCheck: /ui-composition PASS: \d+ source files, 0 finding\(s\)/ },
-    { id: 'evidence-validator', command: 'node --test tests/ui-evidence-validator.test.mjs', log: 'evidence-validator-r43.log', count: 11 },
+    { id: 'layout', command: 'npm.cmd run test:layout', log: 'layout-notifications-timeoutfix-current.log', count: 86, sourceCheck: /layout-check PASS: \d+ source files, 0 finding\(s\)/ },
+    { id: 'contracts', command: 'npm.cmd run test:ui-composition', log: 'composition-notifications-timeoutfix-current.log', count: 41, sourceCheck: /ui-composition PASS: \d+ source files, 0 finding\(s\)/ },
+    { id: 'evidence-validator', command: 'node --test tests/ui-evidence-validator.test.mjs', log: 'evidence-validator-notifications-timeoutfix-current.log', count: 11 },
 ];
 
 const evidence = readJson(evidenceFile);
@@ -42,11 +42,11 @@ for (const source of Object.keys(evidence.sourceFingerprints)) {
     evidence.sourceFingerprints[source] = sha256(path.join(repository, source));
 }
 evidence.recordedAt = new Date().toISOString();
-evidence.scope = 'Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun on unchanged Frontend source revision 4b514d35023048d488637adebc967aa2238247f8 while investigating the R42 hosted Firefox viewport predicate timeout. Browser behavior and hosted outcome are recorded separately; this does not certify backend, owner acceptance, speech or production.';
+evidence.scope = 'Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun after GitHub run #43 exposed a Firefox Notifications lazy-route readiness timeout in the test. The only code change is a 5s to 15s wait in the Notifications layout test; application source is unchanged. Hosted outcome for the follow-up SHA is pending; this does not certify backend, owner acceptance, speech or production.';
 evidence.knownLimits = [...new Set([
     ...evidence.knownLimits,
-    'GitHub run #42 attempt 1 on SHA 4b514d35023048d488637adebc967aa2238247f8 passed verify in both browsers and Chromium E2E/built-demo, but Firefox E2E had one failure at the 768px approvals document-width poll. Trace records the evaluation as unanswered before the 5-second predicate timeout, not a measured over-width value; see the linked R43 contract and artifact.',
-    'The same Firefox CI job is being re-run as attempt 2. Local Windows Firefox R37/R38/R52 viewport coverage passes 2/2, with a separate 768px probe measuring document width exactly 768; neither local result establishes Linux hosted behavior.',
+    'GitHub run #43 on SHA fae1a07d89f9e727b073a62dfbeb570aa88edca7: Firefox attempts 1 and 2 ended by hosted runner shutdown at 347/440 and 341/440. Attempt 3 reached 439/440 and failed the Notifications route heading assertion after its default 5-second wait; the trace final frame shows the route rendered shortly after the assertion timed out. See run artifact 11908494708.',
+    'The Notifications layout test now waits up to 15 seconds for its existing heading assertion. The focused Firefox test passed three repeated local runs; this does not establish Linux hosted behavior. A follow-up GitHub run on the corrected SHA is pending.',
 ])];
 
 fs.writeFileSync(evidenceFile, JSON.stringify(evidence, null, 2) + '\n');
