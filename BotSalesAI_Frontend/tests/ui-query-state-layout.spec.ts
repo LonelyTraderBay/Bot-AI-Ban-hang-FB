@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type Response } from '@playwright/test';
 import { evidenceRunId } from './evidence-run-id.mjs';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -23,11 +23,16 @@ async function setOperationDelay(page: Page, operation: string, delayMs: number 
     }, { operation, delayMs });
 }
 
-async function navigateClientSide(page: Page, pathname: string) {
-    await page.evaluate(nextPath => {
-        window.history.pushState({}, '', nextPath);
-        window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
-    }, pathname);
+async function openCatalogRoute(page: Page, pathname: string) {
+    const menu = page.getByRole('button', { name: 'Mở menu', exact: true });
+    if (await menu.isVisible()) await menu.click();
+    await page.getByRole('link', { name: 'Sản phẩm', exact: true }).click();
+
+    if (pathname !== '/s/shop-demo/products') {
+        const detailLink = page.locator(`main a[href="${pathname}"]`);
+        await expect(detailLink).toBeVisible({ timeout: 15_000 });
+        await detailLink.click();
+    }
 }
 
 function sourceFingerprints() {
@@ -69,43 +74,53 @@ for (const route of cases) {
         const pageErrors: string[] = [];
         const observations: Array<Record<string, unknown>> = [];
         page.on('pageerror', error => pageErrors.push(error.message));
+        let operationResponse: Response | undefined;
+        const matchesOperation = (response: Response) => response.request().method() === 'GET'
+            && new URL(response.url()).pathname.endsWith(route.operationPath);
+        const captureOperationResponse = (response: Response) => {
+            if (matchesOperation(response)) operationResponse = response;
+        };
+        page.on('response', captureOperationResponse);
 
-        for (const width of [390, 806, 1440]) {
-            await page.setViewportSize({ width, height: 900 });
-            await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
-            await page.locator('main h1').waitFor({ state: 'visible' });
-            await setOperationDelay(page, route.operation, 1500);
-            const responsePromise = page.waitForResponse(response => response.request().method() === 'GET'
-                && new URL(response.url()).pathname.endsWith(route.operationPath));
-            await navigateClientSide(page, route.pathname);
-            const targetUrl = new URL(route.pathname, demoUrl).toString();
-            await expect(page).toHaveURL(targetUrl);
-            await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
+        try {
+            for (const width of [390, 806, 1440]) {
+                operationResponse = undefined;
+                await page.setViewportSize({ width, height: 900 });
+                await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+                await page.locator('main h1').waitFor({ state: 'visible' });
+                await setOperationDelay(page, route.operation, 1500);
+                await openCatalogRoute(page, route.pathname);
+                const targetUrl = new URL(route.pathname, demoUrl).toString();
+                await expect(page).toHaveURL(targetUrl);
+                await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible({ timeout: 15_000 });
 
-            const progress = page.getByRole('progressbar', { name: 'Đang tải dữ liệu' });
-            const loader = progress.locator('xpath=..');
-            await expect(progress).toBeVisible();
-            const pendingGeometry = await loader.evaluate(element => {
-                const style = getComputedStyle(element);
-                const rect = element.getBoundingClientRect();
-                return { minHeight: style.minHeight, height: rect.height };
-            });
-            if (route.expectedProfile === 'section') {
-                expect(pendingGeometry.minHeight, `${route.id} ${width}px section profile min-height`).toBe('240px');
-                expect(pendingGeometry.height, `${route.id} ${width}px section profile height`).toBeGreaterThanOrEqual(240);
-            } else {
-                expect(pendingGeometry.minHeight, `${route.id} ${width}px inline profile min-height`).not.toBe('240px');
-                expect(pendingGeometry.height, `${route.id} ${width}px inline profile intrinsic height`).toBeLessThan(120);
+                const progress = page.getByRole('progressbar', { name: 'Đang tải dữ liệu' });
+                const loader = progress.locator('xpath=..');
+                await expect(progress).toBeVisible();
+                const pendingGeometry = await loader.evaluate(element => {
+                    const style = getComputedStyle(element);
+                    const rect = element.getBoundingClientRect();
+                    return { minHeight: style.minHeight, height: rect.height };
+                });
+                if (route.expectedProfile === 'section') {
+                    expect(pendingGeometry.minHeight, `${route.id} ${width}px section profile min-height`).toBe('240px');
+                    expect(pendingGeometry.height, `${route.id} ${width}px section profile height`).toBeGreaterThanOrEqual(240);
+                } else {
+                    expect(pendingGeometry.minHeight, `${route.id} ${width}px inline profile min-height`).not.toBe('240px');
+                    expect(pendingGeometry.height, `${route.id} ${width}px inline profile intrinsic height`).toBeLessThan(120);
+                }
+
+                const response = operationResponse ?? await page.waitForResponse(matchesOperation, { timeout: 30_000 });
+                expect(response.status(), `${route.id} synthetic ${route.operation} response`).toBe(200);
+                await expect(progress).toHaveCount(0);
+                if (route.readySelector === 'table') await expect(page.getByRole('table')).toBeVisible();
+                else await expect(page.getByRole('textbox', { name: 'Tên sản phẩm' })).toBeVisible();
+                expect(await page.evaluate(() => document.documentElement.scrollWidth), `${route.id} ${width}px document width`).toBe(width);
+                observations.push({ routeId: route.id, pathname: route.pathname, viewport: { width, height: 900 }, profile: route.expectedProfile, pendingGeometry, responseStatus: response.status(), ready: true });
+                await setOperationDelay(page, route.operation, null);
             }
-
-            const response = await responsePromise;
-            expect(response.status(), `${route.id} synthetic ${route.operation} response`).toBe(200);
-            await expect(progress).toHaveCount(0);
-            if (route.readySelector === 'table') await expect(page.getByRole('table')).toBeVisible();
-            else await expect(page.getByRole('textbox', { name: 'Tên sản phẩm' })).toBeVisible();
-            expect(await page.evaluate(() => document.documentElement.scrollWidth), `${route.id} ${width}px document width`).toBe(width);
-            observations.push({ routeId: route.id, pathname: route.pathname, viewport: { width, height: 900 }, profile: route.expectedProfile, pendingGeometry, responseStatus: response.status(), ready: true });
-            await setOperationDelay(page, route.operation, null);
+        } finally {
+            page.off('response', captureOperationResponse);
         }
 
         expect(pageErrors, `${route.id} page errors`).toEqual([]);
