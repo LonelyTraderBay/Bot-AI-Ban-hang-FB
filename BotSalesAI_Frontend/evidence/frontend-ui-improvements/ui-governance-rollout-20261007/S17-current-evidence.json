@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun after GitHub run #43 exposed a Firefox Notifications lazy-route readiness timeout in the test. The only code change is a 5s to 15s wait in the Notifications layout test; application source is unchanged. Hosted outcome for the follow-up SHA is pending; this does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-14T16:32:48.368Z",
+  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun after GitHub run #44 exposed a Firefox Dashboard lazy-route readiness timeout in the test. The current code changes only increase initial heading waits from 5s to 15s in the Notifications and Dashboard layout tests; application source is unchanged. Hosted outcome for the follow-up SHA is pending; this does not certify backend, owner acceptance, speech or production.",
+  "recordedAt": "2026-10-14T19:45:59.893Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -13,8 +13,8 @@
       "expected": "86/86 current fixtures PASS; source checker 0 findings",
       "observed": "86/86 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/layout-notifications-timeoutfix-current.log",
-        "sha256": "953f0669947b65353a85b6b1862e51fb5e33ee2457e65af8e077c6ba81dcf19a"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/layout-dashboard-timeoutfix-current.log",
+        "sha256": "bcb8dfd5c9060397ab93848f7e446dc237ae8deaf0b9e3a16b9d36220c981281"
       }
     },
     {
@@ -25,8 +25,8 @@
       "expected": "41/41 current fixtures PASS; source checker 0 findings",
       "observed": "41/41 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/composition-notifications-timeoutfix-current.log",
-        "sha256": "a6f5ffe540a7bccb0e304b6be507f365937616e2a30d870a5144adc42a85f38b"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/composition-dashboard-timeoutfix-current.log",
+        "sha256": "543ee5ab5bbd8bca33fbbafe81c46fc90eefbadea80b2f37e2cde8ede0ee95a2"
       }
     },
     {
@@ -37,8 +37,8 @@
       "expected": "11/11 current fixtures PASS",
       "observed": "11/11 current fixtures PASS",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/evidence-validator-notifications-timeoutfix-current.log",
-        "sha256": "4580238b595fd1efecc95edd6f3810b87642ff839f2b4c98d84add3c831a852f"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/evidence-validator-dashboard-timeoutfix-current.log",
+        "sha256": "76ff20582f9097ec6ffb0a584b959681dcb262b81f5936d4a9e5c4e0e0e247d1"
       }
     }
   ],
@@ -291,7 +291,7 @@
     "BotSalesAI_Frontend/tests/ui-composition-positive-ancestry.spec.ts": "88ccd6f23fb0de29f08d73d52adc86719e640f2bc19c1a70eeac117bff537661",
     "BotSalesAI_Frontend/tests/ui-consent-management.spec.ts": "499b99f10adf12e8cf124b7f3699023f895de466fa0160a896ac65d10d0aa1ea",
     "BotSalesAI_Frontend/tests/ui-customers-layout.spec.ts": "8c0bb6056555399cfcd6be6606a6229e87ef1155e26ba8c62b1056293116b0e7",
-    "BotSalesAI_Frontend/tests/ui-dashboard-layout.spec.ts": "1327040b01df84d92baef0b7ba8594cc3f052d997154f5902cc363d3a791b5e3",
+    "BotSalesAI_Frontend/tests/ui-dashboard-layout.spec.ts": "945f5ee8e18ad7a401bba7c7054c67e0087b03fcf66ec3d98de0d00d423aca8e",
     "BotSalesAI_Frontend/tests/ui-density-layout.spec.ts": "094212eaf886adc0b3fa472518e715fba6a27670e1a04ccda434e7ac3ce70705",
     "BotSalesAI_Frontend/tests/ui-entry-scope.test.mjs": "34855f434ee80ada00c0969f6949c1c268ccfae9c798c66d5d8c67675bb81cb1",
     "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
@@ -349,7 +349,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "d0450ca757690c194fdfa17b55a5abccfedebe25a10686612bd884b2f8ddb0d9"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "3221bd0f0f364d10d72a3fd50877874ca0585497c4e44b7587c99c350c13588b"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -368,6 +368,8 @@
     "GitHub run #42 attempt 1 on SHA 4b514d35023048d488637adebc967aa2238247f8 passed verify in both browsers and Chromium E2E/built-demo, but Firefox E2E had one failure at the 768px approvals document-width poll. Trace records the evaluation as unanswered before the 5-second predicate timeout, not a measured over-width value; see the linked R43 contract and artifact.",
     "The same Firefox CI job is being re-run as attempt 2. Local Windows Firefox R37/R38/R52 viewport coverage passes 2/2, with a separate 768px probe measuring document width exactly 768; neither local result establishes Linux hosted behavior.",
     "GitHub run #43 on SHA fae1a07d89f9e727b073a62dfbeb570aa88edca7: Firefox attempts 1 and 2 ended by hosted runner shutdown at 347/440 and 341/440. Attempt 3 reached 439/440 and failed the Notifications route heading assertion after its default 5-second wait; the trace final frame shows the route rendered shortly after the assertion timed out. See run artifact 11908494708.",
-    "The Notifications layout test now waits up to 15 seconds for its existing heading assertion. The focused Firefox test passed three repeated local runs; this does not establish Linux hosted behavior. A follow-up GitHub run on the corrected SHA is pending."
+    "The Notifications layout test now waits up to 15 seconds for its existing heading assertion. The focused Firefox test passed three repeated local runs; this does not establish Linux hosted behavior. A follow-up GitHub run on the corrected SHA is pending.",
+    "GitHub run #44 on SHA 9b18f748f00faf5c50b9d101afb00e41a1baf467: Firefox attempt 1 ended by runner shutdown at 341/440. Attempt 2 reached 439/440 and failed only the Dashboard heading assertion at its default 5-second wait; 439 other Firefox tests passed. See run artifact 11924345669.",
+    "The Dashboard layout test now waits up to 15 seconds for its existing initial heading assertion. The focused Firefox test passed three repeated local runs; the hosted rerun for this updated SHA is pending."
   ]
 }
