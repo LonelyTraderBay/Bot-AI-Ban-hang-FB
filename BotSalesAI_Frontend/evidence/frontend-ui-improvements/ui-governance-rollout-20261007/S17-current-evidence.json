@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun on the R37 C05 warehouse route-readiness test source. Browser behavior evidence is recorded separately; this does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-14T01:47:59.004Z",
+  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures rerun after R38 Finance route-readiness test hardening. Browser behavior evidence is recorded separately; this does not certify backend, owner acceptance, speech or production.",
+  "recordedAt": "2026-10-14T03:39:59.319Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -13,8 +13,8 @@
       "expected": "86/86 current fixtures PASS; source checker 0 findings",
       "observed": "86/86 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/warehouse-route-r37/layout-r37.log",
-        "sha256": "17803f754749dfdc9d1eccdd873f6eaaece1165718036851d7d2bb6a1d1b979c"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/finance-route-r38/layout-r38.log",
+        "sha256": "9cbc3968df0558c690c7789b3e2bd71d56a2ffbcd39fb2a92f9356c9bd94e245"
       }
     },
     {
@@ -25,8 +25,8 @@
       "expected": "41/41 current fixtures PASS; source checker 0 findings",
       "observed": "41/41 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/warehouse-route-r37/composition-r37.log",
-        "sha256": "8a0e9a2f3721db85b563945ba5d0ebd03d72daf6e2ce3d4338c274e12a75650b"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/finance-route-r38/composition-r38.log",
+        "sha256": "d2b0ddbfddd7476b72ea319b1ce90c79440c1f28eb097bd10c30331744ad90d4"
       }
     },
     {
@@ -37,8 +37,8 @@
       "expected": "11/11 current fixtures PASS",
       "observed": "11/11 current fixtures PASS",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/warehouse-route-r37/evidence-validator-r37.log",
-        "sha256": "96271a74cb621041d8ed7bc03976db84bde39f8149b3ed1349df48571683741a"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/finance-route-r38/evidence-validator-r38.log",
+        "sha256": "27ac5c26875db84de903ed7fc07d0b332f805df30f49c8e5923904c19d99d5ae"
       }
     }
   ],
@@ -295,7 +295,7 @@
     "BotSalesAI_Frontend/tests/ui-density-layout.spec.ts": "094212eaf886adc0b3fa472518e715fba6a27670e1a04ccda434e7ac3ce70705",
     "BotSalesAI_Frontend/tests/ui-entry-scope.test.mjs": "34855f434ee80ada00c0969f6949c1c268ccfae9c798c66d5d8c67675bb81cb1",
     "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
-    "BotSalesAI_Frontend/tests/ui-finance-layout.spec.ts": "583625b064c16746c9a06698e79f030352755659c00a1e26042d9f3116220bf4",
+    "BotSalesAI_Frontend/tests/ui-finance-layout.spec.ts": "2495b0de5bd0af212eb1192675f45de2ddb6247d50ce7b796e3c1414f28177c9",
     "BotSalesAI_Frontend/tests/ui-finance-management.spec.ts": "7f99a407e7739f61c7d197a2ad75b8e3e01f91a1a6a2f6f4f8f1504766dba5b3",
     "BotSalesAI_Frontend/tests/ui-fulfillment-layout.spec.ts": "68b82ff1df3a270997fea89c942450187aae11083b9b06700464ee8b79044ea6",
     "BotSalesAI_Frontend/tests/ui-import-scope.test.mjs": "02d21b1e9efd724c9c0539a6a61bc2ac1f1a9cda9a9fb5513892e9e2bb414fe4",
@@ -349,7 +349,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "009d4c9ccf6eb2f01c6d7ff58f7ab2fe9f5ff0624402ca996b7f7317afc4aa91"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "b881540a263297a304d6a2d79ee7597aad4527b90ba968b42fe5b456321848eb"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -359,6 +359,7 @@
     "Headless Chromium on GitHub did not emit a new BrowserContext page for a Ctrl-click on a native anchor in run 38265782456; the revised application-level test verifies that the router does not prevent the modified-click default, not that browser chrome creates a tab.",
     "Run 38274966705 on 2a396c1f is not a final hosted result: Chromium had one UI006.C05 timeout and Firefox was cancelled by the newer push. Run 38283700738 on 8fc1d3bc passed Chromium but had one Firefox C05 route-readiness failure; the corrected test has only local focused evidence until a later hosted run passes.",
     "This refresh verifies governance fixtures only. Full FE/browser/native/cold evidence is separate; Backend, owner acceptance, speech and hosted CI are not certified.",
-    "GitHub run #37 attempt 2 tested the preceding SHA c1fb2543752c520fc9909e536eb26eecf5a008ed and had one Firefox C05 route-readiness failure; it is historical for R37 source."
+    "GitHub run #37 attempt 2 tested the preceding SHA c1fb2543752c520fc9909e536eb26eecf5a008ed and had one Firefox C05 route-readiness failure; it is historical for R37 source.",
+    "GitHub run #38 tested the preceding Finance readiness-test source at SHA e781934d316aa39a3f4a73997553a4bb013750ef and had one Firefox route-heading timeout; it is historical for R38 source."
   ]
 }
