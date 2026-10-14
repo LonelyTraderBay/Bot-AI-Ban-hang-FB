@@ -1,0 +1,160 @@
+
+> botsales-frontend@0.1.0 verify
+> npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build && npm run test:layout && npm run test:visual-tokens && npm run test:ui-composition && npm run test:evidence
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs tests/session/demo-server-cache-lifecycle.test.mjs tests/session/playwright-run-isolation.test.mjs
+
+{
+  "checkedAt": "2026-10-14T10:47:02.990Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 85,
+  "operationCalls": 271,
+  "routes": 61,
+  "issues": [],
+  "status": "PASS"
+}
+✔ run cache closes once after success and preserves sibling run caches (10.2459ms)
+✔ early nonzero exit cleans only its run cache (5.9015ms)
+✔ signal exit cleans its run cache (4.3142ms)
+✔ spawn failure without a child process cleans the unique run cache (3.8312ms)
+✔ timeout keeps cache while child is alive and later exit triggers cleanup (39.1597ms)
+✔ Playwright API server teardown removes its run cache and preserves sibling cache (6.6999ms)
+✔ Playwright setup failure before server creation removes its run cache (3.438ms)
+✔ Playwright server close failure preserves its run cache (3.4187ms)
+✔ cache paths reject dot-segment traversal (1.0619ms)
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.built-demo.config.ts:11
+if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(runId)) throw new Error('Invalid built-demo run ID.');
+                                                       ^
+
+Error: Invalid built-demo run ID.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.built-demo.config.ts:11:56
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.19.0
+✔ Playwright workers reuse their parent output/cache ID while independent runs remain isolated (730.4485ms)
+✔ built-demo artifacts use a stable private run directory instead of cleaning the parent test-results (715.1706ms)
+✔ built-demo rejects an inherited output ID that could escape the artifact root (233.5817ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (1.0036ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (150.5518ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (152.0204ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1730.4277
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-14T10:47:06.639Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 85,
+  "imports": 723,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> botsales-frontend@0.1.0 test:domain
+> node scripts/test-domain.mjs
+
+{"status":"PASS","simulatorChecks":86,"networkChecks":31,"networkHandlers":245,"passed":117,"operations":100,"node":"v24.19.0","typescript":"5.9.2"}
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend
+
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\direct-vite\mode-demo\deps\react-dom_client.js?v=8de61b25 as it exceeds the max of 500KB.
+
+ Test Files  25 passed (25)
+      Tests  242 passed (242)
+   Start at  17:47:36
+   Duration  6.42s (tests 32%, environment 28%, import 17%, setup 12%, transform 10%)
+
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2077 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BQPx7lJM.css               3.56 kB │ gzip:   1.33 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/filters-CM07jGKE.js              0.32 kB │ gzip:   0.25 kB
+dist/assets/hooks-Txw3_IFx.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-CoiieEjq.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-Dq7haWFD.js                9.42 kB │ gzip:   3.73 kB
+dist/assets/index-CHengUm1.js               10.37 kB │ gzip:   3.61 kB
+dist/assets/index-CHJ4PpSY.js               13.14 kB │ gzip:   5.19 kB
+dist/assets/index-DXTdA7Nj.js               16.44 kB │ gzip:   6.14 kB
+dist/assets/index-DzKlqzWi.js               16.99 kB │ gzip:   5.81 kB
+dist/assets/index-CA9pGlZ7.js               18.61 kB │ gzip:   5.86 kB
+dist/assets/index-DKwXu4XI.js               18.85 kB │ gzip:   6.33 kB
+dist/assets/index-B2-5-C9A.js               19.08 kB │ gzip:   7.01 kB
+dist/assets/index-CRw5Yt2l.js               21.23 kB │ gzip:   7.65 kB
+dist/assets/index-ClycSQCl.js               22.06 kB │ gzip:   7.19 kB
+dist/assets/index-CuWWsEEc.js               25.06 kB │ gzip:   8.46 kB
+dist/assets/index-8Ep0Hh7v.js               27.39 kB │ gzip:   8.95 kB
+dist/assets/index-Nu-IjV5L.js               30.93 kB │ gzip:   9.93 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-D9wnAAPf.js               33.36 kB │ gzip:  11.03 kB
+dist/assets/index-2PvOcl2L.js               42.03 kB │ gzip:  11.49 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-S2zwtOdn.js               64.28 kB │ gzip:  17.67 kB
+dist/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist/assets/index-FrYf9Ilc.js              100.95 kB │ gzip:  32.04 kB
+dist/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-BwhaRlrs.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-CJj7QyVx.js                328.77 kB │ gzip: 100.20 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 2.84s
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 94
+npm error Lifecycle script `build` failed with error:
+npm error code 3221226505
+npm error path C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web
+npm error workspace @botsales/web@0.1.0
+npm error location C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web
+npm error command failed
+npm error command C:\Windows\System32\cmd.exe /d /s /c vite build --mode production
