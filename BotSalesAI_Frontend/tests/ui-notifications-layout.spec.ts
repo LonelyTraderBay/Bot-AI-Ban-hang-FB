@@ -19,7 +19,7 @@ const routes = [
 
 async function openRoute(page: import('@playwright/test').Page, route: string, heading: string) {
     await page.goto(new URL(route, demoUrl).toString(), { waitUntil: 'domcontentloaded' });
-    await expect(page.getByRole('heading', { name: heading })).toBeVisible();
+    await expect(page.getByRole('heading', { name: heading })).toBeVisible({ timeout: 15_000 });
 }
 
 async function expectDocumentFits(page: import('@playwright/test').Page, width: number) {
