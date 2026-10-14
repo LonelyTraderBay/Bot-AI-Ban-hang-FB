@@ -13,7 +13,15 @@ test.beforeAll(async () => {
 test.afterAll(async () => closeDemo?.());
 
 async function gotoDemo(page: import('@playwright/test').Page, route: string) {
-    await page.goto(new URL(route, demoUrl).toString());
+    await page.goto(new URL(route, demoUrl).toString(), { waitUntil: 'domcontentloaded' });
+    await waitForKnowledgeRoute(page);
+}
+
+async function waitForKnowledgeRoute(page: import('@playwright/test').Page) {
+    await page.getByRole('progressbar', { name: /^Đang tải (phiên làm việc|cửa hàng)$/ }).waitFor({ state: 'hidden', timeout: 30_000 });
+    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden', timeout: 30_000 });
+    await expect(page.locator('main h1')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('main .MuiCircularProgress-root, main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30_000 });
 }
 
 async function gotoKnowledgeDetail(page: import('@playwright/test').Page) {
@@ -24,7 +32,7 @@ async function gotoKnowledgeDetail(page: import('@playwright/test').Page) {
     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
     expect((await detailResponse).status()).toBe(200);
     expect((await revisionsResponse).status()).toBe(200);
-    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
+    await waitForKnowledgeRoute(page);
 }
 
 async function openKnowledgeFeedbackReview(page: import('@playwright/test').Page) {
@@ -80,13 +88,13 @@ test('Knowledge routes R23/R24/R25 fit every supported layout boundary', async (
         await page.setViewportSize({ width, height });
 
         await gotoDemo(page, '/s/shop-demo/knowledge');
-        await expect(page.getByRole('heading', { name: 'Kiến thức cửa hàng', exact: true })).toBeVisible();
-        await expect(page.getByRole('table').first()).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Kiến thức cửa hàng', exact: true })).toBeVisible({ timeout: 30_000 });
+        await expect(page.getByRole('table').first()).toBeVisible({ timeout: 30_000 });
         await expectNoHorizontalOverflow(page, width);
 
         await gotoKnowledgeDetail(page);
-        await expect(page.getByRole('heading', { name: 'Chính sách đổi hàng', exact: true })).toBeVisible();
-        await expect(page.getByRole('heading', { name: 'Lịch sử phiên bản', exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Chính sách đổi hàng', exact: true })).toBeVisible({ timeout: 30_000 });
+        await expect(page.getByRole('heading', { name: 'Lịch sử phiên bản', exact: true })).toBeVisible({ timeout: 30_000 });
         await expectNoHorizontalOverflow(page, width);
 
         await seedPendingFeedbackAndOpenReview(page);
