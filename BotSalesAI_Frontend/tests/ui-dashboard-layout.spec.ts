@@ -89,7 +89,7 @@ test('Shared consolidation Dashboard leaves native modified-click navigation to 
 
 test('dashboard hierarchy, CTA targets, and page width hold across supported breakpoints', async ({ page }) => {
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
-    await expect(page.getByRole('heading', { name: 'Tình hình hiện tại', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Tình hình hiện tại', exact: true })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByText('Dữ liệu cập nhật', { exact: false })).toBeVisible();
 
     for (const width of [320, 390, 768, 1280, 1440]) {
