@@ -14,7 +14,11 @@ test.beforeAll(async () => {
 test.afterAll(async () => closeDemo?.());
 
 async function gotoDemo(page: import('@playwright/test').Page, route: string) {
-    await page.goto(new URL(route, demoUrl).toString());
+    await page.goto(new URL(route, demoUrl).toString(), { waitUntil: 'domcontentloaded' });
+    await page.getByRole('progressbar', { name: /^Đang tải (phiên làm việc|cửa hàng)$/ }).waitFor({ state: 'hidden', timeout: 30_000 });
+    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden', timeout: 30_000 });
+    await expect(page.locator('main h1')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('main .MuiCircularProgress-root, main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30_000 });
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp, within?: import('@playwright/test').Locator) {

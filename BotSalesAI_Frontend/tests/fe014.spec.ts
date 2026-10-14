@@ -15,7 +15,11 @@ test.beforeAll(async () => {
 test.afterAll(async () => closeDemo?.());
 
 async function gotoDemo(page: import('@playwright/test').Page, path: string) {
-    await page.goto(new URL(path, demoUrl).toString());
+    await page.goto(new URL(path, demoUrl).toString(), { waitUntil: 'domcontentloaded' });
+    await page.getByRole('progressbar', { name: /^Đang tải (phiên làm việc|cửa hàng)$/ }).waitFor({ state: 'hidden', timeout: 30_000 });
+    await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden', timeout: 30_000 });
+    await expect(page.locator('main h1')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('main .MuiCircularProgress-root, main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30_000 });
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
@@ -174,13 +178,16 @@ test('FE014.S04 owner manages a paused purchase delegation only after rechecking
     const resume = page.getByRole('dialog', { name: 'Kiểm điều kiện để tiếp tục' });
     await resume.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Chủ shop kiểm tra vai trò mua hàng.');
     const resumeWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/automation-control'));
+    const rolesRefresh = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/agent-roles');
     await resume.getByRole('button', { name: 'Kiểm tra để tiếp tục' }).click();
     expect((await resumeWait).status()).toBe(202);
+    expect((await rolesRefresh).status()).toBe(200);
 
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Cần phê duyệt', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Ủy quyền gửi đơn mua', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Tạo ủy quyền có giới hạn', exact: true }).click();
     const create = page.getByRole('dialog', { name: 'Tạo ủy quyền mua hàng' });
+    await expect(create.getByRole('combobox', { name: 'Vai trò mua hàng chịu trách nhiệm' })).toBeVisible({ timeout: 30_000 });
     await chooseOption(page, 'Vai trò mua hàng chịu trách nhiệm', /agent-2/);
     await chooseOption(page, 'Nhà cung cấp đã duyệt', 'Xưởng hàng mẫu');
     await chooseOption(page, 'Kho đang hoạt động', /warehouse-01|MAIN/);
