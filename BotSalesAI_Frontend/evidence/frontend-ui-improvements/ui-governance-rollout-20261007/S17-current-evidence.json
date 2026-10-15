@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures refreshed after GitHub runs #46 and #47 exposed stale evidence fingerprints in intermediate commits. GitHub run #48 identified S12 R09 using History API navigation outside React Router; GitHub run #49 then exposed stale Firefox Service Worker clients when the Operations geometry test reloaded three routes repeatedly in one page. Run #50 Chromium then exposed FE010 checking the products heading before the list route became ready; its test now waits for the target URL and heading. These changes are test-only: React runtime, API, contracts, and mock handlers are unchanged. Local Firefox/Chromium results and full verify are documented in REPORT.md; hosted verification for the latest fix is separate. This record does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-15T06:11:58.902Z",
+  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures refreshed after GitHub runs #46 and #47 exposed stale evidence fingerprints in intermediate commits. GitHub run #48 identified S12 R09 using History API navigation outside React Router; GitHub run #49 then exposed stale Firefox Service Worker clients when the Operations geometry test reloaded three routes repeatedly in one page. Run #50 Chromium exposed FE010 checking the products heading before the list route became ready; its test now waits for the target URL and heading. Run #51 Firefox exposed C05 checking dialog closure within the default 5-second expect timeout even though the PATCH succeeded and the success UI appeared shortly after; C05 now waits up to 15 seconds for both success status and dialog closure. These changes are test-only: React runtime, API, contracts, and mock handlers are unchanged. Local Firefox/Chromium results and full verify are documented in REPORT.md; the hosted follow-up is evaluated on the pushed revision. This record does not certify backend, owner acceptance, speech or production.",
+  "recordedAt": "2026-10-15T09:17:01.245Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -303,7 +303,7 @@
     "BotSalesAI_Frontend/tests/ui-inventory-layout.spec.ts": "3ec58e1ad8fdaff03921c5a3f488b3e33ead8763baec9067e2cf489cb1aaf2c7",
     "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "591b833bae530b19fb231d3aacab2058d4546d2e2648cdaf603c5b973b4a33f6",
     "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
-    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "3ece9b26145b3b4f50268720d4420f43fb00e1037fcb8d00f7fdb1401299b579",
+    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "f0c430f225b022697ce86cc23ca07624825d81fbfa6792b1e197c06bf921e661",
     "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "cd6fb47b6ee1d72fe8da67c64b65224ff23b12e81ea7189f7f141450b5f9a0d8",
     "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "a6fe2576a6442cfe03bc62097435b7f998406250ecedbca71b48e4802565db52",
     "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "73c1af2cb38a16f47add09dd4e6134f2d4578d5528b38696db87b4eb8e30cba6",
@@ -349,7 +349,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "2825b4c2f17c791f89ec115c5419fc813dc217a09cf2c39771f8a9bc537744d3"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "aa589d50113b250ea6ad514cbeb69bd33d620f69c421ef0c23853f722d87e7be"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -382,6 +382,8 @@
     "GitHub run #49 on SHA 4cdfd51334ca81fef52013427ab18ebee70cdcd5 passed Chromium and 439/440 Firefox E2E tests. The sole Firefox failure was R37/R38/R52 in tests/ui-operations-layout.spec.ts after 15 full-document route navigations reused one MSW client. The Firefox trace showed a Service Worker interception error and the app startup fallback heading; the failed assertion was the missing main h1. Artifact 11947873907 has SHA-256 158b1ff72bf729f32e9b74cd628cc6fe959bdfbc941f0f558f0cd94c10ab81f5.",
     "The Operations geometry test now gives each route a fresh Playwright page fixture and checks five viewport widths without repeatedly reloading that document. The complete spec passed 4/4 on local Firefox and 4/4 on local Chromium; local npm run verify passed after refreshing the current 280 S17 source fingerprints. Hosted verification for the fix is separate.",
     "GitHub run #50 on SHA 32929d1be29dfcce1167a98abf00bbdfad3a3bd7 passed npm run verify and Chromium completed 441/442 E2E tests. FE010 timed out waiting for the Sản phẩm heading after clicking Danh sách from a saved product; the trace stayed at /s/shop-demo/products/product-10006 through the default 5-second assertion. Artifact 11951926263 has SHA-256 9a4abde1cc2f05edeb90b8c5ae3d600dab384dfc593ecfdf1159505f15c759d6.",
-    "FE010 now waits for /s/shop-demo/products and then the Sản phẩm heading. The full FE010 spec passed 9/9 on local Chromium and 9/9 on local Firefox; focused Chromium repetition passed 3/3. The change affects only test readiness, not application behavior. Hosted verification for the updated commit remains separate."
+    "FE010 now waits for /s/shop-demo/products and then the Sản phẩm heading. The full FE010 spec passed 9/9 on local Chromium and 9/9 on local Firefox; focused Chromium repetition passed 3/3. The change affects only test readiness, not application behavior. Hosted verification for the updated commit remains separate.",
+    "GitHub run #51 on SHA ae8ec171f407a2b9bb5a6c34289cd503980c9e70 passed npm run verify on both runners and Chromium completed 442/442 E2E plus built-demo 3/3. Firefox attempt 1 ended at 341/442 on runner shutdown; attempt 2 reached 441/442 and failed only C05 at the default 5-second dialog-close assertion after a successful warehouse version-4 PATCH. Artifact 11959977178, SHA-256 3138f27714044ed23f8d33e20c0674ae1fddd8bba3bf70fa2bad6f00643ce32e, shows the success status and closed editor in the final snapshot just after the timeout.",
+    "C05 now waits up to 15 seconds for the saved status and closed dialog without changing the product behavior or weakening either assertion. The focused test passed 5/5 local Firefox and 3/3 local Chromium repetitions; these mock results do not substitute for hosted verification of the fix."
   ]
 }
