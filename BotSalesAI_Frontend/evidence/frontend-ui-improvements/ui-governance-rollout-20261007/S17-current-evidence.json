@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures refreshed after GitHub runs #46 and #47 exposed stale evidence fingerprints in intermediate commits. GitHub run #48 then identified S12 R09 using History API navigation outside React Router; the test now follows the actual menu and RouterLink, with local Firefox and Chromium measurements documented in REPORT.md. Application source is unchanged. Hosted matrix results are recorded separately; this record does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-14T23:52:21.841Z",
+  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures refreshed after GitHub runs #46 and #47 exposed stale evidence fingerprints in intermediate commits. GitHub run #48 identified S12 R09 using History API navigation outside React Router; GitHub run #49 then exposed stale Firefox Service Worker clients when the Operations geometry test reloaded three routes repeatedly in one page. The test now gives each route an isolated Playwright page fixture and resizes the already-loaded route. React runtime, API, contracts, and mock handlers are unchanged. Local Firefox/Chromium results and full verify are documented in REPORT.md; the hosted result for the fix is separate. This record does not certify backend, owner acceptance, speech or production.",
+  "recordedAt": "2026-10-15T04:45:18.431Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -305,7 +305,7 @@
     "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
     "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "3ece9b26145b3b4f50268720d4420f43fb00e1037fcb8d00f7fdb1401299b579",
     "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "cd6fb47b6ee1d72fe8da67c64b65224ff23b12e81ea7189f7f141450b5f9a0d8",
-    "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "94c540c0f6b4fe680fdf20bb0bf321ebe5cbff500004e4aea5fd4d476f367d31",
+    "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "a6fe2576a6442cfe03bc62097435b7f998406250ecedbca71b48e4802565db52",
     "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "73c1af2cb38a16f47add09dd4e6134f2d4578d5528b38696db87b4eb8e30cba6",
     "BotSalesAI_Frontend/tests/ui-panel-layout.spec.ts": "6f5980d08a44ac6bd2b746703704e6eb369441e318cb2edaa1138c35f1c3d8e6",
     "BotSalesAI_Frontend/tests/ui-procurement-layout.spec.ts": "4372f36b9be5eab023f419a03fdcf57c334b00ce6f6768779cff9b9251c19923",
@@ -349,7 +349,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "0f6bb595c21d8a096b6c02755de95e1b4ae08d8fc6f5941c3a500017bc4aa326"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "86003bdfc20285becaa15d335bb6dcca79d8886253bb78e76f25987fb592140e"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -378,6 +378,8 @@
     "GitHub run #46 on P1 SHA 5a61753145c1213e15f18c435ed317baee25575b stopped during npm run verify because the hosted checkout found the old S17 source fingerprint for tests/ui-finance-management.spec.ts; browser E2E and built-demo steps were skipped. The S17 refresh followed in P2.",
     "GitHub run #47 on P2 SHA 4de81f55076221aeda7e0ec101ab0dae8f051435 stopped during npm run verify because REPORT.md and composition-finance-r45-current.log changed after the S17 refresh; the hosted validator reported stale sourceFingerprints[BotSalesAI_Frontend/evidence/REPORT.md] and checks[1].log. Browser E2E and built-demo steps were skipped. This record refreshes S17 after those final edits.",
     "GitHub run #48 on SHA 20cda588950f7ac610ca35ec3a0db52ce531f4c0 passed Chromium and 439/440 Firefox tests. The sole Firefox failure was S12 R09 in tests/ui-query-state-layout.spec.ts: the test changed history with pushState and dispatched popstate directly, so the URL changed before React Router had rendered the products route. The error snapshot showed overview content and a subsequent trace showed the product route and mock API response. Firefox artifact 11936645149, SHA-256 8aebd9a62c4290a5038c3884876074fa6167d15c2971d7bc78dc49fee2a74d92.",
-    "The S12 QueryState layout test now navigates via the application menu and React Router links, and observes the matching MSW response after checking pending-state geometry. Local targeted runs passed 2/2 Firefox profiles, 3/3 repeated Firefox R09 runs, and 2/2 Chromium profiles; hosted verification for the fix is separate."
+    "The S12 QueryState layout test now navigates via the application menu and React Router links, and observes the matching MSW response after checking pending-state geometry. Local targeted runs passed 2/2 Firefox profiles, 3/3 repeated Firefox R09 runs, and 2/2 Chromium profiles; hosted verification for the fix is separate.",
+    "GitHub run #49 on SHA 4cdfd51334ca81fef52013427ab18ebee70cdcd5 passed Chromium and 439/440 Firefox E2E tests. The sole Firefox failure was R37/R38/R52 in tests/ui-operations-layout.spec.ts after 15 full-document route navigations reused one MSW client. The Firefox trace showed a Service Worker interception error and the app startup fallback heading; the failed assertion was the missing main h1. Artifact 11947873907 has SHA-256 158b1ff72bf729f32e9b74cd628cc6fe959bdfbc941f0f558f0cd94c10ab81f5.",
+    "The Operations geometry test now gives each route a fresh Playwright page fixture and checks five viewport widths without repeatedly reloading that document. The complete spec passed 4/4 on local Firefox and 4/4 on local Chromium; local npm run verify passed after refreshing the current 280 S17 source fingerprints. Hosted verification for the fix is separate."
   ]
 }
