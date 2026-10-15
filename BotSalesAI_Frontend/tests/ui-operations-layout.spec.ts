@@ -41,15 +41,15 @@ async function expectDialogFits(page: import('@playwright/test').Page, width: nu
     expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(height + 1);
 }
 
-test('R37/R38/R52 Operations routes fit the supported page-width boundaries', async ({ page }) => {
-    for (const width of [320, 390, 768, 1280, 1440]) {
-        await page.setViewportSize({ width, height: 900 });
-        for (const route of routes) {
-            await openRoute(page, route.path, route.heading);
+for (const route of routes) {
+    test(`${route.path} fits the supported page-width boundaries`, async ({ page }) => {
+        await openRoute(page, route.path, route.heading);
+        for (const width of [320, 390, 768, 1280, 1440]) {
+            await page.setViewportSize({ width, height: 900 });
             await expectDocumentFits(page, width);
         }
-    }
-});
+    });
+}
 
 test('R52 role-control confirmation stays inside mobile and desktop viewports', async ({ page }) => {
     for (const { width, height } of [
