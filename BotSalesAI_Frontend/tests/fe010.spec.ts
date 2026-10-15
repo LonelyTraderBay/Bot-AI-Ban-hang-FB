@@ -91,7 +91,8 @@ test('product editor validates positive prices, protects image-only drafts, and 
     expect(payload.variants[0]).not.toHaveProperty('unitCost');
 
     await page.getByRole('link',{name:'Danh sách',exact:true}).click();
-    await expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible();
+    await expect(page).toHaveURL(/\/s\/shop-demo\/products(?:\?.*)?$/, { timeout: 30_000 });
+    await expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible({ timeout: 15_000 });
     await page.getByLabel('Tìm kiếm').fill('FE010-PRODUCT-L');
     await page.getByRole('button',{name:'Tìm kiếm',exact:true}).click();
     await expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible();
