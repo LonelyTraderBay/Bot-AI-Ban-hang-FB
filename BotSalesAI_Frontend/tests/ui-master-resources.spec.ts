@@ -33,7 +33,7 @@ test('C05 warehouse conflicts keep the draft across two concurrent versions and 
     expect(await mutate(page,'warehouses/warehouse-01',{name:'Tên server lần 1'},1)).toBe(200);
     await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();const compare=page.getByRole('dialog',{name:'Đối chiếu thay đổi',exact:true});await expect(compare).toBeVisible();const choice=compare.getByRole('combobox',{name:/Chọn dữ liệu: Tên kho/});await choice.click();await page.getByRole('option',{name:'Giữ bản nháp',exact:true}).click();await compare.getByRole('button',{name:'Áp dụng vào bản nháp'}).click();
     expect(await mutate(page,'warehouses/warehouse-01',{addressLine:'Địa điểm server lần 2'},2)).toBe(200);await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(compare).toBeVisible();await expect(compare).toContainText('Tên nháp của tôi');await compare.getByRole('button',{name:'Áp dụng vào bản nháp'}).click();await expect(editor.getByLabel('Tên kho',{exact:true})).toHaveValue('Tên nháp của tôi');
-    await expect(editor.getByLabel('Địa điểm kho',{exact:true})).toHaveValue('Địa điểm server lần 2');await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(editor).not.toBeVisible();
+    await expect(editor.getByLabel('Địa điểm kho',{exact:true})).toHaveValue('Địa điểm server lần 2');await editor.getByRole('button',{name:'Lưu kho',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Đã lưu kho Tên nháp của tôi.'})).toBeVisible({timeout:15_000});await expect(editor).not.toBeVisible({timeout:15_000});
 });
 
 test('C05 accounts create and protect used fields; journal choices come from the same API lookup',async({page})=>{
