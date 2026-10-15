@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 governance validation refreshed for GitHub run #52 follow-up. The related browser tests now wait for the finance dialog transition before Axe, use isolated Playwright output paths, and wait for a completed successful cursor response plus lookup readiness. Local Firefox UI006 repeated 5/5 and the final focused Firefox pair passed 2/2; finance C06 repeated 3/3. The focused Chromium pair passed 2/2. Full local verify and hosted follow-up are recorded in the adjacent R52 evidence; this record does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-15T14:12:32.237Z",
+  "scope": "S17 governance validation refreshed after GitHub run #53. The Procurement R44-R47 responsive matrix now has one page/test per route and retains all five widths. Local focused Firefox/Chromium E2E repeated three times passed 30/30; full local npm run verify and hosted validation of the new revision are pending. This record does not certify backend, owner acceptance, assistive-technology acceptance or production.",
+  "recordedAt": "2026-10-15T16:01:22.668Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -13,8 +13,8 @@
       "expected": "86/86 current fixtures PASS; source checker 0 findings",
       "observed": "86/86 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/ui006-lookup-r52/layout-current.log",
-        "sha256": "e50a20afc1cfcefc8c43c9abc3f086044a6452fa5b11a62f20709fef3771d956"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/procurement-layout-r53/layout-current.log",
+        "sha256": "f991a37f5564a48a672e96fe3cd18ac7523175d672eed93fe689811528f12cea"
       }
     },
     {
@@ -25,8 +25,8 @@
       "expected": "41/41 current fixtures PASS; source checker 0 findings",
       "observed": "41/41 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/ui006-lookup-r52/composition-current.log",
-        "sha256": "9222de63d5fbb0864cd6b482ab35ee5584460c7020a5cb27b6382b054aa77270"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/procurement-layout-r53/composition-current.log",
+        "sha256": "ea0dffab274c60382cc0d2a0b385baf2935deed8cc3a80eaaf07dfdc19161158"
       }
     },
     {
@@ -37,8 +37,8 @@
       "expected": "11/11 current fixtures PASS",
       "observed": "11/11 current fixtures PASS",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/ui006-lookup-r52/evidence-validator-current.log",
-        "sha256": "a7d4796e13afa3693a0529f40f0ae8ca65ce571f86ac9b8116746fc168459dc5"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/procurement-layout-r53/evidence-validator-current.log",
+        "sha256": "34566fac15fa73f472f41d6fd0904af63daba8ec5217cbe83da28ab91fa3d08f"
       }
     }
   ],
@@ -308,7 +308,7 @@
     "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "a6fe2576a6442cfe03bc62097435b7f998406250ecedbca71b48e4802565db52",
     "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "73c1af2cb38a16f47add09dd4e6134f2d4578d5528b38696db87b4eb8e30cba6",
     "BotSalesAI_Frontend/tests/ui-panel-layout.spec.ts": "6f5980d08a44ac6bd2b746703704e6eb369441e318cb2edaa1138c35f1c3d8e6",
-    "BotSalesAI_Frontend/tests/ui-procurement-layout.spec.ts": "4372f36b9be5eab023f419a03fdcf57c334b00ce6f6768779cff9b9251c19923",
+    "BotSalesAI_Frontend/tests/ui-procurement-layout.spec.ts": "0199322b40f4ece1cf2b0c89aaa989c462478b026f8337c884504b799cfe79ed",
     "BotSalesAI_Frontend/tests/ui-query-state-layout.spec.ts": "d93c8eb6c3e1fb2ec753fb43224959b42b689f5884a1670e584dbf83209e106d",
     "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "05571e9daf5a87be6e6fe39cc34772c2dadf5481d9843748d648806e2d857aa4",
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
@@ -386,6 +386,8 @@
     "GitHub run #51 on SHA ae8ec171f407a2b9bb5a6c34289cd503980c9e70 passed npm run verify on both runners and Chromium completed 442/442 E2E plus built-demo 3/3. Firefox attempt 1 ended at 341/442 on runner shutdown; attempt 2 reached 441/442 and failed only C05 at the default 5-second dialog-close assertion after a successful warehouse version-4 PATCH. Artifact 11959977178, SHA-256 3138f27714044ed23f8d33e20c0674ae1fddd8bba3bf70fa2bad6f00643ce32e, shows the success status and closed editor in the final snapshot just after the timeout.",
     "C05 now waits up to 15 seconds for the saved status and closed dialog without changing the product behavior or weakening either assertion. The focused test passed 5/5 local Firefox and 3/3 local Chromium repetitions; these mock results do not substitute for hosted verification of the fix.",
     "GitHub run #52 on SHA 3d741ff7f03a6fc3279a611cc61c5c9b30d55b5f: Chromium completed E2E and built-demo. Firefox attempt 3 completed 440/442 and failed only the finance C06 entrance-opacity assertion and UI006.C05 waiting for the final lookup state; attempt 2 ended by hosted-runner shutdown. Firefox artifact 11977597158 contains the UI006 trace and terminal supplier-offers response (HTTP 200, 18 records, hasMore=false).",
-    "The R52 C06 test waits up to 15 seconds for the dialog entrance transition before running Axe; the dialog itself must also be visible. Screenshots use Playwright per-test output paths. The UI006 helper waits up to 30 seconds for readiness, checks the cursor response status and waits for the response body. Local focused runs are not hosted Linux proof; hosted verification is pending."
+    "The R52 C06 test waits up to 15 seconds for the dialog entrance transition before running Axe; the dialog itself must also be visible. Screenshots use Playwright per-test output paths. The UI006 helper waits up to 30 seconds for readiness, checks the cursor response status and waits for the response body. Local focused runs are not hosted Linux proof; hosted verification is pending.",
+    "GitHub run #53 on SHA 7b5a9b2213859aed9937ff248ddd1bab905f5197 passed npm run verify and Chromium E2E; Firefox reached 441/442 and timed out in the single Procurement responsive-layout test while navigating the route matrix. This result belongs to the previous source revision.",
+    "The Procurement matrix now isolates each R44-R47 route in a separate Playwright test/page, loads each route once, and checks 320, 390, 768, 1280 and 1440 CSS px. Local focused repeat-3 verification passed 30/30; GitHub validation for this revision is pending."
   ]
 }

@@ -39,36 +39,40 @@ async function expectDialogWithinViewport(page: import('@playwright/test').Page,
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
 }
 
-test('Procurement R44-R47 preserve shared page gutter and contain responsive tables at 320-1440px', async ({ page }) => {
-    const pageErrors: string[] = [];
-    page.on('pageerror', error => pageErrors.push(error.message));
-    const routes = [
-        { id: 'R44', path: '/s/shop-demo/suppliers', heading: 'Nhà cung cấp hàng hóa' },
-        { id: 'R45', path: '/s/shop-demo/replenishment', heading: 'Nhập lại hàng' },
-        { id: 'R46', path: '/s/shop-demo/purchases', heading: 'Đơn mua hàng' },
-        { id: 'R47', path: '/s/shop-demo/receipts', heading: 'Nhận hàng' },
-    ];
-    const observations = [];
+const layoutRoutes = [
+    { id: 'R44', path: '/s/shop-demo/suppliers', heading: 'Nhà cung cấp hàng hóa' },
+    { id: 'R45', path: '/s/shop-demo/replenishment', heading: 'Nhập lại hàng' },
+    { id: 'R46', path: '/s/shop-demo/purchases', heading: 'Đơn mua hàng' },
+    { id: 'R47', path: '/s/shop-demo/receipts', heading: 'Nhận hàng' },
+];
+const layoutWidths = [320, 390, 768, 1280, 1440];
 
-    for (const width of [320, 390, 768, 1280, 1440]) {
-        await page.setViewportSize({ width, height: 900 });
-        for (const route of routes) {
-            await gotoDemo(page, route.path);
-            await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
-            await expect(page.getByRole('table').first()).toBeVisible();
+for (const route of layoutRoutes) {
+    test(`${route.id} preserves the shared page gutter and contains its table at 320-1440px`, async ({ page }) => {
+        const pageErrors: string[] = [];
+        page.on('pageerror', error => pageErrors.push(error.message));
+        const observations = [];
+
+        await page.setViewportSize({ width: layoutWidths[0], height: 900 });
+        await gotoDemo(page, route.path);
+        await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
+        await expect(page.getByRole('table').first()).toBeVisible();
+
+        for (const width of layoutWidths) {
+            await page.setViewportSize({ width, height: 900 });
             await expect(page.locator('main#main-content')).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
                 scrollWidth: document.documentElement.scrollWidth,
             }));
             expect(geometry.scrollWidth, `${route.id} document width at ${width}px`).toBeLessThanOrEqual(geometry.clientWidth);
-            observations.push({ route: route.id, width, ...geometry });
+            observations.push({ width, ...geometry });
         }
-    }
 
-    expect(observations).toHaveLength(20);
-    expect(pageErrors).toEqual([]);
-});
+        expect(observations).toHaveLength(layoutWidths.length);
+        expect(pageErrors).toEqual([]);
+    });
+}
 
 test('Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow and desktop viewports without writes', async ({ page }) => {
     const pageErrors: string[] = [];
