@@ -15,7 +15,7 @@ test.afterAll(async () => closeDemo?.());
 async function ready(page: Page, route: string, readPath?: string) {
     const response = readPath ? page.waitForResponse(result => result.request().method() === 'GET'
         && new URL(result.url()).pathname === readPath) : undefined;
-    await page.goto(demoUrl + route);
+    await page.goto(demoUrl + route, { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(demoUrl + route);
     if (response) expect((await response).status()).toBe(200);
     await expect(page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true })).toBeHidden({ timeout: 30000 });
@@ -35,6 +35,7 @@ async function searchGeometry(page: Page) {
 }
 
 test('Shared Toolbar and demo tools keep labels clear when text doubles', async ({ page }, info) => {
+    test.setTimeout(300_000);
     const observations = [];
     for (const width of [320, 390, 1280, 1440]) {
         await page.setViewportSize({ width, height: 1000 });
