@@ -1,32 +1,32 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Current S17 governance validation only: 86 layout, 41 composition/shared-contract and 11 provenance fixtures refreshed after GitHub runs #46 and #47 exposed stale evidence fingerprints in intermediate commits. GitHub run #48 identified S12 R09 using History API navigation outside React Router; GitHub run #49 then exposed stale Firefox Service Worker clients when the Operations geometry test reloaded three routes repeatedly in one page. Run #50 Chromium exposed FE010 checking the products heading before the list route became ready; its test now waits for the target URL and heading. Run #51 Firefox exposed C05 checking dialog closure within the default 5-second expect timeout even though the PATCH succeeded and the success UI appeared shortly after; C05 now waits up to 15 seconds for both success status and dialog closure. These changes are test-only: React runtime, API, contracts, and mock handlers are unchanged. Local Firefox/Chromium results and full verify are documented in REPORT.md; the hosted follow-up is evaluated on the pushed revision. This record does not certify backend, owner acceptance, speech or production.",
-  "recordedAt": "2026-10-15T09:17:01.245Z",
+  "scope": "S17 governance validation refreshed for GitHub run #52 follow-up. The related browser tests now wait for the finance dialog transition before Axe, use isolated Playwright output paths, and wait for a completed successful cursor response plus lookup readiness. Local Firefox UI006 repeated 5/5 and the final focused Firefox pair passed 2/2; finance C06 repeated 3/3. The focused Chromium pair passed 2/2. Full local verify and hosted follow-up are recorded in the adjacent R52 evidence; this record does not certify backend, owner acceptance, speech or production.",
+  "recordedAt": "2026-10-15T14:12:32.237Z",
   "status": "COMPLETE",
   "checks": [
     {
       "id": "layout",
-      "command": "npm.cmd run test:layout",
+      "command": "npm run test:layout",
       "exitCode": 0,
       "result": "PASS",
       "expected": "86/86 current fixtures PASS; source checker 0 findings",
       "observed": "86/86 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/layout-finance-r45-current.log",
-        "sha256": "e7eaa5c234144440b4baa773e50fbe1932e26dfa8003f5418823d25997d88012"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/ui006-lookup-r52/layout-current.log",
+        "sha256": "e50a20afc1cfcefc8c43c9abc3f086044a6452fa5b11a62f20709fef3771d956"
       }
     },
     {
       "id": "contracts",
-      "command": "npm.cmd run test:ui-composition",
+      "command": "npm run test:ui-composition",
       "exitCode": 0,
       "result": "PASS",
       "expected": "41/41 current fixtures PASS; source checker 0 findings",
       "observed": "41/41 current fixtures PASS; source checker 0 findings",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/composition-finance-r45-current.log",
-        "sha256": "0620269cb873891901a125f929a7c9bf8a1936e7135949e74bd26a3420ea8084"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/ui006-lookup-r52/composition-current.log",
+        "sha256": "9222de63d5fbb0864cd6b482ab35ee5584460c7020a5cb27b6382b054aa77270"
       }
     },
     {
@@ -37,8 +37,8 @@
       "expected": "11/11 current fixtures PASS",
       "observed": "11/11 current fixtures PASS",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261014-aaf74b7/operations-layout-r43/evidence-validator-finance-r45-current.log",
-        "sha256": "a6a09f5580307d408b2d9c2ab50a74cc3c3be3dfc70260634be2988a6dc759f2"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/ui006-lookup-r52/evidence-validator-current.log",
+        "sha256": "a7d4796e13afa3693a0529f40f0ae8ca65ce571f86ac9b8116746fc168459dc5"
       }
     }
   ],
@@ -296,7 +296,7 @@
     "BotSalesAI_Frontend/tests/ui-entry-scope.test.mjs": "34855f434ee80ada00c0969f6949c1c268ccfae9c798c66d5d8c67675bb81cb1",
     "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
     "BotSalesAI_Frontend/tests/ui-finance-layout.spec.ts": "2495b0de5bd0af212eb1192675f45de2ddb6247d50ce7b796e3c1414f28177c9",
-    "BotSalesAI_Frontend/tests/ui-finance-management.spec.ts": "7978d00d4c09f40c7de6ef476ee55f46b1f3438bada0046ee9114355eabab387",
+    "BotSalesAI_Frontend/tests/ui-finance-management.spec.ts": "edc1292a8d36996c4ecdba30adc2dc9144fa87523a355661afa48a54503a30dc",
     "BotSalesAI_Frontend/tests/ui-fulfillment-layout.spec.ts": "68b82ff1df3a270997fea89c942450187aae11083b9b06700464ee8b79044ea6",
     "BotSalesAI_Frontend/tests/ui-import-scope.test.mjs": "02d21b1e9efd724c9c0539a6a61bc2ac1f1a9cda9a9fb5513892e9e2bb414fe4",
     "BotSalesAI_Frontend/tests/ui-integrations-layout.spec.ts": "874ecc9cca75a45fd465aa91a7993583115e04556a9b254eb7f451f66d50c0d6",
@@ -317,7 +317,7 @@
     "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "73a667fa9754730ace0c78d819b28e7a00ec7ba6e6b7d6731c05fb5e6e63efc7",
     "BotSalesAI_Frontend/tests/ui-width-layout.spec.ts": "ceda554c0bda5f2eddad2f800bb89ca93bccb16a357933fa61e1c6684b91119a",
     "BotSalesAI_Frontend/tests/ui-workspace-layout.spec.ts": "c998d7488abed50b94f074fd311364990b221fc06f8b2bc7d7a7b47b092a3b50",
-    "BotSalesAI_Frontend/tests/ui006-lookups.spec.ts": "72f14e73cc17d8a9606058c8c3fa0412ee42ceede8cbd6710e93813ddf11a792",
+    "BotSalesAI_Frontend/tests/ui006-lookups.spec.ts": "291d172f66f1f030fce6786a5e38b2fdf5bd5dbf9de8601f80bfa08c05efc281",
     "BotSalesAI_Frontend/tests/ui007-query-states.spec.ts": "406bddf053179938782f0e1c42df42f0b1292aa64bd7f2a6dd7f399e55bf31c9",
     "BotSalesAI_Frontend/tests/ui008-integration-empty.spec.ts": "53cde55000619af3f0bf10baa0fa78718b85299e080f6417b1046d4406a0efe0",
     "BotSalesAI_Frontend/tests/ui009-scope-regression.spec.ts": "866d54ef16d28ff669fd9f611415097a1b13540bfd8057e117fd056b353b37b5",
@@ -384,6 +384,8 @@
     "GitHub run #50 on SHA 32929d1be29dfcce1167a98abf00bbdfad3a3bd7 passed npm run verify and Chromium completed 441/442 E2E tests. FE010 timed out waiting for the Sản phẩm heading after clicking Danh sách from a saved product; the trace stayed at /s/shop-demo/products/product-10006 through the default 5-second assertion. Artifact 11951926263 has SHA-256 9a4abde1cc2f05edeb90b8c5ae3d600dab384dfc593ecfdf1159505f15c759d6.",
     "FE010 now waits for /s/shop-demo/products and then the Sản phẩm heading. The full FE010 spec passed 9/9 on local Chromium and 9/9 on local Firefox; focused Chromium repetition passed 3/3. The change affects only test readiness, not application behavior. Hosted verification for the updated commit remains separate.",
     "GitHub run #51 on SHA ae8ec171f407a2b9bb5a6c34289cd503980c9e70 passed npm run verify on both runners and Chromium completed 442/442 E2E plus built-demo 3/3. Firefox attempt 1 ended at 341/442 on runner shutdown; attempt 2 reached 441/442 and failed only C05 at the default 5-second dialog-close assertion after a successful warehouse version-4 PATCH. Artifact 11959977178, SHA-256 3138f27714044ed23f8d33e20c0674ae1fddd8bba3bf70fa2bad6f00643ce32e, shows the success status and closed editor in the final snapshot just after the timeout.",
-    "C05 now waits up to 15 seconds for the saved status and closed dialog without changing the product behavior or weakening either assertion. The focused test passed 5/5 local Firefox and 3/3 local Chromium repetitions; these mock results do not substitute for hosted verification of the fix."
+    "C05 now waits up to 15 seconds for the saved status and closed dialog without changing the product behavior or weakening either assertion. The focused test passed 5/5 local Firefox and 3/3 local Chromium repetitions; these mock results do not substitute for hosted verification of the fix.",
+    "GitHub run #52 on SHA 3d741ff7f03a6fc3279a611cc61c5c9b30d55b5f: Chromium completed E2E and built-demo. Firefox attempt 3 completed 440/442 and failed only the finance C06 entrance-opacity assertion and UI006.C05 waiting for the final lookup state; attempt 2 ended by hosted-runner shutdown. Firefox artifact 11977597158 contains the UI006 trace and terminal supplier-offers response (HTTP 200, 18 records, hasMore=false).",
+    "The R52 C06 test waits up to 15 seconds for the dialog entrance transition before running Axe; the dialog itself must also be visible. Screenshots use Playwright per-test output paths. The UI006 helper waits up to 30 seconds for readiness, checks the cursor response status and waits for the response body. Local focused runs are not hosted Linux proof; hosted verification is pending."
   ]
 }

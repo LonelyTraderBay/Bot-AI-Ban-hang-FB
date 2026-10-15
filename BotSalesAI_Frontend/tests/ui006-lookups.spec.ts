@@ -27,13 +27,16 @@ async function loadAllLookup(page: import('@playwright/test').Page, dialog: impo
         await expect.poll(async () => {
             const count = await button.count();
             return count === 0 || await button.isEnabled();
-        }, { timeout: 10_000 }).toBe(true);
+        // Firefox can keep a lookup disabled after response headers arrive while the full suite is under load.
+        }, { timeout: 30_000 }).toBe(true);
         if (!(await button.count())) return;
         const response = page.waitForResponse(result => result.request().method() === 'GET'
             && new URL(result.url()).pathname.endsWith(`/${collection}`)
             && Boolean(new URL(result.url()).searchParams.get('cursor')));
         await button.click();
-        await response;
+        const pageResponse = await response;
+        expect(pageResponse.ok(), `GET ${collection} cursor page`).toBeTruthy();
+        expect(await pageResponse.finished(), `GET ${collection} response body`).toBeNull();
     }
     throw new Error(`Lookup ${label} exceeded the pagination safety bound`);
 }
