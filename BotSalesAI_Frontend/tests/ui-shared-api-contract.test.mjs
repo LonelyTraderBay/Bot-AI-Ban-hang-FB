@@ -304,6 +304,9 @@ test('required UI evidence and regression gates remain wired to root verify and 
     const e2eJob = workflow.match(/^  e2e:[\s\S]*/m)?.[0];
     assert.ok(verifyJob, 'The shared source/build/evidence job must remain separate from browser shards');
     assert.ok(e2eJob, 'Browser tests must run in their own dependent job');
+    const verifyBrowserInstall = verifyJob.indexOf('npx playwright install --with-deps chromium');
+    const verifyStep = verifyJob.indexOf('npm run verify');
+    assert.ok(verifyBrowserInstall >= 0 && verifyBrowserInstall < verifyStep, 'The browser-backed design audit requires Chromium in the verify job');
     assert.match(verifyJob, /npm run verify/);
     assert.match(e2eJob, /needs: verify/);
     assert.match(e2eJob, /timeout-minutes: 180/, 'Each browser shard must have a bounded hosted-runner timeout');

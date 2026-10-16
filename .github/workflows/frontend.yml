@@ -30,6 +30,8 @@ jobs:
       - name: Audit locked dependencies
         run: npm audit --audit-level=low
       - run: npm run setup
+      - name: Install Chromium required by browser-backed verification
+        run: npx playwright install --with-deps chromium
       - run: npm run verify
 
   e2e:

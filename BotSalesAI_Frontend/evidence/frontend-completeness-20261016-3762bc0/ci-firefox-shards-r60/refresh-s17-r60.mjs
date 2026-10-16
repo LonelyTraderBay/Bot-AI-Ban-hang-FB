@@ -10,8 +10,8 @@ const evidencePath = path.join(frontend, 'evidence/frontend-ui-improvements/ui-g
 const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
 const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const repositoryRelative = file => path.relative(repository, file).replaceAll(path.sep, '/');
-const compositionLog = path.join(output, 'ui-composition-r60-final.log');
-const verifyLog = path.join(output, 'verify-r60-pre-final3.log');
+const compositionLog = path.join(output, 'ui-composition-r61-final.log');
+const verifyLog = path.join(output, 'verify-r61-pre-final.log');
 
 function refreshFingerprints() {
     for (const source of Object.keys(evidence.sourceFingerprints)) {
@@ -52,7 +52,7 @@ if (process.argv.includes('--prepare')) {
     refreshFingerprints();
     evidence.status = 'IN_PROGRESS';
     evidence.recordedAt = new Date().toISOString();
-    evidence.scope = 'S17 fingerprints and composition evidence refreshed after splitting hosted Firefox E2E into three complete Playwright shards. The React implementation and product API contracts are unchanged; full npm run verify is being collected.';
+    evidence.scope = 'S17 fingerprints and composition evidence refreshed after adding Chromium to browser-backed verify and splitting hosted Firefox E2E into three Playwright shards. The React implementation and product API contracts are unchanged; full npm run verify is being collected.';
     fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2) + '\n');
     console.log(JSON.stringify({ phase: 'prepared', checks: evidence.checks.length, coverage: evidence.coverage.length, fingerprints: Object.keys(evidence.sourceFingerprints).length, status: evidence.status }));
     process.exit(0);
@@ -86,7 +86,7 @@ if (process.argv.includes('--finalize')) {
     refreshFingerprints();
     evidence.status = 'COMPLETE';
     evidence.recordedAt = new Date().toISOString();
-    evidence.scope = 'S17 evidence and source fingerprints refreshed for the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance.';
+    evidence.scope = 'S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance.';
     fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2) + '\n');
     console.log(JSON.stringify({ phase: 'finalized', checks: evidence.checks.length, coverage: evidence.coverage.length, fingerprints: Object.keys(evidence.sourceFingerprints).length, recordedAt: evidence.recordedAt, status: evidence.status }));
     process.exit(0);
