@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 governance and local verification refreshed after GitHub run #57. Chromium on SHA e92a42e16423af6e717a934f291ce5c6610f350d passed 445/445 E2E and built-demo 3/3; Firefox passed 444/445 because the R41 heading assertion expired after 5 seconds while Vite was still loading modules. The trace records successful MSW API responses and no pageerror. The test retains its heading/table/layout checks with a 15-second heading timeout; local Chromium and Firefox each passed 3/3 repeats. Full local Frontend verification passed all configured gates. Hosted validation for this change is pending. This is synthetic MSW evidence, not real-backend, owner, assistive-technology, staging or production acceptance.",
-  "recordedAt": "2026-10-16T03:24:30.276Z",
+  "scope": "S17 governance refreshed after the R58 FE010 product-save navigation correction. Local Chromium 20/20 and Firefox 5/5 repeats pass, and the full verification log validates all non-S17 gates against current fingerprints. The final COMPLETE evidence state is verified by the separate final npm run verify. This remains synthetic MSW evidence, not real-backend, owner, assistive-technology, staging or production acceptance.",
+  "recordedAt": "2026-10-16T05:13:27.352Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -114,15 +114,39 @@
       }
     },
     {
+      "id": "product-editor-navigation-chromium",
+      "command": "node scripts/run-e2e.mjs --project=chromium FE010 --repeat-each=20",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Chromium 20/20 PASS; create response is rendered and the list route opens after save",
+      "observed": "Chromium 20/20 PASS; create response is rendered and the list route opens after save",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/product-editor-r58/fe010-navigation-chromium-repeat20-r58.log",
+        "sha256": "2a1d3e5ec1f4f310c8c50990c8949947296d83c896396a48b659d29d5659b246"
+      }
+    },
+    {
+      "id": "product-editor-navigation-firefox",
+      "command": "node scripts/run-e2e.mjs --project=firefox FE010 --repeat-each=5",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Firefox 5/5 PASS; create response is rendered and the list route opens after save",
+      "observed": "Firefox 5/5 PASS; create response is rendered and the list route opens after save",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/product-editor-r58/fe010-navigation-firefox-repeat5-r58.log",
+        "sha256": "d7ce54a87baf81091073a2613cfa65abe9222e84da18844ba7607dedd3393dd0"
+      }
+    },
+    {
       "id": "full-verify",
       "command": "npm run verify",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "All configured Frontend gates pass on the R57 test and report state",
-      "observed": "All configured Frontend gates pass on the R57 test and report state",
+      "expected": "All non-S17 Frontend gates pass; S17 interim evidence is valid against refreshed fingerprints",
+      "observed": "All non-S17 Frontend gates pass; S17 interim evidence is valid against refreshed fingerprints",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/fulfillment-layout-r57/verify-r57-final.log",
-        "sha256": "c267b9ce84e0c8481516ed3f30d6cccf54c40c1cfda2f268385c4b6d39490403"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/product-editor-r58/verify-r58-pre-final.log",
+        "sha256": "7474e1a7b4ad8993fc5448150fc75cc9581b28cf100b3d1e75634135e95d9a8a"
       }
     }
   ],
@@ -184,6 +208,20 @@
       "result": "COMPLETE"
     },
     {
+      "name": "product-editor-navigation-chromium",
+      "expected": 20,
+      "observed": 20,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "product-editor-navigation-firefox",
+      "expected": 5,
+      "observed": 5,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
       "name": "full-verify",
       "expected": 1,
       "observed": 1,
@@ -235,7 +273,7 @@
     "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "e4b52e657085caf1c0d31a7a6570c0262dba6aa5b3f1a13e090d09bb2fa27344",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "28dd46f898fd4f276f6c0db2c4bf056182ed70dc4eac4b63ac3fcf77a975e686",
-    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "4299df8f130704dd77fdea5aa605f7b9c3ac64458c29be035c247aa13268f5c6",
+    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "0348ab9c2021d3b34437fd907a89bea3e54ac47fae9a0c31490fc5e89a3afefe",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/addresses.tsx": "4c81fc0c8eea9ccf270895f9e2e0ad92fd8b6d7b7418561e99955176f8592305",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "4eec3535d4a8fad6fb4d4beac1eb9994bb88c9c72d348a988ae6f45ee8ab73c4",
     "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "690ab38c5282bb5d8368a16ea4efbd8791ff9ba2e4107cf7ff1f7e737705baca",
@@ -475,7 +513,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "0047a2d3e9f739de1a23dd9c3e3b00b4bcbe4e563483b94a8923f8463a20364a"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "c556d8f0d3078b9e91d32fe91a1554d1f82d08523916908d27fe07297dd04810"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -518,6 +556,7 @@
     "GitHub run #54 Firefox attempt 2 (job 116560199755) on SHA 1f483c87368177569bc34aa9c237e66d0e476d0a ended 444/445 because C05 dialog closure crossed the 5-second assertion limit; its trace records POST 201 and the post-failure screenshot shows the saved warehouse and success message. The strengthened test passes locally; hosted validation for the new SHA remains pending.",
     "GitHub run #55 Firefox attempt 3 on SHA 3762bc09f1975aedbc33d71115a696fd903966fa finished 444/445; artifact 12014006194 shows the Toolbar layout readiness wait consumed nearly its 180-second test budget during Vite cold transform before the conversations request. The test now uses DOMContentLoaded and 300 seconds; local focused Firefox and Chromium both passed 8/8. Hosted validation for the changed SHA remains pending.",
     "GitHub run #56 Firefox on SHA c76c314ea06e37fbf5073af8fa641e0f79876227 ended 444/445 at tests/ui-master-resources.spec.ts:43 because dialog \"Thêm tài khoản\" remained in the saving state beyond the default 5-second close assertion. Artifact 12018029003 (SHA-256 72b3b825461a8d2ac34891450237b926dc438e92d5a9a6bc20a33a388b48ecdc) confirms the POST returned 201 and the list GET returned 200; local Firefox and Chromium repeat-3 focused runs pass after the test waits for POST 201, success status and close (15 seconds). Hosted verification for the changed SHA remains pending.",
-    "GitHub run #57 Firefox on SHA e92a42e16423af6e717a934f291ce5c6610f350d ended 444/445 at the FE023 R41 heading assertion. Trace artifact 12022231931 (SHA-256 2fcbb8f1837e2b4323b445ea43c48547e6528a3e96daacfd868c891b83ab4403) shows route/API responses with status 200, ongoing Vite module requests and a loading spinner when the 5-second heading assertion expired. After increasing only that heading timeout to 15 seconds, local Chromium and Firefox repeat-3 focused runs passed; hosted validation for the new commit is pending."
+    "GitHub run #57 Firefox on SHA e92a42e16423af6e717a934f291ce5c6610f350d ended 444/445 at the FE023 R41 heading assertion. Trace artifact 12022231931 (SHA-256 2fcbb8f1837e2b4323b445ea43c48547e6528a3e96daacfd868c891b83ab4403) shows route/API responses with status 200, ongoing Vite module requests and a loading spinner when the 5-second heading assertion expired. After increasing only that heading timeout to 15 seconds, local Chromium and Firefox repeat-3 focused runs passed; hosted validation for the new commit is pending.",
+    "GitHub run #58 on the parent SHA f19d2be reported a Chromium FE010 product-editor list-navigation timeout after save; the browser stayed on the detail URL. The trace showed the save and product detail load completed without pageerror. The current code awaits the React Router navigation promise after the mock save; local repeats pass Chromium 20/20 and Firefox 5/5. Hosted validation of the R58 source remains pending."
   ]
 }
