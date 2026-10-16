@@ -4,7 +4,7 @@ import { ActionGroup, FieldGroup, FormFields } from '../../shared/ui/composition
 import { useEffect, useRef, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { layoutSx } from '@/shared/ui/layout';
-import { useNavigate, useParams, useSearchParams, Link as RouterLink } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams, Link as RouterLink } from 'react-router-dom';
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -14,7 +14,7 @@ import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import type { Category, Product, ProductWritePatch } from '@botsales/contracts';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
-import { useListQuery } from '@/shared/model/filters';
+import { currentSearchParams, useListQuery } from '@/shared/model/filters';
 import { PRODUCT_IMAGE_MAX_BYTES, productImageFileError } from './import-file';
 import { ApiError } from '@/shared/api/errors';
 import { draftEqual, useVersionedDraft } from '@/shared/model/versioned-draft';
@@ -32,6 +32,7 @@ export function ProductsPage() {
     const { shop } = useScope();
     const navigate = useNavigate();
     const [params, setParams] = useSearchParams();
+    const location = useLocation();
     const [categorySearchInput, setCategorySearchInput] = useState(''), [categorySearch, setCategorySearch] = useState('');
     useEffect(() => {
         const timer = window.setTimeout(() => setCategorySearch(categorySearchInput.trim()), 250);
@@ -42,7 +43,7 @@ export function ProductsPage() {
     const selectedCategory = categories.data?.data.find(category => category.id === params.get('categoryId')) || selectedCategoryDetail.data?.data;
     const list = useApi('listProducts', { query: { ...useListQuery('listProducts'), categoryId: params.get('categoryId') || undefined } });
     const setFilter = (key: string, value: string) => {
-        const next = new URLSearchParams(params);
+        const next = currentSearchParams(params, location.pathname);
         if (value)
             next.set(key, value);
         else

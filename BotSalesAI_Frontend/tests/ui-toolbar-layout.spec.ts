@@ -180,6 +180,7 @@ test('Toolbar preserves Products URL filters, search submit, clear and independe
     await search.press('Enter');
     await expect(page).toHaveURL(/q=/);
     expect(new URL(page.url()).searchParams.get('q')).toBe('Áo');
+    expect(new URL(page.url()).searchParams.get('status')).toBe('active');
     await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
     await expect(search).toBeFocused();
     expect(new URL(page.url()).searchParams.get('status')).toBe('active');

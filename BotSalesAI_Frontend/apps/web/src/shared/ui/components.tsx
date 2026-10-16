@@ -11,6 +11,7 @@ import ContentCopyRounded from '@mui/icons-material/ContentCopyRounded';
 import { operations } from '@botsales/contracts';
 import type { Page, Money } from '@botsales/contracts';
 import type { QueryOperationId } from '../api/client';
+import { currentSearchParams } from '../model/filters';
 import { colors, tokens } from '@botsales/tokens';
 import { layoutSx } from './layout';
 import { ApiError, UnknownResultError, errorMessage } from '../api/errors';
@@ -215,12 +216,13 @@ export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filt
     cursorParam?: string;
 }) {
     const [params, setParams] = useSearchParams();
+    const location = useLocation();
     const query = params.get('q') || '';
     const [draft, setDraft] = useState(query);
     const inputRef = useRef<HTMLInputElement>(null);
     useEffect(() => { setDraft(query); }, [query]);
     const updateSearch = (value: string) => {
-        const next = new URLSearchParams(params);
+        const next = currentSearchParams(params, location.pathname);
         const query = value.trim();
         if (query)
             next.set('q', query);

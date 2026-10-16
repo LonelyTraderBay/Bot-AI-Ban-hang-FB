@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "step": "S17",
   "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155.",
-  "recordedAt": "2026-10-16T20:09:27.860Z",
-  "status": "COMPLETE",
+  "recordedAt": "2026-10-16T21:23:15.150Z",
+  "status": "IN_PROGRESS",
   "checks": [
     {
       "id": "layout",
@@ -184,6 +184,18 @@
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-toolbar-regression.log",
         "sha256": "ff98af75be452206cb081bdce4a9a0a9435c7c817c699aa8a71019798b3acdc4"
       }
+    },
+    {
+      "id": "uic01-current-query-race",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui-toolbar-layout.spec.ts --project=chromium --project=firefox --grep 'Toolbar preserves Products URL filters' --repeat-each=10 --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Toolbar product-filter/search/clear/category-lookup regression passed 10/10 on Chrome Stable 155.0.8059.40 and 10/10 on Playwright Firefox 155.0; all 20 browser repetitions passed.",
+      "observed": "Toolbar product-filter/search/clear/category-lookup regression passed 10/10 on Chrome Stable 155.0.8059.40 and 10/10 on Playwright Firefox 155.0; all 20 browser repetitions passed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-toolbar-current-query.log",
+        "sha256": "0202cbe5f6bdb954ef196f480acc8106daaf34d5b20156f8a6ab9cdbc092af09"
+      }
     }
   ],
   "coverage": [
@@ -330,7 +342,7 @@
     "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "e4b52e657085caf1c0d31a7a6570c0262dba6aa5b3f1a13e090d09bb2fa27344",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "28dd46f898fd4f276f6c0db2c4bf056182ed70dc4eac4b63ac3fcf77a975e686",
-    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "0348ab9c2021d3b34437fd907a89bea3e54ac47fae9a0c31490fc5e89a3afefe",
+    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "9b0cd57228ecd482b40b316eec09ced231e45d9f03aafccb1054b0e3b0de4020",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/addresses.tsx": "4c81fc0c8eea9ccf270895f9e2e0ad92fd8b6d7b7418561e99955176f8592305",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "4eec3535d4a8fad6fb4d4beac1eb9994bb88c9c72d348a988ae6f45ee8ab73c4",
     "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "690ab38c5282bb5d8368a16ea4efbd8791ff9ba2e4107cf7ff1f7e737705baca",
@@ -367,17 +379,17 @@
     "BotSalesAI_Frontend/apps/web/src/shared/model/auth.ts": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4",
     "BotSalesAI_Frontend/apps/web/src/shared/model/dirty-drafts.ts": "387b509645164ec4c1aaccdfa96e0b99329ff3ba83f7b28931a8ffb6de3be7a2",
     "BotSalesAI_Frontend/apps/web/src/shared/model/download.ts": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c",
-    "BotSalesAI_Frontend/apps/web/src/shared/model/filters.ts": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/filters.ts": "09fc7ff8434d5ff2095aa84bc81f8be70b747b9b968e399170cd066993306770",
     "BotSalesAI_Frontend/apps/web/src/shared/model/format.ts": "efdd1a638adabee769ffbae3f08d69e6db0b9419592e6528f6991c6cb245b305",
     "BotSalesAI_Frontend/apps/web/src/shared/model/labels.ts": "8af1b23ecb32f4b25b424e8b057ca088675fcc0b23a3fa46e336f844251a32b5",
     "BotSalesAI_Frontend/apps/web/src/shared/model/list-return.ts": "1ec5a32a482a728d7398290a6d2347b7d2a279646af6f1074fc2821ac9a6b5a0",
     "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
     "BotSalesAI_Frontend/apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "e73c23c0b8b7a5a1cd9e512f7fe8d3c53a329398043858258f0f91d112929071",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "c9d9c0b69727e0023caac486a211cf857c43efa35468ef3911c38c3585bbad0c",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "d37882fa1fec836317e8db306a182ded40a5a920f02567aec6eeff696681ee3e",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "e8026fd493550329bb0fc4f7cc51d870222bf625fc061d464eee9ed540f4b149",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "e5ef803b787e6feeeb594d3715012ec33a539848a4c8fdb70d0c48693a651599",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "3018cbe60a1508cee97f5bb7690a4c6ecdd5dbbc19dda24c25673cf2d3bfc91b",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "4f0c1e67c38d2b07b335279436e1b7f72559c890c5241d95937d6e4d01d7607a",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
@@ -534,7 +546,7 @@
     "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "c538b701d2640535467302d841e19ecaeaa6ffe3b334477e1d60fb3b8ac0183e",
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
     "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
-    "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "ffafca7cc8f06cbf6c89e462bec903d6c6a6786324fbf590f84ec91abb5330e8",
+    "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "3a85e5bbac9e47ca971e33128864de63c327351ca62b6c87794cae346a111d05",
     "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "73a667fa9754730ace0c78d819b28e7a00ec7ba6e6b7d6731c05fb5e6e63efc7",
     "BotSalesAI_Frontend/tests/ui-width-layout.spec.ts": "ceda554c0bda5f2eddad2f800bb89ca93bccb16a357933fa61e1c6684b91119a",
     "BotSalesAI_Frontend/tests/ui-workspace-layout.spec.ts": "c998d7488abed50b94f074fd311364990b221fc06f8b2bc7d7a7b47b092a3b50",

@@ -4,7 +4,7 @@
 - Task: `UIC01`
 - Phạm vi: React Frontend chạy API MSW tổng hợp
 - Kết quả local: **PASS_SCOPED**
-- Delivery: **chưa commit/push; chờ GitHub Actions UIC00 kết thúc để không hủy run đang chạy**
+- Delivery baseline: **các commit/push kiểm kê và cổng CI đã được thực hiện; follow-up tìm kiếm/bộ lọc đang kiểm chứng và chờ commit/push cùng Actions trên SHA mới**
 
 ## Nguồn và phạm vi đã khóa
 
@@ -51,4 +51,8 @@ Artifact:
 - [`SHA256SUMS.json`](SHA256SUMS.json) — checksum artifact UIC01.
 - [`generate-uic01-evidence.mjs`](generate-uic01-evidence.mjs) — generator tái lập bằng Node built-in và TypeScript đã cài.
 
-Kết quả UIC01 chỉ được tính là giao hàng sau commit/push riêng bằng tiếng Việt và Actions terminal trên đúng SHA. UIC00 run đang chạy tại [GitHub Actions #38933113980](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38933113980); `verify`, ba shard Firefox đã thành công, Chromium/built-demo còn chạy khi hồ sơ này được tạo.
+**Snapshot lịch sử khi khóa baseline:** UIC00 run [GitHub Actions #38933113980](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38933113980) có `verify` và ba Firefox shard thành công; Chromium/built-demo còn chạy khi hồ sơ ban đầu được tạo. Tình trạng hiện tại nằm trong phần Follow-up dưới đây và [`CI-GATE-REPAIR.md`](CI-GATE-REPAIR.md).
+
+## Follow-up hiện hành — race mất query filter
+
+Sau follow-up CI của SHA `565a073eafdc4594b4fd0fbe2e41e1e308f2544b`, Firefox shard phát hiện gửi search có thể làm rơi `status=active`. Đã trace nguyên nhân, sửa query writer, thêm regression assertion, lặp 20/20 trên browser được hỗ trợ, chạy full verify exit 0 và làm mới S17; dữ liệu chi tiết cùng giới hạn delivery nằm trong [`CI-GATE-REPAIR.md`](CI-GATE-REPAIR.md). Source/proof follow-up hiện local PASS, nhưng UIC01 chưa được coi là giao hàng cho tới khi commit/push và toàn bộ GitHub Actions trên SHA mới PASS.
