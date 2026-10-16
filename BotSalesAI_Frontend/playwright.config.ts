@@ -24,7 +24,7 @@ export default defineConfig({
     use: { baseURL: 'http://127.0.0.1:5187', trace: 'retain-on-failure' },
     globalSetup:'./tests/session/playwright-setup.ts',
     projects: [
-        { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+        { name: 'chromium', use: { ...devices['Desktop Chrome'], channel: 'chrome' } },
         { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     ],
 });

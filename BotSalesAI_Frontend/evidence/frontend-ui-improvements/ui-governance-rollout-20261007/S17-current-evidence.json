@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance.",
-  "recordedAt": "2026-10-16T13:52:36.080Z",
+  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified.",
+  "recordedAt": "2026-10-16T19:18:29.691Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -148,6 +148,30 @@
         "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/ci-firefox-shards-r60/verify-r62-pre-final.log",
         "sha256": "91c0db04370dc4b4a276c2f05a6c1cc3667add3757621079fd7341b2b02d2922"
       }
+    },
+    {
+      "id": "uic01-ci-gate-repair",
+      "command": "npm.cmd run verify (Node 24.19.0, npm 11.17.0; see full log)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify PASS: generated contracts 15/346/245/61; source 85 files/271 operations/61 routes; boundaries 723 imports and 10/10 negative fixtures; domain 117/117; unit 242/242; layout 86/86 with 0 findings; visual token 5/5 with 0 findings; UI composition 41/41 with 0 findings; evidence validator 11/11.",
+      "observed": "npm run verify PASS: generated contracts 15/346/245/61; source 85 files/271 operations/61 routes; boundaries 723 imports and 10/10 negative fixtures; domain 117/117; unit 242/242; layout 86/86 with 0 findings; visual token 5/5 with 0 findings; UI composition 41/41 with 0 findings; evidence validator 11/11.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/verify-local-after-gate-fix.log",
+        "sha256": "6aedc6a54f7318c13b1a6f0e6ceb63d4dd827c2c9e41ca58e5cb374f2b126cf5"
+      }
+    },
+    {
+      "id": "uic01-targeted-chrome-regression",
+      "command": "npm.cmd run test:e2e -- --project=chromium --grep 'FE010|FE016' --repeat-each=3 --reporter=line (Node 24.19.0; see raw log)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE010 and FE016 repeated three times each: 6/6 PASS on Google Chrome Stable 155.0.8059.40 with local synthetic MSW.",
+      "observed": "FE010 and FE016 repeated three times each: 6/6 PASS on Google Chrome Stable 155.0.8059.40 with local synthetic MSW.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-chrome-regression.log",
+        "sha256": "60120b5256663beeef94e291e23cc99da6546e4b971f22249e25a377f5559645"
+      }
     }
   ],
   "coverage": [
@@ -225,6 +249,20 @@
       "name": "full-verify",
       "expected": 1,
       "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-ci-gate-repair",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-targeted-chrome-regression",
+      "expected": 6,
+      "observed": 6,
       "missing": 0,
       "result": "COMPLETE"
     }
@@ -316,11 +354,11 @@
     "BotSalesAI_Frontend/apps/web/src/shared/model/list-return.ts": "1ec5a32a482a728d7398290a6d2347b7d2a279646af6f1074fc2821ac9a6b5a0",
     "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
     "BotSalesAI_Frontend/apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "e322102faa55371356e855fd16967d2a8bd07a6606a2d99dae7323247782f314",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "e73c23c0b8b7a5a1cd9e512f7fe8d3c53a329398043858258f0f91d112929071",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "d37882fa1fec836317e8db306a182ded40a5a920f02567aec6eeff696681ee3e",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "e8026fd493550329bb0fc4f7cc51d870222bf625fc061d464eee9ed540f4b149",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "6564f5a0abef7c573d06b1e3260e42eda511dc64241ddc4b9f87ad7b7b1c95b3",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "e5ef803b787e6feeeb594d3715012ec33a539848a4c8fdb70d0c48693a651599",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "4f0c1e67c38d2b07b335279436e1b7f72559c890c5241d95937d6e4d01d7607a",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
@@ -409,7 +447,7 @@
     "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "d9fecd32da5996ade5cb41a635dda25c8b8e88791064867cd81f98aeff5dd837",
     "BotSalesAI_Frontend/tests/fe015.spec.ts": "c0d1075e9c2e0153b6200e4187ceeb519cdecff086d19faf66549ea927a667d9",
     "BotSalesAI_Frontend/tests/fe016-source-map.test.mjs": "15359771691c02c534f4b998305cb67772c72c5e65468bd832ae79c59cf47d3e",
-    "BotSalesAI_Frontend/tests/fe016.spec.ts": "752acebb290f9ddd156bd0fac77e8753b4d151564e6327b674744260f5b5654a",
+    "BotSalesAI_Frontend/tests/fe016.spec.ts": "7c7821396ff3117a648f28c749f35af43d7322b5b697fc8aea17d28090024375",
     "BotSalesAI_Frontend/tests/fe017-source-map.test.mjs": "99cb021a63bea6f384d8d206cbdc3b6918827cb2ce10027f8ef9fb1374875a56",
     "BotSalesAI_Frontend/tests/fe017-validation.spec.ts": "44f86fc257a9dd645b0255562bff0c1177801a330a92c4dd4f7872b7d4e87e98",
     "BotSalesAI_Frontend/tests/fe017.spec.ts": "2282d63dcc655430ecad77d334eefdc234accf5177af33714c1afacd66e82b12",
@@ -474,7 +512,7 @@
     "BotSalesAI_Frontend/tests/ui-panel-layout.spec.ts": "6f5980d08a44ac6bd2b746703704e6eb369441e318cb2edaa1138c35f1c3d8e6",
     "BotSalesAI_Frontend/tests/ui-procurement-layout.spec.ts": "0199322b40f4ece1cf2b0c89aaa989c462478b026f8337c884504b799cfe79ed",
     "BotSalesAI_Frontend/tests/ui-query-state-layout.spec.ts": "d93c8eb6c3e1fb2ec753fb43224959b42b689f5884a1670e584dbf83209e106d",
-    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "1f06b86c676334fb47d551826c55f76242360a64a5bf8307d56bbee5a235e4d9",
+    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "c538b701d2640535467302d841e19ecaeaa6ffe3b334477e1d60fb3b8ac0183e",
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
     "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
     "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "af0db92cb3ae5419cff81d40315ced97db617c31450f7507fd8a4f26680b4a2b",
@@ -502,12 +540,12 @@
     "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "35b8c496508d754f820e53782d729ef5330fd88897dd2150a205800a3a5bceae",
     "BotSalesAI_Frontend/package.json": "bc3dd1bde58b7bb242c69fa0a7ba33882b29c4da2022dff6a8b29715c13ef073",
     "BotSalesAI_Frontend/package-lock.json": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a",
-    "BotSalesAI_Frontend/playwright.config.ts": "4e99117ba27bd1fa4b6e6bc2423df8c1efa97ec962ff83d48f2e3e830a0d45c9",
-    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "a8c878adf90429511c46afecd182afd9623be4ff54ef2d5fffd321dd986acfcf",
+    "BotSalesAI_Frontend/playwright.config.ts": "cf6286dd9a26fce12a5368d3d07f56683a68e3807f9d1ec2de878bcd652099a2",
+    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "779986012783f386acdf62caba43e019c1787d5a8f49b34b4d77cb0e844c0811",
     "BotSalesAI_Frontend/apps/web/vite.config.ts": "6807da5538ceee93218580b9dad4b72d116feeffb9b397a43322ea9e9808aab5",
     "BotSalesAI_Frontend/apps/web/tsconfig.json": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1",
     "BotSalesAI_Frontend/apps/web/vitest.config.ts": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e",
-    ".github/workflows/frontend.yml": "adf2871843e84f0ed7a47972b3fbdb60eb42ec495ceeff4b33e785428c914d0d",
+    ".github/workflows/frontend.yml": "e791c7a5b9d2d5a330885b4047ae065aefb8d5d5991713e69d4fc1a9dda071ae",
     ".gitattributes": "460edb3fe7bc671c463b78491f521bb8030097f5c1454f86d2e270e90a87f54e",
     "BotSalesAI_Frontend/tests/frontend-completeness.spec.ts": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",

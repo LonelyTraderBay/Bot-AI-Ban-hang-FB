@@ -280,13 +280,15 @@ test('Shared consolidation Inbox preserves selected filters and composer draft t
     }
     const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại', exact: true });
     const status = filters.getByRole('combobox', { name: /^Trạng thái(?: |$)/ });
+    const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
+    await expect(search).toHaveValue('');
+    await search.fill('Linh'); await expect(search).toHaveValue('Linh');
     await status.focus(); await status.press('Enter');
     await page.getByRole('option', { name: 'Tất cả trạng thái', exact: true }).press('Enter');
     expect(new URL(page.url()).searchParams.has('status')).toBe(false);
     await expect(status).toBeFocused();
-    const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
-    await expect(search).toHaveValue('');
-    await search.fill('Linh'); await expect(search).toHaveValue('Linh'); await search.press('Enter');
+    await expect(search).toHaveValue('Linh');
+    await search.press('Enter');
     await expect(page).toHaveURL(url => url.searchParams.get('q') === 'Linh');
     await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
     await expect(page).toHaveURL(url => !url.searchParams.has('q')

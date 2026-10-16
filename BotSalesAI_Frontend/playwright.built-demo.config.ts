@@ -29,7 +29,7 @@ export default defineConfig({
         env: { NODE_ENV: 'production' },
     },
     projects: [
-        { name: 'chromium-built-demo', use: { ...devices['Desktop Chrome'] } },
+        { name: 'chromium-built-demo', use: { ...devices['Desktop Chrome'], channel: 'chrome' } },
         { name: 'firefox-built-demo', use: { ...devices['Desktop Firefox'] } },
     ],
 });

@@ -215,9 +215,10 @@ export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filt
     cursorParam?: string;
 }) {
     const [params, setParams] = useSearchParams();
-    const [draft, setDraft] = useState(params.get('q') || '');
+    const query = params.get('q') || '';
+    const [draft, setDraft] = useState(query);
     const inputRef = useRef<HTMLInputElement>(null);
-    useEffect(() => { setDraft(params.get('q') || ''); }, [params]);
+    useEffect(() => { setDraft(query); }, [query]);
     const updateSearch = (value: string) => {
         const next = new URLSearchParams(params);
         const query = value.trim();
