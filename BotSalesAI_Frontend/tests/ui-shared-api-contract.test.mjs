@@ -300,25 +300,39 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(workflow, /^  push:\s*$/m);
     assert.match(workflow, /^  pull_request:\s*$/m);
     assert.doesNotMatch(workflow, /^\s+paths(?:-ignore)?:/m, 'Every change must run the required gates');
-    const browserInstall = workflow.indexOf('npx playwright install --with-deps chromium firefox');
-    const verifyStep = workflow.indexOf('run: npm run verify');
-    assert.ok(browserInstall >= 0 && browserInstall < verifyStep, 'Browser-backed verify requires installed engines first');
-    assert.match(workflow, /npm run verify/);
-    assert.match(workflow, /npm run test:e2e/);
-    assert.match(workflow, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
-    assert.match(workflow, /timeout-minutes: 180/, 'The browser matrix must allow the serial Firefox suite to complete');
-    assert.match(workflow, /fail-fast: false/);
-    assert.match(workflow, /browser: \[chromium, firefox\]/);
-    assert.match(workflow, /npm run test:e2e -- --project=\$\{\{ matrix\.browser \}\}/);
-    assert.match(workflow, /playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}/);
-    const builtDemoSuffix = workflow.match(/playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}([^\s]*)/)[1];
+    const verifyJob = workflow.match(/^  verify:[\s\S]*?(?=^  e2e:)/m)?.[0];
+    const e2eJob = workflow.match(/^  e2e:[\s\S]*/m)?.[0];
+    assert.ok(verifyJob, 'The shared source/build/evidence job must remain separate from browser shards');
+    assert.ok(e2eJob, 'Browser tests must run in their own dependent job');
+    assert.match(verifyJob, /npm run verify/);
+    assert.match(e2eJob, /needs: verify/);
+    assert.match(e2eJob, /timeout-minutes: 180/, 'Each browser shard must have a bounded hosted-runner timeout');
+    assert.match(e2eJob, /fail-fast: false/);
+    const browserInstall = e2eJob.indexOf('npx playwright install --with-deps ${{ matrix.browser }}');
+    const e2eStep = e2eJob.indexOf('npm run test:e2e -- --project=${{ matrix.browser }}');
+    assert.ok(browserInstall >= 0 && browserInstall < e2eStep, 'Each browser runner must install its engine before E2E');
+    assert.match(e2eJob, /npm run test:e2e -- --project=\$\{\{ matrix\.browser \}\} \$\{\{ matrix\.shard_args \}\} --reporter=line/);
+    assert.equal([...e2eJob.matchAll(/- browser: firefox\r?\n/g)].length, 3, 'No unsharded Firefox job may bypass the bounded matrix');
+    assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n/g)].length, 1, 'Chromium E2E must remain one complete suite');
+    const firefoxShards = [...e2eJob.matchAll(/- browser: firefox\r?\n\s+shard_id: ([\w-]+)\r?\n\s+shard_args: '(--shard=\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
+        .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
+    assert.deepEqual(firefoxShards, [
+        { id: '1-of-3', args: '--shard=1/3', builtDemo: 'true' },
+        { id: '2-of-3', args: '--shard=2/3', builtDemo: 'false' },
+        { id: '3-of-3', args: '--shard=3/3', builtDemo: 'false' },
+    ], 'The complete Firefox suite must be split across three bounded jobs and run built-demo once');
+    assert.match(e2eJob, /- browser: chromium\r?\n\s+shard_id: all\r?\n\s+shard_args: ''\r?\n\s+verify_built_demo: true/);
+    assert.match(e2eJob, /if: \$\{\{ matrix\.verify_built_demo \}\}/);
+    assert.match(e2eJob, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
+    assert.match(e2eJob, /playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}/);
+    const builtDemoSuffix = e2eJob.match(/playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}([^\s]*)/)[1];
     const builtDemoConfig = fs.readFileSync(path.join(root, 'playwright.built-demo.config.ts'), 'utf8');
     const builtDemoProjects = [...builtDemoConfig.matchAll(/\bname:\s*'([^']+)'/g)].map(match => match[1]);
     for (const browser of ['chromium', 'firefox'])
         assert.ok(builtDemoProjects.includes(browser + builtDemoSuffix), `Built-demo selector must resolve a configured project for ${browser}`);
-    assert.match(workflow, /name: frontend-\$\{\{ matrix\.browser \}\}/, 'Each runner must upload a distinct revision-scoped artifact');
-    assert.match(workflow, /if: \$\{\{ always\(\) \}\}/);
-    assert.match(workflow, /upload-artifact/);
+    assert.match(e2eJob, /name: frontend-\$\{\{ matrix\.browser \}\}-\$\{\{ matrix\.shard_id \}\}/, 'Each runner must upload a distinct revision- and shard-scoped artifact');
+    assert.match(e2eJob, /if: \$\{\{ always\(\) \}\}/);
+    assert.match(e2eJob, /upload-artifact/);
     const browserConfig = fs.readFileSync(path.join(root, 'playwright.config.ts'), 'utf8');
     assert.match(browserConfig, /testMatch: \['\*\*\/\*\.spec\.ts'\]/, 'Browser discovery must not execute node:test unit fixtures');
     assert.match(browserConfig, /workers: 1/, 'Browser isolation remains sequential within each runner');

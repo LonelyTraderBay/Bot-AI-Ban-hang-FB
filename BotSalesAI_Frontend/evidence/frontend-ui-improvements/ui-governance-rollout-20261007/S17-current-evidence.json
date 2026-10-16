@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 governance refreshed after the R58 FE010 product-save navigation correction. Local Chromium 20/20 and Firefox 5/5 repeats pass, and the full verification log validates all non-S17 gates against current fingerprints. The final COMPLETE evidence state is verified by the separate final npm run verify. This remains synthetic MSW evidence, not real-backend, owner, assistive-technology, staging or production acceptance.",
-  "recordedAt": "2026-10-16T07:53:17.118Z",
+  "scope": "S17 evidence and source fingerprints refreshed for the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance.",
+  "recordedAt": "2026-10-16T12:26:40.389Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -22,11 +22,11 @@
       "command": "npm run test:ui-composition",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "41/41 current fixtures PASS; source checker 0 findings",
-      "observed": "41/41 current fixtures PASS; source checker 0 findings",
+      "expected": "41/41 current fixtures PASS; source checker 0 findings; CI guard confirms all 445 Firefox tests are assigned to three shards",
+      "observed": "41/41 current fixtures PASS; source checker 0 findings; CI guard confirms all 445 Firefox tests are assigned to three shards",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261015-aaf74b7/procurement-layout-r53/composition-current.log",
-        "sha256": "ea0dffab274c60382cc0d2a0b385baf2935deed8cc3a80eaaf07dfdc19161158"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/ci-firefox-shards-r60/ui-composition-r60-final.log",
+        "sha256": "46f6fddd39d3279d4c9e5088f9c34520111a8ea805b3e977a01be8f29b9268c0"
       }
     },
     {
@@ -142,11 +142,11 @@
       "command": "npm run verify",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "All non-S17 Frontend gates pass; S17 interim evidence is valid against refreshed fingerprints",
-      "observed": "All non-S17 Frontend gates pass; S17 interim evidence is valid against refreshed fingerprints",
+      "expected": "All Frontend source, build, browser-contract and S17 gates pass against current fingerprints",
+      "observed": "All Frontend source, build, browser-contract and S17 gates pass against current fingerprints",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/product-editor-r58/verify-r58-pre-final.log",
-        "sha256": "0bedfe8d3a3d53bb7eba2676dc8d18e17dfeabe13b4354e0defb246a257ce276"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/ci-firefox-shards-r60/verify-r60-pre-final3.log",
+        "sha256": "a02dde3b4ec9916e4c0ce2cebdb8d67f10563d13280c9e5280e41997e2cde12f"
       }
     }
   ],
@@ -474,7 +474,7 @@
     "BotSalesAI_Frontend/tests/ui-panel-layout.spec.ts": "6f5980d08a44ac6bd2b746703704e6eb369441e318cb2edaa1138c35f1c3d8e6",
     "BotSalesAI_Frontend/tests/ui-procurement-layout.spec.ts": "0199322b40f4ece1cf2b0c89aaa989c462478b026f8337c884504b799cfe79ed",
     "BotSalesAI_Frontend/tests/ui-query-state-layout.spec.ts": "d93c8eb6c3e1fb2ec753fb43224959b42b689f5884a1670e584dbf83209e106d",
-    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "7a739b656d55846db3b7c08c64f25c3f927101f6673bf206f2179c346bf38ebd",
+    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "a7dcebc5e916be8930cf900d094988db14f2c061b48889cbd4e6e7c6a367f383",
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
     "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
     "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "af0db92cb3ae5419cff81d40315ced97db617c31450f7507fd8a4f26680b4a2b",
@@ -507,7 +507,7 @@
     "BotSalesAI_Frontend/apps/web/vite.config.ts": "6807da5538ceee93218580b9dad4b72d116feeffb9b397a43322ea9e9808aab5",
     "BotSalesAI_Frontend/apps/web/tsconfig.json": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1",
     "BotSalesAI_Frontend/apps/web/vitest.config.ts": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e",
-    ".github/workflows/frontend.yml": "fc1061bc73ae70f2a92cb1fe84695bcdb01198cc78cb14ce934148f6f9c1dc61",
+    ".github/workflows/frontend.yml": "7c5b9c3086c80eed36ee0ac4d70641c69733dd8271f2408a72addca9fa958cb4",
     ".gitattributes": "460edb3fe7bc671c463b78491f521bb8030097f5c1454f86d2e270e90a87f54e",
     "BotSalesAI_Frontend/tests/frontend-completeness.spec.ts": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
