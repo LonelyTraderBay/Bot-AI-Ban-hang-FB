@@ -306,7 +306,7 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(workflow, /npm run verify/);
     assert.match(workflow, /npm run test:e2e/);
     assert.match(workflow, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
-    assert.match(workflow, /timeout-minutes: 120/);
+    assert.match(workflow, /timeout-minutes: 180/, 'The browser matrix must allow the serial Firefox suite to complete');
     assert.match(workflow, /fail-fast: false/);
     assert.match(workflow, /browser: \[chromium, firefox\]/);
     assert.match(workflow, /npm run test:e2e -- --project=\$\{\{ matrix\.browser \}\}/);
