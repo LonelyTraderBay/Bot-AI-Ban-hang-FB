@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "step": "S17",
   "scope": "S17 governance refreshed after the R58 FE010 product-save navigation correction. Local Chromium 20/20 and Firefox 5/5 repeats pass, and the full verification log validates all non-S17 gates against current fingerprints. The final COMPLETE evidence state is verified by the separate final npm run verify. This remains synthetic MSW evidence, not real-backend, owner, assistive-technology, staging or production acceptance.",
-  "recordedAt": "2026-10-16T05:13:27.352Z",
+  "recordedAt": "2026-10-16T07:53:17.118Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -146,7 +146,7 @@
       "observed": "All non-S17 Frontend gates pass; S17 interim evidence is valid against refreshed fingerprints",
       "log": {
         "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/product-editor-r58/verify-r58-pre-final.log",
-        "sha256": "7474e1a7b4ad8993fc5448150fc75cc9581b28cf100b3d1e75634135e95d9a8a"
+        "sha256": "0bedfe8d3a3d53bb7eba2676dc8d18e17dfeabe13b4354e0defb246a257ce276"
       }
     }
   ],
@@ -474,7 +474,7 @@
     "BotSalesAI_Frontend/tests/ui-panel-layout.spec.ts": "6f5980d08a44ac6bd2b746703704e6eb369441e318cb2edaa1138c35f1c3d8e6",
     "BotSalesAI_Frontend/tests/ui-procurement-layout.spec.ts": "0199322b40f4ece1cf2b0c89aaa989c462478b026f8337c884504b799cfe79ed",
     "BotSalesAI_Frontend/tests/ui-query-state-layout.spec.ts": "d93c8eb6c3e1fb2ec753fb43224959b42b689f5884a1670e584dbf83209e106d",
-    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "05571e9daf5a87be6e6fe39cc34772c2dadf5481d9843748d648806e2d857aa4",
+    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "7a739b656d55846db3b7c08c64f25c3f927101f6673bf206f2179c346bf38ebd",
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
     "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
     "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "af0db92cb3ae5419cff81d40315ced97db617c31450f7507fd8a4f26680b4a2b",
@@ -507,13 +507,13 @@
     "BotSalesAI_Frontend/apps/web/vite.config.ts": "6807da5538ceee93218580b9dad4b72d116feeffb9b397a43322ea9e9808aab5",
     "BotSalesAI_Frontend/apps/web/tsconfig.json": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1",
     "BotSalesAI_Frontend/apps/web/vitest.config.ts": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e",
-    ".github/workflows/frontend.yml": "276a2fcd854b8dc31f88883efa4a07a780525a94188027ce2e6869f93ee6ec36",
+    ".github/workflows/frontend.yml": "fc1061bc73ae70f2a92cb1fe84695bcdb01198cc78cb14ce934148f6f9c1dc61",
     ".gitattributes": "460edb3fe7bc671c463b78491f521bb8030097f5c1454f86d2e270e90a87f54e",
     "BotSalesAI_Frontend/tests/frontend-completeness.spec.ts": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "c556d8f0d3078b9e91d32fe91a1554d1f82d08523916908d27fe07297dd04810"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "147fb4c00a6b0afbc8560179610afc5822354503df120bd857266d944aae3021"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -557,6 +557,8 @@
     "GitHub run #55 Firefox attempt 3 on SHA 3762bc09f1975aedbc33d71115a696fd903966fa finished 444/445; artifact 12014006194 shows the Toolbar layout readiness wait consumed nearly its 180-second test budget during Vite cold transform before the conversations request. The test now uses DOMContentLoaded and 300 seconds; local focused Firefox and Chromium both passed 8/8. Hosted validation for the changed SHA remains pending.",
     "GitHub run #56 Firefox on SHA c76c314ea06e37fbf5073af8fa641e0f79876227 ended 444/445 at tests/ui-master-resources.spec.ts:43 because dialog \"Thêm tài khoản\" remained in the saving state beyond the default 5-second close assertion. Artifact 12018029003 (SHA-256 72b3b825461a8d2ac34891450237b926dc438e92d5a9a6bc20a33a388b48ecdc) confirms the POST returned 201 and the list GET returned 200; local Firefox and Chromium repeat-3 focused runs pass after the test waits for POST 201, success status and close (15 seconds). Hosted verification for the changed SHA remains pending.",
     "GitHub run #57 Firefox on SHA e92a42e16423af6e717a934f291ce5c6610f350d ended 444/445 at the FE023 R41 heading assertion. Trace artifact 12022231931 (SHA-256 2fcbb8f1837e2b4323b445ea43c48547e6528a3e96daacfd868c891b83ab4403) shows route/API responses with status 200, ongoing Vite module requests and a loading spinner when the 5-second heading assertion expired. After increasing only that heading timeout to 15 seconds, local Chromium and Firefox repeat-3 focused runs passed; hosted validation for the new commit is pending.",
-    "GitHub run #58 on the parent SHA f19d2be reported a Chromium FE010 product-editor list-navigation timeout after save; the browser stayed on the detail URL. The trace showed the save and product detail load completed without pageerror. The current code awaits the React Router navigation promise after the mock save; local repeats pass Chromium 20/20 and Firefox 5/5. Hosted validation of the R58 source remains pending."
+    "GitHub run #59 on SHA c1e24e5 passed Chromium verify, E2E 445/445, and built-demo 3/3; Firefox E2E was cancelled while active and no Firefox artifact or log was retained. The run was cancelled after about 125 minutes with a 120-minute job timeout configured; timeout is a timing-based inference, not a recorded cancellation reason.",
+    "GitHub run #60 on SHA 730db37 failed npm run verify in both browser jobs because the workflow contract test still expected timeout-minutes 120 after the workflow was raised to 180; E2E did not run. The guard is updated and hosted verification on the next SHA is pending.",
+    "GitHub run #58 on the parent SHA f19d2be reported a Chromium FE010 product-editor list-navigation timeout after save; the browser stayed on the detail URL. The trace showed the save and product detail load completed without pageerror. The current code awaits the React Router navigation promise after the mock save; local repeats pass Chromium 20/20 and Firefox 5/5."
   ]
 }

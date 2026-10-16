@@ -88,8 +88,10 @@ evidence.recordedAt = new Date().toISOString();
 evidence.status = 'COMPLETE';
 evidence.scope = 'S17 governance refreshed after the R58 FE010 product-save navigation correction. Local Chromium 20/20 and Firefox 5/5 repeats pass, and the full verification log validates all non-S17 gates against current fingerprints. The final COMPLETE evidence state is verified by the separate final npm run verify. This remains synthetic MSW evidence, not real-backend, owner, assistive-technology, staging or production acceptance.';
 evidence.knownLimits = [...new Set([
-    ...evidence.knownLimits,
-    'GitHub run #58 on the parent SHA f19d2be reported a Chromium FE010 product-editor list-navigation timeout after save; the browser stayed on the detail URL. The trace showed the save and product detail load completed without pageerror. The current code awaits the React Router navigation promise after the mock save; local repeats pass Chromium 20/20 and Firefox 5/5. Hosted validation of the R58 source remains pending.',
+    ...evidence.knownLimits.filter(limit => !limit.startsWith('GitHub run #58 on the parent SHA f19d2be')),
+    'GitHub run #58 on the parent SHA f19d2be reported a Chromium FE010 product-editor list-navigation timeout after save; the browser stayed on the detail URL. The trace showed the save and product detail load completed without pageerror. The current code awaits the React Router navigation promise after the mock save; local repeats pass Chromium 20/20 and Firefox 5/5.',
+    'GitHub run #59 on SHA c1e24e5 passed Chromium verify, E2E 445/445, and built-demo 3/3; Firefox E2E was cancelled while active and no Firefox artifact or log was retained. The run was cancelled after about 125 minutes with a 120-minute job timeout configured; timeout is a timing-based inference, not a recorded cancellation reason.',
+    'GitHub run #60 on SHA 730db37 failed npm run verify in both browser jobs because the workflow contract test still expected timeout-minutes 120 after the workflow was raised to 180; E2E did not run. The guard is updated and hosted verification on the next SHA is pending.',
 ])];
 
 fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2) + '\n');
