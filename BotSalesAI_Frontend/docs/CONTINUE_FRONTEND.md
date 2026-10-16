@@ -1,4 +1,12 @@
-# Tiếp tục Frontend — 08/10/2026
+# Tiếp tục Frontend — 16/10/2026
+
+## Điểm tiếp tục sau audit đồng bộ UI
+
+[Bảng việc và trạng thái hiện hành UIC00–UIC13](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status), [phiếu chi tiết](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-consistency-20261016), [audit thực tế và giới hạn](../evidence/frontend-ui-consistency-20261016/REPORT.md). Đọc Git/source revision mới rồi nhận việc theo dependency; không kế thừa closure từ source cũ. Scope Frontend/mock; mỗi việc kiểm chứng, commit và push tiếng Việt riêng theo kế hoạch.
+
+Các kết quả bên dưới là snapshot trước đợt UIC, không chứng minh finding mới đã sửa. Không lấy `next` hoặc số phần trăm cũ thay current task table và canonical FE CLI.
+
+## HISTORICAL_SNAPSHOT — continuation trước audit 16/10/2026
 
 <!-- CORRECTIONS_CURRENT -->
 ## Bằng chứng source cuối — 13/10/2026
