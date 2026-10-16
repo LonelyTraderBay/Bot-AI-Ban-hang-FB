@@ -11,10 +11,12 @@ const repositoryRoot = path.dirname(frontendRoot);
 const manifestPath = 'BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json';
 const logRelativePath = 'BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/verify-local-after-gate-fix.log';
 const targetedLogRelativePath = 'BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-chrome-regression.log';
+const targetedToolbarLogRelativePath = 'BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-toolbar-regression.log';
 const changedFiles = [
     'BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx',
     'BotSalesAI_Frontend/apps/web/src/shared/ui/README.md',
     'BotSalesAI_Frontend/tests/fe016.spec.ts',
+    'BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts',
     'BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs',
     'BotSalesAI_Frontend/playwright.config.ts',
     'BotSalesAI_Frontend/playwright.built-demo.config.ts',
@@ -66,7 +68,6 @@ if (/VERIFY_EXIT=0/.test(log)) {
     const refreshedCoverage = { name: 'uic01-ci-gate-repair', expected: 1, observed: 1, missing: 0, result: 'COMPLETE' };
     if (coverage) Object.assign(coverage, refreshedCoverage);
     else evidence.coverage.push(refreshedCoverage);
-    evidence.scope = `${evidence.scope} UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified.`;
 }
 
 const targetedLog = await readFile(path.join(repositoryRoot, targetedLogRelativePath), 'utf8');
@@ -90,6 +91,35 @@ const targetedCoverage = evidence.coverage.find(item => item.name === targetedCh
 const refreshedTargetedCoverage = { name: targetedCheck.id, expected: 6, observed: 6, missing: 0, result: 'COMPLETE' };
 if (targetedCoverage) Object.assign(targetedCoverage, refreshedTargetedCoverage);
 else evidence.coverage.push(refreshedTargetedCoverage);
+
+const targetedToolbarLog = await readFile(path.join(repositoryRoot, targetedToolbarLogRelativePath), 'utf8');
+assert.match(targetedToolbarLog, /CHROME_VERSION=155\.0\.8059\.40\b/, 'The target Chrome Stable version must be recorded.');
+assert.match(targetedToolbarLog, /FIREFOX_VERSION=155\.0\b/, 'The Playwright Firefox version must be recorded.');
+assert.equal([...targetedToolbarLog.matchAll(/3 passed \(/g)].length, 2, 'Chrome and Firefox targeted runs must both pass all three repetitions.');
+assert.match(targetedToolbarLog, /6 passed total/, 'All six targeted toolbar checks must pass.');
+assert.match(targetedToolbarLog, /TARGETED_E2E_EXIT=0\b/, 'The combined targeted browser command must exit successfully.');
+const targetedToolbarCheck = {
+    id: 'uic01-toolbar-draft-preservation-regression',
+    command: "node ... test tests/ui-toolbar-layout.spec.ts --project=chromium --grep 'Toolbar preserves Products URL filters' --repeat-each=3; then --project=firefox with the same filters (see per-browser logs)",
+    exitCode: 0,
+    result: 'PASS',
+    expected: 'Chrome Stable 155.0.8059.40 3/3 PASS; Playwright Firefox 155.0 3/3 PASS; status URL changed without q; draft remained visible.',
+    observed: 'Chrome Stable 155.0.8059.40 3/3 PASS; Playwright Firefox 155.0 3/3 PASS; status URL changed without q; draft remained visible.',
+    log: { path: targetedToolbarLogRelativePath, sha256: sha256(targetedToolbarLog) },
+};
+const existingToolbarCheck = evidence.checks.find(item => item.id === targetedToolbarCheck.id);
+if (existingToolbarCheck) Object.assign(existingToolbarCheck, targetedToolbarCheck);
+else evidence.checks.push(targetedToolbarCheck);
+const toolbarCoverage = evidence.coverage.find(item => item.name === targetedToolbarCheck.id);
+const refreshedToolbarCoverage = { name: targetedToolbarCheck.id, expected: 6, observed: 6, missing: 0, result: 'COMPLETE' };
+if (toolbarCoverage) Object.assign(toolbarCoverage, refreshedToolbarCoverage);
+else evidence.coverage.push(refreshedToolbarCoverage);
+const scopeClauses = [
+    'UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified.',
+    'UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155.',
+];
+for (const clause of scopeClauses) evidence.scope = evidence.scope.replaceAll(clause, '');
+evidence.scope = `${evidence.scope.replace(/\s{2,}/g, ' ').trim()} ${scopeClauses.join(' ')}`;
 
 evidence.recordedAt = new Date().toISOString();
 const newline = baseline.includes('\r\n') ? '\r\n' : '\n';

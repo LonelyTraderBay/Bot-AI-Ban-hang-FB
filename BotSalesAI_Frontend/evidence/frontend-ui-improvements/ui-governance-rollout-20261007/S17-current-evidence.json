@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified.",
-  "recordedAt": "2026-10-16T19:18:29.691Z",
+  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155.",
+  "recordedAt": "2026-10-16T20:09:27.860Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -172,6 +172,18 @@
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-chrome-regression.log",
         "sha256": "60120b5256663beeef94e291e23cc99da6546e4b971f22249e25a377f5559645"
       }
+    },
+    {
+      "id": "uic01-toolbar-draft-preservation-regression",
+      "command": "node ... test tests/ui-toolbar-layout.spec.ts --project=chromium --grep 'Toolbar preserves Products URL filters' --repeat-each=3; then --project=firefox with the same filters (see per-browser logs)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Chrome Stable 155.0.8059.40 3/3 PASS; Playwright Firefox 155.0 3/3 PASS; status URL changed without q; draft remained visible.",
+      "observed": "Chrome Stable 155.0.8059.40 3/3 PASS; Playwright Firefox 155.0 3/3 PASS; status URL changed without q; draft remained visible.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-toolbar-regression.log",
+        "sha256": "ff98af75be452206cb081bdce4a9a0a9435c7c817c699aa8a71019798b3acdc4"
+      }
     }
   ],
   "coverage": [
@@ -261,6 +273,13 @@
     },
     {
       "name": "uic01-targeted-chrome-regression",
+      "expected": 6,
+      "observed": 6,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-toolbar-draft-preservation-regression",
       "expected": 6,
       "observed": 6,
       "missing": 0,
@@ -515,7 +534,7 @@
     "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "c538b701d2640535467302d841e19ecaeaa6ffe3b334477e1d60fb3b8ac0183e",
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
     "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
-    "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "af0db92cb3ae5419cff81d40315ced97db617c31450f7507fd8a4f26680b4a2b",
+    "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "ffafca7cc8f06cbf6c89e462bec903d6c6a6786324fbf590f84ec91abb5330e8",
     "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "73a667fa9754730ace0c78d819b28e7a00ec7ba6e6b7d6731c05fb5e6e63efc7",
     "BotSalesAI_Frontend/tests/ui-width-layout.spec.ts": "ceda554c0bda5f2eddad2f800bb89ca93bccb16a357933fa61e1c6684b91119a",
     "BotSalesAI_Frontend/tests/ui-workspace-layout.spec.ts": "c998d7488abed50b94f074fd311364990b221fc06f8b2bc7d7a7b47b092a3b50",

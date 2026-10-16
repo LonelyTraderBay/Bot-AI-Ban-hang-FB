@@ -23,4 +23,12 @@ FE010 là lỗi điều hướng/thời điểm chờ khi chạy trên Chromium 
 
 ## Trạng thái bàn giao
 
-Code và bằng chứng đã sẵn sàng cho commit riêng sửa UIC01. Run #38942530101 là run của SHA cha và kết luận failure; chỉ workflow mới chạy trên commit sửa này mới quyết định cổng CI. UIC02 vẫn phải giữ commit/push sau UIC01 theo dependency và chờ Actions terminal trên SHA riêng.
+Lần sửa đầu đã commit/push riêng thành `e2d1d848ce43692074f25db840dd7a1e73aaa6b9`; remote khớp SHA. Run #38942530101 là run của SHA cha và kết luận failure. Run #38954041345 đang chạy trên SHA đầu; Firefox `3-of-3` thất bại do assertion draft cũ và Chromium còn chạy. Follow-up assertion có local proof nhưng chưa commit/push. UIC02 vẫn giữ commit/push sau khi UIC01 mới đạt Actions terminal trên đúng SHA.
+
+## Follow-up theo Firefox shard của run #38954041345
+
+Run #38954041345 trên SHA `e2d1d848ce43692074f25db840dd7a1e73aaa6b9` cho thấy Firefox `1-of-3` và `2-of-3` PASS; `3-of-3` phát hiện assertion cũ không khớp hành vi draft đã sửa. Test `Toolbar preserves Products URL filters, search submit, clear and independent category lookup` vẫn mong ô tìm kiếm thành rỗng sau khi đổi `status`, nhưng trình duyệt thực tế giữ `unsubmitted draft` trong khi URL chỉ thêm `status=active` và không submit `q`. Đây là expectation lỗi thời sau sửa FE016, không phải source regression: hợp đồng đã đo ở FE016 là giữ bản nháp khi tham số URL không liên quan thay đổi.
+
+Đã cập nhật assertion để yêu cầu draft giữ nguyên. Cùng test chạy riêng **3/3 trên Chrome Stable 155.0.8059.40** và **3/3 trên Playwright Firefox 155.0**. Log kết hợp có version/exit: [`targeted-toolbar-regression.log`](targeted-toolbar-regression.log); log từng trình duyệt: [`targeted-toolbar-chrome.log`](targeted-toolbar-chrome.log), [`targeted-toolbar-firefox.log`](targeted-toolbar-firefox.log). S17 validator sau cập nhật: **11/11 test**, `COMPLETE`, 15 command/log record, 14 coverage row và 280 fingerprint; log: [`s17-validator-final.log`](s17-validator-final.log). Lần xác thực trước đó bắt đúng mismatch giữa expected/observed và được giữ tại [`s17-validator-first-attempt.log`](s17-validator-first-attempt.log).
+
+Artifact Firefox CI đầy đủ đã tải và giữ trong workspace tại `ci-run-38954041345-firefox-3-of-3`; run/artifact gốc vẫn thuộc [Actions #38954041345](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38954041345). Run #38954041345 dùng SHA trước follow-up: Firefox `3-of-3` thất bại vì assertion draft cũ, còn Chromium E2E vẫn đang chạy sau hơn 40 phút; GitHub chưa cung cấp log Chromium khi job còn chạy. Vì vậy run này không xác nhận follow-up. Chỉ mở khóa UIC02 sau khi Actions của SHA follow-up kết thúc và đạt PASS trên mọi job.

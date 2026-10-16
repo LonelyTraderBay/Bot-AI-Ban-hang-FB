@@ -8,6 +8,7 @@ const manifestPath = path.join(root, 'SHA256SUMS.json');
 const files = [];
 
 async function walk(directory) {
+    if (directory !== root && path.basename(directory).startsWith('ci-run-')) return;
     for (const entry of await readdir(directory, { withFileTypes: true })) {
         const absolutePath = path.join(directory, entry.name);
         if (entry.isDirectory()) await walk(absolutePath);
