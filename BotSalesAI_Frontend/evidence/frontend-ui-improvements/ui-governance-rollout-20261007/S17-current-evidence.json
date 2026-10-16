@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 governance and frontend verification refreshed after GitHub run #55. On SHA 3762bc09f1975aedbc33d71115a696fd903966fa, Chromium passed 445/445 E2E and built-demo 3/3; Firefox attempts 1 and 2 ended with runner shutdown, and attempt 3 passed 444/445. Trace artifact 12014006194 (SHA-256 efe625f4c0c7a8a23f775dfc7c47784d15f7f82ce22abf0190b7241133160d57) shows the Toolbar layout test waiting through a Vite cold transform until its 180-second timeout, before the conversations request. The test now uses DOMContentLoaded readiness and a 300-second timeout for that cold-start case. Local focused runs passed Firefox 8/8 and Chromium 8/8; hosted verification of this test fix is pending. This is React with synthetic MSW evidence, not real-backend, owner, assistive-technology, staging or production acceptance.",
-  "recordedAt": "2026-10-15T23:35:25.954Z",
+  "scope": "S17 governance and local frontend verification refreshed after GitHub run #56. Chromium on SHA c76c314ea06e37fbf5073af8fa641e0f79876227 passed 445/445 E2E, built-demo 3/3 and 61 routes at 390px/1440px with 0 issues and 0 page errors; artifact 12016873556 SHA-256 215b15f8f77fd187990e2c2c9856d38ec9ef69f5e6e89a6466742a9ebbb1dd08. Firefox passed 444/445; trace artifact 12018029003 (SHA-256 72b3b825461a8d2ac34891450237b926dc438e92d5a9a6bc20a33a388b48ecdc) shows account POST 201 and refreshed list 200, while the 5-second dialog-close assertion expired with the UI still showing the saving progress state. The test now asserts POST 201, the success message and dialog closure with 15-second readiness limits. Local focused repeats passed Firefox 3/3 and Chromium 3/3; hosted validation of this follow-up is pending. This is React with synthetic MSW evidence, not real-backend, owner, assistive-technology, staging or production acceptance.",
+  "recordedAt": "2026-10-16T01:27:26.953Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -34,11 +34,11 @@
       "command": "npm run test:evidence",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "11/11 current fixtures and current S17 log/fingerprints PASS",
-      "observed": "11/11 current fixtures and current S17 log/fingerprints PASS",
+      "expected": "11/11 evidence-validator fixtures PASS",
+      "observed": "11/11 evidence-validator fixtures PASS",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/toolbar-readiness-r55/evidence-validator-final.log",
-        "sha256": "4c0f8bb7a85dcd504e6eafbd755b58b89ae51abca0248e2c264039f08bd77653"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/account-create-r56/evidence-validator-r56-initial.log",
+        "sha256": "cc6366d92f5c957fe8022fcc97d08fa60f35fcbbb4026f72f9e7a0dea78b5798"
       }
     },
     {
@@ -54,12 +54,12 @@
       }
     },
     {
-      "id": "toolbar-layout-cold-start",
-      "command": "Playwright tests/ui-toolbar-layout.spec.ts: Firefox 8/8 and Chromium 8/8",
+      "id": "toolbar-layout-firefox",
+      "command": "Playwright tests/ui-toolbar-layout.spec.ts --project=firefox",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "Firefox 8/8 PASS after DOM readiness on cold Vite start",
-      "observed": "Firefox 8/8 PASS after DOM readiness on cold Vite start",
+      "expected": "Firefox 8/8 PASS",
+      "observed": "Firefox 8/8 PASS",
       "log": {
         "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/toolbar-readiness-r55/ui-toolbar-firefox-r55.log",
         "sha256": "6a2eeb90765294d319167ff13d6481848d5b20d54f574dfe525961aeb7ece9e4"
@@ -67,7 +67,7 @@
     },
     {
       "id": "toolbar-layout-chromium",
-      "command": "Playwright tests/ui-toolbar-layout.spec.ts: Chromium",
+      "command": "Playwright tests/ui-toolbar-layout.spec.ts --project=chromium",
       "exitCode": 0,
       "result": "PASS",
       "expected": "Chromium 8/8 PASS",
@@ -78,6 +78,30 @@
       }
     },
     {
+      "id": "account-create-firefox",
+      "command": "Playwright C05 account create: Firefox repeat-each=3; assert POST 201, success toast and dialog close",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Firefox 3/3 PASS; all creates returned 201 and completed with success toast and closed dialog",
+      "observed": "Firefox 3/3 PASS; all creates returned 201 and completed with success toast and closed dialog",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/account-create-r56/account-create-firefox-postfix-repeat3-r56.log",
+        "sha256": "3d34526fd67e2419f1fcd6cf0ecaab188474b1a0f2aeb5f2e3692796acd9e3f1"
+      }
+    },
+    {
+      "id": "account-create-chromium",
+      "command": "Playwright C05 account create: Chromium repeat-each=3; assert POST 201, success toast and dialog close",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Chromium 3/3 PASS; all creates returned 201 and completed with success toast and closed dialog",
+      "observed": "Chromium 3/3 PASS; all creates returned 201 and completed with success toast and closed dialog",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/account-create-r56/account-create-chromium-postfix-repeat3-r56.log",
+        "sha256": "b2fd6ecd58400670f9029ce314e85228f0872682922c8fe1cc361e0c1b6d60b3"
+      }
+    },
+    {
       "id": "full-verify",
       "command": "npm run verify",
       "exitCode": 0,
@@ -85,8 +109,8 @@
       "expected": "Full Frontend verification passes all configured gates",
       "observed": "Full Frontend verification passes all configured gates",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/toolbar-readiness-r55/verify-r55-toolbar-final.log",
-        "sha256": "f4b19a0b7be90ee90cd4d995d4d8d34a28acbdbd0b76d4f2c68b20ba8b697096"
+        "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/account-create-r56/verify-r56-account-final.log",
+        "sha256": "929988535b3322eb1e5b5dfe313804840a1dd766d89bc7ee49d44b19237610db"
       }
     }
   ],
@@ -123,6 +147,20 @@
       "name": "toolbar-layout-firefox-chromium",
       "expected": 16,
       "observed": 16,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "account-create-firefox",
+      "expected": 3,
+      "observed": 3,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "account-create-chromium",
+      "expected": 3,
+      "observed": 3,
       "missing": 0,
       "result": "COMPLETE"
     },
@@ -372,7 +410,7 @@
     "BotSalesAI_Frontend/tests/ui-inventory-layout.spec.ts": "3ec58e1ad8fdaff03921c5a3f488b3e33ead8763baec9067e2cf489cb1aaf2c7",
     "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "591b833bae530b19fb231d3aacab2058d4546d2e2648cdaf603c5b973b4a33f6",
     "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
-    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "1f5991af595dd717da6afbe45206ba71a6eec325c7dbe53acaa9312fefa40e51",
+    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "e9c9ed1955eec42d4fb611acae628038f87e895c2a608e4dc7dd0c0c11848a66",
     "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "cd6fb47b6ee1d72fe8da67c64b65224ff23b12e81ea7189f7f141450b5f9a0d8",
     "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "a6fe2576a6442cfe03bc62097435b7f998406250ecedbca71b48e4802565db52",
     "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "73c1af2cb38a16f47add09dd4e6134f2d4578d5528b38696db87b4eb8e30cba6",
@@ -459,6 +497,7 @@
     "GitHub run #53 on SHA 7b5a9b2213859aed9937ff248ddd1bab905f5197 passed npm run verify and Chromium E2E; Firefox reached 441/442 and timed out in the single Procurement responsive-layout test while navigating the route matrix. This result belongs to the previous source revision.",
     "The Procurement matrix now isolates each R44-R47 route in a separate Playwright test/page, loads each route once, and checks 320, 390, 768, 1280 and 1440 CSS px. Local focused repeat-3 verification passed 30/30; GitHub validation for this revision is pending.",
     "GitHub run #54 Firefox attempt 2 (job 116560199755) on SHA 1f483c87368177569bc34aa9c237e66d0e476d0a ended 444/445 because C05 dialog closure crossed the 5-second assertion limit; its trace records POST 201 and the post-failure screenshot shows the saved warehouse and success message. The strengthened test passes locally; hosted validation for the new SHA remains pending.",
-    "GitHub run #55 Firefox attempt 3 on SHA 3762bc09f1975aedbc33d71115a696fd903966fa finished 444/445; artifact 12014006194 shows the Toolbar layout readiness wait consumed nearly its 180-second test budget during Vite cold transform before the conversations request. The test now uses DOMContentLoaded and 300 seconds; local focused Firefox and Chromium both passed 8/8. Hosted validation for the changed SHA remains pending."
+    "GitHub run #55 Firefox attempt 3 on SHA 3762bc09f1975aedbc33d71115a696fd903966fa finished 444/445; artifact 12014006194 shows the Toolbar layout readiness wait consumed nearly its 180-second test budget during Vite cold transform before the conversations request. The test now uses DOMContentLoaded and 300 seconds; local focused Firefox and Chromium both passed 8/8. Hosted validation for the changed SHA remains pending.",
+    "GitHub run #56 Firefox on SHA c76c314ea06e37fbf5073af8fa641e0f79876227 ended 444/445 at tests/ui-master-resources.spec.ts:43 because dialog \"Thêm tài khoản\" remained in the saving state beyond the default 5-second close assertion. Artifact 12018029003 (SHA-256 72b3b825461a8d2ac34891450237b926dc438e92d5a9a6bc20a33a388b48ecdc) confirms the POST returned 201 and the list GET returned 200; local Firefox and Chromium repeat-3 focused runs pass after the test waits for POST 201, success status and close (15 seconds). Hosted verification for the changed SHA remains pending."
   ]
 }
