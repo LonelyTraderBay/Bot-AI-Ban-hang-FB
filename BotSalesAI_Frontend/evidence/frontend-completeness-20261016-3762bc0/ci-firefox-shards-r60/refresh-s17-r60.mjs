@@ -11,7 +11,7 @@ const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
 const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const repositoryRelative = file => path.relative(repository, file).replaceAll(path.sep, '/');
 const compositionLog = path.join(output, 'ui-composition-r61-final.log');
-const verifyLog = path.join(output, 'verify-r61-pre-final.log');
+const verifyLog = path.join(output, 'verify-r62-pre-final.log');
 
 function refreshFingerprints() {
     for (const source of Object.keys(evidence.sourceFingerprints)) {
