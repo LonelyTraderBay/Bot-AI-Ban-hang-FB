@@ -4,6 +4,10 @@
 
 [Bảng việc và trạng thái hiện hành UIC00–UIC13](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status), [phiếu chi tiết](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-consistency-20261016), [audit thực tế và giới hạn](../evidence/frontend-ui-consistency-20261016/REPORT.md). Đọc Git/source revision mới rồi nhận việc theo dependency; không kế thừa closure từ source cũ. Scope Frontend/mock; mỗi việc kiểm chứng, commit và push tiếng Việt riêng theo kế hoạch.
 
+## UIC01 — Local proof đạt, delivery đang chờ
+
+[Báo cáo UIC01](../evidence/frontend-ui-consistency-20261017/UIC01/REPORT.md), [inventory và hashes](../evidence/frontend-ui-consistency-20261017/UIC01/inventory.json), [route/owner/role closure](../evidence/frontend-ui-consistency-20261017/UIC01/route-closure.json), [baseline trước sửa](../evidence/frontend-ui-consistency-20261017/UIC01/baseline.json). Đo trên `4a502be79a40cd7dc02c1eaa80445665a226b55f`; route map khớp 61/61, 427/427 role expectation khớp, 3.402 ô route-role-state mới kiểm kê chứ chưa chạy lại. Source inputs không đổi so với audit 16/10. Commit/push UIC01 sau khi GitHub Actions #38933113980 trên UIC00 terminal; sau đó kiểm CI đúng SHA UIC01 rồi tiếp tục UIC02.
+
 Các kết quả bên dưới là snapshot trước đợt UIC, không chứng minh finding mới đã sửa. Không lấy `next` hoặc số phần trăm cũ thay current task table và canonical FE CLI.
 
 ## HISTORICAL_SNAPSHOT — continuation trước audit 16/10/2026
