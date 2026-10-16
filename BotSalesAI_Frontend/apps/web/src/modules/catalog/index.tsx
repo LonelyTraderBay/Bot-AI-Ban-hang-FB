@@ -129,6 +129,7 @@ export function ProductEditorPage() {
         const submitted = { ...productForm.getValues(), imageFileIds: [...imageIds] };
         const body = { name: fields.name, description: fields.description, categoryId: fields.categoryId || null, status: fields.status,
             imageFileIds: imageIds, variants: fields.variants.map(v => ({ id: v.id, sku: v.sku, name: v.name, options: v.options || {}, price: { amount: v.price, currency: shop.currency }, active: v.active })) };
+        let destination: string | undefined;
         try {
             let response: Awaited<ReturnType<typeof create.execute>>;
             if (productId) {
@@ -138,8 +139,9 @@ export function ProductEditorPage() {
             } else response = await create.execute({ body });
             const clean = editor.committed(productSnapshot(response.data), submitted);
             setCreatedProductId(response.data.id);
-            if (clean) { if (productElement.current) markDraftClean(productElement.current); navigate(`/s/${shop.id}/products/${response.data.id}`, { replace: true }); }
-        } catch (error) { editor.failed(error); }
+            if (clean) { if (productElement.current) markDraftClean(productElement.current); destination = `/s/${shop.id}/products/${response.data.id}`; }
+        } catch (error) { editor.failed(error); return; }
+        if (destination) await navigate(destination, { replace: true });
     });
     const pending = create.pending || update.pending || upload.pending;
     return <><PageHeader title={productId ? 'Thông tin sản phẩm' : 'Thêm sản phẩm'} subtitle="Giá theo biến thể. Tồn kho được quản lý ở màn hình riêng." actions={<Button component={RouterLink} to={listHref}>Danh sách</Button>}/>{productId && product.isPending ? <QueryState query={product}>{null}</QueryState> : productId && product.isError ? <QueryState query={product}>{null}</QueryState> : <Box component="form" ref={form => { const element = form as HTMLFormElement | null; productElement.current = element; draftForm(element); }} data-draft-clean={!isDirty && !imagesDirty ? 'true' : undefined} onSubmit={save}>
