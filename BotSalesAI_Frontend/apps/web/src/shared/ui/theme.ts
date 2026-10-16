@@ -43,6 +43,7 @@ export const theme = createTheme({
             standardInfo: { color: colors.info, backgroundColor: colors.infoSurface, '& .MuiAlert-icon': { color: 'inherit' } },
         } },
         MuiDialog: { styleOverrides: { paper: { border: `1px solid ${colors.borderDecorative}`, borderRadius: tokens.radius.dialog } } },
+        MuiBackdrop: { styleOverrides: { root: { backgroundColor: colors.overlay }, invisible: { backgroundColor: 'transparent' } } },
         MuiTooltip: { styleOverrides: { tooltip: { fontSize: tokens.fontSizes.meta, backgroundColor: colors.elevated } } },
         MuiMenuItem: { styleOverrides: { root: { minHeight: tokens.layout.touchTarget, whiteSpace: 'normal', overflowWrap: 'anywhere', '&.Mui-selected': { backgroundColor: colors.selected }, '&.Mui-selected:hover': { backgroundColor: colors.hover } } } },
         MuiTab: { styleOverrides: { root: { textTransform: 'none', minHeight: tokens.space.xxxl } } },

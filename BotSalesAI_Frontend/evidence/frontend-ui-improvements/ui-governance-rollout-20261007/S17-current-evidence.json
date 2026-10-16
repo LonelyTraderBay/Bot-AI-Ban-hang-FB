@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155.",
-  "recordedAt": "2026-10-16T21:23:15.150Z",
-  "status": "IN_PROGRESS",
+  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence.",
+  "recordedAt": "2026-10-16T21:44:49.620Z",
+  "status": "COMPLETE",
   "checks": [
     {
       "id": "layout",
@@ -186,6 +186,18 @@
       }
     },
     {
+      "id": "uic01-current-source-verify",
+      "command": "npm.cmd --script-shell=pwsh.exe run verify (Node 24.19.0, npm 11.17.0; exact command output is in the linked log)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify PASS: generated contracts 15/346/245/61; source/session 15/15; domain 117/117; unit 242/242; layout 86/86 with 0 findings; visual token 5/5 with 0 findings; UI composition 41/41 with 0 findings; evidence validator 11/11; production build passed.",
+      "observed": "npm run verify PASS: generated contracts 15/346/245/61; source/session 15/15; domain 117/117; unit 242/242; layout 86/86 with 0 findings; visual token 5/5 with 0 findings; UI composition 41/41 with 0 findings; evidence validator 11/11; production build passed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/verify-uic01-current-source.log",
+        "sha256": "80314c471fef9809f94cd0a893d80571bacaa3a85fa73a3a2f6e4bfb78fea67b"
+      }
+    },
+    {
       "id": "uic01-current-query-race",
       "command": "node node_modules/@playwright/test/cli.js test tests/ui-toolbar-layout.spec.ts --project=chromium --project=firefox --grep 'Toolbar preserves Products URL filters' --repeat-each=10 --workers=1 --reporter=line",
       "exitCode": 0,
@@ -195,6 +207,30 @@
       "log": {
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-toolbar-current-query.log",
         "sha256": "0202cbe5f6bdb954ef196f480acc8106daaf34d5b20156f8a6ab9cdbc092af09"
+      }
+    },
+    {
+      "id": "uic02-overlay-theme",
+      "command": "UIC02 browser measurement and shared overlay regression; see REPORT.md for commands and environment",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "18/18 visible backdrops match the canonical overlay token; 4/4 invisible Select backdrops remain transparent; 8 forced-colors samples retain visible dialog, backdrop and focus, with opacity transition 4/4; 4/4 Playwright Chromium and Firefox regressions pass.",
+      "observed": "18/18 visible backdrops match the canonical overlay token; 4/4 invisible Select backdrops remain transparent; 8 forced-colors samples retain visible dialog, backdrop and focus, with opacity transition 4/4; 4/4 Playwright Chromium and Firefox regressions pass.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC02/REPORT.md",
+        "sha256": "e1eee0575d6d37b113b3f26ae25627d75182e6e60600aec7f1f25073e5d67cb8"
+      }
+    },
+    {
+      "id": "uic02-current-source-full-verify",
+      "command": "npm.cmd --script-shell=pwsh.exe run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Current-source npm run verify PASS: generated 15/346/245/61; boundaries 724 imports and 10/10 negative fixtures; domain 117 checks; Vitest 25 files/242 tests; production build; layout 86/86; visual tokens 5/5; UI composition 41/41; evidence validator 11/11 and S17 COMPLETE.",
+      "observed": "Current-source npm run verify PASS: generated 15/346/245/61; boundaries 724 imports and 10/10 negative fixtures; domain 117 checks; Vitest 25 files/242 tests; production build; layout 86/86; visual tokens 5/5; UI composition 41/41; evidence validator 11/11 and S17 COMPLETE.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC02/verify-uic02-current-source.log",
+        "sha256": "3bf35788a16b5d15d74af54ea3a9cf62a0644004ec1d8bfb138cb1d53011520d"
       }
     }
   ],
@@ -296,6 +332,20 @@
       "observed": 6,
       "missing": 0,
       "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-current-source-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-current-query-race",
+      "expected": 20,
+      "observed": 20,
+      "missing": 0,
+      "result": "COMPLETE"
     }
   ],
   "baseline": {
@@ -390,7 +440,7 @@
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "e8026fd493550329bb0fc4f7cc51d870222bf625fc061d464eee9ed540f4b149",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "3018cbe60a1508cee97f5bb7690a4c6ecdd5dbbc19dda24c25673cf2d3bfc91b",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "4f0c1e67c38d2b07b335279436e1b7f72559c890c5241d95937d6e4d01d7607a",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "27682e063e02d2ec347f41b37d08ff8145180d1b2319fe528dd9dde7975e4e59",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
     "BotSalesAI_Frontend/apps/web/tests/api-client.test.tsx": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
@@ -582,7 +632,8 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "d88fe5c79557633d29bf5a5b3955c94199b13b2ca28ecaf6e9b7e8bd07a2023e"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "d88fe5c79557633d29bf5a5b3955c94199b13b2ca28ecaf6e9b7e8bd07a2023e",
+    "BotSalesAI_Frontend/tests/ui-overlay-theme.spec.ts": "9f4642c2be2dfc7c831152d88e6550dc751251355f8d7ce300b04a9b8df0a587"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
