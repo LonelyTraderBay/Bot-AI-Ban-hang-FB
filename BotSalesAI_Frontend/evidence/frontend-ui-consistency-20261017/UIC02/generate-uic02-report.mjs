@@ -15,6 +15,10 @@ const log = await readFile(path.join(here, 'playwright-regression.log'), 'utf8')
 const currentSourceLog = await readFile(path.join(here, 'overlay-current-source-chromium-firefox.log'), 'utf8');
 const revertedWorktreeLog = await readFile(path.join(here, 'current-tree-overlay-failure-chromium.log'), 'utf8');
 const fullVerifyLog = await readFile(path.join(here, 'verify-uic02-current-source.log'), 'utf8');
+const fe010RepeatLog = await readFile(path.join(here, 'fe010-navigation-dismissal-repeat-chromium.log'), 'utf8');
+const fe010SuiteLog = await readFile(path.join(here, 'fe010-suite-chromium-firefox.log'), 'utf8');
+const fe010RepeatExit = (await readFile(path.join(here, 'fe010-navigation-dismissal-repeat-chromium.log.exit'), 'utf8')).trim();
+const fe010SuiteExit = (await readFile(path.join(here, 'fe010-suite-chromium-firefox.log.exit'), 'utf8')).trim();
 const s17Evidence = await readJson('../../../evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json');
 const baseCommit = before.headSha;
 if (!baseCommit || after.headSha !== baseCommit || forcedBefore.headSha !== baseCommit || forcedAfter.headSha !== baseCommit)
@@ -53,11 +57,13 @@ const fullVerifyPass = /VERIFY_EXIT=0/.test(fullVerifyLog)
     && /Test Files\s+25 passed \(25\)/.test(fullVerifyLog)
     && /Tests\s+242 passed \(242\)/.test(fullVerifyLog)
     && /ui-evidence PASS: S17; 18 command\/log record\(s\), 16 coverage row\(s\), 281 current fingerprint\(s\); status=COMPLETE/.test(fullVerifyLog);
+const fe010RepeatPass = fe010RepeatExit === '0' && /10 passed \(/.test(fe010RepeatLog);
+const fe010SuitePass = fe010SuiteExit === '0' && /18 passed \(/.test(fe010SuiteLog);
 const expectedColor = before.expectedComputedColor;
 const tokenParityBefore = beforeVisible.filter(sample => sample.color === expectedColor).length;
 const tokenParityAfter = afterVisible.filter(sample => sample.color === expectedColor).length;
 const menusTransparent = [...beforeMenus, ...afterMenus].every(sample => sample.color === 'rgba(0, 0, 0, 0)');
-const reportPass = beforeVisible.length === 18 && afterVisible.length === 18 && tokenParityBefore === 0 && tokenParityAfter === 18 && menusTransparent && paperUnchanged && allInteractionsTrue && pageErrorCount === 0 && forcedChecks && forcedOpacityParity && testPass && currentSourceTestPass && revertedWorktreeReproduced && fullVerifyPass;
+const reportPass = beforeVisible.length === 18 && afterVisible.length === 18 && tokenParityBefore === 0 && tokenParityAfter === 18 && menusTransparent && paperUnchanged && allInteractionsTrue && pageErrorCount === 0 && forcedChecks && forcedOpacityParity && testPass && currentSourceTestPass && revertedWorktreeReproduced && fullVerifyPass && fe010RepeatPass && fe010SuitePass;
 
 const beforeTime = (await stat(path.join(here, 'before.json'))).mtime.toISOString();
 const afterTime = (await stat(path.join(here, 'after.json'))).mtime.toISOString();
@@ -82,7 +88,12 @@ const lines = [
     '',
     `Chạy riêng với Playwright \`forcedColors: 'active'\` trên cùng hai browser và viewport (**${forcedSamples.length}** mẫu). Cả hai pha đều thấy media query bật, dialog/backdrop hiện hữu và focus-visible; cặp trước/sau cho opacity 0,5 → 0,8 ở **${forcedPairs.filter(pair => alphaOf(pair.before?.backdropColor) === 0.5 && alphaOf(pair.after.backdropColor) === 0.8).length}/${forcedPairs.length}** mẫu. UA ánh xạ màu hệ thống khác nhau giữa Chrome và Firefox. Đây là kiểm tra browser emulation, không thay thế nghiệm thu trực tiếp bằng Windows High Contrast.`,
     `Regression \`tests/ui-overlay-theme.spec.ts\`: **${testPass ? '4/4 PASS' : 'FAIL'}** trên project Chromium và Firefox của Playwright. Log: [playwright-regression.log](playwright-regression.log).`,
-    `Full local verify trên source hiện hành: **${fullVerifyPass ? 'PASS' : 'FAIL'}**; 15 generated outputs/346 schemas/245 operations/61 routes; 724 imports; domain 117 checks; Vitest 25 files/242 tests; layout 86/86; visual tokens 5/5; composition 41/41; S17 hiện có ${s17Evidence.checks.length} command/log records, ${s17Evidence.coverage.length} coverage rows và ${Object.keys(s17Evidence.sourceFingerprints).length} fingerprints. Log: [verify-uic02-current-source.log](verify-uic02-current-source.log).`,
+    `Full local verify tại source UIC02 ban đầu: **${fullVerifyPass ? 'PASS' : 'FAIL'}**; 15 generated outputs/346 schemas/245 operations/61 routes; 724 imports; domain 117 checks; Vitest 25 files/242 tests; layout 86/86; visual tokens 5/5; composition 41/41. Log [verify-uic02-current-source.log](verify-uic02-current-source.log) là baseline trước bài kiểm tra FE010 bổ sung, không thay verify exact-SHA mới.`,
+    '',
+    '## Theo dõi FE010 sau lỗi điều hướng trên GitHub',
+    '',
+    'Trace của hai lần PR ở SHA `f39befd02ebe469e63672e58f67533b7c7348116` ghi nhận đúng `href`, click được thực hiện nhưng URL không đổi; local chưa tái hiện. Thêm assertion chờ hộp thoại bản nháp đóng hẳn sau nút “Tiếp tục chỉnh sửa”, không nới điều kiện điều hướng. FE010 đã lặp Chromium **10/10 PASS** và chạy toàn bộ Chromium/Firefox **18/18 PASS** với demo/MSW cục bộ. Log: [fe010-navigation-dismissal-repeat-chromium.log](fe010-navigation-dismissal-repeat-chromium.log), [fe010-suite-chromium-firefox.log](fe010-suite-chromium-firefox.log).',
+    'PR verify cho SHA `d09610d32bcf22dda5155e8f4add41a130a05c0a` sau đó dừng trước E2E vì S17 fingerprint của `tests/fe010.spec.ts` chưa được cập nhật; đây là stale evidence, chưa chứng minh FE010 hosted đã qua. Push/PR chạy lại sau khi đồng bộ fingerprint.',
     '',
     '## Phạm vi và giới hạn',
     '',
@@ -94,20 +105,31 @@ const lines = [
     '- Forced-colors riêng: [forced-colors-before.json](forced-colors-before.json), [forced-colors-after.json](forced-colors-after.json).',
     '- 14 ảnh Chrome ghép theo phase/viewport/component: `before-*.png`, `after-*.png`.',
     '- Lượt đối chiếu source hiện hành: [overlay-current-source-chromium-firefox.log](overlay-current-source-chromium-firefox.log); lần tái hiện regression trước khi khôi phục override: [current-tree-overlay-failure-chromium.log](current-tree-overlay-failure-chromium.log).',
+    '- FE010 follow-up: [fe010-navigation-dismissal-repeat-chromium.log](fe010-navigation-dismissal-repeat-chromium.log), [fe010-suite-chromium-firefox.log](fe010-suite-chromium-firefox.log) và mã thoát kèm theo.',
     '- Kịch bản tái tạo: [capture-uic02.mjs](capture-uic02.mjs), [capture-uic02-forced-colors.mjs](capture-uic02-forced-colors.mjs).',
     `- SHA256 theme baseline: \`${sha256(baseTheme)}\`; theme sau sửa: \`${sha256(currentTheme)}\`; regression spec: \`${sha256(regressionSpec)}\`.`,
     '- `node scripts/generate.mjs --check`: PASS, 15 output / 346 schema / 245 operation / 61 route.',
     '- `node scripts/check-source.mjs`: PASS, 85 file / 271 operation call / 61 route / 0 finding; `node scripts/check-boundaries.mjs`: PASS, 723 import / 10 negative fixture / 0 issue.',
     '- `node scripts/check-visual-tokens.mjs`: PASS, 92 source file / 0 finding; TypeScript `node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit`: PASS; ESLint `node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0`: PASS.',
     '- Shared test `node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/shared-ui-render-contract.test.tsx`: 54/54 PASS; Playwright `node node_modules/@playwright/test/cli.js test tests/ui-overlay-theme.spec.ts --workers=1 --reporter=line`: 4/4 PASS.',
-    '- Evidence fixtures `node --test tests/ui-evidence-validator.test.mjs`: 11/11 PASS; S17 validator: PASS, 13 command/log records / 11 coverage rows / 281 current fingerprints after refreshing the changed theme and adding the regression test hash.',
+    `- Evidence fixtures node --test tests/ui-evidence-validator.test.mjs: 11/11 PASS; S17 after UIC02 refresh: ${s17Evidence.checks.length} command/log records / ${s17Evidence.coverage.length} coverage rows / ${Object.keys(s17Evidence.sourceFingerprints).length} current fingerprints, including the FE010 source hash and navigation regression check.`,
     '- `npm.cmd` invocations for typecheck, lint and Vitest could not resolve local `.bin` executables in the CMD child PATH. Their exact CLI entrypoints were run directly through Node and passed; this is recorded as an environment limitation.',
 ];
 
 await mkdir(here, { recursive: true });
 await writeFile(path.join(here, 'REPORT.md'), `${lines.join('\n')}\n`, 'utf8');
 
-const files = (await readdir(here)).filter(name => name !== 'SHA256SUMS.json' && name !== 'generate-uic02-report.mjs').sort();
+async function evidenceFiles(directory, relative = '') {
+    const entries = await readdir(directory, { withFileTypes: true });
+    const files = [];
+    for (const entry of entries) {
+        const childRelative = path.posix.join(relative, entry.name);
+        if (entry.isDirectory()) files.push(...await evidenceFiles(path.join(directory, entry.name), childRelative));
+        else if (entry.isFile() && childRelative !== 'SHA256SUMS.json' && childRelative !== 'generate-uic02-report.mjs') files.push(childRelative);
+    }
+    return files.sort();
+}
+const files = await evidenceFiles(here);
 const checksums = {};
 for (const name of files) checksums[name] = sha256(await readFile(path.join(here, name)));
 checksums['../source/apps/web/src/shared/ui/theme.ts'] = sha256(currentTheme);

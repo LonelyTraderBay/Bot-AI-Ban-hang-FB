@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "step": "S17",
   "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence.",
-  "recordedAt": "2026-10-16T21:44:49.620Z",
+  "recordedAt": "2026-10-17T01:26:00.534Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -218,7 +218,7 @@
       "observed": "18/18 visible backdrops match the canonical overlay token; 4/4 invisible Select backdrops remain transparent; 8 forced-colors samples retain visible dialog, backdrop and focus, with opacity transition 4/4; 4/4 Playwright Chromium and Firefox regressions pass.",
       "log": {
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC02/REPORT.md",
-        "sha256": "e1eee0575d6d37b113b3f26ae25627d75182e6e60600aec7f1f25073e5d67cb8"
+        "sha256": "f5613b92309ad48d61a9531a469570a4cced3254445a84935569eaca6bc2ff92"
       }
     },
     {
@@ -231,6 +231,18 @@
       "log": {
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC02/verify-uic02-current-source.log",
         "sha256": "3bf35788a16b5d15d74af54ea3a9cf62a0644004ec1d8bfb138cb1d53011520d"
+      }
+    },
+    {
+      "id": "uic02-fe010-navigation-regression",
+      "command": "Playwright FE010 repeat and cross-browser suite; see UIC02 REPORT.md for raw logs and limits",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE010 draft-dialog dismissal and product navigation: Chromium repeat 10/10 PASS; full FE010 suite Chromium/Firefox 18/18 PASS on local mock.",
+      "observed": "FE010 draft-dialog dismissal and product navigation: Chromium repeat 10/10 PASS; full FE010 suite Chromium/Firefox 18/18 PASS on local mock.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC02/REPORT.md",
+        "sha256": "f5613b92309ad48d61a9531a469570a4cced3254445a84935569eaca6bc2ff92"
       }
     }
   ],
@@ -344,6 +356,13 @@
       "name": "uic01-current-query-race",
       "expected": 20,
       "observed": 20,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic02-fe010-navigation-regression",
+      "expected": 28,
+      "observed": 28,
       "missing": 0,
       "result": "COMPLETE"
     }
@@ -516,7 +535,7 @@
     "BotSalesAI_Frontend/tests/domain-scenarios.cjs": "a4b6977835d0c551ad59dd17ac6a580a7af026689686c3f6b09d58e14a1d856f",
     "BotSalesAI_Frontend/tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
     "BotSalesAI_Frontend/tests/fe009.spec.ts": "66424fb9db972021716a768124d80da469502c131fd5d965083009e2e7d26af4",
-    "BotSalesAI_Frontend/tests/fe010.spec.ts": "1609e1df2b15ef0e7f1aadf0fd9c995662b763c3fffae82bdf55fba43120fd6d",
+    "BotSalesAI_Frontend/tests/fe010.spec.ts": "12cf829daf6ccaa7047a37fa6ade4787cc0aa91278ea0407cc87650502110d51",
     "BotSalesAI_Frontend/tests/fe011-source-map.test.mjs": "422db817da901192ee2a80924aebef3115ddf7c00b45ae4297e58ce782e9fef9",
     "BotSalesAI_Frontend/tests/fe011.spec.ts": "1b42ce41f05b3fadc3607b652769a511a27da1c0d519016af15c789a8d836b8c",
     "BotSalesAI_Frontend/tests/fe012-source-map.test.mjs": "096636c823514b1da90192a0a55a22cea800fa5c1de225ec60fd3ecb9b4bb98c",

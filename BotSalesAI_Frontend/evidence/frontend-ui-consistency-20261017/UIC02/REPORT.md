@@ -18,7 +18,12 @@ Token canonical từ `packages/design-tokens/src/tokens.json`: `#090C12CC`, comp
 
 Chạy riêng với Playwright `forcedColors: 'active'` trên cùng hai browser và viewport (**8** mẫu). Cả hai pha đều thấy media query bật, dialog/backdrop hiện hữu và focus-visible; cặp trước/sau cho opacity 0,5 → 0,8 ở **4/4** mẫu. UA ánh xạ màu hệ thống khác nhau giữa Chrome và Firefox. Đây là kiểm tra browser emulation, không thay thế nghiệm thu trực tiếp bằng Windows High Contrast.
 Regression `tests/ui-overlay-theme.spec.ts`: **4/4 PASS** trên project Chromium và Firefox của Playwright. Log: [playwright-regression.log](playwright-regression.log).
-Full local verify trên source hiện hành: **PASS**; 15 generated outputs/346 schemas/245 operations/61 routes; 724 imports; domain 117 checks; Vitest 25 files/242 tests; layout 86/86; visual tokens 5/5; composition 41/41; S17 hiện có 19 command/log records, 16 coverage rows và 281 fingerprints. Log: [verify-uic02-current-source.log](verify-uic02-current-source.log).
+Full local verify tại source UIC02 ban đầu: **PASS**; 15 generated outputs/346 schemas/245 operations/61 routes; 724 imports; domain 117 checks; Vitest 25 files/242 tests; layout 86/86; visual tokens 5/5; composition 41/41. Log [verify-uic02-current-source.log](verify-uic02-current-source.log) là baseline trước bài kiểm tra FE010 bổ sung, không thay verify exact-SHA mới.
+
+## Theo dõi FE010 sau lỗi điều hướng trên GitHub
+
+Trace của hai lần PR ở SHA `f39befd02ebe469e63672e58f67533b7c7348116` ghi nhận đúng `href`, click được thực hiện nhưng URL không đổi; local chưa tái hiện. Thêm assertion chờ hộp thoại bản nháp đóng hẳn sau nút “Tiếp tục chỉnh sửa”, không nới điều kiện điều hướng. FE010 đã lặp Chromium **10/10 PASS** và chạy toàn bộ Chromium/Firefox **18/18 PASS** với demo/MSW cục bộ. Log: [fe010-navigation-dismissal-repeat-chromium.log](fe010-navigation-dismissal-repeat-chromium.log), [fe010-suite-chromium-firefox.log](fe010-suite-chromium-firefox.log).
+PR verify cho SHA `d09610d32bcf22dda5155e8f4add41a130a05c0a` sau đó dừng trước E2E vì S17 fingerprint của `tests/fe010.spec.ts` chưa được cập nhật; đây là stale evidence, chưa chứng minh FE010 hosted đã qua. Push/PR chạy lại sau khi đồng bộ fingerprint.
 
 ## Phạm vi và giới hạn
 
@@ -30,11 +35,12 @@ Sửa đúng owner `apps/web/src/shared/ui/theme.ts`: visible `MuiBackdrop` lấ
 - Forced-colors riêng: [forced-colors-before.json](forced-colors-before.json), [forced-colors-after.json](forced-colors-after.json).
 - 14 ảnh Chrome ghép theo phase/viewport/component: `before-*.png`, `after-*.png`.
 - Lượt đối chiếu source hiện hành: [overlay-current-source-chromium-firefox.log](overlay-current-source-chromium-firefox.log); lần tái hiện regression trước khi khôi phục override: [current-tree-overlay-failure-chromium.log](current-tree-overlay-failure-chromium.log).
+- FE010 follow-up: [fe010-navigation-dismissal-repeat-chromium.log](fe010-navigation-dismissal-repeat-chromium.log), [fe010-suite-chromium-firefox.log](fe010-suite-chromium-firefox.log) và mã thoát kèm theo.
 - Kịch bản tái tạo: [capture-uic02.mjs](capture-uic02.mjs), [capture-uic02-forced-colors.mjs](capture-uic02-forced-colors.mjs).
 - SHA256 theme baseline: `4f0c1e67c38d2b07b335279436e1b7f72559c890c5241d95937d6e4d01d7607a`; theme sau sửa: `27682e063e02d2ec347f41b37d08ff8145180d1b2319fe528dd9dde7975e4e59`; regression spec: `9f4642c2be2dfc7c831152d88e6550dc751251355f8d7ce300b04a9b8df0a587`.
 - `node scripts/generate.mjs --check`: PASS, 15 output / 346 schema / 245 operation / 61 route.
 - `node scripts/check-source.mjs`: PASS, 85 file / 271 operation call / 61 route / 0 finding; `node scripts/check-boundaries.mjs`: PASS, 723 import / 10 negative fixture / 0 issue.
 - `node scripts/check-visual-tokens.mjs`: PASS, 92 source file / 0 finding; TypeScript `node node_modules/typescript/bin/tsc -p apps/web/tsconfig.json --noEmit`: PASS; ESLint `node node_modules/eslint/bin/eslint.js apps/web/src --max-warnings 0`: PASS.
 - Shared test `node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/shared-ui-render-contract.test.tsx`: 54/54 PASS; Playwright `node node_modules/@playwright/test/cli.js test tests/ui-overlay-theme.spec.ts --workers=1 --reporter=line`: 4/4 PASS.
-- Evidence fixtures `node --test tests/ui-evidence-validator.test.mjs`: 11/11 PASS; S17 validator: PASS, 13 command/log records / 11 coverage rows / 281 current fingerprints after refreshing the changed theme and adding the regression test hash.
+- Evidence fixtures node --test tests/ui-evidence-validator.test.mjs: 11/11 PASS; S17 after UIC02 refresh: 20 command/log records / 17 coverage rows / 281 current fingerprints, including the FE010 source hash and navigation regression check.
 - `npm.cmd` invocations for typecheck, lint and Vitest could not resolve local `.bin` executables in the CMD child PATH. Their exact CLI entrypoints were run directly through Node and passed; this is recorded as an environment limitation.
