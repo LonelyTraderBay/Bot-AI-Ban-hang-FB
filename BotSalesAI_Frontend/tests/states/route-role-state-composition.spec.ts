@@ -74,11 +74,15 @@ test.describe('route read states render under every role allowed by the canonica
             const browser = test.info().project.name;
             const readableErrorRoutes = routeSpecificErrorRoutes.filter(route => canRead(route, role));
             const readableEmptyRoutes = emptyStateRoutes.filter(route => canRead(route, role));
-            await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+            // R37/R52 are readable by every role; use one as bootstrap and verify it from a fresh page.
+            const bootstrapRoute = privateRoutes.find(route => route.id === 'R37');
+            const secondaryBootstrapRoute = privateRoutes.find(route => route.id === 'R52');
+            if (!bootstrapRoute || !secondaryBootstrapRoute || !canRead(bootstrapRoute, role) || !canRead(secondaryBootstrapRoute, role)) throw new Error('R37 and R52 must remain readable by every simulated role.');
+            await page.goto(new URL(routePath(bootstrapRoute.path), demoUrl).toString());
             await chooseRole(page, role);
             await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');
 
-            for (const route of readableErrorRoutes) {
+            for (const route of readableErrorRoutes.filter(route => route.id !== 'R37')) {
                 await navigateWithinDemo(page, route.path);
                 const main = page.locator('main#main-content');
                 await expect(main, `${route.id} should render its route content for ${role}`).toBeVisible();
@@ -91,41 +95,64 @@ test.describe('route read states render under every role allowed by the canonica
                 console.log(`BROWSER=${browser} ROLE_STATE=error ROLE=${role} ROUTE=${route.id} RESULT=PASS`);
             }
 
-            await chooseMockOption(page, 'Trạng thái thử', 'Danh sách rỗng (demo)');
-            for (const route of readableEmptyRoutes) {
-                await navigateWithinDemo(page, route.path);
-                const main = page.locator('main#main-content');
-                await expect(main, `${route.id} should render its page for ${role} with empty results`).toBeVisible();
-                if (route.id === 'R29' || route.id === 'R30') {
-                    const emptyCopy = route.id === 'R29' ? 'Chưa có Page kết nối.' : 'Chưa có kết nối AI.';
-                    const actionName = route.id === 'R29' ? 'Kết nối Page' : 'Thêm kết nối AI';
-                    await expect(main.getByRole('status').filter({ hasText: emptyCopy }), `${route.id} should announce its empty card state for ${role}`).toBeVisible();
-                    const actionOperationId = route.id === 'R29' ? 'beginChannelConnect' : 'createAIConnection';
-                    const action = route.actions.find(candidate => candidate.operationId === actionOperationId);
-                    expect(action, `${route.id} should declare the tested action in the canonical route manifest`).toBeTruthy();
-                    const roleCanAct = !action?.permission || permissionCatalog.rolePresets[role].includes(action.permission);
-                    await expect(main.getByRole('button', { name: actionName, exact: true }), `${route.id} should expose the empty-state action only when ${role} has its canonical permission`)
-                        .toHaveCount(roleCanAct ? 1 : 0);
-                } else if (route.id === 'R39') {
-                    await expect(main.getByRole('status').filter({ hasText: 'Chưa có thông báo.' }), `${route.id} should announce the empty notification list for ${role}`).toBeVisible();
-                } else if (route.id === 'R26') {
-                    await expect(main.getByRole('status').filter({ hasText: 'Không có kết nối AI trong danh sách hiện tại' }), `${route.id} should explain the empty connection lookup for ${role}`).toBeVisible();
-                } else if (route.id === 'R52') {
-                    await expect(main.getByRole('status').filter({ hasText: 'Chưa có bản tin điều hành trong danh sách hiện tại.' }), `${route.id} should announce empty digests for ${role}`).toBeVisible();
-                } else if (route.id === 'R58') {
-                    await expect(main.getByRole('status').filter({ hasText: 'Chưa có tài khoản sổ cái để lọc' }), `${route.id} should explain the empty account filter for ${role}`).toBeVisible();
-                    await expect(main.getByRole('table', { name: 'Sổ cái theo chứng từ' }).getByRole('row')).toHaveCount(5);
-                } else if (route.id === 'R18') {
-                    await expect(main.getByText('Không tìm thấy khách phù hợp.', { exact: true }), `${route.id} should explain the empty customer lookup for ${role}`).toBeVisible();
-                } else if (['R05', 'R06', 'R10', 'R11'].includes(route.id)) {
-                    const emptyCopy = route.id === 'R05' ? 'Chưa có hội thoại phù hợp.' : route.id === 'R06' ? 'Chưa có tin nhắn.' : 'Cửa hàng chưa có danh mục.';
-                    await expect(main.getByRole('status').filter({ hasText: emptyCopy }), `${route.id} should announce the empty lookup for ${role}`).toBeVisible();
-                } else {
-                    const emptyCell = main.locator('tbody td[colspan]').first();
-                    await expect(emptyCell, `${route.id} should announce an empty table for ${role}`).toBeVisible({ timeout: 10_000 });
-                    await expect(emptyCell.getByRole('status')).toBeVisible();
+            const secondaryPage = await page.context().newPage();
+            try {
+                await secondaryPage.goto(new URL(routePath(secondaryBootstrapRoute.path), demoUrl).toString());
+                await chooseRole(secondaryPage, role);
+                await chooseMockOption(secondaryPage, 'Trạng thái thử', 'Lỗi API kéo dài');
+                await navigateWithinDemo(secondaryPage, bootstrapRoute.path);
+                const bootstrapMain = secondaryPage.locator('main#main-content');
+                await expect(bootstrapMain, `R37 should render its route content for ${role}`).toBeVisible();
+                await expect(bootstrapMain.locator('[role="alert"], [role="status"]').filter({ hasText: 'API mô phỏng đang lỗi liên tục' }).first(), `R37 should expose the failed read for ${role}`).toBeVisible({ timeout: 10_000 });
+                await expect(secondaryPage.locator('.MuiSnackbar-root').filter({ hasText: /thành công|đã lưu|đã tạo|đã cập nhật|hoàn tất|success/i }), `R37 must not claim success for ${role} while the read fails`).toHaveCount(0);
+                console.log(`BROWSER=${browser} ROLE_STATE=error ROLE=${role} ROUTE=R37 RESULT=PASS`);
+            } finally {
+                await secondaryPage.close();
+            }
+
+            // Start a clean page so failed error-state queries cannot remain cached when testing empty results.
+            const emptyPage = await page.context().newPage();
+            try {
+                await emptyPage.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+                await chooseRole(emptyPage, role);
+                await chooseMockOption(emptyPage, 'Trạng thái thử', 'Danh sách rỗng (demo)');
+                for (const route of readableEmptyRoutes) {
+                    await navigateWithinDemo(emptyPage, route.path);
+                    const main = emptyPage.locator('main#main-content');
+                    await expect(main, `${route.id} should render its page for ${role} with empty results`).toBeVisible();
+                    if (route.id === 'R29' || route.id === 'R30') {
+                        const emptyCopy = route.id === 'R29' ? 'Chưa có Page kết nối.' : 'Chưa có kết nối AI.';
+                        const actionName = route.id === 'R29' ? 'Kết nối Page' : 'Thêm kết nối AI';
+                        await expect(main.getByRole('status').filter({ hasText: emptyCopy }), `${route.id} should announce its empty card state for ${role}`).toBeVisible();
+                        const actionOperationId = route.id === 'R29' ? 'beginChannelConnect' : 'createAIConnection';
+                        const action = route.actions.find(candidate => candidate.operationId === actionOperationId);
+                        expect(action, `${route.id} should declare the tested action in the canonical route manifest`).toBeTruthy();
+                        const roleCanAct = !action?.permission || permissionCatalog.rolePresets[role].includes(action.permission);
+                        await expect(main.getByRole('button', { name: actionName, exact: true }), `${route.id} should expose the empty-state action only when ${role} has its canonical permission`)
+                            .toHaveCount(roleCanAct ? 1 : 0);
+                    } else if (route.id === 'R39') {
+                        await expect(main.getByRole('status').filter({ hasText: 'Chưa có thông báo.' }), `${route.id} should announce the empty notification list for ${role}`).toBeVisible();
+                    } else if (route.id === 'R26') {
+                        await expect(main.getByRole('status').filter({ hasText: 'Không có kết nối AI trong danh sách hiện tại' }), `${route.id} should explain the empty connection lookup for ${role}`).toBeVisible();
+                    } else if (route.id === 'R52') {
+                        await expect(main.getByRole('status').filter({ hasText: 'Chưa có bản tin điều hành trong danh sách hiện tại.' }), `${route.id} should announce empty digests for ${role}`).toBeVisible();
+                    } else if (route.id === 'R58') {
+                        await expect(main.getByRole('status').filter({ hasText: 'Chưa có tài khoản sổ cái để lọc' }), `${route.id} should explain the empty account filter for ${role}`).toBeVisible();
+                        await expect(main.getByRole('table', { name: 'Sổ cái theo chứng từ' }).getByRole('row')).toHaveCount(5);
+                    } else if (route.id === 'R18') {
+                        await expect(main.getByText('Không tìm thấy khách phù hợp.', { exact: true }), `${route.id} should explain the empty customer lookup for ${role}`).toBeVisible();
+                    } else if (['R05', 'R06', 'R10', 'R11'].includes(route.id)) {
+                        const emptyCopy = route.id === 'R05' ? 'Chưa có hội thoại phù hợp.' : route.id === 'R06' ? 'Chưa có tin nhắn.' : 'Cửa hàng chưa có danh mục.';
+                        await expect(main.getByRole('status').filter({ hasText: emptyCopy }), `${route.id} should announce the empty lookup for ${role}`).toBeVisible();
+                    } else {
+                        const emptyCell = main.locator('tbody td[colspan]').first();
+                        await expect(emptyCell, `${route.id} should announce an empty table for ${role}`).toBeVisible({ timeout: 10_000 });
+                        await expect(emptyCell.getByRole('status')).toBeVisible();
+                    }
+                    console.log(`BROWSER=${browser} ROLE_STATE=empty ROLE=${role} ROUTE=${route.id} RESULT=PASS`);
                 }
-                console.log(`BROWSER=${browser} ROLE_STATE=empty ROLE=${role} ROUTE=${route.id} RESULT=PASS`);
+            } finally {
+                await emptyPage.close();
             }
         });
     }

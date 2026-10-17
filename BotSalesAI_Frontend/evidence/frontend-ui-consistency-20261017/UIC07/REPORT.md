@@ -54,3 +54,15 @@ Sau khi sửa, `npm.cmd --script-shell=cmd.exe run verify` chạy lại trên so
 UIC07 chỉ chứng minh Frontend chạy trên synthetic MSW. Native browser zoom/text-only, reflow/accessibility chi tiết thuộc UIC08; full E2E và built-demo cuối thuộc UIC10. Backend thật, provider, network offline, Narrator/screen-reader speech, human acceptance và owner/UAT vẫn chưa được kiểm ở task này. GitHub exact-SHA checks chỉ có sau khi commit/push.
 
 **Quyết định:** đủ local proof để mở UIC08 sau khi UIC07 commit/push và CI exact-SHA được đối chiếu. Không tuyên bố UIC07 là Backend/API thật hoặc nghiệm thu cuối.
+
+## Bổ sung xác minh cô lập cache trạng thái — 17/10/2026
+
+Kiểm tra lại assertion route-state trên Firefox tìm thấy harness chuyển từ trạng thái API lỗi sang danh sách rỗng trên cùng trang; React Query giữ dữ liệu lỗi và khiến R05 không nhận được empty response. Harness hiện mở trang sạch cho lượt empty, chọn vai trò và trạng thái trước khi đi qua các route. Phần lỗi API tiếp tục dùng R37/R52 làm trang bootstrap được cả bảy vai trò đọc; R37 được xác minh trên trang khác để cache bootstrap không làm sai kết quả.
+
+- Lượt tái hiện trước sửa [r4](route-state-error-bootstrap-chromium-firefox-r4.log): 2 test pass, 2 fail; Firefox owner và manager đều dừng tại empty R05. Đây là lỗi test isolation, không phải lỗi giao diện được quan sát. Padding khoảng trắng cuối dòng do formatter Playwright đã được bỏ khỏi bản lưu; tên ca và kết quả được giữ nguyên.
+- Lượt sau sửa [r5](route-state-clean-empty-chromium-firefox-r5.log): exit 0, Chromium 155 + Firefox 155, owner + manager, 4/4 test pass trong 3,3 phút; 394 dòng `ROLE_STATE=error/empty ... RESULT=PASS` xác nhận route/state áp dụng.
+- Cấu hình chạy lại: [route-state-targeted.playwright.config.mjs](route-state-targeted.playwright.config.mjs). Lượt này chỉ chứng minh hai vai trò và hai browser mục tiêu; không thay full E2E, không mở rộng thành bảy vai trò.
+
+SHA `5c4eca680605ea6e9270ef0329f16b5839445200` là snapshot trước sửa. Hai workflow GitHub của SHA đó còn chạy tại lúc ghi nhận; kết quả ấy không được gán cho corrective commit. Exact-SHA push/PR CI của commit sửa sẽ được đối chiếu sau khi đẩy tuần tự.
+
+Việc tái lập dùng cài sạch [npm ci](route-state-correction-npm-ci-r1.log) và [npm run setup](route-state-correction-npm-setup-r1.log), cả hai exit 0; cấu hình test tạo cache Vite/test output riêng cho run.
