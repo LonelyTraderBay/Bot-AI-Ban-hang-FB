@@ -718,7 +718,9 @@ test('FE016.AC03 unknown send keeps the reply draft, exposes command recovery an
     await textbox.fill(reply);
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/messages'));
     await page.getByRole('button', { name: 'Gửi trả lời', exact: true }).click();
-    expect((await responseWait).status()).toBe(202);
+    const result = await responseWait;
+    expect(result.status()).toBe(202);
+    expect((await result.json()).data.status).toBe('unknown');
     await expect(page.getByText('Có 1 thao tác chưa xác minh kết quả')).toBeVisible();
     await expect(textbox).toHaveValue(reply);
     await expect(page.getByText(/Mã lệnh cần kiểm tra/)).toBeVisible();
@@ -727,6 +729,7 @@ test('FE016.AC03 unknown send keeps the reply draft, exposes command recovery an
     await sendAgain.evaluate(button=>(button as HTMLButtonElement).click());
     await expect(page.getByRole('alert').filter({ hasText: /chưa xác minh kết quả/ })).toBeVisible();
     expect(sends).toHaveLength(1);
+    console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R06 OPERATION=sendMessage RESULT=PASS`);
 });
 
 test('FE016.AC04 role without customer/order permissions cannot open those cross-module references', async ({ page }) => {

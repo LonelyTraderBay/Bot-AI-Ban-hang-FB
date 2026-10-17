@@ -147,13 +147,18 @@ test('FE011.AC03 unknown command blocks duplicate submission until shared recove
     const dialog = page.getByRole('dialog', { name: 'Điều chỉnh DEMO-001' });
     await dialog.getByLabel('Thay đổi số lượng').fill('1');
     await dialog.getByLabel('Lý do điều chỉnh').fill('Chưa rõ kết quả');
+    const adjustmentResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/inventory/adjustments'));
     await dialog.getByRole('button', { name: 'Xác nhận điều chỉnh' }).click();
+    const result = await adjustmentResponse;
+    expect(result.status()).toBe(202);
+    expect((await result.json()).data.status).toBe('unknown');
     await expect(dialog.getByRole('alert').filter({ hasText: 'Chưa xác minh được kết quả' })).toBeVisible({ timeout: 15000 });
     await expect(page.getByText(/thao tác chưa xác minh kết quả/)).toBeVisible();
     await dialog.getByRole('button', { name: 'Xác nhận điều chỉnh' }).click();
     await expect(dialog.getByRole('alert').filter({ hasText: 'Chưa xác minh được kết quả' })).toBeVisible();
     expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/inventory/adjustments'))).toHaveLength(1);
     await expect(page.getByRole('status').filter({ hasText: 'Điều chỉnh đã được xác nhận' })).toHaveCount(0);
+    console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R15 OPERATION=createInventoryAdjustment RESULT=PASS`);
 });
 
 test('FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source', async ({ page }) => {

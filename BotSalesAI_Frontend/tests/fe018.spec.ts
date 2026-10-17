@@ -262,7 +262,8 @@ test('FE018.S03 synthetic budget and tool denials retain the prompt and never sh
     const budgetResponse = await budgetWait;
     expect(budgetResponse.status()).toBe(429);
     expect(await budgetResponse.json()).toMatchObject({ code: 'BUDGET_EXCEEDED', status: 429 });
-    await expect(page.getByRole('alert').filter({ hasText: 'Hạn mức AI mô phỏng đã đạt giới hạn' })).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: 'Hạn mức AI mô phỏng đã đạt giới hạn' })).toBeVisible();
+    await expect(page.getByRole('alert')).toHaveCount(0);
     await expect(input).toHaveValue(prompt);
     await expect(page.getByText('Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.')).toBeVisible();
 
@@ -272,7 +273,8 @@ test('FE018.S03 synthetic budget and tool denials retain the prompt and never sh
     const toolResponse = await toolWait;
     expect(toolResponse.status()).toBe(403);
     expect(await toolResponse.json()).toMatchObject({ code: 'TOOL_NOT_ALLOWED', status: 403 });
-    await expect(page.getByRole('alert').filter({ hasText: 'không thuộc allowedToolIds' })).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: 'không thuộc allowedToolIds' })).toBeVisible();
+    await expect(page.getByRole('alert')).toHaveCount(0);
     await expect(input).toHaveValue(prompt);
     await expect(page.getByText('Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.')).toBeVisible();
 });
@@ -406,6 +408,7 @@ test('FE018.AC05 unknown role command stays unresolved and does not claim succes
     await expect(dialog.getByRole('alert')).toContainText('Chưa xác minh được kết quả');
     await expect(dialog).toBeVisible();
     expect(await readApi<Array<{ id: string; status: string }>>(page, '/api/v2/shops/shop-demo/agent-roles')).toContainEqual(expect.objectContaining({ id: 'agent-0', status: 'not_configured' }));
+    console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R51 OPERATION=controlAutomation RESULT=PASS`);
 });
 
 test('UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state', async ({ page }) => {

@@ -1,0 +1,424 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs --project=chromium --project=firefox --workers=1 tests/route-role-matrix.spec.ts tests/states/route-error-composition.spec.ts tests/states/route-empty-composition.spec.ts tests/states/fe023.spec.ts tests/frontend.spec.ts
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2077 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-CbvauvZc.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-YNOV-a6w.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-hL6qAgrY.js                9.40 kB │ gzip:   3.73 kB
+dist/assets/index-CJHLcXMA.js               10.37 kB │ gzip:   3.61 kB
+dist/assets/index-DNJaIKcY.js               13.10 kB │ gzip:   5.17 kB
+dist/assets/index-D4SsCfaq.js               16.40 kB │ gzip:   6.12 kB
+dist/assets/index-Bsl7SZyy.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-BcinR3lm.js               18.58 kB │ gzip:   5.84 kB
+dist/assets/index-CDjhwxgF.js               18.82 kB │ gzip:   6.31 kB
+dist/assets/index-gHr3dPni.js               19.08 kB │ gzip:   7.01 kB
+dist/assets/index-DEQvW7lB.js               21.23 kB │ gzip:   7.65 kB
+dist/assets/index-D6oXhliS.js               22.02 kB │ gzip:   7.18 kB
+dist/assets/index-D_dzRAa3.js               25.07 kB │ gzip:   8.46 kB
+dist/assets/index-Bfcip51U.js               27.36 kB │ gzip:   8.93 kB
+dist/assets/index-BOEUbh5k.js               30.89 kB │ gzip:   9.92 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-DujBF2pA.js               33.32 kB │ gzip:  11.01 kB
+dist/assets/index-CIhxGVfd.js               41.99 kB │ gzip:  11.48 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-Bb9FKvYp.js               64.24 kB │ gzip:  17.65 kB
+dist/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist/assets/index-Bahjxnv9.js              101.52 kB │ gzip:  32.30 kB
+dist/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-BwhaRlrs.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-CJj7QyVx.js                328.77 kB │ gzip: 100.20 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 2.84s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2294 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-C4wZDMnR.js              1.73 kB │ gzip:   0.94 kB
+dist-demo/assets/hooks-CEZHCDvR.js                4.59 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-D_W45sl2.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-BNlqS-T_.js                9.40 kB │ gzip:   3.73 kB
+dist-demo/assets/index-B-xL-Iqx.js               11.01 kB │ gzip:   3.88 kB
+dist-demo/assets/index-DDrRAXgx.js               13.10 kB │ gzip:   5.17 kB
+dist-demo/assets/index-DHBlMmAb.js               16.10 kB │ gzip:   5.95 kB
+dist-demo/assets/index-CvsO_lbq.js               18.74 kB │ gzip:   5.89 kB
+dist-demo/assets/index-Bn4R-Ut2.js               18.82 kB │ gzip:   6.31 kB
+dist-demo/assets/index-GI03PxPk.js               19.15 kB │ gzip:   6.54 kB
+dist-demo/assets/index-CKtxnWK2.js               19.28 kB │ gzip:   7.09 kB
+dist-demo/assets/index-Cn0lVFJn.js               22.02 kB │ gzip:   7.18 kB
+dist-demo/assets/index-DE40MniS.js               25.48 kB │ gzip:   8.62 kB
+dist-demo/assets/index-Dznc7MzC.js               27.36 kB │ gzip:   8.93 kB
+dist-demo/assets/index-C8LHsMJl.js               28.10 kB │ gzip:   9.80 kB
+dist-demo/assets/index-oKqyGRLR.js               30.89 kB │ gzip:   9.92 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-BWkfUnTm.js               33.78 kB │ gzip:  11.13 kB
+dist-demo/assets/index-Dx8I26dx.js               41.99 kB │ gzip:  11.48 kB
+dist-demo/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-E4tgsB6z.js               65.46 kB │ gzip:  18.09 kB
+dist-demo/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist-demo/assets/index-C5vY_inE.js              106.07 kB │ gzip:  33.72 kB
+dist-demo/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-BbcoZCYR.js            233.75 kB │ gzip:  54.25 kB
+dist-demo/assets/browser-Cwk81iQu.js            256.37 kB │ gzip:  87.30 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-uDdGNk6t.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-CUCPJGs1.js                328.77 kB │ gzip: 100.20 kB
+dist-demo/assets/contract-data-CJyvN5AM.js      375.47 kB │ gzip:  44.43 kB
+✓ built in 3.36s
+
+> node node_modules\@playwright\test\cli.js test --project=chromium --project=firefox --workers=1 tests/route-role-matrix.spec.ts tests/states/route-error-composition.spec.ts tests/states/route-empty-composition.spec.ts tests/states/fe023.spec.ts tests/frontend.spec.ts
+
+Running 148 tests using 1 worker
+
+(node:80036) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   1 [chromium] › tests\frontend.spec.ts:41:1 › catalog create uses the HTTP mock and successful save clears the draft guard (2.4s)
+  ok   2 [chromium] › tests\frontend.spec.ts:73:1 › dirty drafts block in-app navigation and preserve input until the user decides (2.3s)
+ROUTE_RENDER_SMOKE_CASES=61 IDS=R01,R02,R03,R04,R05,R06,R07,R08,R09,R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,R20,R21,R22,R23,R24,R25,R26,R27,R28,R29,R30,R31,R32,R33,R34,R35,R36,R37,R38,R39,R40,R41,R42,R43,R44,R45,R46,R47,R48,R49,R50,R51,R52,R53,R54,R55,R56,R57,R58,R59,R60,R61 RESULT=PASS
+  ok   3 [chromium] › tests\frontend.spec.ts:91:1 › all canonical routes render inside the real React demo application (47.2s)
+  ok   4 [chromium] › tests\frontend.spec.ts:120:1 › switching shops cancels a delayed request and loads only the new shop scope (5.8s)
+  ok   5 [chromium] › tests\frontend.spec.ts:138:1 › role changes remove restricted navigation and the route guard explains denied access (1.2s)
+  ok   6 [chromium] › tests\frontend.spec.ts:151:1 › deep links survive browser refresh and logout clears the mock session (3.3s)
+  ok   7 [chromium] › tests\frontend.spec.ts:164:1 › logout asks before discarding a draft and retains the session when logout fails (2.2s)
+  ok   8 [chromium] › tests\frontend.spec.ts:221:1 › mobile navigation opens, routes, and closes without viewport overflow (1.3s)
+  ok   9 [chromium] › tests\frontend.spec.ts:235:1 › chunk loading errors use the route recovery boundary (895ms)
+  ok  10 [chromium] › tests\frontend.spec.ts:274:1 › live mode reports an unavailable session API without enabling mock data (395ms)
+BROWSER=chromium VERSION=155.0.8059.40
+ROUTE_ROLE_MATRIX_CASES=399 ROLES=7 PRIVATE_ROUTES=57 RESULT=PASS
+  ok  11 [chromium] › tests\route-role-matrix.spec.ts:44:1 › route read access matches canonical permissions for every demo role (1.1m)
+  ok  12 [chromium] › tests\states\fe023.spec.ts:18:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard (2.6s)
+  ok  13 [chromium] › tests\states\fe023.spec.ts:36:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices (2.0s)
+  ok  14 [chromium] › tests\states\fe023.spec.ts:77:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path (7.6s)
+  ok  15 [chromium] › tests\states\fe023.spec.ts:107:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope (2.4s)
+  ok  16 [chromium] › tests\states\fe023.spec.ts:125:1 › FE023 a saved shop form resets its dirty baseline and reports success (1.8s)
+ROUTE_EMPTY_COMPOSITION_PROGRESS=3/11
+ROUTE_EMPTY_COMPOSITION_PROGRESS=6/11
+ROUTE_EMPTY_COMPOSITION_PROGRESS=9/11
+ROUTE_EMPTY_COMPOSITION=11/11 RESULT=PASS
+ROUTE_EMPTY_COMPOSITION_IDS=R07,R09,R12,R17,R21,R29,R30,R39,R44,R48,R50
+  ok  17 [chromium] › tests\states\route-empty-composition.spec.ts:29:1 › empty collection responses render accessible empty states on canonical list routes (4.1s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R04 RESULT=PASS
+  ok  18 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R04 /s/:shopId/overview (3.8s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R05 RESULT=PASS
+  ok  19 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R05 /s/:shopId/inbox (2.7s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R06 RESULT=PASS
+  ok  20 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R06 /s/:shopId/inbox/:conversationId (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R07 RESULT=PASS
+  ok  21 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R07 /s/:shopId/customers (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R08 RESULT=PASS
+  ok  22 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R08 /s/:shopId/customers/:customerId (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R09 RESULT=PASS
+  ok  23 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R09 /s/:shopId/products (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R10 RESULT=PASS
+  ok  24 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R10 /s/:shopId/products/new (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R11 RESULT=PASS
+  ok  25 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R11 /s/:shopId/products/:productId (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R12 RESULT=PASS
+  ok  26 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R12 /s/:shopId/categories (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R13 RESULT=PASS
+  ok  27 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R13 /s/:shopId/imports (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R14 RESULT=PASS
+  ok  28 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R14 /s/:shopId/imports/:jobId (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R15 RESULT=PASS
+  ok  29 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R15 /s/:shopId/inventory (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R16 RESULT=PASS
+  ok  30 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R16 /s/:shopId/inventory/movements (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R17 RESULT=PASS
+  ok  31 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R17 /s/:shopId/orders (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R18 RESULT=PASS
+  ok  32 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R18 /s/:shopId/orders/new (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R19 RESULT=PASS
+  ok  33 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R19 /s/:shopId/orders/:orderId (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R20 RESULT=PASS
+  ok  34 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R20 /s/:shopId/finance (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R21 RESULT=PASS
+  ok  35 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R21 /s/:shopId/finance/entries (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R22 RESULT=PASS
+  ok  36 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R22 /s/:shopId/finance/profit-loss (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R23 RESULT=PASS
+  ok  37 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R23 /s/:shopId/knowledge (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R24 RESULT=PASS
+  ok  38 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R24 /s/:shopId/knowledge/:knowledgeId (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R25 RESULT=PASS
+  ok  39 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R25 /s/:shopId/knowledge/review (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R26 RESULT=PASS
+  ok  40 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R26 /s/:shopId/bot (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R27 RESULT=PASS
+  ok  41 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R27 /s/:shopId/bot/playground (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R28 RESULT=PASS
+  ok  42 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R28 /s/:shopId/bot/evaluations (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R29 RESULT=PASS
+  ok  43 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R29 /s/:shopId/integrations/channels (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R30 RESULT=PASS
+  ok  44 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R30 /s/:shopId/integrations/ai (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R31 RESULT=PASS
+  ok  45 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R31 /s/:shopId/reports (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R32 RESULT=PASS
+  ok  46 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R32 /s/:shopId/settings/team (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R33 RESULT=PASS
+  ok  47 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R33 /s/:shopId/settings/shop (1.8s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R34 RESULT=PASS
+  ok  48 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R34 /s/:shopId/settings/audit (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R35 RESULT=PASS
+  ok  49 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R35 /s/:shopId/settings/privacy (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R36 RESULT=PASS
+  ok  50 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R36 /s/:shopId/jobs/:jobId (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R37 RESULT=PASS
+  ok  51 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R37 /s/:shopId/operations (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R38 RESULT=PASS
+  ok  52 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R38 /s/:shopId/approvals (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R39 RESULT=PASS
+  ok  53 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R39 /s/:shopId/notifications (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R40 RESULT=PASS
+  ok  54 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R40 /s/:shopId/notifications/devices (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R41 RESULT=PASS
+  ok  55 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R41 /s/:shopId/fulfillment (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R42 RESULT=PASS
+  ok  56 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R42 /s/:shopId/shipments (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R43 RESULT=PASS
+  ok  57 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R43 /s/:shopId/returns (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R44 RESULT=PASS
+  ok  58 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R44 /s/:shopId/suppliers (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R45 RESULT=PASS
+  ok  59 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R45 /s/:shopId/replenishment (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R46 RESULT=PASS
+  ok  60 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R46 /s/:shopId/purchases (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R47 RESULT=PASS
+  ok  61 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R47 /s/:shopId/receipts (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R48 RESULT=PASS
+  ok  62 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R48 /s/:shopId/finance/journals (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R49 RESULT=PASS
+  ok  63 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R49 /s/:shopId/finance/reconciliation (2.7s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R50 RESULT=PASS
+  ok  64 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R50 /s/:shopId/finance/debts-periods (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R51 RESULT=PASS
+  ok  65 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R51 /s/:shopId/bot/team (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R52 RESULT=PASS
+  ok  66 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R52 /s/:shopId/operations/digests (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R53 RESULT=PASS
+  ok  67 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R53 /s/:shopId/reports/marketing (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R54 RESULT=PASS
+  ok  68 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R54 /s/:shopId/service-cases (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R55 RESULT=PASS
+  ok  69 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R55 /s/:shopId/settings/warehouses (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R56 RESULT=PASS
+  ok  70 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R56 /s/:shopId/finance/accounts (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R57 RESULT=PASS
+  ok  71 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R57 /s/:shopId/finance/opening-balances (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R58 RESULT=PASS
+  ok  72 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R58 /s/:shopId/finance/ledger (2.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R59 RESULT=PASS
+  ok  73 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R59 /s/:shopId/finance/trial-balance (3.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R60 RESULT=PASS
+  ok  74 [chromium] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R60 /s/:shopId/finance/balance-sheet (3.0s)
+(node:79000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  75 [firefox] › tests\frontend.spec.ts:41:1 › catalog create uses the HTTP mock and successful save clears the draft guard (15.5s)
+  ok  76 [firefox] › tests\frontend.spec.ts:73:1 › dirty drafts block in-app navigation and preserve input until the user decides (2.6s)
+ROUTE_RENDER_SMOKE_CASES=61 IDS=R01,R02,R03,R04,R05,R06,R07,R08,R09,R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,R20,R21,R22,R23,R24,R25,R26,R27,R28,R29,R30,R31,R32,R33,R34,R35,R36,R37,R38,R39,R40,R41,R42,R43,R44,R45,R46,R47,R48,R49,R50,R51,R52,R53,R54,R55,R56,R57,R58,R59,R60,R61 RESULT=PASS
+  ok  77 [firefox] › tests\frontend.spec.ts:91:1 › all canonical routes render inside the real React demo application (53.3s)
+  ok  78 [firefox] › tests\frontend.spec.ts:120:1 › switching shops cancels a delayed request and loads only the new shop scope (6.0s)
+  ok  79 [firefox] › tests\frontend.spec.ts:138:1 › role changes remove restricted navigation and the route guard explains denied access (1.4s)
+  ok  80 [firefox] › tests\frontend.spec.ts:151:1 › deep links survive browser refresh and logout clears the mock session (2.9s)
+  ok  81 [firefox] › tests\frontend.spec.ts:164:1 › logout asks before discarding a draft and retains the session when logout fails (2.3s)
+  ok  82 [firefox] › tests\frontend.spec.ts:221:1 › mobile navigation opens, routes, and closes without viewport overflow (1.6s)
+  ok  83 [firefox] › tests\frontend.spec.ts:235:1 › chunk loading errors use the route recovery boundary (967ms)
+  ok  84 [firefox] › tests\frontend.spec.ts:274:1 › live mode reports an unavailable session API without enabling mock data (1.1s)
+BROWSER=firefox VERSION=155.0
+ROUTE_ROLE_MATRIX_CASES=399 ROLES=7 PRIVATE_ROUTES=57 RESULT=PASS
+  ok  85 [firefox] › tests\route-role-matrix.spec.ts:44:1 › route read access matches canonical permissions for every demo role (1.3m)
+  ok  86 [firefox] › tests\states\fe023.spec.ts:18:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard (2.8s)
+  ok  87 [firefox] › tests\states\fe023.spec.ts:36:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices (2.3s)
+  ok  88 [firefox] › tests\states\fe023.spec.ts:77:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path (7.5s)
+  ok  89 [firefox] › tests\states\fe023.spec.ts:107:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope (2.7s)
+  ok  90 [firefox] › tests\states\fe023.spec.ts:125:1 › FE023 a saved shop form resets its dirty baseline and reports success (2.0s)
+ROUTE_EMPTY_COMPOSITION_PROGRESS=3/11
+ROUTE_EMPTY_COMPOSITION_PROGRESS=6/11
+ROUTE_EMPTY_COMPOSITION_PROGRESS=9/11
+ROUTE_EMPTY_COMPOSITION=11/11 RESULT=PASS
+ROUTE_EMPTY_COMPOSITION_IDS=R07,R09,R12,R17,R21,R29,R30,R39,R44,R48,R50
+  ok  91 [firefox] › tests\states\route-empty-composition.spec.ts:29:1 › empty collection responses render accessible empty states on canonical list routes (4.7s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R04 RESULT=PASS
+  ok  92 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R04 /s/:shopId/overview (4.0s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R05 RESULT=PASS
+  ok  93 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R05 /s/:shopId/inbox (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R06 RESULT=PASS
+  ok  94 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R06 /s/:shopId/inbox/:conversationId (3.9s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R07 RESULT=PASS
+  ok  95 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R07 /s/:shopId/customers (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R08 RESULT=PASS
+  ok  96 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R08 /s/:shopId/customers/:customerId (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R09 RESULT=PASS
+  ok  97 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R09 /s/:shopId/products (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R10 RESULT=PASS
+  ok  98 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R10 /s/:shopId/products/new (3.8s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R11 RESULT=PASS
+  ok  99 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R11 /s/:shopId/products/:productId (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R12 RESULT=PASS
+  ok 100 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R12 /s/:shopId/categories (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R13 RESULT=PASS
+  ok 101 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R13 /s/:shopId/imports (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R14 RESULT=PASS
+  ok 102 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R14 /s/:shopId/imports/:jobId (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R15 RESULT=PASS
+  ok 103 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R15 /s/:shopId/inventory (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R16 RESULT=PASS
+  ok 104 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R16 /s/:shopId/inventory/movements (4.1s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R17 RESULT=PASS
+  ok 105 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R17 /s/:shopId/orders (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R18 RESULT=PASS
+  ok 106 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R18 /s/:shopId/orders/new (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R19 RESULT=PASS
+  ok 107 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R19 /s/:shopId/orders/:orderId (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R20 RESULT=PASS
+  ok 108 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R20 /s/:shopId/finance (3.4s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R21 RESULT=PASS
+  ok 109 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R21 /s/:shopId/finance/entries (3.4s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R22 RESULT=PASS
+  ok 110 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R22 /s/:shopId/finance/profit-loss (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R23 RESULT=PASS
+  ok 111 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R23 /s/:shopId/knowledge (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R24 RESULT=PASS
+  ok 112 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R24 /s/:shopId/knowledge/:knowledgeId (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R25 RESULT=PASS
+  ok 113 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R25 /s/:shopId/knowledge/review (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R26 RESULT=PASS
+  ok 114 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R26 /s/:shopId/bot (4.5s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R27 RESULT=PASS
+  ok 115 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R27 /s/:shopId/bot/playground (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R28 RESULT=PASS
+  ok 116 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R28 /s/:shopId/bot/evaluations (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R29 RESULT=PASS
+  ok 117 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R29 /s/:shopId/integrations/channels (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R30 RESULT=PASS
+  ok 118 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R30 /s/:shopId/integrations/ai (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R31 RESULT=PASS
+  ok 119 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R31 /s/:shopId/reports (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R32 RESULT=PASS
+  ok 120 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R32 /s/:shopId/settings/team (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R33 RESULT=PASS
+  ok 121 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R33 /s/:shopId/settings/shop (2.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R34 RESULT=PASS
+  ok 122 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R34 /s/:shopId/settings/audit (3.4s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R35 RESULT=PASS
+  ok 123 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R35 /s/:shopId/settings/privacy (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R36 RESULT=PASS
+  ok 124 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R36 /s/:shopId/jobs/:jobId (4.5s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R37 RESULT=PASS
+  ok 125 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R37 /s/:shopId/operations (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R38 RESULT=PASS
+  ok 126 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R38 /s/:shopId/approvals (3.4s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R39 RESULT=PASS
+  ok 127 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R39 /s/:shopId/notifications (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R40 RESULT=PASS
+  ok 128 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R40 /s/:shopId/notifications/devices (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R41 RESULT=PASS
+  ok 129 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R41 /s/:shopId/fulfillment (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R42 RESULT=PASS
+  ok 130 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R42 /s/:shopId/shipments (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R43 RESULT=PASS
+  ok 131 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R43 /s/:shopId/returns (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R44 RESULT=PASS
+  ok 132 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R44 /s/:shopId/suppliers (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R45 RESULT=PASS
+  ok 133 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R45 /s/:shopId/replenishment (3.4s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R46 RESULT=PASS
+  ok 134 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R46 /s/:shopId/purchases (4.4s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R47 RESULT=PASS
+  ok 135 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R47 /s/:shopId/receipts (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R48 RESULT=PASS
+  ok 136 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R48 /s/:shopId/finance/journals (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R49 RESULT=PASS
+  ok 137 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R49 /s/:shopId/finance/reconciliation (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R50 RESULT=PASS
+  ok 138 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R50 /s/:shopId/finance/debts-periods (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R51 RESULT=PASS
+  ok 139 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R51 /s/:shopId/bot/team (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R52 RESULT=PASS
+  ok 140 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R52 /s/:shopId/operations/digests (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R53 RESULT=PASS
+  ok 141 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R53 /s/:shopId/reports/marketing (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R54 RESULT=PASS
+  ok 142 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R54 /s/:shopId/service-cases (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R55 RESULT=PASS
+  ok 143 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R55 /s/:shopId/settings/warehouses (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R56 RESULT=PASS
+  ok 144 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R56 /s/:shopId/finance/accounts (5.1s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R57 RESULT=PASS
+  ok 145 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R57 /s/:shopId/finance/opening-balances (3.4s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R58 RESULT=PASS
+  ok 146 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R58 /s/:shopId/finance/ledger (3.3s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R59 RESULT=PASS
+  ok 147 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R59 /s/:shopId/finance/trial-balance (3.2s)
+ROUTE_ERROR_COMPOSITION_ROUTE=R60 RESULT=PASS
+  ok 148 [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R60 /s/:shopId/finance/balance-sheet (3.3s)
+
+  148 passed (12.1m)
