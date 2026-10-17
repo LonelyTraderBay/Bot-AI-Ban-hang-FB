@@ -36,7 +36,13 @@ async function readList<T>(page: import('@playwright/test').Page, resource: stri
 }
 
 test('FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked', async ({ page }) => {
+    const inventoryResponse = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/inventory');
     await gotoDemo(page, '/s/shop-demo/inventory');
+    const inventory = await inventoryResponse;
+    expect(inventory.status()).toBe(200);
+    const snapshots = await inventory.json() as { data: Array<{ sku: string }> };
+    expect(snapshots.data.some(snapshot => snapshot.sku === 'AO-002')).toBe(true);
     const stockRow = page.getByRole('row').filter({ hasText: 'AO-002' });
     await expect(stockRow).toBeVisible();
     await stockRow.getByRole('link', { name: 'Mở sản phẩm' }).click();
@@ -239,9 +245,10 @@ test('FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback
     expect(reviewed).toMatchObject({ id: feedback.data.id, status: 'approved', knowledgeDraftId: expect.any(String) });
 
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Kiến thức cửa hàng' }).click();
-    const draftRow = page.getByRole('row').filter({ hasText: 'Đề xuất từ phản hồi' });
-    await expect(draftRow).toBeVisible();
-    await draftRow.getByRole('link', { name: 'Đề xuất từ phản hồi' }).click();
+    const draftLink = page.getByRole('link', { name: 'Đề xuất từ phản hồi', exact: true });
+    await expect(draftLink).toBeVisible();
+    await expect(draftLink).toHaveAttribute('href', `/s/shop-demo/knowledge/${reviewed.knowledgeDraftId}`);
+    await draftLink.click();
     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/knowledge/${reviewed.knowledgeDraftId}`));
     const detail = (await (await detailResponse).json()).data;
     expect(detail).toMatchObject({ id: reviewed.knowledgeDraftId, status: 'draft', sourceKind: 'feedback' });
