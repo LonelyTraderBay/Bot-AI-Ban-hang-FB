@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime.",
-  "recordedAt": "2026-10-17T04:05:12.365Z",
+  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime. UIC05 canonical z-index token-to-runtime integration covers generator output, all MUI theme slots, shell consumers, checker enforcement and live portal layers.",
+  "recordedAt": "2026-10-17T04:34:46.614Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -292,6 +292,42 @@
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC04/validate-dashboard-audit-final.log",
         "sha256": "e2129f2fec656a7509ef1c0c4762f1db7775bb799f837804212904b42d3a1e32"
       }
+    },
+    {
+      "id": "uic05-current-source-full-verify",
+      "command": "npm.cmd --script-shell=<pwsh.exe> run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Current UIC05 source npm run verify PASS: generated 15/346/245/61; source/session 15/15; boundary 725 imports and 10/10 fixtures; domain 117/117; Vitest 249/249; production build; layout 86/86; visual-token checker 6/6 unit tests and 93 files/0 findings; UI composition 41/41; S17 evidence validator PASS.",
+      "observed": "Current UIC05 source npm run verify PASS: generated 15/346/245/61; source/session 15/15; boundary 725 imports and 10/10 fixtures; domain 117/117; Vitest 249/249; production build; layout 86/86; visual-token checker 6/6 unit tests and 93 files/0 findings; UI composition 41/41; S17 evidence validator PASS.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC05/full-verify-current-source-rerun.log",
+        "sha256": "e5bf2ff60bac97e2aa867f2a508fda2d44ed7860aa2b83d958003181be5f2b0e"
+      }
+    },
+    {
+      "id": "uic05-token-theme-overlay-browser",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui-overlay-theme.spec.ts --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Local mock Chromium and Firefox: 4/4 browser tests. Computed z-index verified on Dialog, Drawer, Select Popover, focused skip-link, sticky header and logout Tooltip; mobile keyboard opens/closes Drawer and focus returns.",
+      "observed": "Local mock Chromium and Firefox: 4/4 browser tests. Computed z-index verified on Dialog, Drawer, Select Popover, focused skip-link, sticky header and logout Tooltip; mobile keyboard opens/closes Drawer and focus returns.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC05/overlay-token-layers-rerun-exact-parent.log",
+        "sha256": "e54cdd26b8ee99fc5952ff1727b8b7c866730693ce2f7945fbd9c4196c78f35f"
+      }
+    },
+    {
+      "id": "uic05-token-generator-theme-measured-audit",
+      "command": "node evidence/frontend-ui-consistency-20261017/UIC05/audit-theme-layers.mjs final",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Vite SSR actual theme matches all 8 MUI zIndex slots to canonical roles; generated CSS contains all 7 canonical variables; raw TSX and CSS probes each produce a finding; shell/skip-link literals are absent.",
+      "observed": "Vite SSR actual theme matches all 8 MUI zIndex slots to canonical roles; generated CSS contains all 7 canonical variables; raw TSX and CSS probes each produce a finding; shell/skip-link literals are absent.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC05/theme-layers-final.log",
+        "sha256": "67cc7cdc6d273e1438b9878ff214f3ed3cc79fb7c31d69106a6f0863a15c3441"
+      }
     }
   ],
   "coverage": [
@@ -427,6 +463,27 @@
       "observed": 1,
       "missing": 0,
       "result": "COMPLETE"
+    },
+    {
+      "name": "uic05-current-source-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic05-token-theme-overlay-browser",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic05-token-generator-theme-measured-audit",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
     }
   ],
   "baseline": {
@@ -434,7 +491,7 @@
     "reason": "S17 validates governance evidence and does not change rendered UI. UI comparison baselines are recorded in S11, S12, S15 and S16 artifacts."
   },
   "sourceFingerprints": {
-    "BotSalesAI_Frontend/apps/web/src/app/bootstrap.css": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89",
+    "BotSalesAI_Frontend/apps/web/src/app/bootstrap.css": "3379c7160d961586913648b5c8e9583ebf17333cab5efa251b7e8525d91b7082",
     "BotSalesAI_Frontend/apps/web/src/app/CommandRecovery.tsx": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac",
     "BotSalesAI_Frontend/apps/web/src/app/dirty-drafts.ts": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13",
     "BotSalesAI_Frontend/apps/web/src/app/DraftNavigationGuard.tsx": "75731953b146f9b4fee2e2864ac88a802cba46bfa20c55750e266472e86dc805",
@@ -447,8 +504,8 @@
     "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "12d6b0dbe0dca8b8c5262b37854ebc6407026d658a7a202a557fbb339db4c520",
     "BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx": "cfea6704a8f8a08ca735700ae3aef4444dd40d8b6a8fb121d06cbab60085c0aa",
     "BotSalesAI_Frontend/apps/web/src/app/SessionProvider.tsx": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e",
-    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "e126fcc3e2d82a87e74fc7c2acd30abce46db7d02470ee058fa410c8fb20cb92",
-    "BotSalesAI_Frontend/apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "54012c2dfd4f40cc27b187f809c09086664012a1cafba3cb31182ddcb28b1e2f",
+    "BotSalesAI_Frontend/apps/web/src/app/tokens.css": "880fa854d2e6f0592bb02e78cb3209a3de2e4c99222ec6f4fa0ccfa96debd2c2",
     "BotSalesAI_Frontend/apps/web/src/main.tsx": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb",
     "BotSalesAI_Frontend/apps/web/src/mocks/accounting.ts": "57aae87ba495b4f474273cd92dba5a779938b620f169030bad4181061d4d32ad",
     "BotSalesAI_Frontend/apps/web/src/mocks/auxiliary.ts": "4c251fac239d36fc361a21e33cf647660c5fb061254eb429c7c7cdd52312765b",
@@ -521,13 +578,13 @@
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "e8026fd493550329bb0fc4f7cc51d870222bf625fc061d464eee9ed540f4b149",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "3018cbe60a1508cee97f5bb7690a4c6ecdd5dbbc19dda24c25673cf2d3bfc91b",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "27682e063e02d2ec347f41b37d08ff8145180d1b2319fe528dd9dde7975e4e59",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "bc8089701995cf25b43d78e08930e3e81bd3a6ac0a5940283d73ce3e6b2a1b4d",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
     "BotSalesAI_Frontend/apps/web/tests/api-client.test.tsx": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
     "BotSalesAI_Frontend/apps/web/tests/catalog-import-file.test.ts": "c2b111d0f4848a25cc9bd9ad135af54213f01764ef9905ee331299d40cd3b970",
     "BotSalesAI_Frontend/apps/web/tests/command-lifetime.test.tsx": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
-    "BotSalesAI_Frontend/apps/web/tests/components.test.tsx": "d7ed38c56a6e1ddfb65de0584d43a5c18713c7bfe64303c79be3cbc7f3d8c039",
+    "BotSalesAI_Frontend/apps/web/tests/components.test.tsx": "5e6b808c1e4eea7ebab443c98a441d44ce7948cf85df6f91303a431374b77e5d",
     "BotSalesAI_Frontend/apps/web/tests/composition.test.tsx": "004123081c81aab3a0262e4c85363a8dc3c874cc5a8ea9150a2c2fca01d1f786",
     "BotSalesAI_Frontend/apps/web/tests/confirmation.test.tsx": "ac0023f4efb3ee22af70dd4afee4b17d68d19a4f5afee0b9d3aaeda63c7dae3d",
     "BotSalesAI_Frontend/apps/web/tests/dashboard-labels.test.ts": "17afcd7d1fbc42134b3a07848104e5bca3b0744baff2ed1d309c5650877a700d",
@@ -562,9 +619,9 @@
     "BotSalesAI_Frontend/scripts/check-layout.mjs": "53137d5894954146bad70352b2b7eb8aeb777896267abbac1a5f8512c48ef790",
     "BotSalesAI_Frontend/scripts/check-source.mjs": "593b95de828d54edfd04e0dd847007a71d36175b7fe7b9bc1cb83bea88af6fd3",
     "BotSalesAI_Frontend/scripts/check-ui-composition.mjs": "d3d86a54944b0cfe66cb9f5544b4ea5204b5abf376d76de75e6697f22cea6a0f",
-    "BotSalesAI_Frontend/scripts/check-visual-tokens.mjs": "144f844c7ae2447136580054abde6b07610623a6ba3b3e25db887d8d378a61d6",
+    "BotSalesAI_Frontend/scripts/check-visual-tokens.mjs": "a05d065c8ba9e99af58c19ed879955bf52d4aa65b0b0865cc056dfc591a1df9b",
     "BotSalesAI_Frontend/scripts/doctor.mjs": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e",
-    "BotSalesAI_Frontend/scripts/generate.mjs": "3f51833411b6f1e29bd72fd0a0e911f5f81e727561d92cf2a077edcb173cd428",
+    "BotSalesAI_Frontend/scripts/generate.mjs": "e6764874cc7c3117c3af26c7984159ed48e435a2a60d899772d8dfb625b0ac6c",
     "BotSalesAI_Frontend/scripts/layout-exceptions.json": "7428954378a6b0c978790f9714cfa29ee7981a2c15884f9fdbac3c87939d210c",
     "BotSalesAI_Frontend/scripts/layout-exceptions.schema.json": "69906bf9106e978700f004ab65387fc1966a75a29d5d4ab7f359a94978d53617",
     "BotSalesAI_Frontend/scripts/run-e2e.mjs": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891",
@@ -584,7 +641,7 @@
     "BotSalesAI_Frontend/tests/artifacts/demo-preview.spec.ts": "3d522e81d9c649f9f999aba7cb4a942523c7ac7f310ad1830aecc914d6765ef0",
     "BotSalesAI_Frontend/tests/built-demo-regression.spec.ts": "6abfdc3640ec1c0c66264662fdbf9250874d0d9d200de2e58974b40b0ac461bd",
     "BotSalesAI_Frontend/tests/contracts/generator.test.mjs": "7ff255de33ec7c1d2f78773aabc7de17829ae83d4d8067fedddc942c03a457d0",
-    "BotSalesAI_Frontend/tests/design/browser-audit.mjs": "2ec75d0ffb27cc22e04ffdbbab24baa8b0e135684c217ca5827785e78985249a",
+    "BotSalesAI_Frontend/tests/design/browser-audit.mjs": "0c0145b469b293921271d4d93dbf842429598ebd67ac9920cd655360cd522b57",
     "BotSalesAI_Frontend/tests/design/component-layout-fixture.tsx": "c1822b3ad024a2a1c6fb49fbdb966cd7b0475e56eda70e1e0f897ad58a093722",
     "BotSalesAI_Frontend/tests/design/manual-contrast.mjs": "45a0e3faa047451d2e22d71ed05a373b2be2a39a85d4c4898da85c8a3192fe63",
     "BotSalesAI_Frontend/tests/design/owned-label-geometry.mjs": "05ad4ea1a24a0882d1736a6ada537b03a629a310875c3829a443ad325826f2d7",
@@ -699,7 +756,7 @@
     "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts": "ea4ede6772292060cf7f5e05adfeb43016b8495525c8503fbd2d625a53297b16",
     "BotSalesAI_Frontend/tests/vertical-slices/generate-fe022-evidence.mjs": "6efafd7ba45c64267690620aeff0d6cb38dd23614edda2df9088da2dbeb4d048",
     "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
-    "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "35b8c496508d754f820e53782d729ef5330fd88897dd2150a205800a3a5bceae",
+    "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "7f39234f4d7f60750a8645d85389e2cf7285e16e4e5243a84b61982962aef9d2",
     "BotSalesAI_Frontend/package.json": "bc3dd1bde58b7bb242c69fa0a7ba33882b29c4da2022dff6a8b29715c13ef073",
     "BotSalesAI_Frontend/package-lock.json": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a",
     "BotSalesAI_Frontend/playwright.config.ts": "cf6286dd9a26fce12a5368d3d07f56683a68e3807f9d1ec2de878bcd652099a2",
@@ -714,7 +771,7 @@
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
     "BotSalesAI_Frontend/evidence/REPORT.md": "d88fe5c79557633d29bf5a5b3955c94199b13b2ca28ecaf6e9b7e8bd07a2023e",
-    "BotSalesAI_Frontend/tests/ui-overlay-theme.spec.ts": "9f4642c2be2dfc7c831152d88e6550dc751251355f8d7ce300b04a9b8df0a587",
+    "BotSalesAI_Frontend/tests/ui-overlay-theme.spec.ts": "e974dddd18376cbd6b0e9cd40fd31de430eb72eb75e1f2676518b609d51b503e",
     "BotSalesAI_Frontend/apps/web/src/mocks/service-worker-update-recovery.ts": "62cf0f795b6f0415bb319d4d928eed6fcd6ed8266a546da6828955d4f2dad1b4",
     "BotSalesAI_Frontend/apps/web/tests/service-worker-update-recovery.test.ts": "3a5f1376694d85ad1fb65d8e289685a9d5cdb8d021eea0b0a8301f22d0426b38"
   },

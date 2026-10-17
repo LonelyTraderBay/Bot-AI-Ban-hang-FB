@@ -1,0 +1,73 @@
+
+Running 4 tests using 1 worker
+
+
+(node:58600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/4] [chromium] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token
+  1) [chromium] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: locator.click: Test timeout of 180000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'Mở menu', exact: true })
+        - locator resolved to <button tabindex="0" type="button" aria-label="Mở menu" class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-niut41-MuiButtonBase-root-MuiIconButton-root">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <a class="skip-link" href="#main-content">Đến nội dung chính</a> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <a class="skip-link" href="#main-content">Đến nội dung chính</a> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        328 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <a class="skip-link" href="#main-content">Đến nội dung chính</a> intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+
+
+      124 |         const menuButton = surfacePage.getByRole('button', { name: 'Mở menu', exact: true });
+      125 |         await expect(menuButton).toBeVisible();
+    > 126 |         await menuButton.click();
+          |                          ^
+      127 |         await expect(await visibleLast(surfacePage, '.MuiDrawer-root')).toHaveCSS('z-index', String(tokens.zIndex.drawer));
+      128 |         const drawerBackdrop = await visibleLast(surfacePage, '.MuiDrawer-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)');
+      129 |         await expect(drawerBackdrop).toHaveCSS('background-color', expectedBackdrop);
+        at exerciseOverlayConsumers (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:126:26)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:160:9
+
+    Error Context: test-results\playwright-87200-2479e675-fee5-41d2-b70f-873d680a5735\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\error-context.md
+
+    Error Context: test-results\playwright-87200-2479e675-fee5-41d2-b70f-873d680a5735\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-87200-2479e675-fee5-41d2-b70f-873d680a5735\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-87200-2479e675-fee5-41d2-b70f-873d680a5735\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:86268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/4] [chromium] › tests\ui-overlay-theme.spec.ts:163:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token
+
+(node:78292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/4] [firefox] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token

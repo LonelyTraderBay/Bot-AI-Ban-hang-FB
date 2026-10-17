@@ -38,9 +38,27 @@ export async function runDesignBrowserAudit() {
         await coldPage.close();
 
         const page = await context.newPage();
+        await page.emulateMedia({colorScheme:'light'});
         await page.goto(`${baseUrl}/s/shop-demo/overview`,{waitUntil:'domcontentloaded'});
         await page.locator('main#main-content h1').waitFor({state:'visible',timeout:20000});
         await page.getByText('Hội thoại đang mở',{exact:true}).waitFor({state:'visible'});
+
+        const osLightPreference = await page.evaluate(()=>({
+            prefersLight:matchMedia('(prefers-color-scheme: light)').matches,
+            colorScheme:getComputedStyle(document.documentElement).colorScheme,
+            canvas:getComputedStyle(document.documentElement).getPropertyValue('--color-canvas').trim(),
+        }));
+        const runtimeTokens = await page.evaluate(()=>{
+            const root=getComputedStyle(document.documentElement);
+            const cssVariableNames=['--color-canvas','--color-text-primary','--color-border-decorative','--color-border-control','--color-success','--color-success-surface','--font-family','--font-size-body','--line-height-body','--radius-control','--radius-dialog','--focus-ring-width','--focus-ring-global-offset','--z-index-sticky','--z-index-modal'];
+            return {
+                htmlBackground:root.backgroundColor,
+                htmlColor:root.color,
+                bodyBackground:getComputedStyle(document.body).backgroundColor,
+                bodyFontFamily:getComputedStyle(document.body).fontFamily,
+                cssVariables:Object.fromEntries(cssVariableNames.map(name=>[name,root.getPropertyValue(name).trim()])),
+            };
+        });
 
         const viewports = [];
         if (EVIDENCE_DIR) await fs.promises.mkdir(EVIDENCE_DIR, { recursive: true });
@@ -67,21 +85,43 @@ export async function runDesignBrowserAudit() {
         await page.setViewportSize({width:1440,height:1000});
         const axe = await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
         const contentAxe = await new AxeBuilder({page}).include('main#main-content').withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
-        await page.emulateMedia({forcedColors:'active',reducedMotion:'reduce'});
+        await page.emulateMedia({colorScheme:'light',forcedColors:'active',reducedMotion:'reduce'});
         await page.getByRole('link',{name:'Xem việc cần làm'}).focus();
-        const accessibilityPreferences = await page.evaluate(()=>({
-            forcedColors:matchMedia('(forced-colors: active)').matches,
-            reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,
-            focusedTag:document.activeElement?.tagName,
-            focusOutline:getComputedStyle(document.activeElement).outlineStyle,
-            scrollBehavior:getComputedStyle(document.documentElement).scrollBehavior,
-        }));
+        const accessibilityPreferences = await page.evaluate(()=>{
+            const focused=document.activeElement;
+            const skipLink=document.querySelector('.skip-link');
+            const motionProbe=document.createElement('div');
+            motionProbe.style.transition='opacity 9s';
+            const systemColorProbe=document.createElement('span');
+            systemColorProbe.style.color='Highlight';
+            systemColorProbe.style.backgroundColor='HighlightText';
+            document.body.append(motionProbe,systemColorProbe);
+            const observed={
+                forcedColors:matchMedia('(forced-colors: active)').matches,
+                reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,
+                prefersLight:matchMedia('(prefers-color-scheme: light)').matches,
+                focusedTag:focused?.tagName,
+                focusOutline:getComputedStyle(focused).outlineStyle,
+                focusOutlineColor:getComputedStyle(focused).outlineColor,
+                skipLinkBackground:skipLink?getComputedStyle(skipLink).backgroundColor:'',
+                skipLinkColor:skipLink?getComputedStyle(skipLink).color:'',
+                systemHighlight:getComputedStyle(systemColorProbe).color,
+                systemHighlightText:getComputedStyle(systemColorProbe).backgroundColor,
+                reducedMotionTransitionDuration:getComputedStyle(motionProbe).transitionDuration,
+                scrollBehavior:getComputedStyle(document.documentElement).scrollBehavior,
+            };
+            motionProbe.remove();
+            systemColorProbe.remove();
+            return observed;
+        });
         await page.emulateMedia({forcedColors:'none',reducedMotion:'no-preference'});
         const report = {
             scope:'FRONTEND_WITH_SYNTHETIC_MOCK_API',
             route:'/s/shop-demo/overview',
             viewports,
             preJavaScript,
+            osLightPreference,
+            runtimeTokens,
             accessibilityPreferences,
             axe:{appViolations:axe.violations.map(item=>({id:item.id,impact:item.impact,description:item.description,nodes:item.nodes.map(node=>({target:node.target,summary:node.failureSummary}))})),mainViolations:contentAxe.violations.map(item=>({id:item.id,impact:item.impact,description:item.description,nodes:item.nodes.map(node=>({target:node.target,summary:node.failureSummary}))})),passes:contentAxe.passes.length,incomplete:contentAxe.incomplete.map(item=>item.id)},
         };

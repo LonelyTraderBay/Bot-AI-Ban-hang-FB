@@ -17,6 +17,16 @@ export const theme = createTheme({
     spacing: tokens.space.sm,
     shape: { borderRadius: tokens.radius.control },
     breakpoints: { values: { xs: 0, sm: tokens.breakpoints.mobileMaxExclusive, md: tokens.breakpoints.tabletMin, lg: tokens.breakpoints.desktopMin, xl: tokens.breakpoints.desktopMin } },
+    zIndex: {
+        mobileStepper: tokens.zIndex.dropdown,
+        fab: tokens.zIndex.dropdown,
+        speedDial: tokens.zIndex.dropdown,
+        appBar: tokens.zIndex.sticky,
+        drawer: tokens.zIndex.drawer,
+        modal: tokens.zIndex.modal,
+        snackbar: tokens.zIndex.toast,
+        tooltip: tokens.zIndex.tooltip,
+    },
     components: {
         MuiCssBaseline: { styleOverrides: {
                 body: { margin: 0, colorScheme: 'dark', backgroundColor: colors.canvas }, '*': { boxSizing: 'border-box' }, 'a': { color: colors.accent }, ':focus-visible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.globalOffset }, '::selection': { background: colors.selected, color: colors.textPrimary }, '@media (prefers-reduced-motion: reduce)': { '*': { animationDuration: `${tokens.motion.reducedMotionMs}ms !important`, transitionDuration: `${tokens.motion.reducedMotionMs}ms !important`, scrollBehavior: 'auto !important' } }, '@media (forced-colors: active)': { ':focus-visible': { outlineColor: 'Highlight' }, button: { border: '1px solid ButtonText' } }

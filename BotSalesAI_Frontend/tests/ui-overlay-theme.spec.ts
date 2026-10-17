@@ -38,6 +38,8 @@ async function expectVisibleBackdrop(page: Page) {
 
 async function expectDialogPaper(page: Page) {
     const paper = await visibleLast(page, '.MuiDialog-paper');
+    const dialogRoot = await visibleLast(page, '.MuiDialog-root');
+    await expect(dialogRoot).toHaveCSS('z-index', String(tokens.zIndex.modal));
     await expect(paper).toHaveCSS('background-color', expectedPaper);
     await expect(paper).toHaveCSS('border-radius', `${tokens.radius.dialog}px`);
 }
@@ -47,9 +49,19 @@ async function exerciseOverlayConsumers(page: Page, width: 390 | 1440, baseUrl: 
     await page.goto(new URL('/s/shop-demo/categories', baseUrl).toString());
     await expect(page.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible();
     const add = page.getByRole('button', { name: 'Thêm danh mục', exact: true });
-    await add.click();
+    await expect(add).toHaveCSS('background-color', computedColor(tokens.colors.accent));
+    await add.hover();
+    await expect(add).toHaveCSS('background-color', computedColor(tokens.colors.accentHover));
+    await page.mouse.down();
+    await expect(add).toHaveCSS('background-color', computedColor(tokens.colors.accentPressed));
+    await page.mouse.up();
     const editDialog = page.getByRole('dialog', { name: 'Thêm danh mục', exact: true });
     await expect(editDialog).toBeVisible();
+    const disabledSave = editDialog.getByRole('button', { name: 'Lưu', exact: true });
+    await expect(disabledSave).toBeDisabled();
+    await expect(disabledSave).toHaveCSS('background-color', computedColor(tokens.colors.raised));
+    await expect(disabledSave).toHaveCSS('color', computedColor(tokens.colors.textPrimary));
+    await expect(disabledSave).toHaveCSS('opacity', '1');
     await expectVisibleBackdrop(page);
     await expectDialogPaper(page);
 
@@ -71,6 +83,15 @@ async function exerciseOverlayConsumers(page: Page, width: 390 | 1440, baseUrl: 
     await page.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?', exact: true }).getByRole('button', { name: 'Bỏ thay đổi', exact: true }).click();
     await expect(draftDialog).toBeHidden();
     await expect(add).toBeFocused();
+
+    await add.click();
+    const successDialog = page.getByRole('dialog', { name: 'Thêm danh mục', exact: true });
+    await successDialog.getByRole('textbox', { name: 'Tên', exact: true }).fill(`UIC05 theme ${width}`);
+    await successDialog.getByRole('button', { name: 'Lưu', exact: true }).click();
+    const successMessage = page.getByRole('status').filter({ hasText: `Đã lưu danh mục “UIC05 theme ${width}”.` });
+    await expect(successMessage).toBeVisible();
+    await expect(successMessage).toHaveCSS('background-color', computedColor(tokens.colors.successSurface));
+    await expect(successMessage).toHaveCSS('color', computedColor(tokens.colors.success));
 
     await page.goto(new URL('/s/shop-demo/orders/DH-1001', baseUrl).toString());
     await expect(page.getByRole('heading', { name: 'Đơn DH-1001', exact: true })).toBeVisible();
@@ -97,10 +118,34 @@ async function exerciseOverlayConsumers(page: Page, width: 390 | 1440, baseUrl: 
     const surfacePage = await page.context().newPage();
     await surfacePage.setViewportSize({ width, height: 900 });
     await surfacePage.goto(new URL('/s/shop-demo/overview', baseUrl).toString());
+    await expect(surfacePage.getByRole('heading', { level: 1 })).toContainText('cửa hàng của bạn hôm nay.');
+    const expectedLayers = Object.fromEntries(Object.entries(tokens.zIndex).map(([name, value]) => [name, String(value)]));
+    const shellLayers = await surfacePage.evaluate(expected => {
+        const root = getComputedStyle(document.documentElement);
+        const header = document.querySelector('header');
+        const skipLink = document.querySelector('.skip-link');
+        if (!header || !skipLink) throw new Error('Không tìm thấy header hoặc skip-link trong app shell.');
+        return {
+            variables: Object.fromEntries(Object.keys(expected).map(name => [name, root.getPropertyValue(`--z-index-${name}`).trim()])),
+            header: getComputedStyle(header).zIndex,
+            skipLink: getComputedStyle(skipLink).zIndex,
+        };
+    }, expectedLayers);
+    expect(shellLayers.variables).toEqual(expectedLayers);
+    expect(shellLayers.header).toBe(String(tokens.zIndex.sticky));
+    expect(shellLayers.skipLink).toBe(String(tokens.zIndex.tooltip));
+    const skipLink = surfacePage.locator('.skip-link');
+    await surfacePage.keyboard.press('Tab');
+    await expect(skipLink).toBeFocused();
+    await expect(skipLink).toHaveCSS('top', '12px');
+    await expect(skipLink).toBeVisible();
+    await surfacePage.keyboard.press('Tab');
     if (width < 768) {
         const menuButton = surfacePage.getByRole('button', { name: 'Mở menu', exact: true });
         await expect(menuButton).toBeVisible();
-        await menuButton.click();
+        await expect(menuButton).toBeFocused();
+        await surfacePage.keyboard.press('Enter');
+        await expect(await visibleLast(surfacePage, '.MuiDrawer-root')).toHaveCSS('z-index', String(tokens.zIndex.drawer));
         const drawerBackdrop = await visibleLast(surfacePage, '.MuiDrawer-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)');
         await expect(drawerBackdrop).toHaveCSS('background-color', expectedBackdrop);
         await surfacePage.keyboard.press('Escape');
@@ -108,9 +153,18 @@ async function exerciseOverlayConsumers(page: Page, width: 390 | 1440, baseUrl: 
         await expect(menuButton).toBeFocused();
     }
 
+    if (width >= 768) {
+        const logout = surfacePage.getByRole('button', { name: 'Đăng xuất', exact: true });
+        await logout.focus();
+        const tooltip = surfacePage.getByRole('tooltip', { name: 'Đăng xuất', exact: true });
+        await expect(tooltip).toBeVisible();
+        await expect(await visibleLast(surfacePage, '.MuiTooltip-popper')).toHaveCSS('z-index', String(tokens.zIndex.tooltip));
+    }
+
     await openDemoControls(surfacePage);
     const roleSelect = surfacePage.locator('#mock-tools-controls [role="combobox"]').first();
     await roleSelect.click();
+    await expect(await visibleLast(surfacePage, '.MuiPopover-root')).toHaveCSS('z-index', String(tokens.zIndex.modal));
     const selectBackdrop = await visibleLast(surfacePage, '.MuiBackdrop-root.MuiBackdrop-invisible');
     await expect(selectBackdrop).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await surfacePage.keyboard.press('Escape');
