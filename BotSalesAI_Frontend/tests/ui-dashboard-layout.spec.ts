@@ -126,3 +126,33 @@ test('dashboard hierarchy, CTA targets, and page width hold across supported bre
         expect(dimensions.scrollWidth).toBeLessThanOrEqual(width + 1);
     }
 });
+
+test('dashboard finance summary uses one content track at every supported width', async ({ page }) => {
+    await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    const financeHeading = page.getByRole('heading', { name: 'Dòng tiền và doanh thu', exact: true });
+    await expect(financeHeading).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('link', { name: 'Xem lợi nhuận', exact: true })).toHaveAttribute('href', '/s/shop-demo/finance/profit-loss');
+
+    for (const width of [390, 768, 1279, 1280, 1440, 1920]) {
+        await page.setViewportSize({ width, height: 1000 });
+        const geometry = await financeHeading.evaluate(heading => {
+            const panel = heading.closest('.MuiPaper-outlined');
+            const grid = panel?.parentElement;
+            if (!panel || !grid) throw new Error('Không tìm thấy Panel tài chính hoặc lưới Dashboard.');
+            const panelRect = panel.getBoundingClientRect();
+            const gridRect = grid.getBoundingClientRect();
+            return {
+                columns: getComputedStyle(grid).gridTemplateColumns,
+                panelWidth: panelRect.width,
+                gridWidth: gridRect.width,
+                unusedWidth: Math.max(0, gridRect.right - panelRect.right),
+                viewport: document.documentElement.clientWidth,
+                scrollWidth: document.documentElement.scrollWidth,
+            };
+        });
+        expect(geometry.columns.trim().split(/\s+/), `grid columns at ${width}px`).toHaveLength(1);
+        expect(Math.abs(geometry.panelWidth - geometry.gridWidth), `Panel fills the grid at ${width}px`).toBeLessThanOrEqual(1);
+        expect(geometry.unusedWidth, `unused row width at ${width}px`).toBeLessThanOrEqual(1);
+        expect(geometry.scrollWidth, `document width at ${width}px`).toBeLessThanOrEqual(geometry.viewport + 1);
+    }
+});
