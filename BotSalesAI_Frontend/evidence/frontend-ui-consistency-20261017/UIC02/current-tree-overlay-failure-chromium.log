@@ -1,0 +1,100 @@
+UI-CONS-01 current working-tree reproduction
+{"themeSha256":"4f0c1e67c38d2b07b335279436e1b7f72559c890c5241d95937d6e4d01d7607a","command":"node_modules/@playwright/test/cli.js test tests/ui-overlay-theme.spec.ts --project=chromium --output=test-results/uic02-current-tree-20261017 --reporter=line"}
+
+Running 2 tests using 1 worker
+
+
+
+[1/2] [chromium] › tests\ui-overlay-theme.spec.ts:134:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token
+  1) [chromium] › tests\ui-overlay-theme.spec.ts:134:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('.MuiDialog-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)').first()
+    Expected: "rgba(9, 12, 18, 0.8)"
+    Received: "rgba(0, 0, 0, 0.5)"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" locator('.MuiDialog-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)').first() with timeout 5000ms
+      - waiting for locator('.MuiDialog-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)').first()
+        14 × locator resolved to <div aria-hidden="true" class="MuiBackdrop-root MuiModal-backdrop css-1cennmq-MuiBackdrop-root-MuiDialog-backdrop"></div>
+           - unexpected value "rgba(0, 0, 0, 0.5)"
+
+
+      34 | async function expectVisibleBackdrop(page: Page) {
+      35 |     const backdrop = await visibleLast(page, '.MuiDialog-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)');
+    > 36 |     await expect(backdrop).toHaveCSS('background-color', expectedBackdrop);
+         |                            ^
+      37 | }
+      38 |
+      39 | async function expectDialogPaper(page: Page) {
+        at expectVisibleBackdrop (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:36:28)
+        at exerciseOverlayConsumers (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:53:5)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:135:9
+
+    Error Context: test-results\uic02-current-tree-20261017\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\error-context.md
+
+    Error Context: test-results\uic02-current-tree-20261017\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\uic02-current-tree-20261017\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\uic02-current-tree-20261017\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+[2/2] [chromium] › tests\ui-overlay-theme.spec.ts:138:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token
+  2) [chromium] › tests\ui-overlay-theme.spec.ts:138:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('.MuiDialog-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)').first()
+    Expected: "rgba(9, 12, 18, 0.8)"
+    Received: "rgba(0, 0, 0, 0.5)"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" locator('.MuiDialog-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)').first() with timeout 5000ms
+      - waiting for locator('.MuiDialog-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)').first()
+        14 × locator resolved to <div aria-hidden="true" class="MuiBackdrop-root MuiModal-backdrop css-1cennmq-MuiBackdrop-root-MuiDialog-backdrop"></div>
+           - unexpected value "rgba(0, 0, 0, 0.5)"
+
+
+      34 | async function expectVisibleBackdrop(page: Page) {
+      35 |     const backdrop = await visibleLast(page, '.MuiDialog-root .MuiBackdrop-root:not(.MuiBackdrop-invisible)');
+    > 36 |     await expect(backdrop).toHaveCSS('background-color', expectedBackdrop);
+         |                            ^
+      37 | }
+      38 |
+      39 | async function expectDialogPaper(page: Page) {
+        at expectVisibleBackdrop (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:36:28)
+        at exerciseOverlayConsumers (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:53:5)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:139:9
+
+    Error Context: test-results\uic02-current-tree-20261017\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-chromium\error-context.md
+
+    Error Context: test-results\uic02-current-tree-20261017\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\uic02-current-tree-20261017\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\uic02-current-tree-20261017\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-overlay-theme.spec.ts:134:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token 
+    [chromium] › tests\ui-overlay-theme.spec.ts:138:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token 
+(node:15132) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+CURRENT_TREE_OVERLAY_E2E_EXIT=1

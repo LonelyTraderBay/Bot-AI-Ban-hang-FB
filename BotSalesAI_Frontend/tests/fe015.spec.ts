@@ -511,10 +511,13 @@ test('FE015.AC03 unknown journal posting is not resent from the same draft', asy
     const confirm = page.getByRole('dialog', { name: 'Ghi sổ bút toán' });
     const postResponse = page.waitForResponse(response => response.request().method() === 'POST' && /\/journals\/[^/]+\/post$/.test(new URL(response.url()).pathname));
     await confirm.getByRole('button', { name: 'Ghi sổ bút toán', exact: true }).click();
-    expect((await postResponse).status()).toBe(202);
+    const result = await postResponse;
+    expect(result.status()).toBe(202);
+    expect((await result.json()).data.status).toBe('unknown');
     await expect(page.getByText(/Có 1 thao tác chưa xác minh kết quả/)).toBeVisible();
     await expect(confirm.getByRole('alert')).toContainText(/chưa xác minh|chưa hoàn tất|unknown/i);
     await confirm.getByRole('button', { name: 'Ghi sổ bút toán', exact: true }).click();
     await expect.poll(() => postCalls.length).toBe(1);
     expect(postCalls).toHaveLength(1);
+    console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R48 OPERATION=postJournal RESULT=PASS`);
 });

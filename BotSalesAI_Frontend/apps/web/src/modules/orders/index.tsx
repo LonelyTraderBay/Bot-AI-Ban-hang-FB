@@ -90,8 +90,16 @@ function DraftForm({ initial, onSaved, onBusyChange }: {
         else setCreated(response.data);
     } catch (error) { editor.failed(error); } };
     const selectedCustomer = customers.data?.data.find(customer => customer.id === customerId);
+    const staleLookupNames = [
+        customers.isError && customers.data ? 'khách hàng' : undefined,
+        products.isError && products.data ? 'sản phẩm' : undefined,
+        warehouses.isError && warehouses.data ? 'kho xuất' : undefined,
+        addresses.isError && addresses.data ? 'địa chỉ giao hàng' : undefined,
+        conv.isError && conv.data ? 'hội thoại' : undefined,
+    ].filter((name): name is string => Boolean(name));
     return <Box component="form" ref={form => { const element = form as HTMLFormElement | null; formRef.current = element; bindDraft(element); }} onSubmit={event => { event.preventDefault(); if (valid) void save(); }}><PageSections >
         <ErrorNotice error={create.error || update.error}/><DraftConflict editor={editor} labels={{ customerId: 'Khách hàng', conversationId: 'Hội thoại', warehouse: 'Kho xuất', addressId: 'Địa chỉ giao hàng', notes: 'Ghi chú', lines: 'Dòng đơn hàng' }} busy={create.pending || update.pending}/>
+        {staleLookupNames.length > 0 && <Alert severity="warning" role="status">Danh sách {staleLookupNames.join(', ')} đã tải có thể đã cũ. Bản nháp được giữ; hãy thử tải lại trước khi lưu.</Alert>}
         {!canReadCustomers && <Alert severity="warning">Bạn cần quyền customers.read để tìm và tạo đơn với khách hàng. Đơn nháp hiện có vẫn giữ nguyên mã khách.</Alert>}
         {!canReadProducts && <Alert severity="warning">Bạn cần quyền catalog.read để tìm và chọn sản phẩm cho đơn hàng.</Alert>}
         {customers.isError && <ErrorNotice error={customers.error}/>}

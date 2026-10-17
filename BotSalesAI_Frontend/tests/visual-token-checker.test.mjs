@@ -65,6 +65,22 @@ test('visual checker follows local style aliases and callback themes, but fails 
     fs.rmSync(root, { recursive: true, force: true });
 });
 
+test('visual checker requires canonical z-index references in TSX and CSS', () => {
+    const root = temporaryRoot();
+    const accepted = auditAppDesignSource({ root, fixtures: [
+        { path: 'apps/web/src/app/layer.tsx', content: `import { tokens } from '@botsales/tokens'; <Box sx={{ zIndex: tokens.zIndex.modal }} />;` },
+        { path: 'apps/web/src/app/layer.css', content: '.layer { z-index: var(--z-index-tooltip); }' },
+    ] });
+    assert.equal(accepted.status, 'PASS');
+    const rejected = auditAppDesignSource({ root, fixtures: [
+        { path: 'apps/web/src/app/raw-layer.tsx', content: '<Box sx={{ zIndex: 9999 }} />;' },
+        { path: 'apps/web/src/app/raw-layer.css', content: '.layer { z-index: 9999; }' },
+    ] });
+    assert.equal(rejected.counts.byCategory.zIndex, 2);
+    assert.deepEqual(rejected.findings.filter(item => item.category === 'zIndex').map(item => item.value), ['9999', '9999']);
+    fs.rmSync(root, { recursive: true, force: true });
+});
+
 test('visual checker reports unresolved spreads and malformed style sources as UNKNOWN or parse errors', () => {
     const root = temporaryRoot();
     const report = auditAppDesignSource({

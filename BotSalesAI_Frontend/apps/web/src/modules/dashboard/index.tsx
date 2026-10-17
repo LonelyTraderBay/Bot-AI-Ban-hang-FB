@@ -76,7 +76,7 @@ export function DashboardPage() {
             </QueryState>
         </Panel>
 
-        <Box sx={[layoutSx.dashboard.sectionGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', xl: '1.6fr 1fr' }, alignItems: 'start' }]}>
+        <Box sx={[layoutSx.dashboard.sectionGap, { display: 'grid', gridTemplateColumns: '1fr', alignItems: 'start' }]}>
 
             <Panel title="Dòng tiền và doanh thu" subtitle="Doanh thu ghi nhận và tiền đã thu là hai chỉ số khác nhau." bodyMode="inset">
                 {canFinance ? data ? <SurfaceContent >

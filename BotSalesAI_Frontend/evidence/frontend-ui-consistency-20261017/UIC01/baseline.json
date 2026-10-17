@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "1.0",
+  "task": "UIC01",
+  "capturedAt": "2026-10-16T17:30:52.519Z",
+  "status": "PASS_SCOPED",
+  "sourceCommit": "4a502be79a40cd7dc02c1eaa80445665a226b55f",
+  "priorAuditSourceCommit": "1fd4530609f4e69193a27b0d5a4959181e3f8fc9",
+  "sourceIdentity": {
+    "verdict": "PASS",
+    "changedSourcePathsSinceAudit": [],
+    "explanation": "Git diff confirms application, package, tests, scripts, lockfile, workflow and canonical token/route/permission inputs have not changed since the measured UIC00 baseline."
+  },
+  "browserToolchain": {
+    "node": "v24.19.0",
+    "npm": "11.17.0",
+    "npmProbe": "Observed with npm.cmd --version from BotSalesAI_Frontend; direct Node child-process spawning of .cmd is not supported on Windows.",
+    "playwright": "1.63.0",
+    "recordedUic00": {
+      "chrome": "155.0.8059.40",
+      "firefox": "155",
+      "chromium": "153"
+    },
+    "currentlyInstalled": {
+      "chrome": "155.0.8059.40",
+      "firefox": "157.0.1"
+    },
+    "lockedFrontendPackages": {
+      "react": "19.1.1",
+      "@mui/material": "7.3.1",
+      "vite": "7.3.6",
+      "typescript": "5.9.2",
+      "vitest": "5.0.3",
+      "@playwright/test": "1.63.0",
+      "msw": "2.11.1"
+    },
+    "browserProbe": {
+      "observedAt": "2026-10-17",
+      "method": "PowerShell read of executable ProductVersion at registered App Paths.",
+      "executables": {
+        "chrome": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "firefox": "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
+      }
+    },
+    "playwrightManaged": {
+      "version": "1.63.0",
+      "firefoxRevision": "1543",
+      "firefoxProductVersion": "155.0",
+      "firefoxExecutable": "C:\\Users\\Joker-PC\\AppData\\Local\\ms-playwright\\firefox-1543\\firefox\\firefox.exe",
+      "chromiumRevision": "1243",
+      "chromiumProductVersion": "153.0.8010.12",
+      "chromiumExecutable": "C:\\Users\\Joker-PC\\AppData\\Local\\ms-playwright\\chromium-1243\\chrome-win64\\chrome.exe",
+      "verifiedBy": "node node_modules/@playwright/test/cli.js install --list; Get-Item VersionInfo.ProductVersion on each reported executable path."
+    },
+    "supported": {
+      "chromeMinimum": "154",
+      "firefoxMinimum": "155"
+    },
+    "currentChromiumBundledVersion": "NOT_REMEASURED_IN_UIC01"
+  },
+  "ownerBaselines": [
+    {
+      "owner": "apps/web/src/shared/ui/theme.ts",
+      "task": "UIC02",
+      "finding": "UI-CONS-01",
+      "before": "VISIBLE_BACKDROP 6/6 cells were rgba(0,0,0,0.5); canonical token #090C12CC is rgba(9,12,18,0.8).",
+      "evidence": [
+        "backdrop-parity.json",
+        "chrome-dialog-390.png",
+        "firefox-dialog-390.png",
+        "chromium-dialog-1440.png"
+      ],
+      "verdict": "REUSABLE_FOR_CHROME155_AND_PLAYWRIGHT_FIREFOX155; supplemental Chromium153 stays outside supported-browser acceptance."
+    },
+    {
+      "owner": "apps/web/src/mocks/browser.ts",
+      "task": "UIC03",
+      "finding": "UI-CONS-02",
+      "before": "Chrome155 full run 30 passed/1 failed on ServiceWorker update pageerror; targeted recheck 4/4 passed. Worker request returned HTTP 200; root cause remains unverified.",
+      "evidence": [
+        "audit-summary.json",
+        "sw-failure-analysis.json",
+        "chrome-playwright.log",
+        "chrome-recheck.log"
+      ],
+      "verdict": "KEEP_BOTH_RUNS; investigate lifecycle with actual Chrome155 and current Firefox157; no fixed claim."
+    },
+    {
+      "owner": "apps/web/src/modules/dashboard/index.tsx",
+      "task": "UIC04",
+      "finding": "UI-CONS-03",
+      "before": "1440px measured row 1152px, financial panel 699.06px, remaining track 452.94px.",
+      "evidence": [
+        "dashboard-occupancy.json",
+        "chrome-dashboard-1440.png"
+      ],
+      "verdict": "CANDIDATE_ONLY; purpose/intent unverified; use matched Playwright Chrome155/Firefox155 and seed before any edit if source change is proposed."
+    }
+  ],
+  "proofHashes": [
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/REPORT.md",
+      "sha256": "ee0c7aae36b5bf872bad6bc294ffc842060f03154cfdd358949336819b91e0fb"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/audit-summary.json",
+      "sha256": "e397365cc957cb62e132f46d951e61c31935caab5fcfb98347ab76bc62283651"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/route-coverage.json",
+      "sha256": "99867ab3e6923ad454db0623507d146d234984e81be49a72db9a86b670892b02"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/source-preservation.json",
+      "sha256": "6b7509de425d4c34f2df2360d01f69fd02b55e9cc5e046ed3828bc9e394fd548"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/BUNDLE_MANIFEST.json",
+      "sha256": "2ca75970d6be239ab5996457d49cc167ee41f02430c7074c65af6e80daf1400f"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/backdrop-parity.json",
+      "sha256": "490e1645cffc50431a19a091188cf3a68a4027b3613d4b07b02040a1c3e3c4bb"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/sw-failure-analysis.json",
+      "sha256": "97fbe56a599864191ee9b0b3bf940da5901b638db2fff9355cad9bde873092bd"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/dashboard-occupancy.json",
+      "sha256": "c2a39c9f9138990b6d03ebbe0058a58b1aea4fa337cce2089a7419dd6ad47a96"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/chrome-dialog-390.png",
+      "sha256": "1f06b9644879579ad7b15a368d914673090bd1a6ac5d7c0a0518e3ef15607b0f"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/firefox-dialog-390.png",
+      "sha256": "648aa2414275cbb9c169717b7f1ddae6faaf42718bc4135c31c6fd601739a560"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/chromium-dialog-1440.png",
+      "sha256": "0e4aac5cfe098eba847ff342a073e52e58e16ef76edd396a60f9d8deee7ecace"
+    },
+    {
+      "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261016/chrome-dashboard-1440.png",
+      "sha256": "87ed91da1d54b654d69a85c235fcdfb9651a914c7d8df0d575cd85c910a6a689"
+    }
+  ],
+  "reusedEvidenceLimits": [
+    "UIC00 baseline source commit differs from current HEAD only in documentation/evidence; source inputs are byte-identical by Git path diff.",
+    "Firefox binary updated from 155 in UIC00 to installed 157.0.1; its old screenshot/measurement is a historical observation and cannot serve as paired current-runtime baseline.",
+    "UIC00 Chrome full run retained 30/31 first attempt and 4/4 targeted recheck separately; neither is rewritten or averaged.",
+    "UIC00 role/state matrix document was generated 2026-10-13 and is inventory/reference, not current proof for these sources.",
+    "No current browser UI action or human review was performed during UIC01; baseline images are referenced only under the explicit source/browser conditions above."
+  ]
+}

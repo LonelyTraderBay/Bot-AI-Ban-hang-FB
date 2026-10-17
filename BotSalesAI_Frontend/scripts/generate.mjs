@@ -261,6 +261,7 @@ export function renderGenerated({ api, routes, tokens, permissions, statementFor
         pxVariables('focus-ring', { width: tokens.focusRing.width, globalOffset: tokens.focusRing.globalOffset, controlOffset: tokens.focusRing.controlOffset }),
         pxVariables('breakpoint', tokens.breakpoints),
         unitlessVariables('elevation', tokens.elevation),
+        unitlessVariables('z-index', tokens.zIndex),
     ].filter(Boolean).join('\n');
     const css = `/* GENERATED from approved design/tokens.json. */\n:root{color-scheme:dark;\n${colorVariables}\n${spaceVariables}\n${designVariables}\n}\n`;
     add('apps/web/src/app/tokens.css', css);

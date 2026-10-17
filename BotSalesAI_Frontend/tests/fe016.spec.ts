@@ -280,13 +280,15 @@ test('Shared consolidation Inbox preserves selected filters and composer draft t
     }
     const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại', exact: true });
     const status = filters.getByRole('combobox', { name: /^Trạng thái(?: |$)/ });
+    const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
+    await expect(search).toHaveValue('');
+    await search.fill('Linh'); await expect(search).toHaveValue('Linh');
     await status.focus(); await status.press('Enter');
     await page.getByRole('option', { name: 'Tất cả trạng thái', exact: true }).press('Enter');
     expect(new URL(page.url()).searchParams.has('status')).toBe(false);
     await expect(status).toBeFocused();
-    const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
-    await expect(search).toHaveValue('');
-    await search.fill('Linh'); await expect(search).toHaveValue('Linh'); await search.press('Enter');
+    await expect(search).toHaveValue('Linh');
+    await search.press('Enter');
     await expect(page).toHaveURL(url => url.searchParams.get('q') === 'Linh');
     await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
     await expect(page).toHaveURL(url => !url.searchParams.has('q')
@@ -716,7 +718,9 @@ test('FE016.AC03 unknown send keeps the reply draft, exposes command recovery an
     await textbox.fill(reply);
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/messages'));
     await page.getByRole('button', { name: 'Gửi trả lời', exact: true }).click();
-    expect((await responseWait).status()).toBe(202);
+    const result = await responseWait;
+    expect(result.status()).toBe(202);
+    expect((await result.json()).data.status).toBe('unknown');
     await expect(page.getByText('Có 1 thao tác chưa xác minh kết quả')).toBeVisible();
     await expect(textbox).toHaveValue(reply);
     await expect(page.getByText(/Mã lệnh cần kiểm tra/)).toBeVisible();
@@ -725,6 +729,7 @@ test('FE016.AC03 unknown send keeps the reply draft, exposes command recovery an
     await sendAgain.evaluate(button=>(button as HTMLButtonElement).click());
     await expect(page.getByRole('alert').filter({ hasText: /chưa xác minh kết quả/ })).toBeVisible();
     expect(sends).toHaveLength(1);
+    console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R06 OPERATION=sendMessage RESULT=PASS`);
 });
 
 test('FE016.AC04 role without customer/order permissions cannot open those cross-module references', async ({ page }) => {

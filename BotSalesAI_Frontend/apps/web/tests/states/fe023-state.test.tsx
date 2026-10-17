@@ -105,6 +105,16 @@ describe('FE023 shared state and form behavior', () => {
         expect(screen.getAllByRole('status')[1]).toHaveTextContent(viMessages.state.capabilityUnavailable);
     });
 
+    it.each([
+        ['CAPABILITY_UNAVAILABLE', 503],
+        ['BUDGET_EXCEEDED', 429],
+        ['TOOL_NOT_ALLOWED', 403],
+    ])('maps %s to the capability-unavailable state instead of a permission or generic API error', (code, status) => {
+        renderWithTheme(<ErrorNotice error={new ApiError(status, code, `Thông báo ${code}.`)} />);
+        expect(screen.getByRole('status')).toHaveTextContent(`Thông báo ${code}.`);
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
     it('has a complete Vietnamese translation for every registered common and feature UI key', () => {
         const flatten = (value: unknown, prefix = ''): string[] => Object.entries(value as Record<string, unknown>).flatMap(([key, child]) => {
             const next = prefix ? `${prefix}.${key}` : key;

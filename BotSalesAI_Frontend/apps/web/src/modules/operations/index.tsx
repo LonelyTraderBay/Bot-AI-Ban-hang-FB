@@ -11,7 +11,7 @@ import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, dateTime } from '@/shared/model/format';
-import { PageHeader, Panel, Stats, Stat, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, Amount, DetailLine, ConfirmDialog, LookupLoadMore } from '@/shared/ui/components';
+import { PageHeader, Panel, Stats, Stat, DataTable, Empty, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, Amount, DetailLine, ConfirmDialog, LookupLoadMore } from '@/shared/ui/components';
 
 const workItemActions = ['begin', 'complete', 'block', 'reassign'] as const;
 type WorkItemAction = typeof workItemActions[number];
@@ -380,6 +380,7 @@ export function DigestsPage() {
                             <DetailLine label="Thời điểm tạo / cập nhật">{dateTime(digest.createdAt, shop.timezone)} / {dateTime(digest.updatedAt, shop.timezone)}</DetailLine>
                             <DetailLine label="Nguồn công việc">{digest.workItemIds.length ? digest.workItemIds.join(' · ') : 'Không có mục công việc được tham chiếu'}</DetailLine>
                         </Box>)}
+                        {list.data?.data.length === 0 && <Empty text="Chưa có bản tin điều hành trong danh sách hiện tại."/>}
                         <Pager page={list.data?.page} />
                     </SurfaceContent>
                 </QueryState>

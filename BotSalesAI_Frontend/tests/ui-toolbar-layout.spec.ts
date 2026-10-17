@@ -173,13 +173,14 @@ test('Toolbar preserves Products URL filters, search submit, clear and independe
     await page.getByRole('option', { name: 'Đang bán', exact: true }).click();
     await expect(page).toHaveURL(/status=active/);
     expect(new URL(page.url()).searchParams.has('q')).toBe(false);
-    // Existing URL changes resynchronize the q draft; independent filters never submit it.
-    await expect(search).toHaveValue('');
+    // Independent URL filters preserve the unsubmitted q draft without submitting it.
+    await expect(search).toHaveValue('unsubmitted draft');
     await search.fill('Áo');
     await expect(search).toHaveValue('Áo');
     await search.press('Enter');
     await expect(page).toHaveURL(/q=/);
     expect(new URL(page.url()).searchParams.get('q')).toBe('Áo');
+    expect(new URL(page.url()).searchParams.get('status')).toBe('active');
     await page.getByRole('button', { name: 'Xóa tìm kiếm', exact: true }).click();
     await expect(search).toBeFocused();
     expect(new URL(page.url()).searchParams.get('status')).toBe('active');

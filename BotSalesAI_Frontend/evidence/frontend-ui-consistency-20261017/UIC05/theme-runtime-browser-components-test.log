@@ -1,0 +1,61 @@
+
+ RUN  v5.0.3 C:/Users/Joker-PC/AppData/Local/Temp/uic05-task-worktree-20261017/BotSalesAI_Frontend
+
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\37d3e2673de5c291605a\direct-vite\mode-demo\deps\react-dom_client.js?v=05d57d15 as it exceeds the max of 500KB.
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.waitFor: Timeout 20000ms exceeded.
+Call log:
+  - waiting for locator('main#main-content h1') to be visible
+
+    at runDesignBrowserAudit (C:\Users\Joker-PC\AppData\Local\Temp\uic05-task-worktree-20261017\BotSalesAI_Frontend\tests\design\browser-audit.mjs:43:52)
+    at async file:///C:/Users/Joker-PC/AppData/Local/Temp/uic05-task-worktree-20261017/BotSalesAI_Frontend/tests/design/run-browser-audit.mjs:3:16 {
+  log: [ "  - waiting for locator('main#main-content h1') to be visible" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0
+ ❯ apps/web/tests/components.test.tsx (25 tests | 1 failed) 23858ms
+   ❯ Accessible shared presentation (19)
+     × reflows the real mock application from 320px to 1440px and passes browser axe 22379ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/web/tests/components.test.tsx > Accessible shared presentation > reflows the real mock application from 320px to 1440px and passes browser axe
+Error: Command failed: C:\Program Files\nodejs\node.exe C:\Users\Joker-PC\AppData\Local\Temp\uic05-task-worktree-20261017\BotSalesAI_Frontend\tests\design\run-browser-audit.mjs
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\37d3e2673de5c291605a\direct-vite\mode-demo\deps\react-dom_client.js?v=05d57d15 as it exceeds the max of 500KB.
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.waitFor: Timeout 20000ms exceeded.
+Call log:
+  - waiting for locator('main#main-content h1') to be visible
+
+    at runDesignBrowserAudit (C:\Users\Joker-PC\AppData\Local\Temp\uic05-task-worktree-20261017\BotSalesAI_Frontend\tests\design\browser-audit.mjs:43:52)
+    at async file:///C:/Users/Joker-PC/AppData/Local/Temp/uic05-task-worktree-20261017/BotSalesAI_Frontend/tests/design/run-browser-audit.mjs:3:16 {
+  log: [ "  - waiting for locator('main#main-content h1') to be visible" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0
+
+ ❯ runDesignBrowserAudit tests/design/browser-audit.mjs:43:52
+ ❯ apps/web/tests/components.test.tsx:326:27
+    324|
+    325|     it('reflows the real mock application from 320px to 1440px and pas…
+    326|         const auditOutput=execFileSync(process.execPath,[path.join(pro…
+       |                           ^
+    327|         const reportLine=auditOutput.split(/\r?\n/).find(line=>line.st…
+    328|         expect(reportLine).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 24 passed (25)
+   Start at  11:18:28
+   Duration  25.07s (tests 96%, import 2%, environment 1%, transform 1%)
+

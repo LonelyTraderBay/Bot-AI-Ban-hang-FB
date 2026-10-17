@@ -254,6 +254,7 @@ test('FE012.AC03 unknown confirm outcome blocks duplicate writes until shared co
     await expect(page.getByText('Backend chưa xác minh kết quả. Thao tác tương ứng tiếp tục bị khóa.')).toBeVisible();
     expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/orders/DH-1001/confirm'))).toHaveLength(1);
     await expect(page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' })).toHaveCount(0);
+    console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R19 OPERATION=confirmOrder RESULT=PASS`);
 });
 
 test('FE012.AC03 quote and customer confirmation expiration disable confirmation using API time', async ({ page }) => {
