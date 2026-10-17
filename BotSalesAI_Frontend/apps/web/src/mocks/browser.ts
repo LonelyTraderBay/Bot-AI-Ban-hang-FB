@@ -2,6 +2,7 @@ import { setupWorker } from 'msw/browser';
 import { handlers } from './handlers';
 import { hasUnsavedFormDraft } from '../shared/model/dirty-drafts';
 import { intentSnapshot } from '../shared/api/intents';
+import { recoverableMockWorkerUpdateMessage } from './service-worker-update-recovery';
 export const worker = setupWorker(...handlers);
 let lifecycleInstalled = false;
 export async function startMockWorker() {
@@ -9,6 +10,23 @@ export async function startMockWorker() {
         throw new Error('Không cho phép mock ở production.');
     if (!lifecycleInstalled) {
         lifecycleInstalled = true;
+        const mockWorkerUrl = new URL('/mockServiceWorker.js', location.href).href;
+        window.addEventListener('unhandledrejection', event => {
+            const scopeUrl = new URL('/', location.href).href;
+            const message = recoverableMockWorkerUpdateMessage(
+                event.reason,
+                navigator.serviceWorker.controller?.scriptURL ?? null,
+                scopeUrl,
+                mockWorkerUrl,
+            );
+            if (!message) return;
+            event.preventDefault();
+            console.warn('[MSW demo] Không cập nhật được worker mô phỏng; tiếp tục dùng worker đang hoạt động.', {
+                scope: scopeUrl,
+                scriptURL: mockWorkerUrl,
+                reason: message,
+            });
+        }, { capture: true });
         // MSW closes its client at beforeunload even when the user cancels leaving.
         // Keep the current client active while the native draft guard is pending.
         window.addEventListener('beforeunload', event => {
