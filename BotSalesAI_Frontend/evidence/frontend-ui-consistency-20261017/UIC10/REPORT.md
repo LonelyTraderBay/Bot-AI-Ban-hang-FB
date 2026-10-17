@@ -23,3 +23,5 @@ Full Chromium cùng ba shard Firefox của UIC10 **chưa chạy local** trên tr
 UIC10 chưa được push vì thứ tự đã thống nhất yêu cầu đợi UIC07, UIC08 và UIC09 có Actions terminal trên từng SHA trước, tránh workflow `cancel-in-progress` thay lượt đang chạy. Không nhận local demo/mock là Backend, provider, staging, production hoặc nghiệm thu người dùng.
 
 Screen-reader/human speech review, thiết bị vật lý, Safari/Edge và Backend/provider/production vẫn chưa có bằng chứng trong phạm vi này. Các giới hạn đó được giữ là `NOT_RUN`; không biến chúng thành PASS qua số test tự động.
+
+Sau khi ghi nhận và kiểm tra hash của các log, tree đã được commit thành `85e2a677951e0e46aef6919e775de3e0c0d54103`; thay đổi commit chỉ đóng gói đúng source/evidence đã đo. Push và exact-SHA Actions của UIC10 còn chờ UIC07–UIC09 theo thứ tự.

@@ -11,7 +11,7 @@ Lượt Chrome ban đầu có **30/31 test đạt, 1 thất bại** sau route `/
 Failed to update a ServiceWorker for scope ('http://127.0.0.1:54248/') with script ('http://127.0.0.1:54248/mockServiceWorker.js'): Not found
 ```
 
-Hai request `mockServiceWorker.js` trong trace cùng trả **HTTP 200**, cùng ETag và Content-Length 8928. Không có bằng chứng để kết luận server trả 404 hoặc asset bị thiếu. Giữ nguyên [trace analysis](../../frontend-ui-consistency-20261016/sw-failure-analysis.json), [audit ban đầu](../../frontend-ui-consistency-20261016/REPORT.md#ui-cons-02--p2-confirmed-occurrence-root-cause-unverified-lỗi-update-worker-trên-chrome-155), [baseline fault-injection](fault-injection-before-fix.json) và [lệnh/kết quả](fault-injection-baseline.log).
+Hai request `mockServiceWorker.js` trong trace cùng trả **HTTP 200**, cùng ETag và Content-Length 8928. Không có bằng chứng để kết luận server trả 404 hoặc asset bị thiếu. Giữ nguyên [trace analysis](../../frontend-ui-consistency-20261016/sw-failure-analysis.json), [audit ban đầu](../../frontend-ui-consistency-20261016/REPORT.md#ui-cons-02--p2-confirmed-occurrence--root-cause-unverified-lỗi-update-worker-trên-chrome-155), [baseline fault-injection](fault-injection-before-fix.json) và [lệnh/kết quả](fault-injection-baseline.log).
 
 ## Nguyên nhân đã chứng minh và giới hạn
 
