@@ -1,6 +1,6 @@
 # UIC07 — Kiểm chứng route, quyền, trạng thái và hành động
 
-**Trạng thái thực tế:** `LOCAL_VERIFIED — chờ commit/push và CI đúng SHA`. Source và bằng chứng UIC07 đã chạy trên cùng checkout; không còn cặp route-role command chưa được xử lý trong phạm vi Frontend/mock.
+**Trạng thái thực tế:** `LOCAL_VERIFIED — đang sửa lỗi kiểm thử CI trước khi chốt exact-SHA`. Source và bằng chứng UIC07 đã chạy trên cùng checkout; không còn cặp route-role command chưa được xử lý trong phạm vi Frontend/mock.
 
 **Phạm vi:** React Frontend với MSW và dữ liệu tổng hợp. Lệnh `unknown` là phản hồi được MSW mô phỏng cho UI; không chứng minh Backend, provider, staging, production hoặc persistence ngoài đời thật.
 
@@ -37,6 +37,7 @@ Cặp N/A duy nhất là owner@R35 `approvePrivacyRequest`: contract hiện chư
 - [Ma trận viewport](route-viewport-chromium-firefox-r1.log), [role access](route-role-matrix-chromium-firefox-r1.log), [role-state suite Chromium](route-role-state-chromium-r1.log), [role-state suite Firefox](route-role-state-firefox-r1.log), [ready/stale](route-role-ready-stale-chromium-firefox-r10.log), [capability](route-role-capability-chromium-firefox-r3.log), [loading](route-role-state-chromium-r1.log) và [shell recovery](route-role-unknown-shell-chromium-firefox-r2.log) đều có exit receipt 0.
 - Ma trận tái sinh: [log generator](generate-route-state-matrix-uic07-final-r3.log), exit 0. Snapshot report lưu ở [route-state-role-matrix-final.json](route-state-role-matrix-final.json).
 - S17 fingerprint giới hạn đúng các file UIC07; [preverify](s17-preverify-final-r1.log), [finalize](s17-finalize-final-r1.log), [post-finalize validator](s17-postfinalize-validator-final-r1.log) và [11 regression tests](test-evidence-postfinalize-final-r1.log) đều exit 0. Receipt hiện có 284 fingerprints, 28 command/log records và 23 coverage rows.
+- GitHub exact-SHA lần đầu cho `ebd24e6b39804b2b9dd94552b09046e859cbc3d6`: push run [#39031665193](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39031665193) và PR run [#39031668578](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39031668578) đều PASS verify/build nhưng Firefox shard 1/3 FAIL tại `FE018.S03` vì assertion toàn trang `getByRole('alert').toHaveCount(0)` đếm cả banner phạm vi demo và cảnh báo cấu hình tạm dừng. Đã tái hiện đúng lỗi bằng Firefox cục bộ; snapshot ghi hai alert này và prompt vẫn được giữ. Bản sửa thu hẹp kiểm tra về không có nội dung kết quả AI/không có dòng gửi ra ngoài; [chạy hồi quy Chromium + Firefox](uic07-fe018-denial-chromium-firefox-r1.log), [exit](uic07-fe018-denial-chromium-firefox-r1.log.exit) PASS 2/2. Commit/push sửa lỗi và GitHub exact-SHA đầy đủ vẫn đang chờ.
 
 ## Ranh giới chưa kiểm
 

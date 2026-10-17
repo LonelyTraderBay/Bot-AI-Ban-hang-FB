@@ -263,7 +263,8 @@ test('FE018.S03 synthetic budget and tool denials retain the prompt and never sh
     expect(budgetResponse.status()).toBe(429);
     expect(await budgetResponse.json()).toMatchObject({ code: 'BUDGET_EXCEEDED', status: 429 });
     await expect(page.getByRole('status').filter({ hasText: 'Hạn mức AI mô phỏng đã đạt giới hạn' })).toBeVisible();
-    await expect(page.getByRole('alert')).toHaveCount(0);
+    await expect(page.getByText('[Mô phỏng, không gọi AI]', { exact: false })).toHaveCount(0);
+    await expect(page.getByText('Gửi ra ngoài', { exact: true })).toHaveCount(0);
     await expect(input).toHaveValue(prompt);
     await expect(page.getByText('Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.')).toBeVisible();
 
@@ -274,7 +275,8 @@ test('FE018.S03 synthetic budget and tool denials retain the prompt and never sh
     expect(toolResponse.status()).toBe(403);
     expect(await toolResponse.json()).toMatchObject({ code: 'TOOL_NOT_ALLOWED', status: 403 });
     await expect(page.getByRole('status').filter({ hasText: 'không thuộc allowedToolIds' })).toBeVisible();
-    await expect(page.getByRole('alert')).toHaveCount(0);
+    await expect(page.getByText('[Mô phỏng, không gọi AI]', { exact: false })).toHaveCount(0);
+    await expect(page.getByText('Gửi ra ngoài', { exact: true })).toHaveCount(0);
     await expect(input).toHaveValue(prompt);
     await expect(page.getByText('Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.')).toBeVisible();
 });
