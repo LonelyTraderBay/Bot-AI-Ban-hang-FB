@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W30",
+  "recordedAt": "2026-10-17T13:58:43.859Z",
+  "scope": "Isolated Chromium with local React demo and synthetic MSW; no backend or persistent app writes",
+  "sourceSha256": {
+    "../botsales-kit/contracts/route-manifest.json": "383a248e1732030509fe9bb9dcf550217345481e5577e473559e427c3ac5eba4",
+    "apps/web/src/app/Shell.tsx": "54012c2dfd4f40cc27b187f809c09086664012a1cafba3cb31182ddcb28b1e2f",
+    "apps/web/src/app/tokens.css": "880fa854d2e6f0592bb02e78cb3209a3de2e4c99222ec6f4fa0ccfa96debd2c2",
+    "apps/web/src/modules/catalog/index.tsx": "81283fa7b74eb1e979150fccd2a22bf286008582ff02d4139f105e379849f66b",
+    "apps/web/src/modules/inbox/index.tsx": "6e02cb7178b6923653ff84bd2a1c42894f47252a54678125e0d57c040d91bfc0",
+    "apps/web/src/modules/reports/index.tsx": "094e80e042587ae9390d4dc091cc756c8bc261c4c6871f2767bc5e13624eefc8",
+    "tests/ui028-w30-stress.spec.ts": "54c71563d0be5266c3ac495bfe7ca36252adf6812ec3db665559cd76d6cd9d36",
+    "tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
+    "evidence/frontend-ui-improvements/UI028/W30/design-contract-pre-stress-current-20261006.md": "359fad0f5b642b39c237ce0f7bd236f7cafa4f520acee5956a0996ce7d8fa6ee",
+    "evidence/frontend-ui-improvements/UI028/W30/capture-actual-browser-zoom-200-current-20261006.mjs": "fcd87dbe89f749402b1a6ac21a4afc03261d62cb715299bb0a777b1c807475da"
+  },
+  "method": {
+    "browser": "Playwright-bundled Chromium, headed, fresh temporary profile",
+    "mechanism": "Temporary Manifest V3 extension calls chrome.tabs.setZoom(tabId, 2) and independently reads chrome.tabs.getZoom(tabId)",
+    "baselineViewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "targetZoomFactor": 2,
+    "note": "The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2."
+  },
+  "scenarios": [],
+  "result": "ERROR",
+  "error": "Error: The isolated Chromium zoom extension service worker did not start."
+}

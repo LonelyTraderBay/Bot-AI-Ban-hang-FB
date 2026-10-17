@@ -100,6 +100,72 @@ test('UI012 keyboard-only finance edit handles select, discard warning and focus
     expect(writes).toEqual([]);
 });
 
+test('UIC08 reconciliation tabs expose their name and keep keyboard focus visible at 320px', async ({ page }, info) => {
+    await page.setViewportSize({ width: 320, height: 480 });
+    await page.goto(new URL('/s/shop-demo/finance/reconciliation', demoUrl).toString());
+    await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD', exact: true })).toBeVisible();
+
+    const tablist = page.getByRole('tablist', { name: 'Nhóm đối soát ngân hàng và COD', exact: true });
+    await expect(tablist).toBeVisible();
+    const bank = tablist.getByRole('tab', { name: 'Ngân hàng', exact: true });
+    const cases = tablist.getByRole('tab', { name: 'Chênh lệch cần xử lý', exact: true });
+    await bank.focus();
+    await page.keyboard.press('End');
+    await expect(cases).toBeFocused();
+
+    const visibility = async () => cases.evaluate(element => {
+        const target = element.getBoundingClientRect();
+        const scroller = element.closest('.MuiTabs-scroller');
+        const bounds = scroller?.getBoundingClientRect();
+        return {
+            visible: !!bounds && target.left >= bounds.left - 1 && target.right <= bounds.right + 1,
+            scrollLeft: scroller?.scrollLeft ?? 0,
+            maxScroll: scroller ? scroller.scrollWidth - scroller.clientWidth : 0,
+        };
+    });
+    const focused = await visibility();
+    expect(focused.visible, `focused last tab must remain visible: ${JSON.stringify(focused)}`).toBe(true);
+    await page.keyboard.press('Enter');
+    await expect(cases).toHaveAttribute('aria-selected', 'true');
+    await page.keyboard.press('Home');
+    await expect(bank).toBeFocused();
+    await page.keyboard.press('Space');
+    await expect(bank).toHaveAttribute('aria-selected', 'true');
+    await info.attach('reconciliation-tabs-320px-keyboard', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
+test('UIC08 inbox message auto-scroll stays inside the list on a compact viewport', async ({ page }, info) => {
+    await page.setViewportSize({ width: 320, height: 480 });
+    await page.goto(new URL('/s/shop-demo/inbox/cv1', demoUrl).toString());
+    const takeover = page.getByRole('button', { name: 'Tiếp quản', exact: true });
+    await expect(takeover).toBeVisible();
+
+    const geometry = await page.evaluate(() => {
+        const shellHeader = document.querySelector('header');
+        const action = [...document.querySelectorAll('main button')].find(element => element.textContent?.trim() === 'Tiếp quản');
+        const list = document.querySelector<HTMLElement>('[data-testid="inbox-message-list"]');
+        if (!shellHeader || !action || !list) throw new Error('Inbox shell, action, or message list was not rendered');
+        const headerBottom = shellHeader.getBoundingClientRect().bottom;
+        const actionBounds = action.getBoundingClientRect();
+        return {
+            documentScrollY: window.scrollY,
+            headerBottom,
+            actionTop: actionBounds.top,
+            messageListScrollTop: list.scrollTop,
+            messageListScrollHeight: list.scrollHeight,
+            messageListClientHeight: list.clientHeight,
+        };
+    });
+
+    expect(geometry.documentScrollY, `conversation auto-scroll must not move the document: ${JSON.stringify(geometry)}`).toBe(0);
+    expect(geometry.actionTop, `conversation actions must remain below the shell header: ${JSON.stringify(geometry)}`).toBeGreaterThanOrEqual(geometry.headerBottom);
+    await takeover.click({ trial: true });
+    if (geometry.messageListScrollHeight > geometry.messageListClientHeight) {
+        expect(geometry.messageListScrollTop + geometry.messageListClientHeight).toBeGreaterThanOrEqual(geometry.messageListScrollHeight - 1);
+    }
+    await info.attach('inbox-compact-message-list-scroll', { body: await page.screenshot(), contentType: 'image/png' });
+});
+
 test('UI012 keyboard validation focuses the field named by a synthetic 422 response', async ({ page }) => {
     await page.addInitScript(() => {
         const originalFetch = window.fetch.bind(window);

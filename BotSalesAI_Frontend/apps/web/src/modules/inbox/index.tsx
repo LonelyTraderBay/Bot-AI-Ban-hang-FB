@@ -104,10 +104,13 @@ function ConversationPanel({ conversationId }: {
     const [ratingMessage, setRatingMessage] = useState<Message | null>(null);
     const [correction, setCorrection] = useState('');
     const [rating, setRating] = useState<'positive' | 'negative'>('negative');
-    const end = useRef<HTMLDivElement>(null);
+    const messageList = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!messageCursor) end.current?.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+        const list = messageList.current;
+        if (!messageCursor && list && list.scrollHeight > list.clientHeight) {
+            list.scrollTo({ top: list.scrollHeight, behavior: 'auto' });
+        }
     }, [messages.data, messageCursor]);
 
     const inboxHref = () => {
@@ -156,7 +159,7 @@ function ConversationPanel({ conversationId }: {
                                     </Alert>
                                 </Box>
                             )}
-                            <Box data-testid="inbox-message-list" sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: { xs: 350, xl: '6em' }, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
+                            <Box ref={messageList} data-testid="inbox-message-list" sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: { xs: 350, xl: '6em' }, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
                                 <QueryState query={messages}>
                                     <Stack data-testid="inbox-message-groups" sx={layoutSx.inbox.messageGroupGap}>
                                         <ConversationMessageList
@@ -167,7 +170,6 @@ function ConversationPanel({ conversationId }: {
                                                 setCorrection('');
                                             }}
                                         />
-                                        <div ref={end} />
                                     </Stack>
                                     {!messages.data?.data.length && <Empty text="Chưa có tin nhắn." />}
                                     <Pager page={messages.data?.page} />

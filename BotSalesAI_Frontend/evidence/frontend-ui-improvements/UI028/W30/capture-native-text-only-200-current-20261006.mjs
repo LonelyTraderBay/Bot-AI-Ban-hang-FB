@@ -317,6 +317,8 @@ async function measure(send, context, selectors) {
       const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       const activeStyle = active ? getComputedStyle(active) : null;
       const activeRect = active?.getBoundingClientRect();
+      const activeVisibleWidth = activeRect ? Math.max(0, Math.min(activeRect.right, innerWidth) - Math.max(activeRect.left, 0)) : 0;
+      const activeVisibleHeight = activeRect ? Math.max(0, Math.min(activeRect.bottom, innerHeight) - Math.max(activeRect.top, 0)) : 0;
       const dialog = document.querySelector('[role="dialog"]');
       return {
         viewport: {
@@ -344,6 +346,7 @@ async function measure(send, context, selectors) {
           boxShadow: activeStyle.boxShadow,
           bounds: { x: activeRect.x, right: activeRect.right, y: activeRect.y, bottom: activeRect.bottom },
           visible: Boolean(active.getClientRects().length),
+          visibleInViewport: activeVisibleWidth * activeVisibleHeight > 0,
         } : null,
         pageErrors: window.__w30PageErrors || [],
         writeRequests: (window.__w30Requests || []).filter(request => !['GET', 'HEAD', 'OPTIONS'].includes(request.method.toUpperCase())),
@@ -463,6 +466,10 @@ try {
         const setup = await prepareScenario(send, context, scenario);
         await evaluateString(send, context, `document.fonts.ready.then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve('painted')))))`);
         const before = await measure(send, context, scenario.targets);
+        const baselineScreenshotPath = path.join(path.dirname(outputPath), `native-text-only-100-${scenario.id}-baseline-${evidenceRunId}.png`);
+        const baselineScreenshotResult = await send('browsingContext.captureScreenshot', { context, origin: 'viewport' }, 20_000);
+        const baselineScreenshotBytes = Buffer.from(baselineScreenshotResult.data, 'base64');
+        fs.writeFileSync(baselineScreenshotPath, baselineScreenshotBytes);
 
         const zoom = await setNativeZoom(send, context, 2);
         await evaluateString(send, context, `document.fonts.ready.then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(() => resolve('painted'), 150)))))`);
@@ -471,7 +478,43 @@ try {
           const element = document.querySelector(${JSON.stringify(scenario.focus)});
           if (!element || !element.getClientRects().length) return { found: false };
           element.focus();
-          return { found: true, tag: element.tagName.toLowerCase(), label: element.getAttribute('aria-label') || element.innerText?.slice(0, 80) || '' };
+          const bounds = element.getBoundingClientRect();
+          const visible = {
+            left: Math.max(bounds.left, 0),
+            top: Math.max(bounds.top, 0),
+            right: Math.min(bounds.right, innerWidth),
+            bottom: Math.min(bounds.bottom, innerHeight),
+          };
+          let ancestor = element.parentElement;
+          while (ancestor && ancestor !== document.documentElement) {
+            const style = getComputedStyle(ancestor);
+            const clip = ancestor.getBoundingClientRect();
+            if (/(hidden|clip|auto|scroll)/.test(style.overflowX)) {
+              visible.left = Math.max(visible.left, clip.left + ancestor.clientLeft);
+              visible.right = Math.min(visible.right, clip.left + ancestor.clientLeft + ancestor.clientWidth);
+            }
+            if (/(hidden|clip|auto|scroll)/.test(style.overflowY)) {
+              visible.top = Math.max(visible.top, clip.top + ancestor.clientTop);
+              visible.bottom = Math.min(visible.bottom, clip.top + ancestor.clientTop + ancestor.clientHeight);
+            }
+            ancestor = ancestor.parentElement;
+          }
+          const visibleWidth = Math.max(0, visible.right - visible.left);
+          const visibleHeight = Math.max(0, visible.bottom - visible.top);
+          const visibleArea = visibleWidth * visibleHeight;
+          const x = visibleArea > 0 ? (visible.left + visible.right) / 2 : 0;
+          const y = visibleArea > 0 ? (visible.top + visible.bottom) / 2 : 0;
+          const hit = visibleArea > 0 ? document.elementFromPoint(x, y) : null;
+          return {
+            found: true,
+            active: document.activeElement === element,
+            visibleArea,
+            visibleBounds: visibleArea > 0 ? visible : null,
+            receivesPointerAtVisibleCenter: Boolean(hit && (hit === element || element.contains(hit))),
+            bounds: { x: bounds.x, y: bounds.y, right: bounds.right, bottom: bounds.bottom },
+            tag: element.tagName.toLowerCase(),
+            label: element.getAttribute('aria-label') || element.innerText?.slice(0, 80) || '',
+          };
         })()`);
         if (!focus.found) throw new Error(`${scenario.id}: keyboard focus target not found or not visible.`);
         const focusedScreenshotPath = path.join(path.dirname(outputPath), `native-text-only-200-${scenario.id}-focused-${evidenceRunId}.png`);
@@ -487,6 +530,8 @@ try {
         });
         const after = await measure(send, context, scenario.targets);
         const issues = [];
+        if (!focus.active || focus.visibleArea <= 0 || !focus.receivesPointerAtVisibleCenter)
+            issues.push(`Focused target is not visibly reachable at native text-only 200%: ${JSON.stringify(focus)}.`);
         if (baselineZoom.zoomFullPage?.value !== false || baselineZoom.zoomFactor !== 1)
             issues.push(`Baseline must be native text-only zoom at 100%; observed ${JSON.stringify(baselineZoom)}.`);
         if (zoom.zoomFullPage?.value !== false || zoom.zoomFactor !== 2)
@@ -517,7 +562,7 @@ try {
             issues.push(`Long navigation label geometry is invalid: ${JSON.stringify(after.navigationLabelLayout)}.`);
         if (scenario.id === 'dialog-long-reason' && after.dialog && (after.dialog.y < -1 || after.dialog.bottom > after.viewport.height + 1))
             issues.push(`Dialog extends beyond viewport: ${after.dialog.y}..${after.dialog.bottom} of ${after.viewport.height}px.`);
-        if (!after.activeFocus?.visible || ((after.activeFocus.outlineStyle === 'none' || after.activeFocus.outlineWidth === '0px') && after.activeFocus.boxShadow === 'none'))
+        if (!after.activeFocus?.visibleInViewport || ((after.activeFocus.outlineStyle === 'none' || after.activeFocus.outlineWidth === '0px') && after.activeFocus.boxShadow === 'none'))
             issues.push('Keyboard Tab did not leave a visible focus target with a measurable focus indicator.');
         if (after.pageErrors.length) issues.push(`Uncaught page errors: ${after.pageErrors.length}.`);
         if (after.writeRequests.length) issues.push(`Unexpected non-read requests: ${after.writeRequests.length}.`);
@@ -532,6 +577,7 @@ try {
             routeUrl,
             viewport: scenario.viewport,
             setup,
+            focusedTarget: focus,
             nativeSettings: {
                 baseline: baselineZoom,
                 after: zoom,
@@ -539,6 +585,10 @@ try {
                 fixedDevicePixelRatio: before.viewport.devicePixelRatio === after.viewport.devicePixelRatio,
             },
             baseline: before,
+            baselineScreenshot: {
+                path: path.relative(root, baselineScreenshotPath).replaceAll('\\', '/'),
+                sha256: createHash('sha256').update(baselineScreenshotBytes).digest('hex'),
+            },
             textOnly200: after,
             focusedScreenshot: {
                 path: path.relative(root, focusedScreenshotPath).replaceAll('\\', '/'),

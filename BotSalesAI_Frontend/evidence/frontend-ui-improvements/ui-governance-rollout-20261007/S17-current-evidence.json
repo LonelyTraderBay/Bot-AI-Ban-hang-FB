@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "step": "S17",
   "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime. UIC05 canonical z-index token-to-runtime integration covers generator output, all MUI theme slots, shell consumers, checker enforcement and live portal layers. UIC07 FE022 hosted Firefox exposed a row-versus-card locator mismatch; the test now follows the rendered link and asserts the reviewed knowledgeDraftId in its href, passing on local Chromium and Firefox. FE022.VS01 inventory rendering waits for the observed MSW GET response and confirms AO-002 in both payload and accessible row; repeated Chromium/Firefox evidence is recorded separately.",
-  "recordedAt": "2026-10-17T22:53:18.859Z",
+  "recordedAt": "2026-10-17T23:14:23.192Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -337,8 +337,8 @@
       "expected": "npm run verify trên source UIC07 cuối PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; typecheck/lint; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 evidence validator PASS.",
       "observed": "npm run verify trên source UIC07 cuối PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; typecheck/lint; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 evidence validator PASS.",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-fe022-response-barrier.log",
-        "sha256": "6f6b6a143394fed831a063780b108160747a661ef4e898645d90fd923a085f8f"
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-after-uic08-amended-tree.log",
+        "sha256": "fc1f4551570975cdef85df41bf27da455264aaf22a7a9820988a140452510c48"
       }
     },
     {
@@ -399,6 +399,54 @@
       "log": {
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-fe022-response-ready-r1.log",
         "sha256": "5a71b4cf96fefee6bfabdd6be0a7ba9da2bc3a4cbdb580bc85511f5ae044d042"
+      }
+    },
+    {
+      "id": "uic08-current-source-full-verify",
+      "command": "npm run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify trên source UIC08 cuối PASS; xem log gắn kèm để đọc đầy đủ generate, source/session, boundary, lint, typecheck, domain, unit, build, layout, visual, composition và S17 validator.",
+      "observed": "npm run verify trên source UIC08 cuối PASS; xem log gắn kèm để đọc đầy đủ generate, source/session, boundary, lint, typecheck, domain, unit, build, layout, visual, composition và S17 validator.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/npm-verify-uic08-corrected-uic07-20261018-r1.log",
+        "sha256": "173df6e47cd5a9a714fbe4867e47d53adf19442b3f196f9201fbeeacdea10435"
+      }
+    },
+    {
+      "id": "uic08-keyboard-regression-current-source",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui012-keyboard.spec.ts --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "22/22 UI012 keyboard tests pass on Chromium 155.0.8059.40 and Firefox 155.0; UIC08 R06/R49 regressions are included.",
+      "observed": "22/22 UI012 keyboard tests pass on Chromium 155.0.8059.40 and Firefox 155.0; UIC08 R06/R49 regressions are included.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/uic08-sequence-ui012-chromium-firefox-r2.log",
+        "sha256": "b72735412c5cedb719346702ddae0868867e0899baa6cac1539a4832f0bf0d0f"
+      }
+    },
+    {
+      "id": "uic08-native-chrome-page-zoom-200",
+      "command": "Native Google Chrome Page zoom 200% set and read back in chrome://settings/appearance; five local MSW scenarios.",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Google Chrome Stable 155.0.8059.40 native Page zoom 200% passes 5/5 scenarios with no issue, page error, or frontend write.",
+      "observed": "Google Chrome Stable 155.0.8059.40 native Page zoom 200% passes 5/5 scenarios with no issue, page error, or frontend write.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/browser-zoom-native-settings-chrome155-r2.log",
+        "sha256": "a917f846e46280fee962bd0f8887c04d73e1de05726f6606eae6e8c47bbfedb1"
+      }
+    },
+    {
+      "id": "uic08-native-firefox-text-only-zoom-200",
+      "command": "Native Firefox Zoom Text Only 200% in a temporary profile with the site-specific text-only setting verified.",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Firefox 155.0 native text-only zoom passes 5/5 scenarios with the CSS viewport and DPR fixed and no issue.",
+      "observed": "Firefox 155.0 native text-only zoom passes 5/5 scenarios with the CSS viewport and DPR fixed and no issue.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/native-text-focus-final.log",
+        "sha256": "07f36c239fee496d0da90dd817c70d767e3b450b921d613cc3d2c9c5846f279e"
       }
     },
     {
@@ -612,6 +660,34 @@
       "result": "COMPLETE"
     },
     {
+      "name": "uic08-current-source-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic08-keyboard-regression-current-source",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic08-native-chrome-page-zoom-200",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic08-native-firefox-text-only-zoom-200",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
       "name": "uic07-fe022-approval-response-barrier",
       "expected": 1,
       "observed": 1,
@@ -669,7 +745,7 @@
     "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "2b5330aeab41301db0549a8e4eba4be0d74376f4281be189ae4c0f3612f5251a",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/accounts.tsx": "77be37cccfd6cacd6ec3bce2277d29117a1a51914ea1a3f2c22d97eb6d9f9869",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/entry-editor.tsx": "7c8bca51ea7fc49556246d09a90cf09fd98eba6cf39b7cc88451b54cea1818e7",
-    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "6d475593a41fa3d62ea506bd31dfcd5e35c601c45a09faaa30b6f6d6e5f87370",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "c5fe6efec2ca49ed0e2332d3950b4783761e3c33af740cda46fd25e21f77dde4",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/journal-editor.tsx": "b0001e37866f7f18e6012e8a81e73f883a3dd4374715248353242d651becf008",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx": "760a6cd765525dc783958207f5174bcb0c82a1f61216c920fbaf13c576004804",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/report-explanations.ts": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
@@ -677,7 +753,7 @@
     "BotSalesAI_Frontend/apps/web/src/modules/finance/statement-import.tsx": "5fe843f2deb8bc718b2f61f2907db5e00e14ca8f0a1701b047f036dde9ce3f06",
     "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx": "e577201756d6b1d212acce383daf0b3fb9806e5615819d5c26d39ae434c7f896",
     "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "fcfff677c7f0fd5c58fc28b378cd436d432fe7975e23b6f56c97e22402b4ffed",
-    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "03db63e83a60293ee4bfe8567252e3d873fa34265d7cd09674d0db0c1859e6dd",
+    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "6e02cb7178b6923653ff84bd2a1c42894f47252a54678125e0d57c040d91bfc0",
     "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "5b33cd7cea2a62e2e89480fa061ea2c2be8d5d846d0dfcf6329aa91b88d63d4e",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "298181cf4dc69c68959a02067d740d2b06ad9f60174baccfe34f9158bd54a45b",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/warehouses.tsx": "f9dfdc374cf28993f736d82d63afc121c282936843ab08590a4d06983b6604b6",
@@ -877,7 +953,7 @@
     "BotSalesAI_Frontend/tests/ui009-scope-regression.spec.ts": "866d54ef16d28ff669fd9f611415097a1b13540bfd8057e117fd056b353b37b5",
     "BotSalesAI_Frontend/tests/ui010-dialog-draft.spec.ts": "b101a56dae428a8a8c9f1e11a8304563d829a744f39670daf1a50d685afa1d39",
     "BotSalesAI_Frontend/tests/ui011-date-time.spec.ts": "3b0c72599267f42d22493d44f06257fe66f3f697a855792fcf0c8ca857b6358e",
-    "BotSalesAI_Frontend/tests/ui012-keyboard.spec.ts": "1eecd48b9437f899a7e41d6f192cf8c01a8f56ccc7d5dcc8e145d2285755dfee",
+    "BotSalesAI_Frontend/tests/ui012-keyboard.spec.ts": "62a51b48d4c32cc67eff7c97f2f60d7ef1851709827554b7c5c518610c3f095b",
     "BotSalesAI_Frontend/tests/ui013-url-state.spec.ts": "2fde7cd4bf8cc540e6af0b830fee6b38323dc45bc971a30e63bc09673bfa182f",
     "BotSalesAI_Frontend/tests/ui021-permission-edge.spec.ts": "74c82fe9a2e2b6696d1f6a66c1d3ff307459d45992bd0a466196acbb4aa86413",
     "BotSalesAI_Frontend/tests/ui028-w24-inbox-layout.spec.ts": "00b7ed3c78e3e0772398ea89c4e539b687e8f3316426a6229797fd10ee52c15f",

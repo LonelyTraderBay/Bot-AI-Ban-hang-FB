@@ -168,7 +168,17 @@ export function ReconciliationPage() {
         else next.set('tab', value);
         setParams(next, { replace: true, flushSync: true });
     };
-    return <><PageHeader title="Đối soát ngân hàng & COD" subtitle="Khách trả tiền cho đơn vị giao hàng chưa đồng nghĩa tiền đã về shop." actions={<MutationButton permission="finance.reconcile" variant="contained" onClick={() => setImport(true)}>Nhập bảng đối soát</MutationButton>}/><Tabs value={tab} onChange={selectTab} sx={layoutSx.page.sectionAfter} variant="scrollable"><Tab value="bank" label="Ngân hàng"/><Tab value="cod" label="COD"/><Tab value="cases" label="Chênh lệch cần xử lý"/></Tabs><Panel>{tab === 'bank' ? <QueryState query={banks} pendingProfile="section">{banks.data && <><DataTable label="Giao dịch sao kê ngân hàng" rows={banks.data.data} rowKey={row => row.id} empty="Chưa có giao dịch sao kê trong phạm vi đang xem." emptyAction={<Button onClick={() => setImport(true)}>Nhập bảng sao kê</Button>} columns={[
+    return <><PageHeader title="Đối soát ngân hàng & COD" subtitle="Khách trả tiền cho đơn vị giao hàng chưa đồng nghĩa tiền đã về shop." actions={<MutationButton permission="finance.reconcile" variant="contained" onClick={() => setImport(true)}>Nhập bảng đối soát</MutationButton>}/><Tabs
+        aria-label="Nhóm đối soát ngân hàng và COD"
+        value={tab}
+        onChange={selectTab}
+        sx={layoutSx.page.sectionAfter}
+        variant="scrollable"
+    >
+        <Tab value="bank" label="Ngân hàng" onFocus={event => event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })} />
+        <Tab value="cod" label="COD" onFocus={event => event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })} />
+        <Tab value="cases" label="Chênh lệch cần xử lý" onFocus={event => event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })} />
+    </Tabs><Panel>{tab === 'bank' ? <QueryState query={banks} pendingProfile="section">{banks.data && <><DataTable label="Giao dịch sao kê ngân hàng" rows={banks.data.data} rowKey={row => row.id} empty="Chưa có giao dịch sao kê trong phạm vi đang xem." emptyAction={<Button onClick={() => setImport(true)}>Nhập bảng sao kê</Button>} columns={[
         { key: 'id', label: 'Mã ngoài hệ thống', render: row => row.externalTransactionId },
         { key: 'account', label: 'Tài khoản', render: row => row.accountId },
         { key: 'money', label: 'Số tiền', render: row => <Amount value={row.amount}/> },
