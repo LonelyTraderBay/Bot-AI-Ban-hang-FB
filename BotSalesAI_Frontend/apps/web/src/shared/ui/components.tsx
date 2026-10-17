@@ -197,6 +197,8 @@ export function ErrorNotice({ error, fieldLabels }: {
     }, [error, validationFields]);
     if (!error)
         return null;
+    if (error instanceof ApiError && ['CAPABILITY_UNAVAILABLE', 'BUDGET_EXCEEDED', 'TOOL_NOT_ALLOWED'].includes(error.code))
+        return <CapabilityUnavailable>{error.message}</CapabilityUnavailable>;
     const status = error instanceof ApiError ? error.status : 0;
     const versionConflict = status === 412 || status === 428 || (status === 409 && error instanceof ApiError && ['STALE_VERSION', 'VERSION_CONFLICT', 'VERSION_MISMATCH'].includes(error.code));
     const title = error instanceof UnknownResultError ? t('state.unknownTitle') : status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : versionConflict ? (status === 428 ? t('state.versionRequiredTitle') : t('state.conflictTitle')) : status === 422 ? t('state.validationTitle') : t('state.requestErrorTitle');
