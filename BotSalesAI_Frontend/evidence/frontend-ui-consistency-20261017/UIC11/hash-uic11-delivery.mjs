@@ -18,16 +18,9 @@ const hashReceiptPattern = /^BotSalesAI_Frontend\/evidence\/frontend-ui-consiste
 function expectedTrackedPaths() {
     return [
         'BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md',
-        'BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC03/REPORT.md',
-        'BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC10/REPORT.md',
         'BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md',
         'BotSalesAI_Frontend/docs/PROJECT_CONTEXT.md',
-        'BotSalesAI_Frontend/evidence/REPORT.md',
         'BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md',
-        'BotSalesAI_Frontend/evidence/boundaries.json',
-        'BotSalesAI_Frontend/evidence/domain-tests.json',
-        'BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json',
-        'BotSalesAI_Frontend/evidence/source-check.json',
         'botsales-kit/IMPLEMENTATION_PLAN.md',
         'botsales-kit/execution/FRONTEND_PROGRESS.md',
         'botsales-kit/execution/frontend-progress-report.json',

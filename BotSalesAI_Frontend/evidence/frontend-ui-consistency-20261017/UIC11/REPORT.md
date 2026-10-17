@@ -52,3 +52,13 @@ Trên chuỗi commit đã rebase theo dependency, chạy lại `npm run verify` 
 - [Full verify](npm-verify-after-final-rebase-r1.log), [exit](npm-verify-after-final-rebase-r1.log.exit).
 - [S17 preverify](s17-preverify-after-final-rebase.log), [finalize](s17-finalize-after-final-rebase.log), [post-finalize validator](test-evidence-after-final-rebase.log); cả ba exit `0`.
 - Có lượt capture rỗng `npm-verify-after-final-rebase-empty-capture.log` (2 byte CRLF), exit `0` nhưng không chứa stdout/stderr; lượt này bị loại khỏi proof và không được tính. Lượt r1 ở trên là lần chạy trực tiếp có đầy đủ log.
+
+## Receipt inventory sau corrective UIC07 — 18/10/2026
+
+Đối soát immutable tree ghi `baseline=4a502be79a40cd7dc02c1eaa80445665a226b55f`, `finalHead=cb2df8b500b1c375ca9de8086ad390cd60b8311f`. Inventory UIC01 gồm 329 entry: 280 unchanged, 49 changed, 0 removed. Git diff từ baseline có 931 path (844 added, 87 modified); cả 931 có disposition và commit owner, toàn bộ final file được fingerprint. Reconciliation exit `1` duy nhất vì 4 hash mismatch lịch sử giữa UIC01 inventory với Git blob của baseline; validator không che mismatch này.
+
+Doc-link validator kiểm 21 tài liệu, 1.604 local links, 80 anchors, 0 broken. Hash manifest được chuyển sang source baseline UIC10 đã rebase `bc00572d600bc43872bedea0d4f8922ec5bb98b8`, fingerprint 102 file; lượt `--verify` kiểm 102/102, 0 lỗi. Owner helper hash đã được sửa để kiểm mọi evidence path trong khu vực evidence, đồng thời chỉ giữ exact allowlist cho các file ngoài evidence.
+
+- [Inventory JSON](final-inventory-reconciliation.json), [log reconciliation](final-inventory-reconciliation-after-uic07-rebase.log), [exit](final-inventory-reconciliation-after-uic07-rebase.log.exit).
+- [Doc-link JSON](doc-link-validation.json), [log](doc-link-validation-after-uic07-rebase.log), [exit](doc-link-validation-after-uic07-rebase.log.exit).
+- [Hash manifest](final-document-hashes.json), [generate](hash-manifest-final-after-uic07-rebase.log), [verify](hash-manifest-verify-after-uic07-rebase.log); hash verify exit `0`.
