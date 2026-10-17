@@ -1,0 +1,720 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs --project=firefox --workers=1 --reporter=line
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+Copying the worker script at "C:\Users\Joker-PC\AppData\Local\Temp\uic07-release-sequence-20261018\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2077 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.62 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-Cz-hWNSU.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-MSEY23P6.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-B5LLUCHq.js                9.40 kB │ gzip:   3.73 kB
+dist/assets/index-D92pzzRh.js               10.37 kB │ gzip:   3.60 kB
+dist/assets/index-y9pp0Cl3.js               13.10 kB │ gzip:   5.18 kB
+dist/assets/index-CgVPAN4I.js               16.40 kB │ gzip:   6.13 kB
+dist/assets/index-CLxxcrrY.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-BNW7r5EC.js               18.82 kB │ gzip:   6.31 kB
+dist/assets/index-C9PkYLyR.js               18.82 kB │ gzip:   5.92 kB
+dist/assets/index-BR8cba-v.js               19.08 kB │ gzip:   7.01 kB
+dist/assets/index-D2wgz1lI.js               21.25 kB │ gzip:   7.66 kB
+dist/assets/index-D9a2CoZ_.js               22.02 kB │ gzip:   7.19 kB
+dist/assets/index-DE_vca6r.js               25.13 kB │ gzip:   8.48 kB
+dist/assets/index-D-0O5zKg.js               27.48 kB │ gzip:   8.96 kB
+dist/assets/index-BDt_zxAX.js               31.32 kB │ gzip:  10.03 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-CrB9qWWx.js               33.32 kB │ gzip:  11.02 kB
+dist/assets/index-D4ImyyLc.js               41.99 kB │ gzip:  11.48 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-Bz-4B0KE.js               64.72 kB │ gzip:  17.77 kB
+dist/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist/assets/index-HFb1RVz3.js              101.80 kB │ gzip:  32.42 kB
+dist/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-BwhaRlrs.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-CJj7QyVx.js                328.77 kB │ gzip: 100.20 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 3.00s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2294 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-BB4_XrUG.js              1.73 kB │ gzip:   0.94 kB
+dist-demo/assets/hooks-C4GzL4zr.js                4.59 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-4e5JtS8R.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-k4FxZPf0.js                9.40 kB │ gzip:   3.73 kB
+dist-demo/assets/index-Dms8MXCU.js               11.01 kB │ gzip:   3.88 kB
+dist-demo/assets/index-CQbE6ZY5.js               13.10 kB │ gzip:   5.17 kB
+dist-demo/assets/index-1zBIdzRq.js               16.10 kB │ gzip:   5.95 kB
+dist-demo/assets/index-CGEQjP8_.js               18.82 kB │ gzip:   6.31 kB
+dist-demo/assets/index-YCE4Cp5t.js               18.99 kB │ gzip:   5.96 kB
+dist-demo/assets/index-DcOUIfvK.js               19.15 kB │ gzip:   6.53 kB
+dist-demo/assets/index-CeXRFdR4.js               19.28 kB │ gzip:   7.09 kB
+dist-demo/assets/index-C4QVCngv.js               22.02 kB │ gzip:   7.19 kB
+dist-demo/assets/index-MzWMQGzw.js               25.54 kB │ gzip:   8.64 kB
+dist-demo/assets/index-CQitzrMY.js               27.48 kB │ gzip:   8.96 kB
+dist-demo/assets/index-OqZoioYo.js               28.12 kB │ gzip:   9.80 kB
+dist-demo/assets/index-COI-4yNQ.js               31.32 kB │ gzip:  10.03 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-CZ2xRibc.js               33.78 kB │ gzip:  11.13 kB
+dist-demo/assets/index-CMFh1-JI.js               41.99 kB │ gzip:  11.48 kB
+dist-demo/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-J-nJdZD-.js               65.93 kB │ gzip:  18.19 kB
+dist-demo/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist-demo/assets/index-BcaPHcxy.js              106.34 kB │ gzip:  33.86 kB
+dist-demo/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-DDzPNXpn.js            233.75 kB │ gzip:  54.25 kB
+dist-demo/assets/browser-CkOqgybk.js            256.37 kB │ gzip:  87.30 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-uDdGNk6t.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-CUCPJGs1.js                328.77 kB │ gzip: 100.20 kB
+dist-demo/assets/contract-data-CJyvN5AM.js      375.47 kB │ gzip:  44.43 kB
+✓ built in 3.59s
+
+> node node_modules\@playwright\test\cli.js test --project=firefox --workers=1 --reporter=line
+
+Running 541 tests using 1 worker
+
+
+
+(node:68368) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/541] [firefox] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+[2/541] [firefox] › tests\accessibility\routes.spec.ts:84:1 › contained action buttons do not animate between contrasting enabled and disabled color pairs
+[3/541] [firefox] › tests\artifacts\demo-preview.spec.ts:40:1 › the built demo artifact serves the React UI and synthetic API through preview
+[firefox] › tests\artifacts\demo-preview.spec.ts:40:1 › the built demo artifact serves the React UI and synthetic API through preview
+[artifact-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","browserMetrics":{"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0","viewport":{"width":1280,"height":720},"route":"/s/shop-demo/overview","domContentLoadedMs":91,"loadEventMs":91,"scriptCount":11,"scriptTransferBytes":483181,"scriptAssets":[{"file":"query-Df7VyXaF.js","transferBytes":10222,"decodedBytes":33154,"durationMs":19},{"file":"index-BcaPHcxy.js","transferBytes":34155,"decodedBytes":106344,"durationMs":22},{"file":"i18n-D4N_7Z3Q.js","transferBytes":15416,"decodedBytes":46142,"durationMs":22},{"file":"schema-validation-B78jEm7B.js","transferBytes":45420,"decodedBytes":149800,"durationMs":23},{"file":"contract-data-CJyvN5AM.js","transferBytes":44731,"decodedBytes":375469,"durationMs":24},{"file":"react-runtime-gLMyUIL2.js","transferBytes":90583,"decodedBytes":279787,"durationMs":27},{"file":"mui-CUCPJGs1.js","transferBytes":100504,"decodedBytes":328773,"durationMs":27},{"file":"service-DDzPNXpn.js","transferBytes":54553,"decodedBytes":233754,"durationMs":25},{"file":"browser-CkOqgybk.js","transferBytes":87597,"decodedBytes":256366,"durationMs":27},{"file":"index-k4FxZPf0.js","transferBytes":0,"decodedBytes":0,"durationMs":0},{"file":"hooks-C4GzL4zr.js","transferBytes":0,"decodedBytes":0,"durationMs":0}]},"bundles":{"javascriptFiles":31,"totalBytes":2629520,"totalGzipBytes":738767,"initialRouteGzipBytes":486356,"proposedBudgets":{"initialRouteGzipKiB":500,"largestChunkGzipKiB":200,"basis":"Local demo preview limits for the measured Chromium artifact; not a backend or platform SLO."},"largest":[{"file":"apps/web/dist-demo/assets/contract-data-CJyvN5AM.js","bytes":375469,"gzipBytes":44431},{"file":"apps/web/dist-demo/assets/mui-CUCPJGs1.js","bytes":328773,"gzipBytes":100204},{"file":"apps/web/dist-demo/assets/charts-uDdGNk6t.js","bytes":320234,"gzipBytes":96785},{"file":"apps/web/dist-demo/assets/react-runtime-gLMyUIL2.js","bytes":279787,"gzipBytes":90283},{"file":"apps/web/dist-demo/assets/browser-CkOqgybk.js","bytes":256366,"gzipBytes":87297}]},"observedApi":{"path":"/api/v2/session","status":200,"servedBy":"MSW in the built demo artifact"},"dataSource":"synthetic-msw"}
+
+[4/541] [firefox] › tests\artifacts\demo-preview.spec.ts:104:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+[firefox] › tests\artifacts\demo-preview.spec.ts:104:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+[large-dataset-api] {"url":"http://127.0.0.1:50223/api/v2/shops/shop-demo/customers?limit=20","count":20,"page":{"limit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"firstIds":["c1","c2","c3"]}
+
+[large-dataset-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","datasetId":"FE025-LARGE-CUSTOMERS-1000-V1","generatedRows":1000,"firstPageIds":["c1","c2","c3","c4","perf-customer-0001","perf-customer-0002","perf-customer-0003","perf-customer-0004","perf-customer-0005","perf-customer-0006","perf-customer-0007","perf-customer-0008","perf-customer-0009","perf-customer-0010","perf-customer-0011","perf-customer-0012","perf-customer-0013","perf-customer-0014","perf-customer-0015","perf-customer-0016"],"api":{"status":200,"pageLimit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"domRowsIncludingHeader":21,"firstPageReadyMs":218,"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0","viewport":{"width":1280,"height":720},"note":"Synthetic customer identities only; the React screen renders one API page and exposes the next cursor instead of mounting the full collection."}
+
+[5/541] [firefox] › tests\artifacts\demo-preview.spec.ts:143:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime
+[6/541] [firefox] › tests\browser-runtime-identity.spec.ts:3:1 › browser context reports the major version of its actual supported browser binary
+[firefox] › tests\browser-runtime-identity.spec.ts:3:1 › browser context reports the major version of its actual supported browser binary
+BROWSER_IDENTITY engine=firefox binary=155.0 uaMajor=155 userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0
+
+[7/541] [firefox] › tests\fe009.spec.ts:37:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route
+[8/541] [firefox] › tests\fe009.spec.ts:59:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version
+[9/541] [firefox] › tests\fe009.spec.ts:127:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save
+[10/541] [firefox] › tests\fe009.spec.ts:144:1 › job detail follows an export created in the current synthetic shop and can refetch it
+[11/541] [firefox] › tests\fe009.spec.ts:179:1 › FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified
+[12/541] [firefox] › tests\fe009.spec.ts:192:1 › FE009.G05 consent management persists challenges without granting consent before customer action
+[13/541] [firefox] › tests\fe009.spec.ts:202:1 › FE009.H06 audit screen distinguishes available fields from missing contract detail
+[14/541] [firefox] › tests\fe009.spec.ts:211:1 › FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment
+[15/541] [firefox] › tests\fe009.spec.ts:243:1 › team invitation and membership revoke stay shop-scoped and protect the active owner
+[16/541] [firefox] › tests\fe009.spec.ts:279:1 › privacy delete requests remain pending approval with no frontend step-up shortcut
+[17/541] [firefox] › tests\fe010.spec.ts:40:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP
+[18/541] [firefox] › tests\fe010.spec.ts:117:1 › product update sends If-Match and keeps edits visible after a 412 conflict
+[19/541] [firefox] › tests\fe010.spec.ts:149:1 › warehouse role can read catalog products but cannot edit product fields or price cost data
+[20/541] [firefox] › tests\fe010.spec.ts:158:1 › categories create, search, update with a version, and render cursor pagination
+[21/541] [firefox] › tests\fe010.spec.ts:187:1 › CSV preview reports row-level errors and commits only valid product rows
+[22/541] [firefox] › tests\fe010.spec.ts:259:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible
+[23/541] [firefox] › tests\fe010.spec.ts:291:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview
+[24/541] [firefox] › tests\fe010.spec.ts:304:1 › demo upload rejects files over 5 MB before making an upload request
+[25/541] [firefox] › tests\fe010.spec.ts:315:1 › product category lookup pages the full collection and preserves the selected category while editing
+[firefox] › tests\fe010.spec.ts:315:1 › product category lookup pages the full collection and preserves the selected category while editing
+UI005 acceptance: {"categoryTotal":105,"createCategoryId":"cat-2","editCategoryId":"cat-0","categoryRequests":20}
+
+[26/541] [firefox] › tests\fe011.spec.ts:37:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+[27/541] [firefox] › tests\fe011.spec.ts:56:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+[28/541] [firefox] › tests\fe011.spec.ts:95:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+[29/541] [firefox] › tests\fe011.spec.ts:125:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+[30/541] [firefox] › tests\fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[firefox] › tests\fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R15 OPERATION=createInventoryAdjustment RESULT=PASS
+
+[31/541] [firefox] › tests\fe011.spec.ts:164:1 › FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source
+[32/541] [firefox] › tests\fe011.spec.ts:192:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+[33/541] [firefox] › tests\fe011.spec.ts:215:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+[34/541] [firefox] › tests\fe012.spec.ts:37:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[35/541] [firefox] › tests\fe012.spec.ts:95:1 › FE012 canonical customer address choice completes the mock order flow with a versioned snapshot
+[36/541] [firefox] › tests\fe012.spec.ts:124:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[37/541] [firefox] › tests\fe012.spec.ts:184:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+[38/541] [firefox] › tests\fe012.spec.ts:201:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+[39/541] [firefox] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[firefox] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R19 OPERATION=confirmOrder RESULT=PASS
+
+[40/541] [firefox] › tests\fe012.spec.ts:260:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[41/541] [firefox] › tests\fe012.spec.ts:280:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[42/541] [firefox] › tests\fe012.spec.ts:304:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[43/541] [firefox] › tests\fe012.spec.ts:357:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[44/541] [firefox] › tests\fe012.spec.ts:364:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[45/541] [firefox] › tests\fe013.spec.ts:42:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote
+[46/541] [firefox] › tests\fe013.spec.ts:68:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once
+[47/541] [firefox] › tests\fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+[firefox] › tests\fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R42 OPERATION=handoverShipment RESULT=PASS
+
+[48/541] [firefox] › tests\fe013.spec.ts:262:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible
+[49/541] [firefox] › tests\fe014.spec.ts:31:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent
+[50/541] [firefox] › tests\fe014.spec.ts:83:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers
+[51/541] [firefox] › tests\fe014.spec.ts:101:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+[firefox] › tests\fe014.spec.ts:101:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R46 OPERATION=sendPurchaseOrder RESULT=PASS
+
+[52/541] [firefox] › tests\fe014.spec.ts:163:1 › FE014.S03 auto-send requires an active matching purchase delegation
+[53/541] [firefox] › tests\fe014.spec.ts:177:1 › FE014.S04 owner manages a paused purchase delegation only after rechecking the buyer role
+[54/541] [firefox] › tests\fe014.spec.ts:227:1 › FE014.S03 manager without procurement.receive cannot open receipt actions
+[55/541] [firefox] › tests\fe014.spec.ts:247:1 › FE014.AC03 partial receipt posts only accepted units to synthetic stock and payable once
+[56/541] [firefox] › tests\fe014.spec.ts:318:1 › FE014.D03/D04/D07 replenishment uses min-max rules, labels forecast limits, and blocks duplicate proposals
+[57/541] [firefox] › tests\fe015.spec.ts:59:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates
+[58/541] [firefox] › tests\fe015.spec.ts:109:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data
+[59/541] [firefox] › tests\fe015.spec.ts:130:1 › UI003 report timestamps follow the active shop timezone
+[60/541] [firefox] › tests\fe015.spec.ts:187:1 › FE015.E02/E03 profit report renders canonical cost, gross-profit and operating-expense values
+[61/541] [firefox] › tests\fe015.spec.ts:215:1 › FE015.AC02 journal rejects unbalanced decimal lines before POST and sends exact money strings
+[62/541] [firefox] › tests\fe015.spec.ts:250:1 › FE015.AC02 closed accounting period is visible and disables journal draft creation
+[63/541] [firefox] › tests\fe015.spec.ts:274:1 › FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions
+[64/541] [firefox] › tests\fe015.spec.ts:297:1 › UI001 reconciliation cursors stay scoped and dialogs load choices beyond the visible table page
+[65/541] [firefox] › tests\fe015.spec.ts:424:1 › FE015.AC03 COD settlement matches net remittance plus documented fee
+[66/541] [firefox] › tests\fe015.spec.ts:459:1 › FE015.AC03 partial bank allocation leaves the remaining amount and debt visible
+[67/541] [firefox] › tests\fe015.spec.ts:485:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+[firefox] › tests\fe015.spec.ts:485:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R48 OPERATION=postJournal RESULT=PASS
+
+[68/541] [firefox] › tests\fe016.spec.ts:70:1 › UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports
+[69/541] [firefox] › tests\fe016.spec.ts:103:1 › FE016 conversation keeps its composer visible while long demo context scrolls independently
+[70/541] [firefox] › tests\fe016.spec.ts:210:1 › FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details
+[71/541] [firefox] › tests\fe016.spec.ts:238:1 › Shared consolidation Inbox preserves selected filters and composer draft through metadata pending error empty and recovery
+[72/541] [firefox] › tests\fe016.spec.ts:302:1 › FE016.AC01 list cursor is isolated from message cursor and restored on back navigation
+[73/541] [firefox] › tests\fe016.spec.ts:321:1 › UI002 inbox list and message cursors stay independent through paging, conversation switch and shop change
+[74/541] [firefox] › tests\fe016.spec.ts:410:1 › UI002 mobile keeps the list page while messages page and Back restores it
+[75/541] [firefox] › tests\fe016.spec.ts:454:1 › UI002 Inbox search resets only the list cursor while a message page is open
+[76/541] [firefox] › tests\fe016.spec.ts:511:1 › UI002 deep link, refresh and mobile Back preserve their own cursors
+[77/541] [firefox] › tests\fe016.spec.ts:565:1 › UI002 list and message panel errors remain isolated
+[78/541] [firefox] › tests\fe016.spec.ts:589:1 › UI002 send, invalidation and resync keep both cursors and send only once
+[79/541] [firefox] › tests\fe016.spec.ts:649:1 › FE016.AC01 takeover and reply use current versions and show API send state without claiming delivery
+[80/541] [firefox] › tests\fe016.spec.ts:676:1 › FE016.AC02 internal notes render HTML-like text inert and feedback creates only a review draft
+[81/541] [firefox] › tests\fe016.spec.ts:709:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+[firefox] › tests\fe016.spec.ts:709:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R06 OPERATION=sendMessage RESULT=PASS
+
+[82/541] [firefox] › tests\fe016.spec.ts:735:1 › FE016.AC04 role without customer/order permissions cannot open those cross-module references
+[83/541] [firefox] › tests\fe016.spec.ts:746:1 › FE016.S03 stale takeover preserves reason and reports the version conflict
+[84/541] [firefox] › tests\fe016.spec.ts:762:1 › FE016.B05 cross-sell promotion preview shows sample rules without applying a discount
+[85/541] [firefox] › tests\fe016.spec.ts:776:1 › FE016.B08 capability-driven image, voice and document media upload and send by scoped file IDs
+[86/541] [firefox] › tests\fe016.spec.ts:842:1 › FE016.B09 pending media send preserves newer text and blocks blind retry after unknown outcome
+[87/541] [firefox] › tests\fe016.spec.ts:886:1 › FE016.B10 a channel without an explicit media policy keeps text composer and denies attachments
+[88/541] [firefox] › tests\fe016.spec.ts:898:1 › FE027.B01 industry sales script preview asks for missing facts and stays a local draft
+[89/541] [firefox] › tests\fe016.spec.ts:914:1 › FE027.B02 inbox price and available stock preview uses current canonical mock reads
+[90/541] [firefox] › tests\fe016.spec.ts:935:1 › FE027.B03 order capture links the active customer and conversation into the manual order form
+[91/541] [firefox] › tests\fe016.spec.ts:945:1 › FE027.B04 automatic order confirmation stays unavailable until policy and customer evidence exist
+[92/541] [firefox] › tests\fe017-validation.spec.ts:15:1 › FE017 synthetic 422 keeps the knowledge draft fields and shows field errors
+[93/541] [firefox] › tests\fe017.spec.ts:26:1 › FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field
+[94/541] [firefox] › tests\fe017.spec.ts:117:1 › FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status
+[95/541] [firefox] › tests\fe017.spec.ts:156:1 › FE017 price and stock source preview uses canonical product and timestamped inventory APIs
+[96/541] [firefox] › tests\fe017.spec.ts:189:1 › FE017.AC03 missing content, unsupported and oversized files keep creation unavailable
+[97/541] [firefox] › tests\fe017.spec.ts:211:1 › FE017.AC04 feedback approval creates inert draft content and its first revision only
+[98/541] [firefox] › tests\fe017.spec.ts:244:1 › FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish
+[99/541] [firefox] › tests\fe017.spec.ts:265:1 › FE017.AC06 stale review preserves the reason and explains the conflict
+[100/541] [firefox] › tests\fe017.spec.ts:280:1 › FE027.G02 product content brief edits source, size, warranty, alternatives, and forbidden claims locally
+[101/541] [firefox] › tests\fe017.spec.ts:298:1 › FE027.G03 policy revisions keep the published snapshot immutable when a draft changes
+[102/541] [firefox] › tests\fe018.spec.ts:130:1 › FE018.S01 maps routes and operations to the canonical OpenAPI permissions
+[103/541] [firefox] › tests\fe018.spec.ts:147:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict
+[104/541] [firefox] › tests\fe018.spec.ts:178:1 › FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft
+[105/541] [firefox] › tests\fe018.spec.ts:202:1 › FE018.AC01/04 successful publish is tied to the tested revision and pause explains its boundary
+[106/541] [firefox] › tests\fe018.spec.ts:232:1 › FE018.AC03 playground sends no external message and preserves unknown cost and token values
+[107/541] [firefox] › tests\fe018.spec.ts:254:1 › FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer
+[108/541] [firefox] › tests\fe018.spec.ts:284:1 › FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion
+[109/541] [firefox] › tests\fe018.spec.ts:298:1 › FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot
+[110/541] [firefox] › tests\fe018.spec.ts:339:1 › FE018.AC02 expired, wrong-scope, and matching approvals produce honest budget results
+[111/541] [firefox] › tests\fe018.spec.ts:367:1 › FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions
+[112/541] [firefox] › tests\fe018.spec.ts:399:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+[firefox] › tests\fe018.spec.ts:399:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R51 OPERATION=controlAutomation RESULT=PASS
+
+[113/541] [firefox] › tests\fe018.spec.ts:416:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+[firefox] › tests\fe018.spec.ts:416:1 › UI004 25 evaluations: cursor pages reach the last record and preserve detail, search, and browser Back state
+UI004_25_ACCEPTANCE={"total":25,"pageSizes":[20,5],"cursor":"evaluation-10016","oldestRecord":"evaluation-10001","oldestReachable":true,"detailPreservedCursor":true,"browserBackRestoredFirstPage":true,"searchResetCursor":true}
+
+[114/541] [firefox] › tests\fe018.spec.ts:462:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+[firefox] › tests\fe018.spec.ts:462:1 › UI004 105 evaluations: cursor traversal reaches every record and retains the failing cursor for retry
+UI004_105_ACCEPTANCE={"total":105,"pageSizes":[20,20,20,20,20,5],"pagesVisited":6,"cursorRequests":["evaluation-10256","evaluation-10196","evaluation-10136","evaluation-10076","evaluation-10016"],"uniqueRecords":105,"oldestRecord":"evaluation-10001","oldestReachable":true,"failedCursorRetainedForRetry":"evaluation-10196","errorShowsNoFabricatedRows":true,"retrySucceeded":true}
+
+[115/541] [firefox] › tests\fe019.spec.ts:21:1 › FE019.S01 maps integrations and notification routes, actions, schemas, and mock boundaries
+[116/541] [firefox] › tests\fe019.spec.ts:70:1 › FE019.AC01 AI secret is write-only, cleared after submit, and absent from stored/read data
+[117/541] [firefox] › tests\fe019.spec.ts:117:1 › FE019.AC01 invalid mock credential is rejected, cleared from the form, and not submitted
+[118/541] [firefox] › tests\fe019.spec.ts:138:1 › FE019.AC02 channel OAuth failure stays on the page and never marks a channel connected
+[119/541] [firefox] › tests\fe019.spec.ts:172:1 › FE019.AC03/04 device, Telegram, and PWA checks stay synthetic and do not request OS permission
+[120/541] [firefox] › tests\fe019.spec.ts:251:1 › FE019.AC05 notification policy validates canonical numeric bounds before sending and acknowledges only allowed work
+[121/541] [firefox] › tests\fe019.spec.ts:273:1 › FE019.A03 notification order link stays within the active shop scope
+[122/541] [firefox] › tests\fe019.spec.ts:282:1 › FE019.A05 reminder policy saves shop-local schedule and quiet hours through the synthetic API
+[123/541] [firefox] › tests\fe019.spec.ts:309:1 › FE027.A02/A07 preparation notification keeps order evidence and separates queued, opened, and acknowledged states
+[124/541] [firefox] › tests\fe019.spec.ts:334:1 › FE027.A08 notification settings disclose server-only deduplication and callback safeguards
+[125/541] [firefox] › tests\fe020.spec.ts:43:1 › FE020.AC01 approval detail is fetched and a changed source resource rejects the stale decision
+[126/541] [firefox] › tests\fe020.spec.ts:89:1 › FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic
+[127/541] [firefox] › tests\fe020.spec.ts:140:1 › FE020.AC03 role pause control uses the canonical versioned mock and never claims readiness
+[128/541] [firefox] › tests\fe020.spec.ts:157:1 › FE020.F03 operations exception filter groups overdue, blocked, and unclaimed synthetic work
+[129/541] [firefox] › tests\fe020.spec.ts:178:1 › FE020.F05 purchase delegation is bounded, saved paused, and requires a separate activation decision
+[130/541] [firefox] › tests\fe020.spec.ts:209:1 › FE020.F06/H01 digest and dependency health panels show synthetic history without claiming workers are ready
+[131/541] [firefox] › tests\fe020.spec.ts:242:1 › FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate
+[132/541] [firefox] › tests\fe021.spec.ts:34:1 › FE021 dashboard keeps independent panels usable and hides finance fields without finance.read
+[133/541] [firefox] › tests\fe021.spec.ts:46:1 › FE021 timezone and privacy validation waits for interaction and blocks invalid writes
+[134/541] [firefox] › tests\fe021.spec.ts:82:1 › FE021 approval and shipment work queues appear before sample previews
+[135/541] [firefox] › tests\fe021.spec.ts:104:1 › FE021 marketing filters preserve API-side aggregates, URL context and missing actual spend
+[136/541] [firefox] › tests\fe021.spec.ts:170:5 › FE021 marketing filters preserve edits while the default period response is pending
+[137/541] [firefox] › tests\fe021.spec.ts:170:5 › FE021 marketing filters preserve edits while the canonical period response is pending
+[138/541] [firefox] › tests\fe021.spec.ts:234:1 › FE021 invalid marketing deep links mark the responsible field and never send the invalid range
+[139/541] [firefox] › tests\fe021.spec.ts:248:1 › FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and cursor pagination
+[140/541] [firefox] › tests\fe021.spec.ts:303:1 › FE021 mock rejects an export when reports.export lacks the source permission
+[141/541] [firefox] › tests\fe021.spec.ts:323:1 › FE021 mock rejects an invalid report timezone before creating an export job
+[142/541] [firefox] › tests\fe021.spec.ts:343:1 › FE021 ambiguous export result preserves the selected dates and never exposes a download
+[143/541] [firefox] › tests\fe021.spec.ts:356:1 › FE021 empty report and marketing payloads render explicit empty states
+[144/541] [firefox] › tests\fe021.spec.ts:375:1 › FE021 stale export conflict preserves dates and never exposes a download
+[145/541] [firefox] › tests\frontend-completeness.spec.ts:66:5 › Completion R26 detail waits for GET data, renders fetched fields, closes and fits both viewports
+[146/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R26 detail handles 403 without pretending list data is fetched detail
+[147/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R26 detail handles 404 without pretending list data is fetched detail
+[148/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R26 detail handles 503 without pretending list data is fetched detail
+[149/541] [firefox] › tests\frontend-completeness.spec.ts:66:5 › Completion R28 detail waits for GET data, renders fetched fields, closes and fits both viewports
+[150/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R28 detail handles 403 without pretending list data is fetched detail
+[151/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R28 detail handles 404 without pretending list data is fetched detail
+[152/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R28 detail handles 503 without pretending list data is fetched detail
+[153/541] [firefox] › tests\frontend-completeness.spec.ts:66:5 › Completion R29 detail waits for GET data, renders fetched fields, closes and fits both viewports
+[154/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R29 detail handles 403 without pretending list data is fetched detail
+[155/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R29 detail handles 404 without pretending list data is fetched detail
+[156/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R29 detail handles 503 without pretending list data is fetched detail
+[157/541] [firefox] › tests\frontend-completeness.spec.ts:66:5 › Completion R30 detail waits for GET data, renders fetched fields, closes and fits both viewports
+[158/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R30 detail handles 403 without pretending list data is fetched detail
+[159/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R30 detail handles 404 without pretending list data is fetched detail
+[160/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R30 detail handles 503 without pretending list data is fetched detail
+[161/541] [firefox] › tests\frontend-completeness.spec.ts:66:5 › Completion R32 detail waits for GET data, renders fetched fields, closes and fits both viewports
+[162/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R32 detail handles 403 without pretending list data is fetched detail
+[163/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R32 detail handles 404 without pretending list data is fetched detail
+[164/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R32 detail handles 503 without pretending list data is fetched detail
+[165/541] [firefox] › tests\frontend-completeness.spec.ts:66:5 › Completion R39 detail waits for GET data, renders fetched fields, closes and fits both viewports
+[166/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R39 detail handles 403 without pretending list data is fetched detail
+[167/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R39 detail handles 404 without pretending list data is fetched detail
+[168/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R39 detail handles 503 without pretending list data is fetched detail
+[169/541] [firefox] › tests\frontend-completeness.spec.ts:66:5 › Completion R54 detail waits for GET data, renders fetched fields, closes and fits both viewports
+[170/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R54 detail handles 403 without pretending list data is fetched detail
+[171/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R54 detail handles 404 without pretending list data is fetched detail
+[172/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R54 detail handles 503 without pretending list data is fetched detail
+[173/541] [firefox] › tests\frontend-completeness.spec.ts:66:5 › Completion R37 detail waits for GET data, renders fetched fields, closes and fits both viewports
+[174/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R37 detail handles 403 without pretending list data is fetched detail
+[175/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R37 detail handles 404 without pretending list data is fetched detail
+[176/541] [firefox] › tests\frontend-completeness.spec.ts:99:9 › Completion R37 detail handles 503 without pretending list data is fetched detail
+[177/541] [firefox] › tests\frontend-corrections.spec.ts:18:1 › F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes
+[178/541] [firefox] › tests\frontend-corrections.spec.ts:46:1 › F01 requires an explicit choice for a field changed by both editors
+[179/541] [firefox] › tests\frontend-corrections.spec.ts:62:1 › F06 detects an order draft and blocks navigation until explicit discard
+[180/541] [firefox] › tests\frontend-corrections.spec.ts:75:1 › F02 retains an unsaved product image through an unrelated refetch
+[181/541] [firefox] › tests\frontend-corrections.spec.ts:87:1 › F03 retains notification-policy inputs through a background resync and navigation
+[182/541] [firefox] › tests\frontend-corrections.spec.ts:98:1 › F05 keeps text typed while a previous internal note is pending
+[183/541] [firefox] › tests\frontend-corrections.spec.ts:113:1 › F08 validates 4001 customer-note characters at the field and accepts 4000
+[184/541] [firefox] › tests\frontend-corrections.spec.ts:147:1 › F07 routes the fulfillment footer close through the shared discard guard
+[185/541] [firefox] › tests\frontend-corrections.spec.ts:161:1 › F09 refreshes new Inbox messages without refetching the visible product and stock snapshots
+[186/541] [firefox] › tests\frontend-corrections.spec.ts:191:1 › F01 shop settings merges a server-only locale change and preserves edits typed during save
+[187/541] [firefox] › tests\frontend-corrections.spec.ts:219:1 › F03 privacy policy preserves refetch drafts and compares before applying the newest version
+[188/541] [firefox] › tests\frontend-corrections.spec.ts:236:1 › F01 category keeps a late edit after saving, and reopens with a clean current baseline
+[189/541] [firefox] › tests\frontend-corrections.spec.ts:257:1 › F01 supplier preserves a concurrent server-only term and PATCHes the local name
+[190/541] [firefox] › tests\frontend-corrections.spec.ts:274:1 › F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft
+[191/541] [firefox] › tests\frontend-corrections.spec.ts:302:1 › F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion
+[192/541] [firefox] › tests\frontend-corrections.spec.ts:328:1 › F01 order editor keeps its original version and compares whole line lists before PATCH
+[193/541] [firefox] › tests\frontend-corrections.spec.ts:350:1 › F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard
+[194/541] [firefox] › tests\frontend-corrections.spec.ts:375:1 › F01 analogous return-inspection draft does not adopt a refetched version without comparison
+[195/541] [firefox] › tests\frontend-corrections.spec.ts:415:1 › F01 comparison supports keyboard choices, server changes again, axe and 320px reflow with long content
+[196/541] [firefox] › tests\frontend-corrections.spec.ts:444:1 › F08 privacy bounds reject invalid days and long jurisdiction before HTTP
+[197/541] [firefox] › tests\frontend-corrections.spec.ts:474:1 › F06 order custom close respects the draft guard and busy editors remain protected
+[198/541] [firefox] › tests\frontend.spec.ts:41:1 › catalog create uses the HTTP mock and successful save clears the draft guard
+[199/541] [firefox] › tests\frontend.spec.ts:73:1 › dirty drafts block in-app navigation and preserve input until the user decides
+[200/541] [firefox] › tests\frontend.spec.ts:91:1 › all canonical routes render inside the real React demo application
+[201/541] [firefox] › tests\frontend.spec.ts:116:1 › switching shops cancels a delayed request and loads only the new shop scope
+[202/541] [firefox] › tests\frontend.spec.ts:134:1 › role changes remove restricted navigation and the route guard explains denied access
+[203/541] [firefox] › tests\frontend.spec.ts:147:1 › deep links survive browser refresh and logout clears the mock session
+[204/541] [firefox] › tests\frontend.spec.ts:160:1 › logout asks before discarding a draft and retains the session when logout fails
+[205/541] [firefox] › tests\frontend.spec.ts:217:1 › mobile navigation opens, routes, and closes without viewport overflow
+[206/541] [firefox] › tests\frontend.spec.ts:231:1 › chunk loading errors use the route recovery boundary
+[207/541] [firefox] › tests\frontend.spec.ts:270:1 › live mode reports an unavailable session API without enabling mock data
+[208/541] [firefox] › tests\route-role-matrix.spec.ts:44:1 › route read access matches canonical permissions for every demo role
+[firefox] › tests\route-role-matrix.spec.ts:44:1 › route read access matches canonical permissions for every demo role
+ROUTE_ROLE_MATRIX_CASES=399 ROLES=7 PRIVATE_ROUTES=57 RESULT=PASS
+
+[209/541] [firefox] › tests\security.spec.ts:36:1 › untrusted product text renders as text without activating markup
+[210/541] [firefox] › tests\security.spec.ts:54:1 › catalog import rejects a non-CSV file before an upload request
+[211/541] [firefox] › tests\security.spec.ts:72:1 › catalog import rejects files above the demo size limit before upload
+[212/541] [firefox] › tests\security.spec.ts:90:1 › mock uploads require a purpose, enforce its role, and fingerprint file content for retries
+[213/541] [firefox] › tests\session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+[firefox] › tests\session\demo-server-cache-isolation.spec.ts:7:1 › concurrent demo servers use isolated Vite caches and load the React app
+VITE_CACHE_ISOLATION=PASS rootA=C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\473c267f47e5ceba6050\test-demo\playwright-52408-de99b338-f1c6-4c8a-80c7-f63793b01912-parallel-a-53ecd2ab-99b7-42d4-9925-d3f4ed4640f8 rootB=C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\473c267f47e5ceba6050\test-demo\playwright-52408-de99b338-f1c6-4c8a-80c7-f63793b01912-parallel-b-5fd397ab-f81a-4b27-a292-387db7d7be07 otherCheckout=true
+
+[214/541] [firefox] › tests\session\demo-worker-startup.spec.ts:18:1 › demo conditional module requests return complete exports without changing live or non-asset caching
+[215/541] [firefox] › tests\session\demo-worker-startup.spec.ts:81:1 › demo keeps the active mock worker and UI when its update request is rejected
+[216/541] [firefox] › tests\session\demo-worker-startup.spec.ts:173:1 › demo worker remains isolated across concurrent contexts and reloads
+[217/541] [firefox] › tests\session\demo-worker-startup.spec.ts:206:1 › demo startup explains the required setup when the browser blocks Service Workers
+[218/541] [firefox] › tests\session\session-revocation.spec.ts:20:1 › session.revoked SSE closes the stream and clears the active shop session
+[219/541] [firefox] › tests\session\session-unauthorized.spec.ts:17:1 › expired live session redirects to login and preserves the requested shop route
+[220/541] [firefox] › tests\states\fe023.spec.ts:18:1 › FE023.S04 a dirty dialog keeps the form value until the user confirms discard
+[221/541] [firefox] › tests\states\fe023.spec.ts:36:1 › FE023.S03 a customer lookup loads the next cursor page without dropping earlier choices
+[222/541] [firefox] › tests\states\fe023.spec.ts:77:1 › FE023.S04 delayed requests show loading and failed refresh keeps a retry path
+[223/541] [firefox] › tests\states\fe023.spec.ts:107:1 › FE023 unsaved shop settings are preserved when navigation switches shop scope
+[224/541] [firefox] › tests\states\fe023.spec.ts:125:1 › FE023 a saved shop form resets its dirty baseline and reports success
+[225/541] [firefox] › tests\states\route-empty-composition.spec.ts:33:1 › empty collection responses render accessible empty states on canonical list routes
+[firefox] › tests\states\route-empty-composition.spec.ts:33:1 › empty collection responses render accessible empty states on canonical list routes
+ROUTE_EMPTY_COMPOSITION_PROGRESS=3/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=6/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=9/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=12/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=15/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=18/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=21/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=24/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=27/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=30/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=33/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=36/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=39/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=42/46
+
+ROUTE_EMPTY_COMPOSITION_PROGRESS=45/46
+
+ROUTE_EMPTY_COMPOSITION=46/46 RESULT=PASS
+
+ROUTE_EMPTY_COMPOSITION_IDS=R05,R06,R07,R08,R09,R10,R11,R12,R13,R15,R16,R17,R18,R21,R23,R24,R25,R26,R28,R29,R30,R31,R32,R34,R35,R37,R38,R39,R40,R41,R42,R43,R44,R45,R46,R47,R48,R49,R50,R51,R52,R54,R55,R56,R57,R58
+
+[226/541] [firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for owner
+[firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for owner
+BROWSER=firefox ROLE_STATE=empty ROLE=owner ROUTE=R52 RESULT=PASS
+
+[227/541] [firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for manager
+[firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for manager
+BROWSER=firefox ROLE_STATE=empty ROLE=manager ROUTE=R52 RESULT=PASS
+
+[228/541] [firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for sales
+[firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for sales
+BROWSER=firefox ROLE_STATE=empty ROLE=sales ROUTE=R52 RESULT=PASS
+
+[229/541] [firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for warehouse
+[firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for warehouse
+BROWSER=firefox ROLE_STATE=empty ROLE=warehouse ROUTE=R52 RESULT=PASS
+
+[230/541] [firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for accountant
+[firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for accountant
+BROWSER=firefox ROLE_STATE=empty ROLE=accountant ROUTE=R52 RESULT=PASS
+
+[231/541] [firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for bot_admin
+[firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for bot_admin
+BROWSER=firefox ROLE_STATE=empty ROLE=bot_admin ROUTE=R52 RESULT=PASS
+
+[232/541] [firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for viewer
+[firefox] › tests\states\route-empty-composition.spec.ts:90:5 › R52 empty digest state is accessible for viewer
+BROWSER=firefox ROLE_STATE=empty ROLE=viewer ROUTE=R52 RESULT=PASS
+
+[233/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R04 /s/:shopId/overview
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R04 /s/:shopId/overview
+ROUTE_ERROR_COMPOSITION_ROUTE=R04 RESULT=PASS
+
+[234/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R05 /s/:shopId/inbox
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R05 /s/:shopId/inbox
+ROUTE_ERROR_COMPOSITION_ROUTE=R05 RESULT=PASS
+
+[235/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R06 /s/:shopId/inbox/:conversationId
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R06 /s/:shopId/inbox/:conversationId
+ROUTE_ERROR_COMPOSITION_ROUTE=R06 RESULT=PASS
+
+[236/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R07 /s/:shopId/customers
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R07 /s/:shopId/customers
+ROUTE_ERROR_COMPOSITION_ROUTE=R07 RESULT=PASS
+
+[237/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R08 /s/:shopId/customers/:customerId
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R08 /s/:shopId/customers/:customerId
+ROUTE_ERROR_COMPOSITION_ROUTE=R08 RESULT=PASS
+
+[238/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R09 /s/:shopId/products
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R09 /s/:shopId/products
+ROUTE_ERROR_COMPOSITION_ROUTE=R09 RESULT=PASS
+
+[239/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R10 /s/:shopId/products/new
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R10 /s/:shopId/products/new
+ROUTE_ERROR_COMPOSITION_ROUTE=R10 RESULT=PASS
+
+[240/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R11 /s/:shopId/products/:productId
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R11 /s/:shopId/products/:productId
+ROUTE_ERROR_COMPOSITION_ROUTE=R11 RESULT=PASS
+
+[241/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R12 /s/:shopId/categories
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R12 /s/:shopId/categories
+ROUTE_ERROR_COMPOSITION_ROUTE=R12 RESULT=PASS
+
+[242/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R13 /s/:shopId/imports
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R13 /s/:shopId/imports
+ROUTE_ERROR_COMPOSITION_ROUTE=R13 RESULT=PASS
+
+[243/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R14 /s/:shopId/imports/:jobId
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R14 /s/:shopId/imports/:jobId
+ROUTE_ERROR_COMPOSITION_ROUTE=R14 RESULT=PASS
+
+[244/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R15 /s/:shopId/inventory
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R15 /s/:shopId/inventory
+ROUTE_ERROR_COMPOSITION_ROUTE=R15 RESULT=PASS
+
+[245/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R16 /s/:shopId/inventory/movements
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R16 /s/:shopId/inventory/movements
+ROUTE_ERROR_COMPOSITION_ROUTE=R16 RESULT=PASS
+
+[246/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R17 /s/:shopId/orders
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R17 /s/:shopId/orders
+ROUTE_ERROR_COMPOSITION_ROUTE=R17 RESULT=PASS
+
+[247/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R18 /s/:shopId/orders/new
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R18 /s/:shopId/orders/new
+ROUTE_ERROR_COMPOSITION_ROUTE=R18 RESULT=PASS
+
+[248/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R19 /s/:shopId/orders/:orderId
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R19 /s/:shopId/orders/:orderId
+ROUTE_ERROR_COMPOSITION_ROUTE=R19 RESULT=PASS
+
+[249/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R20 /s/:shopId/finance
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R20 /s/:shopId/finance
+ROUTE_ERROR_COMPOSITION_ROUTE=R20 RESULT=PASS
+
+[250/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R21 /s/:shopId/finance/entries
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R21 /s/:shopId/finance/entries
+ROUTE_ERROR_COMPOSITION_ROUTE=R21 RESULT=PASS
+
+[251/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R22 /s/:shopId/finance/profit-loss
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R22 /s/:shopId/finance/profit-loss
+ROUTE_ERROR_COMPOSITION_ROUTE=R22 RESULT=PASS
+
+[252/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R23 /s/:shopId/knowledge
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R23 /s/:shopId/knowledge
+ROUTE_ERROR_COMPOSITION_ROUTE=R23 RESULT=PASS
+
+[253/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R24 /s/:shopId/knowledge/:knowledgeId
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R24 /s/:shopId/knowledge/:knowledgeId
+ROUTE_ERROR_COMPOSITION_ROUTE=R24 RESULT=PASS
+
+[254/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R25 /s/:shopId/knowledge/review
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R25 /s/:shopId/knowledge/review
+ROUTE_ERROR_COMPOSITION_ROUTE=R25 RESULT=PASS
+
+[255/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R26 /s/:shopId/bot
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R26 /s/:shopId/bot
+ROUTE_ERROR_COMPOSITION_ROUTE=R26 RESULT=PASS
+
+[256/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R27 /s/:shopId/bot/playground
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R27 /s/:shopId/bot/playground
+ROUTE_ERROR_COMPOSITION_ROUTE=R27 RESULT=PASS
+
+[257/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R28 /s/:shopId/bot/evaluations
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R28 /s/:shopId/bot/evaluations
+ROUTE_ERROR_COMPOSITION_ROUTE=R28 RESULT=PASS
+
+[258/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R29 /s/:shopId/integrations/channels
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R29 /s/:shopId/integrations/channels
+ROUTE_ERROR_COMPOSITION_ROUTE=R29 RESULT=PASS
+
+[259/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R30 /s/:shopId/integrations/ai
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R30 /s/:shopId/integrations/ai
+ROUTE_ERROR_COMPOSITION_ROUTE=R30 RESULT=PASS
+
+[260/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R31 /s/:shopId/reports
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R31 /s/:shopId/reports
+ROUTE_ERROR_COMPOSITION_ROUTE=R31 RESULT=PASS
+
+[261/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R32 /s/:shopId/settings/team
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R32 /s/:shopId/settings/team
+ROUTE_ERROR_COMPOSITION_ROUTE=R32 RESULT=PASS
+
+[262/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R33 /s/:shopId/settings/shop
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R33 /s/:shopId/settings/shop
+ROUTE_ERROR_COMPOSITION_ROUTE=R33 RESULT=PASS
+
+[263/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R34 /s/:shopId/settings/audit
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R34 /s/:shopId/settings/audit
+ROUTE_ERROR_COMPOSITION_ROUTE=R34 RESULT=PASS
+
+[264/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R35 /s/:shopId/settings/privacy
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R35 /s/:shopId/settings/privacy
+ROUTE_ERROR_COMPOSITION_ROUTE=R35 RESULT=PASS
+
+[265/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R36 /s/:shopId/jobs/:jobId
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R36 /s/:shopId/jobs/:jobId
+ROUTE_ERROR_COMPOSITION_ROUTE=R36 RESULT=PASS
+
+[266/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R37 /s/:shopId/operations
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R37 /s/:shopId/operations
+ROUTE_ERROR_COMPOSITION_ROUTE=R37 RESULT=PASS
+
+[267/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R38 /s/:shopId/approvals
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R38 /s/:shopId/approvals
+ROUTE_ERROR_COMPOSITION_ROUTE=R38 RESULT=PASS
+
+[268/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R39 /s/:shopId/notifications
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R39 /s/:shopId/notifications
+ROUTE_ERROR_COMPOSITION_ROUTE=R39 RESULT=PASS
+
+[269/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R40 /s/:shopId/notifications/devices
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R40 /s/:shopId/notifications/devices
+ROUTE_ERROR_COMPOSITION_ROUTE=R40 RESULT=PASS
+
+[270/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R41 /s/:shopId/fulfillment
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R41 /s/:shopId/fulfillment
+ROUTE_ERROR_COMPOSITION_ROUTE=R41 RESULT=PASS
+
+[271/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R42 /s/:shopId/shipments
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R42 /s/:shopId/shipments
+ROUTE_ERROR_COMPOSITION_ROUTE=R42 RESULT=PASS
+
+[272/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R43 /s/:shopId/returns
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R43 /s/:shopId/returns
+ROUTE_ERROR_COMPOSITION_ROUTE=R43 RESULT=PASS
+
+[273/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R44 /s/:shopId/suppliers
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R44 /s/:shopId/suppliers
+ROUTE_ERROR_COMPOSITION_ROUTE=R44 RESULT=PASS
+
+[274/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R45 /s/:shopId/replenishment
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R45 /s/:shopId/replenishment
+ROUTE_ERROR_COMPOSITION_ROUTE=R45 RESULT=PASS
+
+[275/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R46 /s/:shopId/purchases
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R46 /s/:shopId/purchases
+ROUTE_ERROR_COMPOSITION_ROUTE=R46 RESULT=PASS
+
+[276/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R47 /s/:shopId/receipts
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R47 /s/:shopId/receipts
+ROUTE_ERROR_COMPOSITION_ROUTE=R47 RESULT=PASS
+
+[277/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R48 /s/:shopId/finance/journals
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R48 /s/:shopId/finance/journals
+ROUTE_ERROR_COMPOSITION_ROUTE=R48 RESULT=PASS
+
+[278/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R49 /s/:shopId/finance/reconciliation
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R49 /s/:shopId/finance/reconciliation
+ROUTE_ERROR_COMPOSITION_ROUTE=R49 RESULT=PASS
+
+[279/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R50 /s/:shopId/finance/debts-periods
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R50 /s/:shopId/finance/debts-periods
+ROUTE_ERROR_COMPOSITION_ROUTE=R50 RESULT=PASS
+
+[280/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R51 /s/:shopId/bot/team
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R51 /s/:shopId/bot/team
+ROUTE_ERROR_COMPOSITION_ROUTE=R51 RESULT=PASS
+
+[281/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R52 /s/:shopId/operations/digests
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R52 /s/:shopId/operations/digests
+ROUTE_ERROR_COMPOSITION_ROUTE=R52 RESULT=PASS
+
+[282/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R53 /s/:shopId/reports/marketing
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R53 /s/:shopId/reports/marketing
+ROUTE_ERROR_COMPOSITION_ROUTE=R53 RESULT=PASS
+
+[283/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R54 /s/:shopId/service-cases
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R54 /s/:shopId/service-cases
+ROUTE_ERROR_COMPOSITION_ROUTE=R54 RESULT=PASS
+
+[284/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R55 /s/:shopId/settings/warehouses
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R55 /s/:shopId/settings/warehouses
+ROUTE_ERROR_COMPOSITION_ROUTE=R55 RESULT=PASS
+
+[285/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R56 /s/:shopId/finance/accounts
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R56 /s/:shopId/finance/accounts
+ROUTE_ERROR_COMPOSITION_ROUTE=R56 RESULT=PASS
+
+[286/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R57 /s/:shopId/finance/opening-balances
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R57 /s/:shopId/finance/opening-balances
+ROUTE_ERROR_COMPOSITION_ROUTE=R57 RESULT=PASS
+
+[287/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R58 /s/:shopId/finance/ledger
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R58 /s/:shopId/finance/ledger
+ROUTE_ERROR_COMPOSITION_ROUTE=R58 RESULT=PASS
+
+[288/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R59 /s/:shopId/finance/trial-balance
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R59 /s/:shopId/finance/trial-balance
+ROUTE_ERROR_COMPOSITION_ROUTE=R59 RESULT=PASS
+
+[289/541] [firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R60 /s/:shopId/finance/balance-sheet
+[firefox] › tests\states\route-error-composition.spec.ts:44:9 › every shop route composes the shared API error state with its page content › R60 /s/:shopId/finance/balance-sheet
+ROUTE_ERROR_COMPOSITION_ROUTE=R60 RESULT=PASS
+
+[290/541] [firefox] › tests\states\route-role-capability-composition.spec.ts:48:5 › R27 capability failure stays distinct and preserves the prompt for owner
+[firefox] › tests\states\route-role-capability-composition.spec.ts:48:5 › R27 capability failure stays distinct and preserves the prompt for owner
+BROWSER=firefox ROLE_STATE=capability_unavailable ROLE=owner ROUTE=R27 OPERATION=runPlayground FAULT=budget_exceeded RESULT=PASS
+
+BROWSER=firefox ROLE_STATE=capability_unavailable ROLE=owner ROUTE=R27 OPERATION=runPlayground FAULT=tool_denied RESULT=PASS
+
+[291/541] [firefox] › tests\states\route-role-capability-composition.spec.ts:48:5 › R27 capability failure stays distinct and preserves the prompt for bot_admin
+[firefox] › tests\states\route-role-capability-composition.spec.ts:48:5 › R27 capability failure stays distinct and preserves the prompt for bot_admin
+BROWSER=firefox ROLE_STATE=capability_unavailable ROLE=bot_admin ROUTE=R27 OPERATION=runPlayground FAULT=budget_exceeded RESULT=PASS
+
+BROWSER=firefox ROLE_STATE=capability_unavailable ROLE=bot_admin ROUTE=R27 OPERATION=runPlayground FAULT=tool_denied RESULT=PASS
+
+[292/541] [firefox] › tests\states\route-role-command-unknown-composition.spec.ts:47:5 › unknown archiveWarehouse result remains visible on R55 for owner

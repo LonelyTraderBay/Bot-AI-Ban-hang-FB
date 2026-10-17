@@ -2,6 +2,9 @@ import {test,expect} from '@playwright/test';
 import type {Page} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {startDemoServer} from './session/demo-server.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { evidenceRunId } from './evidence-run-id.mjs';
 
 let url='',close:(()=>Promise<void>)|undefined;
 test.beforeAll(async()=>{const server=await startDemoServer({cacheIsolationKey:'master-resource-regression'});url=server.url;close=server.close;});
@@ -72,7 +75,7 @@ test('C05 new management routes and address dialog reflow at all required widths
             expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth),`${route}@${width}`).toBeLessThanOrEqual(1);
             expect((await new AxeBuilder({page}).include('main').analyze()).violations).toEqual([]);
         }
-        await page.getByRole('button',{name:'Thêm địa chỉ',exact:true}).focus();await page.keyboard.press('Enter');const dialog=page.getByRole('dialog',{name:'Thêm địa chỉ',exact:true});await expect(dialog).toBeVisible();await expect(dialog.locator('..')).toHaveCSS('opacity','1');await expect(dialog.getByRole('button',{name:'Đóng',exact:true})).toBeVisible();expect((await new AxeBuilder({page}).include('[role="dialog"]').analyze()).violations).toEqual([]);await page.screenshot({path:`evidence/frontend-ux-completion-20261009/C05-address-${browserName}-${width}.png`});await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();
+        await page.getByRole('button',{name:'Thêm địa chỉ',exact:true}).focus();await page.keyboard.press('Enter');const dialog=page.getByRole('dialog',{name:'Thêm địa chỉ',exact:true});await expect(dialog).toBeVisible();await expect(dialog.locator('..')).toHaveCSS('opacity','1');await expect(dialog.getByRole('button',{name:'Đóng',exact:true})).toBeVisible();expect((await new AxeBuilder({page}).include('[role="dialog"]').analyze()).violations).toEqual([]);fs.writeFileSync(path.resolve(process.cwd(), `evidence/frontend-ux-completion-20261009/C05-address-${browserName}-${width}-${evidenceRunId}.png`), await page.screenshot(), { flag: 'wx' });await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();
     }
 });
 

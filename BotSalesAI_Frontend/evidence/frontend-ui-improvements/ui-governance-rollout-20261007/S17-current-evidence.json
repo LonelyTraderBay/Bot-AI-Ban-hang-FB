@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime. UIC05 canonical z-index token-to-runtime integration covers generator output, all MUI theme slots, shell consumers, checker enforcement and live portal layers. UIC07 FE022 hosted Firefox exposed a row-versus-card locator mismatch; the test now follows the rendered link and asserts the reviewed knowledgeDraftId in its href, passing on local Chromium and Firefox. FE022.VS01 inventory rendering waits for the observed MSW GET response and confirms AO-002 in both payload and accessible row; repeated Chromium/Firefox evidence is recorded separately.",
-  "recordedAt": "2026-10-18T02:58:42.763Z",
+  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime. UIC05 canonical z-index token-to-runtime integration covers generator output, all MUI theme slots, shell consumers, checker enforcement and live portal layers. UIC07 FE022 hosted Firefox exposed a row-versus-card locator mismatch; the test now follows the rendered link and asserts the reviewed knowledgeDraftId in its href, passing on local Chromium and Firefox. FE022.VS01 inventory rendering waits for the observed MSW GET response and confirms AO-002 in both payload and accessible row; repeated Chromium/Firefox evidence is recorded separately. UIC09 removed the stale Chrome UA override and locally verified browser binary/user-agent major identity on Chromium 155.0.8059.40 and Firefox 155.0.",
+  "recordedAt": "2026-10-17T23:16:06.524Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -337,8 +337,8 @@
       "expected": "npm run verify trên source UIC07 cuối PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; typecheck/lint; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 evidence validator PASS.",
       "observed": "npm run verify trên source UIC07 cuối PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; typecheck/lint; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 evidence validator PASS.",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-after-uic08-amended-tree.log",
-        "sha256": "fc1f4551570975cdef85df41bf27da455264aaf22a7a9820988a140452510c48"
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/github-exactsha-verify-final-20261018.log",
+        "sha256": "9bb39063d88814345a16135c0a649c61abfadff10346b1046ebd58945e19f185"
       }
     },
     {
@@ -409,8 +409,8 @@
       "expected": "npm run verify trên source UIC08 cuối PASS; xem log gắn kèm để đọc đầy đủ generate, source/session, boundary, lint, typecheck, domain, unit, build, layout, visual, composition và S17 validator.",
       "observed": "npm run verify trên source UIC08 cuối PASS; xem log gắn kèm để đọc đầy đủ generate, source/session, boundary, lint, typecheck, domain, unit, build, layout, visual, composition và S17 validator.",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/npm-verify-overlay-gate-20261018.log",
-        "sha256": "b0c92e88c97633f1fcf6d63f546f681da18467c51d2b4a820fb4ab86ab3c2976"
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/npm-verify-uic08-corrected-uic07-20261018-r1.log",
+        "sha256": "173df6e47cd5a9a714fbe4867e47d53adf19442b3f196f9201fbeeacdea10435"
       }
     },
     {
@@ -450,15 +450,51 @@
       }
     },
     {
-      "id": "uic07-fe022-approval-response-barrier",
-      "command": "npm.cmd --script-shell=cmd.exe run test:e2e -- tests/vertical-slices/fe022-flows.spec.ts --grep FE022.VS02 --project=chromium --project=firefox --repeat-each=3 (Node 24.19.0, npm 11.17.0)",
+      "id": "uic09-browser-identity-chromium",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e -- --config=playwright.config.ts --grep 'browser context reports' --project=chromium --project=firefox --workers=1 --reporter=line",
       "exitCode": 0,
       "result": "PASS",
-      "expected": "FE022.VS02 đạt 6/6 lượt, Chromium 3/3 và Firefox 3/3; từng lượt nhận HTTP 200 cho danh sách phê duyệt có purchase_order đang chờ duyệt trước khi xác nhận hàng hiển thị.",
-      "observed": "FE022.VS02 đạt 6/6 lượt, Chromium 3/3 và Firefox 3/3; từng lượt nhận HTTP 200 cho danh sách phê duyệt có purchase_order đang chờ duyệt trước khi xác nhận hàng hiển thị.",
+      "expected": "chromium binary 155.0.8059.40 and navigator.userAgent major 155 matched; browser identity regression passed 1/1.",
+      "observed": "chromium binary 155.0.8059.40 and navigator.userAgent major 155 matched; browser identity regression passed 1/1.",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE022-approval-response-barrier-targeted.log",
-        "sha256": "d94d3cd7ec35c883c92b6855976b8474e21fe0a23efda39734be62550681e607"
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC09/browser-runtime-identity-corrected-uic08-r1.log",
+        "sha256": "67c6dbb4278795af9adcaf41b3aec205cc5e146abe267e8aeca2442da5d1d676"
+      }
+    },
+    {
+      "id": "uic09-browser-identity-firefox",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e -- --config=playwright.config.ts --grep 'browser context reports' --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "firefox binary 155.0 and navigator.userAgent major 155 matched; browser identity regression passed 1/1.",
+      "observed": "firefox binary 155.0 and navigator.userAgent major 155 matched; browser identity regression passed 1/1.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC09/browser-runtime-identity-corrected-uic08-r1.log",
+        "sha256": "67c6dbb4278795af9adcaf41b3aec205cc5e146abe267e8aeca2442da5d1d676"
+      }
+    },
+    {
+      "id": "uic09-sequential-full-verify",
+      "command": "npm.cmd --script-shell=cmd.exe run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify PASS on the UIC07–UIC09 sequential checkout; generated contracts, source/session, boundary, lint, typecheck, domain, unit, production build, layout, visual-token, composition and S17 gates all passed. Exact counts are in the linked command log.",
+      "observed": "npm run verify PASS on the UIC07–UIC09 sequential checkout; generated contracts, source/session, boundary, lint, typecheck, domain, unit, production build, layout, visual-token, composition and S17 gates all passed. Exact counts are in the linked command log.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC09/npm-verify-uic09-corrected-uic07-uic08-20261018-r1.log",
+        "sha256": "2060eb06d54b0f3dc6059bb3620f6354317e17640480d7f26f647907f9fe64d4"
+      }
+    },
+    {
+      "id": "uic10-current-source-full-verify",
+      "command": "npm.cmd with Node 24.19.0 and npm 11.17.0: run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify trên source UIC10 PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; lint/typecheck; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 validator 11/11 và evidence PASS.",
+      "observed": "npm run verify trên source UIC10 PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; lint/typecheck; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 validator 11/11 và evidence PASS.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC10/npm-verify-corrected-sequence-r2.log",
+        "sha256": "78a5ce0f54d3c63422b7d10dc33ef53f1bc3b0ffd78441d0d26bec351a2dcce6"
       }
     }
   ],
@@ -688,7 +724,28 @@
       "result": "COMPLETE"
     },
     {
-      "name": "uic07-fe022-approval-response-barrier",
+      "name": "uic09-browser-identity-chromium",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic09-browser-identity-firefox",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic09-sequential-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic10-current-source-full-verify",
       "expected": 1,
       "observed": 1,
       "missing": 0,
@@ -848,7 +905,7 @@
     "BotSalesAI_Frontend/tests/accessibility/routes.spec.ts": "a44fc8c19bc637adab9d603d8c9f698ff0af9de5a39e8b06ad078a2f58672a54",
     "BotSalesAI_Frontend/tests/architecture/check-boundaries.mjs": "c2e90eea61c7a8e6198b89f15236726b527f1a9ad8de80e2935b34a908279849",
     "BotSalesAI_Frontend/tests/artifacts/demo-preview.spec.ts": "3d522e81d9c649f9f999aba7cb4a942523c7ac7f310ad1830aecc914d6765ef0",
-    "BotSalesAI_Frontend/tests/built-demo-regression.spec.ts": "6abfdc3640ec1c0c66264662fdbf9250874d0d9d200de2e58974b40b0ac461bd",
+    "BotSalesAI_Frontend/tests/built-demo-regression.spec.ts": "fda161620b09200aef4df093a49125e99a79df4876117611d467bec5757f17a8",
     "BotSalesAI_Frontend/tests/contracts/generator.test.mjs": "7ff255de33ec7c1d2f78773aabc7de17829ae83d4d8067fedddc942c03a457d0",
     "BotSalesAI_Frontend/tests/design/browser-audit.mjs": "0c0145b469b293921271d4d93dbf842429598ebd67ac9920cd655360cd522b57",
     "BotSalesAI_Frontend/tests/design/component-layout-fixture.tsx": "c1822b3ad024a2a1c6fb49fbdb966cd7b0475e56eda70e1e0f897ad58a093722",
@@ -933,7 +990,7 @@
     "BotSalesAI_Frontend/tests/ui-inventory-layout.spec.ts": "3ec58e1ad8fdaff03921c5a3f488b3e33ead8763baec9067e2cf489cb1aaf2c7",
     "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "591b833bae530b19fb231d3aacab2058d4546d2e2648cdaf603c5b973b4a33f6",
     "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
-    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "e9c9ed1955eec42d4fb611acae628038f87e895c2a608e4dc7dd0c0c11848a66",
+    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "98ad94878a6c4ddaa1b471366df1487fda17f73643cdd673c147f44c08f87a80",
     "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "cd6fb47b6ee1d72fe8da67c64b65224ff23b12e81ea7189f7f141450b5f9a0d8",
     "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "a6fe2576a6442cfe03bc62097435b7f998406250ecedbca71b48e4802565db52",
     "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "73c1af2cb38a16f47add09dd4e6134f2d4578d5528b38696db87b4eb8e30cba6",
@@ -944,7 +1001,7 @@
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
     "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
     "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "3a85e5bbac9e47ca971e33128864de63c327351ca62b6c87794cae346a111d05",
-    "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "73a667fa9754730ace0c78d819b28e7a00ec7ba6e6b7d6731c05fb5e6e63efc7",
+    "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "dda0229ab910be4f559b18caed833426b6bf38e14305913c41bad00605521a7e",
     "BotSalesAI_Frontend/tests/ui-width-layout.spec.ts": "ceda554c0bda5f2eddad2f800bb89ca93bccb16a357933fa61e1c6684b91119a",
     "BotSalesAI_Frontend/tests/ui-workspace-layout.spec.ts": "c998d7488abed50b94f074fd311364990b221fc06f8b2bc7d7a7b47b092a3b50",
     "BotSalesAI_Frontend/tests/ui006-lookups.spec.ts": "291d172f66f1f030fce6786a5e38b2fdf5bd5dbf9de8601f80bfa08c05efc281",
@@ -968,8 +1025,8 @@
     "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "7f39234f4d7f60750a8645d85389e2cf7285e16e4e5243a84b61982962aef9d2",
     "BotSalesAI_Frontend/package.json": "bc3dd1bde58b7bb242c69fa0a7ba33882b29c4da2022dff6a8b29715c13ef073",
     "BotSalesAI_Frontend/package-lock.json": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a",
-    "BotSalesAI_Frontend/playwright.config.ts": "cf6286dd9a26fce12a5368d3d07f56683a68e3807f9d1ec2de878bcd652099a2",
-    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "779986012783f386acdf62caba43e019c1787d5a8f49b34b4d77cb0e844c0811",
+    "BotSalesAI_Frontend/playwright.config.ts": "c9ad13fca762ae6669bba7d4a43a35685bd60cab8ca8813b649421a985938712",
+    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "100f58344f18faee3c5f723abad0f5e4bfac78a38020a71da836b12520f05d66",
     "BotSalesAI_Frontend/apps/web/vite.config.ts": "6807da5538ceee93218580b9dad4b72d116feeffb9b397a43322ea9e9808aab5",
     "BotSalesAI_Frontend/apps/web/tsconfig.json": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1",
     "BotSalesAI_Frontend/apps/web/vitest.config.ts": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e",
@@ -983,8 +1040,9 @@
     "BotSalesAI_Frontend/tests/ui-overlay-theme.spec.ts": "e974dddd18376cbd6b0e9cd40fd31de430eb72eb75e1f2676518b609d51b503e",
     "BotSalesAI_Frontend/apps/web/src/mocks/service-worker-update-recovery.ts": "62cf0f795b6f0415bb319d4d928eed6fcd6ed8266a546da6828955d4f2dad1b4",
     "BotSalesAI_Frontend/apps/web/tests/service-worker-update-recovery.test.ts": "3a5f1376694d85ad1fb65d8e289685a9d5cdb8d021eea0b0a8301f22d0426b38",
-    "BotSalesAI_Frontend/tests/states/route-role-command-unknown-master-actions.spec.ts": "406517c1290c2368a7b653ed47609c7313061bd461c11115f61a20daef3fba0f",
-    "BotSalesAI_Frontend/tests/states/route-role-state-composition.spec.ts": "04c218990fc65036bac98574080f7a8ba441222896263d4f4a9b6372311f3b33"
+    "BotSalesAI_Frontend/tests/states/route-role-command-unknown-master-actions.spec.ts": "221d3845d4684b5e12e2aec7be7c754176c67a5f6123c8a6c32788f978bd9c9f",
+    "BotSalesAI_Frontend/tests/states/route-role-state-composition.spec.ts": "04c218990fc65036bac98574080f7a8ba441222896263d4f4a9b6372311f3b33",
+    "BotSalesAI_Frontend/tests/browser-runtime-identity.spec.ts": "cd6e58440c917a42aa5bd8639a38a9e68daebc3ee4e5021f1591b2d65af2e9af"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
