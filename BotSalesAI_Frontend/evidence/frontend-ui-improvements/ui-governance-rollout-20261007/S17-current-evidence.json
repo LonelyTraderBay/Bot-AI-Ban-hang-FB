@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "step": "S17",
   "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime. UIC05 canonical z-index token-to-runtime integration covers generator output, all MUI theme slots, shell consumers, checker enforcement and live portal layers. UIC07 FE022 hosted Firefox exposed a row-versus-card locator mismatch; the test now follows the rendered link and asserts the reviewed knowledgeDraftId in its href, passing on local Chromium and Firefox. FE022.VS01 inventory rendering waits for the observed MSW GET response and confirms AO-002 in both payload and accessible row; repeated Chromium/Firefox evidence is recorded separately.",
-  "recordedAt": "2026-10-17T21:38:53.889Z",
+  "recordedAt": "2026-10-17T22:53:18.859Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -337,8 +337,8 @@
       "expected": "npm run verify trên source UIC07 cuối PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; typecheck/lint; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 evidence validator PASS.",
       "observed": "npm run verify trên source UIC07 cuối PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; typecheck/lint; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 evidence validator PASS.",
       "log": {
-        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/github-exactsha-verify-final-20261018.log",
-        "sha256": "9bb39063d88814345a16135c0a649c61abfadff10346b1046ebd58945e19f185"
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-fe022-response-barrier.log",
+        "sha256": "6f6b6a143394fed831a063780b108160747a661ef4e898645d90fd923a085f8f"
       }
     },
     {
@@ -399,6 +399,18 @@
       "log": {
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-fe022-response-ready-r1.log",
         "sha256": "5a71b4cf96fefee6bfabdd6be0a7ba9da2bc3a4cbdb580bc85511f5ae044d042"
+      }
+    },
+    {
+      "id": "uic07-fe022-approval-response-barrier",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e -- tests/vertical-slices/fe022-flows.spec.ts --grep FE022.VS02 --project=chromium --project=firefox --repeat-each=3 (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE022.VS02 đạt 6/6 lượt, Chromium 3/3 và Firefox 3/3; từng lượt nhận HTTP 200 cho danh sách phê duyệt có purchase_order đang chờ duyệt trước khi xác nhận hàng hiển thị.",
+      "observed": "FE022.VS02 đạt 6/6 lượt, Chromium 3/3 và Firefox 3/3; từng lượt nhận HTTP 200 cho danh sách phê duyệt có purchase_order đang chờ duyệt trước khi xác nhận hàng hiển thị.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE022-approval-response-barrier-targeted.log",
+        "sha256": "d94d3cd7ec35c883c92b6855976b8474e21fe0a23efda39734be62550681e607"
       }
     }
   ],
@@ -594,6 +606,13 @@
     },
     {
       "name": "uic07-current-source-full-verify-response-ready",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe022-approval-response-barrier",
       "expected": 1,
       "observed": 1,
       "missing": 0,
@@ -867,7 +886,7 @@
     "BotSalesAI_Frontend/tests/ui028-w29-reflow.spec.ts": "25b0d6e9fd584103c51d6424b396327af1ab2ccbcdd7b8afdba2543ec1255090",
     "BotSalesAI_Frontend/tests/ui028-w30-stress.spec.ts": "54c71563d0be5266c3ac495bfe7ca36252adf6812ec3db665559cd76d6cd9d36",
     "BotSalesAI_Frontend/tests/ux-confirmation-consumers.test.mjs": "f610f5bce899259d03cca4266db35b0c485e7d6e5f2638e0c104e68a161f43aa",
-    "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts": "73a7b52b83b8bdbdd0e6fe76bf010dc74d9f0ae3b377c6e339e440983b1a55de",
+    "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts": "db9f57a77a75febce36bfc8838b2450b351fe7cf0ca8072e0596d624bfcd05cf",
     "BotSalesAI_Frontend/tests/vertical-slices/generate-fe022-evidence.mjs": "6efafd7ba45c64267690620aeff0d6cb38dd23614edda2df9088da2dbeb4d048",
     "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
     "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "7f39234f4d7f60750a8645d85389e2cf7285e16e4e5243a84b61982962aef9d2",

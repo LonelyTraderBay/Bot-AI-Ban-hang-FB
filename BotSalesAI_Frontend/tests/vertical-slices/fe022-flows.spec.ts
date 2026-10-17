@@ -124,7 +124,19 @@ test('FE022.VS02 procurement → approval → receipt → stock and payable pres
     const requestApproval = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/purchase-orders/${purchaseId}/request-approval`));
     await page.getByRole('button', { name: 'Xin phê duyệt', exact: true }).click();
     expect((await requestApproval).status()).toBe(200);
+    const approvalListResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET'
+            && url.pathname === '/api/v2/shops/shop-demo/approvals'
+            && url.searchParams.get('limit') === '20';
+    });
     await page.getByRole('link', { name: /Xem phê duyệt/ }).click();
+    const approvalList = await approvalListResponse;
+    expect(approvalList.status()).toBe(200);
+    const approvals = await approvalList.json() as { data: Array<{ status: string; resource: { type: string; id: string } }> };
+    expect(approvals.data).toEqual(expect.arrayContaining([
+        expect.objectContaining({ status: 'pending', resource: { type: 'purchase_order', id: purchaseId } }),
+    ]));
     const approvalRow = page.getByRole('row').filter({ hasText: purchaseId });
     await expect(approvalRow).toBeVisible();
     await approvalRow.getByRole('button', { name: 'Xem & quyết định' }).click();

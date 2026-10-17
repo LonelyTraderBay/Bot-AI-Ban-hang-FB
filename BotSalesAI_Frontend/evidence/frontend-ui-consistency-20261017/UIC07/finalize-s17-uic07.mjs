@@ -36,6 +36,7 @@ const sourceFiles = [
     'BotSalesAI_Frontend/tests/states/route-empty-composition.spec.ts',
     'BotSalesAI_Frontend/tests/states/route-role-command-unknown-master-actions.spec.ts',
     'BotSalesAI_Frontend/tests/states/route-role-state-composition.spec.ts',
+    'BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts',
 ];
 const digest = value => createHash('sha256').update(value).digest('hex');
 const raw = await readFile(evidencePath, 'utf8');
@@ -88,6 +89,33 @@ if (finalize) {
     const previousCoverage = evidence.coverage.find(item => item.name === coverage.name);
     if (previousCoverage) Object.assign(previousCoverage, coverage);
     else evidence.coverage.push(coverage);
+
+    const targetedLogName = 'FE022-approval-response-barrier-targeted.log';
+    const targetedLogPath = path.join(here, targetedLogName);
+    const targetedLog = await readFile(targetedLogPath, 'utf8');
+    const targetedExitCode = (await readFile(targetedLogPath + '.exit', 'utf8')).trim();
+    assert.equal(targetedExitCode, '0', 'FE022.VS02 Chromium/Firefox response-barrier repetitions must exit 0.');
+    assert.match(targetedLog, /Running 6 tests using 1 worker/);
+    assert.equal((targetedLog.match(/^\s*ok [1-6] \[(?:chromium|firefox)\]/gm) || []).length, 6,
+        'The targeted log must contain all six passing browser repetitions.');
+    assert.match(targetedLog, /6 passed/);
+    const targetedResult = 'FE022.VS02 đạt 6/6 lượt, Chromium 3/3 và Firefox 3/3; từng lượt nhận HTTP 200 cho danh sách phê duyệt có purchase_order đang chờ duyệt trước khi xác nhận hàng hiển thị.';
+    const targetedCheck = {
+        id: 'uic07-fe022-approval-response-barrier',
+        command: 'npm.cmd --script-shell=cmd.exe run test:e2e -- tests/vertical-slices/fe022-flows.spec.ts --grep FE022.VS02 --project=chromium --project=firefox --repeat-each=3 (Node 24.19.0, npm 11.17.0)',
+        exitCode: 0,
+        result: 'PASS',
+        expected: targetedResult,
+        observed: targetedResult,
+        log: { path: `BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/${targetedLogName}`, sha256: digest(targetedLog) },
+    };
+    const previousTargetedCheck = evidence.checks.find(item => item.id === targetedCheck.id);
+    if (previousTargetedCheck) Object.assign(previousTargetedCheck, targetedCheck);
+    else evidence.checks.push(targetedCheck);
+    const targetedCoverage = { name: targetedCheck.id, expected: 1, observed: 1, missing: 0, result: 'COMPLETE' };
+    const previousTargetedCoverage = evidence.coverage.find(item => item.name === targetedCoverage.name);
+    if (previousTargetedCoverage) Object.assign(previousTargetedCoverage, targetedCoverage);
+    else evidence.coverage.push(targetedCoverage);
 }
 
 evidence.recordedAt = new Date().toISOString();
