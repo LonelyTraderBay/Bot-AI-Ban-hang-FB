@@ -1,0 +1,352 @@
+
+> botsales-frontend@0.1.0 verify
+> npm run generate:check && npm run test:source && npm run boundaries && npm run lint && npm run typecheck && npm run test:domain && npm test && npm run build && npm run test:layout && npm run test:visual-tokens && npm run test:ui-composition && npm run test:evidence
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs tests/session/demo-server-cache-lifecycle.test.mjs tests/session/playwright-run-isolation.test.mjs
+
+{
+  "checkedAt": "2026-10-17T12:53:26.056Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 86,
+  "operationCalls": 271,
+  "routes": 61,
+  "issues": [],
+  "status": "PASS"
+}
+✔ run cache closes once after success and preserves sibling run caches (11.1359ms)
+✔ early nonzero exit cleans only its run cache (5.9ms)
+✔ signal exit cleans its run cache (4.292ms)
+✔ spawn failure without a child process cleans the unique run cache (4.2945ms)
+✔ timeout keeps cache while child is alive and later exit triggers cleanup (30.7044ms)
+✔ Playwright API server teardown removes its run cache and preserves sibling cache (8.5524ms)
+✔ Playwright setup failure before server creation removes its run cache (3.6836ms)
+✔ Playwright server close failure preserves its run cache (3.99ms)
+✔ cache paths reject dot-segment traversal (1.2425ms)
+file:///C:/Users/Joker-PC/AppData/Local/Temp/uic06-task-worktree-20261017/BotSalesAI_Frontend/playwright.built-demo.config.ts:11
+if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(runId)) throw new Error('Invalid built-demo run ID.');
+                                                       ^
+
+Error: Invalid built-demo run ID.
+    at file:///C:/Users/Joker-PC/AppData/Local/Temp/uic06-task-worktree-20261017/BotSalesAI_Frontend/playwright.built-demo.config.ts:11:56
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async file:///C:/Users/Joker-PC/AppData/Local/Temp/uic06-task-worktree-20261017/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.19.0
+✔ Playwright workers reuse their parent output/cache ID while independent runs remain isolated (760.211ms)
+✔ built-demo artifacts use a stable private run directory instead of cleaning the parent test-results (730.6994ms)
+✔ built-demo rejects an inherited output ID that could escape the artifact root (242.9117ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (0.9829ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (166.8393ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (159.0407ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1796.402
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-10-17T12:53:29.932Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 86,
+  "imports": 725,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> botsales-frontend@0.1.0 test:domain
+> node scripts/test-domain.mjs
+
+{"status":"PASS","simulatorChecks":86,"networkChecks":31,"networkHandlers":245,"passed":117,"operations":100,"node":"v24.19.0","typescript":"5.9.2"}
+
+> botsales-frontend@0.1.0 test
+> vitest run --config apps/web/vitest.config.ts
+
+
+ RUN  v5.0.3 C:/Users/Joker-PC/AppData/Local/Temp/uic06-task-worktree-20261017/BotSalesAI_Frontend
+
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\7ed776bc4ec8a449daeb\direct-vite\mode-demo\deps\react-dom_client.js?v=e86df4d7 as it exceeds the max of 500KB.
+
+ Test Files  26 passed (26)
+      Tests  252 passed (252)
+   Start at  19:54:00
+   Duration  17.34s (environment 70%, setup 15%, import 7%, tests 5%, transform 2%)
+
+Environment  jsdom was created 26 times · 173.91s total, 70% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2077 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-Dy-KMc6z.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-DzL6GNIb.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-CZx7PHBM.js                9.40 kB │ gzip:   3.73 kB
+dist/assets/index-DD05oENj.js               10.37 kB │ gzip:   3.60 kB
+dist/assets/index-DVIzcT2K.js               13.10 kB │ gzip:   5.17 kB
+dist/assets/index-0EEE-PDX.js               16.40 kB │ gzip:   6.13 kB
+dist/assets/index-DJg22lBN.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-Bkd75b0S.js               18.82 kB │ gzip:   6.31 kB
+dist/assets/index-DQEbadKr.js               18.82 kB │ gzip:   5.92 kB
+dist/assets/index-C1JIk1Oy.js               19.08 kB │ gzip:   7.01 kB
+dist/assets/index-Cuh6FR8m.js               21.23 kB │ gzip:   7.65 kB
+dist/assets/index-B8-f4rjC.js               22.02 kB │ gzip:   7.19 kB
+dist/assets/index-DyoFduf5.js               25.13 kB │ gzip:   8.48 kB
+dist/assets/index-085cp1PR.js               27.48 kB │ gzip:   8.96 kB
+dist/assets/index-C3F57wg3.js               31.32 kB │ gzip:  10.03 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-BHvGPrdS.js               33.32 kB │ gzip:  11.02 kB
+dist/assets/index-CZjmqTV3.js               41.99 kB │ gzip:  11.48 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-Ci2ssaVK.js               64.43 kB │ gzip:  17.70 kB
+dist/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist/assets/index-DaqP9MfG.js              101.80 kB │ gzip:  32.41 kB
+dist/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-BwhaRlrs.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-CJj7QyVx.js                328.77 kB │ gzip: 100.20 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 2.96s
+
+> botsales-frontend@0.1.0 test:layout
+> node --test tests/layout-checker.test.mjs tests/ui-layout-binding-gates.test.mjs && node scripts/check-layout.mjs
+
+✔ CSS label gap accepts the canonical direct pixel constructor and its exact owner/property (1614.5258ms)
+✔ CSS label gap cannot be used as an unrelated spacing property (1006.6774ms)
+✔ CSS label gap rejects a raw pixel constructor argument (1027.4079ms)
+✔ CSS label gap cannot impersonate a role from another owner (1008.4944ms)
+✔ accepts semantic bridge roles, the closed token-derived factor map, geometry, and reset values (1015.9277ms)
+✔ rejects a CSS spacing role without a declared shared owner (1010.5015ms)
+✔ rejects scale-conforming and off-scale literals in sx, responsive leaves, named and namespace MUI System props (1010.3196ms)
+✔ follows local aliases and style callbacks; rejects theme spacing helpers and preset overrides (1025.9273ms)
+✔ scans nested slotProps but does not confuse event handlers or geometric dimensions with spacing (1010.3172ms)
+✔ keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop (2965.5078ms)
+✔ accepts only an exact CSS exception and reports stale or mismatched exception scope (2994.5224ms)
+✔ rejects malformed TypeScript, malformed CSS, bad exception schema, and raw values in the bridge (4056.3469ms)
+✔ rejects canonical pixel tokens used as MUI factors and an altered bridge factor table (2025.3116ms)
+✔ report mode inventories migration debt without turning findings into PASS (1018.1524ms)
+✔ canonical writes through casts and aliases fail outside style expressions (1626.9419ms)
+✔ Object.assign cannot mutate canonical data but can copy to a fresh object (2079.9157ms)
+✔ layout gate rejects raw spacing on const alias of MUI component (1020.8779ms)
+✔ canonical mutation gate follows global mutator aliases and reflection (1027.7319ms)
+✔ local mutator names do not acquire global mutation identity (1019.1149ms)
+✔ destructured mutators and call/apply retain canonical mutation checks (1037.2082ms)
+✔ global mutator call/apply can copy canonical values into fresh objects (1027.6008ms)
+✔ mutable aliases with possible canonical destinations fail closed (1038.9511ms)
+✔ opaque apply arguments fail closed while unrelated mutable data stays valid (2055.57ms)
+✔ canonical references inside containers and destructured aliases cannot be mutated (1042.6537ms)
+✔ independent shallow copies of scalar canonical fields remain mutable (1022.7364ms)
+✔ array references and nested destructuring preserve canonical write provenance (1047.4863ms)
+✔ array destinations distinguish independent elements from canonical references (1048.1798ms)
+✔ array destructuring, dynamic indices and spread cannot hide canonical references (1057.4887ms)
+✔ dynamic indices and destructuring of independent arrays stay mutable (1041.1814ms)
+✔ function parameters cannot hide canonical mutation across source files (1032.7541ms)
+✔ read-only helpers and mutations of unrelated arguments remain valid (1030.4868ms)
+✔ returned canonical references remain protected across helper boundaries (1085.3815ms)
+✔ helper returns of fresh scalar copies do not retain canonical destination identity (1049.2989ms)
+✔ destructured object parameters cannot mutate canonical arguments (1049.4651ms)
+✔ destructured object parameters retain independent argument mutability (1044.5736ms)
+✔ default parameter and binding initializers cannot hide canonical mutations (1066.9986ms)
+✔ fresh default parameter and binding copies remain mutable (1041.0127ms)
+✔ rest parameters retain canonical argument write provenance (1041.6882ms)
+✔ rest parameters distinguish independent positions from canonical siblings (1029.3275ms)
+✔ finite spread arguments preserve shifted positional and rest destinations (1064.0634ms)
+✔ finite spread expansion keeps independent argument positions mutable (1053.6721ms)
+✔ opaque spreads keep positional mutation destinations unknown (1031.15ms)
+✔ opaque spreads into read-only helpers do not invent mutation findings (1023.2008ms)
+✔ array parameter patterns retain canonical positions including nested object arrays (1087.3437ms)
+✔ array parameter patterns retain independent bound element mutability (1015.8216ms)
+✔ layout gate rejects parameter shadow of canonical layout name (1028.6782ms)
+✔ layout gate follows genuine renamed styled factory (1022.8388ms)
+✔ layout gate accepts canonical namespace, element access and barrel alias (1028.9137ms)
+✔ layout gate does not mistake local component named Stack for MUI (1053.6885ms)
+✔ layout gate inspects renamed installed Emotion css tag (1052.2794ms)
+✔ layout gate preserves genuine aliased Controller field forwarding (1034.6249ms)
+✔ a same-named local Controller cannot exempt an unknown prop spread (1040.067ms)
+✔ genuine useForm registration survives property and destructured aliases (1035.4177ms)
+✔ a function named register cannot exempt injected style props (1027.0797ms)
+✔ a bridge callback parameter cannot impersonate its private factor binding (1059.8159ms)
+✔ opaque namespace component selection remains a strict binding failure (1041.9752ms)
+✔ opaque namespace factory cannot hide style arguments (1046.5085ms)
+✔ MUI re-export cannot hide raw spacing behind a first-party barrel (1121.2658ms)
+✔ destructuring assignments cannot hide canonical write targets (1036.4009ms)
+✔ destructuring assignments can update independent copied destinations (1047.3167ms)
+✔ object rest retains nested canonical references while copying the outer object (1040.0769ms)
+✔ rest scalar copies and replacement of container references stay mutable (1034.9698ms)
+✔ shallow object spread preserves canonical child references and last-writer order (1019.9541ms)
+✔ shallow spread with a later independent override stays mutable (1114.6032ms)
+✔ exported mutable aliases retain assignments from their declaring file (1040.9563ms)
+✔ exported independent mutable data does not acquire canonical provenance (1028.486ms)
+✔ literal computed keys retain canonical container and parameter provenance (1054.8583ms)
+✔ literal computed keys do not taint independent selected properties (1035.4626ms)
+✔ Object.assign shallow copies retain canonical nested reference provenance (1049.4648ms)
+✔ Object.assign later independent overrides and scalar copies stay mutable (1042.7304ms)
+✔ union and dynamic property selections retain possible canonical destinations (1035.7232ms)
+✔ finite union property selections exclude canonical siblings not in the key set (1048.5969ms)
+✔ union selection over Object.assign output retains canonical child provenance (1035.7516ms)
+✔ union selection over independent Object.assign output remains mutable (1010.6962ms)
+✔ Reflect.set call/apply checks the target argument rather than the assigned value (3032.6219ms)
+✔ aliased React createElement checks MUI and native style objects (1016.7829ms)
+✔ GlobalStyles.styles is checked and local createElement names stay local (2021.4927ms)
+✔ React JSX runtime factories cannot bypass MUI or native style checks (1022.2791ms)
+✔ React cloneElement checks the cloned MUI element and preserves native props (4022.9488ms)
+✔ Emotion css props and object factories are inspected with native CSS semantics (3068.5555ms)
+✔ Inline style elements in JSX, React factories, DOM and the HTML entry fail closed (8024.7031ms)
+✔ DOM CSSOM spacing writes use semantic roles and reject opaque style strings (2018.2775ms)
+✔ HTML parsing and runtime stylesheet mutation cannot bypass the imported CSS boundary (2049.2638ms)
+✔ spacing shorthand values and responsive breakpoints preserve token and unit provenance (10228.7562ms)
+✔ function return producers cannot hide canonical children behind spreads (1005.9828ms)
+✔ producer spreads keep later independent child overrides writable (1024.2046ms)
+ℹ tests 86
+ℹ suites 0
+ℹ pass 86
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103821.6023
+layout-check PASS: 94 source files, 0 finding(s), 1 exception(s) used
+
+> botsales-frontend@0.1.0 test:visual-tokens
+> node --test tests/visual-token-checker.test.mjs && node scripts/check-visual-tokens.mjs
+
+✔ visual checker accepts canonical theme roles, token references, geometry and semantic responsive props (549.3065ms)
+✔ visual checker rejects raw literals across sx, JSX system props and CSS declarations (364.0494ms)
+✔ visual checker follows local style aliases and callback themes, but fails raw nested values (365.3739ms)
+✔ visual checker requires canonical z-index references in TSX and CSS (689.8093ms)
+✔ visual checker reports unresolved spreads and malformed style sources as UNKNOWN or parse errors (336.8303ms)
+✔ visual checker includes newly added TSX files under the source root (345.6657ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3092.9165
+visual-token-check PASS: 93 source files, 0 finding(s)
+
+> botsales-frontend@0.1.0 test:ui-composition
+> node --test tests/ui-composition-checker.test.mjs tests/ui-composition-ancestry.test.mjs tests/ui-shared-api-contract.test.mjs && node scripts/check-ui-composition.mjs
+
+✔ P10/P15 catch alias and neutral-wrapper duplicate insets through fragments and conditionals (517.7967ms)
+✔ P20 resolves shared composition identities through a barrel and const component aliases (369.4926ms)
+✔ P11/P13 catch static element access roles on every MUI surface, including Paper (370.3973ms)
+✔ P12 checks React createElement and JSX-runtime element factories (353.3887ms)
+✔ P14 resolves bodyMode literal aliases and fails closed when ownership is unknown (1046.4101ms)
+✔ checks Panel ancestry when React elements are created natively (389.3203ms)
+✔ keeps independent nested surfaces and portaled dialogs as separate owners (734.6945ms)
+✔ accepts finite bodyMode branches and every mode in the public component contracts (1104.8641ms)
+✔ stops inherited gap ownership at Panels and independent bordered surfaces (668.003ms)
+✔ tracks gaps through fragments, conditions and ready QueryState, but not inside DOM wrappers (348.2223ms)
+✔ applies the same finite modes and wrapper boundaries to native React factories (720.2484ms)
+✔ recognizes native outlined Paper and nested Box surface inset boundaries (671.081ms)
+✔ fails closed when an unresolved custom wrapper obscures a semantic gap owner (332.0431ms)
+✔ rejects unsupported placement and rhythm values while accepting finite aliases and branches (678.1967ms)
+✔ rejects unsupported finite values through React element factories (666.5788ms)
+✔ accepts semantic composition, closed geometry and business-specific MUI primitives (6.2895ms)
+✔ rejects rebuilding each shared spacing owner at a consumer (1.9587ms)
+✔ follows aliases, local style variables, object spreads and namespace imports (0.8656ms)
+✔ rejects direct and spread spacing overrides on semantic components (0.562ms)
+✔ rejects spacing or opaque spreads hidden in geometry (0.264ms)
+✔ allows the canonical owner implementation and fails closed on malformed source (0.9612ms)
+✔ rejects duplicated parent boundary and duplicated Panel inset (0.6222ms)
+✔ checks default MUI imports and fails closed for opaque geometry (0.3848ms)
+✔ distinguishes content grids from flex flows when reporting the shared owner (0.3282ms)
+✔ rejects page spacing for paired fields and peer Panels without a section gap owner (1.9585ms)
+✔ related sibling gaps belong to ActionGroup comfortable density, not consumer Stack styles (0.5549ms)
+✔ density profiles are finite and new spacing paths retain the shared owner (1.2762ms)
+✔ Amount consumers declare wrapping outside DataTable columns and keep table money unbroken (67.4055ms)
+✔ the shared catalog covers every public React component and supporting Column type (43.612ms)
+✔ SPC-067 covers discovered public Shared APIs without a fixed export count (0.9319ms)
+✔ every public React API has a direct rendered contract test (1.8397ms)
+✔ catalog declaration lines and stated JSX counts match resolved source symbols (113.1688ms)
+✔ every shared React export has a resolved production consumer or an explicit zero-use lifecycle decision (69.4811ms)
+✔ required UI evidence and regression gates remain wired to root verify and the active parent workflow (1.8601ms)
+✔ composition prop allowlists match the TypeScript owners exactly (0.2277ms)
+✔ QueryState uses only the approved inline and section pending profiles (0.3124ms)
+✔ QueryState consumers reserve section loading for primary content and keep every other state inline by default (58.0005ms)
+✔ body modes, placement roles and geometry keys match the TypeScript contracts (1.1835ms)
+✔ Panel geometry and DataTable columns remain closed public contracts (4.9611ms)
+✔ shared component and composition props expose no arbitrary layout/style escape hatch (0.3057ms)
+✔ layout role types, runtime values, consumers and ownership documentation stay closed (3021.0571ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 41
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9431.5707
+ui-composition PASS: 92 source files, 0 finding(s)
+
+
+> botsales-frontend@0.1.0 test:evidence
+> node --test tests/ui-evidence-validator.test.mjs && node scripts/validate-ui-evidence.mjs evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json
+
+✔ accepts current fingerprints, honest open coverage, and explained N/A (5.8755ms)
+✔ rejects a stale source fingerprint (3.8229ms)
+✔ rejects a stale command log (3.5381ms)
+✔ rejects missing, absolute, and escaping source paths (2.7041ms)
+✔ rejects unrun, missing, duplicate, and nonzero command results marked PASS (3.2328ms)
+✔ rejects PASS when expected and observed results differ (3.3267ms)
+✔ rejects inconsistent coverage and N/A without a reason (3.2587ms)
+✔ rejects a baseline falsely dated after implementation started and detects changed baseline artifacts (6.6768ms)
+✔ COMPLETE cannot contain open coverage or failed commands (4.3299ms)
+✔ S19 must explicitly reconcile files, APIs, routes, rendered routes, slots, and states (5.5209ms)
+✔ rejects malformed top-level evidence instead of treating missing fields as success (2.4224ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103.1835
+ui-evidence PASS: S17; 28 command/log record(s), 23 coverage row(s), 284 current fingerprint(s); status=COMPLETE
