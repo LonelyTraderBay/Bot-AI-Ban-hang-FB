@@ -74,7 +74,7 @@ test.describe('route read states render under every role allowed by the canonica
             const browser = test.info().project.name;
             const readableErrorRoutes = routeSpecificErrorRoutes.filter(route => canRead(route, role));
             const readableEmptyRoutes = emptyStateRoutes.filter(route => canRead(route, role));
-            await page.goto(new URL('/s/shop-demo/notifications', demoUrl).toString());
+            await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
             await chooseRole(page, role);
             await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');
 

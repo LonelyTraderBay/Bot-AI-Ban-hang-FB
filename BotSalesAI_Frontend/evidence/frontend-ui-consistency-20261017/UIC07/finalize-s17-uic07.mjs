@@ -8,7 +8,9 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const frontendRoot = path.resolve(here, '../../..');
 const repositoryRoot = path.resolve(frontendRoot, '..');
 const evidencePath = path.join(frontendRoot, 'evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json');
-const verifyLogPath = path.join(here, 'npm-verify-after-correction-r2.log');
+const verifyLogName = process.env.UIC07_VERIFY_LOG || 'npm-verify-after-correction-r2.log';
+assert.equal(path.basename(verifyLogName), verifyLogName, 'UIC07_VERIFY_LOG must be a file name in this evidence directory.');
+const verifyLogPath = path.join(here, verifyLogName);
 const verifyExitPath = verifyLogPath + '.exit';
 const preverify = process.argv.includes('--preverify');
 const finalize = process.argv.includes('--finalize');
@@ -33,6 +35,7 @@ const sourceFiles = [
     'BotSalesAI_Frontend/tests/states/generate-route-state-roles.mjs',
     'BotSalesAI_Frontend/tests/states/route-empty-composition.spec.ts',
     'BotSalesAI_Frontend/tests/states/route-role-command-unknown-master-actions.spec.ts',
+    'BotSalesAI_Frontend/tests/states/route-role-state-composition.spec.ts',
 ];
 const digest = value => createHash('sha256').update(value).digest('hex');
 const raw = await readFile(evidencePath, 'utf8');

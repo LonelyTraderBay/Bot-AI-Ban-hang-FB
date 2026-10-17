@@ -649,7 +649,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
                 && new URL(candidate.url()).pathname.endsWith(`/goods-receipts/${receiptId}/post`));
             await confirm.getByRole('button', { name: 'Ghi nhận vào kho', exact: true }).click();
             await expectUnknownCommand(page, role, 'R47', 'postGoodsReceipt', response);
-            await expect(confirm).toBeVisible();
+            await expect(page.getByText('Phiếu đã được ghi nhận. Ghi sổ kho/công nợ không thể gửi lại từ trạng thái này.', { exact: true }), 'the unknown result is reconciled from the receipt state before the dialog closes').toBeVisible({ timeout: 15_000 });
+            await expect(confirm).toBeHidden();
         });
     }
 
