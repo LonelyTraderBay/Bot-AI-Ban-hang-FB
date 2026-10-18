@@ -1,6 +1,6 @@
 # UIC11 — Đối soát tài liệu, inventory và freshness FE
 
-**Trạng thái:** LOCAL_VERIFIED_WITH_HISTORICAL_BASELINE_LIMITS; UIC11 được giao thành một commit riêng, push xếp sau UIC07–UIC10. Phạm vi là đối soát; không cập nhật ledger tiến độ.
+**Trạng thái:** LOCAL_RECONCILED_WITH_HISTORICAL_BASELINE_LIMITS; phần ghi nhận ban đầu bên dưới là snapshot trước rebase và được mục “Đối soát cuối trên SHA UIC10 đã rebase” ở cuối báo cáo thay thế khi số liệu/SHA mâu thuẫn. Phạm vi là đối soát; không cập nhật ledger tiến độ.
 
 ## Nguồn và phương pháp
 
@@ -30,13 +30,13 @@ Full [npm run verify](npm-verify-s17-refreshed-corrected-sequence-r1.log) trên 
 
 ## Kiểm tra liên kết và hash tài liệu
 
-Doc-link validator kiểm 21 tài liệu README/kit/Frontend/plan/context/evidence/UIC01–UIC11; raw result [doc-link-validation.json](doc-link-validation.json) ghi 1.578 local links, 80 anchors và 0 broken links. Lượt đầu phát hiện 2 artifact audit chưa tạo; sau khi tạo, kiểm tra cuối exit 0. Hash manifest [final-document-hashes.json](final-document-hashes.json) fingerprint **84 file** tài liệu, generated outputs, S17 và evidence UIC11; bỏ manifest tự thân và log hash-manifest để tránh tham chiếu vòng. Lượt --verify cuối exit 0, kiểm 84 file và 0 lỗi; log tại [hash-manifest-verify-final.log](hash-manifest-verify-final.log).
+Snapshot doc-link/hash đầu tiên trước khi thêm UIC12–UIC13 và rebase đã được thay bằng số liệu cuối ở phần “Đối soát cuối trên SHA UIC10 đã rebase”. Kết quả validator chi tiết nằm trong [doc-link-validation.json](doc-link-validation.json); manifest hiện hành ở [final-document-hashes.json](final-document-hashes.json).
 
 ## Source proof, Git và giới hạn nghiệm thu
 
 UIC10 source proof ghi built-demo suite **6/6**, **244** route opens và không finding; discovery **1.082 tests/79 files** là phép đếm, không phải full-suite run. Full E2E trên exact source SHA đang chờ GitHub Actions; lần Firefox full suite local trước đây dừng INCOMPLETE do RAM. Xem [UIC10 report](../UIC10/REPORT.md).
 
-Remote branch codex/ui-consistency-plan-20261016 đang ở UIC07 corrective SHA 8f4ada345e03af18e607ee87b8044dce418df8db. Push run [#39071935869](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39071935869) và PR run [#39071938654](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39071938654) chưa terminal ở lần đọc hiện hành. UIC08, UIC09, UIC10 đã commit riêng nhưng chưa push theo dependency. UIC11 commit/push sau khi đạt link/hash validation và đúng thứ tự delivery.
+Remote branch, push/PR runs và trạng thái từng commit được chốt trong [receipt UIC12](../UIC12/REPORT.md); các SHA/run được ghi ở snapshot cũ phía trên không còn là trạng thái remote hiện hành.
 
 Backend/provider/server authorization/persistence, staging/production, screen-reader/speech/human review, thiết bị thật và owner/user acceptance chưa được chứng minh. Báo cáo này không đóng các điều kiện nghiệm thu đó.
 
@@ -45,6 +45,14 @@ Backend/provider/server authorization/persistence, staging/production, screen-re
 - [Kế hoạch rollout UIC00–UIC13](../../../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status)
 - [UIC10 final source proof](../UIC10/REPORT.md)
 - [Bằng chứng inventory nguồn UIC01](../UIC01/REPORT.md)
+
+## Đối soát cuối trên SHA UIC10 đã rebase — 18/10/2026
+
+Đã chạy lại reconciliation trên immutable Git trees với baseline `4a502be79a40cd7dc02c1eaa80445665a226b55f` và final source UIC10 `3e49d9424075b1bd28e7e26a16cb702505ffedf9` (không tính các thay đổi working-tree UIC11). Inventory UIC01 gồm **329** entry: **282** không đổi, **47** đổi, **0** xóa. Diff có **836** path: **783 thêm**, **53 sửa**; cả 836 path đều có disposition và commit owner, không thiếu treatment. Tất cả final files được fingerprint.
+
+Reconciliation exit `1` chỉ vì **4 hash lịch sử** trong inventory UIC01 không khớp blob của baseline Git: `BotSalesAI_Frontend/STACK_LOCK.md`, `BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md`, `BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md`, `BotSalesAI_Frontend/premium-audit.json`. Đây là mismatch tồn tại từ snapshot inventory, không bị sửa ngược hoặc che. [JSON đầy đủ](final-inventory-reconciliation.json), [log chạy đúng từ workspace Frontend](final-inventory-reconciliation-after-uic10-rebase.log) và [exit](final-inventory-reconciliation-after-uic10-rebase.log.exit). Lượt gọi nhầm từ repo root được giữ riêng là [log lỗi thư mục làm việc](uic11-reconciliation-wrong-working-directory.log), không tính làm bằng chứng PASS.
+
+Hash manifest dùng `sourceHead=3e49d9424075b1bd28e7e26a16cb702505ffedf9`, là SHA UIC10 sau rebase; không còn dùng baseline cũ `bc00572d...`. Validator liên kết đã mở rộng tới UIC12–UIC13 để link/tài liệu handoff cũng được kiểm; các báo cáo downstream không bị đưa vào hash manifest UIC11 để tránh vòng freshness. Kết quả link và hash cuối hiện được ghi ngay dưới đây; receipt CI sẽ tiếp tục cập nhật trong UIC12/UIC13.
 ## Kiểm chứng sau khi ghép corrective UIC07–UIC11 — 18/10/2026
 
 Trên chuỗi commit đã rebase theo dependency, chạy lại `npm run verify` với Node `v24.19.0`, npm `11.17.0` và PATH Windows rút gọn cho tiến trình con. Lượt hợp lệ exit `0`: generate 15 output/346 schema/245 operation/61 route; source/session 15/15; boundary 725 import và 10/10 fixture; domain 117/117; Vitest 26 file/252 test; lint, typecheck, production build; layout 86/86 trên 94 file/0 finding; visual token 6/6 trên 93 file/0 finding; composition 41/41 trên 92 file/0 finding. Owner finalizer làm mới FE022 theo allowlist UIC07; post-finalize validator 11/11, S17 COMPLETE với 43 command/log, 38 coverage và 286 fingerprint.
@@ -57,7 +65,11 @@ Trên chuỗi commit đã rebase theo dependency, chạy lại `npm run verify` 
 
 Đối soát immutable tree ghi `baseline=4a502be79a40cd7dc02c1eaa80445665a226b55f`, `finalHead=cb2df8b500b1c375ca9de8086ad390cd60b8311f`. Inventory UIC01 gồm 329 entry: 280 unchanged, 49 changed, 0 removed. Git diff từ baseline có 931 path (844 added, 87 modified); cả 931 có disposition và commit owner, toàn bộ final file được fingerprint. Reconciliation exit `1` duy nhất vì 4 hash mismatch lịch sử giữa UIC01 inventory với Git blob của baseline; validator không che mismatch này.
 
-Doc-link validator kiểm 21 tài liệu, 1.604 local links, 80 anchors, 0 broken. Hash manifest được chuyển sang source baseline UIC10 đã rebase `bc00572d600bc43872bedea0d4f8922ec5bb98b8`, fingerprint 102 file; lượt `--verify` kiểm 102/102, 0 lỗi. Owner helper hash đã được sửa để kiểm mọi evidence path trong khu vực evidence, đồng thời chỉ giữ exact allowlist cho các file ngoài evidence.
+Doc-link validator kiểm **23 tài liệu**, **1.630 local links**, **81 anchors**, **0 broken**; [log](doc-link-validation-final-uic12-uic13-r3.log), [exit](doc-link-validation-final-uic12-uic13-r3.log.exit). Hash manifest dùng source baseline UIC10 đã rebase `3e49d9424075b1bd28e7e26a16cb702505ffedf9`, fingerprint **142 file**; `--verify` kiểm **142/142**, **0 lỗi**. Manifest loại chính nó, log lệnh hash và báo cáo downstream UIC12/UIC13 để tránh vòng freshness; [generation log](hash-manifest-final-after-uic10-rebase.log), [verify log](hash-manifest-verify-final-after-uic10-rebase.log).
+
+Full `npm run verify` được chạy lại sau reconciliation và cập nhật kế hoạch; exit `0`: generate 15/346/245/61; source 86 file/271 operation calls/61 route/0 issue; boundary 725 import và 10/10 fixture; domain 117/117; Vitest 252/252; lint/typecheck/production build; layout 86/86 trên 94 file/0 finding; visual token 6/6 trên 93 file/0 finding; composition 41/41 trên 92 file/0 finding; evidence validator 11/11. [Log](npm-verify-final-uic11-reconciliation-20261018.log), [exit](npm-verify-final-uic11-reconciliation-20261018.log.exit). S17 còn `COMPLETE`, 43 check/log, 38 coverage, 286 fingerprint; direct post-check cũng exit `0`: [log](test-evidence-after-uic11-corrected-reconciliation.log), [exit](test-evidence-after-uic11-corrected-reconciliation.log.exit).
+
+Trên cùng application source `9cbe7094b23e6505b634eff0b30846f7d26a7e38`, built-demo đạt **6/6**, kiểm 61 route trên 390px và 1440px ở Chromium 155/Firefox 155: 244 route opens, 0 issue, 0 pageerror, 0 API write; artifact demo 38 file, SHA-256 `86bdc6411bf9fc2c73b54ffaa16c28b0e17dd089b2811de65a8ae6f12bf590da`. [Log](../UIC10/built-demo-uic08-overlay-corrected-sequence-final-20261018.log), [exit](../UIC10/built-demo-uic08-overlay-corrected-sequence-final-20261018.log.exit).
 
 - [Inventory JSON](final-inventory-reconciliation.json), [log reconciliation](final-inventory-reconciliation-after-uic07-rebase.log), [exit](final-inventory-reconciliation-after-uic07-rebase.log.exit).
 - [Doc-link JSON](doc-link-validation.json), [log](doc-link-validation-after-uic07-rebase.log), [exit](doc-link-validation-after-uic07-rebase.log.exit).

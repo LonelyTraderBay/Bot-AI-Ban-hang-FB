@@ -16,7 +16,7 @@ const documents = [
     'BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md',
     'BotSalesAI_Frontend/evidence/REPORT.md',
     'BotSalesAI_Frontend/apps/web/src/shared/ui/README.md',
-    ...Array.from({ length: 11 }, (_, index) => `BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC${String(index + 1).padStart(2, '0')}/REPORT.md`),
+    ...Array.from({ length: 13 }, (_, index) => `BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC${String(index + 1).padStart(2, '0')}/REPORT.md`),
 ];
 
 function anchorSet(markdown) {

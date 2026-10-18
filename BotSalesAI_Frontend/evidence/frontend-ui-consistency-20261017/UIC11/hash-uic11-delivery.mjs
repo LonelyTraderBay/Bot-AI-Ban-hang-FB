@@ -8,11 +8,15 @@ const repoRoot = path.resolve(frontendRoot, '..');
 const evidenceRoot = path.resolve(frontendRoot, 'evidence/frontend-ui-consistency-20261017/UIC11');
 const manifestPath = path.join(evidenceRoot, 'final-document-hashes.json');
 const manifestRelative = path.relative(repoRoot, manifestPath).replaceAll(path.sep, '/');
-const sourceHead = 'bc00572d600bc43872bedea0d4f8922ec5bb98b8';
+const sourceHead = '3e49d9424075b1bd28e7e26a16cb702505ffedf9';
 const git = (...args) => execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }).trim();
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const splitPaths = output => output.split(/\r?\n/).filter(Boolean).map(file => file.replaceAll('\\', '/'));
 const evidencePrefix = 'BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC11/';
+const downstreamDeliveryPrefixes = [
+    'BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC12/',
+    'BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC13/',
+];
 const hashReceiptPattern = /^BotSalesAI_Frontend\/evidence\/frontend-ui-consistency-20261017\/UIC11\/hash-manifest-.*\.log(?:\.exit)?$/;
 
 function expectedTrackedPaths() {
@@ -36,9 +40,11 @@ function currentWorkItems() {
         throw new Error('Tracked paths differ from UIC11 scope relative to source baseline. Observed: ' + trackedOutsideEvidence.join(', '));
     }
     const untrackedAll = splitPaths(git('ls-files', '--others', '--exclude-standard', '-z').replaceAll('\0', '\n')).sort();
-    const outside = untrackedAll.filter(file => !file.startsWith(evidencePrefix));
+    const outside = untrackedAll.filter(file =>
+        !file.startsWith(evidencePrefix) && !downstreamDeliveryPrefixes.some(prefix => file.startsWith(prefix)));
     if (outside.length) throw new Error('Unexpected untracked path outside UIC11 evidence: ' + outside.join(', '));
     return [...new Set([...trackedAll, ...untrackedAll, manifestRelative])]
+        .filter(file => !downstreamDeliveryPrefixes.some(prefix => file.startsWith(prefix)))
         .filter(file => !hashReceiptPattern.test(file))
         .sort();
 }
@@ -73,7 +79,7 @@ if (verifyOnly) {
         capturedAt: new Date().toISOString(),
         sourceHead,
         capturedFromHead: currentHead,
-        scope: 'UIC11 changed documents, S17 owner evidence, owner-generated FE reports, and evidence files relative to immutable final-source baseline; manifest excludes itself and hash-manifest command receipts.',
+        scope: 'UIC11 changed documents, S17 owner evidence, owner-generated FE reports, and UIC11 evidence relative to immutable final-source baseline; manifest excludes itself, hash-manifest command receipts, and downstream UIC12/UIC13 delivery reports to avoid circular freshness.',
         fileCount: files.length,
         files,
     };
