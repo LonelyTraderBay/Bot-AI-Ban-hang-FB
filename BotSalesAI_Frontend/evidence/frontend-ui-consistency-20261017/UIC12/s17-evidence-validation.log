@@ -1,0 +1,29 @@
+capturedAt=2026-10-18T10:25:02.055Z
+HEAD=6679a05064cfa76dc3c1027fb57556732a4bb095
+packageCommandAttempt=npm.cmd run test:evidence failed because npm child could not resolve node.exe; equivalent package commands rerun with pinned Node.js v24.19.0
+
+[unit test command] node --test tests/ui-evidence-validator.test.mjs
+exit=0
+✔ accepts current fingerprints, honest open coverage, and explained N/A (6.4984ms)
+✔ rejects a stale source fingerprint (3.673ms)
+✔ rejects a stale command log (3.5287ms)
+✔ rejects missing, absolute, and escaping source paths (2.8504ms)
+✔ rejects unrun, missing, duplicate, and nonzero command results marked PASS (3.2448ms)
+✔ rejects PASS when expected and observed results differ (3.368ms)
+✔ rejects inconsistent coverage and N/A without a reason (3.6019ms)
+✔ rejects a baseline falsely dated after implementation started and detects changed baseline artifacts (6.6565ms)
+✔ COMPLETE cannot contain open coverage or failed commands (4.4584ms)
+✔ S19 must explicitly reconcile files, APIs, routes, rendered routes, slots, and states (5.864ms)
+✔ rejects malformed top-level evidence instead of treating missing fields as success (2.2345ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 103.756
+
+[validator command] node scripts/validate-ui-evidence.mjs evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json
+exit=0
+ui-evidence PASS: S17; 43 command/log record(s), 38 coverage row(s), 286 current fingerprint(s); status=COMPLETE
