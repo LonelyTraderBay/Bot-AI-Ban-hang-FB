@@ -20,6 +20,7 @@ const sourceFiles = [
     'BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx',
     'BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx',
     'BotSalesAI_Frontend/tests/ui012-keyboard.spec.ts',
+    'BotSalesAI_Frontend/tests/states/route-role-command-unknown-master-actions.spec.ts',
 ];
 const digest = value => createHash('sha256').update(value).digest('hex');
 const raw = await readFile(evidencePath, 'utf8');

@@ -417,6 +417,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         expect((await publishResponse).status()).toBe(202);
         await expect.poll(async () => page.evaluate(async () => (await (await fetch('/api/v2/shops/shop-demo/bot/config')).json()).data.status)).toBe('active');
         await navigateInApp(page, '/s/shop-demo/overview');
+        // MUI retains the publish dialog through its exit transition; let it leave before the next pointer action.
+        await expect(publishDialog).toHaveCount(0);
         await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
         await page.getByRole('button', { name: 'Tạm dừng bot', exact: true }).click();
         const dialog = page.getByRole('dialog', { name: 'Tạm dừng trợ lý bán hàng' });
