@@ -1,0 +1,34 @@
+2026-10-18T18:35:46.9617482Z   1) [firefox] › tests/fe020.spec.ts:178:1 › FE020.F05 purchase delegation is bounded, saved paused, and requires a separate activation decision
+2026-10-18T18:35:46.9618576Z
+2026-10-18T18:35:46.9618973Z     Error: expect(locator).toContainText(expected) failed
+2026-10-18T18:35:46.9619488Z
+2026-10-18T18:35:46.9620531Z     Locator: getByRole('dialog', { name: 'Tạo ủy quyền mua hàng' })
+2026-10-18T18:35:46.9621676Z     Expected substring: "Ủy quyền tạo ở trạng thái tạm dừng"
+2026-10-18T18:35:46.9622136Z     Timeout: 5000ms
+2026-10-18T18:35:46.9622405Z     Error: element(s) not found
+2026-10-18T18:35:46.9622588Z
+2026-10-18T18:35:46.9622685Z     Call log:
+2026-10-18T18:35:46.9623307Z       - Expect "toContainText" getByRole('dialog', { name: 'Tạo ủy quyền mua hàng' }) with timeout 5000ms
+2026-10-18T18:35:46.9624036Z       - waiting for getByRole('dialog', { name: 'Tạo ủy quyền mua hàng' })
+2026-10-18T18:35:46.9624496Z
+2026-10-18T18:35:46.9624507Z
+2026-10-18T18:35:46.9625549Z       187 |     await page.getByRole('button', { name: 'Tạo ủy quyền có giới hạn', exact: true }).click();
+2026-10-18T18:35:46.9626580Z       188 |     const dialog = page.getByRole('dialog', { name: 'Tạo ủy quyền mua hàng' });
+2026-10-18T18:35:46.9627310Z     > 189 |     await expect(dialog).toContainText('Ủy quyền tạo ở trạng thái tạm dừng');
+2026-10-18T18:35:46.9628013Z           |                          ^
+2026-10-18T18:35:46.9628563Z       190 |     await chooseOption(page, 'Vai trò mua hàng chịu trách nhiệm', /agent-2/);
+2026-10-18T18:35:46.9641023Z       191 |     await chooseOption(page, 'Nhà cung cấp đã duyệt', 'Xưởng hàng mẫu');
+2026-10-18T18:35:46.9641732Z       192 |     await chooseOption(page, 'Kho đang hoạt động', /warehouse-01|MAIN/);
+2026-10-18T18:35:46.9642467Z         at /home/runner/work/Bot-AI-Ban-hang-FB/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/fe020.spec.ts:189:26
+2026-10-18T18:35:46.9642917Z
+2026-10-18T18:35:46.9643630Z     Error Context: test-results/playwright-3828-c6e65139-55a1-4ee6-ae75-924c9880cdf1/fe020-FE020-F05-purchase-d-bd3bb-eparate-activation-decision-firefox/error-context.md
+2026-10-18T18:35:46.9644355Z
+2026-10-18T18:35:46.9646476Z     Error Context: test-results/playwright-3828-c6e65139-55a1-4ee6-ae75-924c9880cdf1/fe020-FE020-F05-purchase-d-bd3bb-eparate-activation-decision-firefox/error-context.md
+2026-10-18T18:35:46.9647357Z
+2026-10-18T18:35:46.9647903Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-10-18T18:35:46.9649081Z     test-results/playwright-3828-c6e65139-55a1-4ee6-ae75-924c9880cdf1/fe020-FE020-F05-purchase-d-bd3bb-eparate-activation-decision-firefox/trace.zip
+2026-10-18T18:35:46.9649817Z     Usage:
+2026-10-18T18:35:46.9649932Z
+2026-10-18T18:35:46.9650664Z         npx playwright show-trace test-results/playwright-3828-c6e65139-55a1-4ee6-ae75-924c9880cdf1/fe020-FE020-F05-purchase-d-bd3bb-eparate-activation-decision-firefox/trace.zip
+2026-10-18T18:41:40.6621966Z   196 passed (22.4m)
+2026-10-18T18:41:40.6959671Z ##[error]Process completed with exit code 1.

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime. UIC05 canonical z-index token-to-runtime integration covers generator output, all MUI theme slots, shell consumers, checker enforcement and live portal layers. UIC07 FE022 hosted Firefox exposed a row-versus-card locator mismatch; the test now follows the rendered link and asserts the reviewed knowledgeDraftId in its href, passing on local Chromium and Firefox. FE022.VS01 inventory rendering waits for the observed MSW GET response and confirms AO-002 in both payload and accessible row; repeated Chromium/Firefox evidence is recorded separately. UIC09 removed the stale Chrome UA override and locally verified browser binary/user-agent major identity on Chromium 155.0.8059.40 and Firefox 155.0. FE022.VS04 waits for the knowledge collection response before DOM assertions, verifies the reviewed draft ID in its payload, and registers the detail listener before clicking; a 6000ms delayed-list negative reproduction and repeated Chromium/Firefox proof are retained under UIC07/VS04-response-ready-20261019.",
-  "recordedAt": "2026-10-18T18:08:06.651Z",
+  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime. UIC05 canonical z-index token-to-runtime integration covers generator output, all MUI theme slots, shell consumers, checker enforcement and live portal layers. UIC07 FE022 hosted Firefox exposed a row-versus-card locator mismatch; the test now follows the rendered link and asserts the reviewed knowledgeDraftId in its href, passing on local Chromium and Firefox. FE022.VS01 inventory rendering waits for the observed MSW GET response and confirms AO-002 in both payload and accessible row; repeated Chromium/Firefox evidence is recorded separately. UIC09 removed the stale Chrome UA override and locally verified browser binary/user-agent major identity on Chromium 155.0.8059.40 and Firefox 155.0. FE022.VS04 waits for the knowledge collection response before DOM assertions, verifies the reviewed draft ID in its payload, and registers the detail listener before clicking; a 6000ms delayed-list negative reproduction and repeated Chromium/Firefox proof are retained under UIC07/VS04-response-ready-20261019. FE020.F05 waits for the approvals limit=20 response and all rendered table rows before clicking the delegation button below the loading table; CI trace and repeated Chromium/Firefox evidence are retained under UIC07/FE020-F05-readiness-20261019.",
+  "recordedAt": "2026-10-18T18:51:01.278Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -556,6 +556,42 @@
         "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/VS04-response-ready-20261019/verify.log",
         "sha256": "96bd4b9ddd6f23476c7c102a1ab5b288b16f87eb8f882caf4d736a4b314b425a"
       }
+    },
+    {
+      "id": "uic07-fe020-f05-readiness-repeat-20261019",
+      "command": "node node_modules/@playwright/test/cli.js test tests/fe020.spec.ts --project=chromium --project=firefox --grep FE020.F05 --repeat-each=3 --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE020.F05 passed 6/6 local repetitions, Chromium 3/3 and Firefox 3/3; the approvals response and rendered rows precede the create action, and bounded paused-only delegation assertions remain.",
+      "observed": "FE020.F05 passed 6/6 local repetitions, Chromium 3/3 and Firefox 3/3; the approvals response and rendered rows precede the create action, and bounded paused-only delegation assertions remain.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE020-F05-readiness-20261019/targeted.log",
+        "sha256": "d2b1727dd763595b7cb6678d1815a83d2a6b7fe671f77c179f503596285f601d"
+      }
+    },
+    {
+      "id": "uic07-fe020-suite-20261019",
+      "command": "node node_modules/@playwright/test/cli.js test tests/fe020.spec.ts --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "All 14 FE020/FE027 cases in fe020.spec.ts passed on local Chromium/Firefox with the current source.",
+      "observed": "All 14 FE020/FE027 cases in fe020.spec.ts passed on local Chromium/Firefox with the current source.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE020-F05-readiness-20261019/suite.log",
+        "sha256": "19d13fc1b4b1009a13f0c53ae7a72282a86a815d1dd718a3824fff526d264aba"
+      }
+    },
+    {
+      "id": "uic07-fe020-f05-verify-20261019",
+      "command": "npm.cmd run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Full frontend verify exit 0, including generation, source/boundaries, lint/typecheck, domain, 252 Vitest tests, production build, layout, visual-token, composition and S17 evidence validation.",
+      "observed": "Full frontend verify exit 0, including generation, source/boundaries, lint/typecheck, domain, 252 Vitest tests, production build, layout, visual-token, composition and S17 evidence validation.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE020-F05-readiness-20261019/verify.log",
+        "sha256": "5f3c54c55a1d7460b2ef98e1a750d0fd40bbce030885e0feb06dcac47bf1632b"
+      }
     }
   ],
   "coverage": [
@@ -845,6 +881,27 @@
       "observed": 1,
       "missing": 0,
       "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe020-f05-readiness-repeat-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe020-suite-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe020-f05-verify-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
     }
   ],
   "baseline": {
@@ -1035,7 +1092,7 @@
     "BotSalesAI_Frontend/tests/fe018.spec.ts": "fe4bfa1e6982049e6088fe857ac4a331a6d1538ebb1fdc20ab667b2b8d7c6936",
     "BotSalesAI_Frontend/tests/fe019.spec.ts": "7498e770cf25e2b934a2e77b65c610543943b4b22acc1fcb41bcb24d9a6ba1fa",
     "BotSalesAI_Frontend/tests/fe020-source-map.test.mjs": "388f9c32dc92bf6fbb8070606ad0b93f034e2426f6fcb44ac805e87bae7cb1f0",
-    "BotSalesAI_Frontend/tests/fe020.spec.ts": "cf3c5e542fd3bfbb44ae974ba0947cdca3db2d9cdffbfee2de14169d9bdf8b0b",
+    "BotSalesAI_Frontend/tests/fe020.spec.ts": "4c92beb9a4deee84baee5b11a60bf6179b942608282f70a1b38d4840851beab3",
     "BotSalesAI_Frontend/tests/fe021.spec.ts": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7",
     "BotSalesAI_Frontend/tests/fixtures/finance-management-network.mjs": "a3b1594efbaa86164b6537a5860af89a07e591b8c959f984fc6fb65485a5463b",
     "BotSalesAI_Frontend/tests/fixtures/master-resource-network.mjs": "912277e26b0f268506b7abc01773d15a354be98659314c1fa3cc3c1ae7e6879c",
