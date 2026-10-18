@@ -253,16 +253,41 @@ test('FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback
     await review.getByRole('textbox', { name: 'Lý do' }).fill('Chấp nhận trong kịch bản frontend mô phỏng.');
     const reviewResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/feedback/${feedback.data.id}/review`));
     await review.getByRole('button', { name: 'Lưu kết quả' }).click();
-    const reviewed = (await (await reviewResponse).json()).data;
+    const reviewResult = await reviewResponse;
+    expect(reviewResult.status()).toBe(200);
+    const reviewed = (await reviewResult.json()).data;
     expect(reviewed).toMatchObject({ id: feedback.data.id, status: 'approved', knowledgeDraftId: expect.any(String) });
+    await expect(review).toBeHidden();
 
+    // Exercise collection readiness beyond the default 5-second DOM assertion window.
+    await page.evaluate(() => {
+        const originalFetch = window.fetch.bind(window);
+        window.fetch = async (input, init) => {
+            const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
+            const method = init?.method || (input instanceof Request ? input.method : 'GET');
+            if (method === 'GET' && url.pathname === '/api/v2/shops/shop-demo/knowledge') {
+                await new Promise(resolve => window.setTimeout(resolve, 6000));
+            }
+            return originalFetch(input, init);
+        };
+    });
+    const knowledgeResponse = page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/knowledge');
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Kiến thức cửa hàng' }).click();
+    const knowledgeResult = await knowledgeResponse;
+    expect(knowledgeResult.status()).toBe(200);
+    const knowledge = await knowledgeResult.json() as { data: Array<{ id: string; title: string }> };
+    expect(knowledge.data).toContainEqual(expect.objectContaining({ id: reviewed.knowledgeDraftId, title: 'Đề xuất từ phản hồi' }));
+    await expect(page).toHaveURL(new URL('/s/shop-demo/knowledge', demoUrl).toString());
+    await expect(page.getByRole('heading', { name: 'Kiến thức cửa hàng', exact: true })).toBeVisible();
     const draftLink = page.getByRole('link', { name: 'Đề xuất từ phản hồi', exact: true });
     await expect(draftLink).toBeVisible();
     await expect(draftLink).toHaveAttribute('href', `/s/shop-demo/knowledge/${reviewed.knowledgeDraftId}`);
-    await draftLink.click();
     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/knowledge/${reviewed.knowledgeDraftId}`));
-    const detail = (await (await detailResponse).json()).data;
+    await draftLink.click();
+    const detailResult = await detailResponse;
+    expect(detailResult.status()).toBe(200);
+    const detail = (await detailResult.json()).data;
     expect(detail).toMatchObject({ id: reviewed.knowledgeDraftId, status: 'draft', sourceKind: 'feedback' });
     await expect(page.getByText('Đã xác minh chính sách đổi hàng trong dữ liệu mẫu.', { exact: true })).toBeVisible();
 

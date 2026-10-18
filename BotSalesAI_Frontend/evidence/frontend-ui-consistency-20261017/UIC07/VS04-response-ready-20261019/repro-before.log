@@ -1,0 +1,46 @@
+
+Running 1 test using 1 worker
+
+
+
+(node:52596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] [firefox] › tests\vertical-slices\fe022-flows.spec.ts:237:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+  1) [firefox] › tests\vertical-slices\fe022-flows.spec.ts:237:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('link', { name: 'Đề xuất từ phản hồi', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('link', { name: 'Đề xuất từ phản hồi', exact: true }) with timeout 5000ms
+      - waiting for getByRole('link', { name: 'Đề xuất từ phản hồi', exact: true })
+
+
+      271 |     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Kiến thức cửa hàng' }).click();
+      272 |     const draftLink = page.getByRole('link', { name: 'Đề xuất từ phản hồi', exact: true });
+    > 273 |     await expect(draftLink).toBeVisible();
+          |                             ^
+      274 |     await expect(draftLink).toHaveAttribute('href', `/s/shop-demo/knowledge/${reviewed.knowledgeDraftId}`);
+      275 |     await draftLink.click();
+      276 |     const detailResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/knowledge/${reviewed.knowledgeDraftId}`));
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:273:29
+
+    Error Context: test-results\playwright-76544-77f30156-0513-4b1e-94ef-76ddf1930df6\vertical-slices-fe022-flow-444d4-ack-and-revision-source-IDs-firefox\error-context.md
+
+    Error Context: test-results\playwright-76544-77f30156-0513-4b1e-94ef-76ddf1930df6\vertical-slices-fe022-flow-444d4-ack-and-revision-source-IDs-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-76544-77f30156-0513-4b1e-94ef-76ddf1930df6\vertical-slices-fe022-flow-444d4-ack-and-revision-source-IDs-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-76544-77f30156-0513-4b1e-94ef-76ddf1930df6\vertical-slices-fe022-flow-444d4-ack-and-revision-source-IDs-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [firefox] › tests\vertical-slices\fe022-flows.spec.ts:237:1 › FE022.VS04 inbox → knowledge draft → bot evaluation preserves feedback and revision source IDs
