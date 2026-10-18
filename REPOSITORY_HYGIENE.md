@@ -41,6 +41,14 @@ git status --porcelain=v1 --untracked-files=all
 
 Workflow `.github/workflows/repository-hygiene.yml` chạy test và kiểm checkout trên Ubuntu/Windows, chỉ có quyền `contents: read`, action được ghim bằng SHA. Cấu hình required checks/branch protection được quản lý riêng; workflow tồn tại hoặc chạy thành công không tự chứng minh nhánh được bảo vệ.
 
+Evidence lịch sử có đường dẫn dài. Runner Windows bật `core.longpaths` trước checkout; cấu hình global này chỉ tồn tại trên runner dùng cho job. Khi clone mới trên Windows, ghi cấu hình vào repository mới ngay từ lệnh clone:
+
+```bash
+git clone -c core.longpaths=true https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB.git
+```
+
+Với checkout đã tồn tại, `git config --local core.longpaths true` áp dụng cho riêng repository đó.
+
 ## Xử lý checkout đã tích tụ thay đổi
 
 1. Ghi HEAD, upstream, index và danh sách staged/unstaged/untracked; đối chiếu nội dung với upstream và lịch sử. Không lấy phiên bản cũ ghi đè lên các bản sửa mới hơn.
@@ -82,3 +90,7 @@ Node `24.19.0`, npm `11.17.0`, Windows; source ứng dụng giữ đúng UIC13, 
 | Quét nội dung có phạm vi | 15.720 file văn bản tracked; 0 mẫu header private key, token GitHub hoặc AWS access-key ID; 0 merge marker ngoài evidence/reference lịch sử |
 
 Lượt verify đầu gặp giới hạn PATH của terminal, trước khi chạy các gate. Lượt tiếp theo dùng PATH giới hạn cho riêng process và hoàn tất exit 0; không đổi PATH máy hay cấu hình ứng dụng. Ba JSON báo cáo tự sinh của lượt verify được giữ cùng log ngoài repository rồi đưa bản tracked về đúng byte UIC13, tránh commit thay đổi timestamp. Kết quả trên không phải một lượt full browser E2E mới; workflow Frontend trên GitHub tiếp tục kiểm browser ở SHA được push.
+
+Workflow vệ sinh đầu tiên tại `bda97f21` đạt Ubuntu nhưng Windows lỗi `Filename too long` trong checkout, chưa chạy test. Log lỗi được giữ; sửa bootstrap Windows bằng `core.longpaths=true` trước checkout, giữ nguyên coverage và evidence lịch sử. Kết quả hosted của bản sửa phải được đối chiếu trên SHA mới.
+
+Fixture Windows dùng đường dẫn tuyệt đối 352–353 ký tự tái hiện được lỗi: `core.longpaths=false` làm clone/checkout exit 128; bật `true` thì exit 0 và hash file khớp. Fixture dùng `* -text` như repository để kiểm byte độc lập với cấu hình xuống dòng của máy.
