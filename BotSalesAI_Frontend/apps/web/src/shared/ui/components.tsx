@@ -11,6 +11,7 @@ import ContentCopyRounded from '@mui/icons-material/ContentCopyRounded';
 import { operations } from '@botsales/contracts';
 import type { Page, Money } from '@botsales/contracts';
 import type { QueryOperationId } from '../api/client';
+import { currentSearchParams } from '../model/filters';
 import { colors, tokens } from '@botsales/tokens';
 import { layoutSx } from './layout';
 import { ApiError, UnknownResultError, errorMessage } from '../api/errors';
@@ -196,6 +197,8 @@ export function ErrorNotice({ error, fieldLabels }: {
     }, [error, validationFields]);
     if (!error)
         return null;
+    if (error instanceof ApiError && ['CAPABILITY_UNAVAILABLE', 'BUDGET_EXCEEDED', 'TOOL_NOT_ALLOWED'].includes(error.code))
+        return <CapabilityUnavailable>{error.message}</CapabilityUnavailable>;
     const status = error instanceof ApiError ? error.status : 0;
     const versionConflict = status === 412 || status === 428 || (status === 409 && error instanceof ApiError && ['STALE_VERSION', 'VERSION_CONFLICT', 'VERSION_MISMATCH'].includes(error.code));
     const title = error instanceof UnknownResultError ? t('state.unknownTitle') : status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : versionConflict ? (status === 428 ? t('state.versionRequiredTitle') : t('state.conflictTitle')) : status === 422 ? t('state.validationTitle') : t('state.requestErrorTitle');
@@ -215,11 +218,13 @@ export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filt
     cursorParam?: string;
 }) {
     const [params, setParams] = useSearchParams();
-    const [draft, setDraft] = useState(params.get('q') || '');
+    const location = useLocation();
+    const query = params.get('q') || '';
+    const [draft, setDraft] = useState(query);
     const inputRef = useRef<HTMLInputElement>(null);
-    useEffect(() => { setDraft(params.get('q') || ''); }, [params]);
+    useEffect(() => { setDraft(query); }, [query]);
     const updateSearch = (value: string) => {
-        const next = new URLSearchParams(params);
+        const next = currentSearchParams(params, location.pathname);
         const query = value.trim();
         if (query)
             next.set('q', query);

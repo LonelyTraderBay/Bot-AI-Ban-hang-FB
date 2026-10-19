@@ -72,6 +72,7 @@ describe('Graphite Gold theme contract',()=>{
         expect(theme.typography.h5.fontSize).toBe(tokens.fontSizes.sectionTitle);
         expect(theme.typography.h6.fontSize).toBe(tokens.fontSizes.sectionTitle);
         expect(theme.shape.borderRadius).toBe(tokens.radius.control);
+        expect(theme.zIndex).toMatchObject({ mobileStepper: tokens.zIndex.dropdown, fab: tokens.zIndex.dropdown, speedDial: tokens.zIndex.dropdown, appBar: tokens.zIndex.sticky, drawer: tokens.zIndex.drawer, modal: tokens.zIndex.modal, snackbar: tokens.zIndex.toast, tooltip: tokens.zIndex.tooltip });
         expect(theme.spacing(1)).toBe(`${tokens.space.sm}px`);
         for(const [factor,value] of [[.5,tokens.space.xs],[1,tokens.space.sm],[1.5,tokens.space.md],[2,tokens.space.lg],[3,tokens.space.xl],[4,tokens.space.xxl],[6,tokens.space.xxxl]]) {
             expect(theme.spacing(factor)).toBe(`${value}px`);
@@ -103,6 +104,7 @@ describe('Graphite Gold theme contract',()=>{
         const html=readProjectFile('apps/web/index.html');
         const bootstrap=readProjectFile('apps/web/src/app/bootstrap.css');
         const generatedTokens=readProjectFile('apps/web/src/app/tokens.css');
+        for (const [layer, value] of Object.entries(tokens.zIndex)) expect(generatedTokens).toContain(`--z-index-${layer}:${value};`);
         expect(html).toContain('<html lang="vi">');
         expect(html).toContain('<meta name="color-scheme" content="dark"/>');
         expect(html.indexOf('/src/app/tokens.css')).toBeLessThan(html.indexOf('/src/app/bootstrap.css'));
@@ -326,7 +328,33 @@ describe('Accessible shared presentation',()=>{
         expect(reportLine).toBeDefined();
         const report=JSON.parse(reportLine!.slice('BROWSER_AUDIT_JSON '.length));
         expect(report.preJavaScript).toEqual({html:'rgb(17, 19, 24)',body:'rgb(17, 19, 24)',root:'rgb(17, 19, 24)',colorScheme:'dark'});
-        expect(report.accessibilityPreferences).toMatchObject({forcedColors:true,reducedMotion:true,focusedTag:'A',focusOutline:'solid',scrollBehavior:'auto'});
+        expect(report.osLightPreference).toMatchObject({prefersLight:true,colorScheme:'dark',canvas:colors.canvas});
+        expect(report.runtimeTokens).toMatchObject({
+            htmlBackground:report.preJavaScript.html,
+            bodyBackground:report.preJavaScript.body,
+            bodyFontFamily:tokens.fontFamily,
+            cssVariables:{
+                '--color-canvas':colors.canvas,
+                '--color-text-primary':colors.textPrimary,
+                '--color-border-decorative':colors.borderDecorative,
+                '--color-border-control':colors.borderControl,
+                '--color-success':colors.success,
+                '--color-success-surface':colors.successSurface,
+                '--font-family':tokens.fontFamily,
+                '--font-size-body':`${tokens.fontSizes.body}px`,
+                '--line-height-body':String(tokens.lineHeights.body),
+                '--radius-control':`${tokens.radius.control}px`,
+                '--radius-dialog':`${tokens.radius.dialog}px`,
+                '--focus-ring-width':`${tokens.focusRing.width}px`,
+                '--focus-ring-global-offset':`${tokens.focusRing.globalOffset}px`,
+                '--z-index-sticky':String(tokens.zIndex.sticky),
+                '--z-index-modal':String(tokens.zIndex.modal),
+            },
+        });
+        expect(report.accessibilityPreferences).toMatchObject({forcedColors:true,reducedMotion:true,prefersLight:true,focusedTag:'A',focusOutline:'solid',scrollBehavior:'auto',reducedMotionTransitionDuration:'0s'});
+        expect(report.accessibilityPreferences.focusOutlineColor).toBe(report.accessibilityPreferences.systemHighlight);
+        expect(report.accessibilityPreferences.skipLinkBackground).toBe(report.accessibilityPreferences.systemHighlight);
+        expect(report.accessibilityPreferences.skipLinkColor).toBe(report.accessibilityPreferences.systemHighlightText);
         expect(report.viewports.map(view=>[view.width,view.kpiColumns,view.documentWidth<=view.contentWidth])).toEqual([
             [320,1,true],[390,1,true],[768,2,true],[1440,4,true],
         ]);

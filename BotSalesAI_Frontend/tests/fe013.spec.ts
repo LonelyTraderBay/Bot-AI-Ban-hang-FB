@@ -250,10 +250,13 @@ test('FE013.AC03 unknown handover cannot be repeated before command reconciliati
     });
     const handover = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/handover'));
     await handoverDialog.getByRole('button', { name: 'Xác nhận bàn giao' }).click();
-    expect((await handover).status()).toBe(202);
+    const handoverResponse = await handover;
+    expect(handoverResponse.status()).toBe(202);
+    expect((await handoverResponse.json()).data.status).toBe('unknown');
     await expect(handoverDialog.getByRole('alert').filter({ hasText: 'Mã lệnh cần kiểm tra' })).toBeVisible();
     await expect(handoverDialog.getByRole('button', { name: 'Xác nhận bàn giao' })).toBeDisabled();
     expect(handoverRequests).toHaveLength(1);
+    console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R42 OPERATION=handoverShipment RESULT=PASS`);
 });
 
 test('FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible', async ({ page }) => {

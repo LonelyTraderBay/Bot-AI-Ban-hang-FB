@@ -1,6 +1,9 @@
 import {test,expect} from '@playwright/test';
 import {startDemoServer} from './session/demo-server.mjs';
 import AxeBuilder from '@axe-core/playwright';
+import fs from 'node:fs';
+import path from 'node:path';
+import { evidenceRunId } from './evidence-run-id.mjs';
 
 let url='',close:(()=>Promise<void>)|undefined;
 test.beforeAll(async()=>{const server=await startDemoServer({cacheIsolationKey:'ux-completion'});url=server.url;close=server.close;});
@@ -150,7 +153,7 @@ test('UX15 detail captions reflow without splitting short words across all requi
   const measure=await caption.evaluate(element=>({height:element.getBoundingClientRect().height,lineHeight:parseFloat(getComputedStyle(element).lineHeight),width:element.getBoundingClientRect().width}));
   expect(measure.height).toBeLessThanOrEqual(measure.lineHeight+1);
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);expect(overflow).toBeLessThanOrEqual(1);
-  await page.screenshot({path:`evidence/frontend-ux-completion-20261009/C04-inbox-${info.project.name}-${width}.png`});
+  fs.writeFileSync(path.resolve(process.cwd(), `evidence/frontend-ux-completion-20261009/C04-inbox-${info.project.name}-${width}-${evidenceRunId}.png`), await page.screenshot(), { flag: 'wx' });
  }
  const axe=await new AxeBuilder({page}).include('main').analyze();expect(axe.violations).toEqual([]);
 });

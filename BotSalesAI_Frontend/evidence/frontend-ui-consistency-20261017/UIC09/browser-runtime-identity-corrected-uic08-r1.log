@@ -1,0 +1,157 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs --config=playwright.config.ts --grep browser context reports --project=chromium --project=firefox --workers=1 --reporter=line
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+Copying the worker script at "C:\Users\Joker-PC\AppData\Local\Temp\uic07-corrected-a3-20261018\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2077 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.62 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-Cz-hWNSU.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-MSEY23P6.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-B5LLUCHq.js                9.40 kB │ gzip:   3.73 kB
+dist/assets/index-D92pzzRh.js               10.37 kB │ gzip:   3.60 kB
+dist/assets/index-y9pp0Cl3.js               13.10 kB │ gzip:   5.18 kB
+dist/assets/index-CgVPAN4I.js               16.40 kB │ gzip:   6.13 kB
+dist/assets/index-CLxxcrrY.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-BNW7r5EC.js               18.82 kB │ gzip:   6.31 kB
+dist/assets/index-C9PkYLyR.js               18.82 kB │ gzip:   5.92 kB
+dist/assets/index-BR8cba-v.js               19.08 kB │ gzip:   7.01 kB
+dist/assets/index-D2wgz1lI.js               21.25 kB │ gzip:   7.66 kB
+dist/assets/index-D9a2CoZ_.js               22.02 kB │ gzip:   7.19 kB
+dist/assets/index-DE_vca6r.js               25.13 kB │ gzip:   8.48 kB
+dist/assets/index-D-0O5zKg.js               27.48 kB │ gzip:   8.96 kB
+dist/assets/index-BDt_zxAX.js               31.32 kB │ gzip:  10.03 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-CrB9qWWx.js               33.32 kB │ gzip:  11.02 kB
+dist/assets/index-D4ImyyLc.js               41.99 kB │ gzip:  11.48 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-Bz-4B0KE.js               64.72 kB │ gzip:  17.77 kB
+dist/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist/assets/index-HFb1RVz3.js              101.80 kB │ gzip:  32.42 kB
+dist/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-BwhaRlrs.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-CJj7QyVx.js                328.77 kB │ gzip: 100.20 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 2.92s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2294 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-BB4_XrUG.js              1.73 kB │ gzip:   0.94 kB
+dist-demo/assets/hooks-C4GzL4zr.js                4.59 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-4e5JtS8R.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-k4FxZPf0.js                9.40 kB │ gzip:   3.73 kB
+dist-demo/assets/index-Dms8MXCU.js               11.01 kB │ gzip:   3.88 kB
+dist-demo/assets/index-CQbE6ZY5.js               13.10 kB │ gzip:   5.17 kB
+dist-demo/assets/index-1zBIdzRq.js               16.10 kB │ gzip:   5.95 kB
+dist-demo/assets/index-CGEQjP8_.js               18.82 kB │ gzip:   6.31 kB
+dist-demo/assets/index-YCE4Cp5t.js               18.99 kB │ gzip:   5.96 kB
+dist-demo/assets/index-DcOUIfvK.js               19.15 kB │ gzip:   6.53 kB
+dist-demo/assets/index-CeXRFdR4.js               19.28 kB │ gzip:   7.09 kB
+dist-demo/assets/index-C4QVCngv.js               22.02 kB │ gzip:   7.19 kB
+dist-demo/assets/index-MzWMQGzw.js               25.54 kB │ gzip:   8.64 kB
+dist-demo/assets/index-CQitzrMY.js               27.48 kB │ gzip:   8.96 kB
+dist-demo/assets/index-OqZoioYo.js               28.12 kB │ gzip:   9.80 kB
+dist-demo/assets/index-COI-4yNQ.js               31.32 kB │ gzip:  10.03 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-CZ2xRibc.js               33.78 kB │ gzip:  11.13 kB
+dist-demo/assets/index-CMFh1-JI.js               41.99 kB │ gzip:  11.48 kB
+dist-demo/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-J-nJdZD-.js               65.93 kB │ gzip:  18.19 kB
+dist-demo/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist-demo/assets/index-BcaPHcxy.js              106.34 kB │ gzip:  33.86 kB
+dist-demo/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-DDzPNXpn.js            233.75 kB │ gzip:  54.25 kB
+dist-demo/assets/browser-CkOqgybk.js            256.37 kB │ gzip:  87.30 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-uDdGNk6t.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-CUCPJGs1.js                328.77 kB │ gzip: 100.20 kB
+dist-demo/assets/contract-data-CJyvN5AM.js      375.47 kB │ gzip:  44.43 kB
+✓ built in 3.30s
+
+> node node_modules\@playwright\test\cli.js test --config=playwright.config.ts --grep browser context reports --project=chromium --project=firefox --workers=1 --reporter=line
+
+Running 2 tests using 1 worker
+
+
+
+(node:84884) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/2] [chromium] › tests\browser-runtime-identity.spec.ts:3:1 › browser context reports the major version of its actual supported browser binary
+[chromium] › tests\browser-runtime-identity.spec.ts:3:1 › browser context reports the major version of its actual supported browser binary
+BROWSER_IDENTITY engine=chromium binary=155.0.8059.40 uaMajor=155 userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36
+
+
+(node:60408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/2] [firefox] › tests\browser-runtime-identity.spec.ts:3:1 › browser context reports the major version of its actual supported browser binary
+[firefox] › tests\browser-runtime-identity.spec.ts:3:1 › browser context reports the major version of its actual supported browser binary
+BROWSER_IDENTITY engine=firefox binary=155.0 uaMajor=155 userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:155.0) Gecko/20100101 Firefox/155.0
+
+  2 passed (3.6s)

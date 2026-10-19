@@ -1,0 +1,176 @@
+
+Running 4 tests using 1 worker
+
+
+
+(node:49192) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [chromium] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token
+  1) [chromium] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Tổng quan', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Tổng quan', exact: true }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Tổng quan', exact: true })
+
+
+      100 |     await surfacePage.setViewportSize({ width, height: 900 });
+      101 |     await surfacePage.goto(new URL('/s/shop-demo/overview', baseUrl).toString());
+    > 102 |     await expect(surfacePage.getByRole('heading', { name: 'Tổng quan', exact: true })).toBeVisible();
+          |                                                                                        ^
+      103 |     const expectedLayers = Object.fromEntries(Object.entries(tokens.zIndex).map(([name, value]) => [name, String(value)]));
+      104 |     const shellLayers = await surfacePage.evaluate(expected => {
+      105 |         const root = getComputedStyle(document.documentElement);
+        at exerciseOverlayConsumers (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:102:88)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:160:9
+
+    Error Context: test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\error-context.md
+
+    Error Context: test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:73016) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/4] [chromium] › tests\ui-overlay-theme.spec.ts:163:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token
+  2) [chromium] › tests\ui-overlay-theme.spec.ts:163:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Tổng quan', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Tổng quan', exact: true }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Tổng quan', exact: true })
+
+
+      100 |     await surfacePage.setViewportSize({ width, height: 900 });
+      101 |     await surfacePage.goto(new URL('/s/shop-demo/overview', baseUrl).toString());
+    > 102 |     await expect(surfacePage.getByRole('heading', { name: 'Tổng quan', exact: true })).toBeVisible();
+          |                                                                                        ^
+      103 |     const expectedLayers = Object.fromEntries(Object.entries(tokens.zIndex).map(([name, value]) => [name, String(value)]));
+      104 |     const shellLayers = await surfacePage.evaluate(expected => {
+      105 |         const root = getComputedStyle(document.documentElement);
+        at exerciseOverlayConsumers (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:102:88)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:164:9
+
+    Error Context: test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-chromium\error-context.md
+
+    Error Context: test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:63244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/4] [firefox] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token
+  3) [firefox] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Tổng quan', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Tổng quan', exact: true }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Tổng quan', exact: true })
+
+
+      100 |     await surfacePage.setViewportSize({ width, height: 900 });
+      101 |     await surfacePage.goto(new URL('/s/shop-demo/overview', baseUrl).toString());
+    > 102 |     await expect(surfacePage.getByRole('heading', { name: 'Tổng quan', exact: true })).toBeVisible();
+          |                                                                                        ^
+      103 |     const expectedLayers = Object.fromEntries(Object.entries(tokens.zIndex).map(([name, value]) => [name, String(value)]));
+      104 |     const shellLayers = await surfacePage.evaluate(expected => {
+      105 |         const root = getComputedStyle(document.documentElement);
+        at exerciseOverlayConsumers (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:102:88)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:160:9
+
+    Error Context: test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-firefox\error-context.md
+
+    Error Context: test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-60cec-rs-with-the-canonical-token-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+(node:3572) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[4/4] [firefox] › tests\ui-overlay-theme.spec.ts:163:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token
+  4) [firefox] › tests\ui-overlay-theme.spec.ts:163:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Tổng quan', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Tổng quan', exact: true }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Tổng quan', exact: true })
+
+
+      100 |     await surfacePage.setViewportSize({ width, height: 900 });
+      101 |     await surfacePage.goto(new URL('/s/shop-demo/overview', baseUrl).toString());
+    > 102 |     await expect(surfacePage.getByRole('heading', { name: 'Tổng quan', exact: true })).toBeVisible();
+          |                                                                                        ^
+      103 |     const expectedLayers = Object.fromEntries(Object.entries(tokens.zIndex).map(([name, value]) => [name, String(value)]));
+      104 |     const shellLayers = await surfacePage.evaluate(expected => {
+      105 |         const root = getComputedStyle(document.documentElement);
+        at exerciseOverlayConsumers (C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:102:88)
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-overlay-theme.spec.ts:164:9
+
+    Error Context: test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-firefox\error-context.md
+
+    Error Context: test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-80104-80062189-4150-4c06-838a-a656f9c0d51e\ui-overlay-theme-UI-CONS-0-b1723-rs-with-the-canonical-token-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  4 failed
+    [chromium] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token 
+    [chromium] › tests\ui-overlay-theme.spec.ts:163:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token 
+    [firefox] › tests\ui-overlay-theme.spec.ts:159:5 › UI-CONS-01 shared overlay theme › aligns mobile dialog, confirm, Drawer and Select layers with the canonical token 
+    [firefox] › tests\ui-overlay-theme.spec.ts:163:5 › UI-CONS-01 shared overlay theme › aligns desktop dialog and Select layers with the canonical token 

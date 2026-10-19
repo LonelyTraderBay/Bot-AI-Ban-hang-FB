@@ -1,8 +1,8 @@
 # Kế hoạch hoàn thiện UI và kiến trúc React Frontend, theo dõi tiến độ
 
-**CURRENT PHASE — IN_PROGRESS UX completion và mở rộng nghiệp vụ (09/10/2026):** UX01–UX15 + 6 nhóm capability được người dùng duyệt. [Contract/baseline](../evidence/frontend-ux-completion-20261009/CONTRACT.md); thứ tự/trạng thái duy nhất tại §16.6. Phạm vi Frontend + canonical contract + MSW; nghiệm thu người dùng riêng.
+**CURRENT PHASE — SPECIFIED: tái đồng bộ UI theo audit thực tế 16/10/2026.** UIC00–UIC13 có thứ tự và trạng thái duy nhất tại [§16.6](#ui-rollout-status), phiếu chi tiết tại [§16.21](#ui-consistency-20261016). Audit xác nhận lệch overlay, một lần lỗi Service Worker trên Chrome và một candidate bố cục Dashboard. Các kết quả UX/source/CI trước đó giữ nguyên phạm vi lịch sử; không chứng minh các finding mới đã được xử lý. Phạm vi Frontend + API mock tổng hợp; nghiệm thu người dùng riêng.
 
-**Mã kế hoạch:** FE-UI-FOLLOWUP-20261002 · **Phiên bản:** 16.0 · **Lập / cập nhật ngày:** 09/10/2026.
+**Mã kế hoạch:** FE-UI-FOLLOWUP-20261002 · **Phiên bản:** 16.1 · **Lập / cập nhật ngày:** 16/10/2026.
 
 **Mục tiêu đã chốt 04/10/2026:** hoàn thiện UI và kiến trúc React **Frontend-only**, kiểm chứng bằng mock API tổng hợp; AI tự sửa, kiểm thử, tái xác minh và chuẩn bị bàn giao. Người dùng chỉ nghiệm thu cuối. Chính sách scope/tự thực hiện: [FRONTEND_SCOPE.md](FRONTEND_SCOPE.md). Mục 12 ghi audit toàn bộ tài liệu, mâu thuẫn trước sửa và xử lý từng điểm; bản đối chiếu từng nhóm tài liệu là [audit kế hoạch/tài liệu Frontend](FRONTEND_PLAN_DOCUMENT_AUDIT_2026-10-04.md).
 
@@ -11,6 +11,8 @@
 ## Lịch sử phiên bản và closeout
 
 Các đoạn phiên bản bên dưới ghi **HISTORICAL_SNAPSHOT** theo thời điểm triển khai. Trạng thái hiện hành chỉ ở §16.6; không dùng TODO/next/counts trong journal để điều hành checkout mới.
+
+Phiên bản 16.1 lập đợt UIC00–UIC13 từ audit `1fd4530609f4e69193a27b0d5a4959181e3f8fc9`: lưu bằng chứng có hash, xử lý ba phát hiện theo mức tin cậy, bổ sung coverage còn thiếu và bàn giao từng việc bằng commit/push tiếng Việt. Đây là kế hoạch; không cộng tiến độ UI, FE checkpoint hoặc acceptance từ việc viết tài liệu.
 
 Phiên bản 8.0 bổ sung UI028 theo yêu cầu phân tích sâu và xây quy định spacing đồng bộ ngày 05/10/2026. Baseline UI001–UI027 giữ nguyên DONE 135/135 checkpoint; UI028 đã có C01 baseline và C02 specification, chưa chuyển đổi source hoặc kiểm chứng theo quy định mới. Nguồn quy định: [FRONTEND_SPACING_STANDARD.md](FRONTEND_SPACING_STANDARD.md); bằng chứng: [spacing audit](../evidence/frontend-spacing-audit-20261005/REPORT.md). Tracker FE độc lập và phải đọc status sau thay đổi tài liệu; không ghi tăng ledger hoặc readiness vì thêm quy định. Phạm vi vẫn Frontend-only với mock API; không giả Narrator, hosted CI hoặc owner acceptance.
 
@@ -2248,7 +2250,28 @@ Component nhận children vẫn phải kiểm nội dung được truyền; sour
 
 ### 16.6. Kế hoạch triển khai chi tiết, dependency và tiến độ
 
-**CURRENT — UX completion + capability extension — 09/10/2026.** Người dùng duyệt toàn bộ 15 nhóm UX và 6 nhóm capability: kho/địa chỉ, kế toán quản trị đủ luồng, consent với customer challenge, purchase.send tự động có hạn mức, media ảnh/thoại/tệp và Marketing period/bucket/attribution. Giữ mẫu số FE140, full-product ledger read-only. Bằng chứng lịch sử trước thay đổi không chứng minh source mới.
+**CURRENT — Đồng bộ UI theo audit 16/10/2026, cập nhật trạng thái theo bằng chứng ngày 18/10/2026.** Người dùng yêu cầu kế hoạch chi tiết, theo dõi thực tế, mỗi việc có kiểm chứng và commit/push riêng bằng tiếng Việt. [Bằng chứng gốc đã lưu](../evidence/frontend-ui-consistency-20261016/REPORT.md); [phiếu việc và phạm vi kiểm chứng](#ui-consistency-20261016). Đây là đợt khắc phục/kiểm chứng trong S11–S12/S14–S20, không tạo ledger hoặc mẫu số FE mới. Bảng dưới đây phản ánh đúng source, SHA, remote và Actions đã quan sát; local PASS không thay thế hosted CI.
+
+| Việc / ưu tiên | Công việc, owner và phạm vi | Dependency | Trạng thái thực tế lúc lập | Bằng chứng đóng / bàn giao Git |
+|---|---|---|---|---|
+| UIC00 / P2 | Lưu audit, lập kế hoạch, đối chiếu dependency/link/hash | Không | VERIFIED_LOCAL_DOCUMENTATION — UI chưa sửa | [13 kiểm tra tài liệu](../evidence/frontend-ui-consistency-20261016/planning-validation.json); generator/S17 ở [command log](../evidence/frontend-ui-consistency-20261016/planning-commands.json); commit tài liệu riêng, SHA/remote/CI tra receipt GitHub theo §16.21.3 |
+| UIC01 / P1 prerequisite | Refresh inventory, owner/import closure, route/state/role matrix và baseline trước code | UIC00 | PUSHED + exact-SHA CI PASS — follow-up fix `5610e0bff36da57bd2604a83968845042ac191d2` | [Bằng chứng](../evidence/frontend-ui-consistency-20261017/UIC01/REPORT.md): 329 file fingerprint/treatment; 61/61 route owner-map; 427/427 role expectation; 3.402 ô state được kiểm kê; lỗi Firefox CI về rơi status=active đã sửa và lặp 20/20 Chrome 155/Firefox 155, full local verify PASS. Branch local/origin cùng SHA. [Actions push #38969265018](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38969265018) và [PR #38969272554](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38969272554) terminal success trên cùng SHA: verify/build, Chromium E2E + built-demo, ba Firefox shard. |
+| UIC02 / P2 confirmed | UI-CONS-01: visible backdrop tại shared theme, mọi overlay consumer | UIC01 | PUSHED; push Actions PASS, PR attempt 2 terminal FAILURE trên cùng SHA | [Bằng chứng](../evidence/frontend-ui-consistency-20261017/UIC02/REPORT.md): source/local baseline 0/18 → 18/18; push run [#38976937841](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38976937841) PASS trên `f39befd02ebe469e63672e58f67533b7c7348116`; PR run attempt 2 [#38976941387](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38976941387) FAIL: verify/build + Firefox 3 shards PASS, Chromium 446/447; `FE010` product editor test là ca lỗi duy nhất. Không ghi PR là PASS. |
+| UIC03 / P2 confirmed occurrence | UI-CONS-02: điều tra và xử lý lifecycle MSW đã gây pageerror | UIC01,UIC02 | PUSHED — push và PR Actions exact-SHA PASS | [Bằng chứng](../evidence/frontend-ui-consistency-20261017/UIC03/REPORT.md), commit `ec75644d726ab6d20a7a94045748749fe292b6c4`; push run [#38999419334](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38999419334) và PR run [#38999422754](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38999422754) terminal PASS trên cùng SHA, gồm verify/build, Chromium và ba Firefox shard. |
+| UIC04 / P2 candidate | UI-CONS-03: quyết định và xử lý cột trống Dashboard | UIC01,UIC03 | PUSHED `9a27dba42fe1fdf9effc19028f02738a36698192`; push attempt 3 và PR exact-SHA terminal PASS; attempts 1–2 FAIL được giữ làm lịch sử | [Bằng chứng local](../evidence/frontend-ui-consistency-20261017/UIC04/REPORT.md): đo intent/geometry và quyết định một cột; clean local verify, Chromium/Firefox exact-parent 8/8. Push run [#39003608005 attempt 1](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39003608005/attempts/1) ghi 449/450, duy nhất `tests/fe010.spec.ts:40` còn URL detail sau click danh sách; verify/build và ba Firefox shard PASS. Push run [#39003608005 attempt 2](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39003608005/attempts/2) cũng thất bại ở FE010; sau chẩn đoán trace, push run [#39003608005 attempt 3](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39003608005/attempts/3) terminal PASS. PR run [#39003610996](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39003610996) terminal PASS toàn bộ trên cùng SHA. |
+| UIC05 / P1 verification | Trace đầy đủ token → generator → theme → primitive → route/portal | UIC02,UIC03,UIC04 | PUSHED `9a8bcd1af62ecaad44fc345066db751906c92b23`; push run #39015629456 và PR run #39015632140 terminal PASS đúng SHA | [Bằng chứng local](../evidence/frontend-ui-consistency-20261017/UIC05/REPORT.md): 8 MUI z-index slots/7 CSS vars đo khớp token; runtime color/type/line-height/radius/focus/motion và portal trên demo; full verify 249/249 unit, domain 117/117, layout 86/86, token 6/6, composition 41/41. Cả hai run GitHub PASS verify/build, Chromium E2E, ba Firefox shard; upload evidence hoàn tất. |
+| UIC06 / P1 verification | Shared API, composition, density và layout owners trên toàn inventory | UIC05 | PUSHED `df3e0eba7a87b5fe3cad1e9914bcd54755e7b956`; PR và push attempt 2 terminal PASS toàn bộ | [Bằng chứng](../evidence/frontend-ui-consistency-20261017/UIC06/REPORT.md): 28 exports được disposition, 26 consumer API/30 file/1.431 JSX use, direct render 28/28; layout 94 file/0 finding, composition 92/0. Chrome + Firefox: 61 route × 2 viewport mỗi browser; collection 0/1/2/3 test đủ. PR [#39020682925](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39020682925) PASS toàn bộ 5 job trên SHA này; push run [#39020678465](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39020678465) attempt 2 PASS đủ verify, Chromium/built-demo và ba Firefox shard, gồm shard 1/3 job `117375647102`. |
+| UIC07 / P1 verification | Toàn bộ route, quyền và trạng thái UI/async/action/recovery áp dụng | UIC06 | PUSHED + exact-SHA CI PASS: corrective `dfe9411b37529f9bcfa87171d90df1d8f10f057e` sửa FE022.VS02 theo trace; push #39079265365 và PR #39079271134 terminal PASS. SHA trước correction `8f4ada3` có push failure ở Firefox FE022.VS02; corrective child đã qua đủ checks. | [Bằng chứng đo và trace](../evidence/frontend-ui-consistency-20261017/UIC07/REPORT.md), [ma trận](route-state-role-matrix.json): shell 51/51 tách khỏi API. |
+| UIC08 / P1 verification | Reflow, zoom thật, native text resize, keyboard/focus/occlusion và accessibility | UIC07 | PUSHED + exact-SHA CI PASS qua corrective `cd1e35fee113773f3a360dd689749153ad6e1e27`: push #39097316425 và PR #39097319777 đều 5/5; Chromium 540/540. SHA nền #499ee5 attempt 2 failure được giữ trong receipt. Human/speech/screen-reader và thiết bị thật vẫn NOT_RUN. | [Bằng chứng UIC08](../evidence/frontend-ui-consistency-20261017/UIC08/REPORT.md), [receipt UIC12](../evidence/frontend-ui-consistency-20261017/UIC12/REPORT.md): R04 10/10 local; exact hosted correction push/PR PASS. |
+| UIC09 / P1 verification | Khóa các regression mới vào gates/CI hiện có | UIC02–UIC08 | SOURCE_LOCAL_VERIFIED; exact SHA `b14295f5fbdf953c9e90834deeaf957e11e45dd6` push #39103675840/PR #39103679227 FAIL ở fingerprint S17 `playwright.config.ts`, nên E2E skip. Gate inventory 36/36; browser identity 2/2 Chromium/Firefox v155; current descendant #52b9/#6679 đạt S17 286/286 và full CI PASS. Failure của SHA ban đầu được giữ, không đổi nhãn. | [Bằng chứng UIC09](../evidence/frontend-ui-consistency-20261017/UIC09/REPORT.md), [receipt/logs UIC12](../evidence/frontend-ui-consistency-20261017/UIC12/REPORT.md): positive/negative/UNKNOWN fixtures; descendant exact-SHA PASS. |
+| UIC10 / P1 closure | Final-source verify, full supported-browser suites và built-demo | UIC09 | SOURCE_LOCAL_VERIFIED; exact SHA `3e49d9424075b1bd28e7e26a16cb702505ffedf9` push #39104442872/PR #39104444894 FAIL vì một S17 route-role fingerprint stale; E2E skip. Full verify/built-demo local proof vẫn còn; descendant #52b9/#6679 sửa freshness, đạt 286/286 fingerprint và full push/PR CI PASS. | [Bằng chứng UIC10](../evidence/frontend-ui-consistency-20261017/UIC10/REPORT.md), [receipt/logs UIC12](../evidence/frontend-ui-consistency-20261017/UIC12/REPORT.md): lịch sử failure và descendant proof được giữ riêng. |
+| UIC11 / P2 closure | Đối chiếu tài liệu/catalog/evidence và FE freshness bằng owner CLI | UIC10 | RECONCILED_WITH_HISTORICAL_BASELINE_LIMITS. Baseline inventory 329 entry; diff 836 path; 0 thiếu disposition/owner; 4 mismatch hash lịch sử giữ nguyên. Owner CLI: 0/140 checkpoint hiệu lực, 28 STALE/0 BLOCKED. `218f23f6` và `9cbe7094` exact CI FAIL do fingerprint stale; descendant `52b9b4a0` và `6679a050` push/PR 5/5 PASS, 541 Chromium + 541 Firefox. Doc links 23/1.648/81/0; hash 144/144; S17 43/38/286. | [Báo cáo](../evidence/frontend-ui-consistency-20261017/UIC11/REPORT.md), [reconciliation](../evidence/frontend-ui-consistency-20261017/UIC11/final-inventory-reconciliation.json), [FE receipt](../evidence/frontend-ui-consistency-20261017/UIC11/progress-cli-receipt.json), [hash manifest](../evidence/frontend-ui-consistency-20261017/UIC11/final-document-hashes.json), [GitHub receipts](../evidence/frontend-ui-consistency-20261017/UIC12/github-ci-receipts.json). |
+| UIC12 / P1 delivery | GitHub Actions/check-runs đúng SHA và mọi commit của đợt | UIC10,UIC11 | Đã push receipt SHA `e04a3f8fa2a1ce4eb83c0e06620b29794dcabcc9`; remote ref và PR head khớp. Push #39120231480 và PR #39120234723 terminal PASS đủ 5/5 job trên đúng SHA; verify 252 tests, Chromium 541, Firefox 197+166+178=541, built-demo 3/3 mỗi browser; 61 route ở 390/1440px, 0 issue/pageerror. Receipt bao 9 commit/18 workflow (9 PASS, 9 failure lịch sử), logs/hashes, 8 artifact exact SHA, PR merge-parent proof. Rulesets/effective rules rỗng; protection API 404. | [Receipt UIC12](../evidence/frontend-ui-consistency-20261017/UIC12/REPORT.md), [JSON](../evidence/frontend-ui-consistency-20261017/UIC12/github-ci-receipts.json), [policy](../evidence/frontend-ui-consistency-20261017/UIC12/branch-policy-receipt.json). |
+| UIC13 / P2 handoff | Chốt coverage, vấn đề còn mở, hướng dẫn nghiệm thu và tiếp tục | UIC12 | Handoff có ma trận UIC00–UIC13, replay, rollback, acceptance scope và giới hạn. Đóng task khi commit riêng được push fast-forward và push/PR exact-SHA terminal PASS; kiểm bằng remote ref, PR head và GitHub Actions của chính commit này. | [Bàn giao UIC13](../evidence/frontend-ui-consistency-20261017/UIC13/REPORT.md); 13/13 việc thuộc rollout UIC Frontend/mock sau exact-SHA PASS, không suy ra phần trăm toàn sản phẩm. |
+
+**Tiếp theo — trạng thái đo 18/10/2026:** UIC12 SHA `e04a3f8fa2a1ce4eb83c0e06620b29794dcabcc9` đã khớp remote ref/PR head; push [#39120231480](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39120231480) và PR [#39120234723](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39120234723) terminal PASS 5/5 mỗi run. Handoff UIC13 ghi scope 13/13 việc UIC Frontend/mock, số liệu từ receipt và giới hạn nghiệm thu; closure được dùng sau khi commit UIC13 được push và exact-SHA push/PR PASS trên chính commit đó. GitHub branch rulesets/effective rules rỗng, protection API trả `Branch not protected`. FE tracker vẫn 0/140 checkpoint hiệu lực, 28/28 STALE; đây là độ mới của bằng chứng tracker, không phải phần trăm chức năng Frontend. Backend/provider thật, production, Safari/Edge, thiết bị vật lý, screen-reader/human và owner/user acceptance vẫn ngoài scope hiện có.
+
+**HISTORICAL_SNAPSHOT — UX completion + capability extension — 09/10/2026, closeout local 13/10/2026.** Người dùng duyệt toàn bộ 15 nhóm UX và 6 nhóm capability: kho/địa chỉ, kế toán quản trị đủ luồng, consent với customer challenge, purchase.send tự động có hạn mức, media ảnh/thoại/tệp và Marketing period/bucket/attribution. Giữ mẫu số FE140, full-product ledger read-only. Bằng chứng lịch sử trước thay đổi không chứng minh source mới.
 
 | Bước / ưu tiên | Công việc và owner | Dependency | Trạng thái | Điều kiện đóng |
 |---|---|---|---|---|
@@ -2267,7 +2290,7 @@ Component nhận children vẫn phải kiểm nội dung được truyền; sour
 
 Thiết kế đã chốt: R55 kho, R56 tài khoản, R57 mở sổ, R58 sổ cái, R59 cân đối phát sinh, R60 cân đối quản trị, R61 consent public; địa chỉ trong R08, delegation trong R38. Owner/manager quản trị kho; owner/accountant quản trị tài khoản; owner quản trị delegation. Giữ GraphiteGold/Shared/tokens v1.29/no dependency. Các API mới mở rộng minor, DTO/output chạy generator. Kế toán quản trị một currency, fixture moving weighted average/delivery recognition, không nhận kế toán pháp định/provider live.
 
-Nghiệm thu kỹ thuật: 15/15 UX + 6/6 capability có code/regression/fresh proof và mandatory gates trên final source. Route/state/role discovery theo manifest mới, không pin 54; speech/hosted CI/user acceptance ghi quan sát. Bảng trên là nguồn trạng thái duy nhất, evidence của batch không tạo tracker riêng.
+Nghiệm thu kỹ thuật của snapshot UX: 15/15 UX + 6/6 capability có code/regression/fresh proof và mandatory gates trên source tại closeout. Route/state/role discovery theo manifest mới, không pin 54; speech/hosted CI/user acceptance ghi quan sát. Bảng UX trên giữ kết quả scoped lịch sử; current remediation dùng bảng UIC đầu §16.6, evidence của batch không tạo tracker riêng.
 
 **HISTORICAL_SNAPSHOT — Shared consolidation:**
 
@@ -2915,3 +2938,192 @@ Người dùng đã duyệt triển khai đến hoàn tất kỹ thuật local. 
 | 6 | P0 final | Strict source/unit/verify/full E2E/build/built-demo/native, canonical freshness, handoff | COMPLETE_LOCAL_DENSITY_REVALIDATION |
 
 Các kết quả Shared consolidation §16.19 giữ phạm vi source lịch sử. Đợt density: READY_FOR_ACCEPTANCE_LOCAL_SCOPE. [Proof/source hash/limits](../evidence/frontend-spacing-density-20261009/REPORT.md); FE140 giữ mẫu số. Speech/hosted CI NOT_RUN; user acceptance PENDING.
+
+<a id="ui-consistency-20261016"></a>
+
+### 16.21. Kế hoạch đồng bộ UI có kiểm chứng và bàn giao từng việc — 16/10/2026
+
+#### 16.21.1. Mục tiêu, nguồn chuẩn và điểm xuất phát
+
+Mục tiêu là xử lý hết finding trong phạm vi UI Frontend/mock, kiểm đủ các consumer/state/method áp dụng và giữ bằng chứng tái lập được. “Hoàn toàn” chỉ được dùng với **phạm vi và mẫu số đã khóa bằng inventory**; không là lời cam kết mọi nền tảng/trạng thái có thể tưởng tượng đều đã được kiểm. Quy định duy nhất vẫn là [standard v1.29](FRONTEND_SPACING_STANDARD.md#unified-workflow); shared catalog giải thích API, phần này chỉ giao việc và điều kiện đóng cụ thể cho đợt audit. Không lập scale, policy hoặc ledger UI khác.
+
+Nguồn vào được đo ở `1fd4530609f4e69193a27b0d5a4959181e3f8fc9`: [audit](../evidence/frontend-ui-consistency-20261016/REPORT.md), [summary](../evidence/frontend-ui-consistency-20261016/audit-summary.json), [61 route](../evidence/frontend-ui-consistency-20261016/route-coverage.json), [hashes và provenance](../evidence/frontend-ui-consistency-20261016/BUNDLE_MANIFEST.json). Các số dưới đây thuộc **baseline trước sửa**, không là after proof.
+
+| Hạng mục | Kết quả thực tế baseline | Việc còn phải làm |
+|---|---|---|
+| UI-CONS-01 | Overlay canonical `#090C12CC`; backdrop thực tế `rgba(0,0,0,0.5)` ở 6/6 ô đo | UIC02; 4 ô thuộc supported Chrome/Firefox, 2 ô Chromium bổ sung |
+| UI-CONS-02 | Chrome 155 suite đầu 30 PASS/1 FAIL do worker update pageerror; targeted recheck 4/4 PASS | UIC03; không có proof root cause/fix, không xóa lần FAIL |
+| UI-CONS-03 | Dashboard 1440px: row 1152px, financial Panel 699,06px, còn trống 452,94px | UIC04; candidate về intent, chưa là confirmed defect |
+| Source gates | Layout 93 file/0 finding/1 accepted exception; visual 92/0; composition 91/0 | UIC05/06/09; scan sạch chưa chứng minh backdrop hoặc rendered branches |
+| Selected tests/build | Guard 132/132; shared unit 82/82; lint/typecheck/production/demo builds PASS | UIC10 chạy lại source cuối, không dùng selected tests thay full suite |
+| Browser | Chromium 153: 30/30; Firefox 155: 30/30; Chrome 155: 30/31 rồi recheck 4/4 | Chromium 153 dưới Chrome minimum; UIC10 phải có Chrome ≥154 thật và Firefox ≥155 |
+| Route matrix | 61 route × 390/1440px trên Firefox và Chrome recheck; 9 breakpoint probes | UIC01/UIC07 kiểm mọi role/state/conditional branch áp dụng, không chỉ geometry |
+| Native/accessibility | Audit mới chưa chạy native zoom/text-only/speech/human/physical mobile | UIC08; không kế thừa native PASS từ source cũ |
+| Bảo toàn | 553 source/config hashes giữ nguyên; 22.084 untracked paths giữ nguyên trong audit | UIC01 chụp baseline mới; không bulk-stage hoặc xóa evidence cũ |
+| FE freshness | Report CI trước audit ghi 0/140 VERIFIED, 28 STALE trên snapshot của report | UIC11 phải đo lại CLI; không gọi đây là 0% code hoặc tự đóng FE |
+
+Runtime/backend/provider/staging/production thật, deploy, đổi palette, rewrite framework và full-product ledger nằm ngoài đợt này. Backend placeholder không được mô tả là đã triển khai. App light mode không áp dụng theo quyết định dark-only. Edge/Safari và handset là best effort theo [scope](FRONTEND_SCOPE.md#5-các-quyết-định-đã-có); không bỏ các method bắt buộc thuộc supported browsers.
+
+#### 16.21.2. Theo dõi thực tế và điều kiện cập nhật
+
+Trạng thái task chỉ sửa ở **bảng UIC tại §16.6**. Mỗi lần nhận hoặc kết thúc việc, cập nhật thời điểm, source revision/input hashes, công việc tiếp theo, bằng chứng và giới hạn. Kết quả chi tiết nằm trong thư mục evidence của đợt, theo fields chuẩn tại [standard §13.2](FRONTEND_SPACING_STANDARD.md#132-fields-bằng-chứng-của-chính-task); không tạo tracker chép tay thứ hai.
+
+Trong cùng hàng task cần phân biệt: tiến độ kỹ thuật (`TODO` → `IN_PROGRESS` → `IMPLEMENTED_PENDING_VERIFICATION` → `VERIFIED_SCOPED`), verdict kiểm tra (`PASS/FAIL/NOT_RUN/NOT_APPLICABLE` có lý do), và bàn giao (`NOT_COMMITTED/COMMITTED/PUSHED/CI_RUNNING/CI_FAILED/DELIVERED`). Chỉ ghi trạng thái đã quan sát, không suy `DELIVERED` từ exit của `git push`. Thiếu proof bắt buộc giữ acceptance mở; tiếp tục prerequisite/phần độc lập có thể làm được.
+
+Với mỗi phép thử, hồ sơ phải chứa: trigger/seed/role/route/state, command hoặc thao tác thật, browser binary/version và method, expected/observed, số case dự kiến/thực chạy/skipped/failed, exit, log/ảnh/trace/measurement, hashes source/test/config/token/artifact, thời gian và người/công cụ thực hiện. Chỉ có ảnh hoặc JSON tự khai không đủ chứng minh một assertion đã chạy; đối chiếu raw log và render/action.
+
+Khi sửa source làm proof cũ stale, giữ proof cũ dưới mốc baseline, tạo lượt after mới. Không cập nhật hash cũ để biến lần chạy cũ thành PASS cho source mới. Không cộng targeted recheck vào full run FAIL; ghi hai lượt riêng. Có finding mới thì thêm subtask trong hàng owner tương ứng trước đóng, ghi dependency/impact và điều chỉnh mẫu số công khai.
+
+**Cách tính tiến độ:** đếm việc UIC01–UIC13 có đủ local proof + Git delivery theo claim scope trên tổng 13 việc; việc tách thành nhiều wave chỉ đóng khi mọi wave đạt. UIC00 không tính vào tiến độ đồng bộ UI. Route coverage và branch/state coverage có mẫu số riêng; không lấy số commit, source files, lines, assertions hoặc references làm phần trăm chất lượng.
+
+#### 16.21.3. Commit, push và kiểm GitHub sau từng việc
+
+1. Trước mỗi batch, đọc Git status/staged diff, đúng branch/upstream/remote/identity và policy hiện hành. Giữ nguyên dirty/untracked có sẵn. Chỉ stage path của việc đang bàn giao, không `git add .`, reset/clean/force-push hoặc gộp việc chưa được kiểm.
+2. Chạy các gate áp dụng cho batch; xem diff/hashes, `git diff --cached --check`, kiểm UTF-8 tiếng Việt và không chứa secrets/output ngoài phạm vi. Baseline chứng minh lỗi trước sửa được giữ nguyên nhưng after acceptance của việc sửa phải đạt. Commit hồ sơ/lập kế hoạch có thể ghi baseline FAIL trung thực; nó không đóng lỗi UI.
+3. Commit **một việc hoặc một wave có thể review/rollback độc lập** cùng regression và proof của nó. Subject tiếng Việt theo `P2 fix(ui): Đồng bộ lớp phủ modal theo token` hoặc priority/type thực tế; body có `Task: UICxx`, vấn đề/nguyên nhân, thay đổi, kiểm chứng và giới hạn. Dùng sign-off theo convention repo, không dùng `--no-verify` hoặc sửa global identity.
+4. Push commit đã kiểm lên nhánh làm việc; mặc định nhánh mới có prefix `codex/`. Kiểm `git rev-parse HEAD` với `git ls-remote origin refs/heads/<branch>`. Ghi SHA đầy đủ, branch, remote, URL commit/run, attempt, kết quả và thời điểm thật; push bị từ chối vẫn là `COMMITTED`, chưa `PUSHED`.
+5. Kiểm GitHub Actions/check-runs **đúng SHA**: verify nguồn/build, Chromium all, Firefox 1/3 + 2/3 + 3/3 và built-demo ở các job được cấu hình. Cộng các shard theo danh sách test đã discovery, không bỏ shard hoặc gọi skipped/cancelled/timed_out là đạt. GitHub CI dùng bundled runtime nào phải ghi runtime đó; không thay local supported Chrome bằng tên project `chromium`.
+6. Nếu run còn chạy, ghi `CI_RUNNING`; nếu fail, lưu job/log/trace rồi sửa root cause trong commit kế tiếp có liên kết task. Không đổi assertions/timeout/exception để che lỗi. Workflow có `cancel-in-progress`; tránh push kế tiếp lên cùng branch khi còn run bắt buộc đang cần terminal proof. Trong lúc đó tiếp tục phân tích/kiểm tra phần độc lập; không tạo bước chờ người dùng.
+7. Commit/diff có thể là bằng chứng cho chính nội dung của nó; không chèn SHA của chính file vào hashed manifest. Receipt sau push/CI lấy từ GitHub commit/check-run/run và Git refs; lần cập nhật kế tiếp ghi SHA đã có. Không tạo chuỗi commit rỗng chỉ để ghi SHA của commit trước. CI PASS của source trước không là PASS cho HEAD mới; final receipt luôn truy vấn HEAD cuối.
+
+Subject tham chiếu theo thứ tự dưới đây; khi task có nhiều owner/wave, thêm tên wave và số thứ tự, mỗi wave có proof/commit/push riêng. Task verification chỉ có KEEP/proof dùng `evidence`, không gắn nhãn `fix` khi chưa sửa lỗi.
+
+| Việc | Subject tiếng Việt tham chiếu |
+|---|---|
+| UIC00 | `P2 docs(ui): Lập kế hoạch đồng bộ giao diện có kiểm chứng` |
+| UIC01 | `P1 evidence(ui): Khóa phạm vi và baseline trước đồng bộ` |
+| UIC02 | `P2 fix(ui): Đồng bộ lớp phủ modal theo token` |
+| UIC03 | `P2 fix(mock): Sửa lifecycle worker theo nguyên nhân đã xác minh` |
+| UIC04 | `P2 docs(ui): Chốt bố cục Dashboard theo số đo thực tế` hoặc `fix(ui)` nếu có source fix |
+| UIC05 | `P1 evidence(ui): Kiểm chứng token và theme trên các consumer` |
+| UIC06 | `P1 evidence(ui): Kiểm chứng Shared và ownership bố cục` |
+| UIC07 | `P1 evidence(ui): Kiểm chứng route quyền và trạng thái giao diện` |
+| UIC08 | `P1 evidence(ui): Kiểm chứng reflow zoom và accessibility` |
+| UIC09 | `P1 test(ui): Khóa regression đồng bộ giao diện` hoặc `evidence(ui)` nếu tooling KEEP |
+| UIC10 | `P1 evidence(ui): Ghi nhận full suite và artifact source cuối` |
+| UIC11 | `P2 docs(ui): Đồng bộ tài liệu và trạng thái bằng chứng` |
+| UIC12 | `P1 evidence(ci): Đối chiếu GitHub checks đúng SHA` khi cần commit receipt |
+| UIC13 | `P2 docs(ui): Bàn giao giao diện cùng phạm vi kiểm chứng` |
+
+UIC03 nếu mới điều tra thì dùng `P2 evidence(mock): Ghi nhận điều tra lifecycle worker`, giữ task mở; không dùng subject FIXED hoặc fix khi nguyên nhân chưa xác minh. Các source defect mới trong UIC05–08 có commit `fix(ui)` riêng cùng regression, tham chiếu đúng task/wave trước commit closeout evidence.
+
+Lượt lập kế hoạch đã kiểm `main` trùng origin tại `1fd4530…`; API branch protection trả `404 Branch not protected`. Đây là trạng thái policy tại lúc kiểm, không là check failure hoặc quyền để bỏ CI. Phạm vi này không tự bật protection/ruleset, merge PR hoặc deploy. Nhánh bàn giao kế hoạch `codex/ui-consistency-plan-20261016`; SHA và run mới phải lấy sau push, không điền trước.
+
+#### 16.21.4. Phiếu chi tiết UIC00–UIC04
+
+**UIC00 — Hồ sơ và kế hoạch, P2; owner docs/evidence.** Giữ kết luận audit gốc, nhập bundle nhỏ có SHA-256, snapshot thực tế trước code, định vị các raw logs/measurements và artifact ngoài bundle. Cập nhật current pointer trong plan/continue; không sửa React/theme/MSW/tests hoặc canonical ledger. Kiểm liên kết mới, JSON parse, bundle hashes, task IDs/dependency không vòng, đủ ba finding và phạm vi NOT_RUN; chạy validator evidence hiện có nếu nằm trong input thay đổi. Kết quả kiểm tài liệu không tính là UI after proof. Commit dự kiến: `P2 docs(ui): Lập kế hoạch đồng bộ giao diện có kiểm chứng`.
+
+**UIC01 — Inventory, contract và baseline trước sửa, P1 prerequisite; mapping S03/S15/S19.**
+
+- Khóa Git/source input và runtime toolchain thực; đối chiếu manifest hiện hành với Router/guards/aliases. Đi từng file app/shared/module/package/style/HTML/asset/test/config/workflow/docs liên quan, kể cả untracked nếu có thể được import; gán treatment theo standard §0.3. Excluded historical/evidence/vendor có count/reason, không nhận đã kiểm runtime toàn bộ disk.
+- Lập owner → symbol/import closure → consumer → route/profile/slot/state/role matrix. Liệt kê public exports thực từ source/catalog; mọi conditional permission, portal, fallback, error boundary và generated input có disposition. Không pin 61 khi manifest đổi.
+- Tại từng batch trước code, mở đúng route/seed, đợi required content hết loading, ghi expected minimum observations và chụp baseline source/render/behavior. Tái dùng audit cũ chỉ khi input hashes/method/state thực sự trùng; nếu thiếu paired before, giữ `NOT_VERIFIED`, không dựng baseline sau sửa.
+- Giữ scope Graphite Gold, MUI/Query/Router/RHF/i18n hiện tại; ghi UX intent/contract/owner trước JSX. Bằng chứng đóng: inventory không UNKNOWN, route set reconciliation, source fingerprints và baseline từng owner sẽ sửa. Commit baseline riêng, subject tiếng Việt có `Task: UIC01`.
+
+**UIC02 — Sửa UI-CONS-01, P2; mapping S10/S11/S16.**
+
+- Source owner: `apps/web/src/shared/ui/theme.ts`; canonical `../botsales-kit/design/tokens.json`; consumers thực discovery từ Dialog/ConfirmDialog/EditDialog/dirty guard/Drawer/Menu/Select/Popover. Xác nhận slot/backdrop visible và invisible trước chọn override.
+- Thêm mapping nhỏ tại theme cho visible backdrop để dùng overlay đã duyệt; giữ invisible variant trong suốt. Không sửa token, route-local color, dependency hoặc `node_modules` để hợp thức hóa default.
+- Before/after: computed backdrop trên Chrome ≥154 và Firefox ≥155, 390/1440px, đủ overlay variants có consumer. Overlay token parity phải đúng; Paper surface/radius, menu invisible, backdrop click, Escape, focus trap/return, draft/busy/destructive guard và scroll/hit-testing giữ semantics. Forced-colors kiểm riêng bằng method rõ ràng.
+- Regression có ý nghĩa phải bắt mismatch gốc; chạy source gates/typecheck/shared tests và mọi affected route smoke theo impact. Ghi expected/observed từng slot/state, trước FAIL/sau PASS, không chỉ screenshot. Commit dự kiến `P2 fix(ui): Đồng bộ lớp phủ modal theo token`.
+
+**UIC03 — Điều tra UI-CONS-02, P2; mapping S11/S15/S18.**
+
+- Owner cần đối chiếu: `apps/web/src/mocks/browser.ts`, bootstrap/import flow, test server/isolation và MSW version đang pin. Trace baseline có hai worker GET HTTP 200; không bắt đầu bằng giả định asset bị thiếu.
+- Instrument registration/controller/update/unregister, full navigation, fresh/controlled document, restart/offline/failure và song song theo setup thật. Repro bounded có seed/log; unit/fake lifecycle chỉ chứng minh invariant của code, phải có browser check đi kèm. Không arbitrary sleep, infinite retry hoặc filter `pageerror`.
+- Chỉ sửa sau khi có nguyên nhân/invariant đủ căn cứ; tránh unregister/update/start cạnh tranh, không stale worker hoặc production mock fallback. Giữ request interception, demo scoping/labels và production artifact boundary.
+- Kiểm route matrix trên Chrome supported ở 390/1440, cold start, reload, context độc lập, restart và concurrency phù hợp. Retest bounded phải công bố số lượt; không tái hiện được thì ghi occurrence còn mở, không gọi FIXED chỉ vì 4/4 recheck cũ. Nếu kết luận lỗi tooling/third-party, cần root evidence và disposition có kiểm chứng; không tự đóng required pageerror failure.
+- Commit fix + regression sau kiểm; investigation-only commit ghi đúng việc đã đo và acceptance còn mở. Không khóa UIC03 DONE bằng lời giải thích race chưa được chứng minh.
+
+**UIC04 — Quyết định UI-CONS-03, P2 candidate; mapping S12/S16.**
+
+- Owner `apps/web/src/modules/dashboard/index.tsx`: kiểm parent grid `1.6fr 1fr`, financial Panel, sibling full-span và permission combinations. Tìm intent trong contract/history/consumer; hình học trống một mình chưa chứng minh bug.
+- Nếu không có mục đích giới hạn width, sửa parent/full-span nhỏ nhất; nếu KEEP, ghi rationale dựa trên tác vụ/profile và proof đọc/so sánh money/status thực tế. Không thêm token, universal layout hoặc local spacing override.
+- Đo 390/768/1279/1280/1440/1920, row/panel/unused width, empty/long money/loading/error và các quyền làm đổi siblings. Kiểm CTA destination/priority, keyboard, wrap và no overflow; before/after cùng seed/method.
+- Commit quyết định + bằng chứng hoặc fix + regression, ghi candidate được xử lý thế nào. Giữ baseline 452,94px ở 1440 để đối chiếu, không tự đặt pixel threshold mới thay contract.
+
+#### 16.21.5. Phiếu chi tiết UIC05–UIC09
+
+**UIC05 — Token và runtime visual roles, P1 verification; mapping S10/S14/S19.** Trace màu semantic, typography/line height/font loading, radius, border/elevation, motion, disabled/focus/hover/pressed/error/success và forced-colors từ canonical source qua generated output đến theme/primitive/portal/screen. Kiểm resolver/alias/unit, provider/CSS import scope, default vs explicit variant, dark-only dưới OS light preference và reduced motion. Chọn expectations từ owner chuẩn, ghi mọi exception có consumer/lý do. Generator freshness và computed values phải cùng đúng; tìm lệch mới thì sửa owner cùng regression trước đóng, không bắt mọi workflow có mật độ giống nhau. Commit theo semantic owner đã kiểm.
+
+**UIC06 — Shared và layout consistency, P1 verification; mapping S09/S10/S12/S14.**
+
+- Discovery mọi public shared component/composition/export/type/variant hiện hành; đối chiếu catalog và product consumers. ReactNode children/actions/render slots, nested wrappers, QueryState, RHF/native/ref/ARIA, CSS và style producers phải được xét; không chỉ props trên wrapper.
+- Trên từng profile thực (auth/form/table/detail/dashboard/queue/dialog), kiểm Shell/page/section/surface/header/body/form/action ownership, operational/reading density, scroll và responsive geometry. Parent sở hữu sibling gaps, primitive sở hữu padding; không dùng số px đúng nhưng sai semantic role.
+- Kiểm collection 0/1/2/3+ items, wide/long/empty nội dung, one-sided controls, hidden siblings và transition pending→ready/error→retry. KEEP có proof, EDIT nhỏ tại owner; không migrate local geometry hợp lệ chỉ để tăng tỷ lệ Shared.
+- Đối chiếu strict scanner inventory với source closure; lỗi resolver/opaque style giữ UNKNOWN/FAIL đến xử lý. Bằng chứng đóng: từng public API và affected file có disposition/consumer/test/render, không orphan export hoặc bypass chưa phân loại. Mỗi owner/wave có commit và push riêng.
+
+**UIC07 — Mọi route và hành vi áp dụng, P1 verification; mapping S12/S15/S19.**
+
+- Đi hết canonical IDs trong [route inventory baseline](../evidence/frontend-ui-consistency-20261016/route-coverage.json), rồi đối chiếu manifest/Router mới từ UIC01. Mỗi route có small/large ready render và verdict riêng trên supported browsers; route không truy cập được phải có expected permission/redirect proof, không gọi zero components là PASS.
+- Với từng route, liệt kê role/permission/capability và state áp dụng: loading/empty/ready/error/retry, validation/submitting/success/conflict/unknown, read-only/disabled/busy, long/localized content và scope/session change. N/A cần lý do route-specific; shared behavior có thể reuse test nhưng phải trace đến route consumer và render thật.
+- Kích hoạt control trọng yếu bằng pointer/keyboard: link/button/tab/menu/row action, filter/search/sort/pager, dialog và forms. Xác nhận route/request/state/feedback thực; query parameter theo operation, cursor reset đúng owner, không enabled no-op hoặc thông báo persistence/provider thật khi chỉ là mock.
+- Kiểm dirty draft/late edit, back/reload/shop switch/logout, pending/refetch/realtime/error recovery phù hợp flow. Không đổi nghiệp vụ/API/quyền để làm layout xanh. Coverage có expected/observed và từng missing branch; sửa lỗi phát hiện bằng wave module/owner, mỗi wave kiểm/commit/push trước khi ghi đóng.
+
+**Ảnh chụp thực tế UIC07 ngày 17/10/2026:** full verify r7 exit 0 trên source cuối; 61 route × 7 role, 3.402 ô với 1.200 áp dụng và 1.200/1.200 kiểm trực tiếp; quyền route 399/399; viewport 244/244 trên Chromium 155.0.8059.40 và Firefox 155.0. Command unknown có 51 cặp theo quyền: 50 cặp thao tác UI + HTTP 202/`data.status=unknown`, 1 cặp R35 owner N/A vì Frontend chưa triển khai step-up, 0 cặp chưa kiểm; recovery shell 51/51 được phân loại riêng. Suite hành động tổng hợp 84/84 pass (42 mỗi browser). Xem [report chi tiết](../evidence/frontend-ui-consistency-20261017/UIC07/REPORT.md), [ma trận sinh cuối](route-state-role-matrix.json), [full verify r7](../evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-final-r7.log) và các log/hashes đính kèm. Trạng thái local đã xác minh; commit/push và exact-SHA CI đang chờ, sau đó mới điều hành UIC08.
+
+**UIC08 — Responsive, native và accessibility, P1 verification; mapping S16/S19.**
+
+- Reflow theo affected profiles tại 320/390/767/768/1024/1279/1280/1440/1920 CSS px; chiều cao thấp, pane hẹp và nội bộ table scroll được phép phải có proof. So sánh overflow/wrap/overlap, readable labels/money/status, sticky/fixed/portal occlusion và hit-testing.
+- Browser zoom thật 200% và Firefox native text-only 200% có method/state/viewport/DPR/ảnh trước-sau riêng. Không dùng đổi viewport, CSS zoom hoặc tăng font qua DOM thay native PASS. Thêm regression bắt lỗi, giữ expected critical targets và thao tác.
+- Tab/Shift+Tab/Enter/Space/Escape, skip link, visible focus, focus trap/return, accessible name/role/live errors, label-required/validation association, contrast ở state áp dụng, reduced motion và forced-colors. Chạy axe phù hợp mọi route sau settle; axe không thay speech/human.
+- Narrator speech/human review: có công cụ/quan sát thật thì lưu transcript/method/results; chưa quan sát giữ `NOT_RUN` riêng FE-G05 và không nhận accessibility toàn diện. Physical mobile/Edge/Safari theo best effort; không tự thu hẹp supported scope để đóng.
+- Commit regression/evidence và root fix nếu có. Native mandatory method thiếu thì giữ UI acceptance phần liên quan mở, vẫn chuẩn bị handoff có giới hạn đúng tên.
+
+**UIC09 — Chống tái phạm, P1 verification; mapping S14/S17/S18.** Kiểm những lỗi UIC02–08 đã có assertion giữ invariant, bao phủ cả supported positive và lỗi gốc negative; parser/provenance thay đổi phải có UNKNOWN/parse-error fixtures. Tích hợp vào commands/gates sẵn có khi cần, kiểm workflow path/working-directory/lockfile/browser/artifact/timeout/failure propagation. Không tạo linter/interpreter/framework thứ hai hoặc test chỉ mirror implementation. Gate không được bỏ consumer, nới threshold, lọc assertion, dùng `continue-on-error` hoặc update snapshot để che lỗi. Nếu existing gates đã đủ, ghi KEEP + commands/coverage thay vì sửa tooling không cần thiết; commit evidence là một việc có thể bàn giao.
+
+#### 16.21.6. Phiếu chi tiết UIC10–UIC13 và ma trận không bỏ sót
+
+**UIC10 — Kiểm source và artifact cuối, P1 closure; mapping S19.** Chạy từ workspace root với Node/npm pinned thực: `npm.cmd run verify`, `npm.cmd run build:demo`, full E2E Chrome supported và Firefox supported, built-demo theo config hiện có. Trước full run discovery số test/shard/routes thật; giữ outputDir/cache/server/run ownership riêng, storage đủ và mọi child đã đóng. Ghi từng command/exit/count/skips, browser binary thực, bundle production/demo inventory+checksums; production không worker/seed/mock fallback, demo đúng synthetic scope. Kiểm built artifact route matrix nhỏ/lớn, overlay và action/behavior bị ảnh hưởng; dev-only PASS không thay built artifact proof. Full suite FAIL còn nguyên, sau fix phải chạy lại phần full cần chứng minh trên source cuối, không ghép targeted tests thành full PASS. Commit proof sau kiểm, không stage dist/cache/snapshot lớn không cần thiết.
+
+**UIC11 — Reconcile tài liệu và FE freshness, P2 closure; mapping S17/S19/S20.** Source/catalog/type/export/semantic mapping và current/history pointers khớp, generated output dùng owner generator. So từng file inventory với final diff và treatment; mọi finding/branch/test/asset/tooling có disposition/proof. Dùng `node ../botsales-kit/scripts/progress.mjs validate` và `status` từ Frontend để lấy FE freshness thật; revalidate bằng chứng task theo owner khi thực sự đủ nguyên task. Không tăng checkpoint hoặc sửa full-product `execution/progress.json` vì UI plan được đóng. S17 manifest refresh theo owner và kết quả thật; không thay hashes vào log cũ. Cập nhật `evidence/REPORT.md`, continuation và task table theo final source; nếu đổi doc là input hash của validator thì kiểm lại trước commit. Commit tài liệu/evidence riêng sau source proof.
+
+**UIC12 — GitHub delivery, P1; mapping S18/S20.** Áp dụng §16.21.3 cho mọi commit của đợt, giữ danh sách SHA/task/wave/local checks/remote/check-runs và terminal conclusion. Truy vấn Actions theo SHA, lấy run/attempt/jobs/artifacts/logs; kiểm verify và đủ bốn E2E jobs, built-demo steps áp dụng. Một workflow `success` không chứng minh branch protection, supported native zoom, backend hoặc acceptance. Kiểm branch/ruleset bằng API quyền hiện có, ghi unavailable đúng nếu thiếu quyền; không tự đổi policy. Nếu CI fail, fix có root cause + regression và commit tiếp theo trong đúng task, không mark UI DONE vì local xanh. Receipt có thể là GitHub run/check-run và báo cáo hiện hành; không thêm commit chỉ để thay một SHA tự tham chiếu.
+
+**UIC13 — Bàn giao có phạm vi, P2; mapping S20.** Đối chiếu UIC01–12, route set, owner/export/files, supported browser/state/method coverage và mandatory gates. Chuẩn bị hướng dẫn mở demo, seed/reset theo tool hiện có, ca quan sát overlay/Dashboard/MSW, kết quả trước-sau, nguồn proof/commit/CI và rollback theo từng commit. Giữ screen-reader/human/handset/provider/backend/owner acceptance theo bằng chứng thực, không tự ký nghiệm thu. Có mandatory FAIL/UNKNOWN/NOT_RUN thì ghi `DELIVERED_WITH_EVIDENCE_LIMITS` và việc cụ thể còn mở; chỉ `READY_FOR_ACCEPTANCE_LOCAL_SCOPE` khi toàn claim scope đủ proof. Sau commit handoff/push, kiểm lại remote và CI HEAD cuối; không lấy CI của parent làm final SHA PASS. Người dùng nghiệm thu riêng sau khi xem hồ sơ.
+
+Ma trận rà thiếu dưới đây là ánh xạ phạm vi của các phiếu, không là một bộ quy định UI mới:
+
+| Biên cần bao phủ | Task chịu trách nhiệm | Proof bắt buộc để phần đó được đóng |
+|---|---|---|
+| Files/entries/styles/assets/generated/third-party/historical | UIC01,UIC11 | Inventory treatments + import closure + final reconciliation, exclusions có lý do |
+| Canonical token/generator/theme/provider/portal | UIC02,UIC05 | Freshness và runtime semantic values/variant matrix, visible/invisible backdrop |
+| MSW/session/test server lifecycle | UIC03,UIC10 | Repro/invariant + browser navigation/cold/reload/restart/isolation, pageerrors giữ nguyên |
+| Dashboard geometry theo quyền và nội dung | UIC04,UIC08 | Quyết định KEEP/EDIT có rationale, supported breakpoint/long/empty/action proof |
+| Mọi shared export/slot/native fallback/profile/density | UIC06,UIC09 | Catalog-source-consumer parity, strict fixtures và rendered branch assertions |
+| Mọi canonical route/alias/guard/permission | UIC01,UIC07 | Route-set equality; từng route small/large, access hoặc expected redirect proof |
+| Async/error/empty/validation/conflict/unknown/draft/action | UIC07 | State/operation/role coverage và actual visible result, không no-op/success giả |
+| Reflow/keyboard/focus/hit/overlay/zoom/text-only/a11y | UIC08 | Từng method riêng; automated và human/speech limits tách biệt |
+| Gates/full suites/build/production-demo/artifact | UIC09,UIC10 | Exact source/test/config/artifact hashes, command exits/counts/raw logs |
+| Docs/current-history/FE ledger freshness | UIC11 | Owner CLI receipt và links/hash validation, không cộng điểm giả |
+| Mỗi commit/push/Actions/policy/final handoff | UIC00–UIC13,UIC12 | Task-to-SHA, remote match, đúng run/attempt/terminal kết quả; acceptance riêng |
+
+#### 16.21.7. Lệnh dự kiến và điểm tiếp tục
+
+Các lệnh dưới đây là entrypoint hiện có; snapshot UIC07 (17/10) được ghi để giữ lịch sử, còn source final UIC10/UIC11 và CI delivery mới nằm ở evidence mới hơn. Kiểm `package.json`, configs và side effects trước chạy lại; dùng snapshot/cô lập khi cần giữ checkout/evidence hiện có.
+
+**Snapshot UIC07 sau UIC06 (17/10/2026, lịch sử):** `npm.cmd --script-shell=cmd.exe run verify` exit 0; receipt [full verify r7](../evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-final-r7.log) và [exit](../evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-final-r7.log.exit). Chromium 155.0.8059.40 + Firefox 155.0: 399/399 quyền, 244/244 route-viewport, state matrix 1.200/1.200 ô áp dụng trực tiếp; 50/51 command API unknown trực tiếp + một cặp N/A có reason theo boundary Frontend; recovery shell 51/51 tách riêng; action suite tổng hợp 84/84. Matrix cuối được sinh từ log exit 0 và route/permission/operation contracts; chi tiết ở [UIC07 report](../evidence/frontend-ui-consistency-20261017/UIC07/REPORT.md) và [ma trận](route-state-role-matrix.json). Source tests UIC07 có corrective selector commit sau đó; các browser/browser-identity/full-suite proof source cuối nằm ở UIC10. Snapshot này chưa phải Backend/UAT; native accessibility và human/speech review giữ đúng phạm vi UIC08.
+
+```text
+# Cwd: BotSalesAI_Frontend
+npm.cmd run generate:check
+node scripts/check-layout.mjs --json
+node scripts/check-visual-tokens.mjs --json
+node scripts/check-ui-composition.mjs --json
+npm.cmd run verify
+npm.cmd run build:demo
+npm.cmd run test:e2e -- --project=firefox --reporter=line
+npx.cmd playwright test --config playwright.built-demo.config.ts --project=firefox-built-demo --reporter=line
+node ../botsales-kit/scripts/progress.mjs validate
+node ../botsales-kit/scripts/progress.mjs status
+# Cwd: repo root; thay <SHA>/<RUN_ID>/<BRANCH> bằng giá trị đã kiểm thực
+git diff --cached --check
+git ls-remote origin refs/heads/<BRANCH>
+gh run list --workflow frontend.yml --commit <SHA>
+gh run view <RUN_ID> --json headSha,status,conclusion,jobs,url
+gh api repos/LonelyTraderBay/Bot-AI-Ban-hang-FB/commits/<SHA>/check-runs
+```
+
+Chrome supported: cấu hình/runner đang dùng phải được kiểm binary version; config hiện tại đặt project tên `chromium` và bundled binary baseline là 153. Không gọi tên project là proof Chrome ≥154. Tái dùng harness channel Chrome hợp lệ hoặc bổ sung finite config nhỏ khi cần, giữ full discovered suite và isolation; browser/config mới phải có proof run thật.
+
+Tiếp tục theo bảng UIC §16.6, chọn việc đầu tiên chưa đủ bằng chứng theo dependency, cập nhật trạng thái sau khi có kết quả mới và giữ số liệu gắn với revision/method thực. Không kế thừa “100%” từ snapshot UX/FE/CI trước; lịch sử FAIL và các giới hạn native, backend, hosted policy hoặc human acceptance giữ đúng trạng thái đã quan sát.

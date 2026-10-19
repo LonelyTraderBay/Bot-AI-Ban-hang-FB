@@ -6,6 +6,7 @@ import { isolatedViteCacheDir } from './scripts/vite-cache.mjs';
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const runId = process.env.BOTSALES_PLAYWRIGHT_RUN_ID || `playwright-${process.pid}-${randomUUID()}`;
+const { userAgent: _pinnedChromeUserAgent, ...desktopChrome } = devices['Desktop Chrome'];
 process.env.BOTSALES_PLAYWRIGHT_RUN_ID = runId;
 const cacheDir = isolatedViteCacheDir(projectRoot, 'playwright-webserver', runId);
 
@@ -24,7 +25,7 @@ export default defineConfig({
     use: { baseURL: 'http://127.0.0.1:5187', trace: 'retain-on-failure' },
     globalSetup:'./tests/session/playwright-setup.ts',
     projects: [
-        { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+        { name: 'chromium', use: { ...desktopChrome, channel: 'chrome' } },
         { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     ],
 });

@@ -21,3 +21,14 @@ npm run dev
 ```
 
 Frontend dùng API mock trong chế độ demo. Tài liệu và trạng thái Backend, dịch vụ ngoài, staging hoặc production không được xác nhận bởi các bước chạy Frontend này.
+
+## Giữ repository sạch
+
+Từ repository root, chạy trước khi commit:
+
+```bash
+node --test .github/scripts/check-repository-hygiene.test.mjs
+node .github/scripts/check-repository-hygiene.mjs
+```
+
+Sau khi commit, thêm `--require-clean` để kiểm cả trạng thái checkout. Workflow `repository-hygiene` chạy cùng bộ kiểm trên Ubuntu và Windows cho push/PR. Quy tắc giữ bằng chứng, nơi đặt output tạm và cách khôi phục thay đổi cũ nằm trong [REPOSITORY_HYGIENE.md](REPOSITORY_HYGIENE.md).

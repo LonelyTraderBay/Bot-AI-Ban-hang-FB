@@ -69,6 +69,7 @@ test('product editor validates positive prices, protects image-only drafts, and 
     const guard=page.getByRole('dialog',{name:'Rời màn hình chưa lưu?'});
     await expect(guard).toBeVisible();
     await guard.getByRole('button',{name:'Tiếp tục chỉnh sửa',exact:true}).click();
+    await expect(guard).toBeHidden();
     await expect(name).toHaveValue('Sản phẩm FE010');
     await expect(skus.nth(1)).toHaveValue('FE010-PRODUCT-L');
     await expect(page.getByText('1 tệp được gắn với sản phẩm',{exact:true})).toBeVisible();

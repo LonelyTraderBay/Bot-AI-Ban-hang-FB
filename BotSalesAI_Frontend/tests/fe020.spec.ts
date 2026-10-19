@@ -181,7 +181,20 @@ test('FE020.F05 purchase delegation is bounded, saved paused, and requires a sep
         if (request.method() !== 'GET' && new URL(request.url()).pathname.endsWith('/purchase-delegations'))
             writes.push(`${request.method()} ${new URL(request.url()).pathname}`);
     });
+    const approvalsResponse = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname === '/api/v2/shops/shop-demo/approvals'
+            && url.searchParams.get('limit') === '20';
+    });
     await gotoDemo(page, '/s/shop-demo/approvals');
+    const approvalsResult = await approvalsResponse;
+    expect(approvalsResult.status()).toBe(200);
+    const approvals = await approvalsResult.json() as { data: Array<{ id: string }> };
+    expect(approvals.data.length).toBeGreaterThan(0);
+    // The loaded table changes the position of the create button below it.
+    const approvalsTable = page.getByRole('table', { name: 'Yêu cầu phê duyệt', exact: true });
+    await expect(approvalsTable).toBeVisible();
+    await expect(approvalsTable.getByRole('row')).toHaveCount(approvals.data.length + 1);
     const panel = page.getByRole('heading', { name: 'Ủy quyền gửi đơn mua', exact: true });
     await expect(panel).toBeVisible();
     await page.getByRole('button', { name: 'Tạo ủy quyền có giới hạn', exact: true }).click();

@@ -1,0 +1,42 @@
+
+Running 1 test using 1 worker
+
+
+
+(node:45376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] [chromium] › tests\session\demo-worker-startup.spec.ts:80:1 › demo keeps the active mock worker and UI when its update request is rejected
+  1) [chromium] › tests\session\demo-worker-startup.spec.ts:80:1 › demo keeps the active mock worker and UI when its update request is rejected 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 0
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      114 |         await page.goto(new URL('/s/shop-demo/service-cases', demoUrl).href, { waitUntil: 'domcontentloaded' });
+      115 |         await expect(page.locator('main h1')).toBeVisible();
+    > 116 |         await expect.poll(() => diagnostics.length).toBe(1);
+          |                                                     ^
+      117 |         expect(errors).toEqual([]);
+      118 |         expect(diagnostics[0]).toContain('tiếp tục dùng worker đang hoạt động');
+      119 |         await expect.poll(() => page.evaluate(() => navigator.serviceWorker.controller?.state)).toBe('activated');
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\session\demo-worker-startup.spec.ts:116:53
+
+    Error Context: test-results\playwright-5904-c514a9a5-6ea6-45e9-8586-623f2cb7a721\session-demo-worker-startu-3c1b3--update-request-is-rejected-chromium\error-context.md
+
+    Error Context: test-results\playwright-5904-c514a9a5-6ea6-45e9-8586-623f2cb7a721\session-demo-worker-startu-3c1b3--update-request-is-rejected-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-5904-c514a9a5-6ea6-45e9-8586-623f2cb7a721\session-demo-worker-startu-3c1b3--update-request-is-rejected-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-5904-c514a9a5-6ea6-45e9-8586-623f2cb7a721\session-demo-worker-startu-3c1b3--update-request-is-rejected-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\session\demo-worker-startup.spec.ts:80:1 › demo keeps the active mock worker and UI when its update request is rejected 

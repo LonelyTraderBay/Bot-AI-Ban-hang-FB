@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.join(projectRoot, 'apps/web');
+const { userAgent: _pinnedChromeUserAgent, ...desktopChrome } = devices['Desktop Chrome'];
 const viteCli = path.join(projectRoot, 'node_modules/vite/bin/vite.js');
 const port = 4174;
 const runId = process.env.BOTSALES_BUILT_DEMO_RUN_ID || `built-demo-${process.pid}-${randomUUID()}`;
@@ -29,7 +30,7 @@ export default defineConfig({
         env: { NODE_ENV: 'production' },
     },
     projects: [
-        { name: 'chromium-built-demo', use: { ...devices['Desktop Chrome'] } },
+        { name: 'chromium-built-demo', use: { ...desktopChrome, channel: 'chrome' } },
         { name: 'firefox-built-demo', use: { ...devices['Desktop Firefox'] } },
     ],
 });

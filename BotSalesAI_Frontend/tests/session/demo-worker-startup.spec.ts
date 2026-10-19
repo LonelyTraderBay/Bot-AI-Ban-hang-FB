@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { startDemoServer, startLiveServer } from './demo-server.mjs';
 
@@ -74,6 +75,131 @@ test('demo conditional module requests return complete exports without changing 
     }
     finally {
         await context.close();
+    }
+});
+
+test('demo keeps the active mock worker and UI when its update request is rejected', async ({ browser }, info) => {
+    const workerUrl = new URL('/mockServiceWorker.js', demoUrl).href;
+    const scopeUrl = new URL('/', demoUrl).href;
+    const context = await browser.newContext({ serviceWorkers: 'allow' });
+    try {
+        const page = await context.newPage();
+        const errors: string[] = [];
+        const diagnostics: string[] = [];
+        page.on('pageerror', error => errors.push(error.message));
+        page.on('console', message => {
+            if (message.type() === 'warning' && message.text().startsWith('[MSW demo]')) diagnostics.push(message.text());
+        });
+        await page.addInitScript(({ expectedScope, expectedWorkerUrl }) => {
+            const registrationPrototype = ServiceWorkerRegistration.prototype;
+            const descriptor = Object.getOwnPropertyDescriptor(registrationPrototype, 'update');
+            if (!descriptor || typeof descriptor.value !== 'function' || descriptor.configurable === false) {
+                throw new Error('ServiceWorkerRegistration.update cannot be instrumented in this browser.');
+            }
+            const originalUpdate = descriptor.value as (...args: unknown[]) => Promise<void>;
+            Object.defineProperty(registrationPrototype, 'update', {
+                ...descriptor,
+                value: function (this: ServiceWorkerRegistration, ...args: unknown[]) {
+                    if (this.active?.scriptURL === expectedWorkerUrl) {
+                        return Promise.reject(new TypeError(`Failed to update a ServiceWorker for scope ('${expectedScope}') with script ('${expectedWorkerUrl}'): Not found`));
+                    }
+                    return originalUpdate.apply(this, args);
+                },
+            });
+        }, { expectedScope: scopeUrl, expectedWorkerUrl: workerUrl });
+
+        await page.goto(new URL('/s/shop-demo/overview', demoUrl).href, { waitUntil: 'domcontentloaded' });
+        await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toBeVisible();
+        await expect.poll(() => page.evaluate(() => navigator.serviceWorker.controller?.scriptURL)).toBe(workerUrl);
+
+        await page.goto(new URL('/s/shop-demo/service-cases', demoUrl).href, { waitUntil: 'domcontentloaded' });
+        await expect(page.locator('main h1')).toBeVisible();
+        await page.evaluate((expectedWorkerUrl: string) => {
+            void navigator.serviceWorker.getRegistrations().then(registrations => {
+                const registration = registrations.find(candidate => candidate.active?.scriptURL === expectedWorkerUrl);
+                if (!registration) throw new Error('The active mock Service Worker registration was not found.');
+                // Match MSW 2.11.1's fire-and-forget update() behavior for this controlled browser fault.
+                void registration.update();
+            });
+        }, workerUrl);
+        await expect.poll(() => diagnostics.length).toBe(1);
+        expect(errors).toEqual([]);
+        expect(diagnostics[0]).toContain('tiếp tục dùng worker đang hoạt động');
+        await expect.poll(() => page.evaluate(() => navigator.serviceWorker.controller?.state)).toBe('activated');
+        await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toBeVisible();
+
+        const unrelatedRejectionWasSuppressed = await page.evaluate(({ expectedScope }) => {
+            const messages = [
+                'This unrelated error must remain unhandled.',
+                `Failed to update a ServiceWorker for scope ('${expectedScope}') with script ('${new URL('/another-worker.js', location.href).href}'): Not found`,
+            ];
+            return messages.map(message => {
+                const event = new PromiseRejectionEvent('unhandledrejection', {
+                    promise: Promise.resolve(), reason: new TypeError(message), cancelable: true,
+                });
+                window.dispatchEvent(event);
+                return event.defaultPrevented;
+            });
+        }, { expectedScope: scopeUrl });
+        expect(unrelatedRejectionWasSuppressed).toEqual([false, false]);
+        expect(diagnostics).toHaveLength(1);
+
+        const activeController = await page.evaluate(() => {
+            const controller = navigator.serviceWorker.controller;
+            return controller ? { scriptURL: controller.scriptURL, state: controller.state } : null;
+        });
+        const report = {
+            scope: 'synthetic rejected update() against the active local demo mock worker; no network response is altered',
+            browser: info.project.name,
+            browserVersion: browser.version(),
+            recordedAt: new Date().toISOString(),
+            route: new URL(page.url()).pathname,
+            scriptURL: workerUrl,
+            registrationScope: scopeUrl,
+            activeController,
+            pageErrors: errors,
+            diagnosticWarnings: diagnostics,
+            unrelatedRejectionWasSuppressed,
+        };
+        const output = info.outputPath('service-worker-update-recovery.json');
+        fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+        await info.attach('service-worker-update-recovery', { path: output, contentType: 'application/json' });
+    }
+    finally {
+        await context.close();
+    }
+});
+
+test('demo worker remains isolated across concurrent contexts and reloads', async ({ browser }) => {
+    const workerUrl = new URL('/mockServiceWorker.js', demoUrl).href;
+    const firstContext = await browser.newContext({ serviceWorkers: 'allow' });
+    const secondContext = await browser.newContext({ serviceWorkers: 'allow' });
+    const errors: string[] = [];
+    try {
+        const [firstPage, secondPage] = await Promise.all([firstContext.newPage(), secondContext.newPage()]);
+        firstPage.on('pageerror', error => errors.push(`first: ${error.message}`));
+        secondPage.on('pageerror', error => errors.push(`second: ${error.message}`));
+        await Promise.all([
+            firstPage.goto(new URL('/s/shop-demo/overview', demoUrl).href, { waitUntil: 'domcontentloaded' }),
+            secondPage.goto(new URL('/s/shop-demo/overview', demoUrl).href, { waitUntil: 'domcontentloaded' }),
+        ]);
+        for (const page of [firstPage, secondPage]) {
+            await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toBeVisible();
+            await expect.poll(() => page.evaluate(() => navigator.serviceWorker.controller?.scriptURL)).toBe(workerUrl);
+        }
+
+        await firstPage.reload({ waitUntil: 'domcontentloaded' });
+        await expect(firstPage.locator('main h1')).toBeVisible();
+        await expect.poll(() => firstPage.evaluate(() => navigator.serviceWorker.controller?.scriptURL)).toBe(workerUrl);
+        await firstContext.close();
+
+        await secondPage.goto(new URL('/s/shop-demo/service-cases', demoUrl).href, { waitUntil: 'domcontentloaded' });
+        await expect(secondPage.locator('main h1')).toBeVisible();
+        await expect.poll(() => secondPage.evaluate(() => navigator.serviceWorker.controller?.scriptURL)).toBe(workerUrl);
+        expect(errors).toEqual([]);
+    }
+    finally {
+        await Promise.all([firstContext.close(), secondContext.close()]);
     }
 });
 

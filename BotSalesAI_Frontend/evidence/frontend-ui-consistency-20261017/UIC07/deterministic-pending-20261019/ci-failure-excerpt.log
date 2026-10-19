@@ -1,0 +1,37 @@
+2026-10-18T19:14:26.7559194Z   1) [firefox] › tests/frontend-corrections.spec.ts:191:1 › F01 shop settings merges a server-only locale change and preserves edits typed during save
+2026-10-18T19:14:26.7559711Z
+2026-10-18T19:14:26.7559870Z     Error: expect(locator).toBeEnabled() failed
+2026-10-18T19:14:26.7560396Z
+2026-10-18T19:14:26.7589459Z     Locator:  getByRole('button', { name: 'Lưu cấu hình', exact: true })
+2026-10-18T19:14:26.7589919Z     Expected: enabled
+2026-10-18T19:14:26.7590135Z     Received: disabled
+2026-10-18T19:14:26.7590340Z     Timeout:  5000ms
+2026-10-18T19:14:26.7590467Z
+2026-10-18T19:14:26.7590548Z     Call log:
+2026-10-18T19:14:26.7592964Z       - Expect "toBeEnabled" getByRole('button', { name: 'Lưu cấu hình', exact: true }) with timeout 5000ms
+2026-10-18T19:14:26.7593638Z       - waiting for getByRole('button', { name: 'Lưu cấu hình', exact: true })
+2026-10-18T19:14:26.7596023Z         14 × locator resolved to <button disabled tabindex="-1" type="submit" class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-disableElevation Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-disableElevation css-memtyh-MuiButtonBase-root-MuiButton-root">Lưu cấu hình</button>
+2026-10-18T19:14:26.7598059Z            - unexpected value "disabled"
+2026-10-18T19:14:26.7598237Z
+2026-10-18T19:14:26.7598244Z
+2026-10-18T19:14:26.7598495Z       211 |     expect((await sent).postDataJSON()).toEqual({ name: 'Submitted shop' });
+2026-10-18T19:14:26.7598973Z       212 |     await name.fill('Typed later shop'); await completed;
+2026-10-18T19:14:26.7599575Z     > 213 |     await expect(page.getByRole('button', { name: 'Lưu cấu hình', exact: true })).toBeEnabled();
+2026-10-18T19:14:26.7600074Z           |                                                                                   ^
+2026-10-18T19:14:26.7600454Z       214 |     await expect(name).toHaveValue('Typed later shop');
+2026-10-18T19:14:26.7601139Z       215 |     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Tổng quan/ }).click();
+2026-10-18T19:14:26.7601904Z       216 |     await expect(page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true })).toBeVisible();
+2026-10-18T19:14:26.7602664Z         at /home/runner/work/Bot-AI-Ban-hang-FB/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/frontend-corrections.spec.ts:213:83
+2026-10-18T19:14:26.7603086Z
+2026-10-18T19:14:26.7604065Z     Error Context: test-results/playwright-3588-f6e94194-bc7a-4329-b06e-763bb5b9eb5f/frontend-corrections-F01-s-5ba59-ves-edits-typed-during-save-firefox/error-context.md
+2026-10-18T19:14:26.7604720Z
+2026-10-18T19:14:26.7605366Z     Error Context: test-results/playwright-3588-f6e94194-bc7a-4329-b06e-763bb5b9eb5f/frontend-corrections-F01-s-5ba59-ves-edits-typed-during-save-firefox/error-context.md
+2026-10-18T19:14:26.7605999Z
+2026-10-18T19:14:26.7606373Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-10-18T19:14:26.7607432Z     test-results/playwright-3588-f6e94194-bc7a-4329-b06e-763bb5b9eb5f/frontend-corrections-F01-s-5ba59-ves-edits-typed-during-save-firefox/trace.zip
+2026-10-18T19:14:26.7608070Z     Usage:
+2026-10-18T19:14:26.7608170Z
+2026-10-18T19:14:26.7608794Z         npx playwright show-trace test-results/playwright-3588-f6e94194-bc7a-4329-b06e-763bb5b9eb5f/frontend-corrections-F01-s-5ba59-ves-edits-typed-during-save-firefox/trace.zip
+2026-10-18T19:14:26.7609438Z
+2026-10-18T19:15:28.5589337Z   196 passed (16.0m)
+2026-10-18T19:15:28.5965210Z ##[error]Process completed with exit code 1.

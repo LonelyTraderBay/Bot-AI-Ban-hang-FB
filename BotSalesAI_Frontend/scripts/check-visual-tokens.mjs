@@ -21,6 +21,7 @@ const VISUAL_PROPERTIES = new Map([
     ['boxShadow', 'elevation'], ['shadow', 'elevation'], ['elevation', 'elevation'],
     ['outline', 'focus'], ['outlineWidth', 'focus'], ['outlineOffset', 'focus'],
     ['outlineStyle', 'focus'], ['focusRing', 'focus'],
+    ['zIndex', 'zIndex'],
 ]);
 const CSS_PROPERTIES = new Map([
     ['color', 'palette'], ['background', 'palette'], ['background-color', 'palette'], ['border-color', 'palette'],
@@ -30,6 +31,7 @@ const CSS_PROPERTIES = new Map([
     ['border-bottom-left-radius', 'radius'], ['border-bottom-right-radius', 'radius'],
     ['box-shadow', 'elevation'], ['text-shadow', 'elevation'],
     ['outline', 'focus'], ['outline-width', 'focus'], ['outline-offset', 'focus'], ['outline-style', 'focus'],
+    ['z-index', 'zIndex'],
 ]);
 const CANONICAL_NAMES = new Set(['tokens', 'colors', 'theme', 'layoutSx', 'layoutCss', 'visualSx', 'visualCss']);
 const CSS_SYSTEM_COLORS = new Set(['canvas', 'canvastext', 'linktext', 'visitedtext', 'activetext', 'buttonface', 'buttontext', 'field', 'fieldtext', 'highlight', 'highlighttext', 'mark', 'marktext', 'graytext', 'selecteditem', 'selecteditemtext', 'accentcolor', 'accentcolortext']);
@@ -67,6 +69,7 @@ function semanticValue(category, value) {
     if (category === 'typography') return ['inherit', 'initial', 'unset', 'revert', 'normal', 'small', 'medium', 'large', 'default'].includes(v) || /^var\(--(?:font|type)-[\w-]+\)$/.test(v);
     if (category === 'radius') return ZERO.test(v) || /^var\(--(?:radius|shape)-[\w-]+\)$/.test(v);
     if (category === 'elevation') return ['none', 'inherit', 'initial', 'unset'].includes(v) || /^var\(--(?:shadow|elevation)-[\w-]+\)$/.test(v);
+    if (category === 'zIndex') return ['auto', 'inherit', 'initial', 'unset', 'revert', 'revert-layer'].includes(v) || /^var\(--z-index-[\w-]+\)$/.test(v);
     if (category === 'focus') return ZERO.test(v) || /^var\(--(?:focus|color|palette)-[\w-]+\)$/.test(v) || COLOR_KEYWORDS.has(v);
     return false;
 }

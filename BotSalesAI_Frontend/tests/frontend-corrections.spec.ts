@@ -15,6 +15,37 @@ async function mutate(page: Page, path: string, body: unknown, method = 'POST', 
 }
 async function pulse(page: Page) { expect((await mutate(page, 'customers', { displayName: 'Synthetic refresh event', phone: null, email: null, notes: '' })).status).toBe(201); }
 
+type PendingMutationGate = { entered: boolean; release: () => void };
+/** Hold the client fetch until the in-flight edit is complete; MSW request events may arrive with the response. */
+async function whileMutationPending(page: Page, method: string, pathname: RegExp, submit: () => Promise<unknown>, during: () => Promise<void>) {
+    await page.evaluate(({ method, pattern }) => {
+        const originalFetch = window.fetch.bind(window);
+        let releaseGate!: () => void;
+        const held = new Promise<void>(resolve => { releaseGate = resolve; });
+        const state: PendingMutationGate = { entered: false, release: () => { window.fetch = originalFetch; releaseGate(); } };
+        Object.assign(window, { correctionsPendingMutation: state });
+        window.fetch = async (input, init) => {
+            const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
+            const requestMethod = init?.method || (input instanceof Request ? input.method : 'GET');
+            if (requestMethod === method && new RegExp(pattern).test(url.pathname)) {
+                window.fetch = originalFetch;
+                state.entered = true;
+                await held;
+            }
+            return originalFetch(input, init);
+        };
+    }, { method, pattern: pathname.source });
+    const completed = page.waitForResponse(response => response.request().method() === method && pathname.test(new URL(response.url()).pathname));
+    try {
+        await submit();
+        await expect.poll(() => page.evaluate(() => (window as unknown as { correctionsPendingMutation: PendingMutationGate }).correctionsPendingMutation.entered)).toBe(true);
+        await during();
+    } finally {
+        await page.evaluate(() => (window as unknown as { correctionsPendingMutation: PendingMutationGate }).correctionsPendingMutation.release());
+    }
+    return completed;
+}
+
 test('F01 preserves a customer draft, compares three snapshots, and PATCHes only chosen changes', async ({ page }) => {
     await visit(page, 'customers/c1');
     const name = page.getByLabel('Tên khách hàng', { exact: true });
@@ -101,10 +132,10 @@ test('F05 keeps text typed while a previous internal note is pending', async ({ 
     const text = page.getByLabel('Ghi chú cho nhóm', { exact: true });
     const submittedText = '😀'.repeat(6000);
     await text.fill(submittedText); await expect(text).toHaveValue(submittedText);
-    await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('addInternalNote', 700));
-    const response = page.waitForResponse(result => result.request().method() === 'POST' && new URL(result.url()).pathname.includes('/notes'));
-    await page.getByRole('button', { name: 'Lưu ghi chú', exact: true }).click();
-    await text.fill('Typed next while pending'); const submittedResponse = await response;
+    const submittedResponse = await whileMutationPending(page, 'POST', /\/notes$/, () => page.getByRole('button', { name: 'Lưu ghi chú', exact: true }).click(), async () => {
+        await text.fill('Typed next while pending');
+        await expect(text).toHaveValue('Typed next while pending');
+    });
     expect(submittedResponse.status()).toBe(201); expect((await submittedResponse.json()).data.text).toBe(submittedText);
     await expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeEnabled();
     await expect(text).toHaveValue('Typed next while pending');
@@ -204,12 +235,13 @@ test('F01 shop settings merges a server-only locale change and preserves edits t
     await expect(page.getByLabel('Ngôn ngữ giao diện', { exact: true })).toHaveValue('Tiếng Việt');
     await expect(page.getByLabel('Ngôn ngữ giao diện', { exact: true })).toBeDisabled();
     await expect(page.getByText('Giao diện hiện chỉ hỗ trợ tiếng Việt. Locale lưu trong API: en-US.', { exact: true })).toBeVisible();
-    await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('updateShop', 800));
-    const sent = page.waitForRequest(request => request.method() === 'PATCH' && new URL(request.url()).pathname === '/api/v2/shops/shop-demo');
-    const completed = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo');
-    await page.getByRole('button', { name: 'Lưu cấu hình', exact: true }).click();
-    expect((await sent).postDataJSON()).toEqual({ name: 'Submitted shop' });
-    await name.fill('Typed later shop'); await completed;
+    const completed = await whileMutationPending(page, 'PATCH', /^\/api\/v2\/shops\/shop-demo$/, () => page.getByRole('button', { name: 'Lưu cấu hình', exact: true }).click(), async () => {
+        await expect(page.getByRole('button', { name: 'Lưu cấu hình', exact: true })).toBeDisabled();
+        await name.fill('Typed later shop');
+        await expect(name).toHaveValue('Typed later shop');
+    });
+    expect(completed.status()).toBe(200);
+    expect(completed.request().postDataJSON()).toEqual({ name: 'Submitted shop' });
     await expect(page.getByRole('button', { name: 'Lưu cấu hình', exact: true })).toBeEnabled();
     await expect(name).toHaveValue('Typed later shop');
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Tổng quan/ }).click();
@@ -238,10 +270,10 @@ test('F01 category keeps a late edit after saving, and reopens with a clean curr
     const dialog = page.getByRole('dialog', { name: 'Sửa danh mục', exact: true });
     const name = dialog.getByLabel('Tên', { exact: true });
     await expect(name).toBeEnabled(); await name.fill('Submitted category');
-    await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('updateCategory', 800));
-    const finished = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname.includes('/categories/'));
-    await dialog.getByRole('button', { name: 'Lưu', exact: true }).click();
-    await name.fill('Late category'); await finished;
+    await whileMutationPending(page, 'PATCH', /\/categories\//, () => dialog.getByRole('button', { name: 'Lưu', exact: true }).click(), async () => {
+        await name.fill('Late category');
+        await expect(name).toHaveValue('Late category');
+    });
     await expect(dialog.getByRole('button', { name: 'Lưu', exact: true })).toBeEnabled();
     await expect(dialog).toBeVisible(); await expect(name).toHaveValue('Late category');
     await dialog.getByRole('button', { name: 'Đóng', exact: true }).click();
@@ -302,13 +334,13 @@ test('F08 customer update enforces 4000/4001 before HTTP and retains a 422 draft
 test('F05 keeps mode changes and unknown sends, locks another send, and observes recovery-registry completion', async ({ page }) => {
     await visit(page, 'inbox/cv1'); await page.getByLabel('Ghi chú nội bộ (không gửi khách)').check();
     await page.getByLabel('Ghi chú cho nhóm').fill('Mode switched while pending');
-    await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('addInternalNote', 700));
-    const finished = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.includes('/notes'));
-    await page.getByRole('button', { name: 'Lưu ghi chú', exact: true }).click();
-    await page.getByLabel('Ghi chú nội bộ (không gửi khách)').uncheck(); await finished;
+    await whileMutationPending(page, 'POST', /\/notes$/, () => page.getByRole('button', { name: 'Lưu ghi chú', exact: true }).click(), async () => {
+        await page.getByLabel('Ghi chú nội bộ (không gửi khách)').uncheck();
+        await expect(page.getByLabel('Nội dung trả lời khách')).toHaveValue('Mode switched while pending');
+    });
     await expect(page.getByLabel('Nội dung trả lời khách')).toHaveValue('Mode switched while pending');
     await page.getByLabel('Ghi chú nội bộ (không gửi khách)').check();
-    await page.evaluate(async () => { const service = await import('/src/mocks/service.ts'); service.setOperationDelay('addInternalNote', null); service.setOperationFailure('addInternalNote', { status: 503, code: 'UNAVAILABLE', message: 'Synthetic uncertain result' }); });
+    await page.evaluate(async () => { const service = await import('/src/mocks/service.ts'); service.setOperationFailure('addInternalNote', { status: 503, code: 'UNAVAILABLE', message: 'Synthetic uncertain result' }); });
     const unknown = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.includes('/notes'));
     await page.getByRole('button', { name: 'Lưu ghi chú', exact: true }).click(); expect((await unknown).status()).toBe(503);
     await expect(page.getByRole('button', { name: 'Lưu ghi chú', exact: true })).toBeDisabled();
@@ -479,8 +511,10 @@ test('F06 order custom close respects the draft guard and busy editors remain pr
     await editor.getByRole('button', { name: 'Đóng chỉnh sửa', exact: true }).click();
     const warning = page.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?', exact: true }); await expect(warning).toBeVisible();
     await warning.getByRole('button', { name: 'Tiếp tục sửa', exact: true }).click(); await expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Unsaved order close');
-    await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('updateOrderDraft', 1200));
-    const saved = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().includes('/orders/'));
-    await editor.getByRole('button', { name: 'Lưu đơn nháp', exact: true }).click(); await expect(editor.getByRole('button', { name: 'Đóng chỉnh sửa', exact: true })).toBeDisabled();
-    await editor.getByLabel('Ghi chú chuẩn bị').fill('Late order change'); await saved; await expect(editor).toBeVisible(); await expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Late order change');
+    await whileMutationPending(page, 'PATCH', /\/orders\//, () => editor.getByRole('button', { name: 'Lưu đơn nháp', exact: true }).click(), async () => {
+        await expect(editor.getByRole('button', { name: 'Đóng chỉnh sửa', exact: true })).toBeDisabled();
+        await editor.getByLabel('Ghi chú chuẩn bị').fill('Late order change');
+        await expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Late order change');
+    });
+    await expect(editor).toBeVisible(); await expect(editor.getByLabel('Ghi chú chuẩn bị')).toHaveValue('Late order change');
 });

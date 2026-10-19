@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "task": "UIC07",
+  "capturedFromHead": "8f4ada345e03af18e607ee87b8044dce418df8db",
+  "capturedAtUtc": "2026-10-17T22:41:24Z",
+  "scope": "Stabilize the FE022.VS02 browser assertion without changing product behavior.",
+  "owner": "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts",
+  "consumers": [
+    "FE022.VS02 procurement to approval flow",
+    "UIC07 exact-SHA GitHub Actions and S17 evidence"
+  ],
+  "baseline": {
+    "sourcePath": "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts",
+    "sourceGitBlob": "27911202f29f2245865141c87a518a3c31e7e62f",
+    "failure": {
+      "runId": 39071935869,
+      "jobId": 117512715895,
+      "runUrl": "https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39071935869",
+      "job": "e2e (firefox 3-of-3)",
+      "failedTest": "tests/vertical-slices/fe022-flows.spec.ts:103 FE022.VS02",
+      "assertion": "getByRole('row').filter({ hasText: 'purchaseorder-10002' }).toBeVisible()",
+      "locatorTimeoutMs": 5000,
+      "errorContextSha256": "D674A8936CE259C798B78C98C38076EF3C86CA1227DD53DE28931DB44FB57462"
+    },
+    "browserTrace": {
+      "artifactId": 12117016965,
+      "artifactName": "frontend-firefox-3-of-3-39071935869-1-8f4ada345e03af18e607ee87b8044dce418df8db",
+      "artifactUrl": "https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39071935869/artifacts/12117016965",
+      "networkTraceSha256": "C4A8BD8E8756566795C6FFFF434FD653279EABD068457C14E865A398AD2A5E29",
+      "observed": {
+        "requestApprovalPostStatus": 200,
+        "approvalListGet": "GET /api/v2/shops/shop-demo/approvals?limit=20 returned HTTP 200 and contained approval-10005 for purchaseorder-10002 with status pending",
+        "pageAtFailure": "The approvals main list still exposed its loading status and the target row was absent from the accessibility snapshot.",
+        "prComparisonRunId": 39071938654,
+        "prComparisonJob": "e2e (firefox 3-of-3), passed"
+      }
+    }
+  },
+  "diagnosis": "The request and response data were correct; the test started its five-second DOM assertion immediately after navigation and did not wait for the main approvals-list response. Under the measured Firefox CI run, the view was still loading at assertion timeout. Add a response barrier for the exact limit=20 list request, assert the target approval is in its payload, then retain the existing visible-row assertion.",
+  "verificationRequired": [
+    "Run FE022.VS02 in Chromium and Firefox on this source.",
+    "Run npm run verify and npm run test:e2e with recorded exit codes.",
+    "Refresh only stale S17 fingerprints through the owning evidence workflow and rerun the S17 validator.",
+    "Commit separately in Vietnamese and verify exact-SHA push and pull-request workflows before the next UIC commit."
+  ]
+}

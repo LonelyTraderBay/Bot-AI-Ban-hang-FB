@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { evidenceRunId } from './evidence-run-id.mjs';
 import { expect, test } from '@playwright/test';
 
 type Route = { id: string; path: string; title: string; module: string };
@@ -41,7 +42,7 @@ function routePath(route: Route) {
 
 const fingerprint = artifactFingerprint();
 
-test('built demo artifact loads React and its synthetic API from the isolated Vite preview', async ({ page, browserName }) => {
+test('built demo artifact loads React and its synthetic API from the isolated Vite preview', async ({ page, browser, browserName }) => {
     const pageErrors: string[] = [];
     const writes: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.message));
@@ -52,6 +53,12 @@ test('built demo artifact loads React and its synthetic API from the isolated Vi
     const sessionPromise = page.waitForResponse(response => new URL(response.url()).pathname === '/api/v2/session', { timeout: 20_000 });
     const documentResponse = await page.goto('/s/shop-demo/overview', { waitUntil: 'domcontentloaded' });
     const sessionResponse = await sessionPromise;
+    const browserVersion = browser.version();
+    const browserVersionMajor = browserVersion.match(/^\d+/)?.[0];
+    const userAgent = await page.evaluate(() => navigator.userAgent);
+    const userAgentMajor = userAgent.match(/(?:Chrome|Firefox)\/(\d+)/)?.[1];
+    expect(browserVersionMajor, `Could not read browser version ${browserVersion}`).toBeTruthy();
+    expect(userAgentMajor, `Could not read browser UA major ${userAgent}`).toBe(browserVersionMajor);
     expect(new URL(page.url()).port).toBe('4174');
     expect(documentResponse?.status()).toBe(200);
     expect(sessionResponse.status()).toBe(200);
@@ -67,7 +74,7 @@ test('built demo artifact loads React and its synthetic API from the isolated Vi
     expect(browserAssets.some(asset => asset.endsWith('.css'))).toBe(true);
     expect(pageErrors).toEqual([]);
     expect(writes).toEqual([]);
-    console.log(`[built-demo-artifact] ${JSON.stringify({ browser: browserName, baseURL: new URL(page.url()).origin, route: new URL(page.url()).pathname, artifact: fingerprint, browserAssets, sessionStatus: sessionResponse.status(), workerStatus: workerResponse.status(), pageErrors: pageErrors.length, apiWrites: writes.length })}`);
+    console.log(`[built-demo-artifact] ${JSON.stringify({ browser: browserName, browserVersion, browserVersionMajor, userAgentMajor, baseURL: new URL(page.url()).origin, route: new URL(page.url()).pathname, artifact: fingerprint, browserAssets, sessionStatus: sessionResponse.status(), workerStatus: workerResponse.status(), pageErrors: pageErrors.length, apiWrites: writes.length })}`);
 });
 
 for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 }] as const) {
@@ -148,9 +155,9 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 
             issues,
             observations,
         };
-        const output = path.join(root, 'evidence/frontend-ui-improvements/UI028/W32', `built-demo-routes-${browserName}-${viewport.width}-current-20261007.json`);
+        const output = path.join(root, 'evidence/frontend-ui-improvements/UI028/W32', `built-demo-routes-${browserName}-${viewport.width}-${evidenceRunId}.json`);
         fs.mkdirSync(path.dirname(output), { recursive: true });
-        fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+        fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
         console.log(`[built-demo-routes] ${JSON.stringify({ browser: browserName, width: viewport.width, routes: report.renderedRoutes, issues: issues.length, pageErrors: pageErrors.length, artifactSha256: fingerprint.sha256, evidence: path.relative(root, output) })}`);
 
         expect(report.renderedRoutes).toBe(manifest.routes.length);

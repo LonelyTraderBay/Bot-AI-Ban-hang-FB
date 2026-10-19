@@ -1,13 +1,13 @@
 # Hồ sơ dự án Frontend — 08/10/2026
 
 <!-- CORRECTIONS_CURRENT -->
-## Bằng chứng source cuối — 13/10/2026
+## Cập nhật hiện hành — 18/10/2026
 
-[Báo cáo](../evidence/frontend-completeness-20261013-aaf74b7/REPORT.md), [nghiệm thu](../evidence/frontend-completeness-20261013-aaf74b7/ACCEPTANCE_GUIDE.md), [quality matrix](../evidence/frontend-completeness-20261013-aaf74b7/quality-gates-final.json). Trạng thái UI chỉ ở [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). Full browser 878/878, unit 242/242, domain/HTTP 117/117, built-demo 6/6 và 244 route opens; full matrix Chrome 155/Firefox 155, mỗi engine 439 cases. Hash ứng dụng/mock/test/config giữ nguyên từ full PASS; bốn tên test trong generator báo cáo sửa sau đó và được kiểm riêng (proof-tool-delta.json). UA Chrome 153 do preset; binary đo thực là Chrome 155. Cold 13/13; production 35 file/demo 39 file trùng checksum. Native affected detail: Chromium 8/8, Firefox text-only 16/16 và installed Chrome 8/8.
+Đợt đồng bộ UI đang ở UIC11; trạng thái việc, dependency và delivery nằm tại [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status). Source/test/config cuối được kiểm ở UIC10 commit 85e2a677951e0e46aef6919e775de3e0c0d54103: npm run verify exit 0; discovery 1.082 E2E test/79 file; built-demo 6/6 trên Chromium/Firefox và 244 lần mở route (61 route × 2 viewport × 2 browser), không có page error hoặc finding. Đây là local built-demo proof; full E2E của exact SHA còn chờ GitHub Actions, full Firefox local trước đó INCOMPLETE do RAM. Chi tiết và logs tại [UIC10](../evidence/frontend-ui-consistency-20261017/UIC10/REPORT.md).
 
-61 route/16 module và 64 feature có owner; API references 222/224 (99,11%), giữ mẫu số và hai operation stepUp/approvePrivacyRequest unavailable theo FE009.S03 OIDC policy. Không lấy references/test ratio làm tỷ lệ correctness. Đọc CLI canonical cho FE freshness; các snapshot 140/140 cũ không thay trạng thái hiện tại.
+UIC11 đối soát immutable final HEAD 85e2a677 với baseline 4a502be7: 329 inventory entries (282 unchanged, 47 changed, 0 removed); 801 Git paths (748 added, 53 modified), không thiếu disposition/commit owner và final paths đều fingerprint. Có 4 hash lịch sử trong inventory không khớp hash tái tính từ Git baseline; giữ nguyên và ghi rõ trong [UIC11 report](../evidence/frontend-ui-consistency-20261017/UIC11/REPORT.md). Owner CLI validate/status và generator đều chạy lại; trạng thái FE là 0/140 checkpoint hiệu lực, 28/28 task STALE, 0 BLOCKED. Hai ledger đầu vào không đổi; đây là freshness của tracker, không phải tỷ lệ code hay tiến độ UIC.
 
-Rubric 7/9 fully verified; FE-G05 speech/human NOT_RUN, FE-G09 user acceptance PENDING; hosted CI NOT_RUN. Raw premium scanner FAIL/14 có semantic action review riêng, không scanner PASS hoặc accepted exception mới. Scope React/MSW local; Backend/provider/staging/production chưa xác minh. Baseline FAIL/partial runs và lịch sử được giữ trong hồ sơ.
+Remote origin/codex/ui-consistency-plan-20261016 hiện ở SHA 8f4ada345e03af18e607ee87b8044dce418df8db. Push Actions #39071935869 và PR Actions #39071938654 chưa terminal tại thời điểm ghi; UIC08–UIC10 đã commit local nhưng chưa push theo thứ tự. UIC11 chỉ được đẩy sau exact-SHA CI của các task trước. Backend/provider/server authorization/persistence, staging/production, screen-reader/speech/human review, thiết bị thật và user acceptance chưa được chứng minh; sản phẩm hiện xác minh trong scope Frontend + MSW/mock.
 <!-- END_CORRECTIONS_CURRENT -->
 
 ## HISTORICAL_SNAPSHOT — hồ sơ trước đợt F01–F09
@@ -46,4 +46,4 @@ Lượt triển khai trước ở [§15](FRONTEND_UI_IMPROVEMENT_PLAN.md#15-audi
 
 ## Tiếp tục
 
-[CONTINUE_FRONTEND](CONTINUE_FRONTEND.md), [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) và [REPORT](../evidence/REPORT.md) là đường vào hiện hành; §16.17 giữ lý do thiết kế. Tiếp tục theo dependency; không chạy lại S03–S08 nếu input/evidence còn đúng. Mọi bước theo [workflow canonical](FRONTEND_SPACING_STANDARD.md#unified-workflow), không nhận FE003.S05/W33 từ journal cũ. Strict FAIL/UNKNOWN hoặc mandatory NOT_RUN không đóng UI; hosted CI/owner/speech chưa quan sát được giữ giới hạn đúng scope, không tạo dependency chờ giữa chừng.
+[CONTINUE_FRONTEND](CONTINUE_FRONTEND.md), [plan §16.6](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) và [report bằng chứng](../evidence/REPORT.md) là đường vào hiện hành; §16.17 giữ lý do thiết kế lịch sử. Tiếp tục UIC theo dependency và exact-SHA delivery; không chuyển kết quả mock/local thành Backend/UAT. Theo [workflow canonical](FRONTEND_SPACING_STANDARD.md#unified-workflow); không nhận FE checkpoint từ journal cũ khi owner CLI báo STALE. Strict FAIL/UNKNOWN, mandatory NOT_RUN và hosted check chưa terminal giữ đúng trạng thái.

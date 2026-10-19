@@ -1,4 +1,27 @@
-# Tiếp tục Frontend — 08/10/2026
+# Tiếp tục Frontend — 18/10/2026
+
+## Cập nhật tiếp tục — 18/10/2026
+
+Checkout chính của người dùng được giữ nguyên; worktree release riêng ở branch codex/uic07-corrected-sequence, local HEAD UIC10 85e2a677951e0e46aef6919e775de3e0c0d54103. Remote origin/codex/ui-consistency-plan-20261016 hiện ở UIC07 corrective SHA 8f4ada345e03af18e607ee87b8044dce418df8db. Xem bảng [UIC00–UIC13](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status) và [UIC10 report](../evidence/frontend-ui-consistency-20261017/UIC10/REPORT.md).
+
+Push Actions #39071935869 và PR Actions #39071938654 trên 8f4 còn Chromium và Firefox shard 2/3, 3/3 chạy tại lần kiểm gần nhất; không đẩy SHA kế tiếp khi run cùng branch còn hoạt động. Sau terminal result, tiếp tục từng SHA, mỗi commit chờ đủ push và PR jobs trước SHA sau: UIC08 5ae1c411a6db494cb76358fc9355c25a16ae94ff, UIC09 a76ebc0252ce6bb5b480880c452445efdcb4658a, UIC10 85e2a677951e0e46aef6919e775de3e0c0d54103, rồi UIC11 tài liệu. Lưu attempt/failure; CI của parent không tính cho child SHA.
+
+UIC10 local proof: verify exit 0, discovery 1.082/79, built-demo 6/6, 244 route opens, không finding. Full E2E exact SHA còn pending; Firefox full local historical run INCOMPLETE, không tính PASS. UIC11 đo 329 inventory entry, 801 diff paths, không thiếu disposition/owner, 4 inventory hash lịch sử lệch Git baseline; FE owner CLI 0/140 checkpoint hiệu lực và 28/28 STALE, không sửa ledger. Backend/provider, staging/production, screen-reader/human review và user acceptance vẫn ngoài bằng chứng hiện có.
+## Điểm tiếp tục sau audit đồng bộ UI
+
+[Bảng việc và trạng thái hiện hành UIC00–UIC13](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status), [phiếu chi tiết](FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-consistency-20261016), [audit thực tế và giới hạn](../evidence/frontend-ui-consistency-20261016/REPORT.md). Đọc Git/source revision mới rồi nhận việc theo dependency; không kế thừa closure từ source cũ. Scope Frontend/mock; mỗi việc kiểm chứng, commit và push tiếng Việt riêng theo kế hoạch.
+
+## UIC01 — Đã push, exact-SHA Actions PASS
+
+[Báo cáo UIC01](../evidence/frontend-ui-consistency-20261017/UIC01/REPORT.md), [inventory và hashes](../evidence/frontend-ui-consistency-20261017/UIC01/inventory.json), [route/owner/role closure](../evidence/frontend-ui-consistency-20261017/UIC01/route-closure.json), [baseline trước sửa](../evidence/frontend-ui-consistency-20261017/UIC01/baseline.json). Đo baseline trên `4a502be79a40cd7dc02c1eaa80445665a226b55f`; route map khớp 61/61, 427/427 role expectation khớp, 3.402 ô route-role-state mới kiểm kê chứ chưa chạy lại. Sau commit UIC01 `679f94380745fb42aae440c247cdcf275510127d`, regression Firefox về giữ `status=active` được sửa trong follow-up `5610e0bff36da57bd2604a83968845042ac191d2`; branch local và origin cùng SHA. Hai workflow exact-SHA [push #38969265018](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38969265018) và [PR #38969272554](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38969272554) đều `success`: verify/build, Chromium E2E + built-demo, và ba Firefox shard hoàn tất. Gate UIC01 đạt; chuyển UIC02 sang commit/push riêng.
+
+## UIC02 — Local proof đạt, dependency UIC01 PASS, sẵn sàng giao riêng
+
+[Báo cáo và dữ liệu trước/sau](../evidence/frontend-ui-consistency-20261017/UIC02/REPORT.md). Chrome 155/Firefox 155 ở 390/1440px: 0/18 lớp phủ visible khớp trước sửa, 18/18 khớp sau; menu Select vẫn trong suốt 4/4. Forced-colors kiểm riêng 8 mẫu; paper, draft/destructive guard, close/focus và pageerror giữ đúng. Playwright Chromium/Firefox 4/4, shared UI 54/54, typecheck/lint/generator/source/boundary/visual/evidence gates local PASS. S17 đã được đối chiếu lại và validator đạt 281 fingerprint. Dependency UIC01 đã đạt exact-SHA push/PR Actions success; bước tiếp theo là commit UIC02 riêng theo subject trong plan, push và kiểm workflow trên SHA mới.
+
+Các kết quả bên dưới là snapshot trước đợt UIC, không chứng minh finding mới đã sửa. Không lấy `next` hoặc số phần trăm cũ thay current task table và canonical FE CLI.
+
+## HISTORICAL_SNAPSHOT — continuation trước audit 16/10/2026
 
 <!-- CORRECTIONS_CURRENT -->
 ## Bằng chứng source cuối — 13/10/2026

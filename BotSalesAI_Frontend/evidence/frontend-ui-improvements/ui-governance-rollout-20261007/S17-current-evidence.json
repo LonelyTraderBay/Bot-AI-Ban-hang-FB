@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance.",
-  "recordedAt": "2026-10-16T13:52:36.080Z",
+  "scope": "S17 evidence and source fingerprints refreshed for Chromium-backed hosted verify and the Firefox three-shard CI contract. Local full verify passes; browser tests remain synthetic MSW evidence and do not certify backend, staging, production, screen-reader or owner UAT acceptance. UIC01 CI gate repair: search-draft preservation and supported Chrome Stable workflow were locally verified. UIC01 hosted Firefox revealed a stale URL-draft expectation; updated the assertion and passed three repeats each on Chrome Stable 155 and Firefox 155. UIC02 shared backdrop token parity and browser regression were refreshed against the recorded local frontend/mock evidence. UIC03 scoped active-worker update recovery was measured with synthetic local MSW fault injection and passive Chrome/Firefox route walks. UIC04 Dashboard single-track decision and browser geometry evidence covers six widths, five deterministic data states and three permission presets in the local mock runtime. UIC05 canonical z-index token-to-runtime integration covers generator output, all MUI theme slots, shell consumers, checker enforcement and live portal layers. UIC07 FE022 hosted Firefox exposed a row-versus-card locator mismatch; the test now follows the rendered link and asserts the reviewed knowledgeDraftId in its href, passing on local Chromium and Firefox. FE022.VS01 inventory rendering waits for the observed MSW GET response and confirms AO-002 in both payload and accessible row; repeated Chromium/Firefox evidence is recorded separately. UIC09 removed the stale Chrome UA override and locally verified browser binary/user-agent major identity on Chromium 155.0.8059.40 and Firefox 155.0. FE022.VS04 waits for the knowledge collection response before DOM assertions, verifies the reviewed draft ID in its payload, and registers the detail listener before clicking; a 6000ms delayed-list negative reproduction and repeated Chromium/Firefox proof are retained under UIC07/VS04-response-ready-20261019. FE020.F05 waits for the approvals limit=20 response and all rendered table rows before clicking the delegation button below the loading table; CI trace and repeated Chromium/Firefox evidence are retained under UIC07/FE020-F05-readiness-20261019. Five frontend-corrections pending-save scenarios use an explicitly released client-fetch barrier instead of 700/800/1200ms mock delay windows; 30 repeated cases and the full 42-case Chromium/Firefox file are recorded under UIC07/deterministic-pending-20261019.",
+  "recordedAt": "2026-10-18T19:28:37.925Z",
   "status": "COMPLETE",
   "checks": [
     {
@@ -148,6 +148,486 @@
         "path": "BotSalesAI_Frontend/evidence/frontend-completeness-20261016-3762bc0/ci-firefox-shards-r60/verify-r62-pre-final.log",
         "sha256": "91c0db04370dc4b4a276c2f05a6c1cc3667add3757621079fd7341b2b02d2922"
       }
+    },
+    {
+      "id": "uic01-ci-gate-repair",
+      "command": "npm.cmd run verify (Node 24.19.0, npm 11.17.0; see full log)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify PASS: generated contracts 15/346/245/61; source 85 files/271 operations/61 routes; boundaries 723 imports and 10/10 negative fixtures; domain 117/117; unit 242/242; layout 86/86 with 0 findings; visual token 5/5 with 0 findings; UI composition 41/41 with 0 findings; evidence validator 11/11.",
+      "observed": "npm run verify PASS: generated contracts 15/346/245/61; source 85 files/271 operations/61 routes; boundaries 723 imports and 10/10 negative fixtures; domain 117/117; unit 242/242; layout 86/86 with 0 findings; visual token 5/5 with 0 findings; UI composition 41/41 with 0 findings; evidence validator 11/11.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/verify-local-after-gate-fix.log",
+        "sha256": "6aedc6a54f7318c13b1a6f0e6ceb63d4dd827c2c9e41ca58e5cb374f2b126cf5"
+      }
+    },
+    {
+      "id": "uic01-targeted-chrome-regression",
+      "command": "npm.cmd run test:e2e -- --project=chromium --grep 'FE010|FE016' --repeat-each=3 --reporter=line (Node 24.19.0; see raw log)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE010 and FE016 repeated three times each: 6/6 PASS on Google Chrome Stable 155.0.8059.40 with local synthetic MSW.",
+      "observed": "FE010 and FE016 repeated three times each: 6/6 PASS on Google Chrome Stable 155.0.8059.40 with local synthetic MSW.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-chrome-regression.log",
+        "sha256": "60120b5256663beeef94e291e23cc99da6546e4b971f22249e25a377f5559645"
+      }
+    },
+    {
+      "id": "uic01-toolbar-draft-preservation-regression",
+      "command": "node ... test tests/ui-toolbar-layout.spec.ts --project=chromium --grep 'Toolbar preserves Products URL filters' --repeat-each=3; then --project=firefox with the same filters (see per-browser logs)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Chrome Stable 155.0.8059.40 3/3 PASS; Playwright Firefox 155.0 3/3 PASS; status URL changed without q; draft remained visible.",
+      "observed": "Chrome Stable 155.0.8059.40 3/3 PASS; Playwright Firefox 155.0 3/3 PASS; status URL changed without q; draft remained visible.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-toolbar-regression.log",
+        "sha256": "ff98af75be452206cb081bdce4a9a0a9435c7c817c699aa8a71019798b3acdc4"
+      }
+    },
+    {
+      "id": "uic01-current-source-verify",
+      "command": "npm.cmd --script-shell=pwsh.exe run verify (Node 24.19.0, npm 11.17.0; exact command output is in the linked log)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify PASS: generated contracts 15/346/245/61; source/session 15/15; domain 117/117; unit 242/242; layout 86/86 with 0 findings; visual token 5/5 with 0 findings; UI composition 41/41 with 0 findings; evidence validator 11/11; production build passed.",
+      "observed": "npm run verify PASS: generated contracts 15/346/245/61; source/session 15/15; domain 117/117; unit 242/242; layout 86/86 with 0 findings; visual token 5/5 with 0 findings; UI composition 41/41 with 0 findings; evidence validator 11/11; production build passed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/verify-uic01-current-source.log",
+        "sha256": "80314c471fef9809f94cd0a893d80571bacaa3a85fa73a3a2f6e4bfb78fea67b"
+      }
+    },
+    {
+      "id": "uic01-current-query-race",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui-toolbar-layout.spec.ts --project=chromium --project=firefox --grep 'Toolbar preserves Products URL filters' --repeat-each=10 --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Toolbar product-filter/search/clear/category-lookup regression passed 10/10 on Chrome Stable 155.0.8059.40 and 10/10 on Playwright Firefox 155.0; all 20 browser repetitions passed.",
+      "observed": "Toolbar product-filter/search/clear/category-lookup regression passed 10/10 on Chrome Stable 155.0.8059.40 and 10/10 on Playwright Firefox 155.0; all 20 browser repetitions passed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC01/targeted-toolbar-current-query.log",
+        "sha256": "0202cbe5f6bdb954ef196f480acc8106daaf34d5b20156f8a6ab9cdbc092af09"
+      }
+    },
+    {
+      "id": "uic02-overlay-theme",
+      "command": "UIC02 browser measurement and shared overlay regression; see REPORT.md for commands and environment",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "18/18 visible backdrops match the canonical overlay token; 4/4 invisible Select backdrops remain transparent; 8 forced-colors samples retain visible dialog, backdrop and focus, with opacity transition 4/4; 4/4 Playwright Chromium and Firefox regressions pass.",
+      "observed": "18/18 visible backdrops match the canonical overlay token; 4/4 invisible Select backdrops remain transparent; 8 forced-colors samples retain visible dialog, backdrop and focus, with opacity transition 4/4; 4/4 Playwright Chromium and Firefox regressions pass.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC02/REPORT.md",
+        "sha256": "f5613b92309ad48d61a9531a469570a4cced3254445a84935569eaca6bc2ff92"
+      }
+    },
+    {
+      "id": "uic02-current-source-full-verify",
+      "command": "npm.cmd --script-shell=pwsh.exe run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Current-source npm run verify PASS: generated 15/346/245/61; boundaries 724 imports and 10/10 negative fixtures; domain 117 checks; Vitest 25 files/242 tests; production build; layout 86/86; visual tokens 5/5; UI composition 41/41; evidence validator 11/11 and S17 COMPLETE.",
+      "observed": "Current-source npm run verify PASS: generated 15/346/245/61; boundaries 724 imports and 10/10 negative fixtures; domain 117 checks; Vitest 25 files/242 tests; production build; layout 86/86; visual tokens 5/5; UI composition 41/41; evidence validator 11/11 and S17 COMPLETE.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC02/verify-uic02-current-source.log",
+        "sha256": "3bf35788a16b5d15d74af54ea3a9cf62a0644004ec1d8bfb138cb1d53011520d"
+      }
+    },
+    {
+      "id": "uic02-fe010-navigation-regression",
+      "command": "Playwright FE010 repeat and cross-browser suite; see UIC02 REPORT.md for raw logs and limits",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE010 draft-dialog dismissal and product navigation: Chromium repeat 10/10 PASS; full FE010 suite Chromium/Firefox 18/18 PASS on local mock.",
+      "observed": "FE010 draft-dialog dismissal and product navigation: Chromium repeat 10/10 PASS; full FE010 suite Chromium/Firefox 18/18 PASS on local mock.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC02/REPORT.md",
+        "sha256": "f5613b92309ad48d61a9531a469570a4cced3254445a84935569eaca6bc2ff92"
+      }
+    },
+    {
+      "id": "uic03-current-source-full-verify",
+      "command": "npm.cmd --script-shell=pwsh.exe run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Current source npm run verify PASS: 15/346/245/61 generated contract counts; domain 117/117; Vitest 249/249; production build; layout 86/86; visual tokens 5/5; UI composition 41/41; S17 evidence validator 11/11.",
+      "observed": "Current source npm run verify PASS: 15/346/245/61 generated contract counts; domain 117/117; Vitest 249/249; production build; layout 86/86; visual tokens 5/5; UI composition 41/41; S17 evidence validator 11/11.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC03/verify-current-source-r2.log",
+        "sha256": "39f236335db7ac1e224f7249b2470d638623c91761c58ecc6972248c6aa7de92"
+      }
+    },
+    {
+      "id": "uic03-msw-update-recovery",
+      "command": "Playwright fault-injection, passive route walk and demo worker lifecycle; exact commands, measured versions and limits are in REPORT.md",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Chrome 155.0.8059.40 and Firefox 155.0: update-rejection recovery 2/2; 0 pageerrors, one scoped warning each, active controller retained; 2 unrelated rejections per browser remain uncancelled; route matrix 122/122 per browser at 390px and 1440px; demo lifecycle/startup 8/8.",
+      "observed": "Chrome 155.0.8059.40 and Firefox 155.0: update-rejection recovery 2/2; 0 pageerrors, one scoped warning each, active controller retained; 2 unrelated rejections per browser remain uncancelled; route matrix 122/122 per browser at 390px and 1440px; demo lifecycle/startup 8/8.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC03/REPORT.md",
+        "sha256": "9f11bb1b54d34927567f8cc31de3bf32d1eefdf5adf88c68375030f1e8cba10f"
+      }
+    },
+    {
+      "id": "uic04-current-source-full-verify",
+      "command": "npm.cmd --script-shell=<pwsh.exe> run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Current UIC04 source npm run verify PASS: generated 15/346/245/61; source/session 15/15; boundary 725 imports and 10/10 fixtures; domain 117/117; Vitest 249/249; production build; layout 86/86; visual tokens 5/5; UI composition 41/41; S17 evidence validator PASS.",
+      "observed": "Current UIC04 source npm run verify PASS: generated 15/346/245/61; source/session 15/15; boundary 725 imports and 10/10 fixtures; domain 117/117; Vitest 249/249; production build; layout 86/86; visual tokens 5/5; UI composition 41/41; S17 evidence validator PASS.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC04/full-verify-current-source.log",
+        "sha256": "a49e8f7667451a1cdeeb252d9292a270a704726cdb8c825c55f8a7547c99a5e4"
+      }
+    },
+    {
+      "id": "uic04-dashboard-single-track-browser-proof",
+      "command": "Local Vite demo, Playwright Chromium/Firefox dashboard suite, deterministic response-state audit and evidence validator; exact commands and scope in REPORT.md",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Chrome 155.0.8059.40: before/after geometry at 390/768/1279/1280/1440/1920px, ready/pending/empty/error/long-money and owner/sales/viewer. Baseline 452.9375px unused at 1440; after source 0px, panel 1152px; no horizontal overflow or pageerror. Dashboard Playwright suite Chromium+Firefox 8/8 PASS.",
+      "observed": "Chrome 155.0.8059.40: before/after geometry at 390/768/1279/1280/1440/1920px, ready/pending/empty/error/long-money and owner/sales/viewer. Baseline 452.9375px unused at 1440; after source 0px, panel 1152px; no horizontal overflow or pageerror. Dashboard Playwright suite Chromium+Firefox 8/8 PASS.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC04/validate-dashboard-audit-final.log",
+        "sha256": "e2129f2fec656a7509ef1c0c4762f1db7775bb799f837804212904b42d3a1e32"
+      }
+    },
+    {
+      "id": "uic05-current-source-full-verify",
+      "command": "npm.cmd --script-shell=<pwsh.exe> run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Current UIC05 source npm run verify PASS: generated 15/346/245/61; source/session 15/15; boundary 725 imports and 10/10 fixtures; domain 117/117; Vitest 249/249; production build; layout 86/86; visual-token checker 6/6 unit tests and 93 files/0 findings; UI composition 41/41; S17 evidence validator PASS.",
+      "observed": "Current UIC05 source npm run verify PASS: generated 15/346/245/61; source/session 15/15; boundary 725 imports and 10/10 fixtures; domain 117/117; Vitest 249/249; production build; layout 86/86; visual-token checker 6/6 unit tests and 93 files/0 findings; UI composition 41/41; S17 evidence validator PASS.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC05/full-verify-current-source-rerun.log",
+        "sha256": "e5bf2ff60bac97e2aa867f2a508fda2d44ed7860aa2b83d958003181be5f2b0e"
+      }
+    },
+    {
+      "id": "uic05-token-theme-overlay-browser",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui-overlay-theme.spec.ts --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Local mock Chromium and Firefox: 4/4 browser tests. Computed z-index verified on Dialog, Drawer, Select Popover, focused skip-link, sticky header and logout Tooltip; mobile keyboard opens/closes Drawer and focus returns.",
+      "observed": "Local mock Chromium and Firefox: 4/4 browser tests. Computed z-index verified on Dialog, Drawer, Select Popover, focused skip-link, sticky header and logout Tooltip; mobile keyboard opens/closes Drawer and focus returns.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC05/overlay-token-layers-rerun-exact-parent.log",
+        "sha256": "e54cdd26b8ee99fc5952ff1727b8b7c866730693ce2f7945fbd9c4196c78f35f"
+      }
+    },
+    {
+      "id": "uic05-token-generator-theme-measured-audit",
+      "command": "node evidence/frontend-ui-consistency-20261017/UIC05/audit-theme-layers.mjs final",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Vite SSR actual theme matches all 8 MUI zIndex slots to canonical roles; generated CSS contains all 7 canonical variables; raw TSX and CSS probes each produce a finding; shell/skip-link literals are absent.",
+      "observed": "Vite SSR actual theme matches all 8 MUI zIndex slots to canonical roles; generated CSS contains all 7 canonical variables; raw TSX and CSS probes each produce a finding; shell/skip-link literals are absent.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC05/theme-layers-final.log",
+        "sha256": "67cc7cdc6d273e1438b9878ff214f3ed3cc79fb7c31d69106a6f0863a15c3441"
+      }
+    },
+    {
+      "id": "uic07-current-source-full-verify",
+      "command": "npm.cmd --script-shell=cmd.exe run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify trên source UIC07 cuối PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; typecheck/lint; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 evidence validator PASS.",
+      "observed": "npm run verify trên source UIC07 cuối PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; typecheck/lint; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 evidence validator PASS.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-after-final-rebase-r1.log",
+        "sha256": "24d2135eb8aa4426557f2d39f0d7e845540ec5577eeaabb96ce16556d9190989"
+      }
+    },
+    {
+      "id": "uic07-fe022-selector-semantics",
+      "command": "npm.cmd --script-shell=pwsh.exe run test:e2e -- --config=playwright.config.ts --grep 'FE022.VS04' --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE022.VS04 API-to-rendered-link identity regression passed 1/1 on Chromium and 1/1 on Firefox using the local synthetic demo API.",
+      "observed": "FE022.VS04 API-to-rendered-link identity regression passed 1/1 on Chromium and 1/1 on Firefox using the local synthetic demo API.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE022-selector-fix-targeted.log",
+        "sha256": "aec207f389d1b88c0759902a03fa692061cb0f12c680fc43b4147ac096d11b66"
+      }
+    },
+    {
+      "id": "uic07-fe022-full-verify",
+      "command": "npm.cmd --script-shell=pwsh.exe run verify (Node 24.19.0, npm 11.17.0; complete output captured in linked log)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify PASS: generated 15 outputs/346 schemas/245 operations/61 routes; source/session 15/15; boundaries 725 imports and negative fixtures 10/10; domain 117/117; Vitest 252/252; production build; layout 86/86 and 94 sources/0 findings; visual-token 6/6 and 93 sources/0 findings; composition 41/41 and 92 sources/0 findings; S17 evidence validator 11/11.",
+      "observed": "npm run verify PASS: generated 15 outputs/346 schemas/245 operations/61 routes; source/session 15/15; boundaries 725 imports and negative fixtures 10/10; domain 117/117; Vitest 252/252; production build; layout 86/86 and 94 sources/0 findings; visual-token 6/6 and 93 sources/0 findings; composition 41/41 and 92 sources/0 findings; S17 evidence validator 11/11.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-fe022-fix.log",
+        "sha256": "a160bc61595cd3d6d382cbbe4380eb855c605dec8fad3719b6d2cc9aebe96ea0"
+      }
+    },
+    {
+      "id": "uic07-fe022-vs01-response-ready-r2",
+      "command": "node node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --project=chromium --project=firefox --grep 'FE022.VS01' --workers=1 --repeat-each=3 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE022 VS01 repeated response-ready regression passed 6/6 on local Chromium 155.0.8059.40 and Firefox 155.0 using the synthetic MSW demo API.",
+      "observed": "FE022 VS01 repeated response-ready regression passed 6/6 on local Chromium 155.0.8059.40 and Firefox 155.0 using the synthetic MSW demo API.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/ci-reconciliation-fe022-vs01-repeat-r2.log",
+        "sha256": "6979d28023b655c8b0299b9fd73afc4a0b409422f567df408c264687b81b127f"
+      }
+    },
+    {
+      "id": "uic07-fe022-flow-suite-final-r2",
+      "command": "node node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --project=chromium --project=firefox --grep 'FE022.' --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE022 VS01–VS04 plus S05 flow suite passed 10/10 on local Chromium 155.0.8059.40 and Firefox 155.0 using the synthetic MSW demo API.",
+      "observed": "FE022 VS01–VS04 plus S05 flow suite passed 10/10 on local Chromium 155.0.8059.40 and Firefox 155.0 using the synthetic MSW demo API.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/ci-reconciliation-fe022-flows-chromium-firefox-r2.log",
+        "sha256": "1d7ff07825d4c7bd591ca0867a0e7fbb0cb7105b051704b13210c447ce1da5c7"
+      }
+    },
+    {
+      "id": "uic07-current-source-full-verify-response-ready",
+      "command": "npm run verify (Node 24.19.0, npm 11.17.0; full UIC07 checkout output captured in linked log)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Full verify PASS: generate 15 outputs/346 schemas/245 operations/61 routes; source/session 15/15; boundary 725 imports/10 negative fixtures; domain 117/117; Vitest 252/252; production build; layout 86/86 on 94 files/0 findings; visual token 6/6 on 93 files/0 findings; composition 41/41 on 92 files/0 findings; S17 validator 11/11; exit 0.",
+      "observed": "Full verify PASS: generate 15 outputs/346 schemas/245 operations/61 routes; source/session 15/15; boundary 725 imports/10 negative fixtures; domain 117/117; Vitest 252/252; production build; layout 86/86 on 94 files/0 findings; visual token 6/6 on 93 files/0 findings; composition 41/41 on 92 files/0 findings; S17 validator 11/11; exit 0.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/npm-verify-fe022-response-ready-r1.log",
+        "sha256": "5a71b4cf96fefee6bfabdd6be0a7ba9da2bc3a4cbdb580bc85511f5ae044d042"
+      }
+    },
+    {
+      "id": "uic08-current-source-full-verify",
+      "command": "npm run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify trên source UIC08 cuối PASS; xem log gắn kèm để đọc đầy đủ generate, source/session, boundary, lint, typecheck, domain, unit, build, layout, visual, composition và S17 validator.",
+      "observed": "npm run verify trên source UIC08 cuối PASS; xem log gắn kèm để đọc đầy đủ generate, source/session, boundary, lint, typecheck, domain, unit, build, layout, visual, composition và S17 validator.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/npm-verify-overlay-gate-20261018.log",
+        "sha256": "b0c92e88c97633f1fcf6d63f546f681da18467c51d2b4a820fb4ab86ab3c2976"
+      }
+    },
+    {
+      "id": "uic08-keyboard-regression-current-source",
+      "command": "node node_modules/@playwright/test/cli.js test tests/ui012-keyboard.spec.ts --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "22/22 UI012 keyboard tests pass on Chromium 155.0.8059.40 and Firefox 155.0; UIC08 R06/R49 regressions are included.",
+      "observed": "22/22 UI012 keyboard tests pass on Chromium 155.0.8059.40 and Firefox 155.0; UIC08 R06/R49 regressions are included.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/uic08-sequence-ui012-chromium-firefox-r2.log",
+        "sha256": "b72735412c5cedb719346702ddae0868867e0899baa6cac1539a4832f0bf0d0f"
+      }
+    },
+    {
+      "id": "uic08-native-chrome-page-zoom-200",
+      "command": "Native Google Chrome Page zoom 200% set and read back in chrome://settings/appearance; five local MSW scenarios.",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Google Chrome Stable 155.0.8059.40 native Page zoom 200% passes 5/5 scenarios with no issue, page error, or frontend write.",
+      "observed": "Google Chrome Stable 155.0.8059.40 native Page zoom 200% passes 5/5 scenarios with no issue, page error, or frontend write.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/browser-zoom-native-settings-chrome155-r2.log",
+        "sha256": "a917f846e46280fee962bd0f8887c04d73e1de05726f6606eae6e8c47bbfedb1"
+      }
+    },
+    {
+      "id": "uic08-native-firefox-text-only-zoom-200",
+      "command": "Native Firefox Zoom Text Only 200% in a temporary profile with the site-specific text-only setting verified.",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Firefox 155.0 native text-only zoom passes 5/5 scenarios with the CSS viewport and DPR fixed and no issue.",
+      "observed": "Firefox 155.0 native text-only zoom passes 5/5 scenarios with the CSS viewport and DPR fixed and no issue.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC08/native-text-focus-final.log",
+        "sha256": "07f36c239fee496d0da90dd817c70d767e3b450b921d613cc3d2c9c5846f279e"
+      }
+    },
+    {
+      "id": "uic09-browser-identity-chromium",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e -- --config=playwright.config.ts --grep 'browser context reports' --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "chromium binary 155.0.8059.40 and navigator.userAgent major 155 matched; browser identity regression passed 1/1.",
+      "observed": "chromium binary 155.0.8059.40 and navigator.userAgent major 155 matched; browser identity regression passed 1/1.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC09/browser-runtime-identity-corrected-uic08-r1.log",
+        "sha256": "67c6dbb4278795af9adcaf41b3aec205cc5e146abe267e8aeca2442da5d1d676"
+      }
+    },
+    {
+      "id": "uic09-browser-identity-firefox",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e -- --config=playwright.config.ts --grep 'browser context reports' --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "firefox binary 155.0 and navigator.userAgent major 155 matched; browser identity regression passed 1/1.",
+      "observed": "firefox binary 155.0 and navigator.userAgent major 155 matched; browser identity regression passed 1/1.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC09/browser-runtime-identity-corrected-uic08-r1.log",
+        "sha256": "67c6dbb4278795af9adcaf41b3aec205cc5e146abe267e8aeca2442da5d1d676"
+      }
+    },
+    {
+      "id": "uic09-sequential-full-verify",
+      "command": "npm.cmd --script-shell=cmd.exe run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify PASS on the UIC07–UIC09 sequential checkout; generated contracts, source/session, boundary, lint, typecheck, domain, unit, production build, layout, visual-token, composition and S17 gates all passed. Exact counts are in the linked command log.",
+      "observed": "npm run verify PASS on the UIC07–UIC09 sequential checkout; generated contracts, source/session, boundary, lint, typecheck, domain, unit, production build, layout, visual-token, composition and S17 gates all passed. Exact counts are in the linked command log.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC09/npm-verify-uic09-corrected-uic07-uic08-20261018-r1.log",
+        "sha256": "2060eb06d54b0f3dc6059bb3620f6354317e17640480d7f26f647907f9fe64d4"
+      }
+    },
+    {
+      "id": "uic10-current-source-full-verify",
+      "command": "npm.cmd with Node 24.19.0 and npm 11.17.0: run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "npm run verify trên source UIC10 PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; lint/typecheck; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 validator 11/11 và evidence PASS.",
+      "observed": "npm run verify trên source UIC10 PASS: generate 15/346/245/61; source/session 15/15; boundary 10/10 fixture; domain 117/117; Vitest 252/252; lint/typecheck; production build; layout 86/86 với 94 file/0 finding; visual token 6/6 với 93 file/0 finding; UI composition 41/41 với 92 file/0 finding; S17 validator 11/11 và evidence PASS.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC10/npm-verify-uic08-overlay-corrected-sequence-final-20261018.log",
+        "sha256": "6c6b81a5a3ec78866851217c6ef539baa26127b440d367a56ce78bc6b88b59b2"
+      }
+    },
+    {
+      "id": "uic11-s17-document-fingerprint-refresh",
+      "command": "node evidence/frontend-ui-consistency-20261017/UIC11/refresh-s17-document-fingerprints.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "UIC11 S17 document fingerprint refresh: PASS\nsource BotSalesAI_Frontend/evidence/REPORT.md 53ae515a1cc9162ac1f674e82f6aa9273c8ac0d4b91d9d0e314b0c909a8a994f\ncheck-log BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC03/REPORT.md 9f11bb1b54d34927567f8cc31de3bf32d1eefdf5adf88c68375030f1e8cba10f\nunexpected stale fingerprints: 0",
+      "observed": "UIC11 S17 document fingerprint refresh: PASS\nsource BotSalesAI_Frontend/evidence/REPORT.md 53ae515a1cc9162ac1f674e82f6aa9273c8ac0d4b91d9d0e314b0c909a8a994f\ncheck-log BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC03/REPORT.md 9f11bb1b54d34927567f8cc31de3bf32d1eefdf5adf88c68375030f1e8cba10f\nunexpected stale fingerprints: 0",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC11/s17-document-fingerprint-refresh.log",
+        "sha256": "94e852957bf3003a011c11db2e7b41531bb2463f2d704f46cbff3e5be281c10e"
+      }
+    },
+    {
+      "id": "uic07-fe022-approval-response-barrier",
+      "command": "npm.cmd --script-shell=cmd.exe run test:e2e -- tests/vertical-slices/fe022-flows.spec.ts --grep FE022.VS02 --project=chromium --project=firefox --repeat-each=3 (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE022.VS02 đạt 6/6 lượt, Chromium 3/3 và Firefox 3/3; từng lượt nhận HTTP 200 cho danh sách phê duyệt có purchase_order đang chờ duyệt trước khi xác nhận hàng hiển thị.",
+      "observed": "FE022.VS02 đạt 6/6 lượt, Chromium 3/3 và Firefox 3/3; từng lượt nhận HTTP 200 cho danh sách phê duyệt có purchase_order đang chờ duyệt trước khi xác nhận hàng hiển thị.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE022-approval-response-barrier-targeted.log",
+        "sha256": "d94d3cd7ec35c883c92b6855976b8474e21fe0a23efda39734be62550681e607"
+      }
+    },
+    {
+      "id": "uic07-vs04-slow-collection-repeat-20261019",
+      "command": "node node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --project=chromium --project=firefox --grep FE022.VS04 --repeat-each=3 --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE022.VS04: 6/6 repetitions passed on local Chromium/Firefox with a 6000ms synthetic knowledge-list delay; payload, rendered link, draft/revision identity and bot evaluation assertions retained.",
+      "observed": "FE022.VS04: 6/6 repetitions passed on local Chromium/Firefox with a 6000ms synthetic knowledge-list delay; payload, rendered link, draft/revision identity and bot evaluation assertions retained.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/VS04-response-ready-20261019/targeted.log",
+        "sha256": "4231a91c98f5b207ceb6bd306cc2232cf028e44cd05012b0e9380f1b836a3284"
+      }
+    },
+    {
+      "id": "uic07-fe022-all-flows-20261019",
+      "command": "node node_modules/@playwright/test/cli.js test tests/vertical-slices/fe022-flows.spec.ts --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE022 VS01-VS04 and S05: 10/10 passed on local Chromium/Firefox with the current test source.",
+      "observed": "FE022 VS01-VS04 and S05: 10/10 passed on local Chromium/Firefox with the current test source.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/VS04-response-ready-20261019/flows.log",
+        "sha256": "794630a1522ff8dbf195b6152615feddcfabcb5ff4fcf3b91485a3156657cd20"
+      }
+    },
+    {
+      "id": "uic07-vs04-full-verify-20261019",
+      "command": "npm.cmd run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Full frontend verify exit 0: generator, source/session, boundaries, lint/typecheck, domain, 252 Vitest tests, production build, layout, visual-token, composition and S17 evidence gates passed.",
+      "observed": "Full frontend verify exit 0: generator, source/session, boundaries, lint/typecheck, domain, 252 Vitest tests, production build, layout, visual-token, composition and S17 evidence gates passed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/VS04-response-ready-20261019/verify.log",
+        "sha256": "96bd4b9ddd6f23476c7c102a1ab5b288b16f87eb8f882caf4d736a4b314b425a"
+      }
+    },
+    {
+      "id": "uic07-fe020-f05-readiness-repeat-20261019",
+      "command": "node node_modules/@playwright/test/cli.js test tests/fe020.spec.ts --project=chromium --project=firefox --grep FE020.F05 --repeat-each=3 --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "FE020.F05 passed 6/6 local repetitions, Chromium 3/3 and Firefox 3/3; the approvals response and rendered rows precede the create action, and bounded paused-only delegation assertions remain.",
+      "observed": "FE020.F05 passed 6/6 local repetitions, Chromium 3/3 and Firefox 3/3; the approvals response and rendered rows precede the create action, and bounded paused-only delegation assertions remain.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE020-F05-readiness-20261019/targeted.log",
+        "sha256": "d2b1727dd763595b7cb6678d1815a83d2a6b7fe671f77c179f503596285f601d"
+      }
+    },
+    {
+      "id": "uic07-fe020-suite-20261019",
+      "command": "node node_modules/@playwright/test/cli.js test tests/fe020.spec.ts --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "All 14 FE020/FE027 cases in fe020.spec.ts passed on local Chromium/Firefox with the current source.",
+      "observed": "All 14 FE020/FE027 cases in fe020.spec.ts passed on local Chromium/Firefox with the current source.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE020-F05-readiness-20261019/suite.log",
+        "sha256": "19d13fc1b4b1009a13f0c53ae7a72282a86a815d1dd718a3824fff526d264aba"
+      }
+    },
+    {
+      "id": "uic07-fe020-f05-verify-20261019",
+      "command": "npm.cmd run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Full frontend verify exit 0, including generation, source/boundaries, lint/typecheck, domain, 252 Vitest tests, production build, layout, visual-token, composition and S17 evidence validation.",
+      "observed": "Full frontend verify exit 0, including generation, source/boundaries, lint/typecheck, domain, 252 Vitest tests, production build, layout, visual-token, composition and S17 evidence validation.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/FE020-F05-readiness-20261019/verify.log",
+        "sha256": "5f3c54c55a1d7460b2ef98e1a750d0fd40bbce030885e0feb06dcac47bf1632b"
+      }
+    },
+    {
+      "id": "uic07-pending-barrier-repeat-20261019",
+      "command": "node node_modules/@playwright/test/cli.js test tests/frontend-corrections.spec.ts --project=chromium --project=firefox --grep 'F01 shop settings|F01 category keeps|F05 keeps text typed|F05 keeps mode changes|F06 order custom close' --repeat-each=3 --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Five pending-save scenarios passed 30/30 local repetitions, three per browser per scenario; edits occur while client fetch is explicitly held and the original payload, busy, retention and navigation assertions remain.",
+      "observed": "Five pending-save scenarios passed 30/30 local repetitions, three per browser per scenario; edits occur while client fetch is explicitly held and the original payload, busy, retention and navigation assertions remain.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/deterministic-pending-20261019/targeted.log",
+        "sha256": "2e5bc75a450bb20bad36f5a768eb3f654c94c925bd8f3f292ba1296171fd30ce"
+      }
+    },
+    {
+      "id": "uic07-corrections-suite-20261019",
+      "command": "node node_modules/@playwright/test/cli.js test tests/frontend-corrections.spec.ts --project=chromium --project=firefox --workers=1 --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "All 42 frontend-corrections cases passed on local Chromium/Firefox with the current source.",
+      "observed": "All 42 frontend-corrections cases passed on local Chromium/Firefox with the current source.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/deterministic-pending-20261019/suite.log",
+        "sha256": "f3780d7c340e97c04be949c12adfd31b9bca9077809fa962c5c61fb019047320"
+      }
+    },
+    {
+      "id": "uic07-pending-barrier-verify-20261019",
+      "command": "npm.cmd run verify (Node 24.19.0, npm 11.17.0)",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Full frontend verify exit 0, including generator/source/boundaries, lint/typecheck, domain, 252 Vitest tests, production build, layout, visual-token, composition and S17 evidence gates.",
+      "observed": "Full frontend verify exit 0, including generator/source/boundaries, lint/typecheck, domain, 252 Vitest tests, production build, layout, visual-token, composition and S17 evidence gates.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/frontend-ui-consistency-20261017/UIC07/deterministic-pending-20261019/verify.log",
+        "sha256": "857eae8136774debbe9b2cf02874a40deed7a4bcead47d9ee7b5ab9c8a447c41"
+      }
     }
   ],
   "coverage": [
@@ -227,6 +707,258 @@
       "observed": 1,
       "missing": 0,
       "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-ci-gate-repair",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-targeted-chrome-regression",
+      "expected": 6,
+      "observed": 6,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-toolbar-draft-preservation-regression",
+      "expected": 6,
+      "observed": 6,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-current-source-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic01-current-query-race",
+      "expected": 20,
+      "observed": 20,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic02-fe010-navigation-regression",
+      "expected": 28,
+      "observed": 28,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic03-msw-update-recovery",
+      "expected": 2,
+      "observed": 2,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic04-dashboard-single-track-browser-proof",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic05-current-source-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic05-token-theme-overlay-browser",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic05-token-generator-theme-measured-audit",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-current-source-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe022-selector-semantics",
+      "expected": 2,
+      "observed": 2,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe022-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe022-vs01-response-ready-r2",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe022-flow-suite-final-r2",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-current-source-full-verify-response-ready",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic08-current-source-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic08-keyboard-regression-current-source",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic08-native-chrome-page-zoom-200",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic08-native-firefox-text-only-zoom-200",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic09-browser-identity-chromium",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic09-browser-identity-firefox",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic09-sequential-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic10-current-source-full-verify",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic11-s17-document-fingerprint-refresh",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe022-approval-response-barrier",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-vs04-slow-collection-repeat-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe022-all-flows-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-vs04-full-verify-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe020-f05-readiness-repeat-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe020-suite-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-fe020-f05-verify-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-pending-barrier-repeat-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-corrections-suite-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
+    },
+    {
+      "name": "uic07-pending-barrier-verify-20261019",
+      "expected": 1,
+      "observed": 1,
+      "missing": 0,
+      "result": "COMPLETE"
     }
   ],
   "baseline": {
@@ -234,7 +966,7 @@
     "reason": "S17 validates governance evidence and does not change rendered UI. UI comparison baselines are recorded in S11, S12, S15 and S16 artifacts."
   },
   "sourceFingerprints": {
-    "BotSalesAI_Frontend/apps/web/src/app/bootstrap.css": "248d98621f8d1215bb8f6d52aa879f5e495cb1501a8563df58772abdd1aa1d89",
+    "BotSalesAI_Frontend/apps/web/src/app/bootstrap.css": "3379c7160d961586913648b5c8e9583ebf17333cab5efa251b7e8525d91b7082",
     "BotSalesAI_Frontend/apps/web/src/app/CommandRecovery.tsx": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac",
     "BotSalesAI_Frontend/apps/web/src/app/dirty-drafts.ts": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13",
     "BotSalesAI_Frontend/apps/web/src/app/DraftNavigationGuard.tsx": "75731953b146f9b4fee2e2864ac88a802cba46bfa20c55750e266472e86dc805",
@@ -247,12 +979,12 @@
     "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "12d6b0dbe0dca8b8c5262b37854ebc6407026d658a7a202a557fbb339db4c520",
     "BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx": "cfea6704a8f8a08ca735700ae3aef4444dd40d8b6a8fb121d06cbab60085c0aa",
     "BotSalesAI_Frontend/apps/web/src/app/SessionProvider.tsx": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e",
-    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "e126fcc3e2d82a87e74fc7c2acd30abce46db7d02470ee058fa410c8fb20cb92",
-    "BotSalesAI_Frontend/apps/web/src/app/tokens.css": "f7f6bc21f94664af6cc4173353b2632ef01cf5915cf407b256e3530f96f75fca",
+    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "54012c2dfd4f40cc27b187f809c09086664012a1cafba3cb31182ddcb28b1e2f",
+    "BotSalesAI_Frontend/apps/web/src/app/tokens.css": "880fa854d2e6f0592bb02e78cb3209a3de2e4c99222ec6f4fa0ccfa96debd2c2",
     "BotSalesAI_Frontend/apps/web/src/main.tsx": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb",
     "BotSalesAI_Frontend/apps/web/src/mocks/accounting.ts": "57aae87ba495b4f474273cd92dba5a779938b620f169030bad4181061d4d32ad",
     "BotSalesAI_Frontend/apps/web/src/mocks/auxiliary.ts": "4c251fac239d36fc361a21e33cf647660c5fb061254eb429c7c7cdd52312765b",
-    "BotSalesAI_Frontend/apps/web/src/mocks/browser.ts": "3786d71b2b665490a116bc0671c5e2494e57e87677e132e8cce1fa80cd5860ee",
+    "BotSalesAI_Frontend/apps/web/src/mocks/browser.ts": "60a3ffa0749dc15751a9f7eed6938109e3a7ecca6d33ad7f71faac1143db5953",
     "BotSalesAI_Frontend/apps/web/src/mocks/catalog.ts": "c39e80b000a37e56246fcda7b4a9f6e9b6beea04eaeaaab5e08c8f9c026d21ba",
     "BotSalesAI_Frontend/apps/web/src/mocks/collections.json": "150e5b403e7036a6c03afc01d2009d9b2010b6b2e36fd510bdd7efe9f230fb07",
     "BotSalesAI_Frontend/apps/web/src/mocks/control.ts": "53b30ccf85357683a168a1fc8760a3f18a30a8aff5bbbbb61c7bf419389ac3cc",
@@ -270,32 +1002,32 @@
     "BotSalesAI_Frontend/apps/web/src/mocks/procurement.ts": "ebb52ca3f76ce64cc1c65aba249bd7e7ce2894ed72f9dbff3f350a3665b701be",
     "BotSalesAI_Frontend/apps/web/src/mocks/seed.json": "946c0a4d5b58617575a0d4bbd0acf970fea2c9170769b8f371e73ccd305bb9c8",
     "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "f086bccc5fac03a2f44e582107b091776d7d7a4213c2b71955d5fa256c8e209e",
-    "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "e4b52e657085caf1c0d31a7a6570c0262dba6aa5b3f1a13e090d09bb2fa27344",
+    "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "1a750c8fc8f748b1ff9fedda7a42ffcc4e3245e191cf74d2e19052c4e58ec542",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "28dd46f898fd4f276f6c0db2c4bf056182ed70dc4eac4b63ac3fcf77a975e686",
-    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "0348ab9c2021d3b34437fd907a89bea3e54ac47fae9a0c31490fc5e89a3afefe",
+    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "81283fa7b74eb1e979150fccd2a22bf286008582ff02d4139f105e379849f66b",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/addresses.tsx": "4c81fc0c8eea9ccf270895f9e2e0ad92fd8b6d7b7418561e99955176f8592305",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "4eec3535d4a8fad6fb4d4beac1eb9994bb88c9c72d348a988ae6f45ee8ab73c4",
-    "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "690ab38c5282bb5d8368a16ea4efbd8791ff9ba2e4107cf7ff1f7e737705baca",
+    "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "2b5330aeab41301db0549a8e4eba4be0d74376f4281be189ae4c0f3612f5251a",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/accounts.tsx": "77be37cccfd6cacd6ec3bce2277d29117a1a51914ea1a3f2c22d97eb6d9f9869",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/entry-editor.tsx": "7c8bca51ea7fc49556246d09a90cf09fd98eba6cf39b7cc88451b54cea1818e7",
-    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "6d475593a41fa3d62ea506bd31dfcd5e35c601c45a09faaa30b6f6d6e5f87370",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "c5fe6efec2ca49ed0e2332d3950b4783761e3c33af740cda46fd25e21f77dde4",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/journal-editor.tsx": "b0001e37866f7f18e6012e8a81e73f883a3dd4374715248353242d651becf008",
-    "BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx": "aae9708b7222495131faaf21b36c38e9c77ae5369aff3c15b99cb262ad574f42",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx": "760a6cd765525dc783958207f5174bcb0c82a1f61216c920fbaf13c576004804",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/report-explanations.ts": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/report-range.tsx": "d26b02999934fabfd3f9b4c94ab646b62f2110cac01c464fa952e07c5c53081d",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/statement-import.tsx": "5fe843f2deb8bc718b2f61f2907db5e00e14ca8f0a1701b047f036dde9ce3f06",
     "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx": "e577201756d6b1d212acce383daf0b3fb9806e5615819d5c26d39ae434c7f896",
     "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "fcfff677c7f0fd5c58fc28b378cd436d432fe7975e23b6f56c97e22402b4ffed",
-    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "03db63e83a60293ee4bfe8567252e3d873fa34265d7cd09674d0db0c1859e6dd",
+    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "6e02cb7178b6923653ff84bd2a1c42894f47252a54678125e0d57c040d91bfc0",
     "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "5b33cd7cea2a62e2e89480fa061ea2c2be8d5d846d0dfcf6329aa91b88d63d4e",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "298181cf4dc69c68959a02067d740d2b06ad9f60174baccfe34f9158bd54a45b",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/warehouses.tsx": "f9dfdc374cf28993f736d82d63afc121c282936843ab08590a4d06983b6604b6",
     "BotSalesAI_Frontend/apps/web/src/modules/knowledge/index.tsx": "8c139294f8643da4cfd00d9941bc589abd05ccea72b9f48142ae3a679b740200",
     "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx": "8fcba3b8ca2eae3e7efb2fa5fda9e375b47aedf1a5dac460348d161d31bb8577",
     "BotSalesAI_Frontend/apps/web/src/modules/notifications/push-capabilities.ts": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
-    "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx": "eece85ec20768d64ea2607ef170aaa50b956fe6fcd015a9d44e0375146945304",
-    "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "ef061bdf70abb1e9ba6cf7bb0ba6343fed34f7efa53ac46201e6384fda9c5d6a",
+    "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx": "61290f6b2187715120ad68e5204ef0f297e832db795d6281b71b248ec4a5e510",
+    "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "978743a42883766b23aa62ae5b58b97dfea552be840130054a84e1f8273a0b5d",
     "BotSalesAI_Frontend/apps/web/src/modules/procurement/index.tsx": "02494b22aaa2897512a5e160f339ad6e5605cb34b6ffdcb0f80be7f5305a6839",
     "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx": "094e80e042587ae9390d4dc091cc756c8bc261c4c6871f2767bc5e13624eefc8",
     "BotSalesAI_Frontend/apps/web/src/modules/reports/report-utils.ts": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
@@ -310,24 +1042,24 @@
     "BotSalesAI_Frontend/apps/web/src/shared/model/auth.ts": "7bc419f63be0e3ac3663843d137125c7e0d3dca843e7a3993526453066e6a8b4",
     "BotSalesAI_Frontend/apps/web/src/shared/model/dirty-drafts.ts": "387b509645164ec4c1aaccdfa96e0b99329ff3ba83f7b28931a8ffb6de3be7a2",
     "BotSalesAI_Frontend/apps/web/src/shared/model/download.ts": "ef286806094a71904be7da00b0a9c2fc2e21480ea84038fceec43df095674d1c",
-    "BotSalesAI_Frontend/apps/web/src/shared/model/filters.ts": "393d4f7cc77f4deca11a909ee79f809d76debdbd84e8a413271f9ceadfc29f8d",
+    "BotSalesAI_Frontend/apps/web/src/shared/model/filters.ts": "09fc7ff8434d5ff2095aa84bc81f8be70b747b9b968e399170cd066993306770",
     "BotSalesAI_Frontend/apps/web/src/shared/model/format.ts": "efdd1a638adabee769ffbae3f08d69e6db0b9419592e6528f6991c6cb245b305",
     "BotSalesAI_Frontend/apps/web/src/shared/model/labels.ts": "8af1b23ecb32f4b25b424e8b057ca088675fcc0b23a3fa46e336f844251a32b5",
     "BotSalesAI_Frontend/apps/web/src/shared/model/list-return.ts": "1ec5a32a482a728d7398290a6d2347b7d2a279646af6f1074fc2821ac9a6b5a0",
     "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
     "BotSalesAI_Frontend/apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "e322102faa55371356e855fd16967d2a8bd07a6606a2d99dae7323247782f314",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "6b73806725f287dab6a81d4f68bc3eabc65f66ab4d20696322431daac342d97d",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "d37882fa1fec836317e8db306a182ded40a5a920f02567aec6eeff696681ee3e",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "e8026fd493550329bb0fc4f7cc51d870222bf625fc061d464eee9ed540f4b149",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "6564f5a0abef7c573d06b1e3260e42eda511dc64241ddc4b9f87ad7b7b1c95b3",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "4f0c1e67c38d2b07b335279436e1b7f72559c890c5241d95937d6e4d01d7607a",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "b40c1f2ec7210a8fa402c7c8015d771c353695ccb01284d760d2a4430ab0c65a",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "bc8089701995cf25b43d78e08930e3e81bd3a6ac0a5940283d73ce3e6b2a1b4d",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "ed147658a55cdd9c011a81aba50870ecce3ae1c7e81e92c2b712740ea112c89d",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
     "BotSalesAI_Frontend/apps/web/tests/api-client.test.tsx": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
     "BotSalesAI_Frontend/apps/web/tests/catalog-import-file.test.ts": "c2b111d0f4848a25cc9bd9ad135af54213f01764ef9905ee331299d40cd3b970",
     "BotSalesAI_Frontend/apps/web/tests/command-lifetime.test.tsx": "9c85b3fedbb57f9169f878112a0494121532be434b4a8fd1165955c61d36e2f5",
-    "BotSalesAI_Frontend/apps/web/tests/components.test.tsx": "d7ed38c56a6e1ddfb65de0584d43a5c18713c7bfe64303c79be3cbc7f3d8c039",
+    "BotSalesAI_Frontend/apps/web/tests/components.test.tsx": "5e6b808c1e4eea7ebab443c98a441d44ce7948cf85df6f91303a431374b77e5d",
     "BotSalesAI_Frontend/apps/web/tests/composition.test.tsx": "004123081c81aab3a0262e4c85363a8dc3c874cc5a8ea9150a2c2fca01d1f786",
     "BotSalesAI_Frontend/apps/web/tests/confirmation.test.tsx": "ac0023f4efb3ee22af70dd4afee4b17d68d19a4f5afee0b9d3aaeda63c7dae3d",
     "BotSalesAI_Frontend/apps/web/tests/dashboard-labels.test.ts": "17afcd7d1fbc42134b3a07848104e5bca3b0744baff2ed1d309c5650877a700d",
@@ -345,7 +1077,7 @@
     "BotSalesAI_Frontend/apps/web/tests/scope-events.test.tsx": "e1ed34a5c53b5f9947dc6ab4226b84497e86169fbd78431075739533b7bfcb78",
     "BotSalesAI_Frontend/apps/web/tests/setup.ts": "0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5",
     "BotSalesAI_Frontend/apps/web/tests/shared-ui-render-contract.test.tsx": "bce56874da70a4c376be8eec2fd957a004d3caf56fdbd331e4a246a13c0469e1",
-    "BotSalesAI_Frontend/apps/web/tests/states/fe023-state.test.tsx": "450595afe87cb71809abfd55287f7ff07b3fa6a76ff92ca93b4a166eeac65473",
+    "BotSalesAI_Frontend/apps/web/tests/states/fe023-state.test.tsx": "dc06b9ac16112bfaf27c2f3545b093115c0c26ec6eeca23e986e40f0d178c67c",
     "BotSalesAI_Frontend/apps/web/tests/timezone.test.ts": "c32d80c9566bf18ab7f291ae81a4259ba8e0e0916d375567f332e301841cf815",
     "BotSalesAI_Frontend/apps/web/tests/versioned-draft.test.tsx": "664d2c84a48ed012aee2039b70cd322fa63186e254b5cd246f86edc803b81ee8",
     "BotSalesAI_Frontend/packages/contracts/src/finance-golden.json": "9aa02b481a76bc49c923fcbed5d4b1e14ee135d06058c8487fc8ceb7106f681d",
@@ -362,9 +1094,9 @@
     "BotSalesAI_Frontend/scripts/check-layout.mjs": "53137d5894954146bad70352b2b7eb8aeb777896267abbac1a5f8512c48ef790",
     "BotSalesAI_Frontend/scripts/check-source.mjs": "593b95de828d54edfd04e0dd847007a71d36175b7fe7b9bc1cb83bea88af6fd3",
     "BotSalesAI_Frontend/scripts/check-ui-composition.mjs": "d3d86a54944b0cfe66cb9f5544b4ea5204b5abf376d76de75e6697f22cea6a0f",
-    "BotSalesAI_Frontend/scripts/check-visual-tokens.mjs": "144f844c7ae2447136580054abde6b07610623a6ba3b3e25db887d8d378a61d6",
+    "BotSalesAI_Frontend/scripts/check-visual-tokens.mjs": "a05d065c8ba9e99af58c19ed879955bf52d4aa65b0b0865cc056dfc591a1df9b",
     "BotSalesAI_Frontend/scripts/doctor.mjs": "6cef97a1835f551138c4b1fefc1a334e76479bb70b0b5495c04f7dc993b9c27e",
-    "BotSalesAI_Frontend/scripts/generate.mjs": "3f51833411b6f1e29bd72fd0a0e911f5f81e727561d92cf2a077edcb173cd428",
+    "BotSalesAI_Frontend/scripts/generate.mjs": "e6764874cc7c3117c3af26c7984159ed48e435a2a60d899772d8dfb625b0ac6c",
     "BotSalesAI_Frontend/scripts/layout-exceptions.json": "7428954378a6b0c978790f9714cfa29ee7981a2c15884f9fdbac3c87939d210c",
     "BotSalesAI_Frontend/scripts/layout-exceptions.schema.json": "69906bf9106e978700f004ab65387fc1966a75a29d5d4ab7f359a94978d53617",
     "BotSalesAI_Frontend/scripts/run-e2e.mjs": "b8c35919ce16fc05701ff9de544ba1e737bfa249c1a9e844fdb30e7231a09891",
@@ -382,9 +1114,9 @@
     "BotSalesAI_Frontend/tests/accessibility/routes.spec.ts": "a44fc8c19bc637adab9d603d8c9f698ff0af9de5a39e8b06ad078a2f58672a54",
     "BotSalesAI_Frontend/tests/architecture/check-boundaries.mjs": "c2e90eea61c7a8e6198b89f15236726b527f1a9ad8de80e2935b34a908279849",
     "BotSalesAI_Frontend/tests/artifacts/demo-preview.spec.ts": "3d522e81d9c649f9f999aba7cb4a942523c7ac7f310ad1830aecc914d6765ef0",
-    "BotSalesAI_Frontend/tests/built-demo-regression.spec.ts": "6abfdc3640ec1c0c66264662fdbf9250874d0d9d200de2e58974b40b0ac461bd",
+    "BotSalesAI_Frontend/tests/built-demo-regression.spec.ts": "fda161620b09200aef4df093a49125e99a79df4876117611d467bec5757f17a8",
     "BotSalesAI_Frontend/tests/contracts/generator.test.mjs": "7ff255de33ec7c1d2f78773aabc7de17829ae83d4d8067fedddc942c03a457d0",
-    "BotSalesAI_Frontend/tests/design/browser-audit.mjs": "2ec75d0ffb27cc22e04ffdbbab24baa8b0e135684c217ca5827785e78985249a",
+    "BotSalesAI_Frontend/tests/design/browser-audit.mjs": "0c0145b469b293921271d4d93dbf842429598ebd67ac9920cd655360cd522b57",
     "BotSalesAI_Frontend/tests/design/component-layout-fixture.tsx": "c1822b3ad024a2a1c6fb49fbdb966cd7b0475e56eda70e1e0f897ad58a093722",
     "BotSalesAI_Frontend/tests/design/manual-contrast.mjs": "45a0e3faa047451d2e22d71ed05a373b2be2a39a85d4c4898da85c8a3192fe63",
     "BotSalesAI_Frontend/tests/design/owned-label-geometry.mjs": "05ad4ea1a24a0882d1736a6ada537b03a629a310875c3829a443ad325826f2d7",
@@ -397,33 +1129,33 @@
     "BotSalesAI_Frontend/tests/domain-scenarios.cjs": "a4b6977835d0c551ad59dd17ac6a580a7af026689686c3f6b09d58e14a1d856f",
     "BotSalesAI_Frontend/tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
     "BotSalesAI_Frontend/tests/fe009.spec.ts": "66424fb9db972021716a768124d80da469502c131fd5d965083009e2e7d26af4",
-    "BotSalesAI_Frontend/tests/fe010.spec.ts": "1609e1df2b15ef0e7f1aadf0fd9c995662b763c3fffae82bdf55fba43120fd6d",
+    "BotSalesAI_Frontend/tests/fe010.spec.ts": "12cf829daf6ccaa7047a37fa6ade4787cc0aa91278ea0407cc87650502110d51",
     "BotSalesAI_Frontend/tests/fe011-source-map.test.mjs": "422db817da901192ee2a80924aebef3115ddf7c00b45ae4297e58ce782e9fef9",
-    "BotSalesAI_Frontend/tests/fe011.spec.ts": "1b42ce41f05b3fadc3607b652769a511a27da1c0d519016af15c789a8d836b8c",
+    "BotSalesAI_Frontend/tests/fe011.spec.ts": "f6e56cadbfab5846a0bf1dc6b152ad38184701a55e1222093a439b6d3057ac27",
     "BotSalesAI_Frontend/tests/fe012-source-map.test.mjs": "096636c823514b1da90192a0a55a22cea800fa5c1de225ec60fd3ecb9b4bb98c",
-    "BotSalesAI_Frontend/tests/fe012.spec.ts": "d2599e9df4d37db9099caf7f115d14a7bbd811c42f655cc1ff6191adaa994a52",
+    "BotSalesAI_Frontend/tests/fe012.spec.ts": "f78c87611ec7a331612ae18b97c314f3fb4f2ccf07642fc1aa99f2a5572aeff9",
     "BotSalesAI_Frontend/tests/fe013-source-map.test.mjs": "2f3086d0beee91d8890cfd352ce09df8034d0071e1516ca14e23e7565fa24260",
-    "BotSalesAI_Frontend/tests/fe013.spec.ts": "bfe2c2c8b26d0e0e2f76ece4e002e10b1502c53aa24a9bc2540af020dce11b87",
+    "BotSalesAI_Frontend/tests/fe013.spec.ts": "9afa75f8036f26ecfaccc5f5c5d7b81102d5a86493b51e01dcc5ee8b3f5a10d8",
     "BotSalesAI_Frontend/tests/fe014-source-map.test.mjs": "cced9f897b0765024a3990412d1cbcd4989cd38fc5bedc571037e8096fa3a5d0",
-    "BotSalesAI_Frontend/tests/fe014.spec.ts": "2740aec7711be3b37282097b8ba72a0947d1e56ab2b7a1ef5af2f5857604aa76",
+    "BotSalesAI_Frontend/tests/fe014.spec.ts": "34f16f233774ed4be6bee3d451552efbd46c730c32cdb4b946cd927ce9c2029c",
     "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "d9fecd32da5996ade5cb41a635dda25c8b8e88791064867cd81f98aeff5dd837",
-    "BotSalesAI_Frontend/tests/fe015.spec.ts": "c0d1075e9c2e0153b6200e4187ceeb519cdecff086d19faf66549ea927a667d9",
+    "BotSalesAI_Frontend/tests/fe015.spec.ts": "451376dbdc17b18305f3e980b2d8f456c539aeb2600a292411b4ce4bae364820",
     "BotSalesAI_Frontend/tests/fe016-source-map.test.mjs": "15359771691c02c534f4b998305cb67772c72c5e65468bd832ae79c59cf47d3e",
-    "BotSalesAI_Frontend/tests/fe016.spec.ts": "752acebb290f9ddd156bd0fac77e8753b4d151564e6327b674744260f5b5654a",
+    "BotSalesAI_Frontend/tests/fe016.spec.ts": "f04e2dd8a31f2097defaafc996c836d44442f5fe4b5863a37619f640d75216c3",
     "BotSalesAI_Frontend/tests/fe017-source-map.test.mjs": "99cb021a63bea6f384d8d206cbdc3b6918827cb2ce10027f8ef9fb1374875a56",
     "BotSalesAI_Frontend/tests/fe017-validation.spec.ts": "44f86fc257a9dd645b0255562bff0c1177801a330a92c4dd4f7872b7d4e87e98",
     "BotSalesAI_Frontend/tests/fe017.spec.ts": "2282d63dcc655430ecad77d334eefdc234accf5177af33714c1afacd66e82b12",
     "BotSalesAI_Frontend/tests/fe018-source-map.test.mjs": "f4bf77135fddc7b141a598e184cf7569c0fdafeca3d4c050f86671c40f4d3fc8",
-    "BotSalesAI_Frontend/tests/fe018.spec.ts": "446c859cdfa6629cd304e775f6797a9b429cd87b7c0b1d35012851c532b6245c",
+    "BotSalesAI_Frontend/tests/fe018.spec.ts": "fe4bfa1e6982049e6088fe857ac4a331a6d1538ebb1fdc20ab667b2b8d7c6936",
     "BotSalesAI_Frontend/tests/fe019.spec.ts": "7498e770cf25e2b934a2e77b65c610543943b4b22acc1fcb41bcb24d9a6ba1fa",
     "BotSalesAI_Frontend/tests/fe020-source-map.test.mjs": "388f9c32dc92bf6fbb8070606ad0b93f034e2426f6fcb44ac805e87bae7cb1f0",
-    "BotSalesAI_Frontend/tests/fe020.spec.ts": "cf3c5e542fd3bfbb44ae974ba0947cdca3db2d9cdffbfee2de14169d9bdf8b0b",
+    "BotSalesAI_Frontend/tests/fe020.spec.ts": "4c92beb9a4deee84baee5b11a60bf6179b942608282f70a1b38d4840851beab3",
     "BotSalesAI_Frontend/tests/fe021.spec.ts": "7fb79d39b1ff73a7735208fd40476a28549631af2e0f5a71903b4aae1d5d13a7",
     "BotSalesAI_Frontend/tests/fixtures/finance-management-network.mjs": "a3b1594efbaa86164b6537a5860af89a07e591b8c959f984fc6fb65485a5463b",
     "BotSalesAI_Frontend/tests/fixtures/master-resource-network.mjs": "912277e26b0f268506b7abc01773d15a354be98659314c1fa3cc3c1ae7e6879c",
     "BotSalesAI_Frontend/tests/fixtures/mock-network.mjs": "54562554b0cd7f2ea53351822f521d94b87b951d4b22e74a89017f1706cdd796",
     "BotSalesAI_Frontend/tests/fixtures/ui-source-project.mjs": "3e947d9057bdb6a31be58c6edd9a8b78602620a9e17c0f253af218aea4c54c60",
-    "BotSalesAI_Frontend/tests/frontend-corrections.spec.ts": "5a34dff86ca626c1fcf2e35b67fac61bfef0091f8673c22ab87cd07ed737899e",
+    "BotSalesAI_Frontend/tests/frontend-corrections.spec.ts": "cbf1e0bef2c2d369542d7eb26d3b0ac1f38f3d89be4de8a80ba897025e82f75a",
     "BotSalesAI_Frontend/tests/frontend.spec.ts": "7b641c124314b44777bfe00ecef65f602fdffd146eeea8dc299713bf4208fd8f",
     "BotSalesAI_Frontend/tests/layout-checker.test.mjs": "95d87ab37193ee58a54773fdc8ab3f9b729b8d3590d005d25cb9b137f7f86a5f",
     "BotSalesAI_Frontend/tests/route-role-matrix.spec.ts": "34d746bc2b276610811ae750e6bb6dd4709912c8230cb39c0ae19b12a22761a8",
@@ -431,7 +1163,7 @@
     "BotSalesAI_Frontend/tests/session/demo-controls.ts": "ed25968843883eff62b96cf9d5cf95e8ab76501934516104912eb8de07582217",
     "BotSalesAI_Frontend/tests/session/demo-server-cache-isolation.spec.ts": "8cbbfdc37f5a32c1a228be78b0875652660b10b4ad64c41139753dcd51e7c385",
     "BotSalesAI_Frontend/tests/session/demo-server.mjs": "6d0ed26d908f813307a91f2fed6280ec16ab194fa2698fa434adf0352d8d4de3",
-    "BotSalesAI_Frontend/tests/session/demo-worker-startup.spec.ts": "be4c2de708d6d71f374c2450c8308e5b0dca793018a61debd422c35f0cfe4334",
+    "BotSalesAI_Frontend/tests/session/demo-worker-startup.spec.ts": "2b51feb37a5c17f1ccc565abe5253acad928e7912251b3963f7b9926011f7234",
     "BotSalesAI_Frontend/tests/session/dirty-drafts.check.mjs": "847afcad5f75d5c6348a40a18b429e265dc76a8084ca1f93e0e5c169a5fa6cb4",
     "BotSalesAI_Frontend/tests/session/playwright-setup.ts": "015dbcdb8adf60d9139b81e427b3db605272c6477e380cebcaf1427f36cede77",
     "BotSalesAI_Frontend/tests/session/session-revocation.spec.ts": "e9066f0af951ca3397b240c52453287bbb1c3a8119676a49f51df9b2276748c4",
@@ -439,8 +1171,8 @@
     "BotSalesAI_Frontend/tests/source-checker.test.mjs": "bdc53b8f7d154e9b4126d7f0b7670198c85a0686b9b616598b2583f195f9df7e",
     "BotSalesAI_Frontend/tests/states/fe023.spec.ts": "4eff86d75c1b83a2725a6e527e92eb7b8615c1c9fd4224042a3de685edc9b1f0",
     "BotSalesAI_Frontend/tests/states/generate-fe023-evidence.mjs": "aeb5b08269e5722e55e87508abeec2bdbebb7baf255fc1c15788a1e3a2bb1a3e",
-    "BotSalesAI_Frontend/tests/states/generate-route-state-roles.mjs": "a9be4c94a6db11167f48bd7bcba817e84f0a5358bfe4a47bad21f725d559a798",
-    "BotSalesAI_Frontend/tests/states/route-empty-composition.spec.ts": "c072505bb8c449111a7d372fa925ba6d0304633856b1e7c30c718096b57eb499",
+    "BotSalesAI_Frontend/tests/states/generate-route-state-roles.mjs": "1f684aad2a35a0ff7e0a4b9b83fa9c137191bed497899a0168a217ce7f4bb232",
+    "BotSalesAI_Frontend/tests/states/route-empty-composition.spec.ts": "bdad56c31a032d08118dc64a9608fc977b4fdc54749a66f8f578f29899e59ea1",
     "BotSalesAI_Frontend/tests/states/route-error-composition.spec.ts": "523785cd30d0d83ee0633452b2ab000f452f96c3c0b18378c2dece47bdecc5cc",
     "BotSalesAI_Frontend/tests/tools.test.mjs": "21ce2d1a87e26afd574979f3832dc4da084aa538421034853eceea685d27a0a7",
     "BotSalesAI_Frontend/tests/ui-binding-gates.test.mjs": "d537e23d08bcb7cee4bf0c244f6b8fd579ac86fa7d6180a8cbd234941b411443",
@@ -455,7 +1187,7 @@
     "BotSalesAI_Frontend/tests/ui-composition-positive-ancestry.spec.ts": "88ccd6f23fb0de29f08d73d52adc86719e640f2bc19c1a70eeac117bff537661",
     "BotSalesAI_Frontend/tests/ui-consent-management.spec.ts": "499b99f10adf12e8cf124b7f3699023f895de466fa0160a896ac65d10d0aa1ea",
     "BotSalesAI_Frontend/tests/ui-customers-layout.spec.ts": "8c0bb6056555399cfcd6be6606a6229e87ef1155e26ba8c62b1056293116b0e7",
-    "BotSalesAI_Frontend/tests/ui-dashboard-layout.spec.ts": "945f5ee8e18ad7a401bba7c7054c67e0087b03fcf66ec3d98de0d00d423aca8e",
+    "BotSalesAI_Frontend/tests/ui-dashboard-layout.spec.ts": "34977b491afdf9c4c7642f628ef726ed67e4ffe782efaffeaa16edb89a6fa9c1",
     "BotSalesAI_Frontend/tests/ui-density-layout.spec.ts": "094212eaf886adc0b3fa472518e715fba6a27670e1a04ccda434e7ac3ce70705",
     "BotSalesAI_Frontend/tests/ui-entry-scope.test.mjs": "34855f434ee80ada00c0969f6949c1c268ccfae9c798c66d5d8c67675bb81cb1",
     "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
@@ -467,18 +1199,18 @@
     "BotSalesAI_Frontend/tests/ui-inventory-layout.spec.ts": "3ec58e1ad8fdaff03921c5a3f488b3e33ead8763baec9067e2cf489cb1aaf2c7",
     "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "591b833bae530b19fb231d3aacab2058d4546d2e2648cdaf603c5b973b4a33f6",
     "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
-    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "e9c9ed1955eec42d4fb611acae628038f87e895c2a608e4dc7dd0c0c11848a66",
+    "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "98ad94878a6c4ddaa1b471366df1487fda17f73643cdd673c147f44c08f87a80",
     "BotSalesAI_Frontend/tests/ui-notifications-layout.spec.ts": "cd6fb47b6ee1d72fe8da67c64b65224ff23b12e81ea7189f7f141450b5f9a0d8",
     "BotSalesAI_Frontend/tests/ui-operations-layout.spec.ts": "a6fe2576a6442cfe03bc62097435b7f998406250ecedbca71b48e4802565db52",
     "BotSalesAI_Frontend/tests/ui-orders-layout.spec.ts": "73c1af2cb38a16f47add09dd4e6134f2d4578d5528b38696db87b4eb8e30cba6",
     "BotSalesAI_Frontend/tests/ui-panel-layout.spec.ts": "6f5980d08a44ac6bd2b746703704e6eb369441e318cb2edaa1138c35f1c3d8e6",
     "BotSalesAI_Frontend/tests/ui-procurement-layout.spec.ts": "0199322b40f4ece1cf2b0c89aaa989c462478b026f8337c884504b799cfe79ed",
     "BotSalesAI_Frontend/tests/ui-query-state-layout.spec.ts": "d93c8eb6c3e1fb2ec753fb43224959b42b689f5884a1670e584dbf83209e106d",
-    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "1f06b86c676334fb47d551826c55f76242360a64a5bf8307d56bbee5a235e4d9",
+    "BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs": "c538b701d2640535467302d841e19ecaeaa6ffe3b334477e1d60fb3b8ac0183e",
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "f9b572f2fa45c06eb33743ac57679cbb1479d35a2772830b9995e91bb316ffab",
     "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
-    "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "af0db92cb3ae5419cff81d40315ced97db617c31450f7507fd8a4f26680b4a2b",
-    "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "73a667fa9754730ace0c78d819b28e7a00ec7ba6e6b7d6731c05fb5e6e63efc7",
+    "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "3a85e5bbac9e47ca971e33128864de63c327351ca62b6c87794cae346a111d05",
+    "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "dda0229ab910be4f559b18caed833426b6bf38e14305913c41bad00605521a7e",
     "BotSalesAI_Frontend/tests/ui-width-layout.spec.ts": "ceda554c0bda5f2eddad2f800bb89ca93bccb16a357933fa61e1c6684b91119a",
     "BotSalesAI_Frontend/tests/ui-workspace-layout.spec.ts": "c998d7488abed50b94f074fd311364990b221fc06f8b2bc7d7a7b47b092a3b50",
     "BotSalesAI_Frontend/tests/ui006-lookups.spec.ts": "291d172f66f1f030fce6786a5e38b2fdf5bd5dbf9de8601f80bfa08c05efc281",
@@ -487,7 +1219,7 @@
     "BotSalesAI_Frontend/tests/ui009-scope-regression.spec.ts": "866d54ef16d28ff669fd9f611415097a1b13540bfd8057e117fd056b353b37b5",
     "BotSalesAI_Frontend/tests/ui010-dialog-draft.spec.ts": "b101a56dae428a8a8c9f1e11a8304563d829a744f39670daf1a50d685afa1d39",
     "BotSalesAI_Frontend/tests/ui011-date-time.spec.ts": "3b0c72599267f42d22493d44f06257fe66f3f697a855792fcf0c8ca857b6358e",
-    "BotSalesAI_Frontend/tests/ui012-keyboard.spec.ts": "1eecd48b9437f899a7e41d6f192cf8c01a8f56ccc7d5dcc8e145d2285755dfee",
+    "BotSalesAI_Frontend/tests/ui012-keyboard.spec.ts": "62a51b48d4c32cc67eff7c97f2f60d7ef1851709827554b7c5c518610c3f095b",
     "BotSalesAI_Frontend/tests/ui013-url-state.spec.ts": "2fde7cd4bf8cc540e6af0b830fee6b38323dc45bc971a30e63bc09673bfa182f",
     "BotSalesAI_Frontend/tests/ui021-permission-edge.spec.ts": "74c82fe9a2e2b6696d1f6a66c1d3ff307459d45992bd0a466196acbb4aa86413",
     "BotSalesAI_Frontend/tests/ui028-w24-inbox-layout.spec.ts": "00b7ed3c78e3e0772398ea89c4e539b687e8f3316426a6229797fd10ee52c15f",
@@ -496,24 +1228,30 @@
     "BotSalesAI_Frontend/tests/ui028-w29-reflow.spec.ts": "25b0d6e9fd584103c51d6424b396327af1ab2ccbcdd7b8afdba2543ec1255090",
     "BotSalesAI_Frontend/tests/ui028-w30-stress.spec.ts": "54c71563d0be5266c3ac495bfe7ca36252adf6812ec3db665559cd76d6cd9d36",
     "BotSalesAI_Frontend/tests/ux-confirmation-consumers.test.mjs": "f610f5bce899259d03cca4266db35b0c485e7d6e5f2638e0c104e68a161f43aa",
-    "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts": "ea4ede6772292060cf7f5e05adfeb43016b8495525c8503fbd2d625a53297b16",
+    "BotSalesAI_Frontend/tests/vertical-slices/fe022-flows.spec.ts": "bf10c16e7c6c321c4253095e908e053b2b516d55795c56230c3f91daadc84be4",
     "BotSalesAI_Frontend/tests/vertical-slices/generate-fe022-evidence.mjs": "6efafd7ba45c64267690620aeff0d6cb38dd23614edda2df9088da2dbeb4d048",
     "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
-    "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "35b8c496508d754f820e53782d729ef5330fd88897dd2150a205800a3a5bceae",
+    "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "7f39234f4d7f60750a8645d85389e2cf7285e16e4e5243a84b61982962aef9d2",
     "BotSalesAI_Frontend/package.json": "bc3dd1bde58b7bb242c69fa0a7ba33882b29c4da2022dff6a8b29715c13ef073",
     "BotSalesAI_Frontend/package-lock.json": "a3c0bb3a4906f92a5f23d4e8a0b862769b71de9e7efc9a48601ae44282bc963a",
-    "BotSalesAI_Frontend/playwright.config.ts": "4e99117ba27bd1fa4b6e6bc2423df8c1efa97ec962ff83d48f2e3e830a0d45c9",
-    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "a8c878adf90429511c46afecd182afd9623be4ff54ef2d5fffd321dd986acfcf",
+    "BotSalesAI_Frontend/playwright.config.ts": "c9ad13fca762ae6669bba7d4a43a35685bd60cab8ca8813b649421a985938712",
+    "BotSalesAI_Frontend/playwright.built-demo.config.ts": "100f58344f18faee3c5f723abad0f5e4bfac78a38020a71da836b12520f05d66",
     "BotSalesAI_Frontend/apps/web/vite.config.ts": "6807da5538ceee93218580b9dad4b72d116feeffb9b397a43322ea9e9808aab5",
     "BotSalesAI_Frontend/apps/web/tsconfig.json": "da77a7cc404d19e9128ab6ce1428d1cc4872b97d3316fe08cb192e6b1b7574b1",
     "BotSalesAI_Frontend/apps/web/vitest.config.ts": "48ae3b2f1579380ce3ac309aea96201dec2f7cd4445551bea90ddfba73fcf32e",
-    ".github/workflows/frontend.yml": "adf2871843e84f0ed7a47972b3fbdb60eb42ec495ceeff4b33e785428c914d0d",
+    ".github/workflows/frontend.yml": "e791c7a5b9d2d5a330885b4047ae065aefb8d5d5991713e69d4fc1a9dda071ae",
     ".gitattributes": "460edb3fe7bc671c463b78491f521bb8030097f5c1454f86d2e270e90a87f54e",
     "BotSalesAI_Frontend/tests/frontend-completeness.spec.ts": "ae90df604058631815bd0af4febaccdc95ccdfe59c0bb0e31e2ebfb996e1967b",
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "7b6cce6013e0ffa928e171117c3fc355402b9f1f61bb9176fd0498d71951b88c",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "d88fe5c79557633d29bf5a5b3955c94199b13b2ca28ecaf6e9b7e8bd07a2023e"
+    "BotSalesAI_Frontend/evidence/REPORT.md": "53ae515a1cc9162ac1f674e82f6aa9273c8ac0d4b91d9d0e314b0c909a8a994f",
+    "BotSalesAI_Frontend/tests/ui-overlay-theme.spec.ts": "e974dddd18376cbd6b0e9cd40fd31de430eb72eb75e1f2676518b609d51b503e",
+    "BotSalesAI_Frontend/apps/web/src/mocks/service-worker-update-recovery.ts": "62cf0f795b6f0415bb319d4d928eed6fcd6ed8266a546da6828955d4f2dad1b4",
+    "BotSalesAI_Frontend/apps/web/tests/service-worker-update-recovery.test.ts": "3a5f1376694d85ad1fb65d8e289685a9d5cdb8d021eea0b0a8301f22d0426b38",
+    "BotSalesAI_Frontend/tests/states/route-role-command-unknown-master-actions.spec.ts": "406517c1290c2368a7b653ed47609c7313061bd461c11115f61a20daef3fba0f",
+    "BotSalesAI_Frontend/tests/states/route-role-state-composition.spec.ts": "04c218990fc65036bac98574080f7a8ba441222896263d4f4a9b6372311f3b33",
+    "BotSalesAI_Frontend/tests/browser-runtime-identity.spec.ts": "cd6e58440c917a42aa5bd8639a38a9e68daebc3ee4e5021f1591b2d65af2e9af"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",

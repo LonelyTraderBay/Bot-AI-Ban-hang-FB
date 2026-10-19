@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-16T16:34:05.345452+00:00",
+  "task": "UIC00",
+  "scope": "Planning/docs and imported audit evidence only; no UI remediation claims",
+  "sourceParentHead": "1fd4530609f4e69193a27b0d5a4959181e3f8fc9",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "Imported audit file SHA-256",
+      "result": "PASS",
+      "observed": {
+        "files": 74,
+        "rawArchiveEntriesVerified": 8,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "JSON decoding",
+      "result": "PASS",
+      "observed": {
+        "files": 17
+      }
+    },
+    {
+      "name": "Task inventory unique/complete",
+      "result": "PASS",
+      "observed": {
+        "expected": [
+          "UIC00",
+          "UIC01",
+          "UIC02",
+          "UIC03",
+          "UIC04",
+          "UIC05",
+          "UIC06",
+          "UIC07",
+          "UIC08",
+          "UIC09",
+          "UIC10",
+          "UIC11",
+          "UIC12",
+          "UIC13"
+        ],
+        "observed": [
+          "UIC00",
+          "UIC01",
+          "UIC02",
+          "UIC03",
+          "UIC04",
+          "UIC05",
+          "UIC06",
+          "UIC07",
+          "UIC08",
+          "UIC09",
+          "UIC10",
+          "UIC11",
+          "UIC12",
+          "UIC13"
+        ]
+      }
+    },
+    {
+      "name": "Dependencies resolve and are acyclic",
+      "result": "PASS",
+      "observed": {
+        "dependencies": {
+          "UIC00": [],
+          "UIC01": [
+            "UIC00"
+          ],
+          "UIC02": [
+            "UIC01"
+          ],
+          "UIC03": [
+            "UIC01",
+            "UIC02"
+          ],
+          "UIC04": [
+            "UIC01",
+            "UIC03"
+          ],
+          "UIC05": [
+            "UIC02",
+            "UIC03",
+            "UIC04"
+          ],
+          "UIC06": [
+            "UIC05"
+          ],
+          "UIC07": [
+            "UIC06"
+          ],
+          "UIC08": [
+            "UIC07"
+          ],
+          "UIC09": [
+            "UIC02",
+            "UIC03",
+            "UIC04",
+            "UIC05",
+            "UIC06",
+            "UIC07",
+            "UIC08"
+          ],
+          "UIC10": [
+            "UIC09"
+          ],
+          "UIC11": [
+            "UIC10"
+          ],
+          "UIC12": [
+            "UIC10",
+            "UIC11"
+          ],
+          "UIC13": [
+            "UIC12"
+          ]
+        },
+        "invalid": {}
+      }
+    },
+    {
+      "name": "Detailed ticket per task",
+      "result": "PASS",
+      "observed": {
+        "missing": []
+      }
+    },
+    {
+      "name": "No UI remediation claimed complete by plan",
+      "result": "PASS",
+      "observed": {
+        "implementationStatuses": {
+          "UIC01": "TODO",
+          "UIC02": "TODO — 6/6 baseline mismatch",
+          "UIC03": "TODO — nguyên nhân chưa xác minh",
+          "UIC04": "TODO — intent chưa xác minh",
+          "UIC05": "TODO — mới có probe mẫu",
+          "UIC06": "TODO — source gates cũ chưa đủ runtime closure",
+          "UIC07": "TODO — chưa đủ route×role×state",
+          "UIC08": "TODO — native methods của audit NOT_RUN",
+          "UIC09": "TODO",
+          "UIC10": "TODO",
+          "UIC11": "TODO — FE freshness chưa đo lại",
+          "UIC12": "TODO",
+          "UIC13": "TODO"
+        }
+      }
+    },
+    {
+      "name": "Audit route set reconciles canonical manifest",
+      "result": "PASS",
+      "observed": {
+        "canonical": 61,
+        "baseline": 61,
+        "missing": [],
+        "extra": []
+      }
+    },
+    {
+      "name": "All findings and evidence limits retained",
+      "result": "PASS",
+      "observed": "Confirmed overlay mismatch, worker first failure and recheck, candidate geometry, unverified methods and delivery requirements"
+    },
+    {
+      "name": "New/ported Markdown links and anchors",
+      "result": "PASS",
+      "observed": {
+        "checked": 45,
+        "broken": []
+      }
+    },
+    {
+      "name": "Original source/config preservation",
+      "result": "PASS",
+      "observed": {
+        "checked": 553,
+        "expectedDocumentationEdits": [
+          "BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md",
+          "BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md"
+        ],
+        "actualChanged": [
+          "BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md",
+          "BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "name": "Existing untracked path set preserved",
+      "result": "PASS",
+      "observed": {
+        "paths": 22084,
+        "baselinePaths": 22084,
+        "pathListSha256": "64c2dcf6010fea9852d3344bbb0a369c683b2326fed168df3a34849e4bc72be1",
+        "contentHashClaim": false
+      }
+    },
+    {
+      "name": "Working and staged git diff --check",
+      "result": "PASS",
+      "observed": {
+        "exitCodes": [
+          0,
+          0
+        ],
+        "output": [
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "name": "Narrow credential/private-key scan of imported text",
+      "result": "PASS",
+      "observed": {
+        "matchingFiles": [],
+        "scope": "Pattern check only; not a full security audit"
+      }
+    }
+  ],
+  "documentHashes": {
+    "BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md": "20edf3127b29dee9503339c8208208d2cfbcb295bde355b6bd29c5fbb0594e5e",
+    "BotSalesAI_Frontend/docs/CONTINUE_FRONTEND.md": "aafc2d524bf7e4a23d0a33c6716312602149a8ac83bf61967edcfa22b2b7f968"
+  },
+  "newRuntimeTests": "NOT_RUN: no app source changed; audit runtime results are historical baseline",
+  "newHostedCI": "Resolve from GitHub Actions for the delivered commit SHA after push; not asserted here",
+  "selfHashExcluded": true
+}

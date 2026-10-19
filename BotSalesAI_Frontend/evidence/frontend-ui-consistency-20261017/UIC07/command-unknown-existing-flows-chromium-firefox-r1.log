@@ -1,0 +1,205 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs --project=chromium --project=firefox --grep FE011\.AC03 unknown command blocks|FE012\.AC03 unknown confirm outcome|FE013\.AC03 unknown handover|FE014\.AC02 approval covers|FE015\.AC03 unknown journal posting|FE016\.AC03 unknown send|FE018\.AC05 unknown role command --workers=1 --reporter=line
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+Copying the worker script at "C:\Users\Joker-PC\AppData\Local\Temp\uic06-task-worktree-20261017\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2077 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-Dy-KMc6z.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-DzL6GNIb.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-CZx7PHBM.js                9.40 kB │ gzip:   3.73 kB
+dist/assets/index-DD05oENj.js               10.37 kB │ gzip:   3.60 kB
+dist/assets/index-DVIzcT2K.js               13.10 kB │ gzip:   5.17 kB
+dist/assets/index-0EEE-PDX.js               16.40 kB │ gzip:   6.13 kB
+dist/assets/index-DJg22lBN.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-Bkd75b0S.js               18.82 kB │ gzip:   6.31 kB
+dist/assets/index-DQEbadKr.js               18.82 kB │ gzip:   5.92 kB
+dist/assets/index-C1JIk1Oy.js               19.08 kB │ gzip:   7.01 kB
+dist/assets/index-Cuh6FR8m.js               21.23 kB │ gzip:   7.65 kB
+dist/assets/index-B8-f4rjC.js               22.02 kB │ gzip:   7.19 kB
+dist/assets/index-DyoFduf5.js               25.13 kB │ gzip:   8.48 kB
+dist/assets/index-085cp1PR.js               27.48 kB │ gzip:   8.96 kB
+dist/assets/index-C3F57wg3.js               31.32 kB │ gzip:  10.03 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-BHvGPrdS.js               33.32 kB │ gzip:  11.02 kB
+dist/assets/index-CZjmqTV3.js               41.99 kB │ gzip:  11.48 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-Ci2ssaVK.js               64.43 kB │ gzip:  17.70 kB
+dist/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist/assets/index-DaqP9MfG.js              101.80 kB │ gzip:  32.41 kB
+dist/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-BwhaRlrs.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-CJj7QyVx.js                328.77 kB │ gzip: 100.20 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 2.97s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2294 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-C_axcFpX.js              1.73 kB │ gzip:   0.95 kB
+dist-demo/assets/hooks-iyS31a1s.js                4.59 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-BTAgbcUA.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-6r0gQ2XI.js                9.40 kB │ gzip:   3.73 kB
+dist-demo/assets/index-_k0kjO3f.js               11.01 kB │ gzip:   3.88 kB
+dist-demo/assets/index-BLPONnej.js               13.10 kB │ gzip:   5.17 kB
+dist-demo/assets/index-CsxkFWzB.js               16.10 kB │ gzip:   5.94 kB
+dist-demo/assets/index-Bsuuzqnr.js               18.82 kB │ gzip:   6.31 kB
+dist-demo/assets/index-D67W3FVj.js               18.99 kB │ gzip:   5.96 kB
+dist-demo/assets/index-AcWiQfWD.js               19.15 kB │ gzip:   6.53 kB
+dist-demo/assets/index-Chdq9a2J.js               19.28 kB │ gzip:   7.08 kB
+dist-demo/assets/index-m0OrUToV.js               22.02 kB │ gzip:   7.18 kB
+dist-demo/assets/index-CyxPg5i7.js               25.54 kB │ gzip:   8.64 kB
+dist-demo/assets/index-cFslcvPU.js               27.48 kB │ gzip:   8.96 kB
+dist-demo/assets/index-tfj5nO8W.js               28.10 kB │ gzip:   9.79 kB
+dist-demo/assets/index-BWkxFM2t.js               31.32 kB │ gzip:  10.03 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-DqMN4M-f.js               33.78 kB │ gzip:  11.13 kB
+dist-demo/assets/index-DpxC2gnW.js               41.99 kB │ gzip:  11.48 kB
+dist-demo/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-DPHmo2Yb.js               65.64 kB │ gzip:  18.13 kB
+dist-demo/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist-demo/assets/index-DMgP6AoH.js              106.34 kB │ gzip:  33.84 kB
+dist-demo/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-BvS9RQDT.js            233.75 kB │ gzip:  54.25 kB
+dist-demo/assets/browser-DBiRz1w1.js            256.37 kB │ gzip:  87.30 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-uDdGNk6t.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-CUCPJGs1.js                328.77 kB │ gzip: 100.20 kB
+dist-demo/assets/contract-data-CJyvN5AM.js      375.47 kB │ gzip:  44.43 kB
+✓ built in 3.29s
+
+> node node_modules\@playwright\test\cli.js test --project=chromium --project=firefox --grep FE011\.AC03 unknown command blocks|FE012\.AC03 unknown confirm outcome|FE013\.AC03 unknown handover|FE014\.AC02 approval covers|FE015\.AC03 unknown journal posting|FE016\.AC03 unknown send|FE018\.AC05 unknown role command --workers=1 --reporter=line
+
+Running 14 tests using 1 worker
+
+
+
+(node:32540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/14] [chromium] › tests\fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[chromium] › tests\fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R15 OPERATION=createInventoryAdjustment RESULT=PASS
+
+[2/14] [chromium] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[chromium] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R19 OPERATION=confirmOrder RESULT=PASS
+
+[3/14] [chromium] › tests\fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+[chromium] › tests\fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R42 OPERATION=handoverShipment RESULT=PASS
+
+[4/14] [chromium] › tests\fe014.spec.ts:101:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+[chromium] › tests\fe014.spec.ts:101:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R46 OPERATION=sendPurchaseOrder RESULT=PASS
+
+[5/14] [chromium] › tests\fe015.spec.ts:485:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+[chromium] › tests\fe015.spec.ts:485:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R48 OPERATION=postJournal RESULT=PASS
+
+[6/14] [chromium] › tests\fe016.spec.ts:709:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+[chromium] › tests\fe016.spec.ts:709:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R06 OPERATION=sendMessage RESULT=PASS
+
+[7/14] [chromium] › tests\fe018.spec.ts:397:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+[chromium] › tests\fe018.spec.ts:397:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R51 OPERATION=controlAutomation RESULT=PASS
+
+
+(node:68792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[8/14] [firefox] › tests\fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[firefox] › tests\fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R15 OPERATION=createInventoryAdjustment RESULT=PASS
+
+[9/14] [firefox] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[firefox] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R19 OPERATION=confirmOrder RESULT=PASS
+
+[10/14] [firefox] › tests\fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+[firefox] › tests\fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R42 OPERATION=handoverShipment RESULT=PASS
+
+[11/14] [firefox] › tests\fe014.spec.ts:101:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+[firefox] › tests\fe014.spec.ts:101:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R46 OPERATION=sendPurchaseOrder RESULT=PASS
+
+[12/14] [firefox] › tests\fe015.spec.ts:485:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+[firefox] › tests\fe015.spec.ts:485:1 › FE015.AC03 unknown journal posting is not resent from the same draft
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R48 OPERATION=postJournal RESULT=PASS
+
+[13/14] [firefox] › tests\fe016.spec.ts:709:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+[firefox] › tests\fe016.spec.ts:709:1 › FE016.AC03 unknown send keeps the reply draft, exposes command recovery and never blindly resends
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R06 OPERATION=sendMessage RESULT=PASS
+
+[14/14] [firefox] › tests\fe018.spec.ts:397:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+[firefox] › tests\fe018.spec.ts:397:1 › FE018.AC05 unknown role command stays unresolved and does not claim successful resumption
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R51 OPERATION=controlAutomation RESULT=PASS
+
+  14 passed (1.5m)

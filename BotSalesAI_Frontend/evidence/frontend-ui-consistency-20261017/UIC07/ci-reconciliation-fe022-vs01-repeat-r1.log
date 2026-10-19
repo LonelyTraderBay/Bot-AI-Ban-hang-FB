@@ -1,0 +1,42 @@
+
+Running 6 tests using 1 worker
+
+
+
+(node:33080) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/6] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\116cdb8da3bbe8996eb7\playwright-webserver\playwright-2620-8e26e247-593a-4d55-922a-6eb900f5a119\deps\react-dom_client.js?v=f380a232 as it exceeds the max of 500KB.
+  1) [chromium] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked 
+
+    Test timeout of 180000ms exceeded.
+
+    Error: page.waitForResponse: Test timeout of 180000ms exceeded.
+
+      37 |
+      38 | test('FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked', async ({ page }) => {
+    > 39 |     const inventoryResponse = page.waitForResponse(response => response.request().method() === 'GET'
+         |                                    ^
+      40 |         && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/inventory');
+      41 |     await gotoDemo(page, '/s/shop-demo/inventory');
+      42 |     const inventory = await inventoryResponse;
+        at C:\Users\Joker-PC\AppData\Local\Temp\uic07-corrected-a3-20261018\BotSalesAI_Frontend\tests\vertical-slices\fe022-flows.spec.ts:39:36
+
+    Error Context: test-results\playwright-2620-8e26e247-593a-4d55-922a-6eb900f5a119\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\error-context.md
+
+    Error Context: test-results\playwright-2620-8e26e247-593a-4d55-922a-6eb900f5a119\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-2620-8e26e247-593a-4d55-922a-6eb900f5a119\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-2620-8e26e247-593a-4d55-922a-6eb900f5a119\vertical-slices-fe022-flow-7b9a0-and-order-references-linked-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:20096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/6] [chromium] › tests\vertical-slices\fe022-flows.spec.ts:38:1 › FE022.VS01 catalog → stock → order → prep keeps product, reservation, and order references linked

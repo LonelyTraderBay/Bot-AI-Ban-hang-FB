@@ -1,5 +1,12 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Cập nhật hiện hành — 18/10/2026, đợt UI UIC01–UIC13
+
+Trạng thái task và dependency nằm ở [kế hoạch UI §16.6](../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); kết quả UIC10 source cuối được đo trên SHA 85e2a677951e0e46aef6919e775de3e0c0d54103: npm run verify exit 0, E2E discovery 1.082 tests/79 files, built-demo 6/6 và 244 route opens không finding. Full E2E exact-SHA hosted còn chờ; full Firefox local trước đó INCOMPLETE vì giới hạn RAM. [UIC10 report](frontend-ui-consistency-20261017/UIC10/REPORT.md) lưu commands, logs, browser identity, hashes và giới hạn.
+
+UIC11 đối soát 329 inventory entries (282 unchanged/47 changed/0 removed) và 801 Git paths (748 added/53 modified); 0 path thiếu disposition/owner, final files đã fingerprint. Bốn hash lịch sử inventory UIC01 không trùng Git baseline được giữ nguyên, không biến thành PASS. Owner CLI validate/status và owner report generator exit 0; tracker FE là 0/140 checkpoint hiệu lực, 28/28 STALE, 0 BLOCKED; ledger đầu vào giữ nguyên. Báo cáo UIC11 ghi reconciliation, receipt và link/hash audit.
+
+Remote branch hiện ở 8f4ada345e03af18e607ee87b8044dce418df8db. Push run [#39071935869](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39071935869) và PR run [#39071938654](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/39071938654) còn một số E2E jobs IN_PROGRESS; chưa có terminal PASS cho SHA này. UIC08–UIC10 đang chờ được đẩy tuần tự sau đó. Scope frontend/mock; Backend/provider, staging/production, screen-reader/speech/human review, thiết bị thật và owner acceptance chưa được kiểm chứng.
 ## Kết quả GitHub Actions sau khi chia suite Firefox — run #61–#63, 16/10/2026
 
 GitHub [run #61](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/38870508491), SHA `2d91c7df0a062a7568c8f04b2a92a6bcd3cbccd5`, chưa đạt Firefox: attempt 1 có Chromium 445/445 và built-demo 3/3, còn Firefox 444/445; lỗi được ghi là `page.goto: NS_ERROR_FILE_NO_DEVICE_SPACE`. Attempt 2 và 3 dừng lần lượt tại 347/445 và 352/445 khi runner nhận shutdown signal; không tính hai lượt này là PASS. Vì cả suite Firefox chạy tuần tự trong một runner, tăng timeout lên 180 phút không giải quyết được việc runner bị đóng.

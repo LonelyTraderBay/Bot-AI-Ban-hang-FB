@@ -148,13 +148,16 @@ test('FE014.AC02 approval covers the exact purchase intent; unknown send is bloc
     const sendReq = await sentRequest;
     expect(JSON.parse(sendReq.postData() || 'null')).toMatchObject({ expectedVersion: 3 });
     expect(JSON.parse(sendReq.postData() || 'null').intentHash).toBeTruthy();
-    expect((await sentResponse).status()).toBe(202);
+    const sendResponse = await sentResponse;
+    expect(sendResponse.status()).toBe(202);
+    expect((await sendResponse.json()).data.status).toBe('unknown');
     await expect(approvedAfterFaultDialog.getByRole('alert').filter({ hasText: 'Mã lệnh cần kiểm tra' })).toBeVisible();
     await expect(sendDialog).toHaveCount(0);
     await expect(approvedAfterFaultDialog.getByRole('button', { name: 'Gửi đơn mua' })).toHaveCount(0);
     await expect(approvedAfterFaultDialog.getByRole('alert').filter({ hasText: 'Chưa xác minh kết quả gửi' })).toBeVisible();
     expect(sendCalls).toHaveLength(1);
     await approvedAfterFaultDialog.getByRole('button', { name: 'Đóng', exact: true }).last().click();
+    console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R46 OPERATION=sendPurchaseOrder RESULT=PASS`);
 });
 
 test('FE014.S03 auto-send requires an active matching purchase delegation', async ({ page }) => {

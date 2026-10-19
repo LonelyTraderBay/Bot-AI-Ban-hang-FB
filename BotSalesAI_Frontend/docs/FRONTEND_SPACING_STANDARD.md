@@ -25,6 +25,8 @@
 
 Quy định áp dụng thống nhất theo **vai trò**, không buộc mọi profile giống hình học. Cùng loại field/action/surface dùng cùng owner; hội thoại, bảng, biểu đồ, auth và dialog có profile riêng được truy về cùng token/theme. Primitive MUI được giữ nếu theme đã đáp ứng, không wrapper chỉ đổi tên.
 
+<a id="unified-workflow"></a>
+
 ### 0.2. Quy trình duy nhất, thực hiện theo thứ tự
 
 | Bước | AI phải làm | Đầu ra/điều kiện chuyển bước | Rules chính |

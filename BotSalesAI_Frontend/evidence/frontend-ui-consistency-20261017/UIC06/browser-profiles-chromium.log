@@ -1,0 +1,175 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs tests/ui-component-layout.spec.ts tests/ui-composition-layout.spec.ts tests/ui-composition-positive-ancestry.spec.ts tests/ui-density-layout.spec.ts tests/ui-panel-layout.spec.ts tests/ui-toolbar-layout.spec.ts tests/ui-query-state-layout.spec.ts --project=chromium --reporter=line
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+Copying the worker script at "C:\Users\Joker-PC\AppData\Local\Temp\uic06-task-worktree-20261017\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2077 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-CbvauvZc.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-YNOV-a6w.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-hL6qAgrY.js                9.40 kB │ gzip:   3.73 kB
+dist/assets/index-CJHLcXMA.js               10.37 kB │ gzip:   3.61 kB
+dist/assets/index-DNJaIKcY.js               13.10 kB │ gzip:   5.17 kB
+dist/assets/index-D4SsCfaq.js               16.40 kB │ gzip:   6.12 kB
+dist/assets/index-Bsl7SZyy.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-BcinR3lm.js               18.58 kB │ gzip:   5.84 kB
+dist/assets/index-CDjhwxgF.js               18.82 kB │ gzip:   6.31 kB
+dist/assets/index-gHr3dPni.js               19.08 kB │ gzip:   7.01 kB
+dist/assets/index-DEQvW7lB.js               21.23 kB │ gzip:   7.65 kB
+dist/assets/index-D6oXhliS.js               22.02 kB │ gzip:   7.18 kB
+dist/assets/index-D_dzRAa3.js               25.07 kB │ gzip:   8.46 kB
+dist/assets/index-Bfcip51U.js               27.36 kB │ gzip:   8.93 kB
+dist/assets/index-BOEUbh5k.js               30.89 kB │ gzip:   9.92 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-DujBF2pA.js               33.32 kB │ gzip:  11.01 kB
+dist/assets/index-CIhxGVfd.js               41.99 kB │ gzip:  11.48 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-Bb9FKvYp.js               64.24 kB │ gzip:  17.65 kB
+dist/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist/assets/index-Bahjxnv9.js              101.52 kB │ gzip:  32.30 kB
+dist/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-BwhaRlrs.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-CJj7QyVx.js                328.77 kB │ gzip: 100.20 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 4.10s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.6 building client environment for demo...
+transforming...
+✓ 2294 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-C4wZDMnR.js              1.73 kB │ gzip:   0.94 kB
+dist-demo/assets/hooks-CEZHCDvR.js                4.59 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-D_W45sl2.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-BNlqS-T_.js                9.40 kB │ gzip:   3.73 kB
+dist-demo/assets/index-B-xL-Iqx.js               11.01 kB │ gzip:   3.88 kB
+dist-demo/assets/index-DDrRAXgx.js               13.10 kB │ gzip:   5.17 kB
+dist-demo/assets/index-DHBlMmAb.js               16.10 kB │ gzip:   5.95 kB
+dist-demo/assets/index-CvsO_lbq.js               18.74 kB │ gzip:   5.89 kB
+dist-demo/assets/index-Bn4R-Ut2.js               18.82 kB │ gzip:   6.31 kB
+dist-demo/assets/index-GI03PxPk.js               19.15 kB │ gzip:   6.54 kB
+dist-demo/assets/index-CKtxnWK2.js               19.28 kB │ gzip:   7.09 kB
+dist-demo/assets/index-Cn0lVFJn.js               22.02 kB │ gzip:   7.18 kB
+dist-demo/assets/index-DE40MniS.js               25.48 kB │ gzip:   8.62 kB
+dist-demo/assets/index-Dznc7MzC.js               27.36 kB │ gzip:   8.93 kB
+dist-demo/assets/index-C8LHsMJl.js               28.10 kB │ gzip:   9.80 kB
+dist-demo/assets/index-oKqyGRLR.js               30.89 kB │ gzip:   9.92 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-BWkfUnTm.js               33.78 kB │ gzip:  11.13 kB
+dist-demo/assets/index-Dx8I26dx.js               41.99 kB │ gzip:  11.48 kB
+dist-demo/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-E4tgsB6z.js               65.46 kB │ gzip:  18.09 kB
+dist-demo/assets/schemas-CoWCwirf.js             85.75 kB │ gzip:  25.72 kB
+dist-demo/assets/index-C5vY_inE.js              106.07 kB │ gzip:  33.72 kB
+dist-demo/assets/schema-validation-B78jEm7B.js  149.80 kB │ gzip:  45.12 kB
+dist-demo/assets/service-BbcoZCYR.js            233.75 kB │ gzip:  54.25 kB
+dist-demo/assets/browser-Cwk81iQu.js            256.37 kB │ gzip:  87.30 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-uDdGNk6t.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-CUCPJGs1.js                328.77 kB │ gzip: 100.20 kB
+dist-demo/assets/contract-data-CJyvN5AM.js      375.47 kB │ gzip:  44.43 kB
+✓ built in 4.54s
+
+> node node_modules\@playwright\test\cli.js test tests/ui-component-layout.spec.ts tests/ui-composition-layout.spec.ts tests/ui-composition-positive-ancestry.spec.ts tests/ui-density-layout.spec.ts tests/ui-panel-layout.spec.ts tests/ui-toolbar-layout.spec.ts tests/ui-query-state-layout.spec.ts --project=chromium --reporter=line
+
+Running 30 tests using 1 worker
+
+
+
+(node:93172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/30] [chromium] › tests\ui-component-layout.spec.ts:40:1 › A01 order lines keep intrinsic remove actions with clean and invalid quantities
+[2/30] [chromium] › tests\ui-component-layout.spec.ts:61:1 › A02 product editors align category and status faces independently from lookup metadata
+[3/30] [chromium] › tests\ui-component-layout.spec.ts:84:1 › Shared outlined labels focus empty and populated native controls
+[4/30] [chromium] › tests\ui-component-layout.spec.ts:99:1 › A02 variant fields retain readable widths when text doubles
+[5/30] [chromium] › tests\ui-component-layout.spec.ts:130:1 › A03 import mapping preserves natural remove actions and editable mappings
+[6/30] [chromium] › tests\ui-component-layout.spec.ts:150:1 › A04 full precision money wraps outside tables and remains unbroken in the named scroll region
+[7/30] [chromium] › tests\ui-component-layout.spec.ts:176:1 › A05 status height follows its own label while long labels remain fully readable
+[8/30] [chromium] › tests\ui-component-layout.spec.ts:196:1 › A06 Empty wraps unbroken reference text and retains its keyboard action
+[9/30] [chromium] › tests\ui-component-layout.spec.ts:209:1 › A07 canonical order address selection exposes full text and edit lines retain intrinsic actions
+[10/30] [chromium] › tests\ui-composition-layout.spec.ts:75:5 › SPC-061/062 shared compositions own their gap and child boundaries on every canonical route at 390px
+[11/30] [chromium] › tests\ui-composition-layout.spec.ts:75:5 › SPC-061/062 shared compositions own their gap and child boundaries on every canonical route at 1440px
+[12/30] [chromium] › tests\ui-composition-positive-ancestry.spec.ts:62:1 › S15 Dashboard conditional content keeps an independently bordered surface inside its Panel owner
+[13/30] [chromium] › tests\ui-composition-positive-ancestry.spec.ts:103:1 › S15 catalog QueryState fragment keeps DataTable and Pager as peer children of one Panel
+[14/30] [chromium] › tests\ui-composition-positive-ancestry.spec.ts:137:1 › S15 Knowledge action group wraps children without losing its shared action owner
+[15/30] [chromium] › tests\ui-density-layout.spec.ts:10:1 › density table saves row space while preserving action target and data
+[16/30] [chromium] › tests\ui-density-layout.spec.ts:22:1 › density divided facts list has one row inset and no additional inter-row gap
+[17/30] [chromium] › tests\ui-density-layout.spec.ts:33:1 › density demo disclosure retains state and always shows the synthetic warning
+[18/30] [chromium] › tests\ui-density-layout.spec.ts:49:1 › density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm
+[19/30] [chromium] › tests\ui-density-layout.spec.ts:61:1 › density simple category editor keeps labels, errors and keyboard reflow usable
+[20/30] [chromium] › tests\ui-panel-layout.spec.ts:15:1 › the titled Fulfillment Panel owns its body inset and keeps one 12px header boundary
+[21/30] [chromium] › tests\ui-query-state-layout.spec.ts:73:5 › S12 R09 QueryState section profile preserves pending and ready layout
+[22/30] [chromium] › tests\ui-query-state-layout.spec.ts:73:5 › S12 R11 QueryState inline profile preserves pending and ready layout
+[23/30] [chromium] › tests\ui-toolbar-layout.spec.ts:37:1 › Shared Toolbar and demo tools keep labels clear when text doubles
+[24/30] [chromium] › tests\ui-toolbar-layout.spec.ts:66:1 › Toolbar geometry: multiline category lookup cannot stretch the search button
+[25/30] [chromium] › tests\ui-toolbar-layout.spec.ts:83:1 › Shared consolidation Inbox filters share Toolbar ownership and stay outside search across pane widths
+[26/30] [chromium] › tests\ui-toolbar-layout.spec.ts:126:1 › Toolbar affected routes keep intrinsic actions, capability branches and 320px reflow
+[27/30] [chromium] › tests\ui-toolbar-layout.spec.ts:151:1 › Toolbar public extra slot cannot stretch a single-line submit action
+[28/30] [chromium] › tests\ui-toolbar-layout.spec.ts:168:1 › Toolbar preserves Products URL filters, search submit, clear and independent category lookup
+[29/30] [chromium] › tests\ui-toolbar-layout.spec.ts:205:1 › Toolbar keeps Inventory apply/reset separate from search submission
+[30/30] [chromium] › tests\ui-toolbar-layout.spec.ts:225:1 › Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination
+  30 passed (5.9m)

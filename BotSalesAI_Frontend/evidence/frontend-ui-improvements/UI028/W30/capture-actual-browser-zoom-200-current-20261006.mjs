@@ -28,44 +28,17 @@ const scenarios = [
     { id: 'dialog-long-reason', path: '/s/shop-demo/inbox/cv1' },
 ];
 
-function createZoomExtension(folder) {
-    fs.mkdirSync(folder, { recursive: true });
-    fs.writeFileSync(path.join(folder, 'manifest.json'), JSON.stringify({
-        manifest_version: 3,
-        name: 'UI028 isolated browser zoom evidence',
-        version: '1.0.0',
-        permissions: ['tabs'],
-        host_permissions: ['http://127.0.0.1/*'],
-        background: { service_worker: 'service-worker.js' },
-    }, null, 2));
-    fs.writeFileSync(path.join(folder, 'service-worker.js'), `
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  (async () => {
-    const tab = await chrome.tabs.get(request.tabId);
-    if (request.zoomFactor !== undefined) await chrome.tabs.setZoom(request.tabId, request.zoomFactor);
-    sendResponse({ zoom: await chrome.tabs.getZoom(request.tabId), url: tab.url });
-  })().catch(error => sendResponse({ error: String(error) }));
-  return true;
-});
-`);
-}
-
-async function extensionWorker(context) {
-    for (let attempt = 0; attempt < 50; attempt += 1) {
-        const worker = context.serviceWorkers().find(candidate => candidate.url().startsWith('chrome-extension://'));
-        if (worker) return worker;
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
-    throw new Error('The isolated Chromium zoom extension service worker did not start.');
-}
-
-async function tabIdFor(worker, origin) {
-    const id = await worker.evaluate(async base => {
-        const tabs = await chrome.tabs.query({ url: `${base}/*` });
-        return tabs.find(tab => tab.active)?.id ?? tabs[0]?.id ?? null;
-    }, origin);
-    if (!id) throw new Error(`Could not resolve the isolated app tab for ${origin}.`);
-    return id;
+async function setDefaultPageZoom(settingsPage, factor) {
+    await settingsPage.goto('chrome://settings/appearance', { waitUntil: 'domcontentloaded' });
+    const control = settingsPage.locator('#zoomLevel');
+    await control.waitFor({ state: 'visible', timeout: 10_000 });
+    const before = await control.inputValue();
+    if (before !== String(factor)) await control.selectOption(String(factor));
+    await settingsPage.waitForTimeout(300);
+    const value = await control.inputValue();
+    const label = (await control.locator(`option[value="${factor}"]`).innerText()).trim();
+    if (value !== String(factor)) throw new Error(`Chrome Settings read back page zoom ${value}; expected ${factor}.`);
+    return { before, value, label, settingsRoute: settingsPage.url() };
 }
 
 async function prepare(page, scenario) {
@@ -99,7 +72,7 @@ async function prepare(page, scenario) {
             node.textContent = `Mã công việc xuất ${'JOB-2026-IDENTIFIER-'.repeat(12)}`;
             element.prepend(node);
         });
-        return { targets: ['[data-w30-long-id="true"]', 'main h1', 'button'], focusTarget: 'button' };
+        return { targets: ['[data-w30-long-id="true"]', 'main h1', 'button[aria-label="Mở menu"]'], focusTarget: 'button[aria-label="Mở menu"]' };
     }
     if (scenario.id === 'inbox-long-composer') {
         const composer = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
@@ -111,6 +84,23 @@ async function prepare(page, scenario) {
     await dialog.waitFor({ state: 'visible', timeout: 8_000 });
     await dialog.getByRole('textbox', { name: /Lý do/ }).fill(`Lý do tổng hợp để kiểm tra reflow. ${'Mã hội thoại CV-2026-'.repeat(14)}`);
     return { targets: ['[role="dialog"]', '[role="dialog"] textarea', '[role="dialog"] button'], focusTarget: '[role="dialog"] textarea' };
+}
+
+async function settleVisuals(page) {
+    await page.evaluate(async () => {
+        await document.fonts.ready;
+        const deadline = performance.now() + 2_000;
+        await new Promise(resolve => {
+            const check = () => {
+                const running = document.getAnimations({ subtree: true }).filter(animation =>
+                    animation.playState === 'running' && Number.isFinite(animation.effect?.getComputedTiming().endTime));
+                if (running.length === 0 || performance.now() >= deadline) resolve();
+                else requestAnimationFrame(check);
+            };
+            requestAnimationFrame(check);
+        });
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
 }
 
 async function measure(page, selectors) {
@@ -206,11 +196,11 @@ const evidence = {
     scope: 'Isolated Chromium with local React demo and synthetic MSW; no backend or persistent app writes',
     sourceSha256: Object.fromEntries(sourceInputs.map(relative => [relative, createHash('sha256').update(fs.readFileSync(path.join(root, relative))).digest('hex')])),
     method: {
-        browser: 'Playwright-bundled Chromium, headed, fresh temporary profile',
-        mechanism: 'Temporary Manifest V3 extension calls chrome.tabs.setZoom(tabId, 2) and independently reads chrome.tabs.getZoom(tabId)',
+        browser: 'Google Chrome stable, headed, fresh temporary profile',
+        mechanism: 'The native Page zoom select in chrome://settings/appearance is set and read back through the browser Settings UI; the app viewport and devicePixelRatio are measured after navigation.',
         baselineViewport: { width: 1280, height: 720 },
         targetZoomFactor: 2,
-        note: 'The browser zoom setting is changed through Chromium tab zoom, not CSS/device emulation. CSS viewport and devicePixelRatio are measured from the rendered page after the browser reports zoom factor 2.',
+        note: 'This changes Chrome native Page zoom, not CSS zoom, emulated viewport, device scale, or injected font size. No extension is installed.',
     },
     scenarios: [],
     result: 'INCOMPLETE',
@@ -222,20 +212,13 @@ let temporaryRoot;
 try {
     server = await startDemoServer({ cacheIsolationKey: 'w30-actual-browser-zoom' });
     temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'ui028-actual-browser-zoom-'));
-    const extensionPath = path.join(temporaryRoot, 'extension');
-    createZoomExtension(extensionPath);
     context = await chromium.launchPersistentContext(path.join(temporaryRoot, 'profile'), {
+        channel: 'chrome',
         headless: false,
         viewport: { width: 1280, height: 720 },
-        args: [
-            `--disable-extensions-except=${extensionPath}`,
-            `--load-extension=${extensionPath}`,
-            '--no-first-run',
-            '--no-default-browser-check',
-        ],
     });
-    const worker = await extensionWorker(context);
     const page = context.pages()[0] ?? await context.newPage();
+    const settingsPage = await context.newPage();
     const pageErrors = [];
     const writeRequests = [];
     page.on('pageerror', error => pageErrors.push(error.message));
@@ -245,33 +228,74 @@ try {
         }
     });
     evidence.method.browserVersion = context.browser().version();
+    evidence.method.initialPageZoom = await setDefaultPageZoom(settingsPage, 1);
 
     for (const scenario of scenarios) {
         const writeRequestStart = writeRequests.length;
         const pageErrorStart = pageErrors.length;
         const url = new URL(scenario.path, server.url).toString();
+        const baselineZoomSetting = await setDefaultPageZoom(settingsPage, 1);
         await page.goto(url, { waitUntil: 'domcontentloaded' });
         await page.getByRole('heading').first().waitFor({ state: 'visible', timeout: 15_000 });
-        const tabId = await tabIdFor(worker, server.url);
-        const startingZoom = await worker.evaluate(async id => chrome.tabs.getZoom(id), tabId);
-        if (startingZoom !== 1) {
-            await worker.evaluate(async id => chrome.tabs.setZoom(id, 1), tabId);
-            await page.waitForTimeout(150);
-        }
-        const before = await worker.evaluate(async id => chrome.tabs.getZoom(id), tabId);
+        const startingZoom = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, devicePixelRatio }));
         const defaultViewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, devicePixelRatio }));
-        const zoomResult = await worker.evaluate(async ({ id, factor }) => {
-            await chrome.tabs.setZoom(id, factor);
-            return { zoom: await chrome.tabs.getZoom(id), tabUrl: (await chrome.tabs.get(id)).url };
-        }, { id: tabId, factor: 2 });
+        const baselineScreenshotPath = path.join(root, `evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-100-${scenario.id}-baseline-${evidenceRunId}.png`);
+        const baselineScreenshotBytes = await page.screenshot({ fullPage: false });
+        fs.writeFileSync(baselineScreenshotPath, baselineScreenshotBytes);
+        const zoomResult = await setDefaultPageZoom(settingsPage, 2);
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
+        await page.getByRole('heading').first().waitFor({ state: 'visible', timeout: 15_000 });
         await page.waitForTimeout(150);
         const baseline = await page.evaluate(() => ({
             cssViewport: { width: innerWidth, height: innerHeight },
             devicePixelRatio,
             documentWidth: document.documentElement.scrollWidth,
+            route: location.pathname,
         }));
         const fixture = await prepare(page, scenario);
-        await page.locator(fixture.focusTarget).first().focus();
+        await settleVisuals(page);
+        const focusTarget = page.locator(fixture.focusTarget).first();
+        await focusTarget.focus();
+        await settleVisuals(page);
+        const focusedTarget = await focusTarget.evaluate(element => {
+            const bounds = element.getBoundingClientRect();
+            const visible = {
+                left: Math.max(bounds.left, 0),
+                top: Math.max(bounds.top, 0),
+                right: Math.min(bounds.right, innerWidth),
+                bottom: Math.min(bounds.bottom, innerHeight),
+            };
+            let ancestor = element.parentElement;
+            while (ancestor && ancestor !== document.documentElement) {
+                const style = getComputedStyle(ancestor);
+                const clip = ancestor.getBoundingClientRect();
+                if (/(hidden|clip|auto|scroll)/.test(style.overflowX)) {
+                    visible.left = Math.max(visible.left, clip.left + ancestor.clientLeft);
+                    visible.right = Math.min(visible.right, clip.left + ancestor.clientLeft + ancestor.clientWidth);
+                }
+                if (/(hidden|clip|auto|scroll)/.test(style.overflowY)) {
+                    visible.top = Math.max(visible.top, clip.top + ancestor.clientTop);
+                    visible.bottom = Math.min(visible.bottom, clip.top + ancestor.clientTop + ancestor.clientHeight);
+                }
+                ancestor = ancestor.parentElement;
+            }
+            const visibleWidth = Math.max(0, visible.right - visible.left);
+            const visibleHeight = Math.max(0, visible.bottom - visible.top);
+            const visibleArea = visibleWidth * visibleHeight;
+            const x = visibleArea > 0 ? (visible.left + visible.right) / 2 : 0;
+            const y = visibleArea > 0 ? (visible.top + visible.bottom) / 2 : 0;
+            const hit = visibleArea > 0 ? document.elementFromPoint(x, y) : null;
+            return {
+                active: document.activeElement === element,
+                visibleArea,
+                visibleBounds: visibleArea > 0 ? visible : null,
+                bounds: { x: bounds.x, y: bounds.y, right: bounds.right, bottom: bounds.bottom },
+                receivesPointerAtVisibleCenter: Boolean(hit && (hit === element || element.contains(hit))),
+                hitTag: hit?.tagName.toLowerCase() || null,
+                hitRole: hit?.getAttribute('role') || null,
+                hitText: hit?.textContent?.trim().slice(0, 80) || '',
+            };
+        });
         const focusedScreenshotPath = path.join(root, `evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-${scenario.id}-focused-${evidenceRunId}.png`);
         const focusedScreenshotBytes = await page.screenshot({ fullPage: false });
         fs.writeFileSync(focusedScreenshotPath, focusedScreenshotBytes);
@@ -280,11 +304,19 @@ try {
         const screenshotPath = path.join(root, `evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-${scenario.id}-after-tab-${evidenceRunId}.png`);
         const screenshotBytes = await page.screenshot({ fullPage: false });
         const issues = [];
-        if (before !== 1) issues.push(`Expected unzoomed baseline 1.0; observed ${before}.`);
-        if (zoomResult.zoom !== 2) issues.push(`Browser tab zoom API reported ${zoomResult.zoom}; expected 2.0.`);
-        if (zoomResult.tabUrl !== url) issues.push(`Zoom applied to unexpected tab URL ${zoomResult.tabUrl}.`);
-        if (baseline.cssViewport.width >= 1280 || baseline.devicePixelRatio <= 1)
-            issues.push('Browser zoom did not reduce CSS viewport and increase devicePixelRatio as expected.');
+        if (!focusedTarget.active || focusedTarget.visibleArea <= 0 || !focusedTarget.receivesPointerAtVisibleCenter)
+            issues.push(`Focused target is not visibly reachable at 200%: ${JSON.stringify(focusedTarget)}.`);
+        if (baselineZoomSetting.value !== '1' || baselineZoomSetting.label !== '100%')
+            issues.push(`Chrome Settings did not confirm the 100% baseline: ${JSON.stringify(baselineZoomSetting)}.`);
+        if (zoomResult.value !== '2' || zoomResult.label !== '200%')
+            issues.push(`Chrome Settings did not confirm native 200% page zoom: ${JSON.stringify(zoomResult)}.`);
+        const expectedRoute = new URL(url);
+        if (baseline.route !== expectedRoute.pathname)
+            issues.push(`Measured unexpected app route ${baseline.route}; expected ${expectedRoute.pathname}.`);
+        if (defaultViewport.width !== 1280 || defaultViewport.devicePixelRatio !== 1)
+            issues.push(`Expected a 1280px/DPR1 100% baseline; observed ${JSON.stringify(defaultViewport)}.`);
+        if (baseline.cssViewport.width >= defaultViewport.width || baseline.devicePixelRatio <= defaultViewport.devicePixelRatio)
+            issues.push('Native browser zoom did not reduce CSS viewport and increase devicePixelRatio.');
         if (measurements.viewport.pageOverflow > 1) issues.push(`Document horizontal overflow: ${measurements.viewport.pageOverflow}px.`);
         const scenarioWrites = writeRequests.slice(writeRequestStart);
         const scenarioPageErrors = pageErrors.slice(pageErrorStart);
@@ -307,9 +339,11 @@ try {
         evidence.scenarios.push({
             id: scenario.id,
             route: scenario.path,
-            browserZoom: { startingZoom, before, requested: 2, reported: zoomResult.zoom, tabUrl: zoomResult.tabUrl },
+            browserZoom: { startingZoom, baselineSetting: baselineZoomSetting, requestedFactor: 2, reportedFactor: zoomResult.value, reportedLabel: zoomResult.label, settingsRoute: zoomResult.settingsRoute },
             defaultViewport,
             renderedAfterZoom: baseline,
+            baselineScreenshot: { path: path.relative(root, baselineScreenshotPath).replaceAll('\\', '/'), sha256: createHash('sha256').update(baselineScreenshotBytes).digest('hex') },
+            focusedTarget,
             measurements,
             focusedScreenshot: { path: path.relative(root, focusedScreenshotPath).replaceAll('\\', '/'), sha256: createHash('sha256').update(focusedScreenshotBytes).digest('hex') },
             screenshotAfterTab: { path: path.relative(root, screenshotPath).replaceAll('\\', '/'), sha256: createHash('sha256').update(screenshotBytes).digest('hex') },
