@@ -25,7 +25,7 @@ Dependency, bytecode, cache, build output, Playwright output tạm, giá trị `
 Chạy tại repository root:
 
 ```bash
-node --test .github/scripts/check-repository-hygiene.test.mjs
+node --test .github/scripts/check-repository-hygiene.test.mjs .github/scripts/require-success.test.mjs
 node .github/scripts/check-repository-hygiene.mjs
 git diff --cached --check
 ```
@@ -39,7 +39,7 @@ node .github/scripts/check-repository-hygiene.mjs --require-clean
 git status --porcelain=v1 --untracked-files=all
 ```
 
-Workflow `.github/workflows/repository-hygiene.yml` chạy test và kiểm checkout trên Ubuntu/Windows, chỉ có quyền `contents: read`, action được ghim bằng SHA. Cấu hình required checks/branch protection được quản lý riêng; workflow tồn tại hoặc chạy thành công không tự chứng minh nhánh được bảo vệ.
+Workflow `.github/workflows/repository-hygiene.yml` chạy test và kiểm checkout trên Ubuntu/Windows; producer chỉ có quyền `contents: read`, job tổng có thêm `actions: read` để kiểm kết luận từng job. Action được ghim bằng SHA. [Chính sách CI](.github/CI_POLICY.md) mô tả gate chỉ chấp nhận success và cấu hình required checks. Cấu hình branch protection được quản lý riêng; workflow tồn tại hoặc chạy thành công không tự chứng minh nhánh được bảo vệ.
 
 Evidence lịch sử có đường dẫn dài. Runner Windows bật `core.longpaths` trước checkout; cấu hình global này chỉ tồn tại trên runner dùng cho job. Khi clone mới trên Windows, ghi cấu hình vào repository mới ngay từ lệnh clone:
 

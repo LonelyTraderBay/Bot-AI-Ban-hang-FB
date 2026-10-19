@@ -25,6 +25,26 @@ jobs:
         with:
           node-version: '24'
       - name: Test repository policy and failure cases
-        run: node --test .github/scripts/check-repository-hygiene.test.mjs
+        run: node --test .github/scripts/check-repository-hygiene.test.mjs .github/scripts/require-success.test.mjs
       - name: Check tracked paths and checkout cleanliness
         run: node .github/scripts/check-repository-hygiene.mjs --require-clean
+
+  success-gate:
+    name: gate repository hygiene (success only)
+    needs: [check]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Require both operating system jobs to complete successfully
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: node .github/scripts/require-success.mjs repository-hygiene
