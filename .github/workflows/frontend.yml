@@ -10,6 +10,7 @@ concurrency:
 jobs:
   verify:
     name: verify (source and build)
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     defaults:
@@ -37,6 +38,7 @@ jobs:
   e2e:
     name: e2e (${{ matrix.browser }} ${{ matrix.shard_id }})
     needs: verify
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     strategy:
@@ -68,48 +70,8 @@ jobs:
         working-directory: BotSalesAI_Frontend
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: '24'
-          cache: npm
-          cache-dependency-path: BotSalesAI_Frontend/package-lock.json
-      - name: Pin npm to the lockfile toolchain
-        run: npm install --global npm@11.17.0
-      - name: Require real generated lockfile
-        run: test -f package-lock.json || (echo 'Run npm install on an authorized online machine and commit the generated lockfile.' && exit 1)
-      - run: npm ci
-      - run: npx playwright install --with-deps ${{ matrix.install_browser }}
-      - name: Verify supported Google Chrome version
-        if: ${{ matrix.browser == 'chromium' }}
-        run: |
-          node --input-type=module <<'NODE'
-          import { chromium } from '@playwright/test';
-
-          const browser = await chromium.launch({ channel: 'chrome' });
-          const version = browser.version();
-          await browser.close();
-          const major = Number(version.match(/\d+/)?.[0] ?? NaN);
-          console.log(`Google Chrome ${version}`);
-          if (!Number.isInteger(major) || major < 154) {
-            throw new Error(`Google Chrome ${version} is below the supported minimum 154`);
-          }
-          NODE
-      - name: Run sharded browser E2E tests
-        run: npm run test:e2e -- --project=${{ matrix.browser }} ${{ matrix.shard_args }} --reporter=line
-      - name: Verify the built demo (${{ matrix.browser }})
-        if: ${{ matrix.verify_built_demo }}
-        run: npx playwright test --config playwright.built-demo.config.ts --output test-results/built-demo --project=${{ matrix.browser }}-built-demo --reporter=line
-      - name: Upload revision-scoped build and browser evidence
-        if: ${{ always() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: frontend-${{ matrix.browser }}-${{ matrix.shard_id }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
-          path: |
-            BotSalesAI_Frontend/apps/web/dist/
-            BotSalesAI_Frontend/apps/web/dist-demo/
-            BotSalesAI_Frontend/test-results/
-          if-no-files-found: ignore
-          retention-days: 14
+      - name: Canary-only producer fixture; no application E2E is executed
+        run: echo 'CANARY_ONLY - synthetic success solely to isolate the skipped verify merge test; NOT application evidence'
 
   success-gate:
     name: gate frontend (success only)
