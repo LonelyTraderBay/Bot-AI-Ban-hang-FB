@@ -73,6 +73,7 @@ test.describe('ready route content renders for every role granted read access by
                 if (operation) operationStatuses.set(operation, response.status());
             });
             const readableRoutes = privateRoutes.filter(route => canRead(route, role));
+            const loadedRouteLocations = new Map<string, string>();
             await page.goto(new URL('/s/shop-demo/notifications', demoUrl).toString());
             await chooseRole(page, role);
             await openDemoControls(page);
@@ -80,6 +81,13 @@ test.describe('ready route content renders for every role granted read access by
             await page.getByRole('option', { name: 'Bình thường', exact: true }).click();
 
             for (const route of readableRoutes) {
+                // Marketing normalizes its URL from the first response, then loads a second query.
+                const normalizedMarketingRead = route.id === 'R53' ? page.waitForResponse(response => {
+                    const url = new URL(response.url());
+                    return operationPathPatterns.getMarketingSummary.test(url.pathname)
+                        && ['fromDate', 'toDate', 'bucket'].every(key => url.searchParams.has(key))
+                        && response.status() === 200;
+                }) : undefined;
                 await page.evaluate(nextPath => {
                     window.history.pushState({}, '', nextPath);
                     window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
@@ -93,6 +101,12 @@ test.describe('ready route content renders for every role granted read access by
                 await expect.poll(() => operationStatuses.has(primaryOperation), { message: `${route.id} should complete ${primaryOperation} before state changes for ${role}` }).toBe(true);
                 await expect(main.getByText(/Đang tải/), `${route.id} should settle its visible loading state for ${role}`).toHaveCount(0, { timeout: 10_000 });
                 await expect(main.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }), `${route.id} should not fall through to the route error boundary for ${role}`).toHaveCount(0);
+                if (normalizedMarketingRead) {
+                    expect(await (await normalizedMarketingRead).finished()).toBeNull();
+                    await expect(main.getByTestId('marketing-as-of')).toBeVisible();
+                    const loadedUrl = new URL(page.url());
+                    loadedRouteLocations.set(route.id, loadedUrl.pathname + loadedUrl.search);
+                }
                 const primaryStatus = operationStatuses.get(primaryOperation);
                 if (primaryStatus === 200) {
                     console.log(`BROWSER=${browser} ROLE_STATE=success ROLE=${role} ROUTE=${route.id} RESULT=PASS`);
@@ -122,7 +136,7 @@ test.describe('ready route content renders for every role granted read access by
                 await page.evaluate(nextPath => {
                     window.history.pushState({}, '', nextPath);
                     window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
-                }, routePath(route.path));
+                }, loadedRouteLocations.get(route.id) || routePath(route.path));
                 const main = page.locator('main#main-content');
                 await expect.poll(() => page.title(), { message: `${route.id} should remain the active route while showing stale data for ${role}` }).toBe(`${route.title} · BotSales AI`);
                 await expect(main.getByRole('heading').first(), `${route.id} should retain its loaded content for ${role}`).toBeVisible();
