@@ -16,6 +16,7 @@ import {ActionGroup,FormFields,SurfaceContent} from '@/shared/ui/composition';
 import {Amount,ConfirmDialog,DataTable,DetailLine,EditDialog,ErrorNotice,LookupLoadMore,MutationButton,PageHeader,Pager,Panel,QueryState,RouteLink,Stat,Stats,Status,Toolbar} from '@/shared/ui/components';
 import {useReportRange,ReportRangeFields} from './report-range';
 import {accountGroupName} from './accounts';
+import {ReportWarnings} from './report-warnings';
 
 export function BookProvenance({report}: {report:{asOf:string;policyVersion?:string;completeness?:string;warnings:string[];sourceJournalIds?:string[]}}) {
     const {shop}=useScope();
@@ -23,7 +24,7 @@ export function BookProvenance({report}: {report:{asOf:string;policyVersion?:str
         <DetailLine label="Dữ liệu tại">{dateTime(report.asOf,shop.timezone)}</DetailLine>
         <DetailLine label="Chính sách">{report.policyVersion||'Chưa có'}</DetailLine>
         <DetailLine label="Mức đầy đủ"><Status value={report.completeness||'incomplete'}/></DetailLine>
-        {report.warnings.map(w=><Alert key={w} severity="warning">{w}</Alert>)}
+        <ReportWarnings warnings={report.warnings}/>
         {report.sourceJournalIds&&<ActionGroup>{report.sourceJournalIds.length?report.sourceJournalIds.map(id=><RouteLink key={id} to={`/s/${shop.id}/finance/journals?journalId=${encodeURIComponent(id)}`}>Chứng từ {id}</RouteLink>):<Alert severity="info">Không có bút toán trong khoảng này.</Alert>}</ActionGroup>}
     </SurfaceContent>;
 }

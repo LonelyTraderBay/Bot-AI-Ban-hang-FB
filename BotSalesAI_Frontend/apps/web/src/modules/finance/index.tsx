@@ -3,6 +3,7 @@ import {JournalEditor} from './journal-editor';
 import {FinanceEntryEditor,financeEntryClasses as classes} from './entry-editor';
 import {StatementDialog} from './statement-import';
 import {BookProvenance,CreatePeriodDialog} from './management';
+import {ReportWarnings} from './report-warnings';
 export {OpeningBalancesPage,LedgerPage,TrialBalancePage,BalanceSheetPage} from './management';
 import {useReportRange,ReportRangeFields} from './report-range';
 import {label as businessLabel} from '@/shared/model/labels';
@@ -35,7 +36,7 @@ export function CashflowPage() {
     const report = useReportRange(shop.timezone);
     const data = useApi('getCashflow', { query: report.query }, report.valid);
     const c = data.data?.data;
-    return <><PageHeader title="Dòng tiền" subtitle="Tiền thực thu và thực chi, tách biệt doanh thu và lợi nhuận." actions={<RouteLink to={`/s/${shop.id}/finance/entries`}>Sổ thu chi</RouteLink>}/><ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={report.setFrom} setTo={report.setTo}/>{report.valid ? <QueryState query={data} pendingProfile="section">{c && <><Stats><Stat title="Tiền đã thu" value={<Amount wrap value={c.receipts}/>}/><Stat title="Tiền đã chi" value={<Amount wrap value={c.disbursements}/>}/><Stat title="Biến động tiền thuần" value={<Amount wrap value={c.netCashMovement}/>} accent note="Không phải số dư tài khoản"/><Stat title="Múi giờ báo cáo" value={c.timezone}/></Stats><Panel title="Kỳ báo cáo" bodyMode="inset"><DetailLine label="Từ">{dateTime(c.from, shop.timezone)}</DetailLine><DetailLine label="Đến (không gồm)">{dateTime(c.to, shop.timezone)}</DetailLine><DetailLine label="Dữ liệu tại">{dateTime(c.asOf, shop.timezone)}</DetailLine>{c.warnings.map(w => <Alert key={w} severity="info" sx={layoutSx.surface.sectionBefore}>{w}</Alert>)}</Panel></>}</QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}</>;
+    return <><PageHeader title="Dòng tiền" subtitle="Tiền thực thu và thực chi, tách biệt doanh thu và lợi nhuận." actions={<RouteLink to={`/s/${shop.id}/finance/entries`}>Sổ thu chi</RouteLink>}/><ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={report.setFrom} setTo={report.setTo}/>{report.valid ? <QueryState query={data} pendingProfile="section">{c && <><Stats><Stat title="Tiền đã thu" value={<Amount wrap value={c.receipts}/>}/><Stat title="Tiền đã chi" value={<Amount wrap value={c.disbursements}/>}/><Stat title="Biến động tiền thuần" value={<Amount wrap value={c.netCashMovement}/>} accent note="Không phải số dư tài khoản"/><Stat title="Múi giờ báo cáo" value={c.timezone}/></Stats><Panel title="Kỳ báo cáo" bodyMode="inset"><DetailLine label="Từ">{dateTime(c.from, shop.timezone)}</DetailLine><DetailLine label="Đến (không gồm)">{dateTime(c.to, shop.timezone)}</DetailLine><DetailLine label="Dữ liệu tại">{dateTime(c.asOf, shop.timezone)}</DetailLine><ReportWarnings warnings={c.warnings} severity="info"/></Panel></>}</QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}</>;
 }
 export function EntriesPage() {
     const { shop } = useScope();
@@ -82,13 +83,13 @@ export function ProfitLossPage() {
                     <Stat title="Lợi nhuận vận hành" value={<Amount wrap value={p.operatingProfit} />} note="Chưa có chứng nhận kế toán pháp định" />
                 </Stats>
                 <PageSections>
-                    <Panel title="Chi tiết kết quả kinh doanh" action={<Status value={p.completeness} />} bodyMode="inset">
+                    <Panel title="Chi tiết kết quả kinh doanh" action={<ActionGroup><Status value={p.completeness} /></ActionGroup>} bodyMode="inset">
                         {[
                             ['Doanh thu gộp', p.grossSales], ['Giảm giá', p.discounts], ['Hàng bán trả lại', p.salesReturns], ['Doanh thu thuần', p.netSales], ['Giá vốn', p.cogs], ['Thu phí giao', p.shippingIncome], ['Chi phí giao', p.shippingExpense], ['Phí nền tảng', p.platformFees], ['Phí thanh toán', p.paymentFees], ['Chi phí AI', p.aiExpense], ['Chi phí khác', p.otherOperatingExpenses],
                         ].map(([title, value]) => <DetailLine key={String(title)} label={String(title)}><Amount wrap value={typeof value === 'object' ? value : null} /></DetailLine>)}
                         <DetailLine label="Chính sách">{p.policyVersion}</DetailLine>
                         <DetailLine label="Dữ liệu tại">{dateTime(p.asOf, shop.timezone)}</DetailLine>
-                        {p.warnings.map(warning => <Alert key={warning} severity="warning" sx={layoutSx.surface.sectionBefore}>{warning}</Alert>)}
+                        <ReportWarnings warnings={p.warnings}/>
                     </Panel>
                     <Panel title="Hỏi đáp có nguồn" subtitle="Giải thích giới hạn theo đúng snapshot đang hiển thị." bodyMode="inset">
                         {__MOCK__ ? <>

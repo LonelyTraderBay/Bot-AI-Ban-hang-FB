@@ -106,7 +106,7 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
                         const issue = issues[line.orderLineId] || '';
                         const canEdit = assigned && ['claimed', 'picking'].includes(prep.state);
 
-                        return <Box key={line.orderLineId} data-draft-scope={line.orderLineId} sx={{ ...layoutSx.surface.inset, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.dialog }}>
+                        return <Box key={line.orderLineId} data-draft-scope={line.orderLineId} sx={{ ...layoutSx.surface.inset, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.card }}>
                             <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}>
                                 <Typography fontWeight={visualSx.typography.fontWeight.strong}>{line.sku}</Typography>
                                 <Typography>{line.pickedQuantity}/{line.requiredQuantity}</Typography>

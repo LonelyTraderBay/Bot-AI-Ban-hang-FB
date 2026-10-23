@@ -27,6 +27,7 @@ export const bodyModes = {
     ActionGroup: new Set(['flush', 'header']),
 };
 export const finiteProps = {
+    Stats: { afterGap: new Set(['section', 'none']) },
     Panel: { density: new Set(['compact', 'comfortable']), beforeGap: new Set(['section', 'surface']), afterGap: new Set(['section']) },
     FormFields: { density: new Set(['compact', 'comfortable']), beforeGap: new Set(['surface']), afterGap: new Set(['section']) },
     SurfaceContent: { rhythm: new Set(['content', 'dividedRows']), beforeGap: new Set(['surface']), afterGap: new Set(['notice']) },

@@ -218,7 +218,7 @@ const insetCss = `${tokens.space.lg}px`; // dùng ở raw CSS override, không p
 | `actions.linkTarget` | min-height 44, px16/py8 | same | same | Download/text link hit area; height from canonical `layout.touchTarget` |
 | `grid.gutter` | 16 | 16 | 16 | Shared SectionGrid, section rhythm |
 | `stats.gutter` | 16 | 16 | 16 | Shared Stats |
-| `stats.afterGap` | 16 | 16 | 16 | Stats to next section |
+| `stats.afterGap` | 16 | 16 | 16 | Stats đứng độc lập đến section kế; `afterGap="none"` khi Panel đã sở hữu inset/boundary |
 | `dashboard.groupInset` | 24 | 32 | 32 | Dashboard hero group; responsive shared owner |
 | `dashboard.sectionGap` | 16 | 16 | 16 | Dashboard hero/action flow and supporting section grid |
 | `dashboard.heroTitleFlow` | mt/mb 8 | mt/mb 8 | mt/mb 8 | Dashboard eyebrow/title and title/helper boundary |
@@ -323,7 +323,7 @@ Form hiện có max-width 850 là geometry giới hạn độ dài dòng, không
 
 ## 6. Quy tắc theo component/workflow
 
-**SPC-013 — Surface có profile inset hoặc flush.** Form/detail/stat dùng inset 16/24. Panel chứa table/toolbar/pager dùng body flush vì các slot này có inset riêng. Đây là hai trường hợp thật đã có; dùng union typed `bodyMode: 'inset' | 'flush'`, mặc định tương thích là `flush`, không thêm nhiều boolean mâu thuẫn. Shared Panel nhận khoảng trước/sau theo semantic preset và chỉ nhận geometry qua prop có type đóng; không mở generic `sx` để caller tự ghi spacing.
+**SPC-013 — Surface có profile inset hoặc flush.** Panel/Stat operational dùng compact inset 12/16; Panel comfortable đọc dài dùng inset 16/24. Panel chứa table/toolbar/pager dùng body flush vì các slot này có inset riêng. Đây là hai trường hợp thật đã có; dùng union typed `bodyMode: 'inset' | 'flush'`, mặc định tương thích là `flush`, không thêm nhiều boolean mâu thuẫn. Shared Panel nhận khoảng trước/sau theo semantic preset và chỉ nhận geometry qua prop có type đóng; không mở generic `sx` để caller tự ghi spacing.
 
 **SPC-014 — Header–body gap đo theo profile của Panel.** Operational Panel giữ 12px từ đáy nội dung header đến mép child đầu tiên; comfortable reading Panel giữ16px. Header là owner duy nhất; body top0, child flush, inset ngang/bottom theo profile. Khoảng nội bộ của child (DetailLine row, Alert) được đo riêng; không cộng vào header boundary. Không local override hoặc double inset.
 

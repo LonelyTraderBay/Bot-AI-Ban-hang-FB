@@ -75,18 +75,20 @@ export function Stat({ title, value, note, accent = false, icon }: {
     accent?: boolean;
     icon?: ReactNode;
 }) {
-    return <Paper variant="outlined" sx={[layoutSx.surface.inset, { borderRadius: `${tokens.radius.card}px`, minWidth: 0 }]}><Stack direction="row" justifyContent="space-between" sx={layoutSx.stats.titleGap}><Typography color="text.secondary" variant="body2">{title}</Typography><Box sx={{ color: accent ? 'primary.main' : 'text.secondary' }}>{icon}</Box></Stack><Typography component="div" variant="h4" sx={[layoutSx.stats.valueGap, { fontVariantNumeric: 'tabular-nums', color: accent ? 'primary.main' : undefined, overflowWrap: 'anywhere' }]}>{value}</Typography>{note && <Typography variant="caption" color="text.secondary" sx={[layoutSx.stats.noteGap, { display: 'block' }]}>{note}</Typography>}</Paper>;
+    return <Paper variant="outlined" sx={[layoutSx.surface.inset, { borderRadius: `${tokens.radius.card}px`, minWidth: 0 }]}><Stack direction="row" justifyContent="space-between" sx={layoutSx.stats.titleGap}><Typography color="text.secondary" variant="body2">{title}</Typography><Box sx={{ color: accent ? 'primary.main' : 'text.secondary' }}>{icon}</Box></Stack><Typography component="div" variant="h4" sx={[layoutSx.stats.valueGap, { display: 'flex', alignItems: 'center', minHeight: tokens.fontSizes.pageTitle * tokens.lineHeights.display, fontVariantNumeric: 'tabular-nums', color: accent ? 'primary.main' : undefined, overflowWrap: 'anywhere' }]}>{value}</Typography>{note && <Typography variant="caption" color="text.secondary" sx={[layoutSx.stats.noteGap, { display: 'block' }]}>{note}</Typography>}</Paper>;
 }
-export function Stats({ children }: {
+export function Stats({ children, afterGap = 'section' }: {
     children: ReactNode;
-}) { return <Box sx={[layoutSx.stats.gutter, layoutSx.stats.afterGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' } }]}>{children}</Box>; }
+    afterGap?: 'section' | 'none';
+}) { return <Box sx={[layoutSx.stats.gutter, afterGap === 'section' && layoutSx.stats.afterGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' } }]}>{children}</Box>; }
 export function Amount({ value, wrap = false }: {
     value: Money | null | undefined;
     wrap?: boolean;
 }) { return <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', whiteSpace: wrap ? 'normal' : 'nowrap', overflowWrap: wrap ? 'anywhere' : undefined }}>{formatMoney(value)}</Box>; }
-export function CopyableCode({ value, label: codeLabel = 'mã' }: {
+export function CopyableCode({ value, label: codeLabel = 'mã', showValue = true }: {
     value: string;
     label?: string;
+    showValue?: boolean;
 }) {
     const [feedback, setFeedback] = useState<'copied' | 'failed' | null>(null);
     const copy = async () => {
@@ -99,8 +101,8 @@ export function CopyableCode({ value, label: codeLabel = 'mã' }: {
         }
     };
     return <Stack direction="row" alignItems="center" flexWrap="wrap" sx={[layoutSx.code.inlineGap, { minWidth: 0 }]}>
-        <Typography component="code" variant="caption" sx={{ overflowWrap: 'anywhere' }}>{value}</Typography>
-        <IconButton size="small" aria-label={`Sao chép ${codeLabel}`} onClick={() => { void copy(); }}><ContentCopyRounded fontSize="small" /></IconButton>
+        {showValue && <Typography component="code" variant="caption" sx={{ overflowWrap: 'anywhere' }}>{value}</Typography>}
+        <IconButton size="small" aria-label={showValue ? `Sao chép ${codeLabel}` : `Sao chép ${codeLabel} ${value}`} onClick={() => { void copy(); }}><ContentCopyRounded fontSize="small" /></IconButton>
         {feedback && <Typography role="status" aria-live="polite" variant="caption" color={feedback === 'copied' ? 'success.main' : 'text.secondary'}>
             {feedback === 'copied' ? `Đã sao chép ${codeLabel}.` : `Không thể sao chép ${codeLabel}; hãy chọn mã để sao chép.`}
         </Typography>}
@@ -138,7 +140,8 @@ export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ li
                 event.preventDefault();
                 event.currentTarget.scrollBy({ left: event.key === 'ArrowRight' ? 40 : -40 });
             }
-        }}><Table size="small" aria-label={tableLabel} sx={{ minWidth: { xs: 600, md: 'auto' } }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}{rows.length === 0 && <TableRow><TableCell colSpan={columns.length}><Empty text={empty} action={emptyAction}/></TableCell></TableRow>}</TableBody></Table></TableContainer>
+        }}><Table size="small" aria-label={tableLabel} sx={{ minWidth: { xs: 600, md: 'auto' } }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}</TableBody></Table></TableContainer>
+        {rows.length === 0 && <Empty text={empty} action={emptyAction}/>}
     </>;
 }
 export function Empty({ text, action }: {
@@ -283,9 +286,9 @@ export function Pager({ page, cursorParam = 'cursor' }: {
     const history = cursorHistoryByList.get(key) || [];
     const currentIndex = history.lastIndexOf(currentCursor);
     const previousCursor = currentIndex > 0 ? history[currentIndex - 1] : null;
-    return <Stack direction="row" justifyContent="space-between" alignItems="center" sx={layoutSx.pager.inset}>
+    return <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={[layoutSx.pager.inset, layoutSx.pager.actionsGap]}>
         <Typography variant="caption" color="text.secondary">{typeof page.total === 'number' ? `${page.total} kết quả` : `Tối đa ${page.limit} dòng / trang`}</Typography>
-        <Stack direction="row" sx={layoutSx.pager.actionsGap}>
+        <Stack direction="row" sx={[layoutSx.pager.actionsGap, { '& > .MuiButton-root': { flex: { xs: '1 1 0', sm: '0 1 auto' }, minWidth: 0 } }]}>
             <Button size="small" disabled={!currentCursor} onClick={() => { rememberCursorHistory(key, [null]); const next = new URLSearchParams(params); next.delete(cursorParam); setParams(next); }}>Đầu danh sách</Button>
             <Button size="small" disabled={currentIndex <= 0} title={currentIndex < 0 && currentCursor ? 'Liên kết trực tiếp chưa có lịch sử; dùng Đầu danh sách để quay về đầu.' : undefined} onClick={() => {
                 if (currentIndex <= 0) return;
