@@ -315,6 +315,7 @@ test('required UI evidence and regression gates remain wired to root verify and 
     const e2eStep = e2eJob.indexOf('npm run test:e2e -- --project=${{ matrix.browser }}');
     assert.ok(browserInstall >= 0 && browserInstall < e2eStep, 'Each browser runner must install its engine before E2E');
     assert.match(e2eJob, /npm run test:e2e -- --project=\$\{\{ matrix\.browser \}\} \$\{\{ matrix\.shard_args \}\} --reporter=line/);
+    assert.match(e2eJob, /--reporter=line --max-failures=1/, 'A failed shard must report promptly while green shards retain every test');
     assert.equal([...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n/g)].length, 3, 'No unsharded Firefox job may bypass the bounded matrix');
     assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 3, 'Chromium E2E must use three supported Chrome Stable shards');
     assert.match(e2eJob, /name: Verify supported Google Chrome version[\s\S]*?major < 154/);

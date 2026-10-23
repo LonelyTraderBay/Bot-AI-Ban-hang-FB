@@ -1,0 +1,44 @@
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const here = path.dirname(fileURLToPath(import.meta.url)), repo = path.resolve(here, '../../..');
+const file = path.join(repo, 'BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json');
+const raw = fs.readFileSync(file, 'utf8'), evidence = JSON.parse(raw);
+const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+const inputs = ['BotSalesAI_Frontend/apps/web/package.json', 'BotSalesAI_Frontend/package-lock.json', 'BotSalesAI_Frontend/STACK_LOCK.md'];
+const owned = [...inputs, 'BotSalesAI_Frontend/evidence/commit-workflow-20261023/refresh-zod-evidence.mjs'];
+const lock = JSON.parse(fs.readFileSync(path.join(repo, inputs[1])));
+assert.equal(JSON.parse(fs.readFileSync(path.join(repo, inputs[0]))).dependencies.zod, '4.6.6');
+assert.equal(lock.packages['node_modules/zod'].version, '4.6.6');
+assert.equal(lock.packages['node_modules/zod'].integrity, 'sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==');
+for (const [name, digest] of Object.entries(evidence.sourceFingerprints)) if (!owned.includes(name)) assert.equal(hash(fs.readFileSync(path.join(repo, name))), digest, `Unrelated stale source: ${name}`);
+function record(id, logFile, expected, patterns) {
+    const bytes = fs.readFileSync(path.join(here, logFile));
+    const text = bytes.toString('utf8').replace(/\x1b\[[0-?]*[ -/]*[@-~]/g, '');
+    const header = JSON.parse(text.split(/\r?\n/)[0]);
+    assert.equal(header.zod, '4.6.6', logFile + ' installed Zod');
+    for (const name of inputs) assert.equal(header.inputs[name], hash(fs.readFileSync(path.join(repo, name))), `Stale ${logFile}: ${name}`);
+    assert.match(text, /COMMAND_EXIT=0/);
+    for (const pattern of patterns) assert.match(text, pattern);
+    const check = { id, command: JSON.stringify(header.command), result: 'PASS', exitCode: 0, expected, observed: expected,
+        log: { path: `BotSalesAI_Frontend/evidence/commit-workflow-20261023/${logFile}`, sha256: hash(bytes) } };
+    const at = evidence.checks.findIndex(item => item.id === id);
+    if (at < 0) evidence.checks.push(check); else evidence.checks[at] = check;
+    const row = { name: id, result: 'COMPLETE', expected: 1, observed: 1, missing: 0 };
+    const ci = evidence.coverage.findIndex(item => item.name === id);
+    if (ci < 0) evidence.coverage.push(row); else evidence.coverage[ci] = row;
+}
+record('zod-audit-20261024', 'zod-audit.log', 'Fresh npm audit at level low reports zero vulnerabilities with pinned Zod 4.6.6.', [/\"vulnerabilities\":\s*\{\s*\}/, /\"total\":\s*0/]);
+record('zod-demo-build-20261024', 'zod-build-demo.log', 'TypeScript and built-demo bundle compile with pinned Zod 4.6.6.', [/built in/]);
+record('zod-form-browser-20261024', 'zod-form-target.log', 'Eight Chromium/Firefox customer/product/CSV/timezone validation cases pass with Zod 4.6.6.', [/8 passed/]);
+record('zod-built-browser-20261024', 'zod-built-demo.log', 'Six built demo regressions and all 244 route opens pass in Chromium/Firefox with the new artifact.', [/6 passed/]);
+if (process.argv.includes('--finalize')) record('zod-full-verify-20261024', 'zod-verify.log', 'Full verify passes with pinned Zod 4.6.6 and current source/evidence fingerprints.', [/256 passed/, /ui-evidence PASS: S17/]);
+for (const name of owned) evidence.sourceFingerprints[name] = hash(fs.readFileSync(path.join(repo, name)));
+const scope = ' Zod dependency gate 20261024: fresh hosted audit on e20 attempt2 reported GHSA-mrhx-c7xc-m3w5 for 4.1.3. Exact direct pin/lock/STACK_LOCK move to official patched 4.6.6, retaining prior history. New logs bind installed version and current dependency inputs; earlier browser/toolchain records remain historical. Full closing CI and the new built-demo content must validate the delivered SHA. Audit is not disabled and no forced bulk update was used.';
+if (!evidence.scope.includes(scope)) evidence.scope += scope;
+evidence.recordedAt = new Date().toISOString();
+const nl = raw.includes('\r\n') ? '\r\n' : '\n';
+fs.writeFileSync(file, JSON.stringify(evidence, null, 2).replaceAll('\n', nl) + nl);
+console.log(JSON.stringify({ checks: evidence.checks.length, coverage: evidence.coverage.length, fingerprints: Object.keys(evidence.sourceFingerprints).length }));

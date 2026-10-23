@@ -106,7 +106,7 @@ jobs:
           }
           NODE
       - name: Run sharded browser E2E tests
-        run: npm run test:e2e -- --project=${{ matrix.browser }} ${{ matrix.shard_args }} --reporter=line
+        run: npm run test:e2e -- --project=${{ matrix.browser }} ${{ matrix.shard_args }} --reporter=line --max-failures=1
       - name: Verify the built demo (${{ matrix.browser }})
         if: ${{ matrix.verify_built_demo }}
         run: npx playwright test --config playwright.built-demo.config.ts --output test-results/built-demo --project=${{ matrix.browser }}-built-demo --reporter=line

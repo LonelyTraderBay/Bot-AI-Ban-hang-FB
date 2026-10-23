@@ -91,6 +91,9 @@ test('product editor validates positive prices, protects image-only drafts, and 
     expect(payload).not.toHaveProperty('unitCost');
     expect(payload.variants[0]).not.toHaveProperty('unitCost');
 
+    // The create-ID read can finish before the router commits its title and Shell focus.
+    await expect(page).toHaveTitle('Chi tiết sản phẩm · BotSales AI');
+    await expect(page.locator('main#main-content')).toBeFocused();
     await page.getByRole('link',{name:'Danh sách',exact:true}).click();
     await expect(page).toHaveURL(/\/s\/shop-demo\/products(?:\?.*)?$/, { timeout: 30_000 });
     await expect(page.getByRole('heading',{name:'Sản phẩm',exact:true})).toBeVisible({ timeout: 15_000 });
