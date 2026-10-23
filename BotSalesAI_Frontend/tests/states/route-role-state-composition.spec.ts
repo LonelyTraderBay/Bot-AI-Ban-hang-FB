@@ -33,12 +33,14 @@ function canRead(route: Route, role: string) {
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
     await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
-    await page.getByRole('option', { name: value, exact: true }).click();
+    await page.getByRole('option', { name: value, exact: true }).click({ timeout: 10_000 });
 }
 
 async function chooseRole(page: import('@playwright/test').Page, role: string) {
     if (role === 'owner') return;
     await chooseMockOption(page, 'Vai trò mô phỏng', role);
+    await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText(role);
 }
 
 async function setRouteReadDelays(page: import('@playwright/test').Page, operations: string[], delayMs: number | null) {

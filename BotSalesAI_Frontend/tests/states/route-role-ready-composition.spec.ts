@@ -37,6 +37,8 @@ async function chooseRole(page: import('@playwright/test').Page, role: string) {
     await openDemoControls(page);
     await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
     await page.getByRole('option', { name: role, exact: true }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText(role);
 }
 
 let demoUrl = '';
@@ -56,6 +58,9 @@ test.describe('ready route content renders for every role granted read access by
     for (const role of roles) {
         test(`ready route content for ${role}`, async ({ page }) => {
             test.setTimeout(600_000);
+            // A real shop-midnight rollover changes date-based query keys between the two walks.
+            // Keep timers advancing from a stable midday fixture so staleTime still expires.
+            await page.clock.install({ time: new Date('2026-10-23T05:00:00Z') });
             const browser = test.info().project.name;
             const browserVersion = page.context().browser()?.version() || 'unknown';
             console.log(`BROWSER=${browser} VERSION=${browserVersion}`);
@@ -110,8 +115,9 @@ test.describe('ready route content renders for every role granted read access by
             await openDemoControls(page);
             await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
             await page.getByRole('option', { name: 'Lỗi API kéo dài', exact: true }).click();
+            await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
             // useApi owns a 5-second staleTime; let every cached route query cross it before remounting.
-            await page.waitForTimeout(5_200);
+            await page.clock.fastForward(5_200);
             for (const route of routeOwnedData) {
                 await page.evaluate(nextPath => {
                     window.history.pushState({}, '', nextPath);
