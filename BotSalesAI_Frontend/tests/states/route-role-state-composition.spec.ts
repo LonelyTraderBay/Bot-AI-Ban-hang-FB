@@ -2,6 +2,7 @@ import { openDemoControls } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { assertEmptyTable } from '../session/assert-empty-table';
 
 type Route = { id: string; path: string; readPermission: string | null; readOperations: string[]; actions: Array<{ label: string; permission: string | null; operationId: string }> };
 type RouteManifest = { routes: Route[] };
@@ -145,9 +146,7 @@ test.describe('route read states render under every role allowed by the canonica
                         const emptyCopy = route.id === 'R05' ? 'Chưa có hội thoại phù hợp.' : route.id === 'R06' ? 'Chưa có tin nhắn.' : 'Cửa hàng chưa có danh mục.';
                         await expect(main.getByRole('status').filter({ hasText: emptyCopy }), `${route.id} should announce the empty lookup for ${role}`).toBeVisible();
                     } else {
-                        const emptyCell = main.locator('tbody td[colspan]').first();
-                        await expect(emptyCell, `${route.id} should announce an empty table for ${role}`).toBeVisible({ timeout: 10_000 });
-                        await expect(emptyCell.getByRole('status')).toBeVisible();
+                        await assertEmptyTable(main, `${route.id} should announce an empty table for ${role}`);
                     }
                     console.log(`BROWSER=${browser} ROLE_STATE=empty ROLE=${role} ROUTE=${route.id} RESULT=PASS`);
                 }

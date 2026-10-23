@@ -166,6 +166,46 @@ test('UIC08 inbox message auto-scroll stays inside the list on a compact viewpor
     await info.attach('inbox-compact-message-list-scroll', { body: await page.screenshot(), contentType: 'image/png' });
 });
 
+test('UIC08 inbox scroll reaches the latest message when messages resolve before conversation', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 480 });
+    await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    await expect(page.locator('main h1')).toBeVisible();
+    await page.evaluate(async () => {
+        const mock = await import('/src/mocks/service.ts');
+        const database = await import('/src/mocks/database.ts');
+        const seed = database.db.messages.find(message => message.conversationId === 'cv1');
+        if (!seed) throw new Error('The canonical cv1 message fixture is missing');
+        for (let index = 0; index < 12; index++) database.db.messages.push({
+            ...seed, id: `uic08-response-order-${index}`, text: `Tin nhắn tổng hợp kiểm tra cuộn ${index}: ${seed.text}`,
+        });
+        mock.setOperationDelay('getConversation', 1200);
+        mock.setOperationDelay('listMessages', 0);
+    });
+    const responses: string[] = [];
+    page.on('response', response => {
+        const pathname = new URL(response.url()).pathname;
+        if (pathname.endsWith('/conversations/cv1/messages')) responses.push('messages');
+        else if (pathname.endsWith('/conversations/cv1')) responses.push('conversation');
+    });
+    await page.evaluate(() => {
+        window.history.pushState({}, '', '/s/shop-demo/inbox/cv1');
+        window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
+    });
+    // Shell intentionally focuses main on SPA navigation; measure scrolling after that step.
+    await expect(page.locator('main#main-content')).toBeFocused();
+    const documentScrollAfterNavigation = await page.evaluate(() => window.scrollY);
+    await expect(page.getByRole('button', { name: 'Tiếp quản', exact: true })).toBeVisible();
+    const list = page.getByTestId('inbox-message-list');
+    await expect(list.getByRole('button', { name: /^Đánh giá/ })).toHaveCount(14);
+    expect(await list.evaluate(node => node.scrollHeight - node.clientHeight)).toBeGreaterThan(1);
+    expect(responses.indexOf('messages')).toBeGreaterThanOrEqual(0);
+    expect(responses.indexOf('conversation')).toBeGreaterThan(responses.indexOf('messages'));
+    await expect.poll(() => list.evaluate(node => node.scrollHeight - node.clientHeight - node.scrollTop), {
+        message: 'The mounted conversation list must scroll after its messages resolved first',
+    }).toBeLessThanOrEqual(1);
+    expect(await page.evaluate(() => window.scrollY)).toBe(documentScrollAfterNavigation);
+});
+
 test('UI012 keyboard validation focuses the field named by a synthetic 422 response', async ({ page }) => {
     await page.addInitScript(() => {
         const originalFetch = window.fetch.bind(window);

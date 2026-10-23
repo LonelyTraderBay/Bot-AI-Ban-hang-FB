@@ -2,6 +2,7 @@ import { openDemoControls } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { assertEmptyTable } from '../session/assert-empty-table';
 
 type Route = { id: string; path: string; readOperations: string[] };
 type RouteManifest = { routes: Route[] };
@@ -68,9 +69,7 @@ test('empty collection responses render accessible empty states on canonical lis
                 const emptyCopy = route.id === 'R05' ? 'Chưa có hội thoại phù hợp.' : route.id === 'R06' ? 'Chưa có tin nhắn.' : 'Cửa hàng chưa có danh mục.';
                 await expect(main.getByRole('status').filter({ hasText: emptyCopy }), `${route.id} should announce the empty route lookup`).toBeVisible();
             } else {
-                const emptyCell = main.locator('tbody td[colspan]').first();
-                await expect(emptyCell, `${route.id} should announce an empty table rather than render a blank success`).toBeVisible({ timeout: 10_000 });
-                await expect(emptyCell.getByRole('status')).toBeVisible();
+                await assertEmptyTable(main, `${route.id} should announce an empty table rather than render a blank success`);
             }
             checkedRouteIds.push(route.id);
             if (checkedRouteIds.length % 3 === 0)

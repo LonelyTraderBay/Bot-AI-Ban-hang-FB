@@ -248,6 +248,9 @@ test('shared standalone Stats retain their boundary and long values on every aff
         for (const width of [390, 1440]) {
             await page.setViewportSize({ width, height: 1000 });
             await page.goto(new URL(`/s/shop-demo/${route}`, demoUrl).toString());
+            if (route === 'reports/marketing') {
+                await expect(page).toHaveURL(url => ['fromDate', 'toDate', 'bucket'].every(key => url.searchParams.has(key)));
+            }
             await expect(page.locator('main h1')).toBeVisible();
             await expect(page.locator('main .MuiCircularProgress-root, main .MuiLinearProgress-root')).toHaveCount(0);
             const readGeometry = () => page.locator('main').evaluate(main => {
@@ -261,14 +264,17 @@ test('shared standalone Stats retain their boundary and long values on every aff
                     overflow: [...grid.children].map(card => card.scrollWidth - card.clientWidth),
                 }));
             });
-            // Marketing normalizes its period after the form appears; await the actual Stats content.
-            await expect.poll(async () => (await readGeometry()).length, { message: `Stats loaded on ${route} at ${width}` }).toBe(1);
-            const geometry = await readGeometry();
-            expect(geometry, `Stats present on ${route} at ${width}`).toHaveLength(1);
-            expect(geometry[0].marginBottom).toBe('16px');
-            expect(geometry[0].gap).toBe('16px');
-            expect(geometry[0].radii).toEqual(['12px', '12px', '12px', '12px']);
-            expect(Math.max(...geometry[0].overflow)).toBeLessThanOrEqual(1);
+            // Use the successful measurement itself; a second read can race a query render.
+            let geometry: Awaited<ReturnType<typeof readGeometry>> = [];
+            await expect.poll(async () => {
+                geometry = await readGeometry();
+                return geometry.map(value => ({
+                    marginBottom: value.marginBottom, gap: value.gap, radii: value.radii,
+                    contentFits: value.overflow.every(overflow => overflow <= 1),
+                }));
+            }, { message: `Stats loaded with their complete layout on ${route} at ${width}` }).toEqual([
+                { marginBottom: '16px', gap: '16px', radii: ['12px', '12px', '12px', '12px'], contentFits: true },
+            ]);
             expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
             observations.push({ route, width, ...geometry[0] });
         }

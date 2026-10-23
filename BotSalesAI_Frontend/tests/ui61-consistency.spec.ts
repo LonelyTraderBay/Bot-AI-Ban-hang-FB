@@ -12,7 +12,8 @@ test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolati
 test.afterAll(async () => close?.());
 async function ready(page: Page, id: string) {
     await page.goto(url + routePath(id));
-    await expect(page.locator('main h1')).toBeVisible();
+    // Cold route chunks can still show Suspense after document navigation completes.
+    await expect(page.locator('main h1'), `${id}: route bundle and page heading are ready`).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('main .MuiCircularProgress-root, main .MuiLinearProgress-root')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Không thể mở màn hình', exact: true })).toHaveCount(0);
 }
