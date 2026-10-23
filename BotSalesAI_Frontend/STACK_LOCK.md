@@ -8,7 +8,7 @@ Nguồn chuẩn phiên bản khai báo: package.json root, apps/web/package.json
 | TypeScript / Vite | 5.9.2 / 7.3.7 |
 | MUI Material / icons | 7.3.1 |
 | TanStack Query / Router | 5.85.5 / 7.18.4 |
-| RHF / Zod | 7.62.0 / 4.1.3 |
+| RHF / Zod | 7.62.0 / 4.6.6 |
 | i18next / react-i18next | 25.4.2 / 15.7.3 |
 | MSW / Vitest / Playwright / axe-core playwright | 2.11.1 / 5.0.3 / 1.63.0 / 4.10.2 |
 | Recharts / AJV | 3.1.2 / 8.20.0 |
