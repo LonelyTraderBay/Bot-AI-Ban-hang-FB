@@ -1,11 +1,11 @@
-# Toolchain và dependency lock — đối chiếu 04/10/2026
+# Toolchain và dependency lock — đối chiếu 23/10/2026
 
 Nguồn chuẩn phiên bản khai báo: package.json root, apps/web/package.json; phiên bản resolved là package-lock.json thật hiện có. Không dùng tài liệu khai báo cũ để kết luận chưa có lockfile. packageManager npm@11.17.0; engine Node >=24 <25. Evidence S39/S40 dùng Windows Node24.19.0/npm11.17.0.
 
 | Thành phần | Phiên bản khai báo hiện hành |
 |---|---|
 | React / ReactDOM | 19.1.1 |
-| TypeScript / Vite | 5.9.2 / 7.3.6 |
+| TypeScript / Vite | 5.9.2 / 7.3.7 |
 | MUI Material / icons | 7.3.1 |
 | TanStack Query / Router | 5.85.5 / 7.18.4 |
 | RHF / Zod | 7.62.0 / 4.1.3 |
