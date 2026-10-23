@@ -23,6 +23,8 @@ Gom commit cùng một công việc, push một lượt lên nhánh PR ngắn h�
 
 Browser suite chia ba shard theo file cho mỗi engine; giữ một worker mỗi runner và isolation hiện tại. Tổng số bài không giảm. Không bật fullyParallel khi chưa chứng minh các fixture/server độc lập. [Playwright sharding](https://playwright.dev/docs/test-sharding) và [GitHub event branch filters](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow) mô tả cơ chế được dùng. Thời gian tiết kiệm phải đo từ run thực; queue/cài browser và shard chậm nhất vẫn có thể chi phối.
 
+Mỗi shard dùng `--max-failures=1`: khi một bài FAIL, job trả lỗi sớm cùng trace để sửa ngay; các shard khác vẫn tiếp tục vì matrix giữ `fail-fast: false`. Lượt PASS vẫn phải chạy hết partition, và gate vẫn từ chối producer failure/skipped/cancelled. Điều này giảm thời gian chờ sau lỗi đầu tiên, không giảm coverage của một lượt thành công.
+
 ## Branch protection của main
 
 Cấu hình khi kích hoạt gồm **9 check** từ GitHub Actions, App ID `15368`: giữ nguyên bảy check producer đang bắt buộc và thêm hai check tổng nêu trên. Áp dụng cả admin, nhánh phải cập nhật với main, bắt buộc PR, 0 ngoại lệ bypass, chặn force-push/xóa nhánh và bắt buộc giải quyết hết thảo luận review. Số approval bắt buộc là **0**, theo lựa chọn của người dùng cho repo hiện có một maintainer.
