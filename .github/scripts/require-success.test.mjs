@@ -72,7 +72,7 @@ test('uses the current attempt endpoint with read-only authentication and a boun
         assert.ok(options.signal instanceof AbortSignal);
         return Response.json(jobsFor('frontend'));
     });
-    assert.equal(payload.total_count, 6);
+    assert.equal(payload.total_count, profiles.frontend.jobs.length + 1);
 });
 test('API errors, invalid JSON and network failures keep the gate closed', async () => {
     const options = { repository: 'owner/repo', ...context, token: 'test-token' };
@@ -93,8 +93,17 @@ test('runGate rejects bad context before requesting metadata and propagates stri
     const neutral = jobsFor('frontend'); neutral.jobs[0].conclusion = 'neutral';
     await assert.rejects(runGate('frontend', env, async () => Response.json(neutral)), /only completed\/success/);
 });
+test('the Chromium aggregate tolerates only its named downstream gate and still rejects failed shards', () => {
+    const payload = jobsFor('chromium');
+    payload.jobs.push({ id: 100, run_id: 123, run_attempt: 2, name: 'gate frontend (success only)', status: 'queued', conclusion: null });
+    payload.total_count++;
+    requireSuccessfulJobs('chromium', payload, context);
+    payload.jobs.find(job => job.name === 'e2e (chromium 3-of-3)').conclusion = 'failure';
+    assert.throws(() => requireSuccessfulJobs('chromium', payload, context), /only completed\/success/);
+});
+
 test('both workflows wire always-running gates to every producer and keep read-only permissions', () => {
-    for (const [name, dependencies] of [['frontend', '[verify, e2e]'], ['repository-hygiene', '[check]']]) {
+    for (const [name, dependencies] of [['frontend', '[verify, e2e, chromium-gate]'], ['repository-hygiene', '[check]']]) {
         const workflow = readFileSync(new URL(`../workflows/${name}.yml`, import.meta.url), 'utf8');
         const gate = workflow.match(/^  success-gate:[\s\S]*$/m)?.[0];
         assert.ok(gate, name);
@@ -105,7 +114,19 @@ test('both workflows wire always-running gates to every producer and keep read-o
         assert.doesNotMatch(workflow, /(?:actions|checks|statuses|contents): write|continue-on-error:/);
         assert.ok(gate.includes(`node .github/scripts/require-success.mjs ${name}`));
         assert.match(gate, /NEEDS_JSON: \$\{\{ toJSON\(needs\) \}\}/);
+        assert.match(workflow, /^on:\r?\n  push:\r?\n    branches: \[main\]\r?\n  pull_request:/m,
+            'Feature pushes must not duplicate PR CI; main pushes must retain full CI');
+        assert.doesNotMatch(workflow, /^\s+paths(?:-ignore)?:/m, 'Required PR checks must run for every changed path');
     }
+    const frontend = readFileSync(new URL('../workflows/frontend.yml', import.meta.url), 'utf8');
+    const aggregate = frontend.match(/^  chromium-gate:[\s\S]*?(?=^  success-gate:)/m)?.[0];
+    assert.ok(aggregate);
+    assert.match(aggregate, /name: e2e \(chromium all\)/);
+    assert.match(aggregate, /needs: \[verify, e2e\]/);
+    assert.match(aggregate, /if: \$\{\{ always\(\) \}\}/);
+    assert.match(aggregate, /actions: read/);
+    assert.match(aggregate, /node .github\/scripts\/require-success\.mjs chromium/);
+    assert.match(aggregate, /NEEDS_JSON: \$\{\{ toJSON\(needs\) \}\}/);
     const hygiene = readFileSync(new URL('../workflows/repository-hygiene.yml', import.meta.url), 'utf8');
     assert.match(hygiene, /node --test .*check-repository-hygiene\.test\.mjs .*require-success\.test\.mjs/);
 });
