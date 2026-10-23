@@ -59,15 +59,15 @@ export function DashboardPage() {
                     <Typography color="text.secondary" sx={[layoutSx.dashboard.heroDescriptionGap, { maxWidth: 620 }]}>Theo dõi việc cần xử lý, tiến độ đơn hàng và đội ngũ AI — tập trung vào những quyết định quan trọng.</Typography>
                 </Box>
                 {(canOps || canOrders || canCreateOrder) && <ActionGroup direction="column" density="comfortable" justifyContent="center">
-                    {primaryAction && <Link component={RouterLink} to={primaryAction.to} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: visualSx.radius.dialog, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'primary.light', textDecoration: 'none' }, '&:active': { bgcolor: 'primary.dark' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>{primaryAction.label} <ArrowForwardRounded fontSize="small" /></Link>}
-                    {canCreateOrder && <Link component={RouterLink} to={`/s/${shop.id}/orders/new`} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: 1, borderColor: 'divider', borderRadius: visualSx.radius.dialog, color: 'text.primary', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'action.hover', textDecoration: 'none' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>Tạo đơn hàng</Link>}
+                    {primaryAction && <Link component={RouterLink} to={primaryAction.to} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: visualSx.radius.control, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'primary.light', textDecoration: 'none' }, '&:active': { bgcolor: 'primary.dark' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>{primaryAction.label} <ArrowForwardRounded fontSize="small" /></Link>}
+                    {canCreateOrder && <Link component={RouterLink} to={`/s/${shop.id}/orders/new`} underline="none" sx={[layoutSx.dashboard.actionTarget, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control, color: 'text.primary', fontWeight: visualSx.typography.fontWeight.strong, '&:hover': { bgcolor: 'action.hover', textDecoration: 'none' }, '&:focus-visible': { outline: `${tokens.focusRing.width}px solid`, outlineColor: 'primary.light', outlineOffset: tokens.focusRing.controlOffset } }]}>Tạo đơn hàng</Link>}
                 </ActionGroup>}
             </Stack>
         </Box>
 
-        <Panel title="Tình hình hiện tại" subtitle="Các KPI là trạng thái hiện tại do API trả về, không phải dự báo." afterGap={"section"}>
+        <Panel title="Tình hình hiện tại" subtitle="Các KPI là trạng thái hiện tại do API trả về, không phải dự báo." afterGap="section" bodyMode="inset">
             <QueryState query={dashboard} pendingProfile="section">
-                {data && <Stats>
+                {data && <Stats afterGap="none">
                     <Stat title="Hội thoại đang mở" value={<Link component={RouterLink} to={`/s/${shop.id}/inbox`} underline="hover" color="inherit">{data.openConversations}</Link>} note="Trạng thái hiện tại" icon={<ForumRounded />} />
                     <Stat title="Đơn chờ xử lý" value={<Link component={RouterLink} to={`/s/${shop.id}/orders`} underline="hover" color="inherit">{data.pendingOrders}</Link>} note="Theo trạng thái hiện tại của API" icon={<ReceiptLongRounded />} accent />
                     <Stat title="Sản phẩm gần hết" value={<Link component={RouterLink} to={`/s/${shop.id}/inventory`} underline="hover" color="inherit">{data.lowStockVariants}</Link>} note="Theo ngưỡng tồn trong API" icon={<Inventory2Rounded />} />
@@ -80,16 +80,18 @@ export function DashboardPage() {
 
             <Panel title="Dòng tiền và doanh thu" subtitle="Doanh thu ghi nhận và tiền đã thu là hai chỉ số khác nhau." bodyMode="inset">
                 {canFinance ? data ? <SurfaceContent >
-                    <Box><Typography color="text.secondary" variant="body2">Doanh thu đã ghi nhận</Typography><Typography variant="h4" sx={layoutSx.dashboard.metricValueGap}><Amount wrap value={data.recognizedRevenue} /></Typography></Box>
-                    <Box><Typography color="text.secondary" variant="body2">Tiền đã thu</Typography><Typography variant="h4" sx={[layoutSx.dashboard.metricValueGap, { color: 'primary.main' }]}><Amount wrap value={data.cashReceived} /></Typography></Box>
-                    <RouteLink to={`/s/${shop.id}/finance/profit-loss`}>Xem lợi nhuận</RouteLink>
+                    <SectionGrid rhythm="content" columns={{ xs: '1fr', md: 'repeat(2,minmax(0,1fr))' }} shrinkChildren>
+                        <Box><Typography color="text.secondary" variant="body2">Doanh thu đã ghi nhận</Typography><Typography component="div" variant="h4" sx={layoutSx.dashboard.metricValueGap}><Amount wrap value={data.recognizedRevenue} /></Typography></Box>
+                        <Box><Typography color="text.secondary" variant="body2">Tiền đã thu</Typography><Typography component="div" variant="h4" sx={[layoutSx.dashboard.metricValueGap, { color: 'primary.main' }]}><Amount wrap value={data.cashReceived} /></Typography></Box>
+                    </SectionGrid>
+                    <ActionGroup><RouteLink to={`/s/${shop.id}/finance/profit-loss`}>Xem lợi nhuận</RouteLink></ActionGroup>
                 </SurfaceContent> : dashboard.isPending ? <Box role="status">Đang tải số liệu tài chính…</Box> : <Alert severity="warning" action={<Button onClick={() => void dashboard.refetch()}>Thử lại</Button>}>Không thể tải số liệu tài chính. Dữ liệu của các khu vực khác vẫn dùng được.</Alert>
                     : <Alert severity="info">Chỉ hiển thị khi vai trò có finance.read.</Alert>}
             </Panel>
 
             <Panel title="Đơn hàng gần đây" subtitle="Mở đơn để xem trạng thái chuẩn bị, giao hàng và thanh toán." action={canOrders ? <RouteLink to={`/s/${shop.id}/orders`}>Tất cả đơn</RouteLink> : undefined} bodyMode={canOrders ? 'flush' : 'inset'} geometry={{ gridColumn: { xs: 'auto', xl: '1 / -1' } }}>
                 {canOrders ? <QueryState query={orders} pendingProfile="section">{orders.data && <DataTable rows={orders.data.data} rowKey={order => order.id} label="Đơn hàng gần đây" columns={[
-                    { key: 'id', label: 'Đơn hàng', render: order => <Stack direction="row" alignItems="center" sx={layoutSx.code.inlineGap} flexWrap="wrap"><RouteLink to={`/s/${shop.id}/orders/${order.id}`}>{order.id}</RouteLink><CopyableCode value={order.id} label="mã đơn hàng" /></Stack> },
+                    { key: 'id', label: 'Đơn hàng', render: order => <Stack direction="row" alignItems="center" sx={layoutSx.code.inlineGap} flexWrap="wrap"><RouteLink to={`/s/${shop.id}/orders/${order.id}`}>{order.id}</RouteLink><CopyableCode value={order.id} label="mã đơn hàng" showValue={false} /></Stack> },
                     { key: 'total', label: 'Giá trị', align: 'right', render: order => <Amount value={order.total} /> },
                     { key: 'status', label: 'Đơn', render: order => <Status value={order.orderState} /> },
                     { key: 'delivery', label: 'Giao', render: order => <Status value={order.fulfillmentState} /> },
@@ -106,7 +108,7 @@ export function DashboardPage() {
             </Panel>}
 
             {canPauseBot && <Panel title="Điều khiển trợ lý" subtitle="Tạm dừng là thao tác có tác động; cần xác nhận và lý do." bodyMode="inset" geometry={{ gridColumn: { xs: 'auto', xl: '1 / -1' } }}>
-                <QueryState query={bot}>{botConfig && <ActionGroup direction={{ xs: 'column', sm: 'row' }} density="comfortable" alignItems={{ xs: 'stretch', sm: 'center' }}>
+                <QueryState query={bot}>{botConfig && <ActionGroup density="comfortable" alignItems="center">
                     <Status value={botConfig.status} />
                     <MutationButton permission="bot.publish" variant="outlined" color="error" busy={pause.pending} disabled={botConfig.status === 'paused'} onClick={() => setPauseOpen(true)}>{botConfig.status === 'paused' ? 'Bot đã tạm dừng' : 'Tạm dừng bot'}</MutationButton>
                     {pause.error && <Alert severity="error">{pause.error.message}</Alert>}

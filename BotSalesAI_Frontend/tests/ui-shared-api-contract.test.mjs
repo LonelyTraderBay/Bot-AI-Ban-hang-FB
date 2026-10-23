@@ -297,11 +297,11 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.ok(fs.existsSync(parentWorkflow), 'the active frontend workflow must remain in the repository root');
     assert.equal(fs.existsSync(path.join(root, '.github/workflows/frontend.yml')), false, 'the retired nested workflow must not shadow the parent workflow');
     const workflow = fs.readFileSync(parentWorkflow, 'utf8');
-    assert.match(workflow, /^  push:\s*$/m);
+    assert.match(workflow, /^  push:\r?\n    branches: \[main\]/m);
     assert.match(workflow, /^  pull_request:\s*$/m);
     assert.doesNotMatch(workflow, /^\s+paths(?:-ignore)?:/m, 'Every change must run the required gates');
     const verifyJob = workflow.match(/^  verify:[\s\S]*?(?=^  e2e:)/m)?.[0];
-    const e2eJob = workflow.match(/^  e2e:[\s\S]*/m)?.[0];
+    const e2eJob = workflow.match(/^  e2e:[\s\S]*?(?=^  chromium-gate:)/m)?.[0];
     assert.ok(verifyJob, 'The shared source/build/evidence job must remain separate from browser shards');
     assert.ok(e2eJob, 'Browser tests must run in their own dependent job');
     const verifyBrowserInstall = verifyJob.indexOf('npx playwright install --with-deps chromium');
@@ -316,7 +316,7 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.ok(browserInstall >= 0 && browserInstall < e2eStep, 'Each browser runner must install its engine before E2E');
     assert.match(e2eJob, /npm run test:e2e -- --project=\$\{\{ matrix\.browser \}\} \$\{\{ matrix\.shard_args \}\} --reporter=line/);
     assert.equal([...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n/g)].length, 3, 'No unsharded Firefox job may bypass the bounded matrix');
-    assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 1, 'Chromium E2E must install one supported Chrome Stable suite');
+    assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 3, 'Chromium E2E must use three supported Chrome Stable shards');
     assert.match(e2eJob, /name: Verify supported Google Chrome version[\s\S]*?major < 154/);
     const firefoxShards = [...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n\s+shard_id: ([\w-]+)\r?\n\s+shard_args: '(--shard=\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
         .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
@@ -325,7 +325,9 @@ test('required UI evidence and regression gates remain wired to root verify and 
         { id: '2-of-3', args: '--shard=2/3', builtDemo: 'false' },
         { id: '3-of-3', args: '--shard=3/3', builtDemo: 'false' },
     ], 'The complete Firefox suite must be split across three bounded jobs and run built-demo once');
-    assert.match(e2eJob, /- browser: chromium\r?\n\s+install_browser: chrome\r?\n\s+shard_id: all\r?\n\s+shard_args: ''\r?\n\s+verify_built_demo: true/);
+    const chromiumShards = [...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n\s+shard_id: ([\w-]+)\r?\n\s+shard_args: '(--shard=\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
+        .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
+    assert.deepEqual(chromiumShards, firefoxShards, 'Both engines must cover the same complete three-shard partition and one built demo');
     assert.match(e2eJob, /if: \$\{\{ matrix\.verify_built_demo \}\}/);
     assert.match(e2eJob, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
     assert.match(e2eJob, /playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}/);

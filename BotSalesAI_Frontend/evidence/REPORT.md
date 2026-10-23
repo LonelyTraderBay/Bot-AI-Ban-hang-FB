@@ -1,5 +1,13 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## UI61 — sửa theo audit toàn bộ 61 màn hình, 20/10/2026
+
+Scope local frontend/MSW: khắc phục sáu nhóm UI-A01–06 theo P1/P2 tại owner, chuẩn hóa card nghiệp vụ 12px, inset và flow trạng thái, bảng rỗng/Pager và cảnh báo tài chính. 61 route × desktop/mobile có ảnh và số đo; ba route job/challenge có kiểm bổ sung hợp lệ. 26 ca mới +40 hồi quy Chromium/Firefox và full verify/256 Vitest PASS. [Contract](ui61-consistency-20261020/CONTRACT.md), [kết quả và giới hạn](ui61-consistency-20261020/RESULT.md), [coverage/hash runtime](ui61-consistency-20261020/runtime-summary.json). Native zoom/text-only resize, screen reader, mobile vật lý và owner acceptance chưa được chứng minh; cảnh báo flushSync cũ còn được ghi nhận. Trạng thái chỉ tại plan §16.6; các kết quả dưới đây giữ nguyên lịch sử.
+
+## Tổng quan — đợt sửa theo audit 19/10/2026
+
+Scope local frontend/MSW: chuẩn hóa Panel/Stats, card AI, CTA, copy ID, bố trí số liệu tài chính và status mobile. Full verify exit 0; 14/14 Dashboard và 26/26 shared regression trên Chromium/Firefox PASS. Native zoom/text-only resize, screen reader và mobile vật lý NOT_RUN. [Contract và baseline](overview-consistency-20261019/CONTRACT.md), [kết quả theo nguồn/hash và giới hạn](overview-consistency-20261019/RESULT.json), [ảnh desktop](overview-consistency-20261019/after-desktop.png), [ảnh mobile](overview-consistency-20261019/after-mobile.png). Trạng thái rollout chỉ tại plan §16.6; owner acceptance riêng. Các kết quả dưới đây giữ nguyên timestamp và phạm vi lịch sử.
+
 ## Cập nhật hiện hành — 18/10/2026, đợt UI UIC01–UIC13
 
 Trạng thái task và dependency nằm ở [kế hoạch UI §16.6](../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#ui-rollout-status); kết quả UIC10 source cuối được đo trên SHA 85e2a677951e0e46aef6919e775de3e0c0d54103: npm run verify exit 0, E2E discovery 1.082 tests/79 files, built-demo 6/6 và 244 route opens không finding. Full E2E exact-SHA hosted còn chờ; full Firefox local trước đó INCOMPLETE vì giới hạn RAM. [UIC10 report](frontend-ui-consistency-20261017/UIC10/REPORT.md) lưu commands, logs, browser identity, hashes và giới hạn.

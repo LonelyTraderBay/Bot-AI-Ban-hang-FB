@@ -156,3 +156,128 @@ test('dashboard finance summary uses one content track at every supported width'
         expect(geometry.scrollWidth, `document width at ${width}px`).toBeLessThanOrEqual(geometry.viewport + 1);
     }
 });
+
+test('dashboard nested cards keep one inset and one card radius at every breakpoint', async ({ page }) => {
+    await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    await expect(page.getByText('Dữ liệu cập nhật', { exact: false })).toBeVisible();
+    const observations = [];
+    for (const width of [320, 390, 768, 1280, 1920]) {
+        await page.setViewportSize({ width, height: 1000 });
+        const metrics = await page.getByRole('heading', { name: 'Tình hình hiện tại', exact: true }).evaluate(heading => {
+            const panel = heading.closest('.MuiPaper-root')!;
+            const cards = [...panel.querySelectorAll<HTMLElement>('.MuiPaper-root')];
+            const outer = panel.getBoundingClientRect();
+            const first = cards[0].getBoundingClientRect(), last = cards.at(-1)!.getBoundingClientRect();
+            const header = panel.firstElementChild!;
+            const headerText = header.querySelector('p')!.getBoundingClientRect();
+            const notes = cards.map(card => card.lastElementChild!.getBoundingClientRect().top - card.getBoundingClientRect().top);
+            return {
+                left: first.left - outer.left - Number.parseFloat(getComputedStyle(panel).borderLeftWidth),
+                right: outer.right - last.right - Number.parseFloat(getComputedStyle(panel).borderRightWidth),
+                bottom: outer.bottom - last.bottom - Number.parseFloat(getComputedStyle(panel).borderBottomWidth),
+                headerGap: first.top - headerText.bottom,
+                gridMarginBottom: getComputedStyle(cards[0].parentElement!).marginBottom,
+                gridGap: getComputedStyle(cards[0].parentElement!).gap,
+                noteOffset: Math.max(...notes) - Math.min(...notes),
+                radii: cards.map(card => getComputedStyle(card).borderRadius),
+            };
+        });
+        const inset = width < 768 ? 12 : 16;
+        expect(metrics.left, `KPI left inset at ${width}`).toBeCloseTo(inset, 2);
+        expect(metrics.right, `KPI right inset at ${width}`).toBeCloseTo(inset, 2);
+        expect(metrics.bottom, `KPI bottom inset at ${width}`).toBeCloseTo(inset, 2);
+        expect(metrics.headerGap).toBeCloseTo(12, 1);
+        expect(metrics.gridMarginBottom).toBe('0px');
+        expect(metrics.gridGap).toBe('16px');
+        expect(metrics.radii).toEqual(['12px', '12px', '12px', '12px']);
+        expect(metrics.noteOffset, `metric note alignment at ${width}`).toBeLessThanOrEqual(0.5);
+
+        const team = page.getByRole('heading', { name: 'Đội ngũ AI của cửa hàng', exact: true }).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');
+        const roleCards = team.locator('[data-ui-composition="surface-content"]');
+        await expect(roleCards).toHaveCount(4);
+        expect(await roleCards.evaluateAll(cards => cards.map(card => ({ radius: getComputedStyle(card).borderRadius, padding: getComputedStyle(card).padding })))).toEqual(
+            Array.from({ length: 4 }, () => ({ radius: '12px', padding: '12px' })),
+        );
+        for (const name of ['Xem việc cần làm', 'Tạo đơn hàng']) {
+            expect(await page.getByRole('link', { name, exact: true }).evaluate(link => getComputedStyle(link).borderRadius)).toBe('8px');
+        }
+        const control = page.getByRole('heading', { name: 'Điều khiển trợ lý', exact: true }).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');
+        const statusBounds = await control.locator('.MuiChip-root').boundingBox();
+        const controlBounds = await control.boundingBox();
+        expect(statusBounds!.width).toBeLessThan(controlBounds!.width / 2);
+        expect((await control.getByRole('button', { name: 'Bot đã tạm dừng', exact: true }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
+        const finance = page.getByRole('heading', { name: 'Dòng tiền và doanh thu', exact: true }).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');
+        const amountGrid = finance.locator('[data-ui-composition="section-grid"]');
+        const columns = await amountGrid.evaluate(grid => getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length);
+        expect(columns).toBe(width < 768 ? 1 : 2);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+        observations.push({ width, inset, columns, ...metrics });
+    }
+    await test.info().attach('overview-surface-geometry.json', { body: JSON.stringify(observations, null, 2), contentType: 'application/json' });
+});
+
+test('dashboard order identifier stays a single link with accessible copy success and failure', async ({ page }) => {
+    await page.addInitScript(() => {
+        Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
+            writeText: async (value: string) => {
+                if (document.documentElement.dataset.rejectCopy === 'true') throw new Error('Clipboard permission denied');
+                document.documentElement.dataset.copiedOrder = value;
+            },
+        } });
+    });
+    await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    const link = page.getByRole('link', { name: 'DH-1001', exact: true });
+    await expect(link).toBeVisible();
+    const row = link.locator('xpath=ancestor::tr');
+    expect((await row.innerText()).match(/DH-1001/g)).toHaveLength(1);
+    await expect(link).toHaveAttribute('href', '/s/shop-demo/orders/DH-1001');
+    const copy = row.getByRole('button', { name: 'Sao chép mã đơn hàng DH-1001', exact: true });
+    await copy.click();
+    await expect(page.locator('html')).toHaveAttribute('data-copied-order', 'DH-1001');
+    await expect(row.getByRole('status')).toHaveText('Đã sao chép mã đơn hàng.');
+    await page.evaluate(() => { document.documentElement.dataset.rejectCopy = 'true'; });
+    await copy.click();
+    await expect(row.getByRole('status')).toHaveText('Không thể sao chép mã đơn hàng; hãy chọn mã để sao chép.');
+    await link.click();
+    await expect(page).toHaveURL(/\/orders\/DH-1001$/);
+});
+
+test('shared standalone Stats retain their boundary and long values on every affected report route', async ({ page }) => {
+    const observations = [];
+    for (const route of ['operations', 'finance', 'finance/profit-loss', 'finance/ledger', 'finance/trial-balance', 'finance/balance-sheet', 'reports/marketing']) {
+        for (const width of [390, 1440]) {
+            await page.setViewportSize({ width, height: 1000 });
+            await page.goto(new URL(`/s/shop-demo/${route}`, demoUrl).toString());
+            if (route === 'reports/marketing') {
+                await expect(page).toHaveURL(url => ['fromDate', 'toDate', 'bucket'].every(key => url.searchParams.has(key)));
+            }
+            await expect(page.locator('main h1')).toBeVisible();
+            await expect(page.locator('main .MuiCircularProgress-root, main .MuiLinearProgress-root')).toHaveCount(0);
+            const readGeometry = () => page.locator('main').evaluate(main => {
+                const grids = [...main.querySelectorAll('div')].filter(node => getComputedStyle(node).display === 'grid'
+                    && node.children.length === 4
+                    && [...node.children].every(child => child.classList.contains('MuiPaper-outlined') && !child.querySelector('h2')));
+                return grids.map(grid => ({
+                    marginBottom: getComputedStyle(grid).marginBottom,
+                    gap: getComputedStyle(grid).gap,
+                    radii: [...grid.children].map(card => getComputedStyle(card).borderRadius),
+                    overflow: [...grid.children].map(card => card.scrollWidth - card.clientWidth),
+                }));
+            });
+            // Use the successful measurement itself; a second read can race a query render.
+            let geometry: Awaited<ReturnType<typeof readGeometry>> = [];
+            await expect.poll(async () => {
+                geometry = await readGeometry();
+                return geometry.map(value => ({
+                    marginBottom: value.marginBottom, gap: value.gap, radii: value.radii,
+                    contentFits: value.overflow.every(overflow => overflow <= 1),
+                }));
+            }, { message: `Stats loaded with their complete layout on ${route} at ${width}` }).toEqual([
+                { marginBottom: '16px', gap: '16px', radii: ['12px', '12px', '12px', '12px'], contentFits: true },
+            ]);
+            expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+            observations.push({ route, width, ...geometry[0] });
+        }
+    }
+    await test.info().attach('shared-stats-affected-routes.json', { body: JSON.stringify(observations, null, 2), contentType: 'application/json' });
+});

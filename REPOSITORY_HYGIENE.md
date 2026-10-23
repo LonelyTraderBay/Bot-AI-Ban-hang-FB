@@ -13,6 +13,14 @@ Repository gồm `botsales-kit`, workspace `BotSalesAI_Frontend` và tooling chu
 
 Dependency, bytecode, cache, build output, Playwright output tạm, giá trị `.env` thật và file phát sinh do chuyển hướng shell không thuộc Git. Chỉ commit `.env.example` hoặc `.env.<môi-trường>.example` chứa giá trị mẫu an toàn. `.gitignore` giúp giảm file thừa; bộ kiểm index vẫn phát hiện khi artifact bị ép stage bằng `git add -f`.
 
+## Phát triển với một nhánh dài hạn
+
+Theo quyết định ngày 23/10/2026, `main` là nhánh dài hạn duy nhất cho repository có một maintainer. Mỗi công việc dùng một nhánh `codex/<mô-tả>` tồn tại ngắn hạn, mở PR vào `main`, chạy đủ required checks theo [chính sách CI](.github/CI_POLICY.md), rồi xóa nhánh local và remote sau khi merge. Không cần duy trì thêm `develop` hoặc nhánh release thường trực. Giữ nguyên yêu cầu PR, số approval bằng 0 và các bảo vệ của `main`.
+
+Trước khi hợp nhất hoặc xóa nhánh cũ, đối chiếu nội dung với `main`, cả commit đã viết lại và công việc chưa commit. Lưu lịch sử/refs, stash, index và tệp modified/untracked trong bản khôi phục ngoài repository; kiểm hash và thử khôi phục trước thao tác. Commit có SHA riêng không tự chứng minh còn tính năng thiếu. Chỉ tích hợp phần còn cần giữ; bảo tồn phiên bản thử nghiệm và evidence lịch sử trong bản khôi phục có manifest.
+
+Không stage hàng loạt thay đổi xuống dòng. `.gitattributes` bảo toàn byte cho fingerprint và evidence; chỉ đưa tệp đã đối soát về byte baseline sau khi giữ bản gốc và kiểm các tham chiếu hash. Chốt bàn giao bằng SHA local/remote trùng nhau, CI của đúng SHA hoàn tất, working tree sạch và danh sách nhánh local/remote chỉ còn `main`. Các kết quả Frontend/mock không chứng minh Backend, production hoặc nghiệm thu người dùng.
+
 ## Output tạm và môi trường tái hiện
 
 - Dựng bản cài đặt sạch hoặc Git worktree tại thư mục tạm ngoài repository; lưu đường dẫn, revision, lệnh và kết quả trong record của task.

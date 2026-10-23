@@ -1,12 +1,21 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const browserProducers = ['verify (source and build)',
+    ...['chromium', 'firefox'].flatMap(browser => [1, 2, 3].map(shard => `e2e (${browser} ${shard}-of-3)`))];
+
 export const profiles = {
-    frontend: {
+    chromium: {
         needs: ['verify', 'e2e'],
+        gate: 'e2e (chromium all)',
+        jobs: browserProducers,
+        // The final gate cannot complete until this aggregate has succeeded.
+        downstreamJobs: ['gate frontend (success only)'],
+    },
+    frontend: {
+        needs: ['verify', 'e2e', 'chromium-gate'],
         gate: 'gate frontend (success only)',
-        jobs: ['verify (source and build)', 'e2e (chromium all)',
-            'e2e (firefox 1-of-3)', 'e2e (firefox 2-of-3)', 'e2e (firefox 3-of-3)'],
+        jobs: [...browserProducers, 'e2e (chromium all)'],
     },
     'repository-hygiene': {
         needs: ['check'],
@@ -47,6 +56,7 @@ export function requireSuccessfulJobs(name, payload, { runId, attempt }) {
         seen.add(job.name);
         // The gate itself is still running; only its upstream jobs are evaluated.
         if (job.name === profile.gate) continue;
+        if (profile.downstreamJobs?.includes(job.name)) continue;
         if (!profile.jobs.includes(job.name)) throw new Error(`Unexpected job: ${job.name}`);
         if (job.status !== 'completed' || job.conclusion !== 'success')
             throw new Error(`Required job ${job.name}: ${job.status}/${job.conclusion}; only completed/success is allowed.`);
@@ -91,7 +101,7 @@ export async function runGate(name, env = process.env, fetchImpl = fetch) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
     try {
-        if (process.argv.length !== 3) throw new Error('Usage: node require-success.mjs <frontend|repository-hygiene>');
+        if (process.argv.length !== 3) throw new Error('Usage: node require-success.mjs <chromium|frontend|repository-hygiene>');
         console.log(JSON.stringify({ status: 'PASS', ...await runGate(process.argv[2]) }, null, 2));
     } catch (error) {
         console.error(`Required CI gate failed: ${error.message}`);

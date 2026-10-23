@@ -1,0 +1,343 @@
+{
+  "recordedAt": "2026-10-19T11:15:16.162880+00:00",
+  "progress": "VERIFIED_SCOPED",
+  "delivery": "DELIVERED_WITH_EVIDENCE_LIMITS",
+  "scope": "Local frontend/MSW overview plus direct shared Stat/Stats/CopyableCode/compactOutlined consumers; no backend implementation or external delivery claimed.",
+  "baseSha": "7851c03102ee2e0a29d550bf42fdb1979cfed651",
+  "branch": "codex/overview-ui-consistency-20261019",
+  "gitDelivery": "Intentional uncommitted task changes on feature branch; no commit/push requested for this UI iteration.",
+  "verdicts": {
+    "uiMeasuredScope": "ĐẠT: loaded desktop/mobile viewport geometry and targeted browser behavior",
+    "architectureScoped": "ĐẠT: canonical tokens unchanged; shared owner API/defaults, catalog, finite checker and affected regressions verified",
+    "fullAcceptance": "CHƯA XÁC MINH: native zoom/text-only resize, screen reader, physical mobile and owner acceptance remain outside this evidence"
+  },
+  "fixes": [
+    {
+      "priority": "P1",
+      "issue": "KPI inner and outer borders touch; inset and trailing gap have different owners",
+      "resolution": "Panel owns compact12/16 side/bottom; nested Stats afterGap none; standalone default section16 retained"
+    },
+    {
+      "priority": "P1",
+      "issue": "Equivalent nested cards use radius24 versus card12",
+      "resolution": "compactOutlined uses canonical card12 at shared owner; affected finance/dialog consumers regressed"
+    },
+    {
+      "priority": "P1",
+      "issue": "Metric notes diverge for number versus status",
+      "resolution": "Typography-derived minimum flex value slot; can grow, not fixed height"
+    },
+    {
+      "priority": "P1",
+      "issue": "Hero CTA uses dialog16 despite being a control",
+      "resolution": "Existing canonical control8; hero32 retains its distinct surface role"
+    },
+    {
+      "priority": "P1",
+      "issue": "SPC013 inset prose conflicts with compact runtime profile",
+      "resolution": "Clarified compact12/16 versus comfortable16/24 at the single canonical standard"
+    },
+    {
+      "priority": "P2",
+      "issue": "Finance figures and stretched footer waste desktop space",
+      "resolution": "Inner grid1/2 at768; intrinsic ActionGroup link; outer page remains one content track"
+    },
+    {
+      "priority": "P2",
+      "issue": "Order code appears twice",
+      "resolution": "One visible route link; icon-only CopyableCode includes ID in accessible name; success/rejection/navigation tested"
+    },
+    {
+      "priority": "P2",
+      "issue": "Mobile bot status stretches into a full-width strip",
+      "resolution": "ActionGroup row/wrap with centered intrinsic status/button; minimum44 control target retained"
+    }
+  ],
+  "verification": [
+    {
+      "command": "typecheck; 42 Node contract tests; strict layout/visual/composition",
+      "result": "PASS",
+      "observed": "42/42 tests; 0 findings",
+      "exitCode": 0,
+      "log": "source.log",
+      "logSha256": "145c1659827a0f216be46f523a2c6d735ecd84f2e0c0112d70408cc685cd12de"
+    },
+    {
+      "command": "Playwright tests/ui-dashboard-layout.spec.ts Chromium + Firefox",
+      "result": "PASS",
+      "observed": "14/14 cases",
+      "exitCode": 0,
+      "log": "dashboard.log",
+      "logSha256": "79dd501a2ade51cd4fa7eb0c17b300d0230f070cb50bb350bfaf2076207902e8"
+    },
+    {
+      "command": "Playwright finance-layout + component-layout + ui010-dialog-draft Chromium + Firefox",
+      "result": "PASS",
+      "observed": "26/26 cases",
+      "exitCode": 0,
+      "log": "shared.log",
+      "logSha256": "f636f00f320f08a808786fe5cb90afd78bad9d2c9dce1ee667e55b336ca4ff2e"
+    },
+    {
+      "command": "npm run verify",
+      "result": "PASS",
+      "observed": "252/252 Vitest plus source, boundary, lint, type, domain, build, UI policy and evidence gates",
+      "exitCode": 0,
+      "log": "verify.log",
+      "logSha256": "d9a677eb1b80abf7e4b20125015da1c7e21b30a7bd1c3f0f4544b8e37c7137b4"
+    },
+    {
+      "command": "npm run test:evidence",
+      "result": "PASS",
+      "observed": "11/11 evidence validator tests; S17 59 checks /54 coverage /292 current fingerprints",
+      "exitCode": 0,
+      "log": "final-evidence.log",
+      "logSha256": "9a9b4fcdb64b154cae13c0ae43e5ab8b9f6a9668f4aad7b61390174c5fd71662"
+    }
+  ],
+  "renderCoverage": {
+    "browsers": [
+      "Chromium",
+      "Firefox"
+    ],
+    "overviewWidths": [
+      320,
+      390,
+      768,
+      1280,
+      1920
+    ],
+    "affectedStatsRoutes": [
+      "operations",
+      "finance",
+      "finance/profit-loss",
+      "finance/ledger",
+      "finance/trial-balance",
+      "finance/balance-sheet",
+      "reports/marketing"
+    ],
+    "affectedRouteWidths": [
+      390,
+      1440
+    ],
+    "captures": [
+      "1920x1080 desktop viewport",
+      "390x844 mobile viewport; emulated viewport, not physical hardware"
+    ],
+    "states": "Eight permission tuples, native anchor/modifier navigation, clipboard success and denial; existing finance long-value/form/dialog regression suite. No all-state or full E2E claim."
+  },
+  "measurements": [
+    {
+      "file": "after-desktop-metrics.json",
+      "viewport": {
+        "clientWidth": 1910,
+        "dpr": 1,
+        "height": 1080,
+        "width": 1920
+      },
+      "roleCounts": {
+        "agents": 4,
+        "hero": 1,
+        "panels": 5,
+        "stats": 4
+      },
+      "cardSurfaceCount": 14,
+      "pageOverflow": 0,
+      "kpiInset": {
+        "bottomClearance": 16,
+        "headerTextInset": 16,
+        "headerToFirstStat": 12,
+        "leftClearance": 16,
+        "rightClearance": 16
+      },
+      "kpiGap": "16px",
+      "kpiMargin": "0px",
+      "noteOffsetSpread": 0.0,
+      "statRadii": [
+        "12px",
+        "12px",
+        "12px",
+        "12px"
+      ],
+      "aiRadii": [
+        "12px",
+        "12px",
+        "12px",
+        "12px"
+      ]
+    },
+    {
+      "file": "after-mobile-metrics.json",
+      "viewport": {
+        "clientWidth": 380,
+        "dpr": 1,
+        "height": 844,
+        "width": 390
+      },
+      "roleCounts": {
+        "agents": 4,
+        "hero": 1,
+        "panels": 5,
+        "stats": 4
+      },
+      "cardSurfaceCount": 14,
+      "pageOverflow": 0,
+      "kpiInset": {
+        "bottomClearance": 12,
+        "headerTextInset": 12,
+        "headerToFirstStat": 12,
+        "leftClearance": 12,
+        "rightClearance": 12
+      },
+      "kpiGap": "16px",
+      "kpiMargin": "0px",
+      "noteOffsetSpread": 0.0,
+      "statRadii": [
+        "12px",
+        "12px",
+        "12px",
+        "12px"
+      ],
+      "aiRadii": [
+        "12px",
+        "12px",
+        "12px",
+        "12px"
+      ]
+    }
+  ],
+  "negativeProof": {
+    "log": "negative.log",
+    "result": "Expected FAIL before fix: KPI left inset expected12, observed0 at320px; exit1",
+    "excludedAttempts": "negative-discovery-error is NoTestsFound and is not counted as a negative reproduction; earlier catalog/precision/port attempts retained as history, not final proof"
+  },
+  "evidenceRefresh": {
+    "S17Checks": 59,
+    "S17Coverage": 54,
+    "sourceFingerprints": 292,
+    "historicalChecksPreserved": 55,
+    "historicalCoveragePreserved": 50,
+    "prefixEquality": "PASS",
+    "fullVerifyThenClosure": "Final runtime identical to full verify input; final dashboard rerun after preserving original LF test convention; final S17 validation after documentation/receipt closure."
+  },
+  "changedTrackedFiles": [
+    {
+      "file": "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx",
+      "treatment": "EDIT_VERIFY: KPI, hero CTA, finance layout, single order ID and mobile bot status",
+      "sha256": "1af27eae218454c4493deae7576c11377ac20c2811a6a3d92b39f1f4b3e75e1c"
+    },
+    {
+      "file": "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx",
+      "treatment": "EDIT_VERIFY: Stats end boundary, Stat minimum value slot and CopyableCode presentation; defaults preserved",
+      "sha256": "15a5f2ae0d2301d6a33988677cad37dadb3ece57a61263ed959747b8e5c0e8a1"
+    },
+    {
+      "file": "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx",
+      "treatment": "EDIT_VERIFY: compactOutlined card radius owner",
+      "sha256": "5ebcb8583a5acdff07f8fc736e69c0b939dc3f1cb3ec68153c95b16213c971dc"
+    },
+    {
+      "file": "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md",
+      "treatment": "EDIT_VERIFY: current public API catalog and resolved declaration/usage references",
+      "sha256": "4f6bfb0f4bba66de0f258d57b188d5b313d076d754d85e9e9c3b6d4deeb8d35f"
+    },
+    {
+      "file": "BotSalesAI_Frontend/docs/FRONTEND_SPACING_STANDARD.md",
+      "treatment": "EDIT_VERIFY: reconcile existing compact versus comfortable inset; no additional numeric token scale",
+      "sha256": "59bd1e2c95d1af6d147a364c7a6d27601ba8ea11dbcbd66e03cf6b715ced5cc7"
+    },
+    {
+      "file": "BotSalesAI_Frontend/docs/FRONTEND_UI_IMPROVEMENT_PLAN.md",
+      "treatment": "EDIT_VERIFY: sole rollout progress entry and verification limits",
+      "sha256": "0ae79ffda3d42878bec75da1b056828d541a1cf1a47c53797c239f2a7690546a"
+    },
+    {
+      "file": "BotSalesAI_Frontend/evidence/REPORT.md",
+      "treatment": "EDIT_VERIFY: current evidence pointer; historical results retained",
+      "sha256": "76a92141c542d18e489f9c6e7cacf434b02a62f96cb5c9fa491b37a731377be0"
+    },
+    {
+      "file": "BotSalesAI_Frontend/evidence/boundaries.json",
+      "treatment": "GENERATE_VERIFY: owning boundary checker reports one additional canonical token import, 725 to726",
+      "sha256": "8043059c3e591aa09cca2f668c97d67d8c4df4b609c37b0b40bdbace82e490f6"
+    },
+    {
+      "file": "BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json",
+      "treatment": "GENERATE_VERIFY: refresh-s17.mjs verifies real exits/logs/source hashes and preserves historical prefixes",
+      "sha256": "5997987bf410b968f66d1053d1dae9304fabaf429a7e5d68d926274a71b6b001"
+    },
+    {
+      "file": "BotSalesAI_Frontend/scripts/check-ui-composition.mjs",
+      "treatment": "TOOLING_VERIFY: finite Stats.afterGap allowlist",
+      "sha256": "88ebc4ece7676bb4cd656abdfca6ca102fa13dd9cfcc8348f0ee69dda8cde08f"
+    },
+    {
+      "file": "BotSalesAI_Frontend/tests/ui-composition-checker.test.mjs",
+      "treatment": "TOOLING_VERIFY: positive section/none and negative unknown-value fixture",
+      "sha256": "28d59e065c48216d5e04b7c8441d11445d706b49ee64bc61c5e81c4eb2126eb6"
+    },
+    {
+      "file": "BotSalesAI_Frontend/tests/ui-dashboard-layout.spec.ts",
+      "treatment": "TOOLING_VERIFY: negative reproduction and final geometry/copy/affected-route regression",
+      "sha256": "96aee958380079902257c39042c28e9a8afc4aa10da8c4ac62c51b3c6af174fb"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "CONTRACT.md",
+      "sha256": "8c274d6d9f185fea2a44cb8b06927fee09b91066a89ee3594d0fd1c8247d0668",
+      "bytes": 3065
+    },
+    {
+      "file": "baseline.json",
+      "sha256": "a2e9e33754b1d8c9276b01cca66ab09a4cbd1789dd2b8b745d00a03ebeb61fb4",
+      "bytes": 2296
+    },
+    {
+      "file": "before-kpi-desktop.png",
+      "sha256": "a2413d90dd2070d2530301de7314749eedf2d8b44226be1b82b62b8f5cf5253b",
+      "bytes": 18633
+    },
+    {
+      "file": "before-mobile.png",
+      "sha256": "cb1827bee77349fe3eb028c3f80d62264776c84241addf0cf5acb618b5e983ec",
+      "bytes": 138242
+    },
+    {
+      "file": "after-desktop.png",
+      "sha256": "44b3b803bcf184ac9f1f2c2ccbd6edfdcee65fb788d9cdfd124d83802750c9c1",
+      "bytes": 220192
+    },
+    {
+      "file": "after-mobile.png",
+      "sha256": "7385dedd9063824742fe587d4143aa67ae53827862091d99a64d91495f335e72",
+      "bytes": 135180
+    },
+    {
+      "file": "after-desktop-metrics.json",
+      "sha256": "c6c80e37ca25158aac29446a6ac995667568de48d9dfff2553a5ecd012ab1528",
+      "bytes": 25182
+    },
+    {
+      "file": "after-mobile-metrics.json",
+      "sha256": "7a6a10227a0d45aa783344c19969a2c84526a066970da239e3843572175db9bf",
+      "bytes": 24974
+    },
+    {
+      "file": "negative.log",
+      "sha256": "199d891166fd76bd7c7335736523d938b33e19a1666edf857737624929b5d4a5",
+      "bytes": 3076
+    },
+    {
+      "file": "refresh-s17.mjs",
+      "sha256": "cbd340961e9926c6d467ec4faf24f3ca4d9afd35e8dcf2152c753e7b509d9c18",
+      "bytes": 5713
+    }
+  ],
+  "limits": [
+    "Native browser200% zoom and text-only resizing NOT_RUN; viewport emulation is not equivalent.",
+    "Screen-reader speech, physical mobile, real backend/provider/production, hosted CI/full E2E and human acceptance are NOT_RUN or not claimed.",
+    "Default local demo uses in-memory MSW; data reset on reload; no real messages or orders."
+  ],
+  "hygiene": "Original LF/CRLF conventions preserved for source edits. Timestamp-only source/domain reports archived outside checkout and restored only after semantic comparison and byte guard; boundary count726 is a real generated change and retained."
+}

@@ -2,6 +2,7 @@ import { openDemoControls } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { assertEmptyTable } from '../session/assert-empty-table';
 
 type Route = { id: string; path: string; readPermission: string | null; readOperations: string[]; actions: Array<{ label: string; permission: string | null; operationId: string }> };
 type RouteManifest = { routes: Route[] };
@@ -32,12 +33,14 @@ function canRead(route: Route, role: string) {
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
     await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
-    await page.getByRole('option', { name: value, exact: true }).click();
+    await page.getByRole('option', { name: value, exact: true }).click({ timeout: 10_000 });
 }
 
 async function chooseRole(page: import('@playwright/test').Page, role: string) {
     if (role === 'owner') return;
     await chooseMockOption(page, 'Vai trò mô phỏng', role);
+    await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText(role);
 }
 
 async function setRouteReadDelays(page: import('@playwright/test').Page, operations: string[], delayMs: number | null) {
@@ -145,9 +148,7 @@ test.describe('route read states render under every role allowed by the canonica
                         const emptyCopy = route.id === 'R05' ? 'Chưa có hội thoại phù hợp.' : route.id === 'R06' ? 'Chưa có tin nhắn.' : 'Cửa hàng chưa có danh mục.';
                         await expect(main.getByRole('status').filter({ hasText: emptyCopy }), `${route.id} should announce the empty lookup for ${role}`).toBeVisible();
                     } else {
-                        const emptyCell = main.locator('tbody td[colspan]').first();
-                        await expect(emptyCell, `${route.id} should announce an empty table for ${role}`).toBeVisible({ timeout: 10_000 });
-                        await expect(emptyCell.getByRole('status')).toBeVisible();
+                        await assertEmptyTable(main, `${route.id} should announce an empty table for ${role}`);
                     }
                     console.log(`BROWSER=${browser} ROLE_STATE=empty ROLE=${role} ROUTE=${route.id} RESULT=PASS`);
                 }

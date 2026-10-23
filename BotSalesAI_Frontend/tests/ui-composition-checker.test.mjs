@@ -2,6 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { inspectComposition } from '../scripts/check-ui-composition.mjs';
 
+test('Stats exposes only its standalone or nested end boundary', () => {
+    for (const afterGap of ['section', 'none']) {
+        const result = inspectComposition(`import { Stats } from '../../shared/ui/components'; const UI=()=> <Stats afterGap="${afterGap}"/>;`);
+        assert.deepEqual(result.issues, []);
+    }
+    const invalid = inspectComposition(`import { Stats } from '../../shared/ui/components'; const UI=()=> <Stats afterGap="huge"/>;`);
+    assert.ok(invalid.issues.some(issue => issue.rule === 'composition.value-unknown'));
+});
+
 test('accepts semantic composition, closed geometry and business-specific MUI primitives', () => {
     const result = inspectComposition(`import { FormFields, ActionGroup, SectionGrid } from '../../shared/ui/composition'; import { TextField, Box } from '@mui/material'; const UI=()=> <><FormFields component="form" noValidate><TextField label="Name"/></FormFields><ActionGroup beforeGap="form"/><SectionGrid columns={{xs:'1fr',lg:'2fr 1fr'}} geometry={{minWidth:0}}/><Box width={240}/></>;`);
     assert.deepEqual(result.issues, []);

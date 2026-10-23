@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { openDemoControls } from '../session/demo-controls';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { assertEmptyTable } from '../session/assert-empty-table';
 
 type Route = { id: string; path: string; readPermission: string | null; readOperations: string[]; actions: Array<{ label: string; permission: string | null; operationId: string }> };
 type Operation = { responseSchema?: string };
@@ -51,9 +52,7 @@ async function assertEmptyRoute(page: import('@playwright/test').Page, route: Ro
         const emptyCopy = route.id === 'R05' ? 'Chưa có hội thoại phù hợp.' : route.id === 'R06' ? 'Chưa có tin nhắn.' : 'Cửa hàng chưa có danh mục.';
         await expect(main.getByRole('status').filter({ hasText: emptyCopy })).toBeVisible();
     } else {
-        const emptyCell = main.locator('tbody td[colspan]').first();
-        await expect(emptyCell, `${route.id} should announce an empty table for ${role}`).toBeVisible({ timeout: 10_000 });
-        await expect(emptyCell.getByRole('status')).toBeVisible();
+        await assertEmptyTable(main, `${route.id} should announce an empty table for ${role}`);
     }
 }
 

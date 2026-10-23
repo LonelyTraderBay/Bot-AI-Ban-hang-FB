@@ -2248,6 +2248,11 @@ Component nhận children vẫn phải kiểm nội dung được truyền; sour
 
 <a id="ui-rollout-status"></a>
 
+**UI61 — 20/10/2026:** VERIFIED_SCOPED; DELIVERED_WITH_EVIDENCE_LIMITS. UI-A01–04/P1 và UI-A05–06/P2 đã sửa tại shared/module owner, giữ source Tổng quan. 61 route desktop/mobile, 26 ca mới +40 hồi quy Chromium/Firefox PASS; full verify exit 0/256 Vitest. Native zoom/text-only resize, screen reader, mobile vật lý NOT_RUN; owner acceptance PENDING, cảnh báo lifecycle flushSync cũ chưa gộp vào scope card/spacing. [Contract](../evidence/ui61-consistency-20261020/CONTRACT.md); [kết quả/log/hash và giới hạn](../evidence/ui61-consistency-20261020/RESULT.md). Không stage/commit/push.
+
+**Tổng quan — 19/10/2026, OVERVIEW-01:** VERIFIED_SCOPED; bàn giao DELIVERED_WITH_EVIDENCE_LIMITS. Đã sửa Panel/Stats inset, metric slot, compact card radius, CTA, copy ID, bố trí tài chính và status mobile. Source/type/build và full verify exit 0 (252 Vitest), 14 Dashboard +26 shared regression Chromium/Firefox PASS; rendered viewport 320/390/768/1280/1920. Native zoom/text-only resize, screen reader và mobile vật lý NOT_RUN; owner acceptance PENDING. [Contract/baseline](../evidence/overview-consistency-20261019/CONTRACT.md); [kết quả, hash và giới hạn](../evidence/overview-consistency-20261019/RESULT.json).
+
+
 ### 16.6. Kế hoạch triển khai chi tiết, dependency và tiến độ
 
 **CURRENT — Đồng bộ UI theo audit 16/10/2026, cập nhật trạng thái theo bằng chứng ngày 18/10/2026.** Người dùng yêu cầu kế hoạch chi tiết, theo dõi thực tế, mỗi việc có kiểm chứng và commit/push riêng bằng tiếng Việt. [Bằng chứng gốc đã lưu](../evidence/frontend-ui-consistency-20261016/REPORT.md); [phiếu việc và phạm vi kiểm chứng](#ui-consistency-20261016). Đây là đợt khắc phục/kiểm chứng trong S11–S12/S14–S20, không tạo ledger hoặc mẫu số FE mới. Bảng dưới đây phản ánh đúng source, SHA, remote và Actions đã quan sát; local PASS không thay thế hosted CI.

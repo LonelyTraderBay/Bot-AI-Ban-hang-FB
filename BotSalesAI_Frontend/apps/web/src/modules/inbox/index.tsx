@@ -105,13 +105,14 @@ function ConversationPanel({ conversationId }: {
     const [correction, setCorrection] = useState('');
     const [rating, setRating] = useState<'positive' | 'negative'>('negative');
     const messageList = useRef<HTMLDivElement>(null);
+    const conversationReady = Boolean(c.data);
 
     useEffect(() => {
         const list = messageList.current;
         if (!messageCursor && list && list.scrollHeight > list.clientHeight) {
             list.scrollTo({ top: list.scrollHeight, behavior: 'auto' });
         }
-    }, [messages.data, messageCursor]);
+    }, [messages.data, messageCursor, conversationReady]);
 
     const inboxHref = () => {
         const next = new URLSearchParams(params);

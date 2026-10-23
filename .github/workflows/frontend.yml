@@ -1,6 +1,7 @@
 name: frontend
 on:
   push:
+    branches: [main]
   pull_request:
 permissions:
   contents: read
@@ -45,9 +46,19 @@ jobs:
         include:
           - browser: chromium
             install_browser: chrome
-            shard_id: all
-            shard_args: ''
+            shard_id: 1-of-3
+            shard_args: '--shard=1/3'
             verify_built_demo: true
+          - browser: chromium
+            install_browser: chrome
+            shard_id: 2-of-3
+            shard_args: '--shard=2/3'
+            verify_built_demo: false
+          - browser: chromium
+            install_browser: chrome
+            shard_id: 3-of-3
+            shard_args: '--shard=3/3'
+            verify_built_demo: false
           - browser: firefox
             install_browser: firefox
             shard_id: 1-of-3
@@ -111,9 +122,30 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+  chromium-gate:
+    # Preserve the protected context while checking every browser matrix child.
+    name: e2e (chromium all)
+    needs: [verify, e2e]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Require every source and browser shard to succeed
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: node .github/scripts/require-success.mjs chromium
+
   success-gate:
     name: gate frontend (success only)
-    needs: [verify, e2e]
+    needs: [verify, e2e, chromium-gate]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5

@@ -24,6 +24,7 @@ export const visualSx = {
         },
     },
     radius: {
+        card: tokens.radius.card / tokens.radius.control,
         control: tokens.radius.control / tokens.radius.control,
         dialog: tokens.radius.dialog / tokens.radius.control,
         bubble: tokens.radius.bubble / tokens.radius.control,

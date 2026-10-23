@@ -315,8 +315,8 @@ function PurchaseDelegationsPanel() {
 
     if (!canRead) return null;
     return <Panel title="Ủy quyền gửi đơn mua" subtitle="Chỉ owner cấp quyền; mỗi ủy quyền giới hạn theo người phụ trách, nhà cung cấp, kho, báo giá, ngân sách, hạn mức và thời hạn.">
-        <Alert severity="info" sx={layoutSx.notice.afterGap}>Đây là worker MSW local xác định. Không gọi AI, nhà cung cấp hoặc thanh toán; trạng thái “đã gửi” chỉ là kết quả mô phỏng.</Alert>
-        {canManage && <ActionGroup direction="row" beforeGap="form"><MutationButton permission="procurement.delegation.manage" onClick={openCreate}>Tạo ủy quyền có giới hạn</MutationButton></ActionGroup>}
+        <Box sx={layoutSx.surface.bodyInsetAfterHeader}><SurfaceContent><Alert severity="info">Đây là worker MSW local xác định. Không gọi AI, nhà cung cấp hoặc thanh toán; trạng thái “đã gửi” chỉ là kết quả mô phỏng.</Alert>
+        {canManage && <ActionGroup direction="row"><MutationButton permission="procurement.delegation.manage" onClick={openCreate}>Tạo ủy quyền có giới hạn</MutationButton></ActionGroup>}</SurfaceContent></Box>
         <QueryState query={grants} pendingProfile="section">{grants.data && <DataTable label="Ủy quyền gửi đơn mua" rows={grants.data.data} rowKey={grant => grant.id} columns={[
             { key: 'scope', label: 'Phạm vi', render: grant => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{grantLabel(grant)}</Typography><Typography variant="caption">{grant.offerSnapshots.length} báo giá · tối đa {grant.maxPerOrder.amount} {grant.maxPerOrder.currency} / đơn</Typography><Typography variant="caption">Ngân sách · mã chính sách {grant.budgetPolicyId} · {grant.budgetPeriod} · đến {dateTime(grant.expiresAt, shop.timezone)}</Typography></Stack> },
             { key: 'state', label: 'Trạng thái', render: grant => <Status value={Date.parse(grant.expiresAt) <= Date.now() && grant.status === 'active' ? 'expired' : grant.status}/> },
@@ -374,7 +374,7 @@ export function DigestsPage() {
             <Panel title="Bản tin điều hành" bodyMode="inset">
                 <QueryState query={list}>
                     <SurfaceContent >
-                        {list.data?.data.map(digest => <Box key={digest.id} sx={[layoutSx.detail.relatedItemInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.dialog }]}>
+                        {list.data?.data.map(digest => <Box key={digest.id} sx={[layoutSx.detail.relatedItemInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.card }]}>
                             <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}><Stack><Typography variant="subtitle2">{dateTime(digest.periodStart, shop.timezone)} → {dateTime(digest.periodEnd, shop.timezone)}</Typography><Typography variant="caption" color="text.secondary">{digest.id} · phiên bản {digest.version}</Typography></Stack><Status value={digest.status} /></Stack>
                             <Typography sx={[layoutSx.surface.sectionBefore, { whiteSpace: 'pre-wrap' }]}>{digest.text}</Typography>
                             <DetailLine label="Thời điểm tạo / cập nhật">{dateTime(digest.createdAt, shop.timezone)} / {dateTime(digest.updatedAt, shop.timezone)}</DetailLine>
