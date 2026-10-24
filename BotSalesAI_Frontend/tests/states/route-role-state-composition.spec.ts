@@ -3,15 +3,17 @@ import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
 import { assertEmptyTable } from '../session/assert-empty-table';
+import { holdRouteReads } from '../session/read-barrier';
+import { API_BASE_PATH } from '../../packages/contracts/src/generated';
 
 // Every role test uses a fresh page fixture; no browser/mock state is shared.
 // This is the only large file partitioned at test level by the CI planner.
 test.describe.configure({ mode: 'parallel' });
 
-type Route = { id: string; path: string; readPermission: string | null; readOperations: string[]; actions: Array<{ label: string; permission: string | null; operationId: string }> };
+type Route = { id: string; path: string; title: string; readPermission: string | null; readOperations: string[]; actions: Array<{ label: string; permission: string | null; operationId: string }> };
 type RouteManifest = { routes: Route[] };
 type PermissionCatalog = { rolePresets: Record<string, string[]> };
-type Operation = { responseSchema?: string };
+type Operation = { responseSchema?: string; path: string };
 const routeManifest = JSON.parse(readFileSync(new URL('../../../botsales-kit/contracts/route-manifest.json', import.meta.url), 'utf8')) as RouteManifest;
 const permissionCatalog = JSON.parse(readFileSync(new URL('../../../botsales-kit/contracts/permission-catalog.json', import.meta.url), 'utf8')) as PermissionCatalog;
 const operations = JSON.parse(readFileSync(new URL('../../packages/contracts/src/operations.json', import.meta.url), 'utf8')) as Record<string, Operation>;
@@ -19,6 +21,10 @@ const roles = Object.keys(permissionCatalog.rolePresets);
 const privateRoutes = routeManifest.routes.filter(route => route.path.startsWith('/s/'));
 const emptyStateRoutes = privateRoutes.filter(route => route.readOperations.some(operation => operations[operation]?.responseSchema?.endsWith('ListResponse')));
 const routeSpecificErrorRoutes = privateRoutes.filter(route => route.id !== 'R33');
+// Prefer a small bootstrap; every selected page must be readable and leave target reads cold.
+const loadingBootstraps = [...privateRoutes.filter(route => ['R39', 'R37'].includes(route.id)).sort((a, b) => b.id.localeCompare(a.id)),
+    ...privateRoutes.filter(route => !['R39', 'R37'].includes(route.id))]
+    .filter(route => !route.path.replace(':shopId', '').includes(':'));
 const detailIds: Record<string, string> = {
     conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001',
     knowledgeId: 'k1', jobId: 'missing-job',
@@ -34,6 +40,12 @@ function canRead(route: Route, role: string) {
     return route.readPermission === null || permissionCatalog.rolePresets[role].includes(route.readPermission);
 }
 
+function operationPattern(operation: string) {
+    const path = operations[operation]?.path;
+    if (!path) throw new Error('Missing canonical operation path: ' + operation);
+    return '^' + (API_BASE_PATH + path).split('/').map(segment => segment.startsWith('{') ? '[^/]+' : segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('/') + '$';
+}
+
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
     await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
@@ -45,13 +57,6 @@ async function chooseRole(page: import('@playwright/test').Page, role: string) {
     await chooseMockOption(page, 'Vai trò mô phỏng', role);
     await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
     await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText(role);
-}
-
-async function setRouteReadDelays(page: import('@playwright/test').Page, operations: string[], delayMs: number | null) {
-    await page.evaluate(async ({ operations, delayMs }) => {
-        const mock = await import('/src/mocks/service.ts');
-        for (const operation of operations) mock.setOperationDelay(operation, delayMs);
-    }, { operations, delayMs });
 }
 
 async function navigateWithinDemo(page: import('@playwright/test').Page, path: string) {
@@ -173,35 +178,52 @@ test.describe('route loading state appears for every readable route with route-o
             const readableRoutes = privateRoutes.filter(route => canRead(route, role));
 
             for (const route of readableRoutes) {
-                // R39 is also the bootstrap page used to reach the demo controls.
-                // Start on the sibling device route so its notification query is cold.
-                const setupPath = route.id === 'R39'
-                    ? '/s/shop-demo/notifications/devices'
-                    : '/s/shop-demo/notifications';
-                await page.goto(new URL(setupPath, demoUrl).toString());
+                const bootstrap = loadingBootstraps.find(candidate => canRead(candidate, role)
+                    && candidate.readOperations.every(operation => !route.readOperations.includes(operation)));
+                if (!bootstrap) throw new Error(`No readable bootstrap with disjoint operations for ${role}/${route.id}`);
+                const bootstrapPattern = new RegExp(operationPattern(bootstrap.readOperations[0]));
+                // Match the existing demo-preview startup proof: await a real API read,
+                // then retain the original DOM assertion deadline. No sleep or retry.
+                const [bootstrapRead] = await Promise.all([
+                    page.waitForResponse(response => response.request().method() === 'GET' && bootstrapPattern.test(new URL(response.url()).pathname), { timeout: 15_000 }),
+                    page.goto(new URL(routePath(bootstrap.path), demoUrl).toString()),
+                ]);
+                expect(bootstrapRead.status(), `Bootstrap ${bootstrap.id} must load before testing ${role}/${route.id}`).toBe(200);
+                expect(await bootstrapRead.finished()).toBeNull();
                 await chooseRole(page, role);
-                await chooseMockOption(page, 'Trạng thái thử', 'Tải chậm');
-                await setRouteReadDelays(page, route.readOperations, 900);
-                await navigateWithinDemo(page, route.path);
-                const main = page.locator('main#main-content');
-                await expect(main, `${route.id} should render for ${role}`).toBeVisible();
-                const loading = main.getByText(/Đang tải/);
-                if (route.id === 'R33') {
-                    await expect(main.getByRole('heading').first(), `${route.id} should render using the shop snapshot already fetched by Shell`).toBeVisible();
-                    await expect(loading, `${route.id} should not start a second route-owned fetch after Shell loaded the shop snapshot`).toHaveCount(0);
-                    await setRouteReadDelays(page, route.readOperations, null);
-                    console.log(`BROWSER=${browser} ROLE_STATE_NA=loading ROLE=${role} ROUTE=${route.id} REASON=shared-shell-snapshot RESULT=PASS`);
-                    continue;
+                // Finish Shell/bootstrap reads before holding route operations such as getShop.
+                await expect(page.locator('main#main-content h1')).toBeVisible();
+                await expect(page.locator('main#main-content').getByText(/Đang tải/)).toHaveCount(0);
+                const patterns = route.readOperations.map(operationPattern);
+                const barrier = await holdRouteReads(page, patterns);
+                try {
+                    await navigateWithinDemo(page, route.path);
+                    await expect.poll(() => page.title(), { message: `${route.id} must become the active route for ${role}` }).toBe(`${route.title} · BotSales AI`);
+                    const main = page.locator('main#main-content');
+                    await expect(main, `${route.id} should render for ${role}`).toBeVisible();
+                    const loading = main.getByText(/Đang tải/);
+                    await expect.poll(barrier.entered, { message: `${route.id} must issue a real pending route read for ${role}` }).toBeGreaterThan(0);
+                    if (route.id === 'R33') {
+                        await expect(main.getByRole('heading').first(), `${route.id} should render using the shop snapshot already fetched by Shell`).toBeVisible();
+                        await expect(loading, `${route.id} should keep the Shell snapshot visible while its background read is pending`).toHaveCount(0);
+                        const refreshed = page.waitForResponse(response => response.request().method() === 'GET' && patterns.some(pattern => new RegExp(pattern).test(new URL(response.url()).pathname)));
+                        await barrier.release();
+                        expect((await refreshed).status()).toBe(200);
+                        console.log(`BROWSER=${browser} ROLE_STATE_NA=loading ROLE=${role} ROUTE=${route.id} REASON=shared-shell-snapshot RESULT=PASS`);
+                        continue;
+                    }
+                    await expect(loading.first(), `${route.id} should expose at least one pending route read for ${role}`).toBeVisible({ timeout: 10_000 });
+                    await barrier.release();
+                    await expect(loading, `${route.id} should leave the pending state after its released response for ${role}`).toHaveCount(0, { timeout: 10_000 });
+                    await expect(main.getByRole('heading').first(), `${route.id} should render page content after loading for ${role}`).toBeVisible();
+                    if (route.id === 'R14') {
+                        await expect(main.getByRole('alert').filter({ hasText: 'Không tìm thấy dữ liệu trong cửa hàng hiện tại.' }), `${route.id} should finish loading with the expected not-found response for the deliberately missing fixture`).toBeVisible();
+                    }
+                    const resolved = route.id === 'R14' ? ' OUTCOME=EXPECTED_404' : '';
+                    console.log(`BROWSER=${browser} ROLE_STATE=loading ROLE=${role} ROUTE=${route.id}${resolved} RESULT=PASS`);
+                } finally {
+                    await barrier.release();
                 }
-                await expect(loading.first(), `${route.id} should expose at least one pending route read for ${role}`).toBeVisible({ timeout: 10_000 });
-                await expect(loading, `${route.id} should leave the pending state after its delayed response for ${role}`).toHaveCount(0, { timeout: 10_000 });
-                await expect(main.getByRole('heading').first(), `${route.id} should render page content after loading for ${role}`).toBeVisible();
-                if (route.id === 'R14') {
-                    await expect(main.getByRole('alert').filter({ hasText: 'Không tìm thấy dữ liệu trong cửa hàng hiện tại.' }), `${route.id} should finish loading with the expected not-found response for the deliberately missing fixture`).toBeVisible();
-                }
-                await setRouteReadDelays(page, route.readOperations, null);
-                const resolved = route.id === 'R14' ? ' OUTCOME=EXPECTED_404' : '';
-                console.log(`BROWSER=${browser} ROLE_STATE=loading ROLE=${role} ROUTE=${route.id}${resolved} RESULT=PASS`);
             }
             expect(pageErrors).toEqual([]);
         });

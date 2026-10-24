@@ -9,7 +9,7 @@ import { ownedLabelGeometry } from './design/owned-label-geometry.mjs';
 const impact = toolbarImpact(path.resolve('.'));
 let demoUrl = '';
 let closeDemo: (() => Promise<void>) | undefined;
-test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolationKey: 'toolbar-regression' }); demoUrl = server.url; closeDemo = server.close; });
+test.beforeAll(async () => { const server = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'toolbar-regression' }); demoUrl = server.url; closeDemo = server.close; });
 test.afterAll(async () => closeDemo?.());
 
 async function ready(page: Page, route: string, readPath?: string) {

@@ -9,7 +9,7 @@ let demoUrl = '';
 let closeDemo: (() => Promise<void>) | undefined;
 
 test.beforeAll(async () => {
-    const server = await startDemoServer({ cacheIsolationKey: 's12-query-state-profile-layout' });
+    const server = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 's12-query-state-profile-layout' });
     demoUrl = server.url;
     closeDemo = server.close;
 });

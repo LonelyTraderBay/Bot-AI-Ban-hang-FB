@@ -3,7 +3,7 @@ import type {Page} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {startDemoServer} from './session/demo-server.mjs';
 let url='',close:(()=>Promise<void>)|undefined;
-test.beforeAll(async()=>{const server=await startDemoServer({cacheIsolationKey:'finance-management-regression'});url=server.url;close=server.close;});
+test.beforeAll(async()=>{const server=await startDemoServer({ runtime: 'dev',cacheIsolationKey:'finance-management-regression'});url=server.url;close=server.close;});
 test.afterAll(async()=>close?.());
 test.beforeEach(({page})=>page.setDefaultTimeout(15000));
 async function choose(page:Page,name:string,value:string){await page.getByRole('combobox',{name,exact:true}).click();await page.getByRole('option',{name:value,exact:true}).click();await expect(page.getByRole('listbox')).toBeHidden();}

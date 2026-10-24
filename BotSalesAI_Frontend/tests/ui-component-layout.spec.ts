@@ -7,7 +7,7 @@ import { ownedLabelGeometry } from './design/owned-label-geometry.mjs';
 
 let url = '';
 let close: (() => Promise<void>) | undefined;
-test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolationKey: 'component-layout' }); url = server.url; close = server.close; });
+test.beforeAll(async () => { const server = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'component-layout' }); url = server.url; close = server.close; });
 test.afterAll(async () => close?.());
 test.beforeEach(async ({ page }) => { page.setDefaultTimeout(15000); page.on('dialog', dialog => { void dialog.accept(); }); });
 async function ready(page: Page, route: string) {

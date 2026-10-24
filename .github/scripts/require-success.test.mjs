@@ -103,7 +103,7 @@ test('the Chromium aggregate tolerates only its named downstream gate and still 
 });
 
 test('both workflows wire always-running gates to every producer and keep read-only permissions', () => {
-    for (const [name, dependencies] of [['frontend', '[verify, e2e, chromium-gate]'], ['repository-hygiene', '[check]']]) {
+    for (const [name, dependencies] of [['frontend', '[verify, build-artifacts, e2e, chromium-gate]'], ['repository-hygiene', '[check]']]) {
         const workflow = readFileSync(new URL(`../workflows/${name}.yml`, import.meta.url), 'utf8');
         const gate = workflow.match(/^  success-gate:[\s\S]*$/m)?.[0];
         assert.ok(gate, name);
@@ -122,20 +122,27 @@ test('both workflows wire always-running gates to every producer and keep read-o
     const aggregate = frontend.match(/^  chromium-gate:[\s\S]*?(?=^  success-gate:)/m)?.[0];
     assert.ok(aggregate);
     assert.match(aggregate, /name: e2e \(chromium all\)/);
-    assert.match(aggregate, /needs: \[verify, e2e\]/);
+    assert.match(aggregate, /needs: \[verify, build-artifacts, e2e\]/);
     assert.match(aggregate, /if: \$\{\{ always\(\) \}\}/);
     assert.match(aggregate, /actions: read/);
     assert.match(aggregate, /node .github\/scripts\/require-success\.mjs chromium/);
     assert.match(aggregate, /NEEDS_JSON: \$\{\{ toJSON\(needs\) \}\}/);
     const producers = frontend.split(/^  chromium-gate:/m)[0];
-    const verify = producers.split(/^  e2e:/m)[0];
+    const verify = producers.split(/^  build-artifacts:/m)[0];
+    const build = producers.match(/^  build-artifacts:[\s\S]*?(?=^  e2e:)/m)?.[0];
     const browserJobs = producers.split(/^  e2e:/m)[1];
     assert.match(verify, /run: npm run verify/);
-    assert.match(verify, /run: npm run build:demo/);
-    assert.match(verify, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
+    assert.doesNotMatch(verify, /build:demo|upload-artifact/);
+    assert.ok(build);
+    assert.doesNotMatch(build, /needs:/, 'Artifact preparation runs independently of full verification');
+    assert.match(build, /run: npm run build\r?\n/);
+    assert.match(build, /run: npm run build:demo/);
+    assert.match(build, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
+    assert.match(browserJobs, /needs: build-artifacts/);
     assert.match(browserJobs, /actions\/download-artifact@[a-f0-9]{40}/);
     assert.match(browserJobs, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
     assert.match(browserJobs, /BOTSALES_E2E_WORKERS: '2'/);
+    assert.match(browserJobs, /BOTSALES_E2E_RUNTIME: preview/);
     assert.match(browserJobs, /run: node scripts\/run-ci-e2e.mjs \$\{\{ matrix.browser \}\} \$\{\{ matrix.partition \}\}/);
     assert.doesNotMatch(browserJobs, /run: npm run (?:build|test:e2e)/, 'CI consumes the verified build once');
     assert.equal((browserJobs.match(/partition: '[1-3]\/3'/g) ?? []).length, 6);

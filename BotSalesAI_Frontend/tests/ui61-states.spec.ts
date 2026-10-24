@@ -4,7 +4,7 @@ import { startDemoServer } from './session/demo-server.mjs';
 import path from 'node:path';
 
 let url = '', close: (() => Promise<void>) | undefined;
-test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolationKey: 'ui61-positive-states' }); url = server.url; close = server.close; });
+test.beforeAll(async () => { const server = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'ui61-positive-states' }); url = server.url; close = server.close; });
 test.afterAll(async () => close?.());
 async function ready(page: Page, path: string) {
     await page.goto(url + path); await expect(page.locator('main h1')).toBeVisible();

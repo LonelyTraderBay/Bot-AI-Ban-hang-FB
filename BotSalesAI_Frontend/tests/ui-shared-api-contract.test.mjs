@@ -300,7 +300,8 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(workflow, /^  push:\r?\n    branches: \[main\]/m);
     assert.match(workflow, /^  pull_request:\s*$/m);
     assert.doesNotMatch(workflow, /^\s+paths(?:-ignore)?:/m, 'Every change must run the required gates');
-    const verifyJob = workflow.match(/^  verify:[\s\S]*?(?=^  e2e:)/m)?.[0];
+    const verifyJob = workflow.match(/^  verify:[\s\S]*?(?=^  build-artifacts:)/m)?.[0];
+    const buildJob = workflow.match(/^  build-artifacts:[\s\S]*?(?=^  e2e:)/m)?.[0];
     const e2eJob = workflow.match(/^  e2e:[\s\S]*?(?=^  chromium-gate:)/m)?.[0];
     assert.ok(verifyJob, 'The shared source/build/evidence job must remain separate from browser shards');
     assert.ok(e2eJob, 'Browser tests must run in their own dependent job');
@@ -308,7 +309,11 @@ test('required UI evidence and regression gates remain wired to root verify and 
     const verifyStep = verifyJob.indexOf('npm run verify');
     assert.ok(verifyBrowserInstall >= 0 && verifyBrowserInstall < verifyStep, 'The browser-backed design audit requires Chromium in the verify job');
     assert.match(verifyJob, /npm run verify/);
-    assert.match(e2eJob, /needs: verify/);
+    assert.ok(buildJob);
+    assert.doesNotMatch(buildJob, /needs:/, 'Build preparation must run alongside full verification');
+    assert.match(buildJob, /npm run build:demo/);
+    assert.match(e2eJob, /needs: build-artifacts/);
+    assert.match(e2eJob, /BOTSALES_E2E_RUNTIME: preview/);
     assert.match(e2eJob, /timeout-minutes: 180/, 'Each browser shard must have a bounded hosted-runner timeout');
     assert.match(e2eJob, /fail-fast: false/);
     const browserInstall = e2eJob.indexOf('npx playwright install --with-deps ${{ matrix.install_browser }}');
