@@ -7,7 +7,7 @@ import path from 'node:path';
 import { evidenceRunId } from './evidence-run-id.mjs';
 
 let url='',close:(()=>Promise<void>)|undefined;
-test.beforeAll(async()=>{const server=await startDemoServer({cacheIsolationKey:'master-resource-regression'});url=server.url;close=server.close;});
+test.beforeAll(async()=>{const server=await startDemoServer({ runtime: 'dev',cacheIsolationKey:'master-resource-regression'});url=server.url;close=server.close;});
 test.afterAll(async()=>close?.());
 test.beforeEach(({page})=>page.setDefaultTimeout(15_000));
 async function choose(page:Page,name:string,value:string){await page.getByRole('combobox',{name,exact:true}).click();await page.getByRole('option',{name:value,exact:true}).click();}

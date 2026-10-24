@@ -37,7 +37,11 @@ export function partitionTests(tests, timing, total = 3) {
     }
     // Longest groups first; deterministic tie breaks keep all jobs on the same plan.
     const sorted = [...groups.values()].sort((a, b) => b.seconds - a.seconds || a.key.localeCompare(b.key, 'en'));
-    const partitions = Array.from({ length: total }, () => ({ seconds: 0, groups: [], tests: [] }));
+    const builtDemoSeconds = timing.builtDemoSeconds ?? 0;
+    if (!Number.isFinite(builtDemoSeconds) || builtDemoSeconds < 0) throw new Error('Invalid built-demo timing.');
+    // Lane 1 runs the built-demo suite serially after native E2E. Convert that
+    // observed wall time to the same two-worker duration budget as test sums.
+    const partitions = Array.from({ length: total }, (_, index) => ({ seconds: index === 0 ? builtDemoSeconds * 2 : 0, groups: [], tests: [] }));
     for (const group of sorted) {
         const target = partitions.reduce((best, next) => next.seconds < best.seconds ? next : best);
         target.groups.push(group);

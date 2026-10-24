@@ -4,7 +4,7 @@ import { startDemoServer } from './session/demo-server.mjs';
 
 let origin = '';
 let closeDemo: (() => Promise<void>) | undefined;
-test.beforeAll(async () => { const server = await startDemoServer(); origin = server.url; closeDemo = server.close; });
+test.beforeAll(async () => { const server = await startDemoServer({ runtime: 'dev' }); origin = server.url; closeDemo = server.close; });
 test.afterAll(async () => closeDemo?.());
 
 async function ready(page: Page, route: string, width = 1920) {

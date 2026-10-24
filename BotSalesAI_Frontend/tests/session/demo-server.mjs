@@ -3,6 +3,8 @@ import { randomUUID } from 'node:crypto';
 import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
+import { preview } from 'vite';
 import { createIsolatedViteCacheLifecycle, createViteCacheRunId, isolatedViteCacheDir } from '../../scripts/vite-cache.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -22,16 +24,33 @@ async function freePort() {
 }
 
 export function startDemoServer(options) {
-    // Explicit isolation and live-server tests retain their dedicated process/cache.
+    // Isolation keys get a dedicated server; dev and live retain private process/cache.
     // Borrowers cannot close the global setup's server or remove its cache.
-    const sharedUrl = process.env.BOTSALES_SHARED_DEMO_URL;
+    const runtime = options?.runtime ?? process.env.BOTSALES_E2E_RUNTIME ?? 'dev';
+    if (!['dev', 'preview'].includes(runtime)) throw new Error('Demo runtime must be dev or preview.');
+    const sharedUrl = runtime === 'preview' ? process.env.BOTSALES_SHARED_PREVIEW_URL : process.env.BOTSALES_SHARED_DEMO_URL;
     if (sharedUrl && !options?.cacheIsolationKey) {
         const url = new URL(sharedUrl);
         if (url.hostname !== '127.0.0.1' || url.protocol !== 'http:' || url.origin !== sharedUrl)
             throw new Error('The shared demo server must be a loopback HTTP origin.');
-        return Promise.resolve({ url: sharedUrl, cacheDir: process.env.BOTSALES_SHARED_DEMO_CACHE_DIR, close: async () => {} });
+        return Promise.resolve({ url: sharedUrl, runtime, cacheDir: runtime === 'dev' ? process.env.BOTSALES_SHARED_DEMO_CACHE_DIR : undefined, close: async () => {} });
     }
+    if (runtime === 'preview') return startDemoPreview();
     return startViteServer('demo', options);
+}
+
+/** Serve the exact current-run demo artifact; source/cache tests explicitly request dev. */
+export async function startDemoPreview({ port = 0, strictPort = false } = {}) {
+    if (!existsSync(path.join(app, 'dist-demo/index.html'))) throw new Error('Missing demo build; run npm run build:demo before preview E2E.');
+    const server = await preview({ configFile: path.join(app, 'vite.config.ts'), root: app, mode: 'demo',
+        logLevel: 'error', build: { outDir: 'dist-demo' }, preview: { host: '127.0.0.1', port, strictPort } });
+    const address = server.httpServer.address();
+    if (!address || typeof address === 'string') {
+        await server.close();
+        throw new Error('Demo preview did not expose a local port.');
+    }
+    let closing;
+    return { url: `http://127.0.0.1:${address.port}`, runtime: 'preview', close: () => closing ??= server.close() };
 }
 
 export function startLiveServer(options) {

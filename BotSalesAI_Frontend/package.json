@@ -20,7 +20,7 @@
     "lint": "eslint apps/web/src --max-warnings 0",
     "boundaries": "node scripts/check-boundaries.mjs",
     "test": "vitest run --config apps/web/vitest.config.ts",
-    "test:source": "node scripts/check-source.mjs && node --test tests/source-checker.test.mjs tests/session/demo-server-cache-lifecycle.test.mjs tests/session/playwright-run-isolation.test.mjs tests/ci-partitions.test.mjs",
+    "test:source": "node scripts/check-source.mjs && node --test tests/source-checker.test.mjs tests/session/demo-server-cache-lifecycle.test.mjs tests/session/playwright-run-isolation.test.mjs tests/session/preview-runtime-policy.test.mjs tests/ci-partitions.test.mjs",
     "test:layout": "node --test tests/layout-checker.test.mjs tests/ui-layout-binding-gates.test.mjs && node scripts/check-layout.mjs",
     "test:domain": "node scripts/test-domain.mjs",
     "test:visual-tokens": "node --test tests/visual-token-checker.test.mjs && node scripts/check-visual-tokens.mjs",

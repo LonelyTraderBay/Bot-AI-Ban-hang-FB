@@ -15,7 +15,7 @@ let stopDemoServer: (() => Promise<void>) | undefined;
 let stopLiveServer: (() => Promise<void>) | undefined;
 
 test.beforeAll(async () => {
-    const server = await startDemoServer();
+    const server = await startDemoServer({ runtime: 'dev' });
     demoUrl = server.url;
     stopDemoServer = server.close;
     const liveServer = await startLiveServer();

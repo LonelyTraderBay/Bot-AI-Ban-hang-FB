@@ -11,8 +11,8 @@ test('concurrent demo servers use isolated Vite caches and load the React app', 
 
     try {
         const starts = await Promise.allSettled([
-            startDemoServer({ cacheIsolationKey: 'parallel-a' }),
-            startDemoServer({ cacheIsolationKey: 'parallel-b' }),
+            startDemoServer({ runtime: 'dev', cacheIsolationKey: 'parallel-a' }),
+            startDemoServer({ runtime: 'dev', cacheIsolationKey: 'parallel-b' }),
         ]);
         const startErrors: unknown[] = [];
         for (const result of starts) {

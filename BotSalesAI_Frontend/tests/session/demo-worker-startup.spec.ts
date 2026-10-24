@@ -6,7 +6,7 @@ let demoUrl = '';
 let stopDemoServer: (() => Promise<void>) | undefined;
 
 test.beforeAll(async () => {
-    const server = await startDemoServer();
+    const server = await startDemoServer({ runtime: 'dev' });
     demoUrl = server.url;
     stopDemoServer = server.close;
 });

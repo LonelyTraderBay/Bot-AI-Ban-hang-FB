@@ -38,6 +38,22 @@ test('missing, duplicate, skipped and retried results cannot masquerade as compl
     assert.throws(() => requireExactTests(expected, passed, true), /must pass once/);
 });
 
+test('the observed serial built-demo budget leaves lane 1 less native work without dropping coverage', () => {
+    const tests = ['a', 'b', 'c', 'd', 'e', 'f'].map(id => row(id, id + '.spec.ts'));
+    const measured = { files: Object.fromEntries(tests.map(t => [t.file, 20])), tests: {} };
+    const original = partitionTests(tests, measured);
+    const reserved = partitionTests(tests, { ...measured, builtDemoSeconds: 15 });
+    requireExactTests(tests, reserved.flatMap(p => p.tests));
+    assert.equal(original[0].tests.length, 2);
+    assert.equal(reserved[0].tests.length, 1);
+    assert.ok(Math.max(...reserved.map(p => p.seconds)) - Math.min(...reserved.map(p => p.seconds)) <= 20);
+});
+
+test('invalid built-demo measurements fail closed instead of changing the selected coverage', () => {
+    for (const builtDemoSeconds of [-1, Infinity, NaN, '10', false])
+        assert.throws(() => partitionTests([row('a', 'x')], { files: { x: 1 }, tests: {}, builtDemoSeconds }, 1), /Invalid built-demo timing/);
+});
+
 test('discovery errors, wrong projects, duplicate IDs and empty inventories fail closed', () => {
     for (const report of [{ errors: [{}], suites: [] }, { suites: [] }])
         assert.throws(() => collectedTests(report, 'chromium'));

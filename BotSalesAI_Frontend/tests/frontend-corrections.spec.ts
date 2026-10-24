@@ -4,7 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
 let demoUrl = '';
 let closeDemo: (() => Promise<void>) | undefined;
-test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolationKey: 'frontend-corrections' }); demoUrl = server.url; closeDemo = server.close; });
+test.beforeAll(async () => { const server = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'frontend-corrections' }); demoUrl = server.url; closeDemo = server.close; });
 test.afterAll(async () => closeDemo?.());
 async function visit(page: Page, path: string) { await page.goto(demoUrl + '/s/shop-demo/' + path); await expect(page.locator('main')).toBeVisible(); }
 async function mutate(page: Page, path: string, body: unknown, method = 'POST', version?: number) {
