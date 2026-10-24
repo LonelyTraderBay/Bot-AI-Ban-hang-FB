@@ -79,33 +79,63 @@ jobs:
         include:
           - browser: chromium
             install_browser: chrome
-            shard_id: 1-of-3
-            partition: '1/3'
+            shard_id: 1-of-6
+            partition: '1/6'
             verify_built_demo: true
           - browser: chromium
             install_browser: chrome
-            shard_id: 2-of-3
-            partition: '2/3'
+            shard_id: 2-of-6
+            partition: '2/6'
             verify_built_demo: false
           - browser: chromium
             install_browser: chrome
-            shard_id: 3-of-3
-            partition: '3/3'
+            shard_id: 3-of-6
+            partition: '3/6'
+            verify_built_demo: false
+          - browser: chromium
+            install_browser: chrome
+            shard_id: 4-of-6
+            partition: '4/6'
+            verify_built_demo: false
+          - browser: chromium
+            install_browser: chrome
+            shard_id: 5-of-6
+            partition: '5/6'
+            verify_built_demo: false
+          - browser: chromium
+            install_browser: chrome
+            shard_id: 6-of-6
+            partition: '6/6'
             verify_built_demo: false
           - browser: firefox
             install_browser: firefox
-            shard_id: 1-of-3
-            partition: '1/3'
+            shard_id: 1-of-6
+            partition: '1/6'
             verify_built_demo: true
           - browser: firefox
             install_browser: firefox
-            shard_id: 2-of-3
-            partition: '2/3'
+            shard_id: 2-of-6
+            partition: '2/6'
             verify_built_demo: false
           - browser: firefox
             install_browser: firefox
-            shard_id: 3-of-3
-            partition: '3/3'
+            shard_id: 3-of-6
+            partition: '3/6'
+            verify_built_demo: false
+          - browser: firefox
+            install_browser: firefox
+            shard_id: 4-of-6
+            partition: '4/6'
+            verify_built_demo: false
+          - browser: firefox
+            install_browser: firefox
+            shard_id: 5-of-6
+            partition: '5/6'
+            verify_built_demo: false
+          - browser: firefox
+            install_browser: firefox
+            shard_id: 6-of-6
+            partition: '6/6'
             verify_built_demo: false
     defaults:
       run:
@@ -130,6 +160,18 @@ jobs:
         with:
           name: frontend-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
           path: BotSalesAI_Frontend/apps/web
+      - name: Record and require browser runner capacity
+        run: |
+          node --input-type=module <<'NODE'
+          import os from 'node:os';
+          const requested = process.env.BOTSALES_E2E_WORKERS;
+          const workers = Number(requested);
+          const availableCpus = os.availableParallelism();
+          console.log(JSON.stringify({ kind: 'browser-runner-capacity', availableCpus,
+            totalMemoryBytes: os.totalmem(), workers }));
+          if (!/^[1-4]$/.test(requested ?? '') || workers > availableCpus)
+            throw new Error('Requested browser workers exceed the supported runner capacity.');
+          NODE
       - run: npx playwright install --with-deps ${{ matrix.install_browser }}
       - name: Verify supported Google Chrome version
         if: ${{ matrix.browser == 'chromium' }}

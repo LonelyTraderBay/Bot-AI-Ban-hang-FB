@@ -7,12 +7,13 @@ import { collectedTests, partitionTests, requireExactTests, testList } from './c
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const [project, shard, listOnly] = process.argv.slice(2);
-if (!['chromium', 'firefox'].includes(project) || !/^[1-3]\/3$/.test(shard ?? '')
+if (!['chromium', 'firefox'].includes(project) || !/^[1-6]\/6$/.test(shard ?? '')
     || (listOnly !== undefined && listOnly !== '--list') || process.argv.length > 5)
-    throw new Error('Usage: node scripts/run-ci-e2e.mjs <chromium|firefox> <1/3|2/3|3/3> [--list]');
+    throw new Error('Usage: node scripts/run-ci-e2e.mjs <chromium|firefox> <1/6|2/6|3/6|4/6|5/6|6/6> [--list]');
 const runId = `ci-${project}-${shard[0]}-${randomUUID()}`;
 const output = path.join(root, 'test-results', runId);
 const env = { ...process.env, BOTSALES_PLAYWRIGHT_RUN_ID: runId };
+const workers = Number(env.BOTSALES_E2E_WORKERS ?? '1');
 const cli = path.join(root, 'node_modules/@playwright/test/cli.js');
 function collect(extra = []) {
     const result = spawnSync(process.execPath, [cli, 'test', `--project=${project}`, '--list', '--reporter=json', ...extra],
@@ -22,14 +23,14 @@ function collect(extra = []) {
 }
 const inventory = collect();
 const timings = JSON.parse(fs.readFileSync(new URL('./ci-timings.json', import.meta.url), 'utf8'));
-const partitions = partitionTests(inventory, timings.projects[project]);
+const partitions = partitionTests(inventory, timings.projects[project], 6, workers);
 const selected = partitions[Number(shard[0]) - 1];
 // The list lives outside Playwright's outputDir, which the runner cleans on startup.
 fs.mkdirSync(path.dirname(output), { recursive: true });
 const listPath = output + '.txt';
 fs.writeFileSync(listPath, testList(selected, project));
 requireExactTests(selected.tests, collect(['--test-list', listPath]));
-const plan = { project, shard, inventory: inventory.length, selected: selected.tests.length,
+const plan = { project, shard, workers, inventory: inventory.length, selected: selected.tests.length,
     historicalSeconds: partitions.map(p => Math.round(p.seconds)), ids: selected.tests.map(t => t.id) };
 console.log(JSON.stringify({ ...plan, ids: undefined }));
 fs.writeFileSync(output + '.plan.json', JSON.stringify(plan, null, 2) + '\n');
@@ -42,5 +43,7 @@ if (!listOnly) {
         cwd: root, env: { ...env, PLAYWRIGHT_JSON_OUTPUT_NAME: resultPath }, stdio: 'inherit', windowsHide: true,
     });
     if (result.error || result.status !== 0) process.exit(result.status || 1);
-    requireExactTests(selected.tests, collectedTests(JSON.parse(fs.readFileSync(resultPath, 'utf8')), project), true);
+    const report = JSON.parse(fs.readFileSync(resultPath, 'utf8'));
+    if (report.config.workers !== workers) throw new Error('Executed worker count differs from the CI plan.');
+    requireExactTests(selected.tests, collectedTests(report, project), true);
 }

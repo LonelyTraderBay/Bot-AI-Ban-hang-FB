@@ -1,7 +1,7 @@
 import { openDemoControls } from './session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
-import { startDemoServer, startLiveServer } from './session/demo-server.mjs';
+import { startDemoPreview, startDemoServer, startLiveServer } from './session/demo-server.mjs';
 
 type RouteManifest = { routes: Array<{ id: string; path: string }> };
 const routes = JSON.parse(readFileSync(new URL('../packages/contracts/src/routes.json', import.meta.url), 'utf8')) as RouteManifest;
@@ -88,29 +88,41 @@ test('dirty drafts block in-app navigation and preserve input until the user dec
     await expect(page.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible();
 });
 
-test('all canonical routes render inside the real React demo application', async ({ page }) => {
+test('all canonical routes render inside the real React demo application', async ({ context }) => {
     const errors: string[] = [];
-    page.on('pageerror', error => errors.push(error.message));
-    for (const route of routes.routes) {
-        const path = route.path
-            .replace(':shopId', 'shop-demo')
-            .replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
-        await gotoDemo(page, path);
-        if (route.path.startsWith('/s/')) {
-            const main = page.locator('main#main-content');
-            await expect(main, `${route.id} should mount the shop-scoped page`).toBeVisible();
-            await expect(main.getByRole('heading').first(), `${route.id} should render page content`).toBeVisible();
-            await expect(main.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }), `${route.id} should not fall through to the router error boundary`).toHaveCount(0);
-            await expect(page.getByText('Dữ liệu mô phỏng', { exact: true }), `${route.id} should disclose the synthetic data source`).toBeVisible();
-        } else {
-            const heading = page.getByRole('heading').first();
-            await expect(heading, `${route.id} should render its public page content`).toBeVisible();
-            await expect(page.getByRole('heading', { name: 'Không thể mở màn hình', exact: true })).toHaveCount(0);
-            await expect(page.getByRole('heading', { name: 'Không tìm thấy trang', exact: true })).toHaveCount(0);
+    // The route walk verifies the shipped demo. Source chunk-failure checks below
+    // continue to use their separate live dev server.
+    const built = await startDemoPreview();
+    try {
+        for (const route of routes.routes) {
+            const page = await context.newPage();
+            page.on('pageerror', error => errors.push(`${route.id}: ${error.message}`));
+            try {
+                const path = route.path
+                    .replace(':shopId', 'shop-demo')
+                    .replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
+                await page.goto(new URL(path, built.url).toString());
+                if (route.path.startsWith('/s/')) {
+                    const main = page.locator('main#main-content');
+                    await expect(main, `${route.id} should mount the shop-scoped page`).toBeVisible();
+                    await expect(main.getByRole('heading').first(), `${route.id} should render page content`).toBeVisible();
+                    await expect(main.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }), `${route.id} should not fall through to the router error boundary`).toHaveCount(0);
+                    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true }), `${route.id} should disclose the synthetic data source`).toBeVisible();
+                } else {
+                    const heading = page.getByRole('heading').first();
+                    await expect(heading, `${route.id} should render its public page content`).toBeVisible();
+                    await expect(page.getByRole('heading', { name: 'Không thể mở màn hình', exact: true })).toHaveCount(0);
+                    await expect(page.getByRole('heading', { name: 'Không tìm thấy trang', exact: true })).toHaveCount(0);
+                }
+                await expect(page.getByText('Chưa khởi động được ứng dụng', { exact: true })).toHaveCount(0);
+            } finally {
+                await page.close();
+            }
         }
-        await expect(page.getByText('Chưa khởi động được ứng dụng', { exact: true })).toHaveCount(0);
+        expect(errors).toEqual([]);
+    } finally {
+        await built.close();
     }
-    expect(errors).toEqual([]);
 });
 
 test('switching shops cancels a delayed request and loads only the new shop scope', async ({ page }) => {

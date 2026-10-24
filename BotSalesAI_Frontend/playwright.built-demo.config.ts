@@ -17,6 +17,7 @@ export default defineConfig({
     outputDir: path.join(projectRoot, 'test-results', runId),
     testMatch: '**/built-demo-regression.spec.ts',
     fullyParallel: false,
+    forbidOnly: !!process.env.CI,
     workers: 1,
     timeout: 180_000,
     expect: { timeout: 15_000 },

@@ -98,7 +98,7 @@ test('the Chromium aggregate tolerates only its named downstream gate and still 
     payload.jobs.push({ id: 100, run_id: 123, run_attempt: 2, name: 'gate frontend (success only)', status: 'queued', conclusion: null });
     payload.total_count++;
     requireSuccessfulJobs('chromium', payload, context);
-    payload.jobs.find(job => job.name === 'e2e (chromium 3-of-3)').conclusion = 'failure';
+    payload.jobs.find(job => job.name === 'e2e (chromium 6-of-6)').conclusion = 'failure';
     assert.throws(() => requireSuccessfulJobs('chromium', payload, context), /only completed\/success/);
 });
 
@@ -142,10 +142,12 @@ test('both workflows wire always-running gates to every producer and keep read-o
     assert.match(browserJobs, /actions\/download-artifact@[a-f0-9]{40}/);
     assert.match(browserJobs, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
     assert.match(browserJobs, /BOTSALES_E2E_WORKERS: '2'/);
+    assert.match(browserJobs, /kind: 'browser-runner-capacity'/);
+    assert.match(browserJobs, /workers > availableCpus/);
     assert.match(browserJobs, /BOTSALES_E2E_RUNTIME: preview/);
     assert.match(browserJobs, /run: node scripts\/run-ci-e2e.mjs \$\{\{ matrix.browser \}\} \$\{\{ matrix.partition \}\}/);
     assert.doesNotMatch(browserJobs, /run: npm run (?:build|test:e2e)/, 'CI consumes the verified build once');
-    assert.equal((browserJobs.match(/partition: '[1-3]\/3'/g) ?? []).length, 6);
+    assert.equal((browserJobs.match(/partition: '[1-6]\/6'/g) ?? []).length, 12);
     const hygiene = readFileSync(new URL('../workflows/repository-hygiene.yml', import.meta.url), 'utf8');
     assert.match(hygiene, /node --test .*check-repository-hygiene\.test\.mjs .*require-success\.test\.mjs/);
 });

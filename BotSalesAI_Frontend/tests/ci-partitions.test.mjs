@@ -12,12 +12,17 @@ const timing = { files: { 'slow.spec.ts': 90, 'medium.spec.ts': 60 }, tests: {} 
 test('duration partitions cover every discovered test once, keeping ordinary files together', () => {
     const tests = [row('a', 'slow.spec.ts'), row('b', 'slow.spec.ts'), row('c', 'medium.spec.ts'),
         row('d', 'new.spec.ts'), row('e', 'states/route-role-state-composition.spec.ts'),
-        row('f', 'states/route-role-state-composition.spec.ts')];
+        row('f', 'states/route-role-state-composition.spec.ts'),
+        row('g', 'states/route-role-ready-composition.spec.ts'),
+        row('h', 'states/route-role-ready-composition.spec.ts')];
     const plan = partitionTests(tests, timing);
     requireExactTests(tests, plan.flatMap(p => p.tests));
     assert.equal(plan.flatMap(p => p.tests).length, new Set(plan.flatMap(p => p.tests.map(t => t.id))).size);
     assert.ok(plan.some(p => p.tests.some(t => t.id === 'a') && p.tests.some(t => t.id === 'b')));
     assert.ok(plan.some(p => p.tests.some(t => t.id === 'd')), 'new specs are included without timing metadata');
+    const readyGroups = plan.flatMap(p => p.groups).filter(g => g.tests[0].file === 'states/route-role-ready-composition.spec.ts');
+    assert.equal(readyGroups.length, 2, 'fresh-context ready walks can be selected independently');
+    assert.ok(readyGroups.every(g => g.tests.length === 1));
     const membership = partitions => partitions.map(p => p.tests.map(t => t.id).sort());
     assert.deepEqual(membership(plan), membership(partitionTests(tests.slice().reverse(), timing)),
         'discovery order must not affect partition membership');
@@ -54,6 +59,21 @@ test('invalid built-demo measurements fail closed instead of changing the select
         assert.throws(() => partitionTests([row('a', 'x')], { files: { x: 1 }, tests: {}, builtDemoSeconds }, 1), /Invalid built-demo timing/);
 });
 
+test('four-worker scheduling reserves the serial demo wall time without losing native cases', () => {
+    const tests = Array.from({ length: 12 }, (_, i) => row(String(i), i + '.spec.ts'));
+    const measured = { files: Object.fromEntries(tests.map(t => [t.file, 20])), tests: {}, builtDemoSeconds: 15 };
+    const two = partitionTests(tests, measured, 3, 2);
+    const four = partitionTests(tests, measured, 3, 4);
+    requireExactTests(tests, four.flatMap(p => p.tests));
+    assert.ok(four[0].tests.length < two[0].tests.length, 'the serial demo requires more reserved capacity with four workers');
+    for (const [workers, plan] of [[2, two], [4, four]]) {
+        assert.equal(plan[0].seconds - plan[0].groups.reduce((sum, g) => sum + g.seconds, 0), 15 * workers);
+        assert.ok(plan.every(p => p.tests.length > 0));
+    }
+    for (const workers of [0, 5, -1, 1.5, NaN, Infinity, '4'])
+        assert.throws(() => partitionTests(tests, measured, 3, workers), /Invalid worker count/);
+});
+
 test('discovery errors, wrong projects, duplicate IDs and empty inventories fail closed', () => {
     for (const report of [{ errors: [{}], suites: [] }, { suites: [] }])
         assert.throws(() => collectedTests(report, 'chromium'));
@@ -80,7 +100,7 @@ test('real Playwright selectors cover the current Chrome/Firefox inventories exa
     try {
         for (const project of ['chromium', 'firefox']) {
             const inventory = collect(project);
-            const partitions = partitionTests(inventory, timings.projects[project]);
+            const partitions = partitionTests(inventory, timings.projects[project], 6, 2);
             const executed = [];
             for (const [index, partition] of partitions.entries()) {
                 const list = path.join(output, `${project}-${index}.txt`);

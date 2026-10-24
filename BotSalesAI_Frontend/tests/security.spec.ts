@@ -103,6 +103,9 @@ test('mock uploads require a purpose, enforce its role, and fingerprint file con
     await salesPage.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
     await salesPage.getByRole('option', { name: 'sales', exact: true }).click();
     await expect(salesPage.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('sales');
+    await expect(salesPage.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+    const session = await salesPage.evaluate(async () => (await (await fetch('/api/v2/session')).json()).data);
+    expect(session.memberships.find((membership: { shopId: string }) => membership.shopId === 'shop-demo').roles).toEqual(['sales']);
     const denied = await uploadStatus(salesPage, 'product_import', 'sales-import', 'sku,name,price\nP-1,Sample,100');
     expect(denied.status).toBe(403);
   } finally {

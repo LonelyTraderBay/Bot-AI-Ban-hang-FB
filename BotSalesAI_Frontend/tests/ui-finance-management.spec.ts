@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import type {Page} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import {startDemoServer} from './session/demo-server.mjs';
+import {startDemoPreview,startDemoServer} from './session/demo-server.mjs';
 let url='',close:(()=>Promise<void>)|undefined;
 test.beforeAll(async()=>{const server=await startDemoServer({ runtime: 'dev',cacheIsolationKey:'finance-management-regression'});url=server.url;close=server.close;});
 test.afterAll(async()=>close?.());
@@ -34,7 +34,12 @@ test('C06 finance entry validation and refetch conflict keep the saved baseline 
 });
 test('C06 all new financial routes and dialog use keyboard/axe and reflow at required widths',async({page,browserName},testInfo)=>{
     test.setTimeout(180000);
+    // This rendering/keyboard/axe matrix needs no source-module mock controls.
+    // The other financial tests keep their isolated dev server for those imports.
+    const built=await startDemoPreview(),url=built.url;
+    try {
     const routes=[['opening-balances','Mở sổ kế toán','Hồ sơ mở sổ'],['ledger','Sổ cái','Sổ cái theo chứng từ'],['trial-balance','Cân đối phát sinh','Cân đối phát sinh các tài khoản'],['balance-sheet','Cân đối quản trị','Tài khoản của báo cáo cân đối quản trị']];
     for(const width of [320,390,768,1280,1440]){await page.setViewportSize({width,height:900});for(const [route,title,table] of routes){await page.goto(url+'/s/shop-demo/finance/'+route);await expect(page.getByRole('heading',{name:title,exact:true})).toBeVisible({timeout:15000});await expect(page.getByRole('table',{name:table,exact:true})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth),`${route}@${width}`).toBeLessThanOrEqual(1);expect((await new AxeBuilder({page}).include('main').analyze()).violations).toEqual([]);}
         await page.goto(url+'/s/shop-demo/finance/opening-balances');await page.getByRole('button',{name:'Tạo nháp mở sổ',exact:true}).focus();await page.keyboard.press('Enter');const dialog=page.getByRole('dialog',{name:'Nháp mở sổ mới',exact:true});await expect(dialog).toBeVisible();await expect(dialog.locator('..')).toHaveCSS('opacity','1',{timeout:15_000});expect((await new AxeBuilder({page}).include('[role="dialog"]').analyze()).violations).toEqual([]);await page.screenshot({path:testInfo.outputPath(`C06-opening-${browserName}-${width}.png`)});await page.keyboard.press('Escape');await expect(dialog).not.toBeVisible();}
+    } finally {await built.close();}
 });
