@@ -127,6 +127,18 @@ test('both workflows wire always-running gates to every producer and keep read-o
     assert.match(aggregate, /actions: read/);
     assert.match(aggregate, /node .github\/scripts\/require-success\.mjs chromium/);
     assert.match(aggregate, /NEEDS_JSON: \$\{\{ toJSON\(needs\) \}\}/);
+    const producers = frontend.split(/^  chromium-gate:/m)[0];
+    const verify = producers.split(/^  e2e:/m)[0];
+    const browserJobs = producers.split(/^  e2e:/m)[1];
+    assert.match(verify, /run: npm run verify/);
+    assert.match(verify, /run: npm run build:demo/);
+    assert.match(verify, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
+    assert.match(browserJobs, /actions\/download-artifact@[a-f0-9]{40}/);
+    assert.match(browserJobs, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
+    assert.match(browserJobs, /BOTSALES_E2E_WORKERS: '2'/);
+    assert.match(browserJobs, /run: node scripts\/run-ci-e2e.mjs \$\{\{ matrix.browser \}\} \$\{\{ matrix.partition \}\}/);
+    assert.doesNotMatch(browserJobs, /run: npm run (?:build|test:e2e)/, 'CI consumes the verified build once');
+    assert.equal((browserJobs.match(/partition: '[1-3]\/3'/g) ?? []).length, 6);
     const hygiene = readFileSync(new URL('../workflows/repository-hygiene.yml', import.meta.url), 'utf8');
     assert.match(hygiene, /node --test .*check-repository-hygiene\.test\.mjs .*require-success\.test\.mjs/);
 });

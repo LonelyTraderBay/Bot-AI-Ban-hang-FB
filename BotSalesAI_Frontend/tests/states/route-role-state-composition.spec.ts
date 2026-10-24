@@ -4,6 +4,10 @@ import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
 import { assertEmptyTable } from '../session/assert-empty-table';
 
+// Every role test uses a fresh page fixture; no browser/mock state is shared.
+// This is the only large file partitioned at test level by the CI planner.
+test.describe.configure({ mode: 'parallel' });
+
 type Route = { id: string; path: string; readPermission: string | null; readOperations: string[]; actions: Array<{ label: string; permission: string | null; operationId: string }> };
 type RouteManifest = { routes: Route[] };
 type PermissionCatalog = { rolePresets: Record<string, string[]> };

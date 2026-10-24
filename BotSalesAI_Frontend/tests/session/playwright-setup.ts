@@ -15,6 +15,9 @@ export default async function setup(config:FullConfig) {
     try {
         server=await createServer({configFile:path.join(root,'apps/web/vite.config.ts'),root:path.join(root,'apps/web'),mode:'demo',server:{host:url.hostname,port:Number(url.port),strictPort:true},cacheDir:process.env.BOTSALES_VITE_CACHE_DIR,logLevel:'error'});
         await server.listen();
+        // One optimizer owner per run. Browser pages keep their own MSW state.
+        process.env.BOTSALES_SHARED_DEMO_URL=url.origin;
+        process.env.BOTSALES_SHARED_DEMO_CACHE_DIR=process.env.BOTSALES_VITE_CACHE_DIR;
     } catch(error) {
         try {
             await closeIsolatedViteCacheServer(server,root,'playwright-webserver',runId);
@@ -23,5 +26,9 @@ export default async function setup(config:FullConfig) {
         }
         throw error;
     }
-    return async()=>{await closeIsolatedViteCacheServer(server,root,'playwright-webserver',runId);};
+    return async()=>{
+        delete process.env.BOTSALES_SHARED_DEMO_URL;
+        delete process.env.BOTSALES_SHARED_DEMO_CACHE_DIR;
+        await closeIsolatedViteCacheServer(server,root,'playwright-webserver',runId);
+    };
 }

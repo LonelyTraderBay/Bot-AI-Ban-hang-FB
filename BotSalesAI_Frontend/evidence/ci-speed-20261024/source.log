@@ -1,0 +1,40 @@
+{"startedAt":"2026-10-24T02:01:23.285Z","id":"source","node":"v24.19.0","workers":"1","inputs":{".github/workflows/frontend.yml":"fedf954a9d42c68798a050a8dc7f026cb82d089ea0f91ded40db5da121e5a00e",".github/CI_POLICY.md":"20727f35fbffdb106eb967a31b981c6333527cdbe9a2ae0885fa55a8f1ef35eb",".github/scripts/require-success.test.mjs":"89a9671ebb82090b57a9d5b0073d3835966a5d090b379e368e59c215d78f7f70","BotSalesAI_Frontend/package.json":"26d66af6cf152bc04418e175ba50ef4c18fa5919b3ea08691741fdc8435d5606","BotSalesAI_Frontend/package-lock.json":"8bb4bc96f800c08f60f043df2b65a3c004670ac8833f8930ad54191d9fd61145","BotSalesAI_Frontend/playwright.config.ts":"a1310d4183b03795caa533c6421447041248d6e1dbe74de202174c77ab2b7ac3","BotSalesAI_Frontend/scripts/ci-partitions.mjs":"ab141fd2feb6d34ad427496d6cfb281aa0a30dc16528bfadc74e4cf22144e7d8","BotSalesAI_Frontend/scripts/run-ci-e2e.mjs":"4a038786696a22eeb6486a5576c08de46995fda7aeaab6fb75c0ffc86a56fbbe","BotSalesAI_Frontend/scripts/ci-timings.json":"ae7e3d65f2de7b6c1ffc4e700c156fa46e0874d0abfdd628b578fb0a28310bd1","BotSalesAI_Frontend/tests/ci-partitions.test.mjs":"c449c96973f04effacb0790fc375ae0b0c7be356ef79e767625939aaf15cb2b7","BotSalesAI_Frontend/tests/session/demo-server.mjs":"87b323850acddadd7d39dfdef872bab31c73ec0a4268cd1f099555297019d344","BotSalesAI_Frontend/tests/session/playwright-setup.ts":"03a4fcef7563ec4239f2ebcb7860465e0f9108a4c5e0c50cdc39b6e52b7bc7be","BotSalesAI_Frontend/tests/session/demo-server-reuse.spec.ts":"ec8b019d6b4a6208b29271e37dc5b1172281a41e3e023d5c02a78afa9732ea98","BotSalesAI_Frontend/tests/states/route-role-state-composition.spec.ts":"8ba56f9d988fd6a6a99fa39cc7aae9bac5046c9b36c5ba2322f936c274de943f"},"command":["C:\\Users\\Joker-PC\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe","--test","tests/ci-partitions.test.mjs","tests/session/demo-server-cache-lifecycle.test.mjs","tests/session/playwright-run-isolation.test.mjs"]}
+chromium: 559/559 tests, partitions 175/189/195
+firefox: 559/559 tests, partitions 194/127/238
+✔ duration partitions cover every discovered test once, keeping ordinary files together (6.082ms)
+✔ missing, duplicate, skipped and retried results cannot masquerade as complete coverage (0.3682ms)
+✔ discovery errors, wrong projects, duplicate IDs and empty inventories fail closed (0.2251ms)
+✔ real Playwright selectors cover the current Chrome/Firefox inventories exactly once (10110.5994ms)
+✔ run cache closes once after success and preserves sibling run caches (10.0519ms)
+✔ early nonzero exit cleans only its run cache (5.0361ms)
+✔ signal exit cleans its run cache (3.5519ms)
+✔ spawn failure without a child process cleans the unique run cache (4.1155ms)
+✔ timeout keeps cache while child is alive and later exit triggers cleanup (37.4661ms)
+✔ Playwright API server teardown removes its run cache and preserves sibling cache (5.5196ms)
+✔ Playwright setup failure before server creation removes its run cache (3.2116ms)
+✔ Playwright server close failure preserves its run cache (3.2086ms)
+✔ cache paths reject dot-segment traversal (0.9622ms)
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.built-demo.config.ts:12
+if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(runId)) throw new Error('Invalid built-demo run ID.');
+                                                       ^
+
+Error: Invalid built-demo run ID.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.built-demo.config.ts:12:56
+    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+    at async node:internal/modules/esm/loader:643:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.19.0
+✔ Playwright workers reuse their parent output/cache ID while independent runs remain isolated (729.1698ms)
+✔ built-demo artifacts use a stable private run directory instead of cleaning the parent test-results (727.4762ms)
+✔ built-demo rejects an inherited output ID that could escape the artifact root (237.5279ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10173.8601
+
+COMMAND_EXIT=0
