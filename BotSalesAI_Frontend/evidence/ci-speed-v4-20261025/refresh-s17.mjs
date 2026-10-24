@@ -18,7 +18,8 @@ const ui=prefix+'tests/ui-shared-api-contract.test.mjs';
 const hostedFixtures=['tests/frontend.spec.ts','tests/security.spec.ts','tests/ui-finance-management.spec.ts'].map(p=>prefix+p);
 const code=[...configs,...workflow,...scheduling,...nodeTests,...roles,...hostedFixtures,ui];
 const ownRoot=prefix+'evidence/ci-speed-v4-20261025/';
-const owned=[...code,ownRoot+'REPORT.md',ownRoot+'refresh-s17.mjs'];
+const exportFixture=prefix+'tests/fe021.spec.ts';
+const owned=[...code,exportFixture,ownRoot+'REPORT.md',ownRoot+'refresh-s17.mjs'];
 for(const[name,expected]of Object.entries(evidence.sourceFingerprints))
  if(!owned.includes(name))assert.equal(hash(name),expected,'Unrelated stale fingerprint: '+name);
 
@@ -67,6 +68,9 @@ record('ci-v4-hosted-fixture-synchronization-20261025','smoke-security.log',[...
 record('ci-v4-finance-built-reflow-20261025','finance-preview.log',[...configs,hostedFixtures[2],...runtime.slice(0,2)],
  [/10 passed/,/using 2 workers/],
  'All ten finance management cases pass across Chromium and Firefox with two workers. The complete five-width/four-route keyboard, axe and screenshot matrix uses the built demo; source-module fixture and concurrency tests retain their isolated dev server and original assertions.');
+record('ci-v4-export-control-readiness-20261025','fe021-control.log',[...configs,exportFixture,...runtime.slice(0,2)],
+ [/26 passed/,/using 2 workers/],
+ 'All 26 FE021 cases pass across Chromium and Firefox with two workers. The helper waits for fault application as well as role application; stale export additionally requires actual HTTP 412 before retaining the original alert, date preservation and no-download assertions. Full source/build verification inputs above are unchanged; this fixture has separate current-input browser proof.');
 if(process.argv.includes('--finalize'))
  record('ci-v4-full-verify-20261025','six-full-verify.log',code,
  [/256 passed/,/ui-evidence PASS: S17/,/status=COMPLETE/],

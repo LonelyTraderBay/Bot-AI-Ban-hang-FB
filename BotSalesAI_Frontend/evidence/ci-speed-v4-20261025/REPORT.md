@@ -21,6 +21,7 @@ Loading tạo tab/document mới cho mỗi route và đóng trong finally, giữ
 - Sáu report baseline khớp current discovery561/engine; metadata vẫn ghi đúng3 partition và2worker đã đo. Generator cũng nhận nguồn6 partition/engine có đủ12report. Failed/duplicate/unsupported-worker/native-worker-mismatch/unsupported-partitions/incomplete-six-partitions đều REJECTED, output không đổi.
 - Audit hiện tại0 vulnerabilities tại ngưỡng low.
 - Finance10/10 PASS trên Chromium/Firefox,2workers: đủ4route ở5độ rộng, axe, keyboard, screenshots, đối chiếu/concurrency/source mock controls. Chỉ ma trận render dùng built preview; các test cần import source vẫn dùng dev riêng.
+- Sau lượt PR sáu partition đầu: FE02126/26 PASS trên cả hai engine,2workers. Helper chờ fault áp dụng trước thao tác xuất; stale export yêu cầu HTTP412 thật rồi giữ nguyên alert/ngày nhập/không download. Trace cũ ghi POST202, không có pageerror. Thay đổi này chỉ ở fixture FE021; source/build inputs của full verify ở dưới không đổi, proof browser hiện tại ghi riêng trong fe021-control.log.
 - Full verify cuối: PASS — npm run verify, 256 Vitest và117 domain checks cùng các generate/type/lint/build/layout/token/composition/evidence gate; log six-full-verify.log. Hai lượt local trước (verify.log và hosted-fixes-verify.log) giữ nguyên làm lịch sử; không đại diện cấu hình sáu partition hiện tại.
 - Header log giữ command, source fingerprints, runtime/worker request và environment. Owning refresh kiểm hash/current-input và actual exit0 trước khi cập nhật S17; không sửa hash bằng tay.
 

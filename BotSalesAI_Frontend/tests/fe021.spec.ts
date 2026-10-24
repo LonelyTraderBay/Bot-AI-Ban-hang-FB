@@ -21,9 +21,9 @@ async function chooseOption(page: import('@playwright/test').Page, label: string
     if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
-    if (label === 'Vai trò mô phỏng') {
-        await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
-    }
+    const applied = label === 'Vai trò mô phỏng' ? 'Vai trò mô phỏng đã được áp dụng.'
+        : label === 'Trạng thái thử' ? 'Trạng thái thử đã được áp dụng.' : undefined;
+    if (applied) await expect(page.getByRole('status').filter({ hasText: applied })).toBeVisible();
 }
 
 async function setDemoRole(page: import('@playwright/test').Page, role: 'owner' | 'viewer' | 'accountant') {
@@ -378,7 +378,10 @@ test('FE021 stale export conflict preserves dates and never exposes a download',
     await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
     await page.getByLabel('Từ ngày').fill('2026-09-27');
     await page.getByLabel('Đến ngày').fill('2026-09-28');
+    const conflict = page.waitForResponse(response => response.request().method() === 'POST'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/exports');
     await page.getByRole('button', { name: 'Tạo tệp báo cáo CSV' }).click();
+    expect((await conflict).status()).toBe(412);
     await expect(page.getByRole('alert').filter({ hasText: 'Mô phỏng dữ liệu bị thay đổi bởi người khác' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Tải CSV' })).toHaveCount(0);
     await expect(page.getByLabel('Từ ngày')).toHaveValue('2026-09-27');
