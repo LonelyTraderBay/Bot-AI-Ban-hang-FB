@@ -19,7 +19,8 @@ const hostedFixtures=['tests/frontend.spec.ts','tests/security.spec.ts','tests/u
 const code=[...configs,...workflow,...scheduling,...nodeTests,...roles,...hostedFixtures,ui];
 const ownRoot=prefix+'evidence/ci-speed-v4-20261025/';
 const exportFixture=prefix+'tests/fe021.spec.ts';
-const owned=[...code,exportFixture,ownRoot+'REPORT.md',ownRoot+'refresh-s17.mjs'];
+const componentFixture=prefix+'tests/ui-component-layout.spec.ts';
+const owned=[...code,exportFixture,componentFixture,ownRoot+'REPORT.md',ownRoot+'refresh-s17.mjs'];
 for(const[name,expected]of Object.entries(evidence.sourceFingerprints))
  if(!owned.includes(name))assert.equal(hash(name),expected,'Unrelated stale fingerprint: '+name);
 
@@ -34,7 +35,7 @@ function record(id,log,inputs,patterns,description){
  if(index<0)evidence.coverage.push(coverage);else evidence.coverage[index]=coverage;
  return text;
 }
-record('ci-v4-workers-and-native-selection-20261025','six-source.log',[...configs,...scheduling,...nodeTests],
+record('ci-v4-workers-and-native-selection-20261025','component-source.log',[...configs,...scheduling,...nodeTests,componentFixture],
  [/pass 27/,/fail 0/,/chromium: 561\/561/,/firefox: 561\/561/],
  '27 source/planner/config regressions pass. Local default one, bounded worker overrides and CI forbidOnly/full traces; six two-worker native partitions retain all 561 IDs per engine exactly once.');
 record('ci-v4-required-gates-20261025','six-repository.log',workflow,
@@ -71,6 +72,9 @@ record('ci-v4-finance-built-reflow-20261025','finance-preview.log',[...configs,h
 record('ci-v4-export-control-readiness-20261025','fe021-control.log',[...configs,exportFixture,...runtime.slice(0,2)],
  [/26 passed/,/using 2 workers/],
  'All 26 FE021 cases pass across Chromium and Firefox with two workers. The helper waits for fault application as well as role application; stale export additionally requires actual HTTP 412 before retaining the original alert, date preservation and no-download assertions. Full source/build verification inputs above are unchanged; this fixture has separate current-input browser proof.');
+record('ci-v4-component-layout-runtime-20261025','component-runtime.log',[...configs,componentFixture,prefix+'tests/design/component-layout-fixture.tsx',prefix+'tests/design/owned-label-geometry.mjs',...runtime.slice(0,2)],
+ [/18 passed/,/using 2 workers/],
+ 'All 18 component layout cases pass across Chromium and Firefox with two workers. Five render/form cases use the current demo build; four source-fixture cases retain the isolated dev server and require their canonical list GET 200/finished before unchanged DOM checks. Original IDs, viewport/geometry, draft, lookup, axe and keyboard assertions remain; no timeout/retry increase. Application/build/other full-verification inputs are unchanged.');
 if(process.argv.includes('--finalize'))
  record('ci-v4-full-verify-20261025','six-full-verify.log',code,
  [/256 passed/,/ui-evidence PASS: S17/,/status=COMPLETE/],
