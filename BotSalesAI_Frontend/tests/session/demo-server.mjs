@@ -22,6 +22,15 @@ async function freePort() {
 }
 
 export function startDemoServer(options) {
+    // Explicit isolation and live-server tests retain their dedicated process/cache.
+    // Borrowers cannot close the global setup's server or remove its cache.
+    const sharedUrl = process.env.BOTSALES_SHARED_DEMO_URL;
+    if (sharedUrl && !options?.cacheIsolationKey) {
+        const url = new URL(sharedUrl);
+        if (url.hostname !== '127.0.0.1' || url.protocol !== 'http:' || url.origin !== sharedUrl)
+            throw new Error('The shared demo server must be a loopback HTTP origin.');
+        return Promise.resolve({ url: sharedUrl, cacheDir: process.env.BOTSALES_SHARED_DEMO_CACHE_DIR, close: async () => {} });
+    }
     return startViteServer('demo', options);
 }
 

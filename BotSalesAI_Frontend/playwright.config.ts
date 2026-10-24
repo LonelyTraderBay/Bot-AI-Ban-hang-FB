@@ -9,6 +9,8 @@ const runId = process.env.BOTSALES_PLAYWRIGHT_RUN_ID || `playwright-${process.pi
 const { userAgent: _pinnedChromeUserAgent, ...desktopChrome } = devices['Desktop Chrome'];
 process.env.BOTSALES_PLAYWRIGHT_RUN_ID = runId;
 const cacheDir = isolatedViteCacheDir(projectRoot, 'playwright-webserver', runId);
+const workers = process.env.BOTSALES_E2E_WORKERS ?? '1';
+if (!/^[12]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be 1 or 2.');
 
 // Playwright workers inherit this ID; per-test Vite servers use a separate cache role.
 process.env.BOTSALES_VITE_CACHE_RUN_ID = runId;
@@ -20,7 +22,7 @@ export default defineConfig({
     testIgnore: ['**/built-demo-regression.spec.ts'],
     outputDir: path.join(projectRoot, 'test-results', runId),
     fullyParallel: false,
-    workers: 1,
+    workers: Number(workers),
     timeout: 180_000,
     use: { baseURL: 'http://127.0.0.1:5187', trace: 'retain-on-failure' },
     globalSetup:'./tests/session/playwright-setup.ts',
