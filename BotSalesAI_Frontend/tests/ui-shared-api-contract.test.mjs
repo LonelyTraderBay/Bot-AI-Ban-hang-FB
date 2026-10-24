@@ -324,19 +324,22 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(driver, /'--reporter=line,json', '--max-failures=1'/, 'A failed shard must report promptly while green shards retain every test');
     assert.match(driver, /requireExactTests\(selected\.tests, collect\(/, 'Native test-list selection must match the current discovery plan');
     assert.match(driver, /requireExactTests\(selected\.tests, collectedTests\([\s\S]*project\), true\)/, 'Successful execution must match every planned test and reject skipped/retried results');
-    assert.equal([...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n/g)].length, 3, 'No unsharded Firefox job may bypass the bounded matrix');
-    assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 3, 'Chromium E2E must use three supported Chrome Stable shards');
+    assert.equal([...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n/g)].length, 6, 'No unsharded Firefox job may bypass the bounded matrix');
+    assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 6, 'Chromium E2E must use six supported Chrome Stable shards');
     assert.match(e2eJob, /name: Verify supported Google Chrome version[\s\S]*?major < 154/);
     const firefoxShards = [...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n\s+shard_id: ([\w-]+)\r?\n\s+partition: '(\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
         .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
     assert.deepEqual(firefoxShards, [
-        { id: '1-of-3', args: '1/3', builtDemo: 'true' },
-        { id: '2-of-3', args: '2/3', builtDemo: 'false' },
-        { id: '3-of-3', args: '3/3', builtDemo: 'false' },
-    ], 'The complete Firefox suite must be split across three bounded jobs and run built-demo once');
+        { id: '1-of-6', args: '1/6', builtDemo: 'true' },
+        { id: '2-of-6', args: '2/6', builtDemo: 'false' },
+        { id: '3-of-6', args: '3/6', builtDemo: 'false' },
+        { id: '4-of-6', args: '4/6', builtDemo: 'false' },
+        { id: '5-of-6', args: '5/6', builtDemo: 'false' },
+        { id: '6-of-6', args: '6/6', builtDemo: 'false' },
+    ], 'The complete Firefox suite must be split across six bounded jobs and run built-demo once');
     const chromiumShards = [...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n\s+shard_id: ([\w-]+)\r?\n\s+partition: '(\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
         .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
-    assert.deepEqual(chromiumShards, firefoxShards, 'Both engines must cover the same complete three-shard partition and one built demo');
+    assert.deepEqual(chromiumShards, firefoxShards, 'Both engines must cover the same complete six-shard partition and one built demo');
     assert.match(e2eJob, /if: \$\{\{ matrix\.verify_built_demo \}\}/);
     assert.match(e2eJob, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
     assert.match(e2eJob, /playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}/);
@@ -354,7 +357,7 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(browserConfig, /testMatch: \['\*\*\/\*\.spec\.ts'\]/, 'Browser discovery must not execute node:test unit fixtures');
     assert.match(browserConfig, /const workers = process\.env\.BOTSALES_E2E_WORKERS \?\? '1'/, 'Local runs default to one worker');
     assert.match(browserConfig, /workers: Number\(workers\)/);
-    assert.match(e2eJob, /BOTSALES_E2E_WORKERS: '4'/, 'CI uses the bounded four-worker configuration');
+    assert.match(e2eJob, /BOTSALES_E2E_WORKERS: '2'/, 'CI leaves runner capacity for browser and tracing processes');
     assert.match(e2eJob, /availableCpus = os\.availableParallelism\(\)/, 'Each browser job records actual runner CPU capacity');
     assert.match(e2eJob, /workers > availableCpus/, 'CI must reject oversubscribed browser workers');
     assert.match(browserConfig, /fullyParallel: false/, 'Ordinary files retain existing hook/order semantics');

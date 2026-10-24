@@ -79,39 +79,69 @@ jobs:
         include:
           - browser: chromium
             install_browser: chrome
-            shard_id: 1-of-3
-            partition: '1/3'
+            shard_id: 1-of-6
+            partition: '1/6'
             verify_built_demo: true
           - browser: chromium
             install_browser: chrome
-            shard_id: 2-of-3
-            partition: '2/3'
+            shard_id: 2-of-6
+            partition: '2/6'
             verify_built_demo: false
           - browser: chromium
             install_browser: chrome
-            shard_id: 3-of-3
-            partition: '3/3'
+            shard_id: 3-of-6
+            partition: '3/6'
+            verify_built_demo: false
+          - browser: chromium
+            install_browser: chrome
+            shard_id: 4-of-6
+            partition: '4/6'
+            verify_built_demo: false
+          - browser: chromium
+            install_browser: chrome
+            shard_id: 5-of-6
+            partition: '5/6'
+            verify_built_demo: false
+          - browser: chromium
+            install_browser: chrome
+            shard_id: 6-of-6
+            partition: '6/6'
             verify_built_demo: false
           - browser: firefox
             install_browser: firefox
-            shard_id: 1-of-3
-            partition: '1/3'
+            shard_id: 1-of-6
+            partition: '1/6'
             verify_built_demo: true
           - browser: firefox
             install_browser: firefox
-            shard_id: 2-of-3
-            partition: '2/3'
+            shard_id: 2-of-6
+            partition: '2/6'
             verify_built_demo: false
           - browser: firefox
             install_browser: firefox
-            shard_id: 3-of-3
-            partition: '3/3'
+            shard_id: 3-of-6
+            partition: '3/6'
+            verify_built_demo: false
+          - browser: firefox
+            install_browser: firefox
+            shard_id: 4-of-6
+            partition: '4/6'
+            verify_built_demo: false
+          - browser: firefox
+            install_browser: firefox
+            shard_id: 5-of-6
+            partition: '5/6'
+            verify_built_demo: false
+          - browser: firefox
+            install_browser: firefox
+            shard_id: 6-of-6
+            partition: '6/6'
             verify_built_demo: false
     defaults:
       run:
         working-directory: BotSalesAI_Frontend
     env:
-      BOTSALES_E2E_WORKERS: '4'
+      BOTSALES_E2E_WORKERS: '2'
       BOTSALES_E2E_RUNTIME: preview
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

@@ -2,7 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const browserProducers = ['verify (source and build)', 'build (browser artifacts)',
-    ...['chromium', 'firefox'].flatMap(browser => [1, 2, 3].map(shard => `e2e (${browser} ${shard}-of-3)`))];
+    ...['chromium', 'firefox'].flatMap(browser => [1, 2, 3, 4, 5, 6].map(shard => `e2e (${browser} ${shard}-of-6)`))];
 
 export const profiles = {
     chromium: {
