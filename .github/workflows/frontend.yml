@@ -111,7 +111,7 @@ jobs:
       run:
         working-directory: BotSalesAI_Frontend
     env:
-      BOTSALES_E2E_WORKERS: '2'
+      BOTSALES_E2E_WORKERS: '4'
       BOTSALES_E2E_RUNTIME: preview
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -130,6 +130,18 @@ jobs:
         with:
           name: frontend-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
           path: BotSalesAI_Frontend/apps/web
+      - name: Record and require browser runner capacity
+        run: |
+          node --input-type=module <<'NODE'
+          import os from 'node:os';
+          const requested = process.env.BOTSALES_E2E_WORKERS;
+          const workers = Number(requested);
+          const availableCpus = os.availableParallelism();
+          console.log(JSON.stringify({ kind: 'browser-runner-capacity', availableCpus,
+            totalMemoryBytes: os.totalmem(), workers }));
+          if (!/^[1-4]$/.test(requested ?? '') || workers > availableCpus)
+            throw new Error('Requested browser workers exceed the supported runner capacity.');
+          NODE
       - run: npx playwright install --with-deps ${{ matrix.install_browser }}
       - name: Verify supported Google Chrome version
         if: ${{ matrix.browser == 'chromium' }}

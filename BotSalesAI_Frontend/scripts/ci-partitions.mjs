@@ -1,5 +1,8 @@
 // Timing changes scheduling only. The current Playwright inventory owns coverage.
-const splitFile = 'states/route-role-state-composition.spec.ts';
+export const independentRoleFiles = Object.freeze([
+    'states/route-role-state-composition.spec.ts',
+    'states/route-role-ready-composition.spec.ts',
+]);
 
 export function collectedTests(report, project) {
     if (report.errors?.length || !Array.isArray(report.suites)) throw new Error('Playwright discovery failed.');
@@ -21,17 +24,18 @@ export function collectedTests(report, project) {
     return tests;
 }
 
-export function partitionTests(tests, timing, total = 3) {
+export function partitionTests(tests, timing, total = 3, workers = 2) {
     if (!Number.isInteger(total) || total < 1 || total > tests.length) throw new Error('Invalid partition count.');
+    if (!Number.isInteger(workers) || workers < 1 || workers > 4) throw new Error('Invalid worker count.');
     const groups = new Map();
     for (const test of tests) {
         // Other files retain their existing hook/order semantics.
-        const key = test.file === splitFile ? test.key : test.file;
+        const key = independentRoleFiles.includes(test.file) ? test.key : test.file;
         if (!groups.has(key)) groups.set(key, { key, tests: [], selector: key, seconds: 0 });
         groups.get(key).tests.push(test);
     }
     for (const group of groups.values()) {
-        const measured = group.tests[0].file === splitFile ? timing.tests[group.key] : timing.files[group.key];
+        const measured = independentRoleFiles.includes(group.tests[0].file) ? timing.tests[group.key] : timing.files[group.key];
         group.seconds = measured ?? group.tests.length * 30;
         if (!Number.isFinite(group.seconds) || group.seconds <= 0) throw new Error('Invalid timing: ' + group.key);
     }
@@ -40,8 +44,8 @@ export function partitionTests(tests, timing, total = 3) {
     const builtDemoSeconds = timing.builtDemoSeconds ?? 0;
     if (!Number.isFinite(builtDemoSeconds) || builtDemoSeconds < 0) throw new Error('Invalid built-demo timing.');
     // Lane 1 runs the built-demo suite serially after native E2E. Convert that
-    // observed wall time to the same two-worker duration budget as test sums.
-    const partitions = Array.from({ length: total }, (_, index) => ({ seconds: index === 0 ? builtDemoSeconds * 2 : 0, groups: [], tests: [] }));
+    // observed wall time to a duration budget for the requested worker count.
+    const partitions = Array.from({ length: total }, (_, index) => ({ seconds: index === 0 ? builtDemoSeconds * workers : 0, groups: [], tests: [] }));
     for (const group of sorted) {
         const target = partitions.reduce((best, next) => next.seconds < best.seconds ? next : best);
         target.groups.push(group);

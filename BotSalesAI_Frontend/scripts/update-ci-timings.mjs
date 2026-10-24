@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { collectedTests, requireExactTests } from './ci-partitions.mjs';
+import { collectedTests, independentRoleFiles, requireExactTests } from './ci-partitions.mjs';
 
 // Inputs are six native reports extracted from verified CI artifact ZIPs and a
 // provenance.json with revision/run/attempt, report hashes and serial step times.
@@ -13,11 +13,12 @@ const root = path.resolve(import.meta.dirname, '..');
 const source = JSON.parse(fs.readFileSync(path.join(directory, 'provenance.json'), 'utf8'));
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 assert.match(source.revision, /^[a-f0-9]{40}$/);
-assert.ok(Number.isSafeInteger(source.runId) && source.runId > 0 && Number.isSafeInteger(source.attempt) && source.attempt > 0 && source.workers === 2);
+assert.ok(Number.isSafeInteger(source.runId) && source.runId > 0 && Number.isSafeInteger(source.attempt) && source.attempt > 0
+    && Number.isInteger(source.workers) && source.workers >= 1 && source.workers <= 4);
 assert.equal(source.reports.length, 6);
 const output = { baseline: source.revision,
-    scope: `Native JSON result durations from complete CI run ${source.runId}; two workers and hybrid preview. Summed seconds are scheduling hints, not assertion CPU time or workflow wall time. Lane 1 reserves the observed serial built-demo time.`,
-    source: { runId: source.runId, attempt: source.attempt, workers: 2,
+    scope: `Native JSON result durations from complete CI run ${source.runId}; ${source.workers} workers and hybrid preview. Summed seconds are scheduling hints, not assertion CPU time or workflow wall time. Lane 1 reserves the observed serial built-demo time.`,
+    source: { runId: source.runId, attempt: source.attempt, workers: source.workers,
         reports: source.reports.map(({ project, shard, artifactId, artifactDigest, sha256 }) => ({ project, shard, artifactId, artifactDigest, sha256 })) }, projects: {} };
 const counts = {};
 for (const project of ['chromium', 'firefox']) {
@@ -34,7 +35,7 @@ for (const project of ['chromium', 'firefox']) {
         const bytes = fs.readFileSync(file);
         assert.equal(digest(bytes), row.sha256, 'Native report digest differs from provenance.');
         const report = JSON.parse(bytes);
-        assert.equal(report.config.workers, 2);
+        assert.equal(report.config.workers, source.workers, 'Native worker count differs from provenance.');
         const tests = collectedTests(report, project);
         requireExactTests(tests, tests, true);
         actual.push(...tests);
@@ -42,7 +43,7 @@ for (const project of ['chromium', 'firefox']) {
             const seconds = test.test.results[0].duration / 1000;
             assert.ok(Number.isFinite(seconds) && seconds > 0);
             timing.files[test.file] = (timing.files[test.file] ?? 0) + seconds;
-            if (test.file === 'states/route-role-state-composition.spec.ts') timing.tests[test.key] = seconds;
+            if (independentRoleFiles.includes(test.file)) timing.tests[test.key] = seconds;
         }
     }
     const listed = spawnSync(process.execPath, [path.join(root, 'node_modules/@playwright/test/cli.js'), 'test', `--project=${project}`, '--list', '--reporter=json'],

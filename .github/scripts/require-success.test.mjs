@@ -141,7 +141,9 @@ test('both workflows wire always-running gates to every producer and keep read-o
     assert.match(browserJobs, /needs: build-artifacts/);
     assert.match(browserJobs, /actions\/download-artifact@[a-f0-9]{40}/);
     assert.match(browserJobs, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
-    assert.match(browserJobs, /BOTSALES_E2E_WORKERS: '2'/);
+    assert.match(browserJobs, /BOTSALES_E2E_WORKERS: '4'/);
+    assert.match(browserJobs, /kind: 'browser-runner-capacity'/);
+    assert.match(browserJobs, /workers > availableCpus/);
     assert.match(browserJobs, /BOTSALES_E2E_RUNTIME: preview/);
     assert.match(browserJobs, /run: node scripts\/run-ci-e2e.mjs \$\{\{ matrix.browser \}\} \$\{\{ matrix.partition \}\}/);
     assert.doesNotMatch(browserJobs, /run: npm run (?:build|test:e2e)/, 'CI consumes the verified build once');

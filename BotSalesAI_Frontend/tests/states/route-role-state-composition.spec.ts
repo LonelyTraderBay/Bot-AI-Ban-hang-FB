@@ -7,7 +7,7 @@ import { holdRouteReads } from '../session/read-barrier';
 import { API_BASE_PATH } from '../../packages/contracts/src/generated';
 
 // Every role test uses a fresh page fixture; no browser/mock state is shared.
-// This is the only large file partitioned at test level by the CI planner.
+// The CI planner partitions this and the independent role-ready walks at test level.
 test.describe.configure({ mode: 'parallel' });
 
 type Route = { id: string; path: string; title: string; readPermission: string | null; readOperations: string[]; actions: Array<{ label: string; permission: string | null; operationId: string }> };
@@ -170,59 +170,66 @@ test.describe('route read states render under every role allowed by the canonica
 
 test.describe('route loading state appears for every readable route with route-owned data', () => {
     for (const role of roles) {
-        test(`loading state for ${role}`, async ({ page }) => {
+        test(`loading state for ${role}`, async ({ context }) => {
             test.setTimeout(600_000);
             const browser = test.info().project.name;
             const pageErrors: string[] = [];
-            page.on('pageerror', error => pageErrors.push(error.message));
             const readableRoutes = privateRoutes.filter(route => canRead(route, role));
 
             for (const route of readableRoutes) {
-                const bootstrap = loadingBootstraps.find(candidate => canRead(candidate, role)
-                    && candidate.readOperations.every(operation => !route.readOperations.includes(operation)));
-                if (!bootstrap) throw new Error(`No readable bootstrap with disjoint operations for ${role}/${route.id}`);
-                const bootstrapPattern = new RegExp(operationPattern(bootstrap.readOperations[0]));
-                // Match the existing demo-preview startup proof: await a real API read,
-                // then retain the original DOM assertion deadline. No sleep or retry.
-                const [bootstrapRead] = await Promise.all([
-                    page.waitForResponse(response => response.request().method() === 'GET' && bootstrapPattern.test(new URL(response.url()).pathname), { timeout: 15_000 }),
-                    page.goto(new URL(routePath(bootstrap.path), demoUrl).toString()),
-                ]);
-                expect(bootstrapRead.status(), `Bootstrap ${bootstrap.id} must load before testing ${role}/${route.id}`).toBe(200);
-                expect(await bootstrapRead.finished()).toBeNull();
-                await chooseRole(page, role);
-                // Finish Shell/bootstrap reads before holding route operations such as getShop.
-                await expect(page.locator('main#main-content h1')).toBeVisible();
-                await expect(page.locator('main#main-content').getByText(/Đang tải/)).toHaveCount(0);
-                const patterns = route.readOperations.map(operationPattern);
-                const barrier = await holdRouteReads(page, patterns);
+                // Give each fresh-document check a fresh tab lifecycle as well. Rapid
+                // reloads of one Firefox tab can fail before the bootstrap API starts.
+                const page = await context.newPage();
+                page.on('pageerror', error => pageErrors.push(error.message));
                 try {
-                    await navigateWithinDemo(page, route.path);
-                    await expect.poll(() => page.title(), { message: `${route.id} must become the active route for ${role}` }).toBe(`${route.title} · BotSales AI`);
-                    const main = page.locator('main#main-content');
-                    await expect(main, `${route.id} should render for ${role}`).toBeVisible();
-                    const loading = main.getByText(/Đang tải/);
-                    await expect.poll(barrier.entered, { message: `${route.id} must issue a real pending route read for ${role}` }).toBeGreaterThan(0);
-                    if (route.id === 'R33') {
-                        await expect(main.getByRole('heading').first(), `${route.id} should render using the shop snapshot already fetched by Shell`).toBeVisible();
-                        await expect(loading, `${route.id} should keep the Shell snapshot visible while its background read is pending`).toHaveCount(0);
-                        const refreshed = page.waitForResponse(response => response.request().method() === 'GET' && patterns.some(pattern => new RegExp(pattern).test(new URL(response.url()).pathname)));
+                    const bootstrap = loadingBootstraps.find(candidate => canRead(candidate, role)
+                        && candidate.readOperations.every(operation => !route.readOperations.includes(operation)));
+                    if (!bootstrap) throw new Error(`No readable bootstrap with disjoint operations for ${role}/${route.id}`);
+                    const bootstrapPattern = new RegExp(operationPattern(bootstrap.readOperations[0]));
+                    // Match the existing demo-preview startup proof: await a real API read,
+                    // then retain the original DOM assertion deadline. No sleep or retry.
+                    const [bootstrapRead] = await Promise.all([
+                        page.waitForResponse(response => response.request().method() === 'GET' && bootstrapPattern.test(new URL(response.url()).pathname), { timeout: 15_000 }),
+                        page.goto(new URL(routePath(bootstrap.path), demoUrl).toString()),
+                    ]);
+                    expect(bootstrapRead.status(), `Bootstrap ${bootstrap.id} must load before testing ${role}/${route.id}`).toBe(200);
+                    expect(await bootstrapRead.finished()).toBeNull();
+                    await chooseRole(page, role);
+                    // Finish Shell/bootstrap reads before holding route operations such as getShop.
+                    await expect(page.locator('main#main-content h1')).toBeVisible();
+                    await expect(page.locator('main#main-content').getByText(/Đang tải/)).toHaveCount(0);
+                    const patterns = route.readOperations.map(operationPattern);
+                    const barrier = await holdRouteReads(page, patterns);
+                    try {
+                        await navigateWithinDemo(page, route.path);
+                        await expect.poll(() => page.title(), { message: `${route.id} must become the active route for ${role}` }).toBe(`${route.title} · BotSales AI`);
+                        const main = page.locator('main#main-content');
+                        await expect(main, `${route.id} should render for ${role}`).toBeVisible();
+                        const loading = main.getByText(/Đang tải/);
+                        await expect.poll(barrier.entered, { message: `${route.id} must issue a real pending route read for ${role}` }).toBeGreaterThan(0);
+                        if (route.id === 'R33') {
+                            await expect(main.getByRole('heading').first(), `${route.id} should render using the shop snapshot already fetched by Shell`).toBeVisible();
+                            await expect(loading, `${route.id} should keep the Shell snapshot visible while its background read is pending`).toHaveCount(0);
+                            const refreshed = page.waitForResponse(response => response.request().method() === 'GET' && patterns.some(pattern => new RegExp(pattern).test(new URL(response.url()).pathname)));
+                            await barrier.release();
+                            expect((await refreshed).status()).toBe(200);
+                            console.log(`BROWSER=${browser} ROLE_STATE_NA=loading ROLE=${role} ROUTE=${route.id} REASON=shared-shell-snapshot RESULT=PASS`);
+                            continue;
+                        }
+                        await expect(loading.first(), `${route.id} should expose at least one pending route read for ${role}`).toBeVisible({ timeout: 10_000 });
                         await barrier.release();
-                        expect((await refreshed).status()).toBe(200);
-                        console.log(`BROWSER=${browser} ROLE_STATE_NA=loading ROLE=${role} ROUTE=${route.id} REASON=shared-shell-snapshot RESULT=PASS`);
-                        continue;
+                        await expect(loading, `${route.id} should leave the pending state after its released response for ${role}`).toHaveCount(0, { timeout: 10_000 });
+                        await expect(main.getByRole('heading').first(), `${route.id} should render page content after loading for ${role}`).toBeVisible();
+                        if (route.id === 'R14') {
+                            await expect(main.getByRole('alert').filter({ hasText: 'Không tìm thấy dữ liệu trong cửa hàng hiện tại.' }), `${route.id} should finish loading with the expected not-found response for the deliberately missing fixture`).toBeVisible();
+                        }
+                        const resolved = route.id === 'R14' ? ' OUTCOME=EXPECTED_404' : '';
+                        console.log(`BROWSER=${browser} ROLE_STATE=loading ROLE=${role} ROUTE=${route.id}${resolved} RESULT=PASS`);
+                    } finally {
+                        await barrier.release();
                     }
-                    await expect(loading.first(), `${route.id} should expose at least one pending route read for ${role}`).toBeVisible({ timeout: 10_000 });
-                    await barrier.release();
-                    await expect(loading, `${route.id} should leave the pending state after its released response for ${role}`).toHaveCount(0, { timeout: 10_000 });
-                    await expect(main.getByRole('heading').first(), `${route.id} should render page content after loading for ${role}`).toBeVisible();
-                    if (route.id === 'R14') {
-                        await expect(main.getByRole('alert').filter({ hasText: 'Không tìm thấy dữ liệu trong cửa hàng hiện tại.' }), `${route.id} should finish loading with the expected not-found response for the deliberately missing fixture`).toBeVisible();
-                    }
-                    const resolved = route.id === 'R14' ? ' OUTCOME=EXPECTED_404' : '';
-                    console.log(`BROWSER=${browser} ROLE_STATE=loading ROLE=${role} ROUTE=${route.id}${resolved} RESULT=PASS`);
                 } finally {
-                    await barrier.release();
+                    await page.close();
                 }
             }
             expect(pageErrors).toEqual([]);

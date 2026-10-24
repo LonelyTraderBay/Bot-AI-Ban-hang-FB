@@ -3,6 +3,9 @@ import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
 
+// Each role has its own page/context, clock and response map; only the server is shared.
+test.describe.configure({ mode: 'parallel' });
+
 type Route = { id: string; path: string; title: string; readPermission: string | null; readOperations: string[] };
 type RouteManifest = { routes: Route[] };
 type PermissionCatalog = { rolePresets: Record<string, string[]> };
@@ -74,7 +77,15 @@ test.describe('ready route content renders for every role granted read access by
             });
             const readableRoutes = privateRoutes.filter(route => canRead(route, role));
             const loadedRouteLocations = new Map<string, string>();
-            await page.goto(new URL('/s/shop-demo/notifications', demoUrl).toString());
+            const bootstrap = privateRoutes.find(route => route.id === 'R39');
+            if (!bootstrap || !operationPathPatterns[bootstrap.readOperations[0]]) throw new Error('Missing canonical notifications bootstrap.');
+            const [bootstrapRead] = await Promise.all([
+                page.waitForResponse(response => response.request().method() === 'GET'
+                    && operationPathPatterns[bootstrap.readOperations[0]].test(new URL(response.url()).pathname), { timeout: 15_000 }),
+                page.goto(new URL(routePath(bootstrap.path), demoUrl).toString()),
+            ]);
+            expect(bootstrapRead.status()).toBe(200);
+            expect(await bootstrapRead.finished()).toBeNull();
             await chooseRole(page, role);
             await openDemoControls(page);
             await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
