@@ -1,0 +1,17 @@
+# Native CI timing calibration — 2026-10-24
+
+The first complete v3 PR run on c48bb715c478056d2a32cd8eef8fd245bf03886f passed all 13 frontend/hygiene jobs. Frontend run [40101039733](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/40101039733) took 1541 seconds (25:41), from first job start to last job completion; 114.7 job-minutes. The previous main baseline was 2581 seconds (43:01), 166.7167 job-minutes. This is measured hosted evidence, separately from the local owner-loading sample.
+
+Current PR job seconds: Chromium 1056/821/990; Firefox 1403/862/1149. Native E2E step seconds: Chromium 878/748/905; Firefox 1179/802/1081. Lane 1 additionally ran built-demo serially for 111 seconds Chromium / 140 seconds Firefox. The old c5 timing hints predated the new runtime and deterministic loading fixture, so they no longer described relative work well.
+
+Use the six successful native JSON reports from that run as duration hints, retaining every current ID and ordinary whole-file hook/order. Reports are bound to artifact/report SHA-256 digests in `scripts/ci-timings.json`. Reserve the observed serial built-demo time on lane 1, multiplied by the fixed two CI workers to match summed test-duration units. No worker, shard, gate, test assertion, application or dependency change in this calibration.
+
+Observed summed-test-duration/2 plus serial built-demo workload estimates were Chromium 930/730/859 seconds and Firefox 1208/774/1033. The recalibrated estimate is approximately 839/840/840 and 1005/1005/1005. These are scheduling estimates, not a promise of wall time; fresh full PR and actual-main CI must measure the delivered result. Queue, hooks, CPU contention and indivisible files can change elapsed time.
+
+Reproduction input: one directory with six extracted native report files `chromium-1.json` through `firefox-3.json`, plus `provenance.json`. Verify the original ZIP digests/CRC before extracting just the expected report members. Provenance fields are `revision` (40 hex), positive `runId`/`attempt`, `workers: 2`, `builtDemoSeconds` per engine, and six `reports` with `project`, `shard`, `file`, report `sha256`, `artifactId` and original `artifactDigest` (`sha256:...`). The source run must have passed all expected jobs.
+
+Run `node scripts/update-ci-timings.mjs <verified-report-directory>` from the frontend workspace. The generator rejects report digest mismatches, incomplete or duplicate shard inventory, failed/retried/skipped cases, wrong workers and mismatch against current native discovery. It writes `scripts/ci-timings.json` only after every engine passes validation. Timings never choose which tests exist; current discovery and exact-once execution still enforce coverage.
+
+Temporary raw inputs/ZIPs and scheduling analysis remain in the existing Codex task workspace `work/ci-speed-v3/pr-native` and `outputs/ci-speed-v3`. Failed experiments are preserved separately; this calibration uses the successful PR run only. Closing hosted proof is retained outside the repository to avoid changing the delivered SHA after final CI.
+
+Current calibration validation: 24 source/runtime/planner regressions and the UI workflow contract pass, including native selectors covering all 561 IDs per engine. Controlled failed-result and duplicate-report inputs are rejected with the timing file byte-identical afterward. Full npm run verify passes; final S17 refresh binds the actual current-input logs. Fresh hosted PR and actual-main results are separate closing evidence.
