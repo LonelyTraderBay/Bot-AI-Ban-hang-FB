@@ -41,3 +41,12 @@ Mỗi partition lưu native JSON report và plan gồm mọi ID. `ci-timings.jso
 để xếp lịch; khi thời gian lệch lại, cập nhật trọng số từ report thực rồi chạy regression discovery.
 Không xóa test khỏi discovery để cân tải. Thời gian và tổng phút chạy job phải so từ cùng workflow,
 bao gồm setup/build/upload; không coi ước tính trọng số là thời gian CI đã đạt.
+
+Hosted run đầu 40053375818 trên commit 90b25da8 dừng ở audit: fast-uri 3.1.8 (dependency của Ajv
+8.20.0, range ^3.0.1) có bốn advisory; các matrix browser bị skipped và gate không được qua.
+Phạm vi bổ sung trước khi sửa lockfile: cập nhật duy nhất fast-uri lên bản vá tương thích 3.1.9,
+giữ nguyên Ajv và mọi dependency khác. Owner là lockfile; consumer là Ajv/schema generation và
+validation trong app, domain tests và browser suite. Không thay ngưỡng audit hoặc bỏ kiểm tra.
+Các log local cũ được giữ theo lockfile trong header; cần audit/full verify và hosted CI mới trên
+lockfile đã vá trước khi merge. Nguồn bản vá: GitHub advisories GHSA-w74x-v6f9-j3xg,
+GHSA-xhq7-xmqj-769h, GHSA-wjr9-j795-jxcr và GHSA-333x-w4r6-6crp; cả bốn chỉ rõ 3.1.9.

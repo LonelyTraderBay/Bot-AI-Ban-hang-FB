@@ -15,4 +15,6 @@ Nguồn chuẩn phiên bản khai báo: package.json root, apps/web/package.json
 
 Các khai báo này đã đọc từ manifests, không là kết quả dependency vulnerability scan mới. Không tự nâng stack, npm audit fix --force hoặc force-install trong task UI/docs. Khi tái lập dùng npm ci theo lock, setup/doctor và checks theo diff. Lượt audit tài liệu không cold-install/build/test lại; runtime logs S39/S40/S08 tại evidence/REPORT.md, fingerprint S08 định danh input đã kiểm.
 
+24/10/2026: vá riêng dependency gián tiếp `fast-uri` 3.1.8 → 3.1.9 trong lockfile, giữ Ajv 8.20.0 và range `^3.0.1`, sau khi audit hosted CI báo GHSA-w74x-v6f9-j3xg, GHSA-xhq7-xmqj-769h, GHSA-wjr9-j795-jxcr và GHSA-333x-w4r6-6crp. Đây là bản vá tương thích trong major 3; không thêm dependency trực tiếp hoặc nâng Ajv. Bằng chứng audit/full verify của lock mới nằm tại `evidence/ci-speed-20261024/`; log trước bản vá giữ nguyên theo input đã ghi, không đại diện cho lock mới.
+
 Baseline khi giao gói 29/09 dùng Node22.16.0/TS5.8.3 và chưa cài dependency là lịch sử, không mô tả checkout hiện tại. Nội dung cũ/hash được giữ trong before-documents.json của hồ sơ audit. Kiến trúc một MUI/Query/Router, canonical contract và Graphite Gold token vẫn theo scope hiện hành.
