@@ -2,16 +2,31 @@ import path from 'node:path';
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { startDemoServer } from './session/demo-server.mjs';
+import { startDemoPreview, startDemoServer } from './session/demo-server.mjs';
 import { ownedLabelGeometry } from './design/owned-label-geometry.mjs';
 
 let url = '';
+let builtUrl = '';
 let close: (() => Promise<void>) | undefined;
-test.beforeAll(async () => { const server = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'component-layout' }); url = server.url; close = server.close; });
-test.afterAll(async () => close?.());
+let closeBuilt: (() => Promise<void>) | undefined;
+test.beforeAll(async () => {
+    const server = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'component-layout' });
+    url = server.url; close = server.close;
+    const built = await startDemoPreview(); builtUrl = built.url; closeBuilt = built.close;
+});
+test.afterAll(async () => { await closeBuilt?.(); await close?.(); });
 test.beforeEach(async ({ page }) => { page.setDefaultTimeout(15000); page.on('dialog', dialog => { void dialog.accept(); }); });
-async function ready(page: Page, route: string) {
-    await page.goto(url + '/s/shop-demo/' + route);
+async function ready(page: Page, route: string, sourceFixture = false) {
+    // Only fixture cases need the dev module graph. Its canonical list read
+    // establishes bootstrap readiness before the unchanged five-second DOM check.
+    const initialRead = sourceFixture ? page.waitForResponse(response => response.request().method() === 'GET'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/' + route) : undefined;
+    await page.goto((sourceFixture ? url : builtUrl) + '/s/shop-demo/' + route);
+    if (initialRead) {
+        const response = await initialRead;
+        expect(response.status()).toBe(200);
+        expect(await response.finished()).toBeNull();
+    }
     await expect(page.locator('main h1')).toBeVisible();
     await page.waitForFunction(() => !document.querySelector('main .MuiCircularProgress-root, main .MuiLinearProgress-root'));
 }
@@ -149,7 +164,7 @@ test('A03 import mapping preserves natural remove actions and editable mappings'
 
 test('A04 full precision money wraps outside tables and remains unbroken in the named scroll region', async ({ page }) => {
     for (const width of [320, 768, 1440]) {
-        await page.setViewportSize({ width, height: 900 }); await ready(page, 'products');
+        await page.setViewportSize({ width, height: 900 }); await ready(page, 'products', true);
         const expected = await fixture(page, 'money');
         const amount = page.getByText(expected.money, { exact: true });
         await expect(amount).toHaveCount(2);
@@ -175,7 +190,7 @@ test('A04 full precision money wraps outside tables and remains unbroken in the 
 
 test('A05 status height follows its own label while long labels remain fully readable', async ({ page }) => {
     for (const width of [320, 768, 1440]) {
-        await page.setViewportSize({ width, height: 900 }); await ready(page, 'products'); await fixture(page, 'status');
+        await page.setViewportSize({ width, height: 900 }); await ready(page, 'products', true); await fixture(page, 'status');
         const chip = page.locator('main .MuiChip-root').first();
         const geometry = await chip.evaluate(node => {
             const parent = node.parentElement!, text = node.querySelector('.MuiChip-label')!;
@@ -195,7 +210,7 @@ test('A05 status height follows its own label while long labels remain fully rea
 
 test('A06 Empty wraps unbroken reference text and retains its keyboard action', async ({ page }) => {
     for (const width of [320, 768, 1440]) {
-        await page.setViewportSize({ width, height: 900 }); await ready(page, 'products'); await fixture(page, 'empty');
+        await page.setViewportSize({ width, height: 900 }); await ready(page, 'products', true); await fixture(page, 'empty');
         await expect(page.getByRole('status')).toContainText('Mã tham chiếu: ' + 'A'.repeat(120));
         const text = page.getByText('Mã tham chiếu: ' + 'A'.repeat(120), { exact: true });
         expect(await text.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
@@ -208,7 +223,7 @@ test('A06 Empty wraps unbroken reference text and retains its keyboard action', 
 
 test('A07 canonical order address selection exposes full text and edit lines retain intrinsic actions', async ({ page }) => {
     for (const width of [320, 768, 1440]) {
-        await page.setViewportSize({ width, height: 900 }); await ready(page, 'orders');
+        await page.setViewportSize({ width, height: 900 }); await ready(page, 'orders', true);
         const moduleUrl = '/@fs/' + path.resolve('tests/design/component-layout-fixture.tsx').replaceAll('\\', '/');
         const expected = await page.evaluate(async moduleUrl => (await import(/* @vite-ignore */ moduleUrl)).installReadonlyAddressFixture(), moduleUrl);
         await page.locator('main a[href="/s/shop-demo/orders/DH-1001"]').click();
