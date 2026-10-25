@@ -21,6 +21,8 @@ async function chooseMockOption(page: import('@playwright/test').Page,label: str
     if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox',{name:label}).click();
     await page.getByRole('option',{name:value,exact:true}).click();
+    // The selected label updates before the asynchronously loaded mock control applies.
+    if(label==='Trạng thái thử')await expect(page.getByRole('status').filter({hasText:'Trạng thái thử đã được áp dụng.'})).toBeVisible();
 }
 
 type ObservedRequest={method:string;path:string;body:string|null;headers:Record<string,string>};

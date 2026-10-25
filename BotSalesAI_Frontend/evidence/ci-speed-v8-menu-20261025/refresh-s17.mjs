@@ -1,0 +1,16 @@
+import fs from 'node:fs';import path from 'node:path';import assert from 'node:assert/strict';import{createHash}from'node:crypto';
+const here=import.meta.dirname,repo=path.resolve(here,'../../..'),p='BotSalesAI_Frontend/',own=p+'evidence/ci-speed-v8-menu-20261025/',file=path.join(repo,p+'evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json'),raw=fs.readFileSync(file,'utf8'),e=JSON.parse(raw),digest=b=>createHash('sha256').update(b).digest('hex'),hash=n=>digest(fs.readFileSync(path.join(repo,n)));
+const inputs=[p+'tests/fe009.spec.ts',p+'tests/session/demo-controls.ts',p+'tests/session/demo-server.mjs',p+'tests/session/playwright-setup.ts',p+'playwright.config.ts'],owned=[inputs[0],own+'REPORT.md',own+'refresh-s17.mjs'];
+for(const[n,h]of Object.entries(e.sourceFingerprints))if(!owned.includes(n))assert.equal(hash(n),h,'Unrelated stale input '+n);
+function record(id,name,patterns,description){
+ const bytes=fs.readFileSync(path.join(here,name)),text=bytes.toString().replace(/\x1b\[[0-?]*[ -/]*[@-~]/g,''),header=JSON.parse(text.split(/\r?\n/)[0]);for(const n of inputs)assert.equal(header.inputs[n],hash(n),name+' stale '+n);assert.match(text,/COMMAND_EXIT=0\s*$/);for(const re of patterns)assert.match(text,re);
+ const row={id,command:JSON.stringify(header.command),exitCode:0,result:'PASS',expected:description,observed:description,log:{path:own+name,sha256:digest(bytes)}},i=e.checks.findIndex(c=>c.id===id);if(i<0)e.checks.push(row);else e.checks[i]=row;const coverage={name:id,expected:1,observed:1,missing:0,result:'COMPLETE'},j=e.coverage.findIndex(c=>c.name===id);if(j<0)e.coverage.push(coverage);else e.coverage[j]=coverage;return header;
+}
+for(const kind of ['preview','dev']){
+ const h=record('ci-v8-fe009-'+kind+'-20261025','fe009-'+kind+'.log',[/20 passed/,/using 2 workers/],'All20 original fe009 executions pass across Chromium/Firefox with two workers in '+kind+'. Existing fault-applied public status is awaited before original412 write; currency/onboarding, exact PATCH count, If-Match, retained edits and tenant assertions remain.');
+ assert.equal(h.workers,'2');assert.equal(h.runtime,kind);
+}
+if(process.argv.includes('--finalize'))record('ci-v8-fe009-full-verify-20261025','menu-verify.log',[/256 passed/,/ui-evidence PASS: S17/,/status=COMPLETE/],'Full current-input npm run verify passes after fault setup readiness repair. No application/contracts/dependencies/gates/assertions/timeouts/retries change. Hosted full25-job PR/main and19-ZIP proof remain separate.');
+for(const n of owned)e.sourceFingerprints[n]=hash(n);
+e.recordedAt=new Date().toISOString();e.scope=e.scope.split(' CI v8 fault readiness:')[0]+' CI v8 fault readiness: fe009 awaits existing public applied status after asynchronous demo fault setup before original412 assertion. Preview/dev original cases and full verify are separately input-bound. Full2-worker/9-partition gates unchanged; main854 run40189550472 failed and is excluded from speed.';
+const nl=raw.includes('\r\n')?'\r\n':'\n';fs.writeFileSync(file,JSON.stringify(e,null,2).replaceAll('\n',nl)+nl);console.log(JSON.stringify({checks:e.checks.length,coverage:e.coverage.length,fingerprints:Object.keys(e.sourceFingerprints).length}));
