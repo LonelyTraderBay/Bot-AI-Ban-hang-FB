@@ -25,7 +25,7 @@ record('ci-v6-ui-contract-20261025','ui-contract.log',[policy,ui,'.github/workfl
  [/pass 14/,/fail 0/],'All14 UI/shared/workflow contracts pass with full browser/source/build/evidence gates.');
 const generation=record('ci-v6-native-timing-generation-20261025','timing-generation.log',[scheduling[0],scheduling[2]],
  [/"reports":16/,/"chromium":561/,/"firefox":561/],
- 'Sixteen SHA/CRC-verified native reports from successful maina9db9d64/run40170443494 produce per-case weights for all six independent owners. Actual provenance remains two workers/eight partitions; observed built-demo reserves109/137s.');
+ 'Sixteen SHA/CRC-verified native reports from successful PR12/run40173491248, tested merge7552189e with the same tree as branchcf1e07d6, calibrate the six independent owners after their runtime changes. Actual provenance is two workers/eight partitions; observed built-demo reserves101/128s.');
 const line=generation.text.split(/\r?\n/).find(l=>l.startsWith('{"generated":"native-ci-timings"'));assert.equal(JSON.parse(line).outputSha256,hash(scheduling[1]));
 record('ci-v6-invalid-timing-inputs-20261025','timing-negatives.log',scheduling.slice(0,3),
  ['failed-result','duplicate-partition','unsupported-workers','worker-mismatch','unsupported-partitions','incomplete-eight-partitions','tampered-digest'].map(k=>new RegExp('TIMING_NEGATIVE='+k+' REJECTED=PASS OUTPUT_UNCHANGED=PASS')),
@@ -42,5 +42,5 @@ if(process.argv.includes('--finalize'))record('ci-v6-full-verify-20261025','veri
  [/256 passed/,/ui-evidence PASS: S17/,/status=COMPLETE/],
  'Full current-input npm run verify passes: application/contracts/dependencies unchanged; exact-SHA hosted PR/main, native archive and enforcement closure remain separate.');
 for(const n of owned)e.sourceFingerprints[n]=hash(n);
-const scope='CI v6 20261025: six independently reviewed suites partition at test level on the unchanged eight-partition/two-worker matrix. Per-case historical weights from maina9db9d64; original IDs/assertions preserved. Canonical bootstrap readiness and worker-local mixed Toolbar runtime/cleanup verified in preview/dev. Current local proof recorded here; hosted performance, archive and enforcement proof are separate. No app/contract/dependency change.';
+const scope='CI v6 20261025: six independently reviewed suites partition at test level on the unchanged eight-partition/two-worker matrix. Weights calibrated from complete successful PR12/run40173491248 tested merge7552189e after runtime changes; original IDs/assertions preserved. Canonical bootstrap readiness and worker-local mixed Toolbar runtime/cleanup retain their input-matched preview/dev proofs. Current local proof recorded here; final hosted performance, archive and enforcement proof are separate. No app/contract/dependency change.';
 e.scope=e.scope.split(' CI v6 20261025:')[0]+' '+scope;e.recordedAt=new Date().toISOString();const nl=raw.includes('\r\n')?'\r\n':'\n';fs.writeFileSync(file,JSON.stringify(e,null,2).replaceAll('\n',nl)+nl);console.log(JSON.stringify({checks:e.checks.length,coverage:e.coverage.length,fingerprints:Object.keys(e.sourceFingerprints).length}));
