@@ -286,10 +286,11 @@ test('required UI evidence and regression gates remain wired to root verify and 
     const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
     const verify = manifest.scripts.verify;
     const evidence = manifest.scripts['test:evidence'];
-    assert.match(verify, /npm run test:layout/);
-    assert.match(verify, /npm run test:visual-tokens/);
-    assert.match(verify, /npm run test:ui-composition/);
-    assert.match(verify, /npm run test:evidence/);
+    assert.equal(verify, 'node scripts/run-verify.mjs');
+    const runner = fs.readFileSync(path.join(root, 'scripts/run-verify.mjs'), 'utf8');
+    for (const script of ['test:layout', 'test:visual-tokens', 'test:ui-composition', 'test:evidence'])
+        assert.ok(runner.includes(`'${script}'`), `${script} remains required by the verify runner`);
+    assert.match(manifest.scripts['test:source'], /tests\/verify-runner\.test\.mjs/);
     assert.match(evidence, /tests\/ui-evidence-validator\.test\.mjs/);
     assert.match(evidence, /scripts\/validate-ui-evidence\.mjs/);
 
@@ -370,7 +371,7 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(browserConfig, /testMatch: \['\*\*\/\*\.spec\.ts'\]/, 'Browser discovery must not execute node:test unit fixtures');
     assert.match(browserConfig, /const workers = process\.env\.BOTSALES_E2E_WORKERS \?\? '1'/, 'Local runs default to one worker');
     assert.match(browserConfig, /workers: Number\(workers\)/);
-    assert.match(e2eJob, /BOTSALES_E2E_WORKERS: '2'/, 'CI leaves runner capacity for browser and tracing processes');
+    assert.match(e2eJob, /BOTSALES_E2E_WORKERS: '3'/, 'The three-worker pilot leaves one of four measured CPUs for browser/tracing overhead');
     assert.match(e2eJob, /availableCpus = os\.availableParallelism\(\)/, 'Each browser job records actual runner CPU capacity');
     assert.match(e2eJob, /workers > availableCpus/, 'CI must reject oversubscribed browser workers');
     assert.match(browserConfig, /fullyParallel: false/, 'Ordinary files retain existing hook/order semantics');
