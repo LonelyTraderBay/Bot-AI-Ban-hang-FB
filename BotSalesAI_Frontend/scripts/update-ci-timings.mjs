@@ -16,7 +16,7 @@ assert.match(source.revision, /^[a-f0-9]{40}$/);
 assert.ok(Number.isSafeInteger(source.runId) && source.runId > 0 && Number.isSafeInteger(source.attempt) && source.attempt > 0
     && Number.isInteger(source.workers) && source.workers >= 1 && source.workers <= 4);
 const partitions = source.partitions ?? 3;
-assert.ok([3, 6, 8].includes(partitions), 'Unsupported native partition count.');
+assert.ok([3, 6, 8, 9].includes(partitions), 'Unsupported native partition count.');
 assert.equal(source.reports.length, partitions * 2);
 const output = { baseline: source.revision,
     scope: `Native JSON result durations from complete CI run ${source.runId}; ${source.workers} workers and hybrid preview. Summed seconds are scheduling hints, not assertion CPU time or workflow wall time. Lane 1 reserves the observed serial built-demo time.`,

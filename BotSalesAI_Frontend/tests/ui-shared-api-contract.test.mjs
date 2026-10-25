@@ -334,24 +334,25 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(driver, /'--reporter=line,json', '--max-failures=1'/, 'A failed shard must report promptly while green shards retain every test');
     assert.match(driver, /requireExactTests\(selected\.tests, collect\(/, 'Native test-list selection must match the current discovery plan');
     assert.match(driver, /requireExactTests\(selected\.tests, collectedTests\([\s\S]*project\), true\)/, 'Successful execution must match every planned test and reject skipped/retried results');
-    assert.equal([...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n/g)].length, 8, 'No unsharded Firefox job may bypass the bounded matrix');
-    assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 8, 'Chromium E2E must use eight supported Chrome Stable shards');
+    assert.equal([...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n/g)].length, 9, 'No unsharded Firefox job may bypass the bounded matrix');
+    assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 9, 'Chromium E2E must use nine supported Chrome Stable shards');
     assert.match(e2eJob, /name: Verify supported Google Chrome version[\s\S]*?major < 154/);
     const firefoxShards = [...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n\s+shard_id: ([\w-]+)\r?\n\s+partition: '(\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
         .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
     assert.deepEqual(firefoxShards, [
-        { id: '1-of-8', args: '1/8', builtDemo: 'true' },
-        { id: '2-of-8', args: '2/8', builtDemo: 'false' },
-        { id: '3-of-8', args: '3/8', builtDemo: 'false' },
-        { id: '4-of-8', args: '4/8', builtDemo: 'false' },
-        { id: '5-of-8', args: '5/8', builtDemo: 'false' },
-        { id: '6-of-8', args: '6/8', builtDemo: 'false' },
-        { id: '7-of-8', args: '7/8', builtDemo: 'false' },
-        { id: '8-of-8', args: '8/8', builtDemo: 'false' },
-    ], 'The complete Firefox suite must be split across eight bounded jobs and run built-demo once');
+        { id: '1-of-9', args: '1/9', builtDemo: 'true' },
+        { id: '2-of-9', args: '2/9', builtDemo: 'false' },
+        { id: '3-of-9', args: '3/9', builtDemo: 'false' },
+        { id: '4-of-9', args: '4/9', builtDemo: 'false' },
+        { id: '5-of-9', args: '5/9', builtDemo: 'false' },
+        { id: '6-of-9', args: '6/9', builtDemo: 'false' },
+        { id: '7-of-9', args: '7/9', builtDemo: 'false' },
+        { id: '8-of-9', args: '8/9', builtDemo: 'false' },
+        { id: '9-of-9', args: '9/9', builtDemo: 'false' },
+    ], 'The complete Firefox suite must be split across nine bounded jobs and run built-demo once');
     const chromiumShards = [...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n\s+shard_id: ([\w-]+)\r?\n\s+partition: '(\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
         .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
-    assert.deepEqual(chromiumShards, firefoxShards, 'Both engines must cover the same complete eight-shard partition and one built demo');
+    assert.deepEqual(chromiumShards, firefoxShards, 'Both engines must cover the same complete nine-shard partition and one built demo');
     assert.match(e2eJob, /if: \$\{\{ matrix\.verify_built_demo \}\}/);
     assert.match(e2eJob, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
     assert.match(e2eJob, /playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}/);
