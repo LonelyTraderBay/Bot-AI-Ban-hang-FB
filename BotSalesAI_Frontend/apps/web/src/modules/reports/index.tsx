@@ -2,7 +2,7 @@ import { ActionGroup, FormFields, PageSections, SectionGrid } from '../../shared
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { visualSx } from '@/shared/ui/visual';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, Link, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
 import type { ExportRequest, Job, MarketingBucket } from '@botsales/contracts';
@@ -32,6 +32,7 @@ function MarketingReasonTick({ x = 0, y = 0, width = 0, visibleTicksCount = 1, p
 export function ReportsPage() {
     const { shop } = useScope();
     const [params, setParams] = useSearchParams();
+    const navigate = useNavigate();
     const latestParams = useRef(new URLSearchParams(params));
     const pendingSearch = useRef<string | null>(null);
     useEffect(() => {
@@ -103,11 +104,12 @@ export function ReportsPage() {
             if (changed) {
                 latestParams.current = next;
                 pendingSearch.current = next.toString();
-                setParams(next, { replace: true, flushSync: true });
+                // Server defaults can arrive while a native skip-link updates the live fragment.
+                void navigate({ search: '?' + next.toString(), hash: window.location.hash }, { replace: true, flushSync: true });
             }
         }
         catch { setRangeError('Múi giờ cửa hàng hoặc mốc thời gian báo cáo không hợp lệ.'); }
-    }, [defaultRange, params, requestedType, fromValue, toValue, setParams, snapshotAsOf]);
+    }, [defaultRange, params, requestedType, fromValue, toValue, navigate, snapshotAsOf]);
 
     const submit = async () => {
         setRangeError('');
@@ -202,6 +204,7 @@ export function ReportsPage() {
 export function MarketingPage() {
     const { shop } = useScope();
     const [params, setParams] = useSearchParams();
+    const navigate = useNavigate();
     const search = params.toString();
     const fromParam = params.get('fromDate') || '';
     const toParam = params.get('toDate') || '';
@@ -244,10 +247,11 @@ export function MarketingPage() {
             const next = new URLSearchParams({ fromDate: marketingPeriod.fromDate, toDate: marketingPeriod.toDate, bucket: marketingPeriod.bucket });
             if (next.toString() !== search) {
                 pendingDefaultSearch.current = next.toString();
-                setParams(next, { replace: true });
+                // Preserve a live anchor even before the router has observed its hash change.
+                void navigate({ search: '?' + next.toString(), hash: window.location.hash }, { replace: true });
             }
         }
-    }, [marketingPeriod, hasDateFilter, search, setParams]);
+    }, [marketingPeriod, hasDateFilter, search, navigate]);
 
     const applyFilter = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
