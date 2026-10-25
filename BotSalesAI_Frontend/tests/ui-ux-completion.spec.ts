@@ -73,15 +73,23 @@ test('UX05 product detail returns to committed filters; direct links use the lis
 for(const collection of ['customers','orders','knowledge'])test(`UX05 ${collection} list returns to its own filter context`,async({page})=>{
  test.setTimeout(30000);
  const listPath=`/s/shop-demo/${collection}`;
+ const tableName={customers:'Danh sách khách hàng',orders:'Danh sách đơn hàng',knowledge:'Nguồn kiến thức cửa hàng'}[collection as 'customers'|'orders'|'knowledge'];
+ const collectionTable=page.getByRole('table',{name:tableName,exact:true});
  await page.goto(url+listPath);
- const firstRow=page.locator('main table').first().locator('tbody tr').first();
+ const firstRow=collectionTable.locator('tbody tr').first();
  await expect(firstRow.locator('a').first()).toBeVisible();
  const term=(await firstRow.locator('td').first().innerText()).split('\n')[0].trim();
  const search='?q='+encodeURIComponent(term);
  await page.goto(url+listPath+search);
- await page.locator('main table').first().locator('tbody tr').first().locator('a').first().click();
+ const detailLink=firstRow.locator('a').first();
+ await expect(detailLink).toHaveAttribute('href',new RegExp('^'+listPath+'/'));
+ const detailHref=await detailLink.getAttribute('href');
+ await detailLink.click();
+ await expect(page).toHaveURL(new URL(detailHref!,url).href);
  // URLSearchParams uses form encoding; spaces may therefore be represented as +.
  const expected=url+listPath+'?'+new URLSearchParams({q:term}).toString();
+ await expect(page.locator('main a').filter({hasText:/Danh sách|Tất cả nguồn/}).first())
+  .toHaveAttribute('href',new RegExp('^'+listPath+'(?:[?]|$)'));
  await page.locator('main a').filter({hasText:/Danh sách|Tất cả nguồn/}).first().click();
  await expect(page).toHaveURL(expected);
 });
