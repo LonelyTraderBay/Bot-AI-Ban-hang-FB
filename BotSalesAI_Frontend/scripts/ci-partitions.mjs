@@ -15,11 +15,12 @@ export const independentTestFiles = Object.freeze([
 
 export function collectedTests(report, project) {
     if (report.errors?.length || !Array.isArray(report.suites)) throw new Error('Playwright discovery failed.');
+    const projects = Array.isArray(project) ? project : [project];
     const tests = [];
     function visit(suite, parents) {
         for (const spec of suite.specs ?? []) {
             for (const test of spec.tests ?? []) {
-                if (test.projectName !== project) throw new Error('Unexpected project in inventory.');
+                if (!projects.includes(test.projectName)) throw new Error('Unexpected project in inventory.');
                 const file = spec.file.replaceAll('\\', '/');
                 const title = [...parents, spec.title].join(' › ');
                 tests.push({ id: spec.id, file, title, key: `${file} › ${title}`, order: tests.length, test });

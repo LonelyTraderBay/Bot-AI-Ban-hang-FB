@@ -143,6 +143,16 @@ test('discovery errors, wrong projects, duplicate IDs and empty inventories fail
     assert.throws(() => partitionTests([row('a', 'x')], { files: { x: -1 }, tests: {} }, 1), /timing/);
 });
 
+test('multi-project discovery keeps both built engines and rejects any unlisted project', () => {
+    const spec = (id, projectName) => ({ id, file: 'built-demo-regression.spec.ts', title: id, tests: [{ projectName }] });
+    const report = { suites: [{ specs: [spec('a', 'chromium-built-demo'), spec('b', 'firefox-built-demo')] }] };
+    const projects = ['chromium-built-demo', 'firefox-built-demo'];
+    assert.deepEqual(collectedTests(report, projects).map(t => t.id), ['a', 'b']);
+    assert.throws(() => collectedTests(report, projects.slice(0, 1)), /Unexpected project/);
+    assert.throws(() => collectedTests({ suites: [{ specs: [...report.suites[0].specs, spec('c', 'unexpected')] }] }, projects), /Unexpected project/);
+    assert.throws(() => collectedTests({ suites: [{ specs: [spec('a', projects[0]), spec('a', projects[1])] }] }, projects), /duplicate/);
+});
+
 test('real Playwright selectors cover the current Chrome/Firefox inventories exactly once', { timeout: 60_000 }, () => {
     const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
     const outputRoot = path.join(root, 'test-results');
@@ -159,7 +169,7 @@ test('real Playwright selectors cover the current Chrome/Firefox inventories exa
     try {
         for (const project of ['chromium', 'firefox']) {
             const inventory = collect(project);
-            const partitions = partitionTests(inventory, timings.projects[project], 9, 2, false);
+            const partitions = partitionTests(inventory, timings.projects[project], 9, 3, false);
             const executed = [];
             for (const [index, partition] of partitions.entries()) {
                 const list = path.join(output, `${project}-${index}.txt`);

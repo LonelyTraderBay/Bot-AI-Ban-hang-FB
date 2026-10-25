@@ -5,7 +5,8 @@ import { pathToFileURL } from 'node:url';
 // Source/domain/build and isolated UI audits have separate outputs. Evidence reads both.
 const lanes = [
     ['test:source', 'boundaries', 'lint', 'typecheck', 'test:domain', 'test', 'build'],
-    ['test:layout', 'test:visual-tokens', 'test:ui-composition'],
+    ['test:layout'],
+    ['test:visual-tokens', 'test:ui-composition'],
 ];
 
 async function runScript(script) {

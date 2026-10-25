@@ -29,14 +29,15 @@ test('verification overlaps independent lanes but keeps generation, lane order a
     });
     assert.equal(result, 0);
     assert.deepEqual(calls.filter(name => source.includes(name)), source);
-    assert.deepEqual(calls.filter(name => ui.includes(name)), ui);
+    assert.deepEqual(calls.filter(name => ui.includes(name)).sort(), ui.slice().sort());
+    assert.deepEqual(calls.filter(name => ui.slice(1).includes(name)), ui.slice(1));
     assert.equal(calls[0], 'generate:check');
     assert.equal(calls.at(-1), 'test:evidence');
     assert.equal(calls.length, 12);
     assert.equal(new Set(calls).size, 12);
 });
 
-test('failed generation starts neither lane nor the evidence gate', async () => {
+test('failed generation starts no lane or evidence gate', async () => {
     const calls = [];
     assert.equal(await runVerification(async script => { calls.push(script); return 7; }), 1);
     assert.deepEqual(calls, ['generate:check']);
@@ -46,15 +47,34 @@ test('source failure stops its lane, finishes UI diagnostics and rejects evidenc
     const calls = [];
     assert.equal(await runVerification(async script => { calls.push(script); return script === 'lint' ? 9 : 0; }), 1);
     assert.deepEqual(calls.filter(name => source.includes(name)), source.slice(0, 3));
-    assert.deepEqual(calls.filter(name => ui.includes(name)), ui);
+    assert.deepEqual(calls.filter(name => ui.includes(name)).sort(), ui.slice().sort());
     assert.ok(!calls.includes('test:evidence'));
 });
 
-test('UI failure stops its lane while source/build finishes and rejects evidence', async () => {
+test('layout failure still finishes other diagnostics and rejects evidence', async () => {
     const calls = [];
     assert.equal(await runVerification(async script => { calls.push(script); return script === 'test:layout' ? 9 : 0; }), 1);
     assert.deepEqual(calls.filter(name => source.includes(name)), source);
-    assert.deepEqual(calls.filter(name => ui.includes(name)), ['test:layout']);
+    assert.deepEqual(calls.filter(name => ui.includes(name)).sort(), ui.slice().sort());
+    assert.ok(!calls.includes('test:evidence'));
+});
+
+test('layout and composition audits overlap behind the generation barrier', { timeout: 2000 }, async () => {
+    let releaseLayout;
+    const compositionStarted = new Promise(resolve => { releaseLayout = resolve; });
+    assert.equal(await runVerification(async script => {
+        if (script === 'test:layout') await compositionStarted;
+        if (script === 'test:ui-composition') releaseLayout();
+        return 0;
+    }), 0);
+});
+
+test('third-lane failure stops composition but finishes source/layout and rejects evidence', async () => {
+    const calls = [];
+    assert.equal(await runVerification(async script => { calls.push(script); return script === 'test:visual-tokens' ? 9 : 0; }), 1);
+    assert.deepEqual(calls.filter(name => source.includes(name)), source);
+    assert.ok(calls.includes('test:layout'));
+    assert.ok(!calls.includes('test:ui-composition'));
     assert.ok(!calls.includes('test:evidence'));
 });
 
@@ -90,6 +110,6 @@ if(name==='test:layout'){console.error('VERIFY_EXPECTED_CHILD_FAILURE');process.
     const calls = fs.readFileSync(events, 'utf8').trim().split('\n').map(line => JSON.parse(line));
     assert.equal(calls[0], 'generate:check');
     assert.deepEqual(calls.filter(name => source.includes(name)), source);
-    assert.deepEqual(calls.filter(name => ui.includes(name)), ['test:layout']);
+    assert.deepEqual(calls.filter(name => ui.includes(name)).sort(), ui.slice().sort());
     assert.ok(!calls.includes('test:evidence'));
 });
