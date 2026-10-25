@@ -350,6 +350,7 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 9, 'Chromium E2E must use nine supported Chrome Stable shards');
     assert.match(e2eJob, /name: Verify supported Google Chrome version[\s\S]*?major < 154/);
     const shards = [...e2eJob.matchAll(/- browser: (chromium|firefox)\r?\n\s+install_browser: (?:firefox|chrome)\r?\n\s+shard_id: ([\w-]+)\r?\n\s+partition: '(\d+\/\d+)'/g)];
+    assert.deepEqual(shards.slice(0, 9).map(row => row[1]), Array(9).fill('firefox'), 'Create longer Firefox groups before Chromium to reduce their exposure to queued runner slots');
     for (const browser of ['chromium', 'firefox'])
         assert.deepEqual(shards.filter(m => m[1] === browser).map(([, , id, args]) => ({ id, args })),
             Array.from({ length: 9 }, (_, i) => ({ id: (i+1)+'-of-9', args: (i+1)+'/9' })));
