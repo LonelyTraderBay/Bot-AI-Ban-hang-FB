@@ -141,7 +141,7 @@ test('real Playwright selectors cover the current Chrome/Firefox inventories exa
     try {
         for (const project of ['chromium', 'firefox']) {
             const inventory = collect(project);
-            const partitions = partitionTests(inventory, timings.projects[project], 8, 2);
+            const partitions = partitionTests(inventory, timings.projects[project], 8, 4);
             const executed = [];
             for (const [index, partition] of partitions.entries()) {
                 const list = path.join(output, `${project}-${index}.txt`);

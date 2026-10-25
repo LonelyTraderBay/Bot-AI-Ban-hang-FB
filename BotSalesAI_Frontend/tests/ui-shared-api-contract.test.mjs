@@ -369,7 +369,7 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(browserConfig, /testMatch: \['\*\*\/\*\.spec\.ts'\]/, 'Browser discovery must not execute node:test unit fixtures');
     assert.match(browserConfig, /const workers = process\.env\.BOTSALES_E2E_WORKERS \?\? '1'/, 'Local runs default to one worker');
     assert.match(browserConfig, /workers: Number\(workers\)/);
-    assert.match(e2eJob, /BOTSALES_E2E_WORKERS: '2'/, 'CI leaves runner capacity for browser and tracing processes');
+    assert.match(e2eJob, /BOTSALES_E2E_WORKERS: '4'/, 'CI capacity pilot uses four workers within the recorded CPU guard');
     assert.match(e2eJob, /availableCpus = os\.availableParallelism\(\)/, 'Each browser job records actual runner CPU capacity');
     assert.match(e2eJob, /workers > availableCpus/, 'CI must reject oversubscribed browser workers');
     assert.match(browserConfig, /fullyParallel: false/, 'Ordinary files retain existing hook/order semantics');

@@ -1,0 +1,9 @@
+# CI capacity pilot 2026-10-25
+
+Before edit: main5f280e4f, frontend40184460484+hygiene40184460531,23/23 SUCCESS,607s and124.7667 job-minutes. All17 ZIPs/native561 IDs per engine/6 built-demo cases/role multisets/finance PNGs and unchanged full branch-protection body are verified in outputs/ci-speed-v6. The earlier main baselinea9db was629s/123.2167 job-minutes; a3.5% elapsed gain with higher execution sum is insufficient.
+
+Every current browser producer recorded4 available CPUs and about16 GB RAM, using2 workers. Prior four-worker experiments were slower/failed, so hardware capacity alone is not proof. This bounded pilot uses the current six independent suites, queue-aware planner and trace-fixed bootstrap/menu/evaluation readiness. Only the CI worker setting and guards/native selector regression are changed to4; ordinary file order/hooks, eight partitions per engine, all23 jobs/nine required checks, every test/assertion/trace/timeout and read-only gate permissions remain. Built-demo stays serial at one worker. Historical timing provenance remains truthful at two workers; the planner already supports1..4.
+
+No application/product contract/dependency or backend change. Local evidence must check the actual four-worker native selectors, all31 source/120 repository/14 UI contracts and full verify. The PR runs the entire inventory; no skip/retry or weakening a gate. Do not merge unless the full PR succeeds and measures a clear gain against607s. If rejected, retain the pilot evidence and keep verified main5f280e4f. Exact-main/native archive/protection proof remains required after any accepted merge.
+
+Local proof:31/31 source/native-selector,120/120 repository,14/14 UI contracts; full verify219.536s PASS. Final S17 validator142checks/137coverage/336fingerprints PASS. Pre-recorded acceptance:full23/23,1128 browser cases/no skip/retry,<=536s and<=124.7667 job-minutes. Hosted pilot remains pending.
