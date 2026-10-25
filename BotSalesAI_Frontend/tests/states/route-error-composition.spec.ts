@@ -1,4 +1,4 @@
-import { openDemoControls } from '../session/demo-controls';
+import { openDemoControls, waitForDemoMenu, navigateDemoAndRead } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
@@ -27,6 +27,7 @@ function routePath(path: string) {
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
     if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
+    await waitForDemoMenu(page, label);
     await page.getByRole('option', { name: value, exact: true }).click();
 }
 
@@ -52,10 +53,8 @@ test.describe('every shop route composes the shared API error state with its pag
             const operation = bootstrap?.readOperations[0];
             if (!operation || !operations[operation]) throw new Error('Missing canonical bootstrap read for ' + startingRoute);
             const readPath = (API_BASE_PATH + operations[operation].path).replace('{shopId}', 'shop-demo');
-            const [response] = await Promise.all([
-                page.waitForResponse(result => result.request().method() === 'GET' && new URL(result.url()).pathname === readPath, { timeout: 15_000 }),
-                page.goto(new URL(startingRoute, server.url).toString(), { waitUntil: 'domcontentloaded' }),
-            ]);
+            const response = await navigateDemoAndRead(page, new URL(startingRoute, server.url).toString(),
+                result => result.request().method() === 'GET' && new URL(result.url()).pathname === readPath, 'domcontentloaded');
             expect(response.status()).toBe(200);
             expect(await response.finished()).toBeNull();
             await openDemoControls(page);

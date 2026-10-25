@@ -1,4 +1,4 @@
-import { openDemoControls } from '../session/demo-controls';
+import { openDemoControls, waitForDemoMenu, navigateDemoAndRead } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
@@ -49,6 +49,7 @@ function operationPattern(operation: string) {
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
     await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
+    await waitForDemoMenu(page, label);
     await page.getByRole('option', { name: value, exact: true }).click({ timeout: 10_000 });
 }
 
@@ -188,10 +189,8 @@ test.describe('route loading state appears for every readable route with route-o
                     const bootstrapPattern = new RegExp(operationPattern(bootstrap.readOperations[0]));
                     // Match the existing demo-preview startup proof: await a real API read,
                     // then retain the original DOM assertion deadline. No sleep or retry.
-                    const [bootstrapRead] = await Promise.all([
-                        page.waitForResponse(response => response.request().method() === 'GET' && bootstrapPattern.test(new URL(response.url()).pathname), { timeout: 15_000 }),
-                        page.goto(new URL(routePath(bootstrap.path), demoUrl).toString()),
-                    ]);
+                    const bootstrapRead = await navigateDemoAndRead(page, new URL(routePath(bootstrap.path), demoUrl).toString(),
+                        response => response.request().method() === 'GET' && bootstrapPattern.test(new URL(response.url()).pathname));
                     expect(bootstrapRead.status(), `Bootstrap ${bootstrap.id} must load before testing ${role}/${route.id}`).toBe(200);
                     expect(await bootstrapRead.finished()).toBeNull();
                     await chooseRole(page, role);
