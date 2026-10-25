@@ -31,7 +31,8 @@ const listPath = output + '.txt';
 fs.writeFileSync(listPath, testList(selected, project));
 requireExactTests(selected.tests, collect(['--test-list', listPath]));
 const plan = { project, shard, workers, inventory: inventory.length, selected: selected.tests.length,
-    historicalSeconds: partitions.map(p => Math.round(p.seconds)), ids: selected.tests.map(t => t.id) };
+    historicalSeconds: partitions.map(p => Math.round(p.seconds)),
+    estimatedWallSeconds: partitions.map(p => Math.round(p.estimatedWallSeconds)), ids: selected.tests.map(t => t.id) };
 console.log(JSON.stringify({ ...plan, ids: undefined }));
 fs.writeFileSync(output + '.plan.json', JSON.stringify(plan, null, 2) + '\n');
 if (!listOnly) {

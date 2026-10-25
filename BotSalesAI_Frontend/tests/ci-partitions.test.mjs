@@ -17,6 +17,7 @@ test('every test-level partition owner explicitly declares parallel mode and is 
     for (const file of independentTestFiles) {
         const source = fs.readFileSync(new URL(file, new URL('./', import.meta.url)), 'utf8');
         assert.match(source, /test\.describe\.configure\(\{\s*mode:\s*'parallel'\s*\}\)/, file);
+        assert.match(source, /test\.beforeAll\(/, 'queue estimate requires the current all-hooks owner: ' + file);
     }
 });
 
@@ -54,15 +55,16 @@ test('missing, duplicate, skipped and retried results cannot masquerade as compl
     assert.throws(() => requireExactTests(expected, passed, true), /must pass once/);
 });
 
-test('the observed serial built-demo budget leaves lane 1 less native work without dropping coverage', () => {
+test('the serial built-demo wall budget follows the native worker queue without dropping coverage', () => {
     const tests = ['a', 'b', 'c', 'd', 'e', 'f'].map(id => row(id, id + '.spec.ts'));
     const measured = { files: Object.fromEntries(tests.map(t => [t.file, 20])), tests: {} };
     const original = partitionTests(tests, measured);
     const reserved = partitionTests(tests, { ...measured, builtDemoSeconds: 15 });
     requireExactTests(tests, reserved.flatMap(p => p.tests));
     assert.equal(original[0].tests.length, 2);
-    assert.equal(reserved[0].tests.length, 1);
-    assert.ok(Math.max(...reserved.map(p => p.seconds)) - Math.min(...reserved.map(p => p.seconds)) <= 20);
+    assert.equal(original[0].estimatedWallSeconds, 20);
+    assert.equal(reserved[0].estimatedWallSeconds, 35);
+    assert.equal(Math.max(...reserved.map(p => p.estimatedWallSeconds)), 35);
 });
 
 test('invalid built-demo measurements fail closed instead of changing the selected coverage', () => {
@@ -76,13 +78,41 @@ test('four-worker scheduling reserves the serial demo wall time without losing n
     const two = partitionTests(tests, measured, 3, 2);
     const four = partitionTests(tests, measured, 3, 4);
     requireExactTests(tests, four.flatMap(p => p.tests));
-    assert.ok(four[0].tests.length < two[0].tests.length, 'the serial demo requires more reserved capacity with four workers');
+    assert.equal(two[0].estimatedWallSeconds, 55);
+    assert.equal(four[0].estimatedWallSeconds, 35);
     for (const [workers, plan] of [[2, two], [4, four]]) {
         assert.equal(plan[0].seconds - plan[0].groups.reduce((sum, g) => sum + g.seconds, 0), 15 * workers);
         assert.ok(plan.every(p => p.tests.length > 0));
     }
     for (const workers of [0, 5, -1, 1.5, NaN, Infinity, '4'])
         assert.throws(() => partitionTests(tests, measured, 3, workers), /Invalid worker count/);
+});
+
+test('an ordinary file stays one worker group even when its summed duration could fill two workers', () => {
+    const tests = [row('a', 'one.spec.ts'), row('b', 'one.spec.ts')];
+    const [partition] = partitionTests(tests, { files: { 'one.spec.ts': 200 }, tests: {} }, 1, 2);
+    assert.equal(partition.estimatedWallSeconds, 200);
+    requireExactTests(tests, partition.tests);
+});
+
+test('parallel hook chunks retain native discovery order after longest-first selection', () => {
+    const file = independentTestFiles[0];
+    const tests = ['a', 'c', 'b', 'd'].map((id, order) => ({ ...row(id, file), order }));
+    const measured = { files: {}, tests: Object.fromEntries(tests.map(t => [t.key, ['a', 'b'].includes(t.id) ? 100 : 1])) };
+    for (const inventory of [tests, tests.slice().reverse()]) {
+        const [partition] = partitionTests(inventory, measured, 1, 2);
+        assert.equal(partition.estimatedWallSeconds, 101, 'native chunks are a/c and b/d, rather than longest-first a/b and c/d');
+        requireExactTests(tests, partition.tests);
+    }
+});
+
+test('native file-order tails are modeled instead of dividing total duration by worker count', () => {
+    const tests = ['a', 'b', 'c', 'd'].map(id => row(id, id + '.spec.ts'));
+    const measured = { files: { 'a.spec.ts': 50, 'b.spec.ts': 50, 'c.spec.ts': 1, 'd.spec.ts': 90 }, tests: {} };
+    const [partition] = partitionTests(tests, measured, 1, 2);
+    assert.equal(partition.seconds, 191);
+    assert.equal(partition.estimatedWallSeconds, 140, 'the last 90s file starts on a worker at 50s');
+    requireExactTests(tests, partition.tests);
 });
 
 test('discovery errors, wrong projects, duplicate IDs and empty inventories fail closed', () => {

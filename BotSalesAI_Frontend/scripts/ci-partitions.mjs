@@ -22,7 +22,7 @@ export function collectedTests(report, project) {
                 if (test.projectName !== project) throw new Error('Unexpected project in inventory.');
                 const file = spec.file.replaceAll('\\', '/');
                 const title = [...parents, spec.title].join(' › ');
-                tests.push({ id: spec.id, file, title, key: `${file} › ${title}`, test });
+                tests.push({ id: spec.id, file, title, key: `${file} › ${title}`, order: tests.length, test });
             }
         }
         for (const child of suite.suites ?? []) visit(child, [...parents, child.title]);
@@ -54,15 +54,51 @@ export function partitionTests(tests, timing, total = 3, workers = 2) {
     if (!Number.isFinite(builtDemoSeconds) || builtDemoSeconds < 0) throw new Error('Invalid built-demo timing.');
     // Lane 1 runs the built-demo suite serially after native E2E. Convert that
     // observed wall time to a duration budget for the requested worker count.
-    const partitions = Array.from({ length: total }, (_, index) => ({ seconds: index === 0 ? builtDemoSeconds * workers : 0, groups: [], tests: [] }));
+    const partitions = Array.from({ length: total }, (_, index) => ({ seconds: index === 0 ? builtDemoSeconds * workers : 0,
+        estimatedWallSeconds: index === 0 ? builtDemoSeconds : 0, groups: [], tests: [] }));
     for (const group of sorted) {
-        const target = partitions.reduce((best, next) => next.seconds < best.seconds ? next : best);
+        const choices = partitions.map((partition, index) => ({ partition, index,
+            wall: estimateWorkerQueue([...partition.groups, group], workers) + (index === 0 ? builtDemoSeconds : 0) }));
+        choices.sort((a, b) => a.wall - b.wall || a.partition.seconds - b.partition.seconds || a.index - b.index);
+        const target = choices[0].partition;
         target.groups.push(group);
         target.tests.push(...group.tests);
         target.seconds += group.seconds;
+        target.estimatedWallSeconds = choices[0].wall;
     }
     if (partitions.some(p => !p.tests.length)) throw new Error('Empty CI partition.');
     return partitions;
+}
+
+// Approximate the current native queue, without importing Playwright internals.
+// Ordinary files remain indivisible; explicit parallel all-hooks suites split
+// selected cases into ceil(count / workers) chunks in their discovery order.
+// This is a scheduling hint. Native selection/results still own correctness.
+function estimateWorkerQueue(groups, workers) {
+    const files = new Map();
+    for (const group of groups) {
+        const file = group.tests[0].file;
+        if (!files.has(file)) files.set(file, []);
+        files.get(file).push(group);
+    }
+    const queue = [];
+    for (const file of [...files.keys()].sort()) {
+        const selected = files.get(file);
+        if (!independentTestFiles.includes(file)) {
+            queue.push(selected[0].seconds);
+            continue;
+        }
+        selected.sort((a, b) => (a.tests[0].order ?? 0) - (b.tests[0].order ?? 0) || a.key.localeCompare(b.key, 'en'));
+        const size = Math.ceil(selected.length / workers);
+        for (let i = 0; i < selected.length; i += size)
+            queue.push(selected.slice(i, i + size).reduce((sum, group) => sum + group.seconds, 0));
+    }
+    const available = Array(workers).fill(0);
+    for (const seconds of queue) {
+        const next = available.indexOf(Math.min(...available));
+        available[next] += seconds;
+    }
+    return Math.max(...available);
 }
 
 export function requireExactTests(expected, actual, requirePassed = false) {
