@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { profiles, readAttemptJobs, requireSuccessfulJobs, requireSuccessfulNeeds, runGate } from './require-success.mjs';
+import { waitForBuild } from './wait-for-build.mjs';
 
 const context = { runId: 123, attempt: 2 };
 const jobsFor = name => ({ total_count: profiles[name].jobs.length + 1, jobs: [
@@ -10,6 +11,51 @@ const jobsFor = name => ({ total_count: profiles[name].jobs.length + 1, jobs: [
     { id: 99, run_id: 123, run_attempt: 2, name: profiles[name].gate, status: 'in_progress', conclusion: null },
 ] });
 const needsFor = name => Object.fromEntries(profiles[name].needs.map(id => [id, { result: 'success' }]));
+
+const buildEnv = { GITHUB_REPOSITORY: 'owner/repo', GITHUB_RUN_ID: '123', GITHUB_RUN_ATTEMPT: '2', GITHUB_TOKEN: 'test-token' };
+const buildJob = (status, conclusion = null) => ({ id: 4, run_id: 123, run_attempt: 2, name: 'build (browser artifacts)', status, conclusion });
+const inventory = jobs => ({ total_count: jobs.length, jobs });
+function fakeBuildClock(payloads) {
+    let time = 0, calls = 0;
+    return { now: () => time, sleep: async ms => { time += ms; }, timeoutMs: 10, pollMs: 5,
+        fetchImpl: async () => Response.json(payloads[Math.min(calls++, payloads.length - 1)]) };
+}
+test('build rendezvous waits through registration, queue and execution, accepting only current success', async () => {
+    const ready = await waitForBuild(buildEnv, fakeBuildClock([inventory([]), inventory([buildJob('queued')]),
+        inventory([buildJob('in_progress')]), inventory([buildJob('completed', 'success')])].slice(1)));
+    assert.equal(ready.buildJobId, 4); assert.equal(ready.runId, 123); assert.equal(ready.attempt, 2);
+    const registration = await waitForBuild(buildEnv, fakeBuildClock([inventory([]), inventory([buildJob('completed', 'success')])]));
+    assert.equal(registration.waitedSeconds, 0.005);
+});
+test('build rendezvous rejects every unsuccessful terminal result and unknown state immediately', async () => {
+    for (const conclusion of ['failure', 'cancelled', 'skipped', 'neutral', 'timed_out', 'action_required', 'stale', null])
+        await assert.rejects(waitForBuild(buildEnv, fakeBuildClock([inventory([buildJob('completed', conclusion)])])), /not successful/);
+    for (const job of [buildJob('unknown'), buildJob('in_progress', 'success')])
+        await assert.rejects(waitForBuild(buildEnv, fakeBuildClock([inventory([job])])), /not successful/);
+});
+test('build rendezvous rejects incomplete metadata and cross-attempt or duplicate identities', async () => {
+    const good = buildJob('completed', 'success');
+    for (const payload of [null, {}, { total_count: 1, jobs: [] }, inventory([good, good]),
+        inventory([{ ...good, run_id: 124 }]), inventory([{ ...good, run_attempt: 1 }]),
+        inventory([good, { ...good, id: 5 }]), inventory([{ ...good, id: '4' }])])
+        await assert.rejects(waitForBuild(buildEnv, fakeBuildClock([payload])), /inventory|identity/);
+});
+test('build rendezvous times out missing or unfinished producers without accepting an artifact', async () => {
+    for (const jobs of [[], [buildJob('queued')], [buildJob('in_progress')]])
+        await assert.rejects(waitForBuild(buildEnv, fakeBuildClock([inventory(jobs)])), /Timed out/);
+});
+test('build rendezvous propagates API and network errors without polling past the error', async () => {
+    for (const fetchImpl of [async () => new Response('{}', { status: 403 }),
+        async () => new Response('invalid'), async () => { throw new Error('network unavailable'); }])
+        await assert.rejects(waitForBuild(buildEnv, { fetchImpl }), /gate stays closed|invalid job metadata|network unavailable/);
+});
+test('build rendezvous validates its bounded wait and workflow context before reading metadata', async () => {
+    const fetchImpl = async () => { assert.fail('No API call for invalid context'); };
+    for (const value of ['0', '-1', '1e2', '9007199254740992'])
+        await assert.rejects(waitForBuild({ ...buildEnv, GITHUB_RUN_ID: value }, { fetchImpl }), /positive safe integer/);
+    for (const options of [{ timeoutMs: 0 }, { timeoutMs: 900001 }, { pollMs: 0 }, { pollMs: 5001 }])
+        await assert.rejects(waitForBuild(buildEnv, { ...options, fetchImpl }), /bounded build wait/);
+});
 
 for (const name of Object.keys(profiles)) {
     test(`${name}: accepts every required job, including all matrix children`, () => {
@@ -103,7 +149,7 @@ test('the Chromium aggregate tolerates only its named downstream gate and still 
 });
 
 test('both workflows wire always-running gates to every producer and keep read-only permissions', () => {
-    for (const [name, dependencies] of [['frontend', '[verify, build-artifacts, e2e, chromium-gate]'], ['repository-hygiene', '[check]']]) {
+    for (const [name, dependencies] of [['frontend', '[verify, build-artifacts, e2e, built-demo, chromium-gate]'], ['repository-hygiene', '[check]']]) {
         const workflow = readFileSync(new URL(`../workflows/${name}.yml`, import.meta.url), 'utf8');
         const gate = workflow.match(/^  success-gate:[\s\S]*$/m)?.[0];
         assert.ok(gate, name);
@@ -123,7 +169,7 @@ test('both workflows wire always-running gates to every producer and keep read-o
     const aggregate = frontend.match(/^  chromium-gate:[\s\S]*?(?=^  success-gate:)/m)?.[0];
     assert.ok(aggregate);
     assert.match(aggregate, /name: e2e \(chromium all\)/);
-    assert.match(aggregate, /needs: \[verify, build-artifacts, e2e\]/);
+    assert.match(aggregate, /needs: \[verify, build-artifacts, e2e, built-demo\]/);
     assert.match(aggregate, /if: \$\{\{ always\(\) \}\}/);
     assert.match(aggregate, /actions: read/);
     assert.match(aggregate, /sparse-checkout: \.github\/scripts/);
@@ -132,7 +178,8 @@ test('both workflows wire always-running gates to every producer and keep read-o
     const producers = frontend.split(/^  chromium-gate:/m)[0];
     const verify = producers.split(/^  build-artifacts:/m)[0];
     const build = producers.match(/^  build-artifacts:[\s\S]*?(?=^  e2e:)/m)?.[0];
-    const browserJobs = producers.split(/^  e2e:/m)[1];
+    const browserJobs = producers.match(/^  e2e:[\s\S]*?(?=^  built-demo:)/m)?.[0];
+    const builtDemo = producers.match(/^  built-demo:[\s\S]*$/m)?.[0];
     assert.match(verify, /run: npm run verify/);
     assert.doesNotMatch(verify, /build:demo|upload-artifact/);
     assert.ok(build);
@@ -140,10 +187,19 @@ test('both workflows wire always-running gates to every producer and keep read-o
     assert.match(build, /run: npm run build\r?\n/);
     assert.match(build, /run: npm run build:demo/);
     assert.match(build, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
-    assert.match(browserJobs, /needs: build-artifacts/);
+    assert.doesNotMatch(browserJobs, /needs:/, 'Native preparation overlaps the independent build');
+    assert.match(browserJobs, /actions: read/);
+    assert.match(browserJobs, /node \.\.\/\.github\/scripts\/wait-for-build\.mjs/);
+    assert.ok(browserJobs.indexOf('npx playwright install') < browserJobs.indexOf('node ../.github/scripts/wait-for-build.mjs'));
+    assert.ok(browserJobs.indexOf('node ../.github/scripts/wait-for-build.mjs') < browserJobs.indexOf('uses: actions/download-artifact'));
+    assert.ok(builtDemo);
+    assert.match(builtDemo, /needs: build-artifacts/);
+    assert.match(builtDemo, /name: built demo \(both engines\)/);
+    assert.match(builtDemo, /node scripts\/run-ci-built-demo\.mjs/);
+    assert.doesNotMatch(browserJobs, /verify_built_demo|run-ci-built-demo/);
     assert.match(browserJobs, /actions\/download-artifact@[a-f0-9]{40}/);
     assert.match(browserJobs, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
-    assert.match(browserJobs, /BOTSALES_E2E_WORKERS: '2'/);
+    assert.match(browserJobs, /BOTSALES_E2E_WORKERS: '3'/);
     assert.match(browserJobs, /kind: 'browser-runner-capacity'/);
     assert.match(browserJobs, /workers > availableCpus/);
     assert.match(browserJobs, /BOTSALES_E2E_RUNTIME: preview/);

@@ -1,19 +1,19 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const browserProducers = ['verify (source and build)', 'build (browser artifacts)',
+const browserProducers = ['verify (source and build)', 'build (browser artifacts)', 'built demo (both engines)',
     ...['chromium', 'firefox'].flatMap(browser => [1, 2, 3, 4, 5, 6, 7, 8, 9].map(shard => `e2e (${browser} ${shard}-of-9)`))];
 
 export const profiles = {
     chromium: {
-        needs: ['verify', 'build-artifacts', 'e2e'],
+        needs: ['verify', 'build-artifacts', 'e2e', 'built-demo'],
         gate: 'e2e (chromium all)',
         jobs: browserProducers,
         // The final gate cannot complete until this aggregate has succeeded.
         downstreamJobs: ['gate frontend (success only)'],
     },
     frontend: {
-        needs: ['verify', 'build-artifacts', 'e2e', 'chromium-gate'],
+        needs: ['verify', 'build-artifacts', 'e2e', 'built-demo', 'chromium-gate'],
         gate: 'gate frontend (success only)',
         jobs: [...browserProducers, 'e2e (chromium all)'],
     },

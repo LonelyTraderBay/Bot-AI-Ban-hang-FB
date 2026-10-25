@@ -381,10 +381,26 @@ test('F01 order editor keeps its original version and compares whole line lists 
 
 test('F06 guards added order rows, shop switch, logout and native reload; successful creation leaves no false guard', async ({ page }) => {
     for (const route of ['orders/new', 'bot/evaluations', 'orders/new']) {
+        // Loaded lookup rows change the button position; finish setup before the guard interaction.
+        const lookups = route === 'orders/new' ? ['customers', 'products', 'warehouses'].map(resource =>
+            page.waitForResponse(response => response.request().method() === 'GET'
+                && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/' + resource
+                && new URL(response.url()).searchParams.get('limit') === '20'
+                && response.status() === 200)) : [];
         await visit(page, route);
         expect(await page.evaluate(async () => (await fetch('/api/v2/session')).status)).toBe(200);
+        const counts = await Promise.all(lookups.map(async response => {
+            const payload = await (await response).json();
+            expect(payload.data.length).toBeGreaterThan(0);
+            return payload.data.length as number;
+        }));
+        for (const count of new Set(counts))
+            await expect(page.locator('main form').getByText(`Đã tải ${count} lựa chọn`, { exact: true }))
+                .toHaveCount(counts.filter(value => value === count).length);
     }
     await page.getByRole('button', { name: 'Thêm dòng', exact: true }).click();
+    await expect(page.getByLabel('Sản phẩm 2', { exact: true })).toBeVisible();
+    await expect(page.locator('main form')).toHaveAttribute('data-draft-dirty', 'true');
     const shopLink = page.getByRole('navigation', { name: 'Điều hướng chính' }).locator('a[href="/workspaces"]');
     const warning = page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?', exact: true });
     await shopLink.click(); await expect(warning).toBeVisible();

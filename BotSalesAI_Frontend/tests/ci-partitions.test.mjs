@@ -72,6 +72,24 @@ test('invalid built-demo measurements fail closed instead of changing the select
         assert.throws(() => partitionTests([row('a', 'x')], { files: { x: 1 }, tests: {}, builtDemoSeconds }, 1), /Invalid built-demo timing/);
 });
 
+test('a separate built-demo owner removes the native reserve without editing historical measurements or losing IDs', () => {
+    const tests = Array.from({ length: 12 }, (_, i) => row(String(i), i + '.spec.ts'));
+    const measured = { files: Object.fromEntries(tests.map(t => [t.file, 20])), tests: {}, builtDemoSeconds: 138 };
+    const before = structuredClone(measured);
+    const separate = partitionTests(tests, measured, 3, 2, false);
+    const withoutMeasurement = partitionTests(tests, { ...measured, builtDemoSeconds: 0 }, 3, 2);
+    assert.deepEqual(separate, withoutMeasurement);
+    assert.deepEqual(measured, before);
+    requireExactTests(tests, separate.flatMap(p => p.tests));
+    assert.ok(separate.every(p => p.seconds === p.groups.reduce((sum, g) => sum + g.seconds, 0)));
+});
+
+test('invalid demo ownership and invalid historical timing remain errors for separate jobs', () => {
+    for (const reserve of [null, 0, 1, 'false', {}])
+        assert.throws(() => partitionTests([row('a', 'x')], timing, 1, 2, reserve), /Invalid built-demo ownership/);
+    assert.throws(() => partitionTests([row('a', 'x')], { ...timing, builtDemoSeconds: -1 }, 1, 2, false), /Invalid built-demo timing/);
+});
+
 test('four-worker scheduling reserves the serial demo wall time without losing native cases', () => {
     const tests = Array.from({ length: 12 }, (_, i) => row(String(i), i + '.spec.ts'));
     const measured = { files: Object.fromEntries(tests.map(t => [t.file, 20])), tests: {}, builtDemoSeconds: 15 };
@@ -125,6 +143,16 @@ test('discovery errors, wrong projects, duplicate IDs and empty inventories fail
     assert.throws(() => partitionTests([row('a', 'x')], { files: { x: -1 }, tests: {} }, 1), /timing/);
 });
 
+test('multi-project discovery keeps both built engines and rejects any unlisted project', () => {
+    const spec = (id, projectName) => ({ id, file: 'built-demo-regression.spec.ts', title: id, tests: [{ projectName }] });
+    const report = { suites: [{ specs: [spec('a', 'chromium-built-demo'), spec('b', 'firefox-built-demo')] }] };
+    const projects = ['chromium-built-demo', 'firefox-built-demo'];
+    assert.deepEqual(collectedTests(report, projects).map(t => t.id), ['a', 'b']);
+    assert.throws(() => collectedTests(report, projects.slice(0, 1)), /Unexpected project/);
+    assert.throws(() => collectedTests({ suites: [{ specs: [...report.suites[0].specs, spec('c', 'unexpected')] }] }, projects), /Unexpected project/);
+    assert.throws(() => collectedTests({ suites: [{ specs: [spec('a', projects[0]), spec('a', projects[1])] }] }, projects), /duplicate/);
+});
+
 test('real Playwright selectors cover the current Chrome/Firefox inventories exactly once', { timeout: 60_000 }, () => {
     const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
     const outputRoot = path.join(root, 'test-results');
@@ -141,7 +169,7 @@ test('real Playwright selectors cover the current Chrome/Firefox inventories exa
     try {
         for (const project of ['chromium', 'firefox']) {
             const inventory = collect(project);
-            const partitions = partitionTests(inventory, timings.projects[project], 9, 2);
+            const partitions = partitionTests(inventory, timings.projects[project], 9, 3, false);
             const executed = [];
             for (const [index, partition] of partitions.entries()) {
                 const list = path.join(output, `${project}-${index}.txt`);
