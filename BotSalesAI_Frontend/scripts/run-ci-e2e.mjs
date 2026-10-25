@@ -7,9 +7,9 @@ import { collectedTests, partitionTests, requireExactTests, testList } from './c
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const [project, shard, listOnly] = process.argv.slice(2);
-if (!['chromium', 'firefox'].includes(project) || !/^[1-8]\/8$/.test(shard ?? '')
+if (!['chromium', 'firefox'].includes(project) || !/^[1-9]\/9$/.test(shard ?? '')
     || (listOnly !== undefined && listOnly !== '--list') || process.argv.length > 5)
-    throw new Error('Usage: node scripts/run-ci-e2e.mjs <chromium|firefox> <1/8|2/8|3/8|4/8|5/8|6/8|7/8|8/8> [--list]');
+    throw new Error('Usage: node scripts/run-ci-e2e.mjs <chromium|firefox> <1/9|2/9|3/9|4/9|5/9|6/9|7/9|8/9|9/9> [--list]');
 const runId = `ci-${project}-${shard[0]}-${randomUUID()}`;
 const output = path.join(root, 'test-results', runId);
 const env = { ...process.env, BOTSALES_PLAYWRIGHT_RUN_ID: runId };
@@ -23,7 +23,7 @@ function collect(extra = []) {
 }
 const inventory = collect();
 const timings = JSON.parse(fs.readFileSync(new URL('./ci-timings.json', import.meta.url), 'utf8'));
-const partitions = partitionTests(inventory, timings.projects[project], 8, workers);
+const partitions = partitionTests(inventory, timings.projects[project], 9, workers);
 const selected = partitions[Number(shard[0]) - 1];
 // The list lives outside Playwright's outputDir, which the runner cleans on startup.
 fs.mkdirSync(path.dirname(output), { recursive: true });
