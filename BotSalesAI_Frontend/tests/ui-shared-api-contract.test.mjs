@@ -303,13 +303,15 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.doesNotMatch(workflow, /^\s+paths(?:-ignore)?:/m, 'Every change must run the required gates');
     const verifyJob = workflow.match(/^  verify:[\s\S]*?(?=^  build-artifacts:)/m)?.[0];
     const buildJob = workflow.match(/^  build-artifacts:[\s\S]*?(?=^  e2e:)/m)?.[0];
-    const e2eJob = workflow.match(/^  e2e:[\s\S]*?(?=^  chromium-gate:)/m)?.[0];
+    const e2eJob = workflow.match(/^  e2e:[\s\S]*?(?=^  built-demo:)/m)?.[0];
+    const builtDemoJob = workflow.match(/^  built-demo:[\s\S]*?(?=^  chromium-gate:)/m)?.[0];
+    assert.ok(builtDemoJob);
     assert.ok(verifyJob, 'The shared source/build/evidence job must remain separate from browser shards');
-    assert.ok(e2eJob, 'Browser tests must run in their own dependent job');
+    assert.ok(e2eJob, 'Browser tests must run in their own job');
     const verifyBrowserInstall = verifyJob.indexOf('npx playwright install --with-deps chromium');
     const verifyStep = verifyJob.indexOf('npm run verify');
     assert.ok(verifyBrowserInstall >= 0 && verifyBrowserInstall < verifyStep, 'The browser-backed design audit requires Chromium in the verify job');
-    for (const job of [verifyJob, e2eJob]) {
+    for (const job of [verifyJob, e2eJob, builtDemoJob]) {
         const mirror = job.indexOf('name: Use Ubuntu archive for browser dependencies');
         assert.ok(mirror >= 0 && mirror < job.indexOf('npx playwright install'), 'Configure the measured slow APT endpoint before required browser dependencies');
         assert.ok(job.includes('https://archive.ubuntu.com/ubuntu'));
@@ -322,14 +324,17 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.doesNotMatch(verifyJob, /sparse-checkout/, 'Source verification must retain every historical evidence input');
     const archivePatterns = ['/*', '!/BotSalesAI_Frontend/evidence/**/*.png', '!/BotSalesAI_Frontend/evidence/**/*.jpeg',
         '!/BotSalesAI_Frontend/evidence/**/*.zip', '!/botsales-kit/execution/frontend-evidence/'];
-    for (const job of [buildJob, e2eJob]) {
+    for (const job of [buildJob, e2eJob, builtDemoJob]) {
         assert.match(job, /sparse-checkout-cone-mode: false/);
         const patterns = job.match(/          sparse-checkout: \|\r?\n((?: {12}[^\r\n]+\r?\n)+)/)?.[1];
         assert.ok(patterns, 'Build/browser checkout must use the reviewed archive-only patterns');
         assert.deepEqual(patterns.trim().split(/\r?\n/).map(line => line.trim()), archivePatterns,
             'All source/contracts/configs and non-excluded evidence remain selected');
     }
-    assert.match(e2eJob, /needs: build-artifacts/);
+    assert.doesNotMatch(e2eJob, /needs:/, 'Browser preparation overlaps build');
+    const ready = e2eJob.indexOf('node ../.github/scripts/wait-for-build.mjs');
+    assert.ok(e2eJob.indexOf('npx playwright install') < ready && ready < e2eJob.indexOf('uses: actions/download-artifact'));
+    assert.match(builtDemoJob, /needs: build-artifacts/);
     assert.match(e2eJob, /BOTSALES_E2E_RUNTIME: preview/);
     assert.match(e2eJob, /timeout-minutes: 180/, 'Each browser shard must have a bounded hosted-runner timeout');
     assert.match(e2eJob, /fail-fast: false/);
@@ -344,26 +349,23 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.equal([...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n/g)].length, 9, 'No unsharded Firefox job may bypass the bounded matrix');
     assert.equal([...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n/g)].length, 9, 'Chromium E2E must use nine supported Chrome Stable shards');
     assert.match(e2eJob, /name: Verify supported Google Chrome version[\s\S]*?major < 154/);
-    const firefoxShards = [...e2eJob.matchAll(/- browser: firefox\r?\n\s+install_browser: firefox\r?\n\s+shard_id: ([\w-]+)\r?\n\s+partition: '(\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
-        .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
-    assert.deepEqual(firefoxShards, [
-        { id: '1-of-9', args: '1/9', builtDemo: 'true' },
-        { id: '2-of-9', args: '2/9', builtDemo: 'false' },
-        { id: '3-of-9', args: '3/9', builtDemo: 'false' },
-        { id: '4-of-9', args: '4/9', builtDemo: 'false' },
-        { id: '5-of-9', args: '5/9', builtDemo: 'false' },
-        { id: '6-of-9', args: '6/9', builtDemo: 'false' },
-        { id: '7-of-9', args: '7/9', builtDemo: 'false' },
-        { id: '8-of-9', args: '8/9', builtDemo: 'false' },
-        { id: '9-of-9', args: '9/9', builtDemo: 'false' },
-    ], 'The complete Firefox suite must be split across nine bounded jobs and run built-demo once');
-    const chromiumShards = [...e2eJob.matchAll(/- browser: chromium\r?\n\s+install_browser: chrome\r?\n\s+shard_id: ([\w-]+)\r?\n\s+partition: '(\d+\/\d+)'\r?\n\s+verify_built_demo: (true|false)/g)]
-        .map(([, id, args, builtDemo]) => ({ id, args, builtDemo }));
-    assert.deepEqual(chromiumShards, firefoxShards, 'Both engines must cover the same complete nine-shard partition and one built demo');
-    assert.match(e2eJob, /if: \$\{\{ matrix\.verify_built_demo \}\}/);
-    assert.match(e2eJob, /playwright test --config playwright\.built-demo\.config\.ts --output test-results\/built-demo/);
-    assert.match(e2eJob, /playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}/);
-    const builtDemoSuffix = e2eJob.match(/playwright\.built-demo\.config\.ts[^\n]+--project=\$\{\{ matrix\.browser \}\}([^\s]*)/)[1];
+    const shards = [...e2eJob.matchAll(/- browser: (chromium|firefox)\r?\n\s+install_browser: (?:firefox|chrome)\r?\n\s+shard_id: ([\w-]+)\r?\n\s+partition: '(\d+\/\d+)'/g)];
+    for (const browser of ['chromium', 'firefox'])
+        assert.deepEqual(shards.filter(m => m[1] === browser).map(([, , id, args]) => ({ id, args })),
+            Array.from({ length: 9 }, (_, i) => ({ id: (i+1)+'-of-9', args: (i+1)+'/9' })));
+    assert.doesNotMatch(e2eJob, /verify_built_demo|playwright\.built-demo|run-ci-built-demo/);
+    assert.match(driver, /partitionTests\(inventory, timings\.projects\[project\], 9, workers, false\)/);
+    assert.match(driver, /builtDemoReserved: false/);
+    assert.match(builtDemoJob, /npx playwright install --with-deps chrome firefox/);
+    assert.match(builtDemoJob, /name: Verify supported Google Chrome version[\s\S]*?major < 154/);
+    assert.match(builtDemoJob, /node scripts\/run-ci-built-demo\.mjs/);
+    const builtRunner = fs.readFileSync(path.join(root, 'scripts/run-ci-built-demo.mjs'), 'utf8');
+    assert.match(builtRunner, /for \(const browser of \['chromium', 'firefox'\]\)/);
+    assert.match(builtRunner, /expected\.length !== 3/);
+    assert.match(builtRunner, /report\.config\.workers !== 1/);
+    assert.match(builtRunner, /requireExactTests\(expected, collectedTests\(report, project\), true\)/);
+    assert.match(builtDemoJob, /frontend-built-demo-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
+    const builtDemoSuffix = '-built-demo';
     const builtDemoConfig = fs.readFileSync(path.join(root, 'playwright.built-demo.config.ts'), 'utf8');
     const browserConfig = fs.readFileSync(path.join(root, 'playwright.config.ts'), 'utf8');
     assert.match(browserConfig, /name: 'chromium', use: \{[^}]*channel: 'chrome'/, 'Chromium E2E must execute branded Chrome Stable');

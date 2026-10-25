@@ -23,14 +23,14 @@ function collect(extra = []) {
 }
 const inventory = collect();
 const timings = JSON.parse(fs.readFileSync(new URL('./ci-timings.json', import.meta.url), 'utf8'));
-const partitions = partitionTests(inventory, timings.projects[project], 9, workers);
+const partitions = partitionTests(inventory, timings.projects[project], 9, workers, false);
 const selected = partitions[Number(shard[0]) - 1];
 // The list lives outside Playwright's outputDir, which the runner cleans on startup.
 fs.mkdirSync(path.dirname(output), { recursive: true });
 const listPath = output + '.txt';
 fs.writeFileSync(listPath, testList(selected, project));
 requireExactTests(selected.tests, collect(['--test-list', listPath]));
-const plan = { project, shard, workers, inventory: inventory.length, selected: selected.tests.length,
+const plan = { project, shard, workers, builtDemoReserved: false, inventory: inventory.length, selected: selected.tests.length,
     historicalSeconds: partitions.map(p => Math.round(p.seconds)),
     estimatedWallSeconds: partitions.map(p => Math.round(p.estimatedWallSeconds)), ids: selected.tests.map(t => t.id) };
 console.log(JSON.stringify({ ...plan, ids: undefined }));
