@@ -1,4 +1,4 @@
-import { openDemoControls } from '../session/demo-controls';
+import { openDemoControls, waitForDemoMenu, navigateDemoAndRead } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
@@ -39,6 +39,7 @@ async function chooseRole(page: import('@playwright/test').Page, role: string) {
     if (role === 'owner') return;
     await openDemoControls(page);
     await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
+    await waitForDemoMenu(page, 'Vai trò mô phỏng');
     await page.getByRole('option', { name: role, exact: true }).click();
     await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
     await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText(role);
@@ -79,16 +80,15 @@ test.describe('ready route content renders for every role granted read access by
             const loadedRouteLocations = new Map<string, string>();
             const bootstrap = privateRoutes.find(route => route.id === 'R39');
             if (!bootstrap || !operationPathPatterns[bootstrap.readOperations[0]]) throw new Error('Missing canonical notifications bootstrap.');
-            const [bootstrapRead] = await Promise.all([
-                page.waitForResponse(response => response.request().method() === 'GET'
-                    && operationPathPatterns[bootstrap.readOperations[0]].test(new URL(response.url()).pathname), { timeout: 15_000 }),
-                page.goto(new URL(routePath(bootstrap.path), demoUrl).toString()),
-            ]);
+            const bootstrapRead = await navigateDemoAndRead(page, new URL(routePath(bootstrap.path), demoUrl).toString(),
+                response => response.request().method() === 'GET'
+                    && operationPathPatterns[bootstrap.readOperations[0]].test(new URL(response.url()).pathname));
             expect(bootstrapRead.status()).toBe(200);
             expect(await bootstrapRead.finished()).toBeNull();
             await chooseRole(page, role);
             await openDemoControls(page);
             await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
+            await waitForDemoMenu(page, 'Trạng thái thử');
             await page.getByRole('option', { name: 'Bình thường', exact: true }).click();
 
             for (const route of readableRoutes) {
@@ -139,6 +139,7 @@ test.describe('ready route content renders for every role granted read access by
             const routeOwnedData = readableRoutes.filter(route => route.id !== 'R33' && !noSeedJobRoutes.has(route.id));
             await openDemoControls(page);
             await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
+            await waitForDemoMenu(page, 'Trạng thái thử');
             await page.getByRole('option', { name: 'Lỗi API kéo dài', exact: true }).click();
             await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
             // useApi owns a 5-second staleTime; let every cached route query cross it before remounting.

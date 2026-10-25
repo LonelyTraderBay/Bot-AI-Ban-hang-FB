@@ -3,7 +3,7 @@ const here=import.meta.dirname,repo=path.resolve(here,'../../..'),p='BotSalesAI_
 const file=path.join(repo,p+'evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json'),raw=fs.readFileSync(file,'utf8'),e=JSON.parse(raw);
 const digest=b=>createHash('sha256').update(b).digest('hex'),hash=n=>digest(fs.readFileSync(path.join(repo,n)));
 const scheduling=['scripts/ci-partitions.mjs','scripts/ci-timings.json','scripts/update-ci-timings.mjs','tests/ci-partitions.test.mjs'].map(n=>p+n);
-const fixtures=['tests/states/route-error-composition.spec.ts','tests/ui61-consistency.spec.ts','tests/ui-composition-layout.spec.ts','tests/ui-toolbar-layout.spec.ts'].map(n=>p+n);
+const fixtures=['tests/states/route-error-composition.spec.ts','tests/ui61-consistency.spec.ts','tests/ui-composition-layout.spec.ts','tests/ui-toolbar-layout.spec.ts','tests/states/route-role-state-composition.spec.ts','tests/states/route-role-ready-composition.spec.ts','tests/session/demo-controls.ts'].map(n=>p+n);
 const configs=['playwright.config.ts','playwright.built-demo.config.ts'].map(n=>p+n),policy='.github/CI_POLICY.md',ui=p+'tests/ui-shared-api-contract.test.mjs';
 const code=[...scheduling,...fixtures,policy],owned=[...code,own+'REPORT.md',own+'refresh-s17.mjs'];
 for(const[n,h]of Object.entries(e.sourceFingerprints))if(!owned.includes(n))assert.equal(hash(n),h,'Unrelated stale input: '+n);
@@ -31,12 +31,12 @@ record('ci-v6-invalid-timing-inputs-20261025','timing-negatives.log',scheduling.
  ['failed-result','duplicate-partition','unsupported-workers','worker-mismatch','unsupported-partitions','incomplete-eight-partitions','tampered-digest'].map(k=>new RegExp('TIMING_NEGATIVE='+k+' REJECTED=PASS OUTPUT_UNCHANGED=PASS')),
  'All seven malformed native/provenance input families fail closed without partially changing timing output.');
 const preview=record('ci-v6-preview-independent-suites-20261025','parallel-preview.log',[...fixtures,...configs,p+'tests/session/demo-server.mjs',p+'tests/session/playwright-setup.ts'],
- [/148 passed/,/using 4 workers/],
- 'All148 original affected cases pass across Chromium/Firefox with four local workers and full traces. Canonical route bootstrap200/finished precedes original DOM checks; Toolbar render uses current preview while two /@fs fixtures keep dev. Other assertions, deadlines and IDs remain.');
+ [/190 passed/,/using 4 workers/],
+ 'All190 original affected cases pass across Chromium/Firefox with four local workers and full traces, including both complete role families. Accessible MUI listbox surfaces reach entered opacity1/transform none before the original pointer click. Canonical bootstrap readiness, mixed Toolbar runtime, IDs, assertions and deadlines remain.');
 assert.equal(preview.header.workers,'4');assert.equal(preview.header.runtime,'preview');
 const dev=record('ci-v6-dev-isolation-20261025','dev-isolation.log',[...fixtures,...configs,p+'tests/session/demo-server.mjs',p+'scripts/vite-cache.mjs'],
- [/12 passed/,/using 2 workers/],
- 'All12 focused dev cases pass on both engines/two workers, including both source fixtures, route-error bootstrap exceptions, UI61 and composition rendering. Local default dev and unique private cache/server lifecycle remain intact.');
+ [/16 passed/,/using 2 workers/],
+ 'All16 focused dev cases pass on both engines/two workers, including the originally failed sales loading walk, viewer ready/stale walk, both source fixtures, route-error exceptions, UI61 and composition rendering. Local default dev, original pointer/assertion deadlines and private cache/server lifecycle remain.');
 assert.equal(dev.header.workers,'2');assert.equal(dev.header.runtime,'dev');
 if(process.argv.includes('--finalize'))record('ci-v6-full-verify-20261025','verify.log',code,
  [/256 passed/,/ui-evidence PASS: S17/,/status=COMPLETE/],
