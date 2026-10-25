@@ -5,7 +5,7 @@ const digest=b=>createHash('sha256').update(b).digest('hex'),hash=n=>digest(fs.r
 const scheduling=['scripts/ci-partitions.mjs','scripts/ci-timings.json','scripts/update-ci-timings.mjs','tests/ci-partitions.test.mjs','scripts/run-ci-e2e.mjs'].map(n=>p+n);
 const fixtures=['tests/states/route-error-composition.spec.ts','tests/ui61-consistency.spec.ts','tests/ui-composition-layout.spec.ts','tests/ui-toolbar-layout.spec.ts','tests/states/route-role-state-composition.spec.ts','tests/states/route-role-ready-composition.spec.ts','tests/session/demo-controls.ts'].map(n=>p+n);
 const configs=['playwright.config.ts','playwright.built-demo.config.ts'].map(n=>p+n),policy='.github/CI_POLICY.md',ui=p+'tests/ui-shared-api-contract.test.mjs';
-const code=[...scheduling,...fixtures,policy],owned=[...code,own+'REPORT.md',own+'refresh-s17.mjs'];
+const code=[...scheduling,...fixtures,policy,'.github/workflows/frontend.yml',ui],owned=[...code,own+'REPORT.md',own+'refresh-s17.mjs'];
 for(const[n,h]of Object.entries(e.sourceFingerprints))if(!owned.includes(n))assert.equal(hash(n),h,'Unrelated stale input: '+n);
 function record(id,name,inputs,patterns,description){
  const bytes=fs.readFileSync(path.join(here,name)),text=bytes.toString('utf8').replace(/\x1b\[[0-?]*[ -/]*[@-~]/g,''),header=JSON.parse(text.split(/\r?\n/)[0]);
@@ -20,9 +20,9 @@ record('ci-v6-independent-selection-20261025','source.log',[...scheduling,...fix
  'All31 source/runtime/planner regressions pass, including ordinary-file indivisibility, parallel hook-chunk discovery order and native file-order tails. The six parallel all-hooks owners are guarded; eight native selectors retain every current ID exactly once.');
 record('ci-v6-unchanged-required-gates-20261025','repository.log',[policy,'.github/workflows/frontend.yml','.github/scripts/require-success.mjs','.github/scripts/require-success.test.mjs'],
  [/pass 120/,/fail 0/],
- 'All120 repository/strict gate regressions pass; workflow wiring,16 producers,23 jobs,8 partitions/two workers and read-only permissions remain unchanged.');
+ 'All120 repository/strict gate regressions pass; workflow DAG,16 producers,23 jobs,8 partitions/two workers and read-only permissions remain. Only build/browser checkout omits reviewed archive files; source/hygiene remain full.');
 record('ci-v6-ui-contract-20261025','ui-contract.log',[policy,ui,'.github/workflows/frontend.yml'],
- [/pass 14/,/fail 0/],'All14 UI/shared/workflow contracts pass with full browser/source/build/evidence gates.');
+ [/pass 14/,/fail 0/],'All14 UI/shared/workflow contracts pass, guarding exact archive-only sparse patterns in build/browser and the full source checkout, with unchanged browser/source/build/evidence gates.');
 const generation=record('ci-v6-native-timing-generation-20261025','timing-generation.log',[scheduling[0],scheduling[2]],
  [/"reports":16/,/"chromium":561/,/"firefox":561/],
  'Sixteen SHA/CRC-verified native reports from successful post-fix PR13/run40178000060, tested mergeff802414 with the same tree as branchbff7e2bb, calibrate the current six independent owners. Actual provenance is two workers/eight partitions; observed built-demo reserves112/142s. Queue estimates are separate from summed durations and do not own coverage.');

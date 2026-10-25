@@ -312,6 +312,16 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.ok(buildJob);
     assert.doesNotMatch(buildJob, /needs:/, 'Build preparation must run alongside full verification');
     assert.match(buildJob, /npm run build:demo/);
+    assert.doesNotMatch(verifyJob, /sparse-checkout/, 'Source verification must retain every historical evidence input');
+    const archivePatterns = ['/*', '!/BotSalesAI_Frontend/evidence/**/*.png', '!/BotSalesAI_Frontend/evidence/**/*.jpeg',
+        '!/BotSalesAI_Frontend/evidence/**/*.zip', '!/botsales-kit/execution/frontend-evidence/'];
+    for (const job of [buildJob, e2eJob]) {
+        assert.match(job, /sparse-checkout-cone-mode: false/);
+        const patterns = job.match(/          sparse-checkout: \|\r?\n((?: {12}[^\r\n]+\r?\n)+)/)?.[1];
+        assert.ok(patterns, 'Build/browser checkout must use the reviewed archive-only patterns');
+        assert.deepEqual(patterns.trim().split(/\r?\n/).map(line => line.trim()), archivePatterns,
+            'All source/contracts/configs and non-excluded evidence remain selected');
+    }
     assert.match(e2eJob, /needs: build-artifacts/);
     assert.match(e2eJob, /BOTSALES_E2E_RUNTIME: preview/);
     assert.match(e2eJob, /timeout-minutes: 180/, 'Each browser shard must have a bounded hosted-runner timeout');
