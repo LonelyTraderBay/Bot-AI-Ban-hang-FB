@@ -2,12 +2,17 @@ import { openDemoControls } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { API_BASE_PATH } from '../../packages/contracts/src/generated';
 
-type Route = { id: string; path: string };
+// Every route owns its page/context; the server handle is local to each worker.
+test.describe.configure({ mode: 'parallel' });
+
+type Route = { id: string; path: string; readOperations: string[] };
 type RouteManifest = { routes: Route[] };
 const routeManifest = JSON.parse(
     readFileSync(new URL('../../../botsales-kit/contracts/route-manifest.json', import.meta.url), 'utf8'),
 ) as RouteManifest;
+const operations = JSON.parse(readFileSync(new URL('../../packages/contracts/src/operations.json', import.meta.url), 'utf8')) as Record<string, { path: string }>;
 const detailIds: Record<string, string> = {
     conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001',
     knowledgeId: 'k1', jobId: 'missing-job',
@@ -43,7 +48,16 @@ test.describe('every shop route composes the shared API error state with its pag
         // The page fixture isolates each MSW client; each route also owns its test deadline.
         test(`${route.id} ${route.path}`, async ({ page }) => {
             const startingRoute = route.id === 'R39' || route.id === 'R33' ? '/s/shop-demo/overview' : '/s/shop-demo/notifications';
-            await page.goto(new URL(startingRoute, server.url).toString());
+            const bootstrap = routeManifest.routes.find(item => routePath(item.path) === startingRoute);
+            const operation = bootstrap?.readOperations[0];
+            if (!operation || !operations[operation]) throw new Error('Missing canonical bootstrap read for ' + startingRoute);
+            const readPath = (API_BASE_PATH + operations[operation].path).replace('{shopId}', 'shop-demo');
+            const [response] = await Promise.all([
+                page.waitForResponse(result => result.request().method() === 'GET' && new URL(result.url()).pathname === readPath, { timeout: 15_000 }),
+                page.goto(new URL(startingRoute, server.url).toString(), { waitUntil: 'domcontentloaded' }),
+            ]);
+            expect(response.status()).toBe(200);
+            expect(await response.finished()).toBeNull();
             await openDemoControls(page);
             await expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible({ timeout: 15_000 });
             await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');

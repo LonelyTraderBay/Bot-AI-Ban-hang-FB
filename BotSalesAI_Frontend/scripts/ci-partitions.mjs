@@ -4,6 +4,15 @@ export const independentRoleFiles = Object.freeze([
     'states/route-role-ready-composition.spec.ts',
 ]);
 
+// These cases also own fresh page/context state; the server URL is worker-local.
+export const independentTestFiles = Object.freeze([
+    ...independentRoleFiles,
+    'states/route-error-composition.spec.ts',
+    'ui61-consistency.spec.ts',
+    'ui-composition-layout.spec.ts',
+    'ui-toolbar-layout.spec.ts',
+]);
+
 export function collectedTests(report, project) {
     if (report.errors?.length || !Array.isArray(report.suites)) throw new Error('Playwright discovery failed.');
     const tests = [];
@@ -30,12 +39,12 @@ export function partitionTests(tests, timing, total = 3, workers = 2) {
     const groups = new Map();
     for (const test of tests) {
         // Other files retain their existing hook/order semantics.
-        const key = independentRoleFiles.includes(test.file) ? test.key : test.file;
+        const key = independentTestFiles.includes(test.file) ? test.key : test.file;
         if (!groups.has(key)) groups.set(key, { key, tests: [], selector: key, seconds: 0 });
         groups.get(key).tests.push(test);
     }
     for (const group of groups.values()) {
-        const measured = independentRoleFiles.includes(group.tests[0].file) ? timing.tests[group.key] : timing.files[group.key];
+        const measured = independentTestFiles.includes(group.tests[0].file) ? timing.tests[group.key] : timing.files[group.key];
         group.seconds = measured ?? group.tests.length * 30;
         if (!Number.isFinite(group.seconds) || group.seconds <= 0) throw new Error('Invalid timing: ' + group.key);
     }

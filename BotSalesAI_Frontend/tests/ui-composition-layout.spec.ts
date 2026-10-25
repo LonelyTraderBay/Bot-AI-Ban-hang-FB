@@ -2,6 +2,9 @@ import fs from 'node:fs';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
+// Viewport and observation collections belong to each fresh page/context.
+test.describe.configure({ mode: 'parallel' });
+
 type Route = { id: string; path: string };
 const routes = (JSON.parse(fs.readFileSync('../botsales-kit/contracts/route-manifest.json', 'utf8')) as { routes: Route[] }).routes;
 const ids: Record<string, string> = { conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001', knowledgeId: 'k1', jobId: 'missing-job' };
