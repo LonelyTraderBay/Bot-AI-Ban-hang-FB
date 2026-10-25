@@ -417,7 +417,7 @@ test('UI004 25 evaluations: cursor pages reach the last record and preserve deta
     const { createdIds, firstPage } = await openEvaluationList(page, 25);
     expect(firstPage).toMatchObject({ page: { limit: 20, total: 25, hasMore: true } });
     expect(firstPage.data).toHaveLength(20);
-    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(0, 20));
+    await expect.poll(() => visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(0, 20));
     await expect(page.getByText('25 kết quả', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeEnabled();
 
@@ -425,7 +425,7 @@ test('UI004 25 evaluations: cursor pages reach the last record and preserve deta
     expect(second.response.status()).toBe(200);
     expect(second.envelope).toMatchObject({ page: { total: 25, hasMore: false, nextCursor: null } });
     expect(second.envelope.data.map(row => row.id)).toEqual([...createdIds].reverse().slice(20));
-    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
+    await expect.poll(() => visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
     await expect(page.getByRole('button', { name: 'Trang tiếp', exact: true })).toBeDisabled();
     await expect(page.getByRole('button', { name: 'Đầu danh sách', exact: true })).toBeEnabled();
     await page.screenshot({ path: `evidence/frontend-ui-improvements/UI004/S02-final-list-25-${test.info().project.name}-${evidenceRunId}.png`, fullPage: true });
@@ -436,14 +436,14 @@ test('UI004 25 evaluations: cursor pages reach the last record and preserve deta
     await detail.getByRole('button', { name: 'Đóng' }).last().click();
     await expect(detail).toBeHidden();
     await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(firstPage.page.nextCursor);
-    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
+    await expect.poll(() => visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
 
     await page.goBack();
     await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBeNull();
-    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(0, 20));
+    await expect.poll(() => visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(0, 20));
     await page.goForward();
     await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(firstPage.page.nextCursor);
-    expect(await visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
+    await expect.poll(() => visibleEvaluationIds(page)).toEqual([...createdIds].reverse().slice(20));
 
     await page.getByLabel('Tìm kiếm').fill(createdIds[0]);
     const searchResponseWait = page.waitForResponse(response => {
@@ -455,7 +455,8 @@ test('UI004 25 evaluations: cursor pages reach the last record and preserve deta
     const searchEnvelope = await searchResponse.json() as EvaluationListEnvelope;
     expect(new URL(page.url()).searchParams.get('cursor')).toBeNull();
     expect(searchEnvelope).toMatchObject({ page: { total: 1, hasMore: false } });
-    expect(await visibleEvaluationIds(page)).toEqual([createdIds[0]]);
+    // A completed API response can precede React committing the matching rows.
+    await expect.poll(() => visibleEvaluationIds(page)).toEqual([createdIds[0]]);
     console.log(`UI004_25_ACCEPTANCE=${JSON.stringify({ total: firstPage.page.total, pageSizes: [firstPage.data.length, second.envelope.data.length], cursor: firstPage.page.nextCursor, oldestRecord: createdIds[0], oldestReachable: true, detailPreservedCursor: true, browserBackRestoredFirstPage: true, searchResetCursor: true })}`);
 });
 

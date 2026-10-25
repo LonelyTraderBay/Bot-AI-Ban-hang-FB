@@ -5,7 +5,8 @@ const digest=b=>createHash('sha256').update(b).digest('hex'),hash=n=>digest(fs.r
 const scheduling=['scripts/ci-partitions.mjs','scripts/ci-timings.json','scripts/update-ci-timings.mjs','tests/ci-partitions.test.mjs','scripts/run-ci-e2e.mjs'].map(n=>p+n);
 const fixtures=['tests/states/route-error-composition.spec.ts','tests/ui61-consistency.spec.ts','tests/ui-composition-layout.spec.ts','tests/ui-toolbar-layout.spec.ts','tests/states/route-role-state-composition.spec.ts','tests/states/route-role-ready-composition.spec.ts','tests/session/demo-controls.ts'].map(n=>p+n);
 const configs=['playwright.config.ts','playwright.built-demo.config.ts'].map(n=>p+n),policy='.github/CI_POLICY.md',ui=p+'tests/ui-shared-api-contract.test.mjs';
-const code=[...scheduling,...fixtures,policy,'.github/workflows/frontend.yml',ui],owned=[...code,own+'REPORT.md',own+'refresh-s17.mjs'];
+const evaluation=p+'tests/fe018.spec.ts';
+const code=[...scheduling,...fixtures,evaluation,policy,'.github/workflows/frontend.yml',ui],owned=[...code,own+'REPORT.md',own+'refresh-s17.mjs'];
 for(const[n,h]of Object.entries(e.sourceFingerprints))if(!owned.includes(n))assert.equal(hash(n),h,'Unrelated stale input: '+n);
 function record(id,name,inputs,patterns,description){
  const bytes=fs.readFileSync(path.join(here,name)),text=bytes.toString('utf8').replace(/\x1b\[[0-?]*[ -/]*[@-~]/g,''),header=JSON.parse(text.split(/\r?\n/)[0]);
@@ -38,6 +39,9 @@ const dev=record('ci-v6-dev-isolation-20261025','dev-isolation.log',[...fixtures
  [/16 passed/,/using 2 workers/],
  'All16 focused dev cases pass on both engines/two workers, including the originally failed sales loading walk, viewer ready/stale walk, both source fixtures, route-error exceptions, UI61 and composition rendering. Local default dev, original pointer/assertion deadlines and private cache/server lifecycle remain.');
 assert.equal(dev.header.workers,'2');assert.equal(dev.header.runtime,'dev');
+for(const kind of ['preview','dev'])record('ci-v6-evaluation-'+kind+'-20261025','evaluation-'+kind+'.log',[evaluation,...configs,p+'tests/session/demo-server.mjs',p+'tests/session/demo-controls.ts'],
+ [/4 passed/,/using 2 workers/,/UI004_25_ACCEPTANCE=/,/UI004_105_ACCEPTANCE=/],
+ 'All four original UI00425/105 evaluation cases pass on Chromium/Firefox, two workers, '+kind+' runtime. Exact row equality now awaits React committing the list with the existing bounded expect.poll pattern. All expected IDs, history/detail/search interactions, API/URL assertions and test IDs remain; no application or contract change.');
 if(process.argv.includes('--finalize'))record('ci-v6-full-verify-20261025','verify.log',code,
  [/256 passed/,/ui-evidence PASS: S17/,/status=COMPLETE/],
  'Full current-input npm run verify passes: application/contracts/dependencies unchanged; exact-SHA hosted PR/main, native archive and enforcement closure remain separate.');
