@@ -3,14 +3,37 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { toolbarImpact } from './design/toolbar-impact.mjs';
-import { startDemoServer } from './session/demo-server.mjs';
+import { startDemoPreview, startDemoServer } from './session/demo-server.mjs';
 import { ownedLabelGeometry } from './design/owned-label-geometry.mjs';
+
+// Cases own browser/mock/fixture state; server handles and caches are worker-local.
+test.describe.configure({ mode: 'parallel' });
 
 const impact = toolbarImpact(path.resolve('.'));
 let demoUrl = '';
-let closeDemo: (() => Promise<void>) | undefined;
-test.beforeAll(async () => { const server = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'toolbar-regression' }); demoUrl = server.url; closeDemo = server.close; });
-test.afterAll(async () => closeDemo?.());
+let source: Awaited<ReturnType<typeof startDemoServer>> | undefined;
+let built: Awaited<ReturnType<typeof startDemoPreview>> | undefined;
+const previewEnabled = process.env.BOTSALES_E2E_RUNTIME === 'preview';
+const sourceFixtures = new Set([
+    'Toolbar public extra slot cannot stretch a single-line submit action',
+    'Toolbar category more/busy/error/retry branches preserve search geometry and actual pagination',
+]);
+test.beforeAll(async () => { if (previewEnabled) built = await startDemoPreview(); });
+test.beforeEach(async ({}, info) => {
+    const needsSource = !previewEnabled || sourceFixtures.has(info.title);
+    if (needsSource && !source) source = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'toolbar-regression' });
+    demoUrl = needsSource ? source!.url : built!.url;
+});
+test.afterAll(async () => {
+    const closing = [source?.close(), built?.close()];
+    // Playwright can revisit this module for another parallel group in one worker.
+    source = undefined;
+    built = undefined;
+    demoUrl = '';
+    const closed = await Promise.allSettled(closing);
+    const errors = closed.filter(result => result.status === 'rejected').map(result => result.reason);
+    if (errors.length) throw new AggregateError(errors, 'Toolbar runtime cleanup failed.');
+});
 
 async function ready(page: Page, route: string, readPath?: string) {
     const response = readPath ? page.waitForResponse(result => result.request().method() === 'GET'

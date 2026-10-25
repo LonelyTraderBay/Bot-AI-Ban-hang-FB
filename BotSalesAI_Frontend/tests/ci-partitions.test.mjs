@@ -4,10 +4,21 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { collectedTests, partitionTests, requireExactTests, testList } from '../scripts/ci-partitions.mjs';
+import { collectedTests, independentTestFiles, partitionTests, requireExactTests, testList } from '../scripts/ci-partitions.mjs';
 
 const row = (id, file, title = id) => ({ id, file, title, key: `${file} › ${title}` });
 const timing = { files: { 'slow.spec.ts': 90, 'medium.spec.ts': 60 }, tests: {} };
+
+test('every test-level partition owner explicitly declares parallel mode and is split by case', () => {
+    const tests = independentTestFiles.flatMap((file, i) => [row(`a${i}`, file), row(`b${i}`, file)]);
+    const plan = partitionTests(tests, { files: {}, tests: {} });
+    requireExactTests(tests, plan.flatMap(p => p.tests));
+    assert.equal(plan.flatMap(p => p.groups).length, tests.length);
+    for (const file of independentTestFiles) {
+        const source = fs.readFileSync(new URL(file, new URL('./', import.meta.url)), 'utf8');
+        assert.match(source, /test\.describe\.configure\(\{\s*mode:\s*'parallel'\s*\}\)/, file);
+    }
+});
 
 test('duration partitions cover every discovered test once, keeping ordinary files together', () => {
     const tests = [row('a', 'slow.spec.ts'), row('b', 'slow.spec.ts'), row('c', 'medium.spec.ts'),

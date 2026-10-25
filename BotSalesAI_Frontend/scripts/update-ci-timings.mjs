@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { collectedTests, independentRoleFiles, requireExactTests } from './ci-partitions.mjs';
+import { collectedTests, independentTestFiles, requireExactTests } from './ci-partitions.mjs';
 
 // Inputs are all native reports extracted from verified CI artifact ZIPs and a
 // provenance.json with revision/run/attempt, report hashes and serial step times.
@@ -45,7 +45,7 @@ for (const project of ['chromium', 'firefox']) {
             const seconds = test.test.results[0].duration / 1000;
             assert.ok(Number.isFinite(seconds) && seconds > 0);
             timing.files[test.file] = (timing.files[test.file] ?? 0) + seconds;
-            if (independentRoleFiles.includes(test.file)) timing.tests[test.key] = seconds;
+            if (independentTestFiles.includes(test.file)) timing.tests[test.key] = seconds;
         }
     }
     const listed = spawnSync(process.execPath, [path.join(root, 'node_modules/@playwright/test/cli.js'), 'test', `--project=${project}`, '--list', '--reporter=json'],

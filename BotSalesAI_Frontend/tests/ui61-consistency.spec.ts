@@ -4,6 +4,9 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
+// Each case owns its page/MSW state; dedicated dev caches include a unique run ID.
+test.describe.configure({ mode: 'parallel' });
+
 const manifest = JSON.parse(fs.readFileSync(path.resolve('../botsales-kit/contracts/route-manifest.json'), 'utf8')) as { routes: { id: string; path: string; title: string }[] };
 const ids: Record<string, string> = { shopId: 'shop-demo', conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001', knowledgeId: 'k1', jobId: 'missing-job' };
 const routePath = (id: string) => manifest.routes.find(route => route.id === id)!.path.replace(/:([A-Za-z]+)/g, (_, key: string) => ids[key] || 'missing');
