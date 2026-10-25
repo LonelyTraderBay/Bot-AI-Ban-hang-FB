@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { realpathSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 // Source/domain/build and isolated UI audits have separate outputs. Evidence reads both.
@@ -38,5 +39,5 @@ export async function runVerification(run = runScript) {
     return await run('test:evidence') ? 1 : 0;
 }
 
-if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url)
+if (process.argv[1] && pathToFileURL(realpathSync(process.argv[1])).href === import.meta.url)
     process.exitCode = await runVerification();

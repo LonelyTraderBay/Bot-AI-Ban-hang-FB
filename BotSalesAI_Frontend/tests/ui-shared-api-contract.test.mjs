@@ -309,6 +309,12 @@ test('required UI evidence and regression gates remain wired to root verify and 
     const verifyBrowserInstall = verifyJob.indexOf('npx playwright install --with-deps chromium');
     const verifyStep = verifyJob.indexOf('npm run verify');
     assert.ok(verifyBrowserInstall >= 0 && verifyBrowserInstall < verifyStep, 'The browser-backed design audit requires Chromium in the verify job');
+    for (const job of [verifyJob, e2eJob]) {
+        const mirror = job.indexOf('name: Use Ubuntu archive for browser dependencies');
+        assert.ok(mirror >= 0 && mirror < job.indexOf('npx playwright install'), 'Configure the measured slow APT endpoint before required browser dependencies');
+        assert.ok(job.includes('https://archive.ubuntu.com/ubuntu'));
+        assert.ok(job.includes('/etc/apt/apt-mirrors.txt'));
+    }
     assert.match(verifyJob, /npm run verify/);
     assert.ok(buildJob);
     assert.doesNotMatch(buildJob, /needs:/, 'Build preparation must run alongside full verification');
@@ -371,7 +377,7 @@ test('required UI evidence and regression gates remain wired to root verify and 
     assert.match(browserConfig, /testMatch: \['\*\*\/\*\.spec\.ts'\]/, 'Browser discovery must not execute node:test unit fixtures');
     assert.match(browserConfig, /const workers = process\.env\.BOTSALES_E2E_WORKERS \?\? '1'/, 'Local runs default to one worker');
     assert.match(browserConfig, /workers: Number\(workers\)/);
-    assert.match(e2eJob, /BOTSALES_E2E_WORKERS: '3'/, 'The three-worker pilot leaves one of four measured CPUs for browser/tracing overhead');
+    assert.match(e2eJob, /BOTSALES_E2E_WORKERS: '2'/, 'CI leaves runner capacity for browser and tracing processes');
     assert.match(e2eJob, /availableCpus = os\.availableParallelism\(\)/, 'Each browser job records actual runner CPU capacity');
     assert.match(e2eJob, /workers > availableCpus/, 'CI must reject oversubscribed browser workers');
     assert.match(browserConfig, /fullyParallel: false/, 'Ordinary files retain existing hook/order semantics');

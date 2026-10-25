@@ -65,7 +65,7 @@ test('final evidence failure cannot become successful verification', async () =>
     assert.equal(calls.length, 12);
 });
 
-test('the real CLI preserves child diagnostics and fails without running final evidence', t => {
+test('the real CLI through a directory alias preserves child failure and rejects final evidence', t => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'verify-runner-'));
     assert.equal(path.dirname(fs.realpathSync(root)), fs.realpathSync(os.tmpdir()));
     t.after(() => fs.rmSync(root, { recursive: true, force: true }));
@@ -74,7 +74,14 @@ test('the real CLI preserves child diagnostics and fails without running final e
     fs.writeFileSync(cli, `const fs=require('node:fs');const name=process.argv[3];
 fs.appendFileSync(process.env.VERIFY_TEST_EVENTS,JSON.stringify(name)+'\\n');
 if(name==='test:layout'){console.error('VERIFY_EXPECTED_CHILD_FAILURE');process.exitCode=7;}`);
-    const result = spawnSync(process.execPath, [fileURLToPath(new URL('../scripts/run-verify.mjs', import.meta.url))], {
+    const entry = path.join(root, 'entry');
+    const alias = path.join(root, 'entry-alias');
+    fs.mkdirSync(entry);
+    assert.equal(path.dirname(fs.realpathSync(entry)), fs.realpathSync(root));
+    fs.copyFileSync(fileURLToPath(new URL('../scripts/run-verify.mjs', import.meta.url)), path.join(entry, 'run-verify.mjs'));
+    fs.symlinkSync(entry, alias, 'junction');
+    assert.equal(fs.realpathSync(alias), fs.realpathSync(entry));
+    const result = spawnSync(process.execPath, [path.join(alias, 'run-verify.mjs')], {
         env: { ...process.env, npm_execpath: cli, VERIFY_TEST_EVENTS: events },
         encoding: 'utf8', windowsHide: true, timeout: 20_000,
     });
