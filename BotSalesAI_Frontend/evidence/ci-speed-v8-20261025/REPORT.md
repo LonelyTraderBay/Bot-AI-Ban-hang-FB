@@ -9,5 +9,5 @@ Contract before edit:keep all561 IDs per engine+6 built-demo=1128, all assertion
 Timing generator must keep truthful source provenance:the input run has8 partitions,2 workers,16 validated native reports; the new plan has9 partitions. Add9 to supported future provenance counts while invalid/failed/duplicate/unsupported inputs still fail closed with output unchanged. No app/packages/kit/dependency/lockfile changes.
 
 Before merge require complete local checks and full PR proof, observed elapsed<=560s and execution sum<=131.005 job-minutes (5% over safe checkpoint at most). Exact-main25/25, all19 ZIP/native-ID/role/finance proof and exact scoped protection comparison remain separate closure requirements.
-+
+
 Local verification:31 source/runtime/planner regressions pass with561 native-selected IDs/engine over all9 partitions;128 strict repository/gate checks and14 UI/workflow contracts pass. Seven invalid timing families reject without changing output. Full runtime-code verify224.878s PASS; policy wording was refreshed separately with a new root128 log before the running full command reached the final S17 validator. Final S17 refresh adds the full-verify record to144 checks/139 coverage/336 fingerprints, followed by a fresh validator. Hosted PR/main/protection migration and19 ZIP proof remain pending.
