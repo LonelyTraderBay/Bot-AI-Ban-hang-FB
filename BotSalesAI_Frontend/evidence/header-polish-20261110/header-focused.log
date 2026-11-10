@@ -1,0 +1,368 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs tests/ui-header.spec.ts tests/ui-ux-completion.spec.ts --grep header |UX07 --reporter=line,json
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.7 building client environment for production...
+transforming...
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2128 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-Ch3gkNk5.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-BcyfWwKh.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-D90dEuRe.js                8.73 kB │ gzip:   3.42 kB
+dist/assets/index-HJdfAwZI.js               10.39 kB │ gzip:   3.62 kB
+dist/assets/index-BIhiqBGB.js               13.12 kB │ gzip:   5.17 kB
+dist/assets/index-B64KuX2h.js               16.40 kB │ gzip:   6.13 kB
+dist/assets/index-BxiXciRb.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-x_5UfHdP.js               18.84 kB │ gzip:   6.32 kB
+dist/assets/index-BZQR6Xlo.js               18.86 kB │ gzip:   5.92 kB
+dist/assets/index-D8thi7qc.js               19.22 kB │ gzip:   7.05 kB
+dist/assets/index-B9ogrX16.js               21.27 kB │ gzip:   7.66 kB
+dist/assets/index-B4QcdweC.js               22.02 kB │ gzip:   7.18 kB
+dist/assets/index-Bc8HHxrt.js               25.15 kB │ gzip:   8.49 kB
+dist/assets/index-DBYiIGyF.js               27.51 kB │ gzip:   8.97 kB
+dist/assets/index-Br2g0lJ7.js               31.32 kB │ gzip:  10.03 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-yy_MXkqk.js               33.36 kB │ gzip:  11.02 kB
+dist/assets/index-BONCvncp.js               41.99 kB │ gzip:  11.47 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-CI6eRVyo.js               64.78 kB │ gzip:  17.80 kB
+dist/assets/index-NPehYKoV.js              102.54 kB │ gzip:  32.79 kB
+dist/assets/schemas-aAIIjfeZ.js            125.23 kB │ gzip:  37.80 kB
+dist/assets/schema-validation-DPZaQ5WH.js  150.80 kB │ gzip:  45.45 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-CdMLP0na.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-C893E9C2.js                340.02 kB │ gzip: 103.72 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 2.87s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.7 building client environment for demo...
+transforming...
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2345 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-iEDHClRe.js              1.73 kB │ gzip:   0.94 kB
+dist-demo/assets/hooks-BTleDPt0.js                4.59 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-BFW1Pz33.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-De-Mruoc.js                8.73 kB │ gzip:   3.42 kB
+dist-demo/assets/index-C58nrk1y.js               11.03 kB │ gzip:   3.88 kB
+dist-demo/assets/index-DYOGUrwb.js               13.12 kB │ gzip:   5.17 kB
+dist-demo/assets/index-C7cw2gWd.js               16.10 kB │ gzip:   5.94 kB
+dist-demo/assets/index-DbnFBFNS.js               18.84 kB │ gzip:   6.32 kB
+dist-demo/assets/index-CS5cTV0z.js               19.03 kB │ gzip:   5.96 kB
+dist-demo/assets/index-z3F0JCYG.js               19.15 kB │ gzip:   6.53 kB
+dist-demo/assets/index-DsHmJSAO.js               19.41 kB │ gzip:   7.12 kB
+dist-demo/assets/index-CzSvNNcE.js               22.02 kB │ gzip:   7.18 kB
+dist-demo/assets/index-C3jLAZ3l.js               25.56 kB │ gzip:   8.64 kB
+dist-demo/assets/index-B7py5YAy.js               27.51 kB │ gzip:   8.97 kB
+dist-demo/assets/index-BaOpX59f.js               28.14 kB │ gzip:   9.80 kB
+dist-demo/assets/index-B5l8JwTi.js               31.32 kB │ gzip:  10.03 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-DwDIQ-EB.js               33.82 kB │ gzip:  11.13 kB
+dist-demo/assets/index-CQgxCfms.js               41.99 kB │ gzip:  11.47 kB
+dist-demo/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-C71PEJta.js               65.99 kB │ gzip:  18.22 kB
+dist-demo/assets/index-CWsYm1de.js              107.08 kB │ gzip:  34.19 kB
+dist-demo/assets/schemas-aAIIjfeZ.js            125.23 kB │ gzip:  37.80 kB
+dist-demo/assets/schema-validation-DPZaQ5WH.js  150.80 kB │ gzip:  45.45 kB
+dist-demo/assets/service-Ch0EYct_.js            233.75 kB │ gzip:  54.25 kB
+dist-demo/assets/browser-Cbq-h7W2.js            256.37 kB │ gzip:  87.30 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-DxpULJBb.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-flb27yH7.js                340.02 kB │ gzip: 103.72 kB
+dist-demo/assets/contract-data-CJyvN5AM.js      375.47 kB │ gzip:  44.43 kB
+✓ built in 3.26s
+
+> node node_modules\@playwright\test\cli.js test tests/ui-header.spec.ts tests/ui-ux-completion.spec.ts --grep header |UX07 --reporter=line,json
+
+Running 14 tests using 2 workers
+
+(node:50980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:35560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/14] [chromium] › tests\ui-ux-completion.spec.ts:119:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus
+[2/14] [chromium] › tests\ui-header.spec.ts:17:1 › header centers content across responsive breakpoints and preserves touch targets
+(node:70404) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[3/14] [firefox] › tests\ui-header.spec.ts:17:1 › header centers content across responsive breakpoints and preserves touch targets
+[4/14] [chromium] › tests\ui-header.spec.ts:47:1 › header breadcrumb identifies the current shop and supports keyboard navigation
+[5/14] [chromium] › tests\ui-header.spec.ts:66:1 › header menu filter retains empty-state recovery and keyboard focus
+[6/14] [chromium] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 320px
+[7/14] [firefox] › tests\ui-header.spec.ts:47:1 › header breadcrumb identifies the current shop and supports keyboard navigation
+[8/14] [firefox] › tests\ui-header.spec.ts:66:1 › header menu filter retains empty-state recovery and keyboard focus
+[9/14] [firefox] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 320px
+  1) [chromium] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 320px 
+
+    Error: expect(locator).toBeHidden() failed
+
+    Locator:  getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible()
+    Expected: hidden
+    Received: visible
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeHidden" getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible() with timeout 5000ms
+      - waiting for getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible()
+        14 × locator resolved to <nav aria-label="Điều hướng chính" class="MuiBox-root css-r9i3oh">…</nav>
+           - unexpected value "visible"
+
+
+      94 |         await expect(navigation.getByRole('link', { name: 'Vận đơn & giao hàng', exact: true })).toHaveAttribute('aria-current', 'page');
+      95 |         await page.keyboard.press('Escape');
+    > 96 |         await expect(navigation).toBeHidden();
+         |                                  ^
+      97 |         await expect(menu).toBeFocused();
+      98 |         expect((await new AxeBuilder({ page }).include('header').analyze()).violations).toEqual([]);
+      99 |     });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-header.spec.ts:96:34
+
+    Error Context: test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-48bc2-nd-filter-recovery-at-320px-chromium\error-context.md
+
+    Error Context: test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-48bc2-nd-filter-recovery-at-320px-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-48bc2-nd-filter-recovery-at-320px-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-48bc2-nd-filter-recovery-at-320px-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:84316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[10/14] [chromium] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 390px
+  2) [chromium] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 390px 
+
+    Error: expect(locator).toBeHidden() failed
+
+    Locator:  getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible()
+    Expected: hidden
+    Received: visible
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeHidden" getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible() with timeout 5000ms
+      - waiting for getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible()
+        14 × locator resolved to <nav aria-label="Điều hướng chính" class="MuiBox-root css-r9i3oh">…</nav>
+           - unexpected value "visible"
+
+
+      94 |         await expect(navigation.getByRole('link', { name: 'Vận đơn & giao hàng', exact: true })).toHaveAttribute('aria-current', 'page');
+      95 |         await page.keyboard.press('Escape');
+    > 96 |         await expect(navigation).toBeHidden();
+         |                                  ^
+      97 |         await expect(menu).toBeFocused();
+      98 |         expect((await new AxeBuilder({ page }).include('header').analyze()).violations).toEqual([]);
+      99 |     });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-header.spec.ts:96:34
+
+    Error Context: test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-551ba-nd-filter-recovery-at-390px-chromium\error-context.md
+
+    Error Context: test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-551ba-nd-filter-recovery-at-390px-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-551ba-nd-filter-recovery-at-390px-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-551ba-nd-filter-recovery-at-390px-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+
+(node:58432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[11/14] [chromium] › tests\ui-header.spec.ts:102:1 › header reflows long shop names and doubled text without overlap or clipping
+
+
+(node:61380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[12/14] [firefox] › tests\ui-ux-completion.spec.ts:119:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus
+  3) [firefox] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 320px 
+
+    Error: expect(locator).toBeHidden() failed
+
+    Locator:  getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible()
+    Expected: hidden
+    Received: visible
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeHidden" getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible() with timeout 5000ms
+      - waiting for getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible()
+        13 × locator resolved to <nav aria-label="Điều hướng chính" class="MuiBox-root css-r9i3oh">…</nav>
+           - unexpected value "visible"
+
+
+      94 |         await expect(navigation.getByRole('link', { name: 'Vận đơn & giao hàng', exact: true })).toHaveAttribute('aria-current', 'page');
+      95 |         await page.keyboard.press('Escape');
+    > 96 |         await expect(navigation).toBeHidden();
+         |                                  ^
+      97 |         await expect(menu).toBeFocused();
+      98 |         expect((await new AxeBuilder({ page }).include('header').analyze()).violations).toEqual([]);
+      99 |     });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-header.spec.ts:96:34
+
+    Error Context: test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-48bc2-nd-filter-recovery-at-320px-firefox\error-context.md
+
+    Error Context: test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-48bc2-nd-filter-recovery-at-320px-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-48bc2-nd-filter-recovery-at-320px-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-48bc2-nd-filter-recovery-at-320px-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:40376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[13/14] [firefox] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 390px
+  4) [firefox] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 390px 
+
+    Error: expect(locator).toBeHidden() failed
+
+    Locator:  getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible()
+    Expected: hidden
+    Received: visible
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeHidden" getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible() with timeout 5000ms
+      - waiting for getByRole('navigation', { name: 'Điều hướng chính', exact: true }).visible()
+        13 × locator resolved to <nav aria-label="Điều hướng chính" class="MuiBox-root css-r9i3oh">…</nav>
+           - unexpected value "visible"
+
+
+      94 |         await expect(navigation.getByRole('link', { name: 'Vận đơn & giao hàng', exact: true })).toHaveAttribute('aria-current', 'page');
+      95 |         await page.keyboard.press('Escape');
+    > 96 |         await expect(navigation).toBeHidden();
+         |                                  ^
+      97 |         await expect(menu).toBeFocused();
+      98 |         expect((await new AxeBuilder({ page }).include('header').analyze()).violations).toEqual([]);
+      99 |     });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-header.spec.ts:96:34
+
+    Error Context: test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-551ba-nd-filter-recovery-at-390px-firefox\error-context.md
+
+    Error Context: test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-551ba-nd-filter-recovery-at-390px-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-551ba-nd-filter-recovery-at-390px-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-60088-a580e095-dbe3-4c61-9e11-9f269543cf29\ui-header-header-preserves-551ba-nd-filter-recovery-at-390px-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:57032) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[14/14] [firefox] › tests\ui-header.spec.ts:102:1 › header reflows long shop names and doubled text without overlap or clipping
+  4 failed
+    [chromium] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 320px 
+    [chromium] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 390px 
+    [firefox] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 320px 
+    [firefox] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 390px 
+  10 passed (49.1s)

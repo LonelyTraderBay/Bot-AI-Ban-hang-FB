@@ -689,3 +689,11 @@ At the S08 snapshot, the strict `frontend-design-premium` v1.4.0 audit exited 1 
 ## Tinh chỉnh unslop UI — 10/11/2026
 
 Đã chỉnh menu, typography, Tổng quan và ngôn ngữ số tồn; giữ Graphite Gold và contract. [Báo cáo đợt sửa](unslop-ui-20261110/REPORT.md) ghi ảnh, hash và giới hạn. Lượt E2E cuối đạt 1126/1126 (563 mỗi engine), không skip/retry/flaky; bản build riêng đạt 6/6. Các lượt thất bại và retest cũ được giữ là lịch sử. Hai lỗi readiness của test đã được sửa và lặp 12/12 cho từng nhóm. `npm run verify` cuối exit 0: 258 unit tests, 117 domain/MSW checks, lint/typecheck/build và UI/evidence gates đều PASS; log tại unslop-ui-20261110/continuation/verify-final.log. S17 và paired visual acceptance vẫn IN_PROGRESS/NOT_VERIFIED do thiếu baseline, không suy ra owner acceptance, screen-reader, CI hoặc backend.
+
+## Tinh chỉnh header — 10/11/2026
+
+[Header report](header-polish-20261110/REPORT.md): căn giữa, breadcrumb shop có link, tìm trong menu, nhãn môi trường neutral và focus recovery mobile. Hồi quy scoped 56/56, built-demo 6/6 với 244 observations ở 390/1440 trên Chromium/Firefox; 12 paired header contexts và 307 source inputs được đối chiếu, Graphite Gold không đổi. Verify tổng hợp exit 0 cho snapshot header này: 258 unit tests, 117 domain/MSW checks, lint/typecheck/build/UI/evidence đều PASS. Full E2E 1126/1126 ở đoạn unslop trước thuộc snapshot trước header, không được khai lại cho source mới. S17 tiếp tục IN_PROGRESS; không suy manual/screen-reader/native zoom/hosted CI/backend proof.
+
+## Sửa findings unslop toàn UI — 10/11/2026
+
+[Báo cáo sửa và bằng chứng](unslop-fixes-20261110/REPORT.md): xử lý tám nhóm từ audit theo ưu tiên, giữ Graphite Gold. Bản cuối có ma trận 488/488 route/viewport/engine, 112/112 dialog và 104/104 scoped Playwright; `npm run verify` 12/12 bước exit 0. Lượt full E2E lịch sử thuộc snapshot trước, không áp cho lần sửa này. S17 vẫn IN_PROGRESS; không suy screen-reader thực, native zoom/text-only resize, thiết bị vật lý, hosted CI, backend/provider hoặc owner acceptance.

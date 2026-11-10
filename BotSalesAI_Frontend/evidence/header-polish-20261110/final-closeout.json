@@ -1,0 +1,100 @@
+{
+  "recordedAt": "2026-11-10T05:57:55.533Z",
+  "status": "DELIVERED_WITH_EVIDENCE_LIMITS",
+  "uiScope": "Header paired captures and desktop/mobile behavior PASS",
+  "architecture": "Shell owner only; contracts/palette/shared API unchanged",
+  "verify": {
+    "exitCode": 0,
+    "steps": [
+      {
+        "script": "generate:check",
+        "exitCode": 0
+      },
+      {
+        "script": "test:visual-tokens",
+        "exitCode": 0
+      },
+      {
+        "script": "test:source",
+        "exitCode": 0
+      },
+      {
+        "script": "boundaries",
+        "exitCode": 0
+      },
+      {
+        "script": "lint",
+        "exitCode": 0
+      },
+      {
+        "script": "typecheck",
+        "exitCode": 0
+      },
+      {
+        "script": "test:domain",
+        "exitCode": 0
+      },
+      {
+        "script": "test",
+        "exitCode": 0
+      },
+      {
+        "script": "build",
+        "exitCode": 0
+      },
+      {
+        "script": "test:ui-composition",
+        "exitCode": 0
+      },
+      {
+        "script": "test:layout",
+        "exitCode": 0
+      },
+      {
+        "script": "test:evidence",
+        "exitCode": 0
+      }
+    ]
+  },
+  "scoped": {
+    "startTime": "2026-11-10T05:48:45.642Z",
+    "duration": 109866.282,
+    "expected": 56,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "built": {
+    "startTime": "2026-11-10T05:51:03.522Z",
+    "duration": 203362.28100000002,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "sourceFiles": 307,
+  "sourceDrift": [],
+  "restoredHistoricalOutputs": [
+    {
+      "file": "evidence/boundaries.json",
+      "sha256": "336f1840d16c25efbc84b2987c0aac4dc7c71561704f66db140668b07e72a817"
+    },
+    {
+      "file": "evidence/domain-tests.json",
+      "sha256": "3c9728bf4ac1f9d291983d73f6adab0a963426aba9f55cd8a1d191e817629c11"
+    },
+    {
+      "file": "evidence/logs/mock-typecheck.log",
+      "sha256": "a3a17eff2606b9273041f34e07776a74dd5c700fc8546a0405ecd803c4e6b467"
+    },
+    {
+      "file": "evidence/source-check.json",
+      "sha256": "576db70a2350629dc19de908874fd37f6c801c5cb9cc5760b4456eb4e3fefd91"
+    }
+  ],
+  "limits": [
+    "Paired visual captures: R42 only; built-demo covers 61 routes at two widths on both engines",
+    "200% text stress is not native zoom, physical device or human accessibility acceptance",
+    "Full 1126-case suite and hosted CI not rerun for this header snapshot; local frontend/MSW only"
+  ]
+}

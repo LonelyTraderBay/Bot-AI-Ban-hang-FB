@@ -1,0 +1,195 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs tests/ui-header.spec.ts tests/ui-ux-completion.spec.ts --grep header |UX07 --reporter=line,json
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.7 building client environment for production...
+transforming...
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2128 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-C4_cotuv.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-CwPsZ1On.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-Bn3lmVv9.js                8.73 kB │ gzip:   3.42 kB
+dist/assets/index-BX8EwBjG.js               10.39 kB │ gzip:   3.61 kB
+dist/assets/index-CnaUYg7Y.js               13.12 kB │ gzip:   5.17 kB
+dist/assets/index-BllsqHEM.js               16.40 kB │ gzip:   6.13 kB
+dist/assets/index-DP6AlZ7Y.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-CmTJdhuG.js               18.84 kB │ gzip:   6.32 kB
+dist/assets/index-Cwl43TnA.js               18.86 kB │ gzip:   5.92 kB
+dist/assets/index-CRR1zXPS.js               19.22 kB │ gzip:   7.05 kB
+dist/assets/index-DYlz5nRi.js               21.27 kB │ gzip:   7.66 kB
+dist/assets/index-CB7Jsecf.js               22.02 kB │ gzip:   7.18 kB
+dist/assets/index-wnX6F6hl.js               25.15 kB │ gzip:   8.49 kB
+dist/assets/index-B6u4LfwW.js               27.51 kB │ gzip:   8.98 kB
+dist/assets/index-Cxem5azH.js               31.32 kB │ gzip:  10.03 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-mZeFsytB.js               33.36 kB │ gzip:  11.02 kB
+dist/assets/index-BTpFjHeT.js               41.99 kB │ gzip:  11.47 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-viW256EA.js               64.78 kB │ gzip:  17.80 kB
+dist/assets/index-BITRg24K.js              102.63 kB │ gzip:  32.82 kB
+dist/assets/schemas-aAIIjfeZ.js            125.23 kB │ gzip:  37.80 kB
+dist/assets/schema-validation-DPZaQ5WH.js  150.80 kB │ gzip:  45.45 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-CdMLP0na.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-C893E9C2.js                340.02 kB │ gzip: 103.72 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 2.94s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.7 building client environment for demo...
+transforming...
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2345 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-Bzc2C5wK.js              1.73 kB │ gzip:   0.94 kB
+dist-demo/assets/hooks-BZYFA9Rs.js                4.59 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-BDiZ19OJ.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-C7oIpZcJ.js                8.73 kB │ gzip:   3.42 kB
+dist-demo/assets/index-XNGH4DPu.js               11.03 kB │ gzip:   3.89 kB
+dist-demo/assets/index-DNaaoqaY.js               13.12 kB │ gzip:   5.17 kB
+dist-demo/assets/index-3ViI60FJ.js               16.10 kB │ gzip:   5.95 kB
+dist-demo/assets/index-BM9cdEzZ.js               18.84 kB │ gzip:   6.32 kB
+dist-demo/assets/index-CFbRt5_6.js               19.03 kB │ gzip:   5.96 kB
+dist-demo/assets/index-Cc9UNbbJ.js               19.15 kB │ gzip:   6.53 kB
+dist-demo/assets/index-SL9d92Hz.js               19.41 kB │ gzip:   7.12 kB
+dist-demo/assets/index-DF51UGi1.js               22.02 kB │ gzip:   7.19 kB
+dist-demo/assets/index-CjRkjwSf.js               25.56 kB │ gzip:   8.65 kB
+dist-demo/assets/index-q1fGoFBO.js               27.51 kB │ gzip:   8.98 kB
+dist-demo/assets/index-D53ceuMA.js               28.14 kB │ gzip:   9.81 kB
+dist-demo/assets/index-UqLWj7gO.js               31.32 kB │ gzip:  10.03 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-C49Ci10o.js               33.82 kB │ gzip:  11.14 kB
+dist-demo/assets/index-DMCG73Yl.js               41.99 kB │ gzip:  11.48 kB
+dist-demo/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-Bdtj6vr0.js               65.99 kB │ gzip:  18.23 kB
+dist-demo/assets/index-OismSl9E.js              107.18 kB │ gzip:  34.23 kB
+dist-demo/assets/schemas-aAIIjfeZ.js            125.23 kB │ gzip:  37.80 kB
+dist-demo/assets/schema-validation-DPZaQ5WH.js  150.80 kB │ gzip:  45.45 kB
+dist-demo/assets/service-ByRrv3Wg.js            233.75 kB │ gzip:  54.25 kB
+dist-demo/assets/browser-TLs7RuJk.js            256.37 kB │ gzip:  87.30 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-DxpULJBb.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-flb27yH7.js                340.02 kB │ gzip: 103.72 kB
+dist-demo/assets/contract-data-CJyvN5AM.js      375.47 kB │ gzip:  44.43 kB
+✓ built in 3.58s
+
+> node node_modules\@playwright\test\cli.js test tests/ui-header.spec.ts tests/ui-ux-completion.spec.ts --grep header |UX07 --reporter=line,json
+
+Running 14 tests using 2 workers
+
+
+(node:58108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:88556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/14] [chromium] › tests\ui-header.spec.ts:17:1 › header centers content across responsive breakpoints and preserves touch targets
+[2/14] [chromium] › tests\ui-ux-completion.spec.ts:119:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus
+
+(node:68396) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/14] [firefox] › tests\ui-header.spec.ts:17:1 › header centers content across responsive breakpoints and preserves touch targets
+[4/14] [chromium] › tests\ui-header.spec.ts:47:1 › header breadcrumb identifies the current shop and supports keyboard navigation
+[5/14] [chromium] › tests\ui-header.spec.ts:66:1 › header menu filter retains empty-state recovery and keyboard focus
+[6/14] [chromium] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 320px
+[7/14] [firefox] › tests\ui-header.spec.ts:47:1 › header breadcrumb identifies the current shop and supports keyboard navigation
+[8/14] [chromium] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 390px
+[9/14] [firefox] › tests\ui-header.spec.ts:66:1 › header menu filter retains empty-state recovery and keyboard focus
+[10/14] [chromium] › tests\ui-header.spec.ts:103:1 › header reflows long shop names and doubled text without overlap or clipping
+[11/14] [firefox] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 320px
+
+(node:52096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[12/14] [firefox] › tests\ui-ux-completion.spec.ts:119:1 › UX07 titles and breadcrumb distinguish create/detail/review; menu empty state clears with focus
+[13/14] [firefox] › tests\ui-header.spec.ts:85:5 › header preserves demo disclosure, mobile menu and filter recovery at 390px
+[14/14] [firefox] › tests\ui-header.spec.ts:103:1 › header reflows long shop names and doubled text without overlap or clipping
+  14 passed (28.7s)
