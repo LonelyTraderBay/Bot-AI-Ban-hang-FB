@@ -78,7 +78,7 @@ test('Shell keeps header, banner, main and footer on one responsive gutter', asy
                 mainBlockInset: [getComputedStyle(main).paddingTop, getComputedStyle(main).paddingBottom],
                 contentColumn: { display: getComputedStyle(contentColumn).display, direction: getComputedStyle(contentColumn).flexDirection },
                 document: { clientWidth: document.documentElement.clientWidth, scrollWidth: document.documentElement.scrollWidth },
-                navigationWidth: navigation.getBoundingClientRect().width,
+                navigationWidth: navigation.closest('.MuiDrawer-paper')!.getBoundingClientRect().width,
                 accountName: { whiteSpace: getComputedStyle(accountName).whiteSpace, overflowWrap: getComputedStyle(accountName).overflowWrap, clientWidth: accountName.clientWidth, scrollWidth: accountName.scrollWidth },
             };
         });
