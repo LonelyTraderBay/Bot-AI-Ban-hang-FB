@@ -685,3 +685,19 @@ At the S08 snapshot, after correcting the R35 Privacy → R07 Customers CTA guar
 S08 preview measurements were 446,261 initial script-transfer bytes, 449,801 initial-route gzip bytes and a 187,961-byte largest gzip chunk; the first page for 1,004 synthetic customers rendered in 349 ms at 1280×720. [S08 verification](frontend-ui-improvements/UI021/S08-permission-edge-and-current-verification.md) and the [source/artifact fingerprint](frontend-ui-improvements/UI021/S08-current-worktree-and-artifact-fingerprint.json) identify the dirty source and built artifacts. The E2E run rewrote six of 41 snapshotted evidence files; all six were restored and 41/41 hashes matched.
 
 At the S08 snapshot, the strict `frontend-design-premium` v1.4.0 audit exited 1 with 13 `affordance.actionless-button` findings; current S09 rerun after S27 also exits 1/13, so UI021.C04 remains PARTIAL despite both crosswalks. UI021 stays 4/5; the overall plan remains 20/26 tasks and 113/130 checkpoints, readiness 7/9. FE-G05 manual screen-reader/interaction review, FE-G09 owner UAT, UI020 owner matrix and UI022 hosted GitHub run remain open. No backend/provider, staging, production-runtime or owner-acceptance result is implied.
+
+## Tinh chỉnh unslop UI — 10/11/2026
+
+Đã chỉnh menu, typography, Tổng quan và ngôn ngữ số tồn; giữ Graphite Gold và contract. [Báo cáo đợt sửa](unslop-ui-20261110/REPORT.md) ghi ảnh, hash và giới hạn. Lượt E2E cuối đạt 1126/1126 (563 mỗi engine), không skip/retry/flaky; bản build riêng đạt 6/6. Các lượt thất bại và retest cũ được giữ là lịch sử. Hai lỗi readiness của test đã được sửa và lặp 12/12 cho từng nhóm. `npm run verify` cuối exit 0: 258 unit tests, 117 domain/MSW checks, lint/typecheck/build và UI/evidence gates đều PASS; log tại unslop-ui-20261110/continuation/verify-final.log. S17 và paired visual acceptance vẫn IN_PROGRESS/NOT_VERIFIED do thiếu baseline, không suy ra owner acceptance, screen-reader, CI hoặc backend.
+
+## Tinh chỉnh header — 10/11/2026
+
+[Header report](header-polish-20261110/REPORT.md): căn giữa, breadcrumb shop có link, tìm trong menu, nhãn môi trường neutral và focus recovery mobile. Hồi quy scoped 56/56, built-demo 6/6 với 244 observations ở 390/1440 trên Chromium/Firefox; 12 paired header contexts và 307 source inputs được đối chiếu, Graphite Gold không đổi. Verify tổng hợp exit 0 cho snapshot header này: 258 unit tests, 117 domain/MSW checks, lint/typecheck/build/UI/evidence đều PASS. Full E2E 1126/1126 ở đoạn unslop trước thuộc snapshot trước header, không được khai lại cho source mới. S17 tiếp tục IN_PROGRESS; không suy manual/screen-reader/native zoom/hosted CI/backend proof.
+
+## Sửa findings unslop toàn UI — 10/11/2026
+
+[Báo cáo sửa và bằng chứng](unslop-fixes-20261110/REPORT.md): xử lý tám nhóm từ audit theo ưu tiên, giữ Graphite Gold. Bản cuối có ma trận 488/488 route/viewport/engine, 112/112 dialog và 104/104 scoped Playwright; `npm run verify` 12/12 bước exit 0. Lượt full E2E lịch sử thuộc snapshot trước, không áp cho lần sửa này. S17 vẫn IN_PROGRESS; không suy screen-reader thực, native zoom/text-only resize, thiết bị vật lý, hosted CI, backend/provider hoặc owner acceptance.
+
+## Xử lý CI khi cập nhật main — 10/11/2026
+
+[Báo cáo](ci-push-unblock-20261110/REPORT.md) lưu nguyên nhân và kiểm thử của thay đổi sau snapshot UI: override minimatch trong typescript-estree để xử lý advisory, cập nhật locator và assertion test phù hợp header/copy hiện tại. Audit dependency 0 lỗi, 12/12 scoped E2E và `npm run verify` 12/12 bước đạt trên source này. Kết quả UI toàn trang ở trên thuộc snapshot trước thay đổi CI. Trạng thái hosted CI phụ thuộc kết quả GitHub Actions của PR.

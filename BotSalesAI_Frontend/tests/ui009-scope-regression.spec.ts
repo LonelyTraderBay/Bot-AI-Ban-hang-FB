@@ -64,7 +64,7 @@ test('UI009 delayed customer orders from the previous shop cannot leak into the 
         mock.setOperationDelay('listOrders', null);
     });
 
-    await page.getByRole('link', { name: /Joker Studio/ }).click();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Joker Studio/ }).click();
     await expect(page.getByRole('heading', { name: 'Chọn cửa hàng' })).toBeVisible();
     await page.locator('a[href="/s/shop-second/overview"]').click();
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Khách hàng', exact: true }).click();

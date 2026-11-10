@@ -34,7 +34,7 @@ test('expired live session redirects to login and preserves the requested shop r
 
     await page.goto(new URL('/s/shop-demo/finance/profit-loss', liveUrl).toString());
 
-    await expect(page.getByRole('heading', { name: 'Chào mừng trở lại', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Đăng nhập BotSales AI', exact: true })).toBeVisible();
     await expect.poll(() => new URL(page.url()).searchParams.get('returnTo')).toBe('/s/shop-demo/finance/profit-loss');
     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0);
     expect(sessionRequests).toBeGreaterThan(0);

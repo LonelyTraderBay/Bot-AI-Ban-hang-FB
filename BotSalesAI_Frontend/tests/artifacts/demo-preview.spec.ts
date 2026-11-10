@@ -1,4 +1,4 @@
-import { openDemoControls } from '../session/demo-controls';
+import { navigateDemoAndRead, openDemoControls } from '../session/demo-controls';
 import { expect, test } from '@playwright/test';
 import { preview } from 'vite';
 import type { PreviewServer } from 'vite';
@@ -38,9 +38,8 @@ test.afterAll(async () => {
 });
 
 test('the built demo artifact serves the React UI and synthetic API through preview', async ({ page, browserName }) => {
-    const sessionResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/v2/session', { timeout: 15_000 });
-    await page.goto(`${baseUrl}/s/shop-demo/overview`);
-    const response = await sessionResponse;
+    const response = await navigateDemoAndRead(page, `${baseUrl}/s/shop-demo/overview`,
+        response => new URL(response.url()).pathname === '/api/v2/session');
     expect(response.status()).toBe(200);
     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
     await expect(page.locator('main h1').first()).toBeVisible();

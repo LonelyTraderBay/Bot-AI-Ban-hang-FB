@@ -5,7 +5,7 @@ import {routeMetadata} from './route-metadata';
 import {label} from '../shared/model/labels';
 import { Link as RouterLink, Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Alert, Avatar, Box, Button, Chip, Divider, Drawer, IconButton, LinearProgress, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Paper, Stack, TextField, Tooltip, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Breadcrumbs, Button, Chip, Divider, Drawer, IconButton, LinearProgress, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Paper, Stack, TextField, Tooltip, Typography } from '@mui/material';
 import MenuRounded from '@mui/icons-material/MenuRounded';
 import DashboardRounded from '@mui/icons-material/DashboardRounded';
 import ForumRounded from '@mui/icons-material/ForumRounded';
@@ -18,6 +18,27 @@ import SettingsOutlined from '@mui/icons-material/SettingsOutlined';
 import SearchRounded from '@mui/icons-material/SearchRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import LogoutRounded from '@mui/icons-material/LogoutRounded';
+import PeopleRounded from '@mui/icons-material/PeopleRounded';
+import LocalShippingRounded from '@mui/icons-material/LocalShippingRounded';
+import AssignmentReturnRounded from '@mui/icons-material/AssignmentReturnRounded';
+import SupportAgentRounded from '@mui/icons-material/SupportAgentRounded';
+import CategoryRounded from '@mui/icons-material/CategoryRounded';
+import UploadFileRounded from '@mui/icons-material/UploadFileRounded';
+import HistoryRounded from '@mui/icons-material/HistoryRounded';
+import AssignmentTurnedInRounded from '@mui/icons-material/AssignmentTurnedInRounded';
+import ChecklistRounded from '@mui/icons-material/ChecklistRounded';
+import MenuBookRounded from '@mui/icons-material/MenuBookRounded';
+import PlayCircleRounded from '@mui/icons-material/PlayCircleRounded';
+import FactCheckRounded from '@mui/icons-material/FactCheckRounded';
+import FeedbackRounded from '@mui/icons-material/FeedbackRounded';
+import MonitorHeartRounded from '@mui/icons-material/MonitorHeartRounded';
+import PhoneAndroidRounded from '@mui/icons-material/PhoneAndroidRounded';
+import CampaignRounded from '@mui/icons-material/CampaignRounded';
+import LinkRounded from '@mui/icons-material/LinkRounded';
+import StoreRounded from '@mui/icons-material/StoreRounded';
+import SecurityRounded from '@mui/icons-material/SecurityRounded';
+import CalendarMonthRounded from '@mui/icons-material/CalendarMonthRounded';
+import AssessmentRounded from '@mui/icons-material/AssessmentRounded';
 import { routeManifest } from '@botsales/contracts';
 import { colors, tokens } from '@botsales/tokens';
 import { layoutSx } from '@/shared/ui/layout';
@@ -25,22 +46,29 @@ import { ScopeContext } from '@/shared/model/scope';
 import { request, cancelScopeRequests } from '@/shared/api/client';
 import { ApiError } from '@/shared/api/errors';
 import { useSession } from './SessionProvider';
-import { navigation } from './navigation';
+import { activeNavigationId, navigation } from './navigation';
 import { ScopeEvents } from './ScopeEvents';
 import { CommandRecovery } from './CommandRecovery';
 import { FeedbackDialog } from './feedback';
 import { hasUnsavedFormDraft } from './dirty-drafts';
 import {DraftNavigationGuard} from './DraftNavigationGuard';
-function NavIcon({ kind }: {
-    kind: string;
-}) { if (kind === 'chat')
-    return <ForumRounded fontSize="small"/>; if (['inventory', 'product', 'reorder', 'purchase', 'suppliers'].includes(kind))
-    return <Inventory2Rounded fontSize="small"/>; if (['ai', 'play', 'quality', 'knowledge'].includes(kind))
-    return <SmartToyRounded fontSize="small"/>; if (['money', 'chart', 'match'].includes(kind))
-    return <AccountBalanceWalletRounded fontSize="small"/>; if (['orders', 'receipt', 'book', 'report'].includes(kind))
-    return <ReceiptLongRounded fontSize="small"/>; if (kind === 'dashboard')
-    return <DashboardRounded fontSize="small"/>; if (kind === 'bell')
-    return <NotificationsNoneRounded fontSize="small"/>; return <SettingsOutlined fontSize="small"/>; }
+type NavigationIconKind = (typeof navigation)[number]['items'][number][3];
+const navigationIcons: Record<NavigationIconKind, typeof SettingsOutlined> = {
+    dashboard: DashboardRounded, work: ChecklistRounded, approval: AssignmentTurnedInRounded,
+    chat: ForumRounded, people: PeopleRounded, orders: ReceiptLongRounded, inventory: Inventory2Rounded,
+    shipping: LocalShippingRounded, return: AssignmentReturnRounded, support: SupportAgentRounded,
+    product: Inventory2Rounded, category: CategoryRounded, upload: UploadFileRounded, history: HistoryRounded,
+    suppliers: StoreRounded, reorder: Inventory2Rounded, purchase: ReceiptLongRounded, receipt: ReceiptLongRounded,
+    money: AccountBalanceWalletRounded, book: MenuBookRounded, chart: AssessmentRounded, match: FactCheckRounded,
+    calendar: CalendarMonthRounded, ai: SmartToyRounded, settings: SettingsOutlined, play: PlayCircleRounded,
+    quality: FactCheckRounded, knowledge: MenuBookRounded, feedback: FeedbackRounded, health: MonitorHeartRounded,
+    bell: NotificationsNoneRounded, phone: PhoneAndroidRounded, report: AssessmentRounded, marketing: CampaignRounded,
+    channel: LinkRounded, integration: LinkRounded, store: StoreRounded, security: SecurityRounded,
+};
+function NavIcon({ kind }: { kind: NavigationIconKind }) {
+    const Icon = navigationIcons[kind];
+    return <Icon fontSize="small" />;
+}
 export default function Shell() {
     const { shopId = '' } = useParams();
     const { session, loading, error, refresh, logout, online } = useSession();
@@ -49,7 +77,12 @@ export default function Shell() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [search, setSearch] = useState('');
     const searchInput = useRef<HTMLInputElement>(null);
-    const clearSearch = () => {setSearch('');searchInput.current?.focus();};
+    const menuFocus = useRef<HTMLElement>(null);
+    const clearSearch = () => {
+        setSearch('');
+        if (searchInput.current?.getClientRects().length) searchInput.current.focus();
+        else menuFocus.current?.focus();
+    };
     const [feedback, setFeedback] = useState(false);
     const [logoutPending, setLogoutPending] = useState(false);
     const [logoutError, setLogoutError] = useState('');
@@ -97,21 +130,22 @@ export default function Shell() {
     const shop = shopQuery.data.data;
     const currentRoute = routeMetadata(location.pathname);
     const hasPermission = (id: string) => { const r = routeManifest.routes.find(r => r.id === id); return !r?.readPermission || membership.permissions.some(p => p === r.readPermission); };
+    const activeId = activeNavigationId(location.pathname, shopId);
     const matchingNavigation = navigation.map(group => ({...group,items:group.items.filter(([id,title])=>hasPermission(id)&&title.toLocaleLowerCase('vi').includes(search.trim().toLocaleLowerCase('vi')))}));
-    const menu = <Box sx={{ height: '100%', bgcolor: colors.sidebar, display: 'flex', flexDirection: 'column' }}>
+    const menu = <Box component="nav" aria-label="Điều hướng chính" ref={menuFocus} tabIndex={-1} sx={{ height: '100%', bgcolor: colors.sidebar, display: 'flex', flexDirection: 'column' }}>
   <Stack direction="row" alignItems="center" sx={[layoutSx.navigation.brandGap, layoutSx.navigation.brandInset]}><Box sx={[layoutSx.navigation.brandMarkShape, { width: 38, height: 38, bgcolor: 'primary.main', color: colors.onAccent, display: 'grid', placeItems: 'center' }]}><SmartToyRounded /></Box><Box><Typography variant="h6">BotSales <Box component="span" color="primary.main">AI</Box></Typography><Typography variant="caption" color="text.secondary">Đội ngũ vận hành cửa hàng</Typography></Box></Stack>
   <Box sx={layoutSx.navigation.shopInset}><Button component={RouterLink} to="/workspaces" variant="outlined" fullWidth sx={{ justifyContent: 'space-between', borderColor: 'divider' }}>{shop.name}<span>⌄</span></Button></Box>
-  <Box sx={[{ flex: 1, overflowY: 'auto' }, layoutSx.navigation.listInset] }>{matchingNavigation.map(group => { const items = group.items; return items.length > 0 && <Box key={group.label} sx={layoutSx.navigation.groupGap}><Typography variant="overline" sx={[layoutSx.navigation.groupLabelInset, layoutSx.navigation.groupLabelGap, { color: colors.textMuted }]}>{group.label}</Typography><List disablePadding>{items.map(([id, title, path, icon]) => { const to = `/s/${shopId}/${path}`; const active = location.pathname === to; return <ListItem key={id} disablePadding><ListItemButton component={RouterLink} to={to} selected={active} sx={[layoutSx.navigation.itemInsetBlock, layoutSx.navigation.itemGap, layoutSx.navigation.itemShape, { '&.Mui-selected': { bgcolor: colors.selected, color: 'primary.main' }, '&.Mui-selected:hover': { bgcolor: colors.selected }
+  <Box sx={[{ flex: 1, overflowY: 'auto' }, layoutSx.navigation.listInset] }>{matchingNavigation.map(group => { const items = group.items; return items.length > 0 && <Box key={group.label} sx={layoutSx.navigation.groupGap}><Typography variant="caption" component="div" sx={[layoutSx.navigation.groupLabelInset, layoutSx.navigation.groupLabelGap, { color: colors.textMuted }]}>{group.label}</Typography><List disablePadding>{items.map(([id, title, path, icon]) => { const to = `/s/${shopId}/${path}`; const active = activeId === id; return <ListItem key={id} disablePadding><ListItemButton component={RouterLink} to={to} selected={active} aria-current={active ? (location.pathname === to ? 'page' : 'location') : undefined} sx={[layoutSx.navigation.itemInsetBlock, layoutSx.navigation.itemGap, layoutSx.navigation.itemShape, { '&.Mui-selected': { bgcolor: colors.selected, color: 'primary.main' }, '&.Mui-selected:hover': { bgcolor: colors.selected }
     }]}><ListItemIcon sx={{ minWidth: 32, color: active ? 'primary.main' : 'text.secondary' }}><NavIcon kind={icon}/></ListItemIcon><ListItemText primary={title} primaryTypographyProps={{ variant: 'body2', fontWeight: active ? 'medium' : 'regular' }}/></ListItemButton></ListItem>; })}</List></Box>; })}{search.trim() && !matchingNavigation.some(group => group.items.length) && <Alert severity="info" action={<Button onClick={clearSearch}>Xóa tìm kiếm</Button>}>Không tìm thấy màn hình phù hợp.</Alert>}</Box>
   <Divider /><Stack direction="row" alignItems="center" sx={[layoutSx.navigation.accountInset, layoutSx.navigation.accountGap]}><Avatar sx={{ width: 32, height: 32, bgcolor: colors.raised, color: 'primary.main' }}>{session.user.displayName[0]}</Avatar><Box sx={{ flex: 1, minWidth: 0 }}><Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>{session.user.displayName}</Typography><Typography variant="caption" color="text.secondary">{membership.roles.map(role => label(role)).join(' · ')}</Typography></Box><Tooltip title="Đăng xuất"><IconButton aria-label="Đăng xuất" onClick={requestLogout}><LogoutRounded fontSize="small"/></IconButton></Tooltip></Stack>
  </Box>;
     return <ScopeContext.Provider value={{ session, shop, membership, online, refreshSession: refresh }}>
- <Box sx={{ display: 'flex', minHeight: '100vh' }}><Box component="nav" aria-label="Điều hướng chính" sx={{ width: { lg: 240 }, flexShrink: 0 }}><Drawer variant="permanent" sx={{ display: { xs: 'none', lg: 'block' }, '& .MuiDrawer-paper': { width: 240, borderColor: 'divider' } }}>{menu}</Drawer><Drawer open={mobileOpen} onClose={() => setMobileOpen(false)} sx={{ display: { lg: 'none' }, '& .MuiDrawer-paper': { width: 280 } }}>{menu}</Drawer></Box>
- <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}><Paper square component="header" sx={[layoutSx.shell.headerHeight, { position: 'sticky', top: 0, zIndex: tokens.zIndex.sticky, borderBottom: 1, borderColor: 'divider', bgcolor: colors.canvas }]}><Stack direction="row" alignItems="center" justifyContent="space-between" sx={layoutSx.page.gutter}>
-  <ActionGroup direction="row" alignItems="center" ><IconButton aria-label="Mở menu" onClick={() => setMobileOpen(true)} sx={{ display: { lg: 'none' } }}><MenuRounded /></IconButton><Typography component="nav" aria-label="Đường dẫn hiện tại" variant="body2" color="text.secondary" sx={{ display: { xs: 'none', sm: 'block' } }}>Không gian làm việc <Box component="span"> / </Box><Box component="span" color="text.primary">{currentRoute?.title || 'BotSales'}</Box></Typography></ActionGroup>
-  <Stack direction="row" alignItems="center" sx={layoutSx.toolbar.controlGap}><TextField inputRef={searchInput} size="small" value={search} onChange={e => setSearch(e.target.value)} placeholder="Tìm màn hình..." inputProps={{ 'aria-label': 'Tìm màn hình' }} sx={{ width: 200, display: { xs: 'none', md: 'block' } }} slotProps={{ input: { startAdornment: <SearchRounded fontSize="small" sx={[layoutSx.shell.searchIconInset, { color: 'text.secondary' }]}/> } }}/>{search && <IconButton aria-label="Xóa tìm màn hình" onClick={clearSearch}><CloseRounded/></IconButton>}<Chip aria-label={__MOCK__ ? 'Dữ liệu mô phỏng' : 'API thật'} label={<><Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{__MOCK__ ? 'Dữ liệu mô phỏng' : 'API thật'}</Box><Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{__MOCK__ ? 'Demo' : 'API'}</Box></>} color={__MOCK__ ? 'warning' : 'default'} variant="outlined"/><IconButton component={RouterLink} to={`/s/${shopId}/notifications`} aria-label="Thông báo"><NotificationsNoneRounded /></IconButton><Avatar sx={{ width: 32, height: 32, bgcolor: colors.selected, color: 'primary.main', fontSize: tokens.fontSizes.body }}>{session.user.displayName[0]}</Avatar></Stack>
+ <Box sx={{ display: 'flex', minHeight: '100vh' }}><Box sx={{ width: { lg: 240 }, flexShrink: 0 }}><Drawer variant="permanent" sx={{ display: { xs: 'none', lg: 'block' }, '& .MuiDrawer-paper': { width: 240, borderColor: 'divider' } }}>{menu}</Drawer><Drawer open={mobileOpen} onClose={() => setMobileOpen(false)} sx={{ display: { lg: 'none' }, '& .MuiDrawer-paper': { width: 280 } }}>{menu}</Drawer></Box>
+ <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}><Paper square component="header" sx={[layoutSx.shell.headerHeight, { position: 'sticky', top: 0, zIndex: tokens.zIndex.sticky, display: 'flex', alignItems: 'center', borderBottom: 1, borderColor: 'divider', bgcolor: colors.canvas }]}><Stack direction="row" alignItems="center" justifyContent="space-between" sx={[layoutSx.page.gutter, { flex: 1, minWidth: 0 }]}>
+  <ActionGroup direction="row" alignItems="center" geometry={{ minWidth: 0, flex: 1 }}><IconButton aria-label="Mở menu" onClick={() => setMobileOpen(true)} sx={{ display: { lg: 'none' } }}><MenuRounded /></IconButton><Breadcrumbs aria-label="Đường dẫn hiện tại" sx={{ display: { xs: 'none', sm: 'block' }, minWidth: 0, overflowWrap: 'anywhere' }}><Link component={RouterLink} to="/workspaces" color="inherit" underline="hover">{shop.name}</Link><Typography component="span" variant="body2" color="text.primary" aria-current="page">{currentRoute?.title || 'BotSales'}</Typography></Breadcrumbs></ActionGroup>
+  <Stack direction="row" alignItems="center" sx={[layoutSx.toolbar.controlGap, { flexShrink: 0 }]}><TextField inputRef={searchInput} size="small" value={search} onChange={e => setSearch(e.target.value)} placeholder="Tìm trong menu" inputProps={{ 'aria-label': 'Tìm trong menu' }} sx={{ width: 200, display: { xs: 'none', md: 'block' } }} slotProps={{ input: { startAdornment: <SearchRounded fontSize="small" sx={[layoutSx.shell.searchIconInset, { color: 'text.secondary' }]}/> } }}/>{search && <IconButton aria-label="Xóa bộ lọc menu" onClick={clearSearch}><CloseRounded/></IconButton>}<Chip aria-label={__MOCK__ ? 'Dữ liệu mô phỏng' : 'API thật'} label={<><Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{__MOCK__ ? 'Dữ liệu mô phỏng' : 'API thật'}</Box><Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{__MOCK__ ? 'Demo' : 'API'}</Box></>} color="default" variant="outlined" sx={{ height: 'auto', minHeight: tokens.space.lg, '& .MuiChip-label': { whiteSpace: 'normal' } }}/><IconButton component={RouterLink} to={`/s/${shopId}/notifications`} aria-label="Thông báo"><NotificationsNoneRounded fontSize="small" /></IconButton><Avatar sx={{ width: 32, height: 32, bgcolor: colors.selected, color: 'primary.main', fontSize: tokens.fontSizes.body }}>{session.user.displayName[0]}</Avatar></Stack>
  </Stack></Paper>
- {__MOCK__ && <Box sx={layoutSx.shell.demoBanner}><Alert severity="info" action={<Button color="inherit" size="small" onClick={() => setFeedback(true)}>Góp ý</Button>}>Frontend review: API được mô phỏng trong bộ nhớ, không gửi tin hoặc đặt hàng thật. Tải lại trang sẽ khởi tạo lại dữ liệu.</Alert><MockTools onChange={refresh} expanded={demoExpanded} setExpanded={setDemoExpanded} role={demoRole} setRole={setDemoRole} fault={demoFault} setFault={setDemoFault} dataset={demoDataset} setDataset={setDemoDataset} datasetStatus={demoStatus} setDatasetStatus={setDemoStatus}/></Box>}
+ {__MOCK__ && <Box component="aside" aria-label="Công cụ mô phỏng" sx={layoutSx.shell.demoBanner}><Alert severity="info" action={<Button color="inherit" size="small" onClick={() => setFeedback(true)}>Góp ý</Button>}>Frontend review: API được mô phỏng trong bộ nhớ, không gửi tin hoặc đặt hàng thật. Tải lại trang sẽ khởi tạo lại dữ liệu.</Alert><MockTools onChange={refresh} expanded={demoExpanded} setExpanded={setDemoExpanded} role={demoRole} setRole={setDemoRole} fault={demoFault} setFault={setDemoFault} dataset={demoDataset} setDataset={setDemoDataset} datasetStatus={demoStatus} setDatasetStatus={setDemoStatus}/></Box>}
  {logoutError && <Alert severity="error" sx={layoutSx.shell.statusBanner}>{logoutError}</Alert>}<ScopeEvents /><CommandRecovery />
  {!online && <Alert severity="warning" sx={layoutSx.shell.statusBanner}>Đang ngoại tuyến. Dữ liệu đang xem có thể cũ; mọi thao tác ghi bị tạm khóa.</Alert>}
  <Box component="main" id="main-content" tabIndex={-1} sx={[layoutSx.page.gutter, layoutSx.page.contentInsetBlock, layoutSx.shell.mainFill, { outline: 'none' }]}><Outlet key={`${shopId}:${membership.permissionVersion}`}/></Box>

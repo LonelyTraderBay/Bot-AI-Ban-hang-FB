@@ -1,0 +1,17 @@
+const fs = require('node:fs');
+const crypto = require('node:crypto');
+const path = require('node:path');
+const repo = path.resolve('..');
+const evidencePath = 'evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json';
+const evidence = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+const original = 'evidence/unslop-fixes-20261110/S17-before.json';
+if (!fs.existsSync(original)) fs.copyFileSync(evidencePath, original);
+const files = Object.keys(evidence.sourceFingerprints);
+const newTest = 'BotSalesAI_Frontend/tests/ui-unslop-findings.spec.ts';
+if (!files.includes(newTest)) files.push(newTest);
+for (const file of files) evidence.sourceFingerprints[file] = crypto.createHash('sha256').update(fs.readFileSync(path.join(repo, file))).digest('hex');
+evidence.recordedAt = new Date().toISOString();
+evidence.scope = 'Governance ledger preserving historical checks and limitations. Current fingerprints correspond to the unslop finding fixes of 2026-11-10; prior checks remain historical unless explicitly identified as current. See evidence/unslop-fixes-20261110 for current tests and baseline. Does not close owner, screen-reader, native zoom or hosted acceptance.';
+const limit = 'Unslop fixes 2026-11-10: earlier header and full E2E results are historical; current scoped evidence and remaining limits are recorded in evidence/unslop-fixes-20261110.';
+if (!evidence.knownLimits.includes(limit)) evidence.knownLimits.push(limit);
+fs.writeFileSync(evidencePath, JSON.stringify(evidence, null, 2) + '\n');

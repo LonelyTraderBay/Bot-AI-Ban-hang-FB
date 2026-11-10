@@ -15,7 +15,8 @@ const listRoutes = routeManifest.routes.filter(route => route.path.startsWith('/
 const detailIds: Record<string, string> = { conversationId: 'cv1', customerId: 'c1', productId: 'p1', orderId: 'DH-1001', knowledgeId: 'k1', jobId: 'missing-job' };
 
 function routePath(path: string) {
-    return path.replace(':shopId', 'shop-demo').replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
+    const resolved = path.replace(':shopId', 'shop-demo').replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
+    return path.endsWith('/finance/ledger') ? `${resolved}?fromDate=2026-09-01&toDate=2026-10-01` : resolved;
 }
 function canRead(route: Route, role: string) {
     return route.readPermission === null || permissionCatalog.rolePresets[role].includes(route.readPermission);

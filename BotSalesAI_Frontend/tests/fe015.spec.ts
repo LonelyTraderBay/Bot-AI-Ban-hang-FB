@@ -167,7 +167,7 @@ test('UI003 report timestamps follow the active shop timezone', async ({ browser
             return response.request().method() === 'GET' && url.pathname.endsWith('/finance/cashflow') && url.searchParams.get('from') === '2026-08-31T17:00:00.000Z' && url.searchParams.get('to') === '2026-09-30T17:00:00.000Z' && url.searchParams.get('timezone') === 'Asia/Vientiane';
         });
         await page.evaluate(() => {
-            window.history.pushState({}, '', '/s/shop-second/finance');
+            window.history.pushState({}, '', '/s/shop-second/finance?fromDate=2026-09-01&toDate=2026-10-01');
             window.dispatchEvent(new PopStateEvent('popstate'));
         });
         const vientianeReportResponse = await vientianeReportWait;

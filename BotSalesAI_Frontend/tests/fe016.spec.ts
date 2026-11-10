@@ -385,7 +385,7 @@ test('UI002 inbox list and message cursors stay independent through paging, conv
     await expect(page.getByRole('heading', { name: 'UI002 Conversation 42', exact: true })).toBeVisible();
     expect(invalidCursorResponses).toEqual([]);
 
-    await page.getByRole('link', { name: /Joker Studio/ }).click();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Joker Studio/ }).click();
     await expect(page.getByRole('heading', { name: 'Chọn cửa hàng', exact: true })).toBeVisible();
     await page.locator('a[href="/s/shop-second/overview"]').click();
     await page.getByRole('link', { name: 'Hộp thư khách hàng', exact: true }).click();

@@ -234,7 +234,7 @@ test('F01 shop settings merges a server-only locale change and preserves edits t
     await comparison.getByRole('button', { name: 'Áp dụng vào bản nháp' }).click();
     await expect(page.getByLabel('Ngôn ngữ giao diện', { exact: true })).toHaveValue('Tiếng Việt');
     await expect(page.getByLabel('Ngôn ngữ giao diện', { exact: true })).toBeDisabled();
-    await expect(page.getByText('Giao diện hiện chỉ hỗ trợ tiếng Việt. Locale lưu trong API: en-US.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Giao diện hiện chỉ hỗ trợ tiếng Việt. Ngôn ngữ lưu cho cửa hàng: en-US.', { exact: true })).toBeVisible();
     const completed = await whileMutationPending(page, 'PATCH', /^\/api\/v2\/shops\/shop-demo$/, () => page.getByRole('button', { name: 'Lưu cấu hình', exact: true }).click(), async () => {
         await expect(page.getByRole('button', { name: 'Lưu cấu hình', exact: true })).toBeDisabled();
         await name.fill('Typed later shop');

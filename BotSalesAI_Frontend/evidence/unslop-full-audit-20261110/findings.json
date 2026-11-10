@@ -1,0 +1,344 @@
+{
+  "verdict": "FINDINGS",
+  "sourceChanges": false,
+  "findings": [
+    {
+      "id": "U01",
+      "priority": "P1",
+      "category": "Lỗi thao tác bàn phím",
+      "title": "Nút chọn ảnh/CSV không mở bộ chọn tệp bằng Enter hoặc Space",
+      "routes": [
+        "R10",
+        "R11",
+        "R13"
+      ],
+      "source": [
+        {
+          "file": "apps/web/src/modules/catalog/index.tsx",
+          "line": 151
+        },
+        {
+          "file": "apps/web/src/modules/catalog/imports.tsx",
+          "line": 38
+        }
+      ],
+      "evidence": [
+        "overlays.json"
+      ],
+      "observed": "12/12 thao tác Enter/Space không mở file chooser; 6/6 click đối chứng mở được, trên Chromium và Firefox ở 1440 px. Axe cũng ghi aria-allowed-role ở cả ba route.",
+      "cause": "Button component=\"label\" tạo label role=button có tabindex nhưng thiếu kích hoạt bàn phím tương đương nút native; input file bị hidden.",
+      "recommendation": "Dùng nút native kích hoạt input file qua ref, hoặc control tải tệp truy cập được; giữ đủ Enter, Space và click trong phép kiểm tra."
+    },
+    {
+      "id": "U02",
+      "priority": "P2",
+      "category": "Căn chỉnh giống header",
+      "title": "Tiêu đề và nút đóng hộp thoại lệch tâm khoảng 9,85 px",
+      "routes": [
+        "R07",
+        "R08",
+        "R12",
+        "R15",
+        "R21",
+        "R23",
+        "R26",
+        "R28",
+        "R29",
+        "R30",
+        "R32",
+        "R35",
+        "R37",
+        "R38",
+        "R39",
+        "R42",
+        "R43",
+        "R44",
+        "R45",
+        "R46",
+        "R47",
+        "R48",
+        "R49",
+        "R50",
+        "R54",
+        "R55",
+        "R56",
+        "R57"
+      ],
+      "source": [
+        {
+          "file": "apps/web/src/shared/ui/components.tsx",
+          "line": 497
+        }
+      ],
+      "evidence": [
+        "overlays.json",
+        "overlays/R07-390.png",
+        "overlays/R07-1440.png"
+      ],
+      "observed": "112/112 lần mở, thuộc 28 loại hộp thoại ở 390/1440 px trên hai engine, có titleCenterDelta từ -9.8515625 đến -9.8499985 px (xấp xỉ -9,85 px).",
+      "cause": "EditDialog dùng flex alignItems:flex-start; dòng tiêu đề thấp hơn hit area 44 px của nút đóng, nên chữ nằm cao hơn tâm biểu tượng.",
+      "recommendation": "Căn tâm theo cross-axis tại owner EditDialog, cho tiêu đề nhiều dòng nở tự nhiên; giữ target nút đóng 44 px. Đo lại cả tiêu đề ngắn/dài, mobile/desktop và hành vi focus."
+    },
+    {
+      "id": "U03",
+      "priority": "P2",
+      "category": "Đọc nội dung trên mobile",
+      "title": "Nhãn trạng thái ngắn bị bẻ giữa chữ trong bảng",
+      "routes": [
+        "R15",
+        "R16",
+        "R17",
+        "R21",
+        "R37",
+        "R42",
+        "R54"
+      ],
+      "source": [
+        {
+          "file": "apps/web/src/shared/ui/components.tsx",
+          "line": 120
+        },
+        {
+          "file": "apps/web/src/shared/ui/components.tsx",
+          "line": 143
+        }
+      ],
+      "evidence": [
+        "status-wrap.json",
+        "screens/R16-chromium-390.png",
+        "screens/R42-chromium-390.png"
+      ],
+      "observed": "7 route ở 390 px. Ví dụ R16: “Nhập” bị chia ba dòng trong label khoảng 30 px; R42: “giao” chia hai dòng. R21 tái hiện trên Firefox; sáu route còn lại trên cả hai engine.",
+      "cause": "Status cho phép overflowWrap:anywhere trong cột auto bị ép hẹp; bảng min-width 600 px vẫn không đảm bảo chiều rộng riêng cho trạng thái.",
+      "recommendation": "Giữ nguyên từ cho trạng thái ngắn và đặt bề rộng tối thiểu phù hợp tại cột/variant dùng chung. Cho bảng cuộn trong region đã có tên; không giảm font để nhét chữ."
+    },
+    {
+      "id": "U04",
+      "priority": "P2",
+      "category": "Tinh chỉnh target theo chuẩn dự án",
+      "title": "Một số ô chọn compact có vùng chạm cao khoảng 37 px",
+      "routes": [
+        "R05",
+        "R06",
+        "R09",
+        "R15",
+        "R16"
+      ],
+      "source": [
+        {
+          "file": "apps/web/src/shared/ui/theme.ts",
+          "line": 41
+        },
+        {
+          "file": "docs/FRONTEND_SPACING_STANDARD.md",
+          "line": 298
+        }
+      ],
+      "evidence": [
+        "fields-final.json"
+      ],
+      "observed": "20/20 tổ hợp route × engine × 390/1440 px đều có select nhỏ: root và combobox cùng cao 37.125 px (Chromium), khoảng 37.13 px (Firefox). Select “Ngành hàng mẫu” ở R06 cao 53.125 px, không thuộc lỗi.",
+      "cause": "Select size=small kế thừa hình học compact từ MUI, chưa có min-height tương ứng mục tiêu 44 px của sản phẩm.",
+      "recommendation": "Cân chỉnh compact control tại shared owner theo target nội bộ ≥44 px, giữ typography và responsive hiện tại. Đây là chênh lệch chuẩn chạm dự án, không được gọi tự động là vi phạm WCAG AA chỉ vì nhỏ hơn 44 px."
+    },
+    {
+      "id": "U05",
+      "priority": "P2",
+      "category": "Ngữ nghĩa bảng",
+      "title": "Cột thao tác có ô tiêu đề rỗng",
+      "routes": [
+        "R07",
+        "R12",
+        "R13",
+        "R15",
+        "R17",
+        "R24",
+        "R25",
+        "R26",
+        "R32",
+        "R37",
+        "R38",
+        "R40",
+        "R41",
+        "R42",
+        "R43",
+        "R44",
+        "R45",
+        "R46",
+        "R47",
+        "R48",
+        "R50",
+        "R51",
+        "R54"
+      ],
+      "source": [
+        {
+          "file": "apps/web/src/shared/ui/components.tsx",
+          "line": 143
+        }
+      ],
+      "evidence": [
+        "matrix.json"
+      ],
+      "observed": "Axe empty-table-header ở 23 route; DOM xác nhận th scope=col không có nội dung.",
+      "cause": "Các consumer truyền label rỗng cho cột thao tác và DataTable render trực tiếp c.label.",
+      "recommendation": "Đặt tên “Thao tác” tại khai báo cột; nếu thiết kế cần ẩn chữ, dùng tên chỉ dành cho công nghệ hỗ trợ. Không suy đoán nhãn cho mọi cột rỗng bằng một fallback mù."
+    },
+    {
+      "id": "U06",
+      "priority": "P2",
+      "category": "Thứ bậc heading",
+      "title": "Heading nhảy cấp hoặc dùng để trình bày số/ngày",
+      "routes": [
+        "R02",
+        "R19",
+        "R52"
+      ],
+      "source": [
+        {
+          "file": "apps/web/src/modules/workspace/index.tsx",
+          "line": 57
+        },
+        {
+          "file": "apps/web/src/modules/orders/index.tsx",
+          "line": 234
+        },
+        {
+          "file": "apps/web/src/modules/operations/index.tsx",
+          "line": 378
+        }
+      ],
+      "evidence": [
+        "matrix.json"
+      ],
+      "observed": "R02 dùng h1→h5 cho tên cửa hàng; R19 tổng tiền mặc định thành h4; R52 khoảng thời gian dùng subtitle2 mặc định thành h6.",
+      "cause": "Typography variant được dùng để chọn cỡ chữ mà chưa chỉ định component ngữ nghĩa.",
+      "recommendation": "Đặt component h2/h3 cho tiêu đề thực và div/p cho số tiền hoặc metadata; giữ nguyên variant để không thay giao diện Graphite Gold."
+    },
+    {
+      "id": "U07",
+      "priority": "P3",
+      "category": "Landmark trong demo",
+      "title": "Tóm tắt công cụ demo nằm ngoài landmark có tên",
+      "routes": [
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14",
+        "R15",
+        "R16",
+        "R17",
+        "R18",
+        "R19",
+        "R20",
+        "R21",
+        "R22",
+        "R23",
+        "R24",
+        "R25",
+        "R26",
+        "R27",
+        "R28",
+        "R29",
+        "R30",
+        "R31",
+        "R32",
+        "R33",
+        "R34",
+        "R35",
+        "R36",
+        "R37",
+        "R38",
+        "R39",
+        "R40",
+        "R41",
+        "R42",
+        "R43",
+        "R44",
+        "R45",
+        "R46",
+        "R47",
+        "R48",
+        "R49",
+        "R50",
+        "R51",
+        "R52",
+        "R53",
+        "R54",
+        "R55",
+        "R56",
+        "R57",
+        "R58",
+        "R59",
+        "R60"
+      ],
+      "source": [
+        {
+          "file": "apps/web/src/app/Shell.tsx",
+          "line": 148
+        },
+        {
+          "file": "apps/web/src/app/Shell.tsx",
+          "line": 196
+        }
+      ],
+      "evidence": [
+        "matrix.json"
+      ],
+      "observed": "Axe region trên 57 route dùng Shell (R04–R60), target là phần tóm tắt owner/trạng thái/dataset.",
+      "cause": "Khối demo ở giữa header và main, chưa có landmark/region có tên bao quanh phần tóm tắt.",
+      "recommendation": "Gắn ngữ nghĩa phù hợp, chẳng hạn aside có tên “Công cụ mô phỏng”. Giữ thông báo mô phỏng và khả năng thu/mở; phạm vi vấn đề là demo."
+    },
+    {
+      "id": "U08",
+      "priority": "P3",
+      "category": "Tinh chỉnh copy theo unslop",
+      "title": "Một số lời dẫn còn dùng tên API và thuật ngữ triển khai",
+      "routes": [
+        "R01",
+        "R10",
+        "R11",
+        "R18",
+        "R31",
+        "R33"
+      ],
+      "source": [
+        {
+          "file": "apps/web/src/modules/orders/index.tsx",
+          "line": 108
+        },
+        {
+          "file": "apps/web/src/modules/orders/index.tsx",
+          "line": 144
+        },
+        {
+          "file": "apps/web/src/modules/reports/index.tsx",
+          "line": 195
+        },
+        {
+          "file": "apps/web/src/modules/catalog/index.tsx",
+          "line": 151
+        },
+        {
+          "file": "apps/web/src/modules/workspace/index.tsx",
+          "line": 48
+        }
+      ],
+      "evidence": [
+        "matrix.json",
+        "screens/R18-chromium-390.png",
+        "screens/R31-chromium-1440.png"
+      ],
+      "observed": "Ví dụ listCustomers/listProducts ở R18; getReportSummary/listJobs/Snapshot API ở R31; API upload/secret ở R10/R11; lời dẫn thiết lập nhắc Locale/catalog ở R33; R01 còn tiêu đề chào mừng chung.",
+      "cause": "Copy triển khai còn xuất hiện trong luồng cho người vận hành; đây là đánh giá biên tập, không phải lỗi runtime.",
+      "recommendation": "Đổi lời dẫn sang hành động/ngữ cảnh nghiệp vụ, ví dụ “Tìm khách theo tên hoặc mã”. Đưa tên operation sang tài liệu kỹ thuật khi không giúp quyết định. Giữ nguyên cảnh báo dữ liệu mô phỏng, quyền, bảo mật và độ đầy đủ kế toán."
+    }
+  ]
+}

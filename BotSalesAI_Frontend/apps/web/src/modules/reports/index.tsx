@@ -159,7 +159,7 @@ export function ReportsPage() {
                                 <TextField label="Đến ngày" type="date" value={to} onChange={event => setReportParam('toDate', event.target.value)} slotProps={{ inputLabel: { shrink: true } }} fullWidth />
                             </FormFields>
                             <DetailLine label="Múi giờ">{shop.timezone}</DetailLine>
-                            <DetailLine label="Snapshot API">{snapshotAsOf ? dateTime(snapshotAsOf, shop.timezone) : 'Chưa có snapshot'}</DetailLine>
+                            <DetailLine label="Thời điểm dữ liệu">{snapshotAsOf ? dateTime(snapshotAsOf, shop.timezone) : 'Chưa có snapshot'}</DetailLine>
                             {!canExportReports && <Alert severity="warning">Vai trò hiện tại không có quyền reports.export.</Alert>}
                             {canExportReports && !canExportSource && <Alert severity="warning">Quyền xuất không thay thế quyền đọc nguồn {sourcePermissions[type]}; loại báo cáo này chưa thể xuất.</Alert>}
                             {canExportReports && canExportSource && !reportAvailable && availableReports.length > 0 && <Alert severity="warning">API không liệt kê loại báo cáo này cho vai trò hiện tại.</Alert>}
@@ -192,8 +192,8 @@ export function ReportsPage() {
             </PageSections>
             <Panel title="Phạm vi dữ liệu" subtitle="Chỉ những gì API cung cấp mới được trình bày như số liệu." bodyMode="inset">
                 <Stack sx={layoutSx.report.contextGap}>
-                    <Typography color="text.secondary">Báo cáo dòng, biểu đồ và tổng hợp theo khoảng ngày chưa có trong getReportSummary. Frontend không cộng dữ liệu phân trang để tạo KPI thay thế.</Typography>
-                    <Typography color="text.secondary">Trạng thái export được lấy riêng từ listJobs; URL tải chỉ được mở sau khi API trả về công việc hoàn tất.</Typography>
+                    <Typography color="text.secondary">Báo cáo chi tiết, biểu đồ và tổng hợp theo khoảng ngày hiện chưa có. Số liệu trong từng trang danh sách không được cộng để thay thế chỉ số tổng.</Typography>
+                    <Typography color="text.secondary">Trạng thái xuất dữ liệu được theo dõi riêng; chỉ mở tệp tải sau khi công việc hoàn tất.</Typography>
                     <RouteLink to={`/s/${shop.id}/reports/marketing`}>Xem thông tin marketing</RouteLink>
                 </Stack>
             </Panel>

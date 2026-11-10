@@ -1,0 +1,113 @@
+{
+  "recordedAt": "2026-11-10T09:43:05.877Z",
+  "verdict": "FINDINGS",
+  "scope": "Read-only UI audit; no application/test/tracker changes",
+  "sourceInputs": 307,
+  "sourceDrift": [],
+  "coverage": {
+    "routeMatrix": {
+      "expected": 488,
+      "observed": 488,
+      "canonicalRoutes": 61,
+      "widths": [
+        320,
+        390,
+        768,
+        1440
+      ],
+      "engines": [
+        "chromium",
+        "firefox"
+      ],
+      "navigationOrCollectorErrors": 0,
+      "pageErrors": 0,
+      "documentOverflow": 0,
+      "clippedControlCandidates": 0
+    },
+    "header": {
+      "observations": 456,
+      "maxAbsoluteCenterDelta": 0.5,
+      "toleranceCssPx": 0.5
+    },
+    "axe": {
+      "scans": 122,
+      "ruleIds": [
+        "aria-allowed-role",
+        "empty-table-header",
+        "heading-order",
+        "region"
+      ]
+    },
+    "dialogs": {
+      "expected": 112,
+      "observed": 112,
+      "types": 28,
+      "errors": 0,
+      "fitViewport": 112,
+      "focusInsideAfterFourTabs": 112,
+      "escapeCloses": 112,
+      "openerFocusRestored": 112,
+      "titleMisalignment": 112,
+      "initialPaperFocusInside": 0,
+      "initialFocusNote": "MUI initially focuses dialog trap container outside Paper; no initial-Paper-focus PASS claimed"
+    },
+    "uploadActivation": {
+      "observations": 18,
+      "keyboardAttempts": 12,
+      "keyboardOpened": 0,
+      "pointerAttempts": 6,
+      "pointerOpened": 6,
+      "width": 1440
+    },
+    "statusWordWrap": {
+      "expected": 122,
+      "observed": 122,
+      "affectedRoutes": [
+        "R15",
+        "R16",
+        "R17",
+        "R21",
+        "R37",
+        "R42",
+        "R54"
+      ]
+    },
+    "supplementalReadyStates": {
+      "expected": 28,
+      "observed": 28,
+      "errors": 0,
+      "overflow": 0
+    },
+    "compactFields": {
+      "expected": 20,
+      "observed": 20,
+      "emptyRows": 0
+    },
+    "screenshots": {
+      "routeFullPage": 122,
+      "dialogs": 56,
+      "supplemental": 14
+    }
+  },
+  "staticChecks": {
+    "generate": "PASS (15 outputs, 346 schemas, 245 operations, 61 routes)",
+    "layout": "PASS (95 files, 0 findings, 1 existing exception)",
+    "visualTokens": "PASS (94 files, 0 findings)",
+    "composition": "PASS (93 files, 0 findings)"
+  },
+  "excludedPositiveEvidence": [
+    "states-unsettled.json",
+    "status-wrap-unsettled.json",
+    "fields-unsettled.json",
+    "states.json.fields",
+    "fields-confirmed.json (superseded by fields-final.json)"
+  ],
+  "limitations": [
+    "Not all mutations/roles/fault variants or every modal type were traversed",
+    "No human screen-reader speech or owner acceptance",
+    "No native browser zoom/text-only resize or physical-device validation in this audit",
+    "Frontend synthetic MSW only; backend/provider behavior unverified",
+    "Full regression suite not rerun because no app changes; previous test results are historical"
+  ],
+  "findingGroups": 8
+}
