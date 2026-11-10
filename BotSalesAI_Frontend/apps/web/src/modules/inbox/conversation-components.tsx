@@ -281,6 +281,8 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
     return messages.slice().sort((a, b) => a.createdAt.localeCompare(b.createdAt)).map(message => {
         const senderLabel = message.direction === 'internal' ? 'Ghi chú nội bộ' : message.senderKind === 'customer' ? 'Khách' : message.senderKind === 'bot' ? 'Trợ lý AI' : 'Nhân viên';
         const messageText = (message.text || '').replace(/\s+/g, ' ').trim();
+        const mockConfirmation = __MOCK__ ? message.text?.match(/^\[CONFIRM:([^\]]+)\]\s*/) : null;
+        const displayText = mockConfirmation ? message.text?.slice(mockConfirmation[0].length) : message.text;
         const preview = Array.from(messageText).slice(0, 64).join('');
         const messagePreview = messageText ? preview === messageText ? messageText : `${preview.trimEnd()}…` : `${message.attachments?.length || 0} tệp đính kèm`;
 
@@ -297,7 +299,8 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
                         <Typography variant="caption" color="text.secondary">
                             {senderLabel}
                         </Typography>
-                        {messageText && <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{message.text}</Typography>}
+                        {messageText && <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{displayText}</Typography>}
+                        {mockConfirmation && <Typography variant="caption" color="text.secondary">Xác nhận mẫu · mã báo giá {mockConfirmation[1]}</Typography>}
                         {message.attachments?.map(attachment => <MessageAttachmentView key={attachment.fileId} attachment={attachment} />)}
                     </Stack>
                     {message.sourceEvidence.length > 0 && (

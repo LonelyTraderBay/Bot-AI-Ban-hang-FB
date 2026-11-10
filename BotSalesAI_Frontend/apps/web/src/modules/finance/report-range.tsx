@@ -2,7 +2,7 @@ import {useEffect,useRef} from 'react';
 import {useSearchParams} from 'react-router-dom';
 import {Alert,TextField} from '@mui/material';
 import {FormFields} from '@/shared/ui/composition';
-import {dateOnlyInTimezone,dateOnlyStartOfDayToISOString,isValidDateOnly} from '@/shared/model/format';
+import {dateOnlyInTimezone,dateOnlyStartOfDayToISOString,formatDateOnly,isValidDateOnly} from '@/shared/model/format';
 function previousMonthRange(timezone: string) {
     const [yearText = '', monthText = ''] = dateOnlyInTimezone(new Date(), timezone).split('-');
     const year = Number(yearText), month = Number(monthText);
@@ -59,8 +59,8 @@ export function useReportRange(timezone: string) {
 }
 export function ReportRangeFields({ range, timezone, setFrom, setTo }: { range: { from: string; to: string }; timezone: string; setFrom: (value: string) => void; setTo: (value: string) => void }) {
     return <FormFields direction={{ xs: 'column', sm: 'row' }} afterGap="section">
-        <TextField type="date" label="Từ ngày" value={range.from} onChange={event => setFrom(event.target.value)} slotProps={{ inputLabel: { shrink: true } }}/>
-        <TextField type="date" label="Đến trước ngày" value={range.to} onChange={event => setTo(event.target.value)} slotProps={{ inputLabel: { shrink: true } }}/>
-        <Alert severity="info" sx={{ alignItems: 'center' }}>Khoảng [Từ, Đến); múi giờ {timezone}.</Alert>
+        <TextField type="date" label="Từ ngày" value={range.from} onChange={event => setFrom(event.target.value)} slotProps={{ inputLabel: { shrink: true } }} helperText={isValidDateOnly(range.from) ? `Ngày bắt đầu: ${formatDateOnly(range.from)}` : undefined}/>
+        <TextField type="date" label="Đến trước ngày" value={range.to} onChange={event => setTo(event.target.value)} slotProps={{ inputLabel: { shrink: true } }} helperText={isValidDateOnly(range.to) ? `Ngày kết thúc: ${formatDateOnly(range.to)}` : undefined}/>
+        <Alert severity="info" sx={{ alignItems: 'center' }}>Bao gồm ngày bắt đầu; không bao gồm ngày kết thúc. Múi giờ {timezone}.</Alert>
     </FormFields>;
 }

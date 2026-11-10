@@ -51,16 +51,16 @@ export function InboxPage() {
             <Panel geometry={{ display: { xs: conversationId ? 'none' : 'block', lg: 'block' } }}>
                 <Toolbar operation="listConversations" placeholder="Tìm hội thoại…" cursorParam={listCursorParam} filters={
                 <FieldGroup direction={{ xs: 'column', sm: 'row' }} flexWrap="wrap" role="group" aria-label="Bộ lọc hội thoại">
-                    <TextField select size="small" label="Trạng thái" value={status || ''} onChange={event => updateFilter('status', event.target.value)} sx={{ flex: 1, minWidth: 140 }}>
+                    <TextField id="inbox-status" select size="small" label="Trạng thái" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-status-label' } }} value={status || ''} onChange={event => updateFilter('status', event.target.value)} sx={{ flex: 1, minWidth: 140 }}>
                         <MenuItem value="">Tất cả trạng thái</MenuItem><MenuItem value="open">Đang mở</MenuItem><MenuItem value="resolved">Đã giải quyết</MenuItem>
                     </TextField>
-                    <TextField select size="small" label="Chế độ" value={mode || ''} onChange={event => updateFilter('mode', event.target.value)} sx={{ flex: 1, minWidth: 140 }}>
+                    <TextField id="inbox-mode" select size="small" label="Chế độ" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-mode-label' } }} value={mode || ''} onChange={event => updateFilter('mode', event.target.value)} sx={{ flex: 1, minWidth: 140 }}>
                         <MenuItem value="">Tất cả chế độ</MenuItem><MenuItem value="bot">Bot</MenuItem><MenuItem value="human">Nhân viên</MenuItem><MenuItem value="paused">Tạm dừng</MenuItem>
                     </TextField>
-                    <TextField select size="small" label="Kênh" value={channelId || ''} onChange={event => updateFilter('channelId', event.target.value)} sx={{ flex: 1, minWidth: 160 }}>
+                    <TextField id="inbox-channel" select size="small" label="Kênh" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-channel-label' } }} value={channelId || ''} onChange={event => updateFilter('channelId', event.target.value)} sx={{ flex: 1, minWidth: 160 }}>
                         <MenuItem value="">Tất cả kênh</MenuItem>{metadata.data?.data.channels.map(channel => <MenuItem key={channel.id} value={channel.id}>{channel.displayName}</MenuItem>)}
                     </TextField>
-                    <TextField select size="small" label="Nhân viên" value={assignedUserId || ''} onChange={event => updateFilter('assignedUserId', event.target.value)} sx={{ flex: 1, minWidth: 160 }}>
+                    <TextField id="inbox-assignee" select size="small" label="Nhân viên" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-assignee-label' } }} value={assignedUserId || ''} onChange={event => updateFilter('assignedUserId', event.target.value)} sx={{ flex: 1, minWidth: 160 }}>
                         <MenuItem value="">Tất cả nhân viên</MenuItem>{metadata.data?.data.assignees.map(assignee => <MenuItem key={assignee.userId} value={assignee.userId}>{assignee.displayName}</MenuItem>)}
                     </TextField>
                 </FieldGroup>} />
