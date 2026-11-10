@@ -125,14 +125,16 @@ export interface Column<T> {
     render: (row: T) => ReactNode;
     align?: 'left' | 'right' | 'center';
 }
-export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ liệu phù hợp.', emptyAction, label: tableLabel = 'Dữ liệu' }: {
+export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ liệu phù hợp.', emptyAction, pinActionOnMobile = false, label: tableLabel = 'Dữ liệu' }: {
     rows: readonly T[];
     columns: readonly Column<T>[];
     rowKey: (row: T) => string;
     empty?: string;
     emptyAction?: ReactNode;
+    pinActionOnMobile?: boolean;
     label?: string;
 }) {
+    const pinnedAction = { position: { xs: 'sticky', md: 'static' }, right: 0, backgroundColor: 'background.paper' } as const;
     return <>
         <Typography variant="caption" color="text.secondary" sx={[layoutSx.table.mobileHintInset, { display: { xs: 'block', md: 'none' } }]}>Cuộn ngang để xem đủ cột.</Typography>
         <TableContainer sx={{ maxWidth: '100%' }} tabIndex={0} role="region" aria-label={tableLabel} onKeyDown={event => {
@@ -140,7 +142,7 @@ export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ li
                 event.preventDefault();
                 event.currentTarget.scrollBy({ left: event.key === 'ArrowRight' ? 40 : -40 });
             }
-        }}><Table size="small" aria-label={tableLabel} sx={{ minWidth: { xs: 600, md: 'auto' } }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align}>{c.render(row)}</TableCell>)}</TableRow>)}</TableBody></Table></TableContainer>
+        }}><Table size="small" aria-label={tableLabel} sx={{ minWidth: Math.max(600, Math.min(760, columns.length * tokens.layout.touchTarget * 3)) }}><TableHead><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align} sx={pinActionOnMobile && columns.at(-1)?.key === c.key && c.key === 'action' ? pinnedAction : {}}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover>{columns.map(c => <TableCell key={c.key} align={c.align} sx={pinActionOnMobile && columns.at(-1)?.key === c.key && c.key === 'action' ? pinnedAction : {}}>{c.render(row)}</TableCell>)}</TableRow>)}</TableBody></Table></TableContainer>
         {rows.length === 0 && <Empty text={empty} action={emptyAction}/>}
     </>;
 }

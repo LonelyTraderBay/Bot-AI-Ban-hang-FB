@@ -191,10 +191,10 @@ export const layoutSx = {
         subheadingAfterGap: { mb: factor.sm },
     },
     dashboard: {
-        groupInset: { p: { xs: factor.xl, md: factor.xxl } },
+        groupInset: { p: { xs: factor.lg, md: factor.xl } },
         sectionGap: { gap: factor.lg },
         heroTitleFlow: { mt: factor.sm, mb: factor.sm },
-        heroDescriptionGap: { mt: factor.lg },
+        heroDescriptionGap: { mt: factor.sm },
         actionTarget: { minHeight: tokens.layout.touchTarget, px: factor.md, py: factor.sm, gap: factor.sm, flexWrap: 'wrap' },
         metricValueGap: { mt: factor.xs },
         footerFlow: { mt: factor.lg, gap: factor.lg },
