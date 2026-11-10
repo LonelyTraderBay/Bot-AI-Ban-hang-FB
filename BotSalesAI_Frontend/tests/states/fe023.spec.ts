@@ -108,14 +108,14 @@ test('FE023 unsaved shop settings are preserved when navigation switches shop sc
     await page.goto(new URL('/s/shop-demo/settings/shop', demoUrl).toString());
     const name = page.getByRole('textbox', { name: 'Tên cửa hàng' });
     await name.fill('Joker Studio chưa lưu');
-    await page.getByRole('link', { name: /Joker Studio/ }).click();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Joker Studio/ }).click();
     const confirm = page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' });
     await expect(confirm).toBeVisible();
     await confirm.getByRole('button', { name: 'Tiếp tục chỉnh sửa' }).click();
     await expect(page).toHaveURL(/\/s\/shop-demo\/settings\/shop$/);
     await expect(name).toHaveValue('Joker Studio chưa lưu');
 
-    await page.getByRole('link', { name: /Joker Studio/ }).click();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Joker Studio/ }).click();
     await page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' }).getByRole('button', { name: 'Rời màn hình' }).click();
     await expect(page.getByRole('heading', { name: 'Chọn cửa hàng', exact: true })).toBeVisible();
     await page.getByRole('link', { name: 'Mở cửa hàng' }).nth(1).click();

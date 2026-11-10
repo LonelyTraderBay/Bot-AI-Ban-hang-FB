@@ -130,7 +130,7 @@ test('switching shops cancels a delayed request and loads only the new shop scop
     await chooseMockOption(page, 'Trạng thái thử', 'Tải chậm');
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Sản phẩm' }).click();
     await expect(page).toHaveURL(/\/shop-demo\/products$/);
-    await page.getByRole('link', { name: /Joker Studio/ }).click();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Joker Studio/ }).click();
     await expect(page.getByRole('heading', { name: 'Chọn cửa hàng', exact: true })).toBeVisible();
     await page.getByRole('link', { name: 'Mở cửa hàng' }).nth(1).click();
     await expect(page).toHaveURL(/\/s\/shop-second\/overview$/);

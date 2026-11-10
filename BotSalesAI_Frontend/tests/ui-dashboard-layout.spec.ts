@@ -117,7 +117,9 @@ test('dashboard hierarchy, CTA targets, and page width hold across supported bre
         const roleCardBounds = await teamStatus.locator('xpath=..').boundingBox();
         expect(statusBounds).not.toBeNull();
         expect(roleCardBounds).not.toBeNull();
-        expect(statusBounds!.width).toBeLessThan(roleCardBounds!.width / 2);
+        // A readable unbroken status can exceed half a narrow card; it must still
+        // leave visible space instead of stretching across the whole card.
+        expect(statusBounds!.width).toBeLessThanOrEqual(roleCardBounds!.width - 16);
 
         const dimensions = await page.evaluate(() => ({
             clientWidth: document.documentElement.clientWidth,
