@@ -165,6 +165,13 @@ const roleLabels: Record<Role, string> = {
 export function TeamPage() {
     const { session, shop } = useScope();
     const list = useApi('listMembers', { query: useListQuery('listMembers') });
+    const canReadConversations = useCan('conversations.read');
+    const people = useApi('getInboxMetadata', {}, canReadConversations);
+    const memberName = (id: string) => {
+        if (id === session.user.id) return session.user.displayName;
+        const name = canReadConversations && !people.isError ? people.data?.data.assignees.find(person => person.userId === id)?.displayName : undefined;
+        return name && name !== id ? name : `Mã nhân sự: ${id}`;
+    };
     const [memberId, setMemberId] = useState('');
     const detail = useApi('getMember', { path: { memberId } }, Boolean(memberId));
     const invite = useCommand('inviteMember', ['listMembers']);
@@ -173,14 +180,14 @@ export function TeamPage() {
     const [edit, setEdit] = useState<Membership | null | undefined>(), [email, setEmail] = useState(''), [roles, setRoles] = useState<Role[]>(['viewer']), [remove, setRemove] = useState<Membership | null>(null), [savedMessage, setSavedMessage] = useState('');
     const open = (m: Membership | null) => { setSavedMessage(''); setEdit(m); setEmail(''); setRoles(m?.roles || ['viewer']); };
     return <><PageHeader title="Nhân sự & phân quyền" subtitle="Vai trò là bộ quyền mặc định; API quyết định quyền hiệu lực ở từng thao tác." actions={<MutationButton permission="members.manage" variant="contained" onClick={() => open(null)}>Mời nhân viên</MutationButton>}/>{savedMessage && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>{savedMessage}</Alert>}<Panel><Toolbar operation="listMembers" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable label="Nhân sự và quyền truy cập" rows={list.data.data} rowKey={m => m.id} columns={[
-        { key: 'user', label: 'Nhân viên', render: m => m.userId === session.user.id ? session.user.displayName : `Mã nhân sự: ${m.userId}` }, { key: 'roles', label: 'Vai trò', render: m => m.roles.map(r => roleLabels[r]).join(', ') }, { key: 'status', label: 'Trạng thái', render: m => <Status value={m.status}/> }, { key: 'perms', label: 'Quyền hiệu lực', render: m => `${m.permissions.length} quyền · v${m.permissionVersion}` },
+        { key: 'user', label: 'Nhân viên / vai trò', render: m => <Stack><Typography>{memberName(m.userId)}</Typography><Typography variant="caption" color="text.secondary">{m.roles.map(r => roleLabels[r]).join(', ')}</Typography><Box sx={{ display: { xs: 'block', md: 'none' } }}><Button onClick={() => setMemberId(m.id)}>Chi tiết nhân sự</Button></Box></Stack> }, { key: 'status', label: 'Trạng thái', render: m => <Status value={m.status}/> }, { key: 'perms', label: 'Quyền hiệu lực', render: m => `${m.permissions.length} quyền · v${m.permissionVersion}` },
         {
             key: 'actions', label: 'Thao tác', render: m => <ActionGroup direction="row"><Button onClick={() => setMemberId(m.id)}>Chi tiết nhân sự</Button><MutationButton permission="members.manage" onClick={() => open(m)}>Sửa quyền</MutationButton><MutationButton permission="members.manage" color="error" disabled={m.userId === session.user.id || m.status === 'revoked'} onClick={() => setRemove(m)}>Thu hồi</MutationButton></ActionGroup>
         }
     ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
- <EditDialog open={!!memberId} title="Chi tiết nhân sự" onClose={() => setMemberId('')} actions={<Button onClick={() => setMemberId('')}>Đóng</Button>}>
+ <EditDialog open={!!memberId} title="Chi tiết nhân sự" onClose={() => setMemberId('')} actions={<><Button onClick={() => setMemberId('')}>Đóng</Button>{detail.data && <Box sx={{ display: { xs: 'block', md: 'none' } }}><ActionGroup direction="row"><MutationButton permission="members.manage" onClick={() => { setMemberId(''); open(detail.data!.data); }}>Sửa quyền</MutationButton><MutationButton permission="members.manage" color="error" disabled={detail.data.data.userId === session.user.id || detail.data.data.status === 'revoked'} onClick={() => { setMemberId(''); setRemove(detail.data!.data); }}>Thu hồi</MutationButton></ActionGroup></Box>}</>}>
     <QueryState query={detail}>{detail.data && <SurfaceContent>
-        <DetailLine label="Nhân viên">{detail.data.data.userId === session.user.id ? session.user.displayName : 'Mã nhân sự: ' + detail.data.data.userId}</DetailLine>
+        <DetailLine label="Nhân viên">{memberName(detail.data.data.userId)}</DetailLine>
         <DetailLine label="Mã thành viên">{detail.data.data.id}</DetailLine><DetailLine label="Trạng thái"><Status value={detail.data.data.status}/></DetailLine>
         <DetailLine label="Vai trò">{detail.data.data.roles.map(role => roleLabels[role]).join(', ')}</DetailLine>
         <DetailLine label="Phiên bản quyền">{detail.data.data.permissionVersion}</DetailLine><DetailLine label="Quyền hiệu lực">{detail.data.data.permissions.join(', ') || 'Không có quyền'}</DetailLine>
@@ -396,7 +403,7 @@ export function ConsentConfirmationPage() {
                 {challenge && <>
                     <DetailLine label="Mục đích">Marketing</DetailLine>
                     <DetailLine label="Kênh">{businessLabel(challenge.channel)}</DetailLine>
-                    <DetailLine label="Nội dung đã xem">{challenge.message}</DetailLine>
+                    <DetailLine label="Nội dung đã xem"><Typography align="left">{challenge.message}</Typography></DetailLine>
                     <DetailLine label="Phiên bản nội dung">v{challenge.contentVersion}</DetailLine>
                     <DetailLine label="Hết hạn">{dateTime(challenge.expiresAt, 'Asia/Ho_Chi_Minh')}</DetailLine>
                     {confirmation ? <Alert severity="success" role="status">{confirmationMessage}</Alert> : <ActionGroup>

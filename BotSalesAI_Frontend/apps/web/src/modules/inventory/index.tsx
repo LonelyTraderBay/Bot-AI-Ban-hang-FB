@@ -62,7 +62,7 @@ function InventoryFilters({ includeVariant = false }: { includeVariant?: boolean
 
     return <FormFields direction={{ xs: 'column', sm: 'row' }}  alignItems={{ sm: 'center' }} flexWrap="wrap">
         <FormFields direction={{ xs: 'column', sm: 'row' }} >
-            <TextField select size="small" label="Kho" value={warehouseId} onChange={event => setWarehouseId(event.target.value)} sx={{ minWidth: { sm: 150 } }}><MenuItem value="">Tất cả kho</MenuItem>{warehouseId && !warehouses.data?.data.some(w => w.id === warehouseId) && <MenuItem value={warehouseId}>Đang giữ bộ lọc {warehouseId}</MenuItem>}{warehouses.data?.data.map(w => <MenuItem key={w.id} value={w.id}>{w.code} · {w.name}</MenuItem>)}</TextField><LookupLoadMore label="kho" loadedCount={warehouses.loadedCount} hasMore={warehouses.hasMore} busy={warehouses.isLoadingMore} onLoadMore={warehouses.loadMore}/><ErrorNotice error={warehouses.error}/>
+            <TextField id="inventory-warehouse" select size="small" label="Kho" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inventory-warehouse-label' } }} value={warehouseId} onChange={event => setWarehouseId(event.target.value)} sx={{ minWidth: { sm: 150 } }}><MenuItem value="">Tất cả kho</MenuItem>{warehouseId && !warehouses.data?.data.some(w => w.id === warehouseId) && <MenuItem value={warehouseId}>Đang giữ bộ lọc {warehouseId}</MenuItem>}{warehouses.data?.data.map(w => <MenuItem key={w.id} value={w.id}>{w.code} · {w.name}</MenuItem>)}</TextField><LookupLoadMore label="kho" loadedCount={warehouses.loadedCount} hasMore={warehouses.hasMore} busy={warehouses.isLoadingMore} onLoadMore={warehouses.loadMore}/><ErrorNotice error={warehouses.error}/>
             {includeVariant && <>
                 <TextField size="small" label="Mã biến thể" value={variantId} onChange={event => setVariantId(limitCodePoints(event.target.value, 120))}  sx={{ minWidth: { sm: 160 } }}/>
             </>}
@@ -120,7 +120,7 @@ export function InventoryPage() {
         <Alert severity="info" sx={layoutSx.page.sectionAfter}>Số tồn tại thời điểm cập nhật không cộng hàng đang về hoặc hàng cách ly vào số có thể bán. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
         {completedCommandId && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>Điều chỉnh đã được xác nhận. Mã lệnh: {completedCommandId}. Tồn kho và lịch sử đã được tải lại.</Alert>}
         <Panel><Toolbar operation="listStockSnapshots" placeholder="Tìm SKU hoặc mã biến thể…" filters={<InventoryFilters/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable label="Tồn kho theo vị trí" rows={list.data.data} rowKey={row => row.id} columns={[
+            <DataTable pinActionOnMobile label="Tồn kho theo vị trí" rows={list.data.data} rowKey={row => row.id} columns={[
                 { key: 'sku', label: 'SKU / Kho', render: row => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{row.sku}</Typography><Typography variant="caption" color="text.secondary">Mã kho: {row.warehouseId} · cập nhật {dateTime(row.asOf, shop.timezone)}</Typography>{canCatalog && <RouteLink to={`/s/${shop.id}/products?q=${encodeURIComponent(row.sku)}`}>Mở sản phẩm</RouteLink>}</Stack> },
                 { key: 'onHand', label: 'Thực tế', align: 'right', render: row => row.onHand },
                 { key: 'reserved', label: 'Đã giữ', align: 'right', render: row => row.reserved },
@@ -145,21 +145,32 @@ export function InventoryPage() {
 }
 
 export function MovementsPage() {
-    const { shop } = useScope();
+    const { shop, session } = useScope();
     const canReadOrders = useCan('orders.read');
+    const canReadCatalog = useCan('catalog.read');
+    const canReadConversations = useCan('conversations.read');
     const list = useApi('listStockMovements', { query: useListQuery('listStockMovements') });
+    const products = useApi('listProducts', { query: { limit: 100 } }, canReadCatalog);
+    const warehouses = useApi('listWarehouses', { query: { limit: 100 } });
+    const people = useApi('getInboxMetadata', {}, canReadConversations);
+    const variants = new Map((canReadCatalog && !products.isError ? products.data?.data : [])?.flatMap(product => product.variants.map(variant => [variant.id, `${product.name} · ${variant.name} · ${variant.sku}`] as const)) || []);
+    const warehouseNames = new Map((!warehouses.isError ? warehouses.data?.data : [])?.map(warehouse => [warehouse.id, `${warehouse.code} · ${warehouse.name}`] as const) || []);
+    const actorNames = new Map((canReadConversations && !people.isError ? people.data?.data.assignees : [])?.map(person => [person.userId, person.displayName] as const) || []);
     return <>
         <PageHeader title="Lịch sử kho" subtitle="Truy nguyên mỗi thay đổi đến chứng từ và người thực hiện." actions={<RouteLink to={`/s/${shop.id}/inventory`}>Về tồn kho</RouteLink>}/>
         <Panel><Toolbar operation="listStockMovements" placeholder="Tìm SKU, mã biến thể hoặc mã chứng từ…" filters={<InventoryFilters includeVariant/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
             <DataTable label="Lịch sử biến động kho" rows={list.data.data} rowKey={row => row.id} columns={[
                 { key: 'date', label: 'Thời gian', render: row => dateTime(row.createdAt, shop.timezone) },
                 { key: 'kind', label: 'Loại', render: row => <Status domain="stockMovement" value={row.kind}/> },
-                { key: 'variant', label: 'Biến thể', render: row => `Mã biến thể: ${row.variantId}` },
-                { key: 'warehouse', label: 'Kho', render: row => `Mã kho: ${row.warehouseId}` },
+                { key: 'variant', label: 'Biến thể', render: row => variants.get(row.variantId) || `Mã biến thể: ${row.variantId}` },
+                { key: 'warehouse', label: 'Kho', render: row => warehouseNames.get(row.warehouseId) || `Mã kho: ${row.warehouseId}` },
                 { key: 'quantity', label: 'Tồn ±', align: 'right', render: row => row.quantityDelta },
                 { key: 'reserved', label: 'Giữ ±', align: 'right', render: row => row.reservedDelta },
                 { key: 'source', label: 'Nguồn', render: row => movementSource(row, shop.id, canReadOrders) },
-                { key: 'actor', label: 'Người thực hiện', render: row => `Mã nhân sự: ${row.actorId}` },
+                { key: 'actor', label: 'Người thực hiện', render: row => {
+                    const name = row.actorId === session.user.id ? session.user.displayName : actorNames.get(row.actorId);
+                    return name && name !== row.actorId ? <Stack><Typography>{name}</Typography><Typography variant="caption" color="text.secondary">Mã nhân sự: {row.actorId}</Typography></Stack> : `Mã nhân sự: ${row.actorId}`;
+                } },
                 { key: 'reason', label: 'Lý do', render: row => row.reason },
             ]}/>
             <Pager page={list.data.page}/>

@@ -33,7 +33,7 @@ export function FulfillmentPage() {
             <Toolbar operation="listPrepJobs" />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
-                    <DataTable label="Công việc chuẩn bị đơn" rows={list.data.data} rowKey={prep => prep.id} columns={[
+                    <DataTable pinActionOnMobile label="Công việc chuẩn bị đơn" rows={list.data.data} rowKey={prep => prep.id} columns={[
                         { key: 'order', label: 'Đơn hàng', render: prep => <RouteLink to={`/s/${shop.id}/orders/${prep.orderId}`}>Mã đơn: {prep.orderId}</RouteLink> },
                         { key: 'state', label: 'Giai đoạn', render: prep => <Status value={prep.state} /> },
                         { key: 'items', label: 'Dòng hàng', render: prep => `${prep.lines.filter(line => line.requiredQuantity === line.pickedQuantity && !line.hasIssue).length}/${prep.lines.length} đã kiểm đủ` },

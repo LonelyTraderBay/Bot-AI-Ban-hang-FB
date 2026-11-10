@@ -89,7 +89,7 @@ export async function orders(op: string, input: Input): Promise<Row | undefined>
                 orderId: order.id, assigneeUserId: null, workItemId: task.id, state: 'queued', lines: rows(quote.lines).map(l => ({ orderLineId: l.id, sku: l.sku, requiredQuantity: l.quantity, pickedQuantity: 0, hasIssue: false }))
             });
             insert('notifications', 'Notification', shopId, {
-                workItemId: task.id, source: { type: 'order', id: order.id }, recipientUserId: input.userId, channel: 'in_app', title: `Đơn ${str(order.id)} cần chuẩn bị`, safeBody: `${rows(order.lines).length} mặt hàng · Bấm để nhận việc.`, deliveryStatus: 'queued', openedAt: null, acknowledgedAt: null, allowedActions: ['acknowledge']
+                workItemId: task.id, source: { type: 'order', id: order.id }, recipientUserId: input.userId, channel: 'in_app', title: `Đơn ${str(order.id)} cần chuẩn bị`, safeBody: `${rows(order.lines).length} mặt hàng cần chuẩn bị.`, deliveryStatus: 'queued', openedAt: null, acknowledgedAt: null, allowedActions: ['acknowledge']
             });
             Object.assign(order, {
                 orderState: 'confirmed', fulfillmentState: 'reserved', lines: quote.lines, total: quote.total, shippingAddressSnapshot:quote.shippingAddressSnapshot, customerConfirmationId: confirmation.id, prepTaskId: task.id, allowedActions: ['prepare', 'cancel', 'record_payment']

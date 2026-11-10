@@ -146,7 +146,7 @@ test('A03 import mapping preserves natural remove actions and editable mappings'
     const observations = [];
     for (const width of [320, 768, 1440]) {
         await page.setViewportSize({ width, height: 900 }); await ready(page, 'imports');
-        const remove = page.locator('main').getByRole('button', { name: 'Bỏ', exact: true });
+        const remove = page.locator('main').getByRole('button', { name: /^Bỏ ánh xạ / });
         await expect(remove).toHaveCount(5);
         for (const button of await remove.all()) {
             const geometry = await intrinsic(button);
@@ -154,6 +154,7 @@ test('A03 import mapping preserves natural remove actions and editable mappings'
             observations.push({ width, ...geometry });
         }
         await page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first().fill('Mã SKU đã sửa');
+        await expect(remove.first()).toHaveAccessibleName('Bỏ ánh xạ Mã SKU đã sửa');
         await remove.last().click(); await expect(remove).toHaveCount(4);
         await page.getByRole('button', { name: 'Thêm cột', exact: true }).click(); await expect(remove).toHaveCount(5);
         await expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('Mã SKU đã sửa');

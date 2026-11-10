@@ -73,7 +73,7 @@ export function CustomersPage() {
         navigate(`/s/${shop.id}/customers/${response.data.id}`);
     }
     catch { /* error stays in dialog */ } });
-    return <><PageHeader title={t('customers.list.title')} subtitle={t('customers.list.subtitle')} actions={<MutationButton permission="customers.write" variant="contained" onClick={() => setOpen(true)}>{t('customers.list.addAction')}</MutationButton>}/><Panel><Toolbar operation="listCustomers" placeholder={t('customers.list.searchPlaceholder')} cursorParam="cursor"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable label={t('customers.list.tableLabel')} empty={t('customers.list.empty')} rows={list.data.data} rowKey={c => c.id} columns={[
+    return <><PageHeader title={t('customers.list.title')} subtitle={t('customers.list.subtitle')} actions={<MutationButton permission="customers.write" variant="contained" onClick={() => setOpen(true)}>{t('customers.list.addAction')}</MutationButton>}/><Panel><Toolbar operation="listCustomers" placeholder={t('customers.list.searchPlaceholder')} cursorParam="cursor"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable pinActionOnMobile label={t('customers.list.tableLabel')} empty={t('customers.list.empty')} rows={list.data.data} rowKey={c => c.id} columns={[
         { key: 'name', label: t('customers.list.customerColumn'), render: c => <Typography fontWeight={visualSx.typography.fontWeight.strong}>{c.displayName}</Typography> }, { key: 'phone', label: t('customers.list.contactColumn'), render: c => c.phone || t('customers.list.contactUnavailable') }, { key: 'email', label: t('customers.list.emailColumn'), render: c => c.email || '—' }, { key: 'note', label: t('customers.list.notesColumn'), render: c => c.notes || '—' }, { key: 'action', label: 'Thao tác', render: c => <RouteLink to={`/s/${shop.id}/customers/${c.id}`}>{t('customers.list.profileAction')}</RouteLink> }
     ]}/><Pager page={list.data.page}/></>}</QueryState></Panel><EditDialog open={open} title={t('customers.form.createTitle')} onClose={() => setOpen(false)} busy={create.pending} actions={<Button type="submit" form="customer-create-form" variant="contained" disabled={create.pending}>{t('customers.form.createAction')}</Button>}><ErrorNotice error={create.error}/><FormFields component="form" ref={createForm} id="customer-create-form" onSubmit={submit} noValidate >{customerFormFields.map(field => <TextField key={field.name} label={t(field.labelKey)} disabled={create.pending} {...form.register(field.name)} error={!!form.formState.errors[field.name]} helperText={form.formState.errors[field.name]?.message} multiline={field.multiline}/>)}</FormFields></EditDialog></>;
 }
@@ -121,7 +121,7 @@ export function CustomerPage() {
     return <>
         <PageHeader title={customer.data?.data.displayName || t('customers.detail.fallbackTitle')} subtitle={t('customers.detail.subtitle')} actions={<RouteLink to={listHref}>{t('customers.detail.listAction')}</RouteLink>}/>
         <QueryState query={customer} pendingProfile="section">
-            {customer.data && <SectionGrid shrinkChildren columns={{ xs: '1fr', lg: '1.2fr 1fr' }}>
+            {customer.data && <SectionGrid shrinkChildren columns={{ xs: '1fr' }}>
                 <Panel title={t('customers.detail.information')} bodyMode="inset">
                     <FormFields component="form" ref={draftForm} data-draft-clean={!editor.dirty ? 'true' : undefined} onSubmit={save} >
                         <ErrorNotice error={update.error}/>
@@ -228,11 +228,12 @@ export function ServiceCasesPage() {
         }}>Tạo yêu cầu</Button>}>
             <ErrorNotice error={create.error || customers.error || relatedOrders.error} />
             <FormFields >
-                <TextField select label="Khách hàng" value={customerId} onChange={event => { setCustomerId(event.target.value); setOrderId(''); }}>
+                <TextField id="service-customer" select label="Khách hàng" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'service-customer-label' } }} value={customerId} onChange={event => { setCustomerId(event.target.value); setOrderId(''); }}>
+                    <MenuItem value="" disabled>Chọn khách hàng</MenuItem>
                     {customers.data?.data.map(customer => <MenuItem key={customer.id} value={customer.id}>{customer.displayName}</MenuItem>)}
                 </TextField>
                 <LookupLoadMore label="khách hàng" loadedCount={customers.loadedCount} hasMore={customers.hasMore} busy={customers.isLoadingMore} onLoadMore={customers.loadMore} />
-                <TextField select label="Đơn hàng liên quan (không bắt buộc)" value={orderId} disabled={!customerId || !canReadOrders || relatedOrders.isPending} onChange={event => setOrderId(event.target.value)} helperText={!canReadOrders ? 'Vai trò này không có quyền xem đơn; có thể tạo yêu cầu không gắn đơn.' : !customerId ? 'Chọn khách hàng trước để lọc đúng đơn của họ.' : relatedOrders.isPending ? 'Đang tải đơn của khách đã chọn…' : relatedOrders.data?.data.length ? 'Chỉ hiển thị đơn thuộc khách hàng đã chọn.' : 'Không có đơn phù hợp; có thể tạo yêu cầu không gắn đơn.'}>
+                <TextField id="service-order" select label="Đơn hàng liên quan (không bắt buộc)" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'service-order-label' } }} value={orderId} disabled={!customerId || !canReadOrders || relatedOrders.isPending} onChange={event => setOrderId(event.target.value)} helperText={!canReadOrders ? 'Vai trò này không có quyền xem đơn; có thể tạo yêu cầu không gắn đơn.' : !customerId ? 'Chọn khách hàng trước để lọc đúng đơn của họ.' : relatedOrders.isPending ? 'Đang tải đơn của khách đã chọn…' : relatedOrders.data?.data.length ? 'Chỉ hiển thị đơn thuộc khách hàng đã chọn.' : 'Không có đơn phù hợp; có thể tạo yêu cầu không gắn đơn.'}>
                     <MenuItem value="">Không liên kết đơn</MenuItem>
                     {relatedOrders.data?.data.map(order => <MenuItem key={order.id} value={order.id}>{order.id} · {businessLabel(order.orderState)}</MenuItem>)}
                 </TextField>

@@ -1,0 +1,2 @@
+import {readFile,writeFile} from 'node:fs/promises';import {createHash} from 'node:crypto';import path from 'node:path';
+const root=path.resolve('..'),m=JSON.parse(await readFile('evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json','utf8'));const h={};for(const f of Object.keys(m.sourceFingerprints))h[f]=createHash('sha256').update(await readFile(path.join(root,f))).digest('hex');await writeFile('evidence/ci-pr20-20261111/final-input-hashes.json',JSON.stringify(h,null,2)+'\n');

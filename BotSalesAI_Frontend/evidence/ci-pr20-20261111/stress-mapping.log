@@ -1,0 +1,111 @@
+
+Running 4 tests using 1 worker
+
+
+(node:65932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/4] [chromium] › tests\ui-component-layout.spec.ts:145:1 › A03 import mapping preserves natural remove actions and editable mappings
+  1) [chromium] › tests\ui-component-layout.spec.ts:145:1 › A03 import mapping preserves natural remove actions and editable mappings 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('main').getByRole('button', { name: /^Bỏ ánh xạ / })
+    Expected: 5
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('main').getByRole('button', { name: /^Bỏ ánh xạ / }) with timeout 5000ms
+      - waiting for locator('main').getByRole('button', { name: /^Bỏ ánh xạ / })
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      148 |         await page.setViewportSize({ width, height: 900 }); await ready(page, 'imports');
+      149 |         const remove = page.locator('main').getByRole('button', { name: /^Bỏ ánh xạ / });
+    > 150 |         await expect(remove).toHaveCount(5);
+          |                              ^
+      151 |         for (const button of await remove.all()) {
+      152 |             const geometry = await intrinsic(button);
+      153 |             expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:150:30
+
+    Error Context: test-results\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\ui-component-layout-A03-im-a0b65-tions-and-editable-mappings-chromium\error-context.md
+
+    Error Context: test-results\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\ui-component-layout-A03-im-a0b65-tions-and-editable-mappings-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\ui-component-layout-A03-im-a0b65-tions-and-editable-mappings-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\ui-component-layout-A03-im-a0b65-tions-and-editable-mappings-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:75848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/4] [chromium] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\deps\react-dom_client.js?v=b75bd949 as it exceeds the max of 500KB.
+[chromium] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+[w30-stress] {"browser":"chromium","scenario":"form-error-short","viewport":{"width":320,"height":480},"scaledTextElements":55,"issues":0,"pageErrors":0,"evidence":"evidence\\frontend-ui-improvements\\UI028\\W30\\stress-chromium-form-error-short-current-pr20-final-20261111.json"}
+
+
+(node:39112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/4] [firefox] › tests\ui-component-layout.spec.ts:145:1 › A03 import mapping preserves natural remove actions and editable mappings
+  2) [firefox] › tests\ui-component-layout.spec.ts:145:1 › A03 import mapping preserves natural remove actions and editable mappings 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('main').getByRole('button', { name: /^Bỏ ánh xạ / })
+    Expected: 5
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('main').getByRole('button', { name: /^Bỏ ánh xạ / }) with timeout 5000ms
+      - waiting for locator('main').getByRole('button', { name: /^Bỏ ánh xạ / })
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      148 |         await page.setViewportSize({ width, height: 900 }); await ready(page, 'imports');
+      149 |         const remove = page.locator('main').getByRole('button', { name: /^Bỏ ánh xạ / });
+    > 150 |         await expect(remove).toHaveCount(5);
+          |                              ^
+      151 |         for (const button of await remove.all()) {
+      152 |             const geometry = await intrinsic(button);
+      153 |             expect(geometry.actual).toBeLessThanOrEqual(geometry.natural + 1);
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-component-layout.spec.ts:150:30
+
+    Error Context: test-results\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\ui-component-layout-A03-im-a0b65-tions-and-editable-mappings-firefox\error-context.md
+
+    Error Context: test-results\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\ui-component-layout-A03-im-a0b65-tions-and-editable-mappings-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\ui-component-layout-A03-im-a0b65-tions-and-editable-mappings-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-59852-84d227e3-7a5f-431f-adbd-a7cd2aec0808\ui-component-layout-A03-im-a0b65-tions-and-editable-mappings-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:70520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[4/4] [firefox] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+[firefox] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+[w30-stress] {"browser":"firefox","scenario":"form-error-short","viewport":{"width":320,"height":480},"scaledTextElements":55,"issues":0,"pageErrors":0,"evidence":"evidence\\frontend-ui-improvements\\UI028\\W30\\stress-firefox-form-error-short-current-pr20-final-20261111.json"}
+
+  2 failed
+    [chromium] › tests\ui-component-layout.spec.ts:145:1 › A03 import mapping preserves natural remove actions and editable mappings 
+    [firefox] › tests\ui-component-layout.spec.ts:145:1 › A03 import mapping preserves natural remove actions and editable mappings 
+  2 passed (44.5s)
+COMMAND_EXIT=1

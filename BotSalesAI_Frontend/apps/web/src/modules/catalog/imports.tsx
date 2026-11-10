@@ -53,7 +53,7 @@ export function ImportsPage() {
                         <Typography variant="body2" color="text.secondary">Mẫu CSV tổng hợp để kiểm tra import. XLSX chưa có parser được chốt; chuyển sang CSV, không đổi đuôi tệp.</Typography>
                         <Button component="a" href={import.meta.env.BASE_URL + 'samples/products.csv'} download="botsales-products.csv" size="small">Tải CSV mẫu</Button>
                     </FieldGroup>
-                    {mapping.map((item, index) => <FieldGroup key={index} direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'start' }}>
+                    {mapping.map((item, index) => <FormFields key={index} bodyMode="outlined" density="compact"><FieldGroup direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'start' }}>
                         <TextField label="Tên cột trong tệp" value={item.sourceColumn} onChange={event => setMapping(mapping.map((value, itemIndex) => itemIndex === index ? { ...value, sourceColumn: event.target.value } : value))} sx={{ flex: 1, minWidth: 0 }} />
                         <TextField select label="Trường sản phẩm" value={item.targetField} onChange={event => {
                             const value = targets.find(target => target === event.target.value);
@@ -62,8 +62,8 @@ export function ImportsPage() {
                         }} sx={{ flex: 1, minWidth: 0 }}>
                             {targets.map(target => <MenuItem value={target} key={target}>{target}</MenuItem>)}
                         </TextField>
-                        <Button color="error" onClick={() => setMapping(mapping.filter((_, itemIndex) => itemIndex !== index))}>Bỏ</Button>
-                    </FieldGroup>)}
+                        <Button color="error" aria-label={`Bỏ ánh xạ ${item.sourceColumn || `dòng ${index + 1}`}`} onClick={() => setMapping(mapping.filter((_, itemIndex) => itemIndex !== index))}>Bỏ</Button>
+                    </FieldGroup></FormFields>)}
                     <Button onClick={() => setMapping([...mapping, { sourceColumn: '', targetField: 'variantName' }])}>Thêm cột</Button>
                     <TextField select label="Khi trùng SKU" value={strategy} onChange={event => setStrategy(event.target.value === 'update_existing' ? 'update_existing' : 'reject')}>
                         <MenuItem value="reject">Từ chối dòng trùng</MenuItem>

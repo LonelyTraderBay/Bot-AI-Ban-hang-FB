@@ -128,7 +128,7 @@ test('W02 full-width form groups fill their panel and retain input/mapping/shipp
             await expect(page.getByRole('textbox', { name: 'Tên cửa hàng', exact: true })).toHaveValue('Tên cửa hàng cần giữ');
         } else if (route === 'imports') {
             await page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first().fill('sku-width');
-            await page.locator('main').getByRole('button', { name: 'Bỏ', exact: true }).last().click();
+            await page.locator('main').getByRole('button', { name: /^Bỏ ánh xạ / }).last().click();
             await page.getByRole('button', { name: 'Thêm cột', exact: true }).click();
             await expect(page.getByRole('textbox', { name: 'Tên cột trong tệp', exact: true }).first()).toHaveValue('sku-width');
         } else {

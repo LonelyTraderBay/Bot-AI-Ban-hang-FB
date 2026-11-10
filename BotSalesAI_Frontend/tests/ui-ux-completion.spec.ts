@@ -77,11 +77,11 @@ for(const collection of ['customers','orders','knowledge'])test(`UX05 ${collecti
  const collectionTable=page.getByRole('table',{name:tableName,exact:true});
  await page.goto(url+listPath);
  const firstRow=collectionTable.locator('tbody tr').first();
- await expect(firstRow.locator('a').first()).toBeVisible();
+ await expect(firstRow.locator(`a[href^="${listPath}/"]`).first()).toBeVisible();
  const term=(await firstRow.locator('td').first().innerText()).split('\n')[0].trim();
  const search='?q='+encodeURIComponent(term);
  await page.goto(url+listPath+search);
- const detailLink=firstRow.locator('a').first();
+ const detailLink=firstRow.locator(`a[href^="${listPath}/"]`).first();
  await expect(detailLink).toHaveAttribute('href',new RegExp('^'+listPath+'/'));
  const detailHref=await detailLink.getAttribute('href');
  await detailLink.click();
