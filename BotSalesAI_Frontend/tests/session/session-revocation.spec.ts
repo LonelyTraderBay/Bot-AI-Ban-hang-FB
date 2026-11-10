@@ -79,7 +79,7 @@ test('session.revoked SSE closes the stream and clears the active shop session',
     finally {
         releaseRevocation();
     }
-    await expect(page.getByRole('heading', { name: 'Chào mừng trở lại', exact: true })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Đăng nhập BotSales AI', exact: true })).toBeVisible({ timeout: 15000 });
     await expect.poll(() => sessionReads).toBeGreaterThanOrEqual(2);
     await expect.poll(() => eventRequests).toBeGreaterThanOrEqual(1);
     expect(eventRequests).toBeLessThanOrEqual(2);

@@ -38,7 +38,7 @@ export function FulfillmentPage() {
                         { key: 'state', label: 'Giai đoạn', render: prep => <Status value={prep.state} /> },
                         { key: 'items', label: 'Dòng hàng', render: prep => `${prep.lines.filter(line => line.requiredQuantity === line.pickedQuantity && !line.hasIssue).length}/${prep.lines.length} đã kiểm đủ` },
                         { key: 'assigned', label: 'Người nhận', render: prep => prep.assigneeUserId || 'Chưa có' },
-                        { key: 'action', label: '', render: prep => <Button variant="outlined" onClick={() => setSelected(prep.id)}>Mở phiếu lấy hàng</Button> },
+                        { key: 'action', label: 'Thao tác', render: prep => <Button variant="outlined" onClick={() => setSelected(prep.id)}>Mở phiếu lấy hàng</Button> },
                     ]} />
                     <Pager page={list.data.page} />
                 </>}
@@ -243,7 +243,7 @@ export function ShipmentsPage() {
                         { key: 'state', label: 'Trạng thái', render: item => <Status value={item.state} /> },
                         { key: 'quote', label: 'Phí báo giá', render: item => <Amount value={item.shippingFeeQuote}/> },
                         { key: 'actual', label: 'Phí thực tế', render: item => <Amount value={item.shippingFeeActual}/> },
-                        { key: 'actions', label: '', render: item => <ActionGroup direction="row" >
+                        { key: 'actions', label: 'Thao tác', render: item => <ActionGroup direction="row" >
                             <Button size="small" onClick={() => openShipment(item.id, 'view')}>Chi tiết</Button>
                             <MutationButton permission="fulfillment.handover" disabled={!['planned', 'label_ready'].includes(item.state)} onClick={() => openShipment(item.id, 'handover')}>Bàn giao</MutationButton>
                             <MutationButton permission="fulfillment.write" disabled={['planned', 'cancelled', 'returned'].includes(item.state)} onClick={() => openShipment(item.id, 'event')}>Cập nhật hành trình</MutationButton>

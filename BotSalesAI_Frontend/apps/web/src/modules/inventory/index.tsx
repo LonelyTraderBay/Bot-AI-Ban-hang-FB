@@ -128,7 +128,7 @@ export function InventoryPage() {
                 { key: 'threshold', label: 'Ngưỡng cảnh báo', align: 'right', render: row => row.lowStockThreshold },
                 ...(canFinance ? [{ key: 'cost', label: 'Giá vốn/đơn vị', render: (row: StockSnapshot) => <Amount value={row.unitCost}/> }] : []),
                 { key: 'state', label: 'Tình trạng', render: row => <Status domain="stock" value={row.available <= 0 ? 'out_of_stock' : row.available <= row.lowStockThreshold ? 'low_stock' : 'in_stock'}/> },
-                { key: 'action', label: '', render: row => <MutationButton permission="inventory.adjust" onClick={() => edit(row)}>Điều chỉnh</MutationButton> },
+                { key: 'action', label: 'Thao tác', render: row => <MutationButton permission="inventory.adjust" onClick={() => edit(row)}>Điều chỉnh</MutationButton> },
             ]}/>
             <Pager page={list.data.page}/>
         </>}</QueryState></Panel>

@@ -123,10 +123,10 @@ test('UX07 titles and breadcrumb distinguish create/detail/review; menu empty st
  await expect(page.getByRole('navigation',{name:'Đường dẫn hiện tại'})).toContainText('Thêm sản phẩm');
  await page.goto(url+'/s/shop-demo/products/p1');
  await expect(page).toHaveTitle('Chi tiết sản phẩm · BotSales AI');
- const search=page.getByRole('textbox',{name:'Tìm màn hình',exact:true});
+ const search=page.getByRole('textbox',{name:'Tìm trong menu',exact:true});
  await search.fill('zzzzzz');
  await expect(page.getByText('Không tìm thấy màn hình phù hợp.',{exact:true})).toBeVisible();
- await page.getByRole('button',{name:'Xóa tìm màn hình',exact:true}).click();
+ await page.getByRole('button',{name:'Xóa bộ lọc menu',exact:true}).click();
  await expect(search).toHaveValue('');await expect(search).toBeFocused();
  await expect(page.getByRole('link',{name:'Sản phẩm',exact:true})).toBeVisible();
  await page.goto(url+'/s/shop-demo/knowledge/review');

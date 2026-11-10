@@ -26,7 +26,7 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(async () => closeDemo?.());
 
 const routes = [
-    { id: 'R01', path: '/login', heading: 'Chào mừng trở lại' },
+    { id: 'R01', path: '/login', heading: 'Đăng nhập BotSales AI' },
     { id: 'R02', path: '/workspaces', heading: 'Chọn cửa hàng' },
     { id: 'R03', path: '/onboarding', heading: 'Tạo cửa hàng' },
     { id: 'R32', path: '/s/shop-demo/settings/team', heading: 'Nhân sự & phân quyền' },

@@ -1,5 +1,5 @@
 import { ActionGroup, FieldGroup, FormFields } from '../../shared/ui/composition';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Box, Button, MenuItem, TextField, Typography } from '@mui/material';
 import type { ColumnMapping } from '@botsales/contracts';
@@ -16,6 +16,7 @@ export function ImportsPage() {
     const jobs = useApi('listJobs', { query: { limit: 20, sort: '-createdAt' } });
     const upload = useCommand('uploadFile', []);
     const dry = useCommand('createProductImport', ['listJobs']);
+    const fileInput = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | null>(null);
     const [fileError, setFileError] = useState('');
     const [strategy, setStrategy] = useState<'reject' | 'update_existing'>('reject');
@@ -35,9 +36,10 @@ export function ImportsPage() {
                 <ErrorNotice error={upload.error || dry.error} />
                 <FormFields >
                     {__MOCK__ && <Alert severity="info">Trong demo mô phỏng: CSV UTF-8 tối đa 5 MB và 1.000 dòng dữ liệu. Khi nối backend thật, giới hạn được lấy từ API.</Alert>}
-                    <Button variant="outlined" component="label">
+                    <Button variant="outlined" onClick={() => fileInput.current?.click()}>
                         {file ? file.name : 'Chọn CSV UTF-8'}
-                        <input hidden type="file" accept=".csv,text/csv" aria-describedby={fileError ? 'product-import-file-error' : undefined} onChange={event => {
+                    </Button>
+                        <input ref={fileInput} hidden type="file" accept=".csv,text/csv" aria-describedby={fileError ? 'product-import-file-error' : undefined} onChange={event => {
                             const input = event.currentTarget;
                             const next = input.files?.[0] || null;
                             const error = productImportFileError(next, __MOCK__ ? PRODUCT_IMPORT_MAX_BYTES : undefined);
@@ -46,7 +48,6 @@ export function ImportsPage() {
                             if (error)
                                 input.value = '';
                         }} />
-                    </Button>
                     {fileError && <Alert id="product-import-file-error" severity="error" role="alert">{fileError}</Alert>}
                     <FieldGroup direction={{ xs: 'column', sm: 'row' }}  alignItems={{ xs: 'stretch', sm: 'center' }}>
                         <Typography variant="body2" color="text.secondary">Mẫu CSV tổng hợp để kiểm tra import. XLSX chưa có parser được chốt; chuyển sang CSV, không đổi đuôi tệp.</Typography>
@@ -96,7 +97,7 @@ export function ImportsPage() {
                         { key: 'progress', label: 'Đã xử lý', render: job => String(job.completed) + ' / ' + (job.total ?? 'Chưa rõ') },
                         { key: 'errors', label: 'Dòng lỗi', render: job => job.errorCount },
                         { key: 'updatedAt', label: 'Cập nhật', render: job => dateTime(job.updatedAt, shop.timezone) },
-                        { key: 'action', label: '', render: job => <RouteLink to={job.kind === 'import' ? '/s/' + shop.id + '/imports/' + job.id : '/s/' + shop.id + '/jobs/' + job.id}>Xem kết quả</RouteLink> },
+                        { key: 'action', label: 'Thao tác', render: job => <RouteLink to={job.kind === 'import' ? '/s/' + shop.id + '/imports/' + job.id : '/s/' + shop.id + '/jobs/' + job.id}>Xem kết quả</RouteLink> },
                     ]} />
                     <Pager page={jobs.data.page} />
                 </>}

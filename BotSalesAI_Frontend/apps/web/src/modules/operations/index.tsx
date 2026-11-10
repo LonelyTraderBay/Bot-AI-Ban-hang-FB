@@ -39,7 +39,7 @@ function CommandsPanel() {
                 { key: 'kind', label: 'Thao tác', render: command => commandNames[command.kind] || 'Thao tác khác' },
                 { key: 'status', label: 'Trạng thái', render: command => <Status value={command.status}/> },
                 { key: 'updated', label: 'Cập nhật', render: command => dateTime(command.updatedAt, shop.timezone) },
-                { key: 'detail', label: '', render: command => <Button onClick={() => setCommandId(command.id)}>Chi tiết thao tác</Button> },
+                { key: 'detail', label: 'Thao tác', render: command => <Button onClick={() => setCommandId(command.id)}>Chi tiết thao tác</Button> },
             ]}/><Pager page={list.data.page} cursorParam="commandCursor"/>
         </>}</QueryState>
         <EditDialog open={!!commandId} title="Chi tiết trạng thái thao tác" onClose={() => setCommandId('')} actions={<ActionGroup direction="row"><Button disabled={detail.isFetching} onClick={() => void detail.refetch()}>Kiểm tra trạng thái</Button><Button onClick={() => setCommandId('')}>Đóng</Button></ActionGroup>}>
@@ -125,7 +125,7 @@ export function OperationsPage() {
                         { key: 'due', label: 'Hạn xử lý', render: task => task.dueAt ? dateTime(task.dueAt, shop.timezone) : 'Chưa đặt lịch' },
                         { key: 'reason', label: 'Vướng mắc', render: task => task.blockedReason || '—' },
                         {
-                            key: 'actions', label: '', render: task => {
+                            key: 'actions', label: 'Thao tác', render: task => {
                                 const updateActions = task.allowedActions.filter(candidate => workItemActions.includes(candidate as WorkItemAction));
                                 return <ActionGroup direction="row" >
                                     <MutationButton permission="operations.claim" allowedActions={task.allowedActions} action="claim" busy={claim.pending} onClick={() => void claim.execute({ path: { resourceId: task.id }, body: { expectedVersion: task.version } }).catch(() => undefined)}>Tôi nhận việc</MutationButton>
@@ -202,7 +202,7 @@ export function ApprovalsPage() {
                         { key: 'state', label: 'Trạng thái', render: entry => <Status value={entry.status} /> },
                         { key: 'due', label: 'Hết hạn', render: entry => dateTime(entry.expiresAt, shop.timezone) },
                         {
-                            key: 'actions', label: '', render: entry => <MutationButton permission="approvals.decide" disabled={entry.status !== 'pending'} onClick={() => {
+                            key: 'actions', label: 'Thao tác', render: entry => <MutationButton permission="approvals.decide" disabled={entry.status !== 'pending'} onClick={() => {
                                 setApprovalId(entry.id);
                                 setReason('');
                                 setDecision('approve');
@@ -321,7 +321,7 @@ function PurchaseDelegationsPanel() {
             { key: 'scope', label: 'Phạm vi', render: grant => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{grantLabel(grant)}</Typography><Typography variant="caption">{grant.offerSnapshots.length} báo giá · tối đa {grant.maxPerOrder.amount} {grant.maxPerOrder.currency} / đơn</Typography><Typography variant="caption">Ngân sách · mã chính sách {grant.budgetPolicyId} · {grant.budgetPeriod} · đến {dateTime(grant.expiresAt, shop.timezone)}</Typography></Stack> },
             { key: 'state', label: 'Trạng thái', render: grant => <Status value={Date.parse(grant.expiresAt) <= Date.now() && grant.status === 'active' ? 'expired' : grant.status}/> },
             { key: 'reason', label: 'Lý do gần nhất', render: grant => grant.lastReason || '—' },
-            { key: 'actions', label: '', render: grant => <ActionGroup direction="row">
+            { key: 'actions', label: 'Thao tác', render: grant => <ActionGroup direction="row">
                 {grant.status !== 'revoked' && Date.parse(grant.expiresAt) > Date.now() && <MutationButton permission="procurement.delegation.manage" disabled={update.pending} onClick={() => { setActionGrant(grant); setActionStatus(grant.status === 'active' ? 'paused' : 'active'); }}>{grant.status === 'active' ? 'Tạm dừng' : 'Kích hoạt'}</MutationButton>}
                 {grant.status !== 'revoked' && <MutationButton permission="procurement.delegation.manage" color="error" disabled={update.pending} onClick={() => { setActionGrant(grant); setActionStatus('revoked'); }}>Thu hồi</MutationButton>}
             </ActionGroup> },
@@ -375,7 +375,7 @@ export function DigestsPage() {
                 <QueryState query={list}>
                     <SurfaceContent >
                         {list.data?.data.map(digest => <Box key={digest.id} sx={[layoutSx.detail.relatedItemInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.card }]}>
-                            <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}><Stack><Typography variant="subtitle2">{dateTime(digest.periodStart, shop.timezone)} → {dateTime(digest.periodEnd, shop.timezone)}</Typography><Typography variant="caption" color="text.secondary">{digest.id} · phiên bản {digest.version}</Typography></Stack><Status value={digest.status} /></Stack>
+                            <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}><Stack><Typography component="div" variant="subtitle2">{dateTime(digest.periodStart, shop.timezone)} → {dateTime(digest.periodEnd, shop.timezone)}</Typography><Typography variant="caption" color="text.secondary">{digest.id} · phiên bản {digest.version}</Typography></Stack><Status value={digest.status} /></Stack>
                             <Typography sx={[layoutSx.surface.sectionBefore, { whiteSpace: 'pre-wrap' }]}>{digest.text}</Typography>
                             <DetailLine label="Thời điểm tạo / cập nhật">{dateTime(digest.createdAt, shop.timezone)} / {dateTime(digest.updatedAt, shop.timezone)}</DetailLine>
                             <DetailLine label="Nguồn công việc">{digest.workItemIds.length ? digest.workItemIds.join(' · ') : 'Không có mục công việc được tham chiếu'}</DetailLine>

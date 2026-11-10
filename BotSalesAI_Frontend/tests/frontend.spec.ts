@@ -165,7 +165,7 @@ test('deep links survive browser refresh and logout clears the mock session', as
     const logoutResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/v2/auth/logout');
     await page.getByRole('button', { name: 'Đăng xuất' }).click();
     expect((await logoutResponse).status()).toBe(204);
-    await expect(page.getByRole('heading', { name: 'Chào mừng trở lại' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Đăng nhập BotSales AI' })).toBeVisible();
     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0);
 });
 
