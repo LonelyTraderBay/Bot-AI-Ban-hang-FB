@@ -167,7 +167,10 @@ export function MovementsPage() {
                 { key: 'quantity', label: 'Tồn ±', align: 'right', render: row => row.quantityDelta },
                 { key: 'reserved', label: 'Giữ ±', align: 'right', render: row => row.reservedDelta },
                 { key: 'source', label: 'Nguồn', render: row => movementSource(row, shop.id, canReadOrders) },
-                { key: 'actor', label: 'Người thực hiện', render: row => row.actorId === session.user.id ? session.user.displayName : actorNames.get(row.actorId) && actorNames.get(row.actorId) !== row.actorId ? actorNames.get(row.actorId) : `Mã nhân sự: ${row.actorId}` },
+                { key: 'actor', label: 'Người thực hiện', render: row => {
+                    const name = row.actorId === session.user.id ? session.user.displayName : actorNames.get(row.actorId);
+                    return name && name !== row.actorId ? <Stack><Typography>{name}</Typography><Typography variant="caption" color="text.secondary">Mã nhân sự: {row.actorId}</Typography></Stack> : `Mã nhân sự: ${row.actorId}`;
+                } },
                 { key: 'reason', label: 'Lý do', render: row => row.reason },
             ]}/>
             <Pager page={list.data.page}/>

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical.",
-  "recordedAt": "2026-11-10T16:54:43.465Z",
+  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical. PR 20 CI correction 20261111: retained actor ID and updated accessible selectors; select values wrap under text stress. Hosted and native acceptance remain separate.",
+  "recordedAt": "2026-11-10T17:46:21.873Z",
   "status": "IN_PROGRESS",
   "checks": [
     {
@@ -2380,6 +2380,66 @@
         "path": "BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/verify-final.log",
         "sha256": "eb2f15b989a7430dbdd0eb8f5569fd0580b487313175fe510f2641587a3168d4"
       }
+    },
+    {
+      "id": "pr20-focused-20261111",
+      "command": "npx playwright test tests/ui028-w30-stress.spec.ts tests/ui-component-layout.spec.ts tests/ui-width-layout.spec.ts tests/ui-ux-completion.spec.ts --grep \"form-error-short|A03 import mapping|W02 full-width|UX05 .* list returns\" --project=chromium --project=firefox --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "12 cases pass on Chromium and Firefox for text stress, import mapping, form width and list return.",
+      "observed": "12 cases pass on Chromium and Firefox for text stress, import mapping, form width and list return.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-pr20-20261111/browser-retest.log",
+        "sha256": "b13f76249e54cb4a085cbe1d0c32641bf7bec7e421998a5d70fea0b127ad04ee"
+      }
+    },
+    {
+      "id": "pr20-inventory-20261111",
+      "command": "npx playwright test tests/fe011.spec.ts --config evidence/ci-pr20-20261111/playwright-fe011.config.ts --project=chromium --project=firefox --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "16 inventory cases pass on Chromium and Firefox with name and actor ID retained.",
+      "observed": "16 inventory cases pass on Chromium and Firefox with name and actor ID retained.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-pr20-20261111/inventory-final.log",
+        "sha256": "b42d3a1c08b7a774b6445c9136a3b385fc33aeea55e2b10d21a48772b38c5f89"
+      }
+    },
+    {
+      "id": "pr20-routes-20261111",
+      "command": "npx playwright test tests/ui61-consistency.spec.ts --grep \"UI61 all 61\" --project=chromium --project=firefox --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Four 61-route entry-state smoke cases pass at 390 and 1440 CSS px in Chromium and Firefox.",
+      "observed": "Four 61-route entry-state smoke cases pass at 390 and 1440 CSS px in Chromium and Firefox.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-pr20-20261111/routes-final.log",
+        "sha256": "02117ca6a94e643f369998011814b8ea9d7e171861d159caec4ccbbcec90dd6d"
+      }
+    },
+    {
+      "id": "pr20-verify-pre-s17-20261111",
+      "command": "npm run verify",
+      "exitCode": 1,
+      "result": "FAIL",
+      "expected": "All local verify gates pass.",
+      "observed": "Source, build and UI policy gates passed; S17 rejected five stale fingerprints before refresh.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-pr20-20261111/verify-before-s17.log",
+        "sha256": "965ef2ec1822eda9cd63bbc2da933cb83ac8caebafc1f3f43564c51af1c59beb"
+      }
+    },
+    {
+      "id": "pr20-verify-final-20261111",
+      "command": "npm run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "All local verify gates pass; S17 remains IN_PROGRESS and native and human UI acceptance remain open.",
+      "observed": "All local verify gates pass; S17 remains IN_PROGRESS and native and human UI acceptance remain open.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-pr20-20261111/verify-final.log",
+        "sha256": "18fb6a38199a1ee41c1f615b17aea5cc482a49345db72f416927d355ef8a506f"
+      }
     }
   ],
   "coverage": [
@@ -3554,6 +3614,14 @@
       "missing": 1,
       "result": "OPEN",
       "reason": "Other multi-action and read-only mobile tables remain horizontally scrollable. Paired screenshots cover six routes only; native zoom, Firefox text-only resize, all permissions and states, screen reader, physical mobile, backend and human acceptance remain unverified."
+    },
+    {
+      "name": "pr20-ui-acceptance-20261111",
+      "expected": 1,
+      "observed": 0,
+      "missing": 1,
+      "result": "OPEN",
+      "reason": "Route smoke covers entry states only. Native browser zoom, Firefox text-only resizing, all roles and states, screen reader, physical mobile and owner acceptance remain unverified."
     }
   ],
   "baseline": {
@@ -3616,7 +3684,7 @@
     "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "bb6428789bdf63d790180bd6ef04735ce44767568560568b4dbc0d6a5223979a",
     "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "b279542844044b040e097e61d421b471fef5ca160bda32b9662258948a112f9e",
     "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "710bce114d8194505317db19adf44fa531ba0a480fc439bd673e8884fed77b4d",
-    "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "4a120b783225618240809e55a8ffd3a0560983afb8d5b39fe542ee10f0823aac",
+    "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "a8fd2d3d60ea51f9529c3deeab30c491b1caa6616f7a843b773498fea6dc72cc",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/warehouses.tsx": "f9dfdc374cf28993f736d82d63afc121c282936843ab08590a4d06983b6604b6",
     "BotSalesAI_Frontend/apps/web/src/modules/knowledge/index.tsx": "0e7cf207254c76c06c7ac7f1c44c32bc1b7c2ed1dedcd69e04e6e139bd5d0b98",
     "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx": "dd83ccbde1453b18cb0fc0cdbc9ad119121b536e78441f965e435e0a530728d2",
@@ -3648,7 +3716,7 @@
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "ee98d2dc219d10b9ab58f993be6500ebc73362d921a05f4215d7cb95a61c990f",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "cc0630d482bdfa540471fb4ddecf785b85d1efaaa07b895cdf63b9592c24b325",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "bc1ae0be7f312aec604a9e60b5e438822564e95d4e866e7cf22bb8423d9415d2",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "21f4b5151cf9890d8d88332fe89ae7c8bf6bc183537b4ee525cf8faaf4dfb39c",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "f662e786fffe12898d0f19c13444ef3fbb1ab5c1744f7d01a30fdd380f8c5d11",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
     "BotSalesAI_Frontend/apps/web/tests/api-client.test.tsx": "57b186f6732c6eb50afe9f9c5c00e5b7f3becc078ef89ace7ff69f5f69fdc379",
@@ -3775,7 +3843,7 @@
     "BotSalesAI_Frontend/tests/ui-bot-layout.spec.ts": "68fafbde47907289f1af901813d3993b79e7abc6cac3a05591b142b29f04b733",
     "BotSalesAI_Frontend/tests/ui-canonical-readonly.test.mjs": "b375cf25be3904f294766bdaf806e54f38eda18462dcbc25c6d88dbb6b685aaa",
     "BotSalesAI_Frontend/tests/ui-catalog-layout.spec.ts": "1495e372bf8d8b9f0a4710a08e04a1f894c3895d5e44ca7956628c80acc4cedf",
-    "BotSalesAI_Frontend/tests/ui-component-layout.spec.ts": "9dcc1b10832b9a9df1e349718affcefcf957f21cb2dca29d383b5cb5bee0c685",
+    "BotSalesAI_Frontend/tests/ui-component-layout.spec.ts": "8976283b3dfda818ad1c08f1a5b501cd8dd951014cca82d3d8ffc8c635b2261d",
     "BotSalesAI_Frontend/tests/ui-composition-ancestry.test.mjs": "cdbb012fff52ae65b448a1cfc4062328c826719cf86fc6154fa5c93b9a66c2d8",
     "BotSalesAI_Frontend/tests/ui-composition-checker.test.mjs": "28d59e065c48216d5e04b7c8441d11445d706b49ee64bc61c5e81c4eb2126eb6",
     "BotSalesAI_Frontend/tests/ui-composition-layout.spec.ts": "9bbc1e86b4f42834f6c682deaa2f1464b70605bc5d6b9357e8ae8c17de8e903d",
@@ -3805,8 +3873,8 @@
     "BotSalesAI_Frontend/tests/ui-shell-layout.spec.ts": "51c5cf5409d66163e51ea5dc15f08d228251b785abf8795a6be5ae00c3084e46",
     "BotSalesAI_Frontend/tests/ui-source-scope.test.mjs": "fa3480f50d419ea5abac10ffd43085db09cf21da2b3dbe95f3b99997f50cafee",
     "BotSalesAI_Frontend/tests/ui-toolbar-layout.spec.ts": "84bc434eb6e5b123679fbeffa103885cb4a6b4bb5dfb0ac30ffc7f1105448eae",
-    "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "9c99c754501fb889839cea70b8a92fba9779bf3057ec7889f33a2f1094c63280",
-    "BotSalesAI_Frontend/tests/ui-width-layout.spec.ts": "b2d24b409eb2b2849887b9a4e79a98d6384f861e553c71ff5fbe092d9aebcb95",
+    "BotSalesAI_Frontend/tests/ui-ux-completion.spec.ts": "5eddb7e2cb66fda54ac700959f76bcd799eddb0fcdb3c87463d54e5be7b42327",
+    "BotSalesAI_Frontend/tests/ui-width-layout.spec.ts": "c33c506a5167131c7c7c429cd904621eac1e27fad46f78a895c3e29995e6cdb1",
     "BotSalesAI_Frontend/tests/ui-workspace-layout.spec.ts": "c517afa8c63c04a47df8432a7fb5948da40720db67dad7e42b3013d7fb56ba9e",
     "BotSalesAI_Frontend/tests/ui006-lookups.spec.ts": "c7028a85a304fac838db422a86cace5efce335d54bfa431646b1aa11246a2c05",
     "BotSalesAI_Frontend/tests/ui007-query-states.spec.ts": "df92ac928550f6ce5ec59def8aa9fb8803981b3aae3b21e9d84f9fdf9584dcdd",
@@ -3918,7 +3986,8 @@
     "BotSalesAI_Frontend/tests/ui-order-permission-followup.spec.ts": "6a71fa4ca1a12881b1ef9fd4454232644293137cffaac0c350e24893c7e2e68f",
     "BotSalesAI_Frontend/tests/ui-remaining-tables.spec.ts": "0951de34bf0a337fdedfde562e34f95b63334f0cb228303bfc2887a9c60b3bac",
     "BotSalesAI_Frontend/tests/ui-team-mobile-dialog.spec.ts": "1250a52b1e14c0fe845e47f47b2dc5d4b6aef6138088b314d6e11ce7cb9dcd12",
-    "BotSalesAI_Frontend/apps/web/tests/team-display-name.test.tsx": "13946e8190ca4829ab01c981c92ace489faa990d066d12c85764bc86cc6b13f3"
+    "BotSalesAI_Frontend/apps/web/tests/team-display-name.test.tsx": "13946e8190ca4829ab01c981c92ace489faa990d066d12c85764bc86cc6b13f3",
+    "BotSalesAI_Frontend/evidence/ci-pr20-20261111/playwright-fe011.config.ts": "6f7761fbc96b7fa990a9d43c5e965ad7e28b78198d996b41f99c6c1d5148d60b"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -3974,6 +4043,7 @@
     "Unslop fixes 2026-11-10: earlier header and full E2E results are historical; current scoped evidence and remaining limits are recorded in evidence/unslop-fixes-20261110.",
     "CI unblock 2026-11-10: previous UI and verify checks belong to the source before the minimatch override and selector changes. The current scoped checks are recorded separately in evidence/ci-push-unblock-20261110; hosted CI status remains external.",
     "Paired before/after baselines, all changed route states and permissions, native browser zoom, text-only resizing, screen reader and physical mobile have not been verified.",
-    "Other multi-action and read-only mobile tables remain horizontally scrollable. Paired screenshots cover six routes only; native zoom, Firefox text-only resize, all permissions and states, screen reader, physical mobile, backend and human acceptance remain unverified."
+    "Other multi-action and read-only mobile tables remain horizontally scrollable. Paired screenshots cover six routes only; native zoom, Firefox text-only resize, all permissions and states, screen reader, physical mobile, backend and human acceptance remain unverified.",
+    "Route smoke covers entry states only. Native browser zoom, Firefox text-only resizing, all roles and states, screen reader, physical mobile and owner acceptance remain unverified."
   ]
 }

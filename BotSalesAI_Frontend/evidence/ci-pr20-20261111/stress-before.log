@@ -1,0 +1,92 @@
+
+Running 2 tests using 1 worker
+
+
+
+(node:53844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/2] [chromium] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\deps\react-dom_client.js?v=4f72f308 as it exceeds the max of 500KB.
+[chromium] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+[w30-stress] {"browser":"chromium","scenario":"form-error-short","viewport":{"width":320,"height":480},"scaledTextElements":55,"issues":1,"pageErrors":0,"evidence":"evidence\\frontend-ui-improvements\\UI028\\W30\\stress-chromium-form-error-short-current-pr20-pre-20261111.json"}
+
+  1) [chromium] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "Potential clipped text elements: 1",
+    + ]
+
+      233 |         fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+      234 |         console.log(`[w30-stress] ${JSON.stringify({ browser: browserName, scenario: scenario.id, viewport: scenario.viewport, scaledTextElements: scale.scaledTextElements, issues: issues.length, pageErrors: pageErrors.length, evidence: path.relative(root, output) })}`);
+    > 235 |         expect(issues).toEqual([]);
+          |                        ^
+      236 |     });
+      237 | }
+      238 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui028-w30-stress.spec.ts:235:24
+
+    Error Context: test-results\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-chromium\error-context.md
+
+    Error Context: test-results\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:54980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/2] [firefox] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+[firefox] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480
+[w30-stress] {"browser":"firefox","scenario":"form-error-short","viewport":{"width":320,"height":480},"scaledTextElements":55,"issues":1,"pageErrors":0,"evidence":"evidence\\frontend-ui-improvements\\UI028\\W30\\stress-firefox-form-error-short-current-pr20-pre-20261111.json"}
+
+  2) [firefox] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "Potential clipped text elements: 1",
+    + ]
+
+      233 |         fs.writeFileSync(output, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+      234 |         console.log(`[w30-stress] ${JSON.stringify({ browser: browserName, scenario: scenario.id, viewport: scenario.viewport, scaledTextElements: scale.scaledTextElements, issues: issues.length, pageErrors: pageErrors.length, evidence: path.relative(root, output) })}`);
+    > 235 |         expect(issues).toEqual([]);
+          |                        ^
+      236 |     });
+      237 | }
+      238 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui028-w30-stress.spec.ts:235:24
+
+    Error Context: test-results\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-firefox\error-context.md
+
+    Error Context: test-results\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-4972-c21cdb6c-a75b-41ba-9324-d76b9f3d12a7\ui028-w30-stress-UI028-W30-1f8c2-d-spacing-stress-at-320x480-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480 
+    [firefox] › tests\ui028-w30-stress.spec.ts:75:5 › UI028.W30 form-error-short: 200% text and spacing stress at 320x480 
+COMMAND_EXIT=1
