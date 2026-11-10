@@ -40,6 +40,7 @@ test('Shared consolidation Dashboard primary link respects all eight permission 
             const href = `/s/shop-demo/${ops ? 'operations' : 'orders'}`;
             await expect(primary).toHaveText(label);
             await expect(primary).toHaveAttribute('href', href);
+            await page.mouse.move(0, 0);
             await primary.focus(); await expect(primary).toBeFocused();
             const style = await primary.evaluate(element => {
                 const s = getComputedStyle(element), r = element.getBoundingClientRect();
@@ -170,7 +171,7 @@ test('dashboard nested cards keep one inset and one card radius at every breakpo
             const first = cards[0].getBoundingClientRect(), last = cards.at(-1)!.getBoundingClientRect();
             const header = panel.firstElementChild!;
             const headerText = header.querySelector('p')!.getBoundingClientRect();
-            const notes = cards.map(card => card.lastElementChild!.getBoundingClientRect().top - card.getBoundingClientRect().top);
+            const values = cards.map(card => card.querySelector('.MuiTypography-h4')!.getBoundingClientRect().top - card.getBoundingClientRect().top);
             return {
                 left: first.left - outer.left - Number.parseFloat(getComputedStyle(panel).borderLeftWidth),
                 right: outer.right - last.right - Number.parseFloat(getComputedStyle(panel).borderRightWidth),
@@ -178,7 +179,7 @@ test('dashboard nested cards keep one inset and one card radius at every breakpo
                 headerGap: first.top - headerText.bottom,
                 gridMarginBottom: getComputedStyle(cards[0].parentElement!).marginBottom,
                 gridGap: getComputedStyle(cards[0].parentElement!).gap,
-                noteOffset: Math.max(...notes) - Math.min(...notes),
+                valueOffset: Math.max(...values) - Math.min(...values),
                 radii: cards.map(card => getComputedStyle(card).borderRadius),
             };
         });
@@ -190,7 +191,7 @@ test('dashboard nested cards keep one inset and one card radius at every breakpo
         expect(metrics.gridMarginBottom).toBe('0px');
         expect(metrics.gridGap).toBe('16px');
         expect(metrics.radii).toEqual(['12px', '12px', '12px', '12px']);
-        expect(metrics.noteOffset, `metric note alignment at ${width}`).toBeLessThanOrEqual(0.5);
+        expect(metrics.valueOffset, `metric value alignment at ${width}`).toBeLessThanOrEqual(0.5);
 
         const team = page.getByRole('heading', { name: 'Đội ngũ AI của cửa hàng', exact: true }).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');
         const roleCards = team.locator('[data-ui-composition="surface-content"]');

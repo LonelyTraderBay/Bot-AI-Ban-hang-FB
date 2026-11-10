@@ -27,7 +27,7 @@ import { PageHeader, Panel, QueryState, DataTable, Toolbar, Pager, Status, Mutat
 import { useSession } from '@/shared/model/auth';
 function AuthCard({ children }: {
     children: ReactNode;
-}) { return <Box component="main" id="main-content" tabIndex={-1} sx={[layoutSx.shell.centeredFallback, { bgcolor: 'background.default', outline: 'none' }]}><Paper variant="outlined" sx={[layoutSx.auth.surfaceInset, { width: '100%', maxWidth: 520, borderRadius: visualSx.radius.hero }]}><Stack direction="row" alignItems="center" sx={layoutSx.auth.brandMarkGap}><Avatar sx={{ bgcolor: 'primary.main', color: colors.onAccent }}><SmartToyRounded /></Avatar><Typography variant="h5" fontWeight={visualSx.typography.fontWeight.extraBold}>BotSales <Box component="span" color="primary.main">AI</Box></Typography></Stack>{children}</Paper></Box>; }
+}) { return <Box component="main" id="main-content" tabIndex={-1} sx={[layoutSx.shell.centeredFallback, { bgcolor: 'background.default', outline: 'none' }]}><Paper variant="outlined" sx={[layoutSx.auth.surfaceInset, { width: '100%', maxWidth: 520, borderRadius: visualSx.radius.hero }]}><Stack direction="row" alignItems="center" sx={layoutSx.auth.brandMarkGap}><Avatar sx={{ bgcolor: 'primary.main', color: colors.onAccent }}><SmartToyRounded /></Avatar><Typography variant="h5" fontWeight={visualSx.typography.fontWeight.semibold}>BotSales <Box component="span" color="primary.main">AI</Box></Typography></Stack>{children}</Paper></Box>; }
 export function LoginPage() {
     const { session, loading } = useSession();
     const [params] = useSearchParams();

@@ -74,7 +74,7 @@ test('session.revoked SSE closes the stream and clears the active shop session',
     await page.goto(new URL('/s/shop-demo/overview', liveUrl).toString());
     try {
         await expect(page.getByText('API thật', { exact: true })).toBeVisible();
-        await expect(page.getByRole('heading', { name: /Chào .*cửa hàng của bạn hôm nay/ })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Tổng quan cửa hàng' })).toBeVisible();
     }
     finally {
         releaseRevocation();

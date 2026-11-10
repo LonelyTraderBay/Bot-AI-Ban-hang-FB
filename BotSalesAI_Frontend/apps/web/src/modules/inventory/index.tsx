@@ -117,11 +117,11 @@ export function InventoryPage() {
 
     return <>
         <PageHeader title="Tồn kho" subtitle="Tồn thực tế, đã giữ cho đơn và số còn có thể bán." actions={<RouteLink to={`/s/${shop.id}/inventory/movements`}>Lịch sử biến động</RouteLink>}/>
-        <Alert severity="info" sx={layoutSx.page.sectionAfter}>Snapshot kho do API cung cấp; không cộng hàng đang về hoặc hàng cách ly vào số có thể bán. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
+        <Alert severity="info" sx={layoutSx.page.sectionAfter}>Số tồn tại thời điểm cập nhật không cộng hàng đang về hoặc hàng cách ly vào số có thể bán. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
         {completedCommandId && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>Điều chỉnh đã được xác nhận. Mã lệnh: {completedCommandId}. Tồn kho và lịch sử đã được tải lại.</Alert>}
         <Panel><Toolbar operation="listStockSnapshots" placeholder="Tìm SKU hoặc mã biến thể…" filters={<InventoryFilters/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
             <DataTable label="Tồn kho theo vị trí" rows={list.data.data} rowKey={row => row.id} columns={[
-                { key: 'sku', label: 'SKU / Kho', render: row => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{row.sku}</Typography><Typography variant="caption" color="text.secondary">Mã kho: {row.warehouseId} · snapshot {dateTime(row.asOf, shop.timezone)}</Typography>{canCatalog && <RouteLink to={`/s/${shop.id}/products?q=${encodeURIComponent(row.sku)}`}>Mở sản phẩm</RouteLink>}</Stack> },
+                { key: 'sku', label: 'SKU / Kho', render: row => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{row.sku}</Typography><Typography variant="caption" color="text.secondary">Mã kho: {row.warehouseId} · cập nhật {dateTime(row.asOf, shop.timezone)}</Typography>{canCatalog && <RouteLink to={`/s/${shop.id}/products?q=${encodeURIComponent(row.sku)}`}>Mở sản phẩm</RouteLink>}</Stack> },
                 { key: 'onHand', label: 'Thực tế', align: 'right', render: row => row.onHand },
                 { key: 'reserved', label: 'Đã giữ', align: 'right', render: row => row.reserved },
                 { key: 'available', label: 'Có thể bán', align: 'right', render: row => <Typography fontWeight={visualSx.typography.fontWeight.display} color={row.available <= row.lowStockThreshold ? 'warning.main' : 'text.primary'}>{row.available}</Typography> },

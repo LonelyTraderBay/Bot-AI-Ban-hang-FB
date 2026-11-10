@@ -43,7 +43,7 @@ test('FE011.AC01 snapshot drives stock totals and the SKU opens its catalog resu
     await expect(row.getByRole('cell').nth(1)).toHaveText('8');
     await expect(row.getByRole('cell').nth(2)).toHaveText('0');
     await expect(row.getByRole('cell').nth(3)).toHaveText('8');
-    await expect(row).toContainText('snapshot');
+    await expect(row).toContainText(/cập nhật \d{1,2}:\d{2} \d{1,2}\/\d{1,2}\/\d{2}/);
     await expect(row.getByRole('link', { name: 'Mở sản phẩm' })).toHaveAttribute('href', '/s/shop-demo/products?q=DEMO-001');
     expect(calls.some(call => call.method === 'GET' && call.path === '/api/v2/shops/shop-demo')).toBeTruthy();
     expect(calls.some(call => call.method === 'GET' && call.path.startsWith('/api/v2/shops/shop-demo/inventory?'))).toBeTruthy();

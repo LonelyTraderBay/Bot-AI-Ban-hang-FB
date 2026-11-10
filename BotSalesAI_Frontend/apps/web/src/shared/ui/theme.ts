@@ -11,7 +11,7 @@ export const theme = createTheme({
     typography: {
         fontFamily: tokens.fontFamily, fontSize: tokens.fontSizes.body,
         body1: { fontSize: tokens.fontSizes.body, lineHeight: tokens.lineHeights.body }, body2: { fontSize: tokens.fontSizes.body, lineHeight: tokens.lineHeights.body }, subtitle1: { fontSize: tokens.fontSizes.bodyComfortable, lineHeight: tokens.lineHeights.body }, caption: { fontSize: tokens.fontSizes.meta, lineHeight: tokens.lineHeights.body },
-        h4: { fontSize: tokens.fontSizes.pageTitle, fontWeight: tokens.fontWeights.display, lineHeight: tokens.lineHeights.display, letterSpacing: `${tokens.letterSpacing.pageTitle}px` }, h5: { fontSize: tokens.fontSizes.sectionTitle, fontWeight: tokens.fontWeights.bold, lineHeight: tokens.lineHeights.section }, h6: { fontSize: tokens.fontSizes.sectionTitle, fontWeight: tokens.fontWeights.strong, lineHeight: tokens.lineHeights.subsection },
+        h4: { fontSize: tokens.fontSizes.pageTitle, fontWeight: tokens.fontWeights.semibold, lineHeight: tokens.lineHeights.display, letterSpacing: `${tokens.letterSpacing.pageTitle}px` }, h5: { fontSize: tokens.fontSizes.sectionTitle, fontWeight: tokens.fontWeights.semibold, lineHeight: tokens.lineHeights.section }, h6: { fontSize: tokens.fontSizes.sectionTitle, fontWeight: tokens.fontWeights.semibold, lineHeight: tokens.lineHeights.subsection },
         button: { textTransform: 'none', fontWeight: tokens.fontWeights.strong }
     },
     spacing: tokens.space.sm,
