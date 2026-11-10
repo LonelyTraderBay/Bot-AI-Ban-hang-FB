@@ -697,3 +697,7 @@ At the S08 snapshot, the strict `frontend-design-premium` v1.4.0 audit exited 1 
 ## Sửa findings unslop toàn UI — 10/11/2026
 
 [Báo cáo sửa và bằng chứng](unslop-fixes-20261110/REPORT.md): xử lý tám nhóm từ audit theo ưu tiên, giữ Graphite Gold. Bản cuối có ma trận 488/488 route/viewport/engine, 112/112 dialog và 104/104 scoped Playwright; `npm run verify` 12/12 bước exit 0. Lượt full E2E lịch sử thuộc snapshot trước, không áp cho lần sửa này. S17 vẫn IN_PROGRESS; không suy screen-reader thực, native zoom/text-only resize, thiết bị vật lý, hosted CI, backend/provider hoặc owner acceptance.
+
+## Xử lý CI khi cập nhật main — 10/11/2026
+
+[Báo cáo](ci-push-unblock-20261110/REPORT.md) lưu nguyên nhân và kiểm thử của thay đổi sau snapshot UI: override minimatch trong typescript-estree để xử lý advisory, cập nhật locator và assertion test phù hợp header/copy hiện tại. Audit dependency 0 lỗi, 12/12 scoped E2E và `npm run verify` 12/12 bước đạt trên source này. Kết quả UI toàn trang ở trên thuộc snapshot trước thay đổi CI. Trạng thái hosted CI phụ thuộc kết quả GitHub Actions của PR.

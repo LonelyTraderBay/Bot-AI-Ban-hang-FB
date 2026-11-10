@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Governance ledger preserving historical checks and limitations. Current fingerprints correspond to the unslop finding fixes of 2026-11-10; prior checks remain historical unless explicitly identified as current. See evidence/unslop-fixes-20261110 for current tests and baseline. Does not close owner, screen-reader, native zoom or hosted acceptance.",
-  "recordedAt": "2026-11-10T10:06:24.808Z",
+  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance.",
+  "recordedAt": "2026-11-10T10:36:23.455Z",
   "status": "IN_PROGRESS",
   "checks": [
     {
@@ -2212,6 +2212,42 @@
         "path": "BotSalesAI_Frontend/evidence/unslop-fixes-20261110/select-align-final.log",
         "sha256": "65891d2e30514296172d0254366d6f55b37df0372b8670576c50ec22fcae7af3"
       }
+    },
+    {
+      "id": "ci-unblock-audit",
+      "command": "npm audit --audit-level=low",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "0 vulnerabilities",
+      "observed": "0 vulnerabilities",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-push-unblock-20261110/audit.log",
+        "sha256": "4b02d4a3c23d969c46bd2041360f80bfcb1fe760d9db864009acdd710f9de601"
+      }
+    },
+    {
+      "id": "ci-unblock-tests",
+      "command": "Playwright scoped regressions on Chromium and Firefox",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "12/12 tests PASS",
+      "observed": "12/12 tests PASS",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-push-unblock-20261110/focused-e2e.log",
+        "sha256": "87eba5ae093f4659e17121281e9e6f8fbb423b7bf38192319246980e9b1daea5"
+      }
+    },
+    {
+      "id": "ci-unblock-verify",
+      "command": "npm run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "12/12 verify steps PASS",
+      "observed": "12/12 verify steps PASS",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-push-unblock-20261110/verify.log",
+        "sha256": "0dc3d7cd7cf096bb6093e86c49649bde470006445858efe5bb8b09990498edaf"
+      }
     }
   ],
   "coverage": [
@@ -3363,6 +3399,13 @@
       "observed": 104,
       "missing": 0,
       "result": "COMPLETE"
+    },
+    {
+      "name": "ci-unblock-scoped-e2e",
+      "expected": 12,
+      "observed": 12,
+      "missing": 0,
+      "result": "COMPLETE"
     }
   ],
   "baseline": {
@@ -3545,7 +3588,7 @@
     "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "d9fecd32da5996ade5cb41a635dda25c8b8e88791064867cd81f98aeff5dd837",
     "BotSalesAI_Frontend/tests/fe015.spec.ts": "0cae5ac3d4bde930445b727af6695c42ca19303f09a4d477f72234f29c4ce379",
     "BotSalesAI_Frontend/tests/fe016-source-map.test.mjs": "15359771691c02c534f4b998305cb67772c72c5e65468bd832ae79c59cf47d3e",
-    "BotSalesAI_Frontend/tests/fe016.spec.ts": "48064766a80ce93a09ce16b1eba4633270cd640ea986b40f19cecef54d5749c7",
+    "BotSalesAI_Frontend/tests/fe016.spec.ts": "55e4aba4171d5476e0172bb3398bfd32479758b52c20b01135b498d82275bbba",
     "BotSalesAI_Frontend/tests/fe017-source-map.test.mjs": "99cb021a63bea6f384d8d206cbdc3b6918827cb2ce10027f8ef9fb1374875a56",
     "BotSalesAI_Frontend/tests/fe017-validation.spec.ts": "44f86fc257a9dd645b0255562bff0c1177801a330a92c4dd4f7872b7d4e87e98",
     "BotSalesAI_Frontend/tests/fe017.spec.ts": "2282d63dcc655430ecad77d334eefdc234accf5177af33714c1afacd66e82b12",
@@ -3559,8 +3602,8 @@
     "BotSalesAI_Frontend/tests/fixtures/master-resource-network.mjs": "912277e26b0f268506b7abc01773d15a354be98659314c1fa3cc3c1ae7e6879c",
     "BotSalesAI_Frontend/tests/fixtures/mock-network.mjs": "54562554b0cd7f2ea53351822f521d94b87b951d4b22e74a89017f1706cdd796",
     "BotSalesAI_Frontend/tests/fixtures/ui-source-project.mjs": "3e947d9057bdb6a31be58c6edd9a8b78602620a9e17c0f253af218aea4c54c60",
-    "BotSalesAI_Frontend/tests/frontend-corrections.spec.ts": "248a9ef92c353ead06c40b7b9af506164bae91ad8ef1d04715573162c8c79948",
-    "BotSalesAI_Frontend/tests/frontend.spec.ts": "80a12f6a7d36927f8762add9ffa8966e04f5a748abe4901b448e313662c3eb32",
+    "BotSalesAI_Frontend/tests/frontend-corrections.spec.ts": "254077af8a123e88182d50e45bc047e933ce6d295df016f25933df89409e2da6",
+    "BotSalesAI_Frontend/tests/frontend.spec.ts": "557f91d5032bc93d9726ed16639b2d43886ff248f275852995205035cc250690",
     "BotSalesAI_Frontend/tests/layout-checker.test.mjs": "95d87ab37193ee58a54773fdc8ab3f9b729b8d3590d005d25cb9b137f7f86a5f",
     "BotSalesAI_Frontend/tests/route-role-matrix.spec.ts": "34d746bc2b276610811ae750e6bb6dd4709912c8230cb39c0ae19b12a22761a8",
     "BotSalesAI_Frontend/tests/security.spec.ts": "b66e2dd5919751b023c2d31f29ace54b8c3b782d9d0bba71162e5cd19841bc03",
@@ -3573,7 +3616,7 @@
     "BotSalesAI_Frontend/tests/session/session-revocation.spec.ts": "22ebac77a2e8886118b96d38d6979d7e8766675f31fd8a375fda536b0f48f936",
     "BotSalesAI_Frontend/tests/session/session-unauthorized.spec.ts": "d665eaa969cd39fa98f26ded3c9c4419decb9f4e5ec165f93b1d9f8bab2b186e",
     "BotSalesAI_Frontend/tests/source-checker.test.mjs": "bdc53b8f7d154e9b4126d7f0b7670198c85a0686b9b616598b2583f195f9df7e",
-    "BotSalesAI_Frontend/tests/states/fe023.spec.ts": "4eff86d75c1b83a2725a6e527e92eb7b8615c1c9fd4224042a3de685edc9b1f0",
+    "BotSalesAI_Frontend/tests/states/fe023.spec.ts": "6fe36e5ec37cfd6dcc0b23f25647f6cc84dffeb50614fbce630159648ee5d3bd",
     "BotSalesAI_Frontend/tests/states/generate-fe023-evidence.mjs": "aeb5b08269e5722e55e87508abeec2bdbebb7baf255fc1c15788a1e3a2bb1a3e",
     "BotSalesAI_Frontend/tests/states/generate-route-state-roles.mjs": "1f684aad2a35a0ff7e0a4b9b83fa9c137191bed497899a0168a217ce7f4bb232",
     "BotSalesAI_Frontend/tests/states/route-empty-composition.spec.ts": "3a43dadf66c0908da63439addd4a588c4d4894e349e8e1b9636e1274284929db",
@@ -3591,7 +3634,7 @@
     "BotSalesAI_Frontend/tests/ui-composition-positive-ancestry.spec.ts": "88ccd6f23fb0de29f08d73d52adc86719e640f2bc19c1a70eeac117bff537661",
     "BotSalesAI_Frontend/tests/ui-consent-management.spec.ts": "499b99f10adf12e8cf124b7f3699023f895de466fa0160a896ac65d10d0aa1ea",
     "BotSalesAI_Frontend/tests/ui-customers-layout.spec.ts": "8c0bb6056555399cfcd6be6606a6229e87ef1155e26ba8c62b1056293116b0e7",
-    "BotSalesAI_Frontend/tests/ui-dashboard-layout.spec.ts": "984171a3be707b81c933fcce98cfa7c76e75fa4c4f2c63e123b27ca445a930e0",
+    "BotSalesAI_Frontend/tests/ui-dashboard-layout.spec.ts": "c962e0f0a45bcd805b8ca3e9e8ec946a71bb4ad1c410359955a92398ea6cac54",
     "BotSalesAI_Frontend/tests/ui-density-layout.spec.ts": "094212eaf886adc0b3fa472518e715fba6a27670e1a04ccda434e7ac3ce70705",
     "BotSalesAI_Frontend/tests/ui-entry-scope.test.mjs": "34855f434ee80ada00c0969f6949c1c268ccfae9c798c66d5d8c67675bb81cb1",
     "BotSalesAI_Frontend/tests/ui-evidence-validator.test.mjs": "af7ffc03ec97691f04a634f4b53a815d12509f272389252e9152ba4ded4530df",
@@ -3620,7 +3663,7 @@
     "BotSalesAI_Frontend/tests/ui006-lookups.spec.ts": "c7028a85a304fac838db422a86cace5efce335d54bfa431646b1aa11246a2c05",
     "BotSalesAI_Frontend/tests/ui007-query-states.spec.ts": "df92ac928550f6ce5ec59def8aa9fb8803981b3aae3b21e9d84f9fdf9584dcdd",
     "BotSalesAI_Frontend/tests/ui008-integration-empty.spec.ts": "e2503749a70b029f1f0318ef9c423a3d67d91f4bd7c6079082f6ea518e4735d1",
-    "BotSalesAI_Frontend/tests/ui009-scope-regression.spec.ts": "a3a33b9e11e1b329264b9bcc14c6d5a29b24b2e79d7ff7745efc7796548f8d99",
+    "BotSalesAI_Frontend/tests/ui009-scope-regression.spec.ts": "53f85a4f78d7be05e5194d02b29719fd3cd31275e58ef148e0072a7d4e795024",
     "BotSalesAI_Frontend/tests/ui010-dialog-draft.spec.ts": "b101a56dae428a8a8c9f1e11a8304563d829a744f39670daf1a50d685afa1d39",
     "BotSalesAI_Frontend/tests/ui011-date-time.spec.ts": "3b0c72599267f42d22493d44f06257fe66f3f697a855792fcf0c8ca857b6358e",
     "BotSalesAI_Frontend/tests/ui012-keyboard.spec.ts": "d0140e5151c82530d8208e6bfac66a2aa8a1800cd596235949885126a55775a7",
@@ -3636,8 +3679,8 @@
     "BotSalesAI_Frontend/tests/vertical-slices/generate-fe022-evidence.mjs": "6efafd7ba45c64267690620aeff0d6cb38dd23614edda2df9088da2dbeb4d048",
     "BotSalesAI_Frontend/tests/vertical-slices/generate-route-implementation.mjs": "3bf9b3a7461ecbcf650f142467b60b6bc76943b4256830337ad65798c8aa15f1",
     "BotSalesAI_Frontend/tests/visual-token-checker.test.mjs": "7f39234f4d7f60750a8645d85389e2cf7285e16e4e5243a84b61982962aef9d2",
-    "BotSalesAI_Frontend/package.json": "8371922b7a06bf4fcef199c2da22f260a68e05c8deb4b85603e05eeadc9094f2",
-    "BotSalesAI_Frontend/package-lock.json": "fe78fd166dadd48e5e43392bc5cf31b73e4ad6e8524f1b03582e01182d1041f0",
+    "BotSalesAI_Frontend/package.json": "68feae35cf6f086cd244938c044c099733587eea3126fc9683f01a2998a1a355",
+    "BotSalesAI_Frontend/package-lock.json": "c78ad6212ad9fc3a93b3024cf82ef5e4def354dfc7b63270259e7f4cc9d15bdf",
     "BotSalesAI_Frontend/playwright.config.ts": "b89f86ee9f142be5141cb852ce70ac97de74def60800d769330ae538973782a7",
     "BotSalesAI_Frontend/playwright.built-demo.config.ts": "f4e7c0d3143215065db63732fa8f2c684f107fc1842f2d4cff988ab485d4f4f1",
     "BotSalesAI_Frontend/apps/web/vite.config.ts": "6807da5538ceee93218580b9dad4b72d116feeffb9b397a43322ea9e9808aab5",
@@ -3649,7 +3692,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "2a99544c37f5635110d4d64a4931b27d23116b7269504d2ab0299f36c737eeb9",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "875ed905b64c13de538eeb70f44fb5dab164363e798e653365eb3d533f5d2081",
+    "BotSalesAI_Frontend/evidence/REPORT.md": "8bde28fcd152fdfc6f978650ea976c3de2251e6a8e9e09600b959a171609a534",
     "BotSalesAI_Frontend/tests/ui-overlay-theme.spec.ts": "ad70fc60a8e712ffbeceed270a5e5b0d62ba4cd6a7e9bc158b5d623c2b58c757",
     "BotSalesAI_Frontend/apps/web/src/mocks/service-worker-update-recovery.ts": "62cf0f795b6f0415bb319d4d928eed6fcd6ed8266a546da6828955d4f2dad1b4",
     "BotSalesAI_Frontend/apps/web/tests/service-worker-update-recovery.test.ts": "3a5f1376694d85ad1fb65d8e289685a9d5cdb8d021eea0b0a8301f22d0426b38",
@@ -3774,6 +3817,7 @@
     "Historical interim note, superseded for automated coverage by unslop-full-e2e-final: Full E2E exited 1 with 1101/1126 passing on the pre-correction test snapshot; the affected groups passed in scoped 38-case and 3-case retests, but full suite was not rerun on the final test snapshot.",
     "Final local automated checks cover all 1126 E2E cases and 6 independent built-demo cases; historical failures remain in the ledger. 54 routes lack pre-edit paired visual captures, screen-reader speech and human/owner acceptance remain unverified.",
     "Header 2026-11-10: initial 10/14 failure is retained and superseded for the corrected owner by 56/56 scoped and 6/6 built-demo local results. Full 1126-case suite was not rerun for the header source. Paired header captures cover R42 only; other consumers have scoped/global route proofs, not paired visual or human acceptance.",
-    "Unslop fixes 2026-11-10: earlier header and full E2E results are historical; current scoped evidence and remaining limits are recorded in evidence/unslop-fixes-20261110."
+    "Unslop fixes 2026-11-10: earlier header and full E2E results are historical; current scoped evidence and remaining limits are recorded in evidence/unslop-fixes-20261110.",
+    "CI unblock 2026-11-10: previous UI and verify checks belong to the source before the minimatch override and selector changes. The current scoped checks are recorded separately in evidence/ci-push-unblock-20261110; hosted CI status remains external."
   ]
 }
