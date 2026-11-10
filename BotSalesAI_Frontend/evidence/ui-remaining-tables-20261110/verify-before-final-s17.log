@@ -1,0 +1,214 @@
+
+> botsales-frontend@0.1.0 verify
+> node scripts/run-verify.mjs
+
+VERIFY_STEP_STARTED=generate:check
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+VERIFY_STEP_FINISHED={"script":"generate:check","exitCode":0,"seconds":0.2755549}
+VERIFY_STEP_STARTED=test:source
+VERIFY_STEP_STARTED=test:layout
+VERIFY_STEP_STARTED=test:visual-tokens
+
+> botsales-frontend@0.1.0 test:visual-tokens
+> node --test tests/visual-token-checker.test.mjs && node scripts/check-visual-tokens.mjs
+
+✔ visual checker accepts canonical theme roles, token references, geometry and semantic responsive props (696.9509ms)
+✔ visual checker rejects raw literals across sx, JSX system props and CSS declarations (392.5004ms)
+✔ visual checker follows local style aliases and callback themes, but fails raw nested values (391.5594ms)
+✔ visual checker requires canonical z-index references in TSX and CSS (710.8066ms)
+✔ visual checker reports unresolved spreads and malformed style sources as UNKNOWN or parse errors (419.0461ms)
+✔ visual checker includes newly added TSX files under the source root (718.7799ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3885.9388
+visual-token-check PASS: 94 source files, 0 finding(s)
+VERIFY_STEP_FINISHED={"script":"test:visual-tokens","exitCode":0,"seconds":9.018106900000001}
+VERIFY_STEP_STARTED=test:ui-composition
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs tests/session/demo-server-cache-lifecycle.test.mjs tests/session/playwright-run-isolation.test.mjs tests/session/preview-runtime-policy.test.mjs tests/ci-partitions.test.mjs tests/verify-runner.test.mjs
+
+{
+  "checkedAt": "2026-11-10T16:44:11.160Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 87,
+  "operationCalls": 276,
+  "routes": 61,
+  "issues": [],
+  "status": "PASS"
+}
+chromium: 589/589 tests, partitions 10/65/41/79/78/92/63/96/65
+firefox: 589/589 tests, partitions 49/78/81/56/68/49/51/90/67
+✔ every test-level partition owner explicitly declares parallel mode and is split by case (6.7073ms)
+✔ duration partitions cover every discovered test once, keeping ordinary files together (1.3038ms)
+✔ missing, duplicate, skipped and retried results cannot masquerade as complete coverage (0.4137ms)
+✔ the serial built-demo wall budget follows the native worker queue without dropping coverage (0.1646ms)
+✔ invalid built-demo measurements fail closed instead of changing the selected coverage (0.1514ms)
+✔ a separate built-demo owner removes the native reserve without editing historical measurements or losing IDs (0.2978ms)
+✔ invalid demo ownership and invalid historical timing remain errors for separate jobs (0.1113ms)
+✔ four-worker scheduling reserves the serial demo wall time without losing native cases (0.312ms)
+✔ an ordinary file stays one worker group even when its summed duration could fill two workers (0.0999ms)
+✔ parallel hook chunks retain native discovery order after longest-first selection (0.2164ms)
+✔ native file-order tails are modeled instead of dividing total duration by worker count (0.0945ms)
+✔ discovery errors, wrong projects, duplicate IDs and empty inventories fail closed (0.2446ms)
+✔ multi-project discovery keeps both built engines and rejects any unlisted project (0.4033ms)
+✔ real Playwright selectors cover the current Chrome/Firefox inventories exactly once (21587.725ms)
+✔ run cache closes once after success and preserves sibling run caches (19.1009ms)
+✔ early nonzero exit cleans only its run cache (12.0349ms)
+✔ signal exit cleans its run cache (8.1559ms)
+✔ spawn failure without a child process cleans the unique run cache (11.5079ms)
+✔ timeout keeps cache while child is alive and later exit triggers cleanup (48.5758ms)
+✔ Playwright API server teardown removes its run cache and preserves sibling cache (9.2637ms)
+✔ Playwright setup failure before server creation removes its run cache (6.4729ms)
+✔ Playwright server close failure preserves its run cache (5.911ms)
+✔ cache paths reject dot-segment traversal (1.869ms)
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.built-demo.config.ts:12
+if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(runId)) throw new Error('Invalid built-demo run ID.');
+                                                       ^
+
+Error: Invalid built-demo run ID.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.built-demo.config.ts:12:56
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+✔ Playwright workers reuse their parent output/cache ID while independent runs remain isolated (972.8836ms)
+✔ built-demo artifacts use a stable private run directory instead of cleaning the parent test-results (956.246ms)
+✔ built-demo rejects an inherited output ID that could escape the artifact root (297.9411ms)
+✔ worker overrides stay bounded while local runs keep one worker and complete traces (3628.3732ms)
+✔ CI rejects focused tests in both browser configs and keeps full failure traces (577.5248ms)
+DEV_RUNTIME_SPECS=20
+✔ browser specs with absolute dev source URLs explicitly keep every demo server in dev mode (9.9373ms)
+✔ runtime selection rejects invalid values and explicit source mode overrides the CI default (0.4862ms)
+✔ both shared runtimes reject non-loopback, non-origin and non-HTTP URLs (0.2427ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (0.7995ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (198.9697ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (233.619ms)
+✔ verification overlaps independent lanes but keeps generation, lane order and final evidence barriers (1.0899ms)
+✔ failed generation starts no lane or evidence gate (0.0975ms)
+✔ source failure stops its lane, finishes UI diagnostics and rejects evidence (0.1301ms)
+✔ layout failure still finishes other diagnostics and rejects evidence (0.1244ms)
+✔ layout and composition audits overlap behind the generation barrier (0.1441ms)
+✔ third-lane failure stops composition but finishes source/layout and rejects evidence (0.1254ms)
+✔ final evidence failure cannot become successful verification (0.1096ms)
+✔ the real CLI through a directory alias preserves child failure and rejects final evidence (646.1946ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21666.1683
+VERIFY_STEP_FINISHED={"script":"test:source","exitCode":0,"seconds":22.1992941}
+VERIFY_STEP_STARTED=boundaries
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-11-10T16:44:35.453Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 87,
+  "imports": 747,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+VERIFY_STEP_FINISHED={"script":"boundaries","exitCode":0,"seconds":2.581898299999997}
+VERIFY_STEP_STARTED=lint
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+VERIFY_STEP_FINISHED={"script":"lint","exitCode":0,"seconds":2.1985361999999986}
+VERIFY_STEP_STARTED=typecheck

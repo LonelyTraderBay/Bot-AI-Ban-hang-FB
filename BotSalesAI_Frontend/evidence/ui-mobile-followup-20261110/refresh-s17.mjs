@@ -1,0 +1,44 @@
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+const root = path.resolve('..');
+const manifestPath = 'evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json';
+const manifest = JSON.parse(await readFile(manifestPath,'utf8'));
+const snapshot = JSON.parse(await readFile('evidence/ui-mobile-followup-20261110/final-input-hashes.json','utf8'));
+const sha = bytes => createHash('sha256').update(bytes).digest('hex');
+for (const [file, hash] of Object.entries(snapshot)) assert.equal(sha(await readFile(path.join(root,file))),hash,`Changed after snapshot: ${file}`);
+const changed = new Set(execFileSync('git',['diff','--name-only'],{cwd:root,encoding:'utf8'}).trim().split(/\r?\n/));
+for (const [file, hash] of Object.entries(manifest.sourceFingerprints)) if (snapshot[file] !== hash) assert.ok(changed.has(file),`Unrelated stale evidence: ${file}`);
+const browserBytes = await readFile('evidence/ui-mobile-followup-20261110/browser-final.log');
+const browser = browserBytes.toString('utf8');
+assert.match(browser,/14 passed/); assert.match(browser,/COMMAND_EXIT=0/);
+const verifyBytes = await readFile('evidence/ui-mobile-followup-20261110/verify-before-refresh-final.log');
+const verify = verifyBytes.toString('utf8');
+for (const name of ['generate:check','test:source','boundaries','lint','typecheck','test:domain','test','build','test:layout','test:visual-tokens','test:ui-composition']) {
+ if (name === 'generate:check') { assert.match(verify,/> botsales-frontend@[^\n]+ generate:check/); continue; }
+ assert.match(verify,new RegExp(`VERIFY_STEP_FINISHED=\\{"script":"${name}"[^\\n]*"exitCode":0`),`Missing passing ${name}`);
+}
+assert.match(verify,/sourceFingerprints\[.*\] is stale/); assert.match(verify,/COMMAND_EXIT=1/);
+const permissionBytes = await readFile('evidence/ui-mobile-followup-20261110/browser-permissions-final.log');
+assert.match(permissionBytes.toString('utf8'), /2 passed/); assert.match(permissionBytes.toString('utf8'), /COMMAND_EXIT=0/);
+const permissionFile='BotSalesAI_Frontend/tests/ui-order-permission-followup.spec.ts';
+assert.equal(sha(await readFile(path.join(root,permissionFile))),(await readFile('evidence/ui-mobile-followup-20261110/permission-spec.sha256','utf8')).trim());
+const prefix='BotSalesAI_Frontend/evidence/ui-mobile-followup-20261110/';
+const addCheck = check => { const idx=manifest.checks.findIndex(x=>x.id===check.id); if(idx<0) manifest.checks.push(check); else manifest.checks[idx]=check; };
+const success='14 Chromium/Firefox cases pass: 61-route entry smoke at 390/1440, empty table and keyboard scroll at 320/390/1440, and targeted order/customer action and product selector checks.';
+addCheck({id:'ui-followup-browser-20261110',command:'npx playwright test tests/ui-mobile-followup.spec.ts tests/ui61-consistency.spec.ts --grep "table actions remain|order product selector|UI61 all 61|UI61 A01" --project=chromium --project=firefox --reporter=line',exitCode:0,result:'PASS',expected:success,observed:success,log:{path:prefix+'browser-final.log',sha256:sha(browserBytes)}});
+addCheck({id:'ui-followup-verify-before-s17-20261110',command:'npm run verify',exitCode:1,result:'FAIL',expected:'All verify lanes and S17 validator pass.',observed:'Source, build and UI policy lanes passed; S17 reported stale source fingerprints before the evidence refresh.',log:{path:prefix+'verify-before-refresh-final.log',sha256:sha(verifyBytes)}});
+const permissionSuccess='Two browser cases pass: revoking customers.read hides the customer name and customer link while retaining the customer ID in orders.';
+addCheck({id:'ui-followup-permission-20261110',command:'npx playwright test tests/ui-order-permission-followup.spec.ts --project=chromium --project=firefox --reporter=line',exitCode:0,result:'PASS',expected:permissionSuccess,observed:permissionSuccess,log:{path:prefix+'browser-permissions-final.log',sha256:sha(permissionBytes)}});
+Object.assign(manifest.sourceFingerprints,snapshot,{[permissionFile]:sha(await readFile(path.join(root,permissionFile)))});
+manifest.status='IN_PROGRESS';
+manifest.recordedAt=new Date().toISOString();
+manifest.scope+=' UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance.';
+const reason='Paired before/after baselines, all changed route states and permissions, native browser zoom, text-only resizing, screen reader and physical mobile have not been verified.';
+if(!manifest.knownLimits.includes(reason)) manifest.knownLimits.push(reason);
+const coverage={name:'ui-followup-acceptance-20261110',expected:1,observed:0,missing:1,result:'OPEN',reason};
+const index=manifest.coverage.findIndex(x=>x.name===coverage.name); if(index<0) manifest.coverage.push(coverage); else manifest.coverage[index]=coverage;
+await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n');
+console.log(`S17 refreshed with ${Object.keys(snapshot).length} verified input hashes; acceptance remains OPEN.`);

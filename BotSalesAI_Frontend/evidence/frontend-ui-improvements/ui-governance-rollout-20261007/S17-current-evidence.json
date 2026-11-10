@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance.",
-  "recordedAt": "2026-11-10T10:36:23.455Z",
+  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical.",
+  "recordedAt": "2026-11-10T16:54:43.465Z",
   "status": "IN_PROGRESS",
   "checks": [
     {
@@ -2248,6 +2248,138 @@
         "path": "BotSalesAI_Frontend/evidence/ci-push-unblock-20261110/verify.log",
         "sha256": "0dc3d7cd7cf096bb6093e86c49649bde470006445858efe5bb8b09990498edaf"
       }
+    },
+    {
+      "id": "ui-followup-browser-20261110",
+      "command": "npx playwright test tests/ui-mobile-followup.spec.ts tests/ui61-consistency.spec.ts --grep \"table actions remain|order product selector|UI61 all 61|UI61 A01\" --project=chromium --project=firefox --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "14 Chromium/Firefox cases pass: 61-route entry smoke at 390/1440, empty table and keyboard scroll at 320/390/1440, and targeted order/customer action and product selector checks.",
+      "observed": "14 Chromium/Firefox cases pass: 61-route entry smoke at 390/1440, empty table and keyboard scroll at 320/390/1440, and targeted order/customer action and product selector checks.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-mobile-followup-20261110/browser-final.log",
+        "sha256": "1d9f9b580bcc655fa237587e7f9fda903e3ef7818d1a4a846579eeceaaabf8fa"
+      }
+    },
+    {
+      "id": "ui-followup-verify-before-s17-20261110",
+      "command": "npm run verify",
+      "exitCode": 1,
+      "result": "FAIL",
+      "expected": "All verify lanes and S17 validator pass.",
+      "observed": "Source, build and UI policy lanes passed; S17 reported stale source fingerprints before the evidence refresh.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-mobile-followup-20261110/verify-before-refresh-final.log",
+        "sha256": "8ef28d59090bf90f9140d3695c4720fcd8e2dfb054295049d37012969a3ea309"
+      }
+    },
+    {
+      "id": "ui-followup-permission-20261110",
+      "command": "npx playwright test tests/ui-order-permission-followup.spec.ts --project=chromium --project=firefox --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Two browser cases pass: revoking customers.read hides the customer name and customer link while retaining the customer ID in orders.",
+      "observed": "Two browser cases pass: revoking customers.read hides the customer name and customer link while retaining the customer ID in orders.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-mobile-followup-20261110/browser-permissions-final.log",
+        "sha256": "9f9f43d9f88315ea86d7a772c60697567fd9b6d26cc8f0d55173cec24c77139f"
+      }
+    },
+    {
+      "id": "ui-followup-verify-final-20261110",
+      "command": "npm run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "All local npm run verify lanes pass including S17 validation; S17 remains IN_PROGRESS and UI acceptance remains open.",
+      "observed": "All local npm run verify lanes pass including S17 validation; S17 remains IN_PROGRESS and UI acceptance remains open.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-mobile-followup-20261110/verify-final.log",
+        "sha256": "a90bf7a8e0116f60e58d512c970b59be2daddd4728de51b238c4082c75d5e0c8"
+      }
+    },
+    {
+      "id": "ui-remaining-browser-20261110",
+      "command": "npx playwright test tests/ui-remaining-tables.spec.ts --project=chromium --project=firefox --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "10 Chromium/Firefox cases pass across five affected table actions, three widths, stock names, roles and explicit ID fallback.",
+      "observed": "10 Chromium/Firefox cases pass across five affected table actions, three widths, stock names, roles and explicit ID fallback.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/browser-final2.log",
+        "sha256": "24c680401366f4d0f99a5bdb129b098cb24bf7eae4cf6d5ac240f3e125a95bdc"
+      }
+    },
+    {
+      "id": "ui-remaining-team-dialog-20261110",
+      "command": "npx playwright test tests/ui-team-mobile-dialog.spec.ts --project=chromium --project=firefox --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "2 Chromium/Firefox cases pass for mobile revoke confirmation and cancellation.",
+      "observed": "2 Chromium/Firefox cases pass for mobile revoke confirmation and cancellation.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/team-dialog.log",
+        "sha256": "70578c1d34ecd1f36b176ea2a5cf0ff354be8d37e03e38c8162a363bb51886b5"
+      }
+    },
+    {
+      "id": "ui-remaining-staff-names-20261110",
+      "command": "npx vitest run --config apps/web/vitest.config.ts apps/web/tests/team-display-name.test.tsx",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "3 staff-name cases pass for allowed name, denied cached data and failed lookup.",
+      "observed": "3 staff-name cases pass for allowed name, denied cached data and failed lookup.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/names-unit-final.log",
+        "sha256": "3e9fb01fe5127e94f6770d4b8304bb3986686840e2bfafede81e8e25772c7228"
+      }
+    },
+    {
+      "id": "ui-remaining-baseline-20261110",
+      "command": "npx playwright test tests/ui-remaining-baseline.spec.ts --project=chromium --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Captured six pre-edit route screens at 390 and 1440 CSS px.",
+      "observed": "Captured six pre-edit route screens at 390 and 1440 CSS px.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/baseline.log",
+        "sha256": "809a89801fe9b089c8ba5cb61c3c5adb7e97bc56e8ca3fc3f0234c747a865fff"
+      }
+    },
+    {
+      "id": "ui-remaining-after-20261110",
+      "command": "npx playwright test tests/ui-remaining-paired-final.spec.ts --project=chromium --reporter=line",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Captured six current route screens at 390 and 1440 CSS px.",
+      "observed": "Captured six current route screens at 390 and 1440 CSS px.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/paired-after-final.log",
+        "sha256": "2f1b7384b998b257a65703a2e52d1da1ddde1fd04c1c73a71317d23f7a8c94af"
+      }
+    },
+    {
+      "id": "ui-remaining-pre-refresh-20261110",
+      "command": "npm run verify",
+      "exitCode": 1,
+      "result": "FAIL",
+      "expected": "All local verify gates pass.",
+      "observed": "Source, build and UI gates passed; S17 rejected stale fingerprints before this refresh.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/verify-before-refresh2.log",
+        "sha256": "84f40aa52a665d0f5f4170086c9d3138e6bd2ba6f935be671035007c34d3e0db"
+      }
+    },
+    {
+      "id": "ui-remaining-verify-final-20261110",
+      "command": "npm run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "All local verify gates pass; S17 remains IN_PROGRESS and UI acceptance remains open.",
+      "observed": "All local verify gates pass; S17 remains IN_PROGRESS and UI acceptance remains open.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/verify-final.log",
+        "sha256": "eb2f15b989a7430dbdd0eb8f5569fd0580b487313175fe510f2641587a3168d4"
+      }
     }
   ],
   "coverage": [
@@ -3406,6 +3538,22 @@
       "observed": 12,
       "missing": 0,
       "result": "COMPLETE"
+    },
+    {
+      "name": "ui-followup-acceptance-20261110",
+      "expected": 1,
+      "observed": 0,
+      "missing": 1,
+      "result": "OPEN",
+      "reason": "Paired before/after baselines, all changed route states and permissions, native browser zoom, text-only resizing, screen reader and physical mobile have not been verified."
+    },
+    {
+      "name": "ui-remaining-acceptance-20261110",
+      "expected": 1,
+      "observed": 0,
+      "missing": 1,
+      "result": "OPEN",
+      "reason": "Other multi-action and read-only mobile tables remain horizontally scrollable. Paired screenshots cover six routes only; native zoom, Firefox text-only resize, all permissions and states, screen reader, physical mobile, backend and human acceptance remain unverified."
     }
   ],
   "baseline": {
@@ -3426,7 +3574,7 @@
     "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "12d6b0dbe0dca8b8c5262b37854ebc6407026d658a7a202a557fbb339db4c520",
     "BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx": "cfea6704a8f8a08ca735700ae3aef4444dd40d8b6a8fb121d06cbab60085c0aa",
     "BotSalesAI_Frontend/apps/web/src/app/SessionProvider.tsx": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e",
-    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "dcc13d4d373aca3544bc203dbf60a15a57f1c861eace50204ebf7c6670164887",
+    "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "a47120af8953de861adc47fd9a9b8eae2d3759bf9ce1668ff52c29340ee22f97",
     "BotSalesAI_Frontend/apps/web/src/app/tokens.css": "880fa854d2e6f0592bb02e78cb3209a3de2e4c99222ec6f4fa0ccfa96debd2c2",
     "BotSalesAI_Frontend/apps/web/src/main.tsx": "2fbb13874110b3e6fc3f5583d36fc50a409f3dd5e28d7946f8b5b61c946d6bbb",
     "BotSalesAI_Frontend/apps/web/src/mocks/accounting.ts": "57aae87ba495b4f474273cd92dba5a779938b620f169030bad4181061d4d32ad",
@@ -3444,41 +3592,41 @@
     "BotSalesAI_Frontend/apps/web/src/mocks/marketing-fixture.ts": "b77c25af49dd79001ec8c54bf46479a98ba1e9cce853be60d05f4173c90d552f",
     "BotSalesAI_Frontend/apps/web/src/mocks/marketing-report.ts": "bc73bef02c6add4f235c5975b776810e315eae169f0cb397c9cdf4720d39f3bd",
     "BotSalesAI_Frontend/apps/web/src/mocks/masters.ts": "2c64a80ad678bb7e4144ca9e5473586fd1293eb3b050cdab0498c72f34281622",
-    "BotSalesAI_Frontend/apps/web/src/mocks/orders.ts": "919d15a484214bceddf5ad242f30b96766a2a324de48d2484223cfac1ed3a411",
+    "BotSalesAI_Frontend/apps/web/src/mocks/orders.ts": "e8731d0ce423bd6370f28472ca995fd6301635271e0528da03044fa66f82ef09",
     "BotSalesAI_Frontend/apps/web/src/mocks/privacy.ts": "8d31769c7c124dbe1db96e98100c178767be7fb2bbf491253aa673fc805ea443",
     "BotSalesAI_Frontend/apps/web/src/mocks/procurement.ts": "ebb52ca3f76ce64cc1c65aba249bd7e7ce2894ed72f9dbff3f350a3665b701be",
-    "BotSalesAI_Frontend/apps/web/src/mocks/seed.json": "946c0a4d5b58617575a0d4bbd0acf970fea2c9170769b8f371e73ccd305bb9c8",
+    "BotSalesAI_Frontend/apps/web/src/mocks/seed.json": "401685b3e5d3067a611d4512f2cd68d59eba21b0d9dff350f52c9d8fc308dd71",
     "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "f086bccc5fac03a2f44e582107b091776d7d7a4213c2b71955d5fa256c8e209e",
     "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "ce4b788834e03e0e3303c81845291159e747918634a64c56d4f76dd9882794ed",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
-    "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "1f6d8c6bc352984e89b3c4dce6c11710af21a81ce755d74650c2a9909bc3385b",
-    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "db0132d3f0aade53bde393863ee2c9383c059499b9df8a4d490173212ac737ca",
+    "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "2690e23e2afa4d01004929f35ae96c7c51315904dd18cbc8bf502ea7173d6a47",
+    "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "0991ae0be94c3804997fa7f28a479a7c86f2ca37965c1093624607ec1547ce8d",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/addresses.tsx": "4c81fc0c8eea9ccf270895f9e2e0ad92fd8b6d7b7418561e99955176f8592305",
-    "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "1206e87f744a6f1395e323a7d5d1422f377221bc4af983ac460c0a3c10c3e257",
+    "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "0b78f57f4f9690a85391a9d71cdf9d8db1df175e05ecb1e391d30321a955485f",
     "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "f495d13a461ac220302bfc153cd3e86831f663c5dfe474d4e51ec9b68de73255",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/accounts.tsx": "77be37cccfd6cacd6ec3bce2277d29117a1a51914ea1a3f2c22d97eb6d9f9869",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/entry-editor.tsx": "7c8bca51ea7fc49556246d09a90cf09fd98eba6cf39b7cc88451b54cea1818e7",
-    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "9261204fae6f52ceb29c1dd2c045c9b9ffe059c3b591000ecc96002ebbd35c32",
-    "BotSalesAI_Frontend/apps/web/src/modules/finance/journal-editor.tsx": "b0001e37866f7f18e6012e8a81e73f883a3dd4374715248353242d651becf008",
-    "BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx": "77cb420575077b0e03085ced2a3cfe75a25b3fa10f3f44b2ea58c1aec33aa78a",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "78479c77f8f2e259cac3de12eefa6518ddab0a3dcece84fee644b63c6b8d875d",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/journal-editor.tsx": "e766deaad59f3a4341d281d7c794e050e5a38bc5d3b8b3db4a5fedf8e6b4f82f",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx": "a9c3a0423113d0bd1b395483e1f00edd219c8bf3b5e4bab7a1b65a7a8c2884e3",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/report-explanations.ts": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
-    "BotSalesAI_Frontend/apps/web/src/modules/finance/report-range.tsx": "d26b02999934fabfd3f9b4c94ab646b62f2110cac01c464fa952e07c5c53081d",
-    "BotSalesAI_Frontend/apps/web/src/modules/finance/statement-import.tsx": "5fe843f2deb8bc718b2f61f2907db5e00e14ca8f0a1701b047f036dde9ce3f06",
-    "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx": "e750080793b9503643bac1315ae06641eb5919f6c233f98b2a401f3eab87496d",
-    "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "fcfff677c7f0fd5c58fc28b378cd436d432fe7975e23b6f56c97e22402b4ffed",
-    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "28f56b3f69d643b68cb4c45cfa0627311a866a0b012ce6aa65fdbc3c8a4f1e14",
-    "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "87d2b42efd23f838916551aa8fdd81fb8071ba2934a63212e21876751f3700c4",
-    "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "f2d1563931a7e0b08b470cca2927e0887c2a89a0f21bedc74cf8c02fac976aca",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/report-range.tsx": "e768dbab02a6831983e68809b29fa6347ef15f21057e8739b120ab1ce63b3f04",
+    "BotSalesAI_Frontend/apps/web/src/modules/finance/statement-import.tsx": "0fbfc2b95f057fdcc88779bd8ac425e0b04aa768645771f8dbfef8d39f83009e",
+    "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx": "b6d5e7380830977c878f8f02f4e6e6dd134dc571fb69209649b3739f80ce53af",
+    "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "bb6428789bdf63d790180bd6ef04735ce44767568560568b4dbc0d6a5223979a",
+    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "b279542844044b040e097e61d421b471fef5ca160bda32b9662258948a112f9e",
+    "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "710bce114d8194505317db19adf44fa531ba0a480fc439bd673e8884fed77b4d",
+    "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "4a120b783225618240809e55a8ffd3a0560983afb8d5b39fe542ee10f0823aac",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/warehouses.tsx": "f9dfdc374cf28993f736d82d63afc121c282936843ab08590a4d06983b6604b6",
     "BotSalesAI_Frontend/apps/web/src/modules/knowledge/index.tsx": "0e7cf207254c76c06c7ac7f1c44c32bc1b7c2ed1dedcd69e04e6e139bd5d0b98",
     "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx": "dd83ccbde1453b18cb0fc0cdbc9ad119121b536e78441f965e435e0a530728d2",
     "BotSalesAI_Frontend/apps/web/src/modules/notifications/push-capabilities.ts": "5afb7d25417142b10f9df582062ff0103b17e89514af11db2f6138093259ff0a",
     "BotSalesAI_Frontend/apps/web/src/modules/operations/index.tsx": "54c8cefa9daf5a2d8343b0e4ec620e7e2a1c5f44b37c7aebff55c69c9c939e70",
-    "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "278ed29fd423ec12f99a0e0b42af06427f1943674e4b315af2430d220bb99341",
-    "BotSalesAI_Frontend/apps/web/src/modules/procurement/index.tsx": "1a36eff5fcce79ae94edfd890a7b76c57a731c70986fa6d2869a71bff90eb3b9",
-    "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx": "8bc5791585084084891487cd06d92aecad5d3b037730257afac690a1d20ecda9",
+    "BotSalesAI_Frontend/apps/web/src/modules/orders/index.tsx": "4ce0c669ba62647ab44f2267c036f1dd2f984846e8f5830777ab1c1e4fbb4571",
+    "BotSalesAI_Frontend/apps/web/src/modules/procurement/index.tsx": "ac70303639fd5c4b3d1620183bf3d5ad7d1b299dd9fdaa6a312a6873891db34e",
+    "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx": "57aa4797d4478133f766588e2651c120b62baae692ce7c094b0b1aa430a97c11",
     "BotSalesAI_Frontend/apps/web/src/modules/reports/report-utils.ts": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
-    "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx": "27888bee73f3cc0007ed8f4942cf50a66508947567edd5d3dee80649213f4075",
+    "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx": "bfa565fb2569b291d0740f40a22d3e46fd5f1717b625302d0704bf98d0711174",
     "BotSalesAI_Frontend/apps/web/src/shared/api/client.ts": "14f723eb00cb9e7e5e244b440c1de7dfd534be499c991cf25288b5a7506c65ae",
     "BotSalesAI_Frontend/apps/web/src/shared/api/client.type-contracts.ts": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e",
     "BotSalesAI_Frontend/apps/web/src/shared/api/errors.ts": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227",
@@ -3495,11 +3643,11 @@
     "BotSalesAI_Frontend/apps/web/src/shared/model/list-return.ts": "1ec5a32a482a728d7398290a6d2347b7d2a279646af6f1074fc2821ac9a6b5a0",
     "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
     "BotSalesAI_Frontend/apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "5495e3c96141edc471e05de0dfefc7ffabcd2eb817934a62850c262286b2f652",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "0f6c9e4563599129a8e7f3e04ad849a6dff42be73d464625371326be6c496c88",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "83a83d65df1aa1f50adc531d299b1b33e0cdec702818c97d1fba728da637c8a0",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "e8026fd493550329bb0fc4f7cc51d870222bf625fc061d464eee9ed540f4b149",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "9d59d4d35303bc619aade10a84745b9d0bf395f6b692be459d4b7a50b79a9efc",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "ee98d2dc219d10b9ab58f993be6500ebc73362d921a05f4215d7cb95a61c990f",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "cc0630d482bdfa540471fb4ddecf785b85d1efaaa07b895cdf63b9592c24b325",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "bc1ae0be7f312aec604a9e60b5e438822564e95d4e866e7cf22bb8423d9415d2",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "f662e786fffe12898d0f19c13444ef3fbb1ab5c1744f7d01a30fdd380f8c5d11",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
@@ -3764,7 +3912,13 @@
     "BotSalesAI_Frontend/evidence/header-polish-20261110/CONTRACT.md": "8cedec9047d26375224d968155146c6bee85b5cf7c52bcec9e6cfa34fdbe5109",
     "BotSalesAI_Frontend/evidence/header-polish-20261110/collect.cjs": "4d051d2a22ce06013a366782e5753e07b2230084c4e29e5e9222d99bc5dea724",
     "BotSalesAI_Frontend/evidence/header-polish-20261110/REPORT.md": "f32195b3f17075c69123743f6db2eb9e0dac54c0ded39fb5ff4c002aacb56454",
-    "BotSalesAI_Frontend/tests/ui-unslop-findings.spec.ts": "d60d7a2b9a3e0bd4a4d571cca193f1981315854c608bda2488be99d8bdefd1a3"
+    "BotSalesAI_Frontend/tests/ui-unslop-findings.spec.ts": "d60d7a2b9a3e0bd4a4d571cca193f1981315854c608bda2488be99d8bdefd1a3",
+    "BotSalesAI_Frontend/tests/ui-mobile-followup.spec.ts": "41d20f054bed32d1b0b29073911cf72460bda98671b7c380af9f9467854611d9",
+    "BotSalesAI_Frontend/apps/web/tests/ui-audit-fixes.test.tsx": "54fd6de547362be6a72303f31e7fa02efae4957e32d2bf8092c216ea3692cc1d",
+    "BotSalesAI_Frontend/tests/ui-order-permission-followup.spec.ts": "6a71fa4ca1a12881b1ef9fd4454232644293137cffaac0c350e24893c7e2e68f",
+    "BotSalesAI_Frontend/tests/ui-remaining-tables.spec.ts": "0951de34bf0a337fdedfde562e34f95b63334f0cb228303bfc2887a9c60b3bac",
+    "BotSalesAI_Frontend/tests/ui-team-mobile-dialog.spec.ts": "1250a52b1e14c0fe845e47f47b2dc5d4b6aef6138088b314d6e11ce7cb9dcd12",
+    "BotSalesAI_Frontend/apps/web/tests/team-display-name.test.tsx": "13946e8190ca4829ab01c981c92ace489faa990d066d12c85764bc86cc6b13f3"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -3818,6 +3972,8 @@
     "Final local automated checks cover all 1126 E2E cases and 6 independent built-demo cases; historical failures remain in the ledger. 54 routes lack pre-edit paired visual captures, screen-reader speech and human/owner acceptance remain unverified.",
     "Header 2026-11-10: initial 10/14 failure is retained and superseded for the corrected owner by 56/56 scoped and 6/6 built-demo local results. Full 1126-case suite was not rerun for the header source. Paired header captures cover R42 only; other consumers have scoped/global route proofs, not paired visual or human acceptance.",
     "Unslop fixes 2026-11-10: earlier header and full E2E results are historical; current scoped evidence and remaining limits are recorded in evidence/unslop-fixes-20261110.",
-    "CI unblock 2026-11-10: previous UI and verify checks belong to the source before the minimatch override and selector changes. The current scoped checks are recorded separately in evidence/ci-push-unblock-20261110; hosted CI status remains external."
+    "CI unblock 2026-11-10: previous UI and verify checks belong to the source before the minimatch override and selector changes. The current scoped checks are recorded separately in evidence/ci-push-unblock-20261110; hosted CI status remains external.",
+    "Paired before/after baselines, all changed route states and permissions, native browser zoom, text-only resizing, screen reader and physical mobile have not been verified.",
+    "Other multi-action and read-only mobile tables remain horizontally scrollable. Paired screenshots cover six routes only; native zoom, Firefox text-only resize, all permissions and states, screen reader, physical mobile, backend and human acceptance remain unverified."
   ]
 }

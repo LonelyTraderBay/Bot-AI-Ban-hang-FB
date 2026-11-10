@@ -1,0 +1,6 @@
+import assert from 'node:assert/strict';import {createHash} from 'node:crypto';import {readFile,writeFile} from 'node:fs/promises';import path from 'node:path';
+const root=path.resolve('..'),mp='evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json',ev=JSON.parse(await readFile(mp,'utf8'));
+const sha=b=>createHash('sha256').update(b).digest('hex');for(const [f,h] of Object.entries(ev.sourceFingerprints))assert.equal(sha(await readFile(path.join(root,f))),h,'Source changed: '+f);
+const bytes=await readFile('evidence/ui-remaining-tables-20261110/verify-final.log'),log=bytes.toString('utf8');assert.match(log,/ui-evidence PASS: S17;/);assert.match(log,/status=IN_PROGRESS/);assert.match(log,/COMMAND_EXIT=0/);
+const summary='All local verify gates pass; S17 remains IN_PROGRESS and UI acceptance remains open.';
+ev.checks.push({id:'ui-remaining-verify-final-20261110',command:'npm run verify',exitCode:0,result:'PASS',expected:summary,observed:summary,log:{path:'BotSalesAI_Frontend/evidence/ui-remaining-tables-20261110/verify-final.log',sha256:sha(bytes)}});ev.recordedAt=new Date().toISOString();await writeFile(mp,JSON.stringify(ev,null,2)+'\n');console.log('Recorded final verify without closing S17.');

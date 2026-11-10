@@ -1,0 +1,303 @@
+
+> botsales-frontend@0.1.0 verify
+> node scripts/run-verify.mjs
+
+VERIFY_STEP_STARTED=generate:check
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+VERIFY_STEP_FINISHED={"script":"generate:check","exitCode":0,"seconds":0.24047509999999997}
+VERIFY_STEP_STARTED=test:source
+VERIFY_STEP_STARTED=test:layout
+VERIFY_STEP_STARTED=test:visual-tokens
+
+> botsales-frontend@0.1.0 test:visual-tokens
+> node --test tests/visual-token-checker.test.mjs && node scripts/check-visual-tokens.mjs
+
+✔ visual checker accepts canonical theme roles, token references, geometry and semantic responsive props (665.0266ms)
+✔ visual checker rejects raw literals across sx, JSX system props and CSS declarations (347.022ms)
+✔ visual checker follows local style aliases and callback themes, but fails raw nested values (338.9276ms)
+✔ visual checker requires canonical z-index references in TSX and CSS (665.5386ms)
+✔ visual checker reports unresolved spreads and malformed style sources as UNKNOWN or parse errors (337.4083ms)
+✔ visual checker includes newly added TSX files under the source root (317.57ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3167.7477
+visual-token-check PASS: 94 source files, 0 finding(s)
+VERIFY_STEP_FINISHED={"script":"test:visual-tokens","exitCode":0,"seconds":7.283375299999999}
+VERIFY_STEP_STARTED=test:ui-composition
+
+> botsales-frontend@0.1.0 test:ui-composition
+> node --test tests/ui-composition-checker.test.mjs tests/ui-composition-ancestry.test.mjs tests/ui-shared-api-contract.test.mjs && node scripts/check-ui-composition.mjs
+
+✔ P10/P15 catch alias and neutral-wrapper duplicate insets through fragments and conditionals (528.5439ms)
+✔ P20 resolves shared composition identities through a barrel and const component aliases (363.5785ms)
+✔ P11/P13 catch static element access roles on every MUI surface, including Paper (349.0359ms)
+✔ P12 checks React createElement and JSX-runtime element factories (422.6635ms)
+✔ P14 resolves bodyMode literal aliases and fails closed when ownership is unknown (1838.8315ms)
+✔ checks Panel ancestry when React elements are created natively (424.2202ms)
+✔ keeps independent nested surfaces and portaled dialogs as separate owners (643.1922ms)
+✔ accepts finite bodyMode branches and every mode in the public component contracts (1207.2786ms)
+✔ stops inherited gap ownership at Panels and independent bordered surfaces (836.7066ms)
+✔ tracks gaps through fragments, conditions and ready QueryState, but not inside DOM wrappers (460.1411ms)
+✔ applies the same finite modes and wrapper boundaries to native React factories (644.5651ms)
+✔ recognizes native outlined Paper and nested Box surface inset boundaries (643.2578ms)
+✔ fails closed when an unresolved custom wrapper obscures a semantic gap owner (309.5167ms)
+✔ rejects unsupported placement and rhythm values while accepting finite aliases and branches (618.7659ms)
+✔ rejects unsupported finite values through React element factories (682.5632ms)
+✔ Stats exposes only its standalone or nested end boundary (10.6405ms)
+✔ accepts semantic composition, closed geometry and business-specific MUI primitives (3.6654ms)
+✔ rejects rebuilding each shared spacing owner at a consumer (3.2198ms)
+✔ follows aliases, local style variables, object spreads and namespace imports (1.3152ms)
+✔ rejects direct and spread spacing overrides on semantic components (0.6526ms)
+✔ rejects spacing or opaque spreads hidden in geometry (0.4565ms)
+✔ allows the canonical owner implementation and fails closed on malformed source (0.7468ms)
+✔ rejects duplicated parent boundary and duplicated Panel inset (0.674ms)
+✔ checks default MUI imports and fails closed for opaque geometry (0.3815ms)
+✔ distinguishes content grids from flex flows when reporting the shared owner (0.4201ms)
+✔ rejects page spacing for paired fields and peer Panels without a section gap owner (2.351ms)
+✔ related sibling gaps belong to ActionGroup comfortable density, not consumer Stack styles (0.6753ms)
+✔ density profiles are finite and new spacing paths retain the shared owner (1.9853ms)
+✔ Amount consumers declare wrapping outside DataTable columns and keep table money unbroken (72.9175ms)
+✔ the shared catalog covers every public React component and supporting Column type (56.173ms)
+✔ SPC-067 covers discovered public Shared APIs without a fixed export count (0.8701ms)
+✔ every public React API has a direct rendered contract test (1.4177ms)
+✖ catalog declaration lines and stated JSX counts match resolved source symbols (107.3566ms)
+✔ every shared React export has a resolved production consumer or an explicit zero-use lifecycle decision (72.3181ms)
+✔ required UI evidence and regression gates remain wired to root verify and the active parent workflow (1.6352ms)
+✔ composition prop allowlists match the TypeScript owners exactly (0.272ms)
+✔ QueryState uses only the approved inline and section pending profiles (0.3255ms)
+✔ QueryState consumers reserve section loading for primary content and keep every other state inline by default (53.6096ms)
+✔ body modes, placement roles and geometry keys match the TypeScript contracts (1.1124ms)
+✔ Panel geometry and DataTable columns remain closed public contracts (5.3381ms)
+✔ shared component and composition props expose no arbitrary layout/style escape hatch (0.3282ms)
+✔ layout role types, runtime values, consumers and ownership documentation stay closed (4655.3116ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 41
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10552.5418
+
+✖ failing tests:
+
+test at tests\ui-shared-api-contract.test.mjs:203:1
+✖ catalog declaration lines and stated JSX counts match resolved source symbols (107.3566ms)
+  AssertionError [ERR_ASSERTION]: shared UI catalog has stale source line/use counts:
+  MutationButton: documented uses 125, source uses 127
+  + actual - expected
+  
+  + [
+  +   'MutationButton: documented uses 125, source uses 127'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/tests/ui-shared-api-contract.test.mjs:235:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'MutationButton: documented uses 125, source uses 127' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+VERIFY_STEP_FINISHED={"script":"test:ui-composition","exitCode":1,"seconds":10.754523099999998}
+
+> botsales-frontend@0.1.0 test:source
+> node scripts/check-source.mjs && node --test tests/source-checker.test.mjs tests/session/demo-server-cache-lifecycle.test.mjs tests/session/playwright-run-isolation.test.mjs tests/session/preview-runtime-policy.test.mjs tests/ci-partitions.test.mjs tests/verify-runner.test.mjs
+
+{
+  "checkedAt": "2026-11-10T16:45:16.698Z",
+  "scope": "Syntax, operation identifiers, route-source mapping, permissions and token adoption. NOT React typecheck, build or browser test.",
+  "compiler": "5.9.2",
+  "compilerSource": "project dependency",
+  "files": 87,
+  "operationCalls": 276,
+  "routes": 61,
+  "issues": [],
+  "status": "PASS"
+}
+chromium: 589/589 tests, partitions 10/65/41/79/78/92/63/96/65
+firefox: 589/589 tests, partitions 49/78/81/56/68/49/51/90/67
+✔ every test-level partition owner explicitly declares parallel mode and is split by case (7.891ms)
+✔ duration partitions cover every discovered test once, keeping ordinary files together (1.3145ms)
+✔ missing, duplicate, skipped and retried results cannot masquerade as complete coverage (0.395ms)
+✔ the serial built-demo wall budget follows the native worker queue without dropping coverage (0.1706ms)
+✔ invalid built-demo measurements fail closed instead of changing the selected coverage (0.1636ms)
+✔ a separate built-demo owner removes the native reserve without editing historical measurements or losing IDs (0.476ms)
+✔ invalid demo ownership and invalid historical timing remain errors for separate jobs (0.1723ms)
+✔ four-worker scheduling reserves the serial demo wall time without losing native cases (0.4266ms)
+✔ an ordinary file stays one worker group even when its summed duration could fill two workers (0.1306ms)
+✔ parallel hook chunks retain native discovery order after longest-first selection (0.2716ms)
+✔ native file-order tails are modeled instead of dividing total duration by worker count (0.2022ms)
+✔ discovery errors, wrong projects, duplicate IDs and empty inventories fail closed (0.345ms)
+✔ multi-project discovery keeps both built engines and rejects any unlisted project (0.2497ms)
+✔ real Playwright selectors cover the current Chrome/Firefox inventories exactly once (21938.3834ms)
+✔ run cache closes once after success and preserves sibling run caches (13.1248ms)
+✔ early nonzero exit cleans only its run cache (8.5665ms)
+✔ signal exit cleans its run cache (5.8077ms)
+✔ spawn failure without a child process cleans the unique run cache (6.24ms)
+✔ timeout keeps cache while child is alive and later exit triggers cleanup (46.5037ms)
+✔ Playwright API server teardown removes its run cache and preserves sibling cache (11.1635ms)
+✔ Playwright setup failure before server creation removes its run cache (5.9237ms)
+✔ Playwright server close failure preserves its run cache (5.2994ms)
+✔ cache paths reject dot-segment traversal (1.7383ms)
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.built-demo.config.ts:12
+if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(runId)) throw new Error('Invalid built-demo run ID.');
+                                                       ^
+
+Error: Invalid built-demo run ID.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.built-demo.config.ts:12:56
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13
+if (!/^[1-4]$/.test(workers)) throw new Error('BOTSALES_E2E_WORKERS must be an integer from 1 to 4.');
+                                    ^
+
+Error: BOTSALES_E2E_WORKERS must be an integer from 1 to 4.
+    at file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/playwright.config.ts:13:37
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async file:///C:/Users/Joker-PC/Documents/Projects/Bot-AI-Ban-hang-FB/BotSalesAI_Frontend/[eval1]:1:24
+
+Node.js v24.22.0
+✔ Playwright workers reuse their parent output/cache ID while independent runs remain isolated (916.8791ms)
+✔ built-demo artifacts use a stable private run directory instead of cleaning the parent test-results (837.353ms)
+✔ built-demo rejects an inherited output ID that could escape the artifact root (292.3169ms)
+✔ worker overrides stay bounded while local runs keep one worker and complete traces (3444.2818ms)
+✔ CI rejects focused tests in both browser configs and keeps full failure traces (653.961ms)
+DEV_RUNTIME_SPECS=20
+✔ browser specs with absolute dev source URLs explicitly keep every demo server in dev mode (11.2636ms)
+✔ runtime selection rejects invalid values and explicit source mode overrides the CI default (0.4777ms)
+✔ both shared runtimes reject non-loopback, non-origin and non-HTTP URLs (0.2544ms)
+✔ module path classification accepts Windows and POSIX spellings, but excludes app files (0.8785ms)
+✔ the source-checker CLI rejects a prohibited color literal in a module (178.0318ms)
+✔ the source-checker CLI accepts a token-based module and leaves app-level colors outside the rule (238.7183ms)
+✔ verification overlaps independent lanes but keeps generation, lane order and final evidence barriers (1.3224ms)
+✔ failed generation starts no lane or evidence gate (0.1295ms)
+✔ source failure stops its lane, finishes UI diagnostics and rejects evidence (0.1648ms)
+✔ layout failure still finishes other diagnostics and rejects evidence (0.1503ms)
+✔ layout and composition audits overlap behind the generation barrier (0.1866ms)
+✔ third-lane failure stops composition but finishes source/layout and rejects evidence (0.2036ms)
+✔ final evidence failure cannot become successful verification (0.1316ms)
+✔ the real CLI through a directory alias preserves child failure and rejects final evidence (597.9793ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22012.7579
+VERIFY_STEP_FINISHED={"script":"test:source","exitCode":0,"seconds":22.495216}
+VERIFY_STEP_STARTED=boundaries
+
+> botsales-frontend@0.1.0 boundaries
+> node scripts/check-boundaries.mjs
+
+{
+  "checkedAt": "2026-11-10T16:45:41.133Z",
+  "scope": "AST imports resolve aliases/relative paths, module boundaries and cycles; parser diagnostics are errors",
+  "files": 87,
+  "imports": 747,
+  "negativeFixtures": "Boundary fixtures: PASS 10/10 scenarios (allowed shared/public imports, alias, relative, app deep import, type-only, dynamic, unresolved, cycle, parser error).",
+  "status": "PASS",
+  "issues": []
+}
+VERIFY_STEP_FINISHED={"script":"boundaries","exitCode":0,"seconds":2.378048999999999}
+VERIFY_STEP_STARTED=lint
+
+> botsales-frontend@0.1.0 lint
+> eslint apps/web/src --max-warnings 0
+
+VERIFY_STEP_FINISHED={"script":"lint","exitCode":0,"seconds":1.9119176000000007}
+VERIFY_STEP_STARTED=typecheck
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+VERIFY_STEP_FINISHED={"script":"typecheck","exitCode":0,"seconds":3.7239781}
+VERIFY_STEP_STARTED=test:domain

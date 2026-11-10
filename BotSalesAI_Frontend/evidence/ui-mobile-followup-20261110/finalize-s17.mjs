@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {readFile,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+const root=path.resolve('..'), manifestPath='evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json';
+const evidence=JSON.parse(await readFile(manifestPath,'utf8'));
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+for(const [file,hash] of Object.entries(evidence.sourceFingerprints)) assert.equal(sha(await readFile(path.join(root,file))),hash,`Source changed: ${file}`);
+const bytes=await readFile('evidence/ui-mobile-followup-20261110/verify-final.log'), log=bytes.toString('utf8');
+assert.match(log,/ui-evidence PASS: S17;/); assert.match(log,/status=IN_PROGRESS/); assert.match(log,/COMMAND_EXIT=0/);
+const result='All local npm run verify lanes pass including S17 validation; S17 remains IN_PROGRESS and UI acceptance remains open.';
+const check={id:'ui-followup-verify-final-20261110',command:'npm run verify',exitCode:0,result:'PASS',expected:result,observed:result,log:{path:'BotSalesAI_Frontend/evidence/ui-mobile-followup-20261110/verify-final.log',sha256:sha(bytes)}};
+const index=evidence.checks.findIndex(item=>item.id===check.id);if(index<0)evidence.checks.push(check);else evidence.checks[index]=check;
+evidence.recordedAt=new Date().toISOString();
+await writeFile(manifestPath,JSON.stringify(evidence,null,2)+'\n');
+console.log('Recorded final verification without closing S17.');

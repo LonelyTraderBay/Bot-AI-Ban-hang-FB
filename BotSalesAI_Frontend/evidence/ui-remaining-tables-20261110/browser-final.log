@@ -1,0 +1,50 @@
+
+Running 10 tests using 1 worker
+
+
+
+(node:81236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/10] [chromium] › tests\ui-remaining-tables.spec.ts:15:36 › mobile actions and desktop layout 320
+  1) [chromium] › tests\ui-remaining-tables.spec.ts:15:36 › mobile actions and desktop layout 320 ──
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 156.734375
+    Received:    213.765625
+
+      24 |    const row=control.locator('xpath=ancestor::tr'), role=row.getByText('Chủ cửa hàng',{exact:true}); await expect(role).toBeVisible();
+      25 |    const geometry=await role.evaluate(node=>{const text=node.getBoundingClientRect(),action=node.closest('tr')!.querySelector('td:last-child')!.getBoundingClientRect();return {right:text.right,actionLeft:action.left};});
+    > 26 |    expect(geometry.right).toBeLessThanOrEqual(geometry.actionLeft+1);
+         |                           ^
+      27 |   }
+      28 |   if(width<600){await region.focus();const before=await region.evaluate(n=>n.scrollLeft);await page.keyboard.press('ArrowRight');await expect.poll(()=>region.evaluate(n=>n.scrollLeft)).toBeGreaterThan(before);}
+      29 |   if(route==='settings/team' && width<600){const row=control.locator('xpath=ancestor::tr');for(const button of await row.getByRole('button').all()){const bounds=await button.boundingBox();expect(bounds).not.toBeNull();expect(bounds!.x).toBeGreaterThanOrEqual(rects.regionLeft-1);expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(rects.regionRight+1);}}
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-remaining-tables.spec.ts:26:27
+
+    Error Context: test-results\playwright-43808-d54b710c-4352-4486-8b53-bc7e3464343e\ui-remaining-tables-mobile-actions-and-desktop-layout-320-chromium\error-context.md
+
+    Error Context: test-results\playwright-43808-d54b710c-4352-4486-8b53-bc7e3464343e\ui-remaining-tables-mobile-actions-and-desktop-layout-320-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-43808-d54b710c-4352-4486-8b53-bc7e3464343e\ui-remaining-tables-mobile-actions-and-desktop-layout-320-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-43808-d54b710c-4352-4486-8b53-bc7e3464343e\ui-remaining-tables-mobile-actions-and-desktop-layout-320-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:85268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/10] [chromium] › tests\ui-remaining-tables.spec.ts:15:36 › mobile actions and desktop layout 390
+[3/10] [chromium] › tests\ui-remaining-tables.spec.ts:15:36 › mobile actions and desktop layout 1440
+[4/10] [chromium] › tests\ui-remaining-tables.spec.ts:34:1 › stock history displays names from accessible lookups and keeps staff fallback
+[5/10] [chromium] › tests\ui-remaining-tables.spec.ts:42:1 › team preserves explicit IDs when directory does not supply names
+(node:55660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[6/10] [firefox] › tests\ui-remaining-tables.spec.ts:15:36 › mobile actions and desktop layout 320
