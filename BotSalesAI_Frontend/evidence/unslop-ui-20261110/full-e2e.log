@@ -1,0 +1,297 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs --reporter=line
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+Copying the worker script at "C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.7 building client environment for production...
+transforming...
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2128 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                              1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js             0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-B2zd8F6y.js                4.59 kB │ gzip:   2.15 kB
+dist/assets/draft-conflict-7sQt2G7t.js       5.37 kB │ gzip:   2.49 kB
+dist/assets/index-xKdavf_g.js                8.74 kB │ gzip:   3.42 kB
+dist/assets/index-Cr76gXC3.js               10.39 kB │ gzip:   3.61 kB
+dist/assets/index-Byu9VV2U.js               13.12 kB │ gzip:   5.17 kB
+dist/assets/index-DpdVAtfU.js               16.40 kB │ gzip:   6.13 kB
+dist/assets/index-Csk6BylW.js               16.95 kB │ gzip:   5.79 kB
+dist/assets/index-DoddRVAG.js               18.84 kB │ gzip:   6.32 kB
+dist/assets/index-BS8lVaO4.js               18.86 kB │ gzip:   5.92 kB
+dist/assets/index-B-R9uPfH.js               19.22 kB │ gzip:   7.06 kB
+dist/assets/index-Ct6kMXzi.js               21.27 kB │ gzip:   7.66 kB
+dist/assets/index-B_0rINNn.js               22.02 kB │ gzip:   7.18 kB
+dist/assets/index-DfIt8Ooq.js               25.15 kB │ gzip:   8.49 kB
+dist/assets/index-CdQMGsQD.js               27.51 kB │ gzip:   8.97 kB
+dist/assets/index-IcBNOygH.js               31.32 kB │ gzip:  10.03 kB
+dist/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist/assets/index-BfhQEUoN.js               33.36 kB │ gzip:  11.02 kB
+dist/assets/index-CQYNOsJX.js               42.00 kB │ gzip:  11.48 kB
+dist/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist/assets/index-DgDgBLwT.js               64.78 kB │ gzip:  17.81 kB
+dist/assets/index-D8ArlxmC.js              102.28 kB │ gzip:  32.74 kB
+dist/assets/schemas-aAIIjfeZ.js            125.23 kB │ gzip:  37.80 kB
+dist/assets/schema-validation-DPZaQ5WH.js  150.80 kB │ gzip:  45.45 kB
+dist/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-B8wFGXu_.js             320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-B8mKMyD5.js                337.13 kB │ gzip: 102.81 kB
+dist/assets/contract-data-BRT-TOMX.js      368.62 kB │ gzip:  42.83 kB
+✓ built in 3.80s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":346,"operations":245,"routes":61}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.7 building client environment for demo...
+transforming...
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2345 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.62 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-CU4e8NmL.js              1.73 kB │ gzip:   0.95 kB
+dist-demo/assets/hooks-B3LmdeSu.js                4.59 kB │ gzip:   2.15 kB
+dist-demo/assets/draft-conflict-C-ETVcm2.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-DS2NUcA5.js                8.73 kB │ gzip:   3.42 kB
+dist-demo/assets/index-M3OP0P0v.js               11.03 kB │ gzip:   3.88 kB
+dist-demo/assets/index-BO7McPNm.js               13.12 kB │ gzip:   5.17 kB
+dist-demo/assets/index-BfTqWi2B.js               16.10 kB │ gzip:   5.95 kB
+dist-demo/assets/index-C8io9vBP.js               18.84 kB │ gzip:   6.32 kB
+dist-demo/assets/index-BZab4nGe.js               19.03 kB │ gzip:   5.96 kB
+dist-demo/assets/index-CSpfeLyK.js               19.15 kB │ gzip:   6.53 kB
+dist-demo/assets/index-MTmFlxHd.js               19.41 kB │ gzip:   7.12 kB
+dist-demo/assets/index-Do3IgTkl.js               22.02 kB │ gzip:   7.18 kB
+dist-demo/assets/index-C_FrQtKY.js               25.56 kB │ gzip:   8.65 kB
+dist-demo/assets/index-C4aei9_J.js               27.51 kB │ gzip:   8.98 kB
+dist-demo/assets/index-DNz1BV5f.js               28.14 kB │ gzip:   9.80 kB
+dist-demo/assets/index-DfNI0R9-.js               31.32 kB │ gzip:  10.03 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-D80wv50K.js               33.82 kB │ gzip:  11.14 kB
+dist-demo/assets/index-B0-oduol.js               41.99 kB │ gzip:  11.48 kB
+dist-demo/assets/i18n-D4N_7Z3Q.js                46.14 kB │ gzip:  15.12 kB
+dist-demo/assets/index-Te_ftGPx.js               65.99 kB │ gzip:  18.23 kB
+dist-demo/assets/index-CA3DQUQV.js              106.83 kB │ gzip:  34.14 kB
+dist-demo/assets/schemas-aAIIjfeZ.js            125.23 kB │ gzip:  37.80 kB
+dist-demo/assets/schema-validation-DPZaQ5WH.js  150.80 kB │ gzip:  45.45 kB
+dist-demo/assets/service-Ch6xUMTa.js            233.75 kB │ gzip:  54.25 kB
+dist-demo/assets/browser-jxUWOmnq.js            256.37 kB │ gzip:  87.30 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-B4WKiqpU.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-C7Y1O7jt.js                337.13 kB │ gzip: 102.81 kB
+dist-demo/assets/contract-data-CJyvN5AM.js      375.47 kB │ gzip:  44.43 kB
+✓ built in 3.97s
+
+> node node_modules\@playwright\test\cli.js test --reporter=line
+
+Running 1126 tests using 2 workers
+
+
+(node:48060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+(node:44788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1126] [chromium] › tests\artifacts\demo-preview.spec.ts:40:1 › the built demo artifact serves the React UI and synthetic API through preview
+[2/1126] [chromium] › tests\accessibility\routes.spec.ts:17:1 › all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in the React demo
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-31076-4a8b65a7-4092-44fd-8e02-561423104062\deps\react-dom_client.js?v=d75a7405 as it exceeds the max of 500KB.
+[chromium] › tests\artifacts\demo-preview.spec.ts:40:1 › the built demo artifact serves the React UI and synthetic API through preview
+[artifact-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","browserMetrics":{"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36","viewport":{"width":1280,"height":720},"route":"/s/shop-demo/overview","domContentLoadedMs":70,"loadEventMs":70,"scriptCount":11,"scriptTransferBytes":486396,"scriptAssets":[{"file":"index-CA3DQUQV.js","transferBytes":34435,"decodedBytes":106830,"durationMs":14},{"file":"react-runtime-gLMyUIL2.js","transferBytes":90583,"decodedBytes":279787,"durationMs":18},{"file":"query-Df7VyXaF.js","transferBytes":10222,"decodedBytes":33154,"durationMs":11},{"file":"schema-validation-DPZaQ5WH.js","transferBytes":45747,"decodedBytes":150798,"durationMs":16},{"file":"i18n-D4N_7Z3Q.js","transferBytes":15416,"decodedBytes":46142,"durationMs":17},{"file":"contract-data-CJyvN5AM.js","transferBytes":44731,"decodedBytes":375469,"durationMs":16},{"file":"mui-C7Y1O7jt.js","transferBytes":103109,"decodedBytes":337133,"durationMs":18},{"file":"browser-jxUWOmnq.js","transferBytes":87599,"decodedBytes":256366,"durationMs":9},{"file":"service-Ch6xUMTa.js","transferBytes":54554,"decodedBytes":233754,"durationMs":7},{"file":"index-DS2NUcA5.js","transferBytes":0,"decodedBytes":8730,"durationMs":57},{"file":"hooks-B3LmdeSu.js","transferBytes":0,"decodedBytes":4585,"durationMs":62}]},"bundles":{"javascriptFiles":31,"totalBytes":2678582,"totalGzipBytes":753869,"initialRouteGzipBytes":489267,"proposedBudgets":{"initialRouteGzipKiB":500,"largestChunkGzipKiB":200,"basis":"Local demo preview limits for the measured Chromium artifact; not a backend or platform SLO."},"largest":[{"file":"apps/web/dist-demo/assets/contract-data-CJyvN5AM.js","bytes":375469,"gzipBytes":44431},{"file":"apps/web/dist-demo/assets/mui-C7Y1O7jt.js","bytes":337133,"gzipBytes":102809},{"file":"apps/web/dist-demo/assets/charts-B4WKiqpU.js","bytes":320234,"gzipBytes":96785},{"file":"apps/web/dist-demo/assets/react-runtime-gLMyUIL2.js","bytes":279787,"gzipBytes":90283},{"file":"apps/web/dist-demo/assets/browser-jxUWOmnq.js","bytes":256366,"gzipBytes":87299}]},"observedApi":{"path":"/api/v2/session","status":200,"servedBy":"MSW in the built demo artifact"},"dataSource":"synthetic-msw"}
+
+[3/1126] [chromium] › tests\artifacts\demo-preview.spec.ts:104:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+[chromium] › tests\artifacts\demo-preview.spec.ts:104:1 › a thousand synthetic customers remain API-paginated in the built demo artifact
+[large-dataset-api] {"url":"http://127.0.0.1:52818/api/v2/shops/shop-demo/customers?limit=20","count":20,"page":{"limit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"firstIds":["c1","c2","c3"]}
+
+[large-dataset-preview] {"scope":"FRONTEND_WITH_SYNTHETIC_MOCK_API","artifact":"apps/web/dist-demo","datasetId":"FE025-LARGE-CUSTOMERS-1000-V1","generatedRows":1000,"firstPageIds":["c1","c2","c3","c4","perf-customer-0001","perf-customer-0002","perf-customer-0003","perf-customer-0004","perf-customer-0005","perf-customer-0006","perf-customer-0007","perf-customer-0008","perf-customer-0009","perf-customer-0010","perf-customer-0011","perf-customer-0012","perf-customer-0013","perf-customer-0014","perf-customer-0015","perf-customer-0016"],"api":{"status":200,"pageLimit":20,"total":1004,"hasMore":true,"nextCursor":"perf-customer-0016"},"domRowsIncludingHeader":21,"firstPageReadyMs":135,"browser":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36","viewport":{"width":1280,"height":720},"note":"Synthetic customer identities only; the React screen renders one API page and exposes the next cursor instead of mounting the full collection."}
+
+[4/1126] [chromium] › tests\artifacts\demo-preview.spec.ts:143:1 › the production artifact contains neither the mock worker asset nor MSW fixtures/runtime
+[5/1126] [chromium] › tests\browser-runtime-identity.spec.ts:3:1 › browser context reports the major version of its actual supported browser binary
+[chromium] › tests\browser-runtime-identity.spec.ts:3:1 › browser context reports the major version of its actual supported browser binary
+BROWSER_IDENTITY engine=chromium binary=157.0.8103.38 uaMajor=157 userAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36
+
+[6/1126] [chromium] › tests\fe009.spec.ts:39:1 › workspace onboarding creates a shop with an active membership and returns to its scoped route
+[7/1126] [chromium] › tests\fe009.spec.ts:61:1 › customer create validates fields, submits through mock HTTP, and preserves edits after a stale version
+[8/1126] [chromium] › tests\fe009.spec.ts:129:1 › customer detail keeps redacted contact fields read-only and does not overwrite them on save
+[9/1126] [chromium] › tests\fe009.spec.ts:146:1 › job detail follows an export created in the current synthetic shop and can refetch it
+[10/1126] [chromium] › tests\fe009.spec.ts:181:1 › FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified
+[11/1126] [chromium] › tests\fe009.spec.ts:194:1 › FE009.G05 consent management persists challenges without granting consent before customer action
+[12/1126] [chromium] › tests\fe009.spec.ts:204:1 › FE009.H06 audit screen distinguishes available fields from missing contract detail
+[13/1126] [chromium] › tests\fe009.spec.ts:213:1 › FE009.B06 after-sale cases only link orders loaded for the selected customer and customer profile shows their shipment
+[14/1126] [chromium] › tests\fe009.spec.ts:245:1 › team invitation and membership revoke stay shop-scoped and protect the active owner
+[15/1126] [chromium] › tests\fe009.spec.ts:281:1 › privacy delete requests remain pending approval with no frontend step-up shortcut
+[16/1126] [chromium] › tests\fe010.spec.ts:40:1 › product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP
+[17/1126] [chromium] › tests\fe010.spec.ts:120:1 › product update sends If-Match and keeps edits visible after a 412 conflict
+[18/1126] [chromium] › tests\fe010.spec.ts:152:1 › warehouse role can read catalog products but cannot edit product fields or price cost data
+[19/1126] [chromium] › tests\fe010.spec.ts:161:1 › categories create, search, update with a version, and render cursor pagination
+[20/1126] [chromium] › tests\fe010.spec.ts:190:1 › CSV preview reports row-level errors and commits only valid product rows
+[21/1126] [chromium] › tests\fe010.spec.ts:262:1 › import validation token is rejected with 412 after catalog changes and the preview remains visible
+[22/1126] [chromium] › tests\fe010.spec.ts:294:1 › CSV demo row limit is explained and rejects more than 1000 data rows before preview
+[23/1126] [chromium] › tests\fe010.spec.ts:307:1 › demo upload rejects files over 5 MB before making an upload request
+[24/1126] [chromium] › tests\fe010.spec.ts:318:1 › product category lookup pages the full collection and preserves the selected category while editing
+[chromium] › tests\fe010.spec.ts:318:1 › product category lookup pages the full collection and preserves the selected category while editing
+UI005 acceptance: {"categoryTotal":105,"createCategoryId":"cat-2","editCategoryId":"cat-0","categoryRequests":20}
+
+[25/1126] [chromium] › tests\fe011.spec.ts:37:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result
+  1) [chromium] › tests\fe011.spec.ts:37:1 › FE011.AC01 snapshot drives stock totals and the SKU opens its catalog result 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('row').filter({ hasText: 'DEMO-001' })
+    Expected substring: "snapshot"
+    Received string:    "DEMO-001Mã kho: warehouse-01 · cập nhật 21:00 29/9/26Mở sản phẩm8082100.000 ₫Còn hàngĐiều chỉnh"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('row').filter({ hasText: 'DEMO-001' }) with timeout 5000ms
+      - waiting for getByRole('row').filter({ hasText: 'DEMO-001' })
+        14 × locator resolved to <tr class="MuiTableRow-root MuiTableRow-hover css-1lr2mue-MuiTableRow-root">…</tr>
+           - unexpected value "DEMO-001Mã kho: warehouse-01 · cập nhật 21:00 29/9/26Mở sản phẩm8082100.000 ₫Còn hàngĐiều chỉnh"
+
+
+      44 |     await expect(row.getByRole('cell').nth(2)).toHaveText('0');
+      45 |     await expect(row.getByRole('cell').nth(3)).toHaveText('8');
+    > 46 |     await expect(row).toContainText('snapshot');
+         |                       ^
+      47 |     await expect(row.getByRole('link', { name: 'Mở sản phẩm' })).toHaveAttribute('href', '/s/shop-demo/products?q=DEMO-001');
+      48 |     expect(calls.some(call => call.method === 'GET' && call.path === '/api/v2/shops/shop-demo')).toBeTruthy();
+      49 |     expect(calls.some(call => call.method === 'GET' && call.path.startsWith('/api/v2/shops/shop-demo/inventory?'))).toBeTruthy();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\fe011.spec.ts:46:23
+
+    Error Context: test-results\playwright-31076-4a8b65a7-4092-44fd-8e02-561423104062\fe011-FE011-AC01-snapshot--79d84-KU-opens-its-catalog-result-chromium\error-context.md
+
+    Error Context: test-results\playwright-31076-4a8b65a7-4092-44fd-8e02-561423104062\fe011-FE011-AC01-snapshot--79d84-KU-opens-its-catalog-result-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-31076-4a8b65a7-4092-44fd-8e02-561423104062\fe011-FE011-AC01-snapshot--79d84-KU-opens-its-catalog-result-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-31076-4a8b65a7-4092-44fd-8e02-561423104062\fe011-FE011-AC01-snapshot--79d84-KU-opens-its-catalog-result-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:48448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[26/1126] [chromium] › tests\fe011.spec.ts:56:1 › FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once
+[27/1126] [chromium] › tests\fe011.spec.ts:95:1 › FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically
+[28/1126] [chromium] › tests\accessibility\routes.spec.ts:84:1 › contained action buttons do not animate between contrasting enabled and disabled color pairs
+[29/1126] [chromium] › tests\fe012.spec.ts:37:1 › FE012.AC01 searchable customer and product pickers submit contract-shaped draft and reject fractional quantity
+[30/1126] [chromium] › tests\fe011.spec.ts:125:1 › FE011.AC03 forbidden adjustment retains user input and shows no success state
+[31/1126] [chromium] › tests\fe012.spec.ts:95:1 › FE012 canonical customer address choice completes the mock order flow with a versioned snapshot
+[32/1126] [chromium] › tests\fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+[chromium] › tests\fe011.spec.ts:141:1 › FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R15 OPERATION=createInventoryAdjustment RESULT=PASS
+
+[33/1126] [chromium] › tests\fe011.spec.ts:164:1 › FE011.AC04 movement contract filters are URL-backed and history exposes actor and permission-gated source
+[34/1126] [chromium] › tests\fe011.spec.ts:192:1 › FE011.AC05 inventory reflows at mobile widths, passes axe, and restores keyboard focus after adjustment dialog
+[35/1126] [chromium] › tests\fe012.spec.ts:124:1 › FE012.AC01 editing lines invalidates quote and customer consent; a new quote is required before confirmation
+[36/1126] [chromium] › tests\fe011.spec.ts:215:1 › FE011.AC03 unknown shop scope shows no stock from another shop
+[37/1126] [chromium] › tests\fe013.spec.ts:42:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote
+[38/1126] [chromium] › tests\fe013.spec.ts:68:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once
+[39/1126] [chromium] › tests\fe012.spec.ts:184:1 › FE012.AC03 mock stale-version 412 preserves draft fields and does not show success
+[40/1126] [chromium] › tests\fe012.spec.ts:201:1 › FE012.AC03 offline state blocks quote mutation while retaining the loaded draft
+[41/1126] [chromium] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+[chromium] › tests\fe012.spec.ts:213:1 › FE012.AC03 unknown confirm outcome blocks duplicate writes until shared command recovery is available
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R19 OPERATION=confirmOrder RESULT=PASS
+
+[42/1126] [chromium] › tests\fe012.spec.ts:260:1 › FE012.AC03 quote and customer confirmation expiration disable confirmation using API time
+[43/1126] [chromium] › tests\fe012.spec.ts:280:1 › FE012.AC03 returns reject fractional/over-original quantities locally and preserve data on cumulative mock rejection
+[44/1126] [chromium] › tests\fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+[45/1126] [chromium] › tests\fe012.spec.ts:304:1 › FE012.AC04 return inspection loads the current case and applies accepted partial quantity to mock stock and refund
+[46/1126] [chromium] › tests\fe012.spec.ts:357:1 › FE012.AC03 handed-over order routes to returns and exposes no ordinary cancel action
+[chromium] › tests\fe013.spec.ts:212:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R42 OPERATION=handoverShipment RESULT=PASS
+
+[47/1126] [chromium] › tests\fe013.spec.ts:262:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible
+[48/1126] [chromium] › tests\fe012.spec.ts:364:1 › FE012.AC05 order drafting remains usable without horizontal page overflow and passes focused axe checks
+[49/1126] [chromium] › tests\fe014.spec.ts:31:1 › FE014.AC01 multi-line purchase validates MOQ/pack size and binds approval to the created intent
+[50/1126] [chromium] › tests\fe015.spec.ts:59:1 › FE015.AC01 report filters use exact timezone boundaries and mock API aggregates
+[51/1126] [chromium] › tests\fe015.spec.ts:109:1 › FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot, and never writes finance data
+[52/1126] [chromium] › tests\fe015.spec.ts:130:1 › UI003 report timestamps follow the active shop timezone
+[53/1126] [chromium] › tests\fe014.spec.ts:83:1 › FE027.D02 supplier workspace edits the selected contact through its current version and displays MOQ offers
+[54/1126] [chromium] › tests\fe014.spec.ts:101:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+[chromium] › tests\fe014.spec.ts:101:1 › FE014.AC02 approval covers the exact purchase intent; unknown send is blocked from blind retry
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R46 OPERATION=sendPurchaseOrder RESULT=PASS
+
+[55/1126] [chromium] › tests\fe014.spec.ts:163:1 › FE014.S03 auto-send requires an active matching purchase delegation
+[56/1126] [chromium] › tests\fe014.spec.ts:177:1 › FE014.S04 owner manages a paused purchase delegation only after rechecking the buyer role

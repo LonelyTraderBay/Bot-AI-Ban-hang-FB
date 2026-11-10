@@ -1,0 +1,103 @@
+{
+  "recordedAt": "2026-11-10T04:24:43.571Z",
+  "status": "DELIVERED_WITH_EVIDENCE_LIMITS",
+  "verifyExitCode": 0,
+  "verifySteps": [
+    {
+      "script": "generate:check",
+      "exitCode": 0
+    },
+    {
+      "script": "test:visual-tokens",
+      "exitCode": 0
+    },
+    {
+      "script": "test:source",
+      "exitCode": 0
+    },
+    {
+      "script": "boundaries",
+      "exitCode": 0
+    },
+    {
+      "script": "lint",
+      "exitCode": 0
+    },
+    {
+      "script": "typecheck",
+      "exitCode": 0
+    },
+    {
+      "script": "test:domain",
+      "exitCode": 0
+    },
+    {
+      "script": "test",
+      "exitCode": 0
+    },
+    {
+      "script": "build",
+      "exitCode": 0
+    },
+    {
+      "script": "test:ui-composition",
+      "exitCode": 0
+    },
+    {
+      "script": "test:layout",
+      "exitCode": 0
+    },
+    {
+      "script": "test:evidence",
+      "exitCode": 0
+    }
+  ],
+  "sourceFiles": 306,
+  "sourceDrift": [],
+  "canonicalTokensUnchanged": true,
+  "restoredHistoricalOutputs": [
+    {
+      "file": "evidence/boundaries.json",
+      "sha256": "336f1840d16c25efbc84b2987c0aac4dc7c71561704f66db140668b07e72a817"
+    },
+    {
+      "file": "evidence/domain-tests.json",
+      "sha256": "3c9728bf4ac1f9d291983d73f6adab0a963426aba9f55cd8a1d191e817629c11"
+    },
+    {
+      "file": "evidence/logs/mock-typecheck.log",
+      "sha256": "a3a17eff2606b9273041f34e07776a74dd5c700fc8546a0405ecd803c4e6b467"
+    },
+    {
+      "file": "evidence/source-check.json",
+      "sha256": "576db70a2350629dc19de908874fd37f6c801c5cb9cc5760b4456eb4e3fefd91"
+    }
+  ],
+  "fullE2E": {
+    "startTime": "2026-11-10T03:36:56.028Z",
+    "duration": 2406137.489,
+    "expected": 1126,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "builtDemo": {
+    "startTime": "2026-11-10T04:17:28.810Z",
+    "duration": 196514.448,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "exactInventory": {
+    "expected": 1126,
+    "actual": 1126,
+    "exactInventory": true,
+    "everyTestPassedOnce": true
+  },
+  "limits": [
+    "54 routes lack pre-edit paired visual captures",
+    "Human screen-reader/owner acceptance and hosted CI are unverified",
+    "Local frontend/synthetic MSW evidence only"
+  ]
+}
