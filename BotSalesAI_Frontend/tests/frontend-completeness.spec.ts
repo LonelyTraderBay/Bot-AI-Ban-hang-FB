@@ -75,6 +75,7 @@ for (const detail of details) {
             await page.evaluate(() => (window as ProbeWindow).detailProbe.release?.());
             await expect(dialog.getByText('fetched-' + detail.id, { exact: false })).toBeVisible();
             await expect(dialog.getByRole('progressbar')).toHaveCount(0);
+            await expect(dialog.locator('..')).toHaveCSS('opacity', '1');
             const region = dialog.getByRole('region', { name: detail.title, exact: true });
             await region.focus();
             await expect(region).toBeFocused();

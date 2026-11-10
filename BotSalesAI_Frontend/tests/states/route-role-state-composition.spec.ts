@@ -31,9 +31,10 @@ const detailIds: Record<string, string> = {
 };
 
 function routePath(path: string) {
-    return path
+    const resolved = path
         .replace(':shopId', 'shop-demo')
         .replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
+    return path.endsWith('/finance/ledger') ? `${resolved}?fromDate=2026-09-01&toDate=2026-10-01` : resolved;
 }
 
 function canRead(route: Route, role: string) {
