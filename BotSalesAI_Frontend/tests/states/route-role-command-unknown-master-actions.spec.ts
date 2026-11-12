@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { openDemoControls } from '../session/demo-controls';
+import { openDemoControls, waitForDemoMenu } from '../session/demo-controls';
 import { startDemoServer } from '../session/demo-server.mjs';
 
 type Role = 'owner' | 'manager' | 'sales' | 'warehouse' | 'accountant' | 'bot_admin';
@@ -35,6 +35,7 @@ async function chooseMockOption(page: import('@playwright/test').Page, label: st
     if (label === 'Vai trò mô phỏng' && value === 'owner') return;
     if (label === 'Vai trò mô phỏng' || label === 'Trạng thái thử') await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
+    await waitForDemoMenu(page, label);
     await page.getByRole('option', { name: value, exact: true }).click();
     const message = label === 'Vai trò mô phỏng' ? 'Vai trò mô phỏng đã được áp dụng.' : 'Trạng thái thử đã được áp dụng.';
     await expect(page.getByRole('status').filter({ hasText: message })).toBeVisible();
@@ -43,6 +44,7 @@ async function chooseMockOption(page: import('@playwright/test').Page, label: st
 async function chooseDemoDataset(page: import('@playwright/test').Page, value: string) {
     await openDemoControls(page);
     await page.getByRole('combobox', { name: 'Dataset mô phỏng' }).click();
+    await waitForDemoMenu(page, 'Dataset mô phỏng');
     await page.getByRole('option', { name: value, exact: true }).click();
     await expect(page.getByRole('status').filter({ hasText: /^Đã (tải|khôi phục)/ })).toBeVisible();
 }
