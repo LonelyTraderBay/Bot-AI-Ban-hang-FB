@@ -197,6 +197,7 @@ export function ServiceCasesPage() {
     const [selected, setSelected] = useState<ServiceCase | null>(null), [state, setState] = useState<'assigned' | 'resolved' | 'closed'>('assigned'), [reason, setReason] = useState('');
     const relatedOrders = usePagedApi('listOrders', { query: { customerId, limit: 50 } }, Boolean(customerId) && canReadOrders);
     const selectedOrderIsValid = !orderId || relatedOrders.data?.data.some(order => order.id === orderId);
+    const startProcessing = (item: ServiceCase) => { setSelected(item); setState(item.state === 'open' ? 'assigned' : item.state); setReason(''); };
 
     return <>
         <PageHeader title="Chăm sóc sau bán" subtitle="Nhận câu hỏi, khiếu nại và yêu cầu đổi trả; không tự hứa hoàn tiền." actions={<MutationButton permission="customers.write" variant="contained" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>} />
@@ -205,12 +206,12 @@ export function ServiceCasesPage() {
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
                     <DataTable label="Yêu cầu chăm sóc sau bán" rows={list.data.data} rowKey={item => item.id} columns={[
-                        { key: 'summary', label: 'Yêu cầu', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.summary}</Typography><Typography variant="caption">{item.id}</Typography></Stack> },
+                        { key: 'summary', label: 'Yêu cầu', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.summary}</Typography><Typography variant="caption">{item.id}</Typography><Box sx={{ display: { xs: 'block', md: 'none' } }}><Button onClick={() => setDetailId(item.id)}>Chi tiết yêu cầu</Button></Box></Stack> },
                         { key: 'customer', label: 'Khách', render: item => <RouteLink to={`/s/${shop.id}/customers/${item.customerId}`}>{customers.data?.data.find(customer => customer.id === item.customerId)?.displayName || item.customerId}</RouteLink> },
                         { key: 'order', label: 'Đơn liên quan', render: item => item.orderId ? <RouteLink to={`/s/${shop.id}/orders/${item.orderId}`}>{item.orderId}</RouteLink> : 'Chưa liên kết' },
                         { key: 'type', label: 'Loại', render: item => <Status value={item.kind} /> },
                         { key: 'state', label: 'Trạng thái', render: item => <Status value={item.state} /> },
-                        { key: 'action', label: 'Thao tác', render: item => <ActionGroup direction="row"><Button onClick={() => setDetailId(item.id)}>Chi tiết yêu cầu</Button><MutationButton permission="customers.write" onClick={() => { setSelected(item); setState(item.state === 'open' ? 'assigned' : item.state); setReason(''); }}>Xử lý</MutationButton></ActionGroup> },
+                        { key: 'action', label: 'Thao tác', render: item => <ActionGroup direction="row"><Button onClick={() => setDetailId(item.id)}>Chi tiết yêu cầu</Button><MutationButton permission="customers.write" onClick={() => startProcessing(item)}>Xử lý</MutationButton></ActionGroup> },
                     ]} />
                     <Pager page={list.data.page} />
                 </>}
@@ -243,10 +244,11 @@ export function ServiceCasesPage() {
                 <Alert severity="info">Yêu cầu chỉ được liên kết với đơn đã tải từ hồ sơ khách đang chọn. Việc tạo case không xác nhận đổi trả hoặc hoàn tiền.</Alert>
             </FormFields>
         </EditDialog>
-        <EditDialog open={!!detailId} title="Chi tiết yêu cầu sau bán" onClose={() => setDetailId('')} actions={<Button onClick={() => setDetailId('')}>Đóng</Button>}>
+        <EditDialog open={!!detailId} title="Chi tiết yêu cầu sau bán" onClose={() => setDetailId('')} actions={<><Button onClick={() => setDetailId('')}>Đóng</Button>{detail.data?.data.id === detailId && <Box sx={{ display: { xs: 'block', md: 'none' } }}><MutationButton permission="customers.write" onClick={() => { setDetailId(''); startProcessing(detail.data!.data); }}>Xử lý</MutationButton></Box>}</>}>
             <QueryState query={detail}>{detail.data && <SurfaceContent>
                 <DetailLine label="Mã yêu cầu">{detail.data.data.id}</DetailLine><Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{detail.data.data.summary}</Typography>
-                <DetailLine label="Khách hàng"><RouteLink to={'/s/' + shop.id + '/customers/' + detail.data.data.customerId}>{detail.data.data.customerId}</RouteLink></DetailLine>
+                <DetailLine label="Khách hàng"><RouteLink to={'/s/' + shop.id + '/customers/' + detail.data.data.customerId}>{customers.data?.data.find(customer => customer.id === detail.data!.data.customerId)?.displayName || detail.data.data.customerId}</RouteLink></DetailLine>
+                <DetailLine label="Mã khách hàng">{detail.data.data.customerId}</DetailLine>
                 <DetailLine label="Loại"><Status value={detail.data.data.kind}/></DetailLine><DetailLine label="Trạng thái"><Status value={detail.data.data.state}/></DetailLine>
                 <DetailLine label="Cập nhật">{dateTime(detail.data.data.updatedAt, shop.timezone)}</DetailLine>
                 {detail.data.data.orderId && <DetailLine label="Đơn liên quan">{canReadOrders ? <RouteLink to={'/s/' + shop.id + '/orders/' + detail.data.data.orderId}>{detail.data.data.orderId}</RouteLink> : detail.data.data.orderId}</DetailLine>}
