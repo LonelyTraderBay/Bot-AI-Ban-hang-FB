@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "step": "S17",
   "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical. PR 20 CI correction 20261111: retained actor ID and updated accessible selectors; select values wrap under text stress. Hosted and native acceptance remain separate. Accessibility follow-up 20261111 records selected native zoom, text resize and service-case results; screen-reader and physical mobile acceptance remain open. Inbox follow-up: desktop native text-only initially found clipped conversation list text; final runs retest after wrapping. Shared dialog heading follow-up 20261111 fixes its accessible name; browser semantics and selected reflow checks are not a screen-reader speech verdict. Two named S17 tables received a scoped mobile reflow on 20261112; the remaining tables and acceptance stay open.",
-  "recordedAt": "2026-11-12T08:06:19.703Z",
+  "recordedAt": "2026-11-12T08:41:59.414Z",
   "status": "IN_PROGRESS",
   "checks": [
     {
@@ -2836,6 +2836,18 @@
         "path": "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/screen-heading/run.log",
         "sha256": "55131d8e7ff1ca99a6ff5d56521f9de8bdb4102f542a7db157934a6e6ef5cd70"
       }
+    },
+    {
+      "id": "pr21-fe013-demo-control-20261112",
+      "command": "playwright test tests/fe013.spec.ts --grep unknown handover --workers=1",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Two scoped browser tests passed after the demo control acknowledged the fault.",
+      "observed": "Two scoped browser tests passed after the demo control acknowledged the fault.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ci-pr21-20261112/fe013-test.log",
+        "sha256": "c72a706110b333e9f27abf9985acbf38d685c0d5918723c9b4a52d92402065fa"
+      }
     }
   ],
   "coverage": [
@@ -4226,7 +4238,7 @@
     "BotSalesAI_Frontend/tests/fe012-source-map.test.mjs": "096636c823514b1da90192a0a55a22cea800fa5c1de225ec60fd3ecb9b4bb98c",
     "BotSalesAI_Frontend/tests/fe012.spec.ts": "f78c87611ec7a331612ae18b97c314f3fb4f2ccf07642fc1aa99f2a5572aeff9",
     "BotSalesAI_Frontend/tests/fe013-source-map.test.mjs": "2f3086d0beee91d8890cfd352ce09df8034d0071e1516ca14e23e7565fa24260",
-    "BotSalesAI_Frontend/tests/fe013.spec.ts": "9afa75f8036f26ecfaccc5f5c5d7b81102d5a86493b51e01dcc5ee8b3f5a10d8",
+    "BotSalesAI_Frontend/tests/fe013.spec.ts": "385f345a785b439b464eb77deacf35f9f056390a931301c223d3ae98293b5d01",
     "BotSalesAI_Frontend/tests/fe014-source-map.test.mjs": "cced9f897b0765024a3990412d1cbcd4989cd38fc5bedc571037e8096fa3a5d0",
     "BotSalesAI_Frontend/tests/fe014.spec.ts": "34f16f233774ed4be6bee3d451552efbd46c730c32cdb4b946cd927ce9c2029c",
     "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "d9fecd32da5996ade5cb41a635dda25c8b8e88791064867cd81f98aeff5dd837",
@@ -4444,7 +4456,8 @@
     "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/post-inbox/diagnostic.json": "48392452a733a2701f5b1350b9a84e6084c23fcc16181758ac0752472d9e09b6",
     "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/post-inbox/run.log": "1da433d05d7ba73e88f854119e42ab0ff142ba4cd545eea6ef00a67bc60fbe5a",
     "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/screen-heading/diagnostic.json": "b60bc0e4ce81bccef9a5519f99ba55f2fb2f042c7bebb401c630aff8aad337ec",
-    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/screen-heading/run.log": "55131d8e7ff1ca99a6ff5d56521f9de8bdb4102f542a7db157934a6e6ef5cd70"
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/screen-heading/run.log": "55131d8e7ff1ca99a6ff5d56521f9de8bdb4102f542a7db157934a6e6ef5cd70",
+    "BotSalesAI_Frontend/evidence/ci-pr21-20261112/refresh-s17.mjs": "4e03b8a31db485056655f12962ea5894666613b06a3ce9164c38f2467704346f"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -4511,6 +4524,7 @@
     "TalkBack and its speech output overlay are enabled on emulator 5570, superseding the prior off state. Chrome first-run remains incomplete; BotSales TalkBack speech and physical-device acceptance are unverified.",
     "Only stock movement history and team tables were reflowed and checked in the 20261112 batch. Other multi-action and read-only tables remain open; complete states and permissions, native zoom, text-only resize, screen reader, physical mobile and owner acceptance remain unverified.",
     "Sixteen historical W30 screenshots from four previous source snapshots are blank; four new current-source clips do not recreate those historical screenshots or prove their visual baselines. Native zoom capture is scoped to Chrome DPR 2 and two scenarios.",
-    "Historical-source rechecks are new captures using current Chrome and dependencies; 106 matched recorded inputs do not establish the complete historical environment or prove original blank images. Some source fingerprints were recorded after the historical runs. Original screenshot coverage remains OPEN."
+    "Historical-source rechecks are new captures using current Chrome and dependencies; 106 matched recorded inputs do not establish the complete historical environment or prove original blank images. Some source fingerprints were recorded after the historical runs. Original screenshot coverage remains OPEN.",
+    "PR 21 Chromium shard 8 initially failed because the unknown handover response was succeeded. A scoped local test waits for the demo fault acknowledgment; the full hosted PR and exact-main checks are separate."
   ]
 }
