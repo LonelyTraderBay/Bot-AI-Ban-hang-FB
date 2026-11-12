@@ -35,9 +35,9 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
     const quoteOp = useCommand('quoteOrder', ['getOrder']);
     const record = useCommand('recordCustomerConfirmation', []);
     const confirm = useCommand('confirmOrder', ['getOrder', 'listOrders', 'listStockSnapshots', 'getDashboard', 'listWorkItems', 'listNotifications', 'listPrepJobs']);
-    const cancel = useCommand('cancelOrder', ['getOrder', 'listOrders', 'listStockSnapshots', 'listWorkItems', 'listPrepJobs']);
-    const pay = useCommand('payOrder', ['getOrder', 'listOrders', 'getCashflow', 'listFinanceEntries']);
-    const refund = useCommand('refundOrder', ['getOrder', 'listOrders', 'getCashflow']);
+    const cancel = useCommand('cancelOrder', ['getOrder', 'listOrders', 'listStockSnapshots', 'listStockMovements', 'getDashboard', 'listWorkItems', 'listPrepJobs']);
+    const pay = useCommand('payOrder', ['getOrder', 'listOrders', 'getCashflow', 'listFinanceEntries', 'listDebtItems', 'listJournals', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getDashboard']);
+    const refund = useCommand('refundOrder', ['getOrder', 'listOrders', 'getCashflow', 'listFinanceEntries', 'listJournals', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getDashboard']);
     const [quote, setQuote] = useState<OrderQuote | null>(null), [confirmation, setConfirmation] = useState<CustomerConfirmation | null>(null), [editing, setEditing] = useState(false), [action, setAction] = useState<'cancel' | 'pay' | 'refund' | 'evidence' | null>(null), [error, setError] = useState<Error | null>(null);
     const [editBusy, setEditBusy] = useState(false);
     const [hash, setHash] = useState(''), [identity, setIdentity] = useState(''), [messageId, setMessage] = useState(''), [amount, setAmount] = useState(''), [reference, setReference] = useState(''), [evidenceRef, setEvidence] = useState(''), [reason, setReason] = useState('');

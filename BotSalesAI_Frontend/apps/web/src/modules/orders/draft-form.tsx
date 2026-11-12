@@ -30,7 +30,7 @@ export function DraftForm({ initial, onSaved, onBusyChange }: {
     const [productSearch, setProductSearch] = useState('');
     const customers = usePagedApi('listCustomers', { query: { q: customerSearch.trim() || undefined, limit: 20 } }, canReadCustomers);
     const products = usePagedApi('listProducts', { query: { q: productSearch.trim() || undefined, limit: 20 } }, canReadProducts);
-    const create = useCommand('createOrder', ['listOrders']);
+    const create = useCommand('createOrder', ['listOrders', 'getDashboard']);
     const update = useCommand('updateOrderDraft', ['getOrder', 'listOrders']);
     useEffect(() => { onBusyChange?.(create.pending || update.pending); }, [create.pending, update.pending, onBusyChange]);
     const initialNotes = typeof initial?.notes === 'string' ? initial.notes : '';
