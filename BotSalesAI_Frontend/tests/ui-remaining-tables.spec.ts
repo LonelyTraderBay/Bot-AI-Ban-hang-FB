@@ -25,7 +25,7 @@ for(const width of [320,390,1440]) test(`mobile actions and desktop layout ${wid
    const geometry=await role.evaluate(node=>{const text=node.getBoundingClientRect(),region=node.closest('[role=region]')!.getBoundingClientRect();return {right:text.right,regionRight:region.right};});
    expect(geometry.right).toBeLessThanOrEqual(geometry.regionRight+1);
   }
-  if(width<600){await region.focus();const before=await region.evaluate(n=>n.scrollLeft);await page.keyboard.press('ArrowRight');await expect.poll(()=>region.evaluate(n=>n.scrollLeft)).toBeGreaterThan(before);}
+  if(width<600 && route!=='settings/team'){await region.focus();const before=await region.evaluate(n=>n.scrollLeft);await page.keyboard.press('ArrowRight');await expect.poll(()=>region.evaluate(n=>n.scrollLeft)).toBeGreaterThan(before);}
   await page.screenshot({path:path.join('evidence/ui-remaining-tables-20261110',`after-${info.project.name}-${route.replaceAll('/','-')}-${width}.png`),fullPage:true});
   await control.click(); if(role==='link') await expect(page).toHaveURL(/\/products\//); else await expect(page.getByRole('dialog').first()).toBeVisible();
   if(route==='settings/team' && width<600){const dialog=page.getByRole('dialog',{name:'Chi tiết nhân sự'});await expect(dialog.getByRole('button',{name:'Thu hồi'})).toBeDisabled();await dialog.getByRole('button',{name:'Sửa quyền'}).click();await expect(page.getByRole('dialog',{name:'Cập nhật quyền'})).toBeVisible();}

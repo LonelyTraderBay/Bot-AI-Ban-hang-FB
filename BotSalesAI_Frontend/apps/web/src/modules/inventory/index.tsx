@@ -159,7 +159,7 @@ export function MovementsPage() {
     return <>
         <PageHeader title="Lịch sử kho" subtitle="Truy nguyên mỗi thay đổi đến chứng từ và người thực hiện." actions={<RouteLink to={`/s/${shop.id}/inventory`}>Về tồn kho</RouteLink>}/>
         <Panel><Toolbar operation="listStockMovements" placeholder="Tìm SKU, mã biến thể hoặc mã chứng từ…" filters={<InventoryFilters includeVariant/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable label="Lịch sử biến động kho" rows={list.data.data} rowKey={row => row.id} columns={[
+            <DataTable reflowOnMobile label="Lịch sử biến động kho" rows={list.data.data} rowKey={row => row.id} columns={[
                 { key: 'date', label: 'Thời gian', render: row => dateTime(row.createdAt, shop.timezone) },
                 { key: 'kind', label: 'Loại', render: row => <Status domain="stockMovement" value={row.kind}/> },
                 { key: 'variant', label: 'Biến thể', render: row => variants.get(row.variantId) || `Mã biến thể: ${row.variantId}` },
