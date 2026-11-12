@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { act, cleanup, render } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { ScopeEvents } from '../src/app/ScopeEvents';
 import { ScopeContext } from '../src/shared/model/scope';
 import type { Scope } from '../src/shared/model/scope';
@@ -23,6 +23,7 @@ const scope: Scope = { membership, online: true, refreshSession,
 const cache = new QueryClient();
 const invalidate = vi.fn<QueryClient['invalidateQueries']>();
 const key = ['scope', 'user-1', 'shop-1', 1];
+const shopKey = ['shop', 'user-1', 'shop-1', 1];
 const event = (sequence: number, extra: object = {}) => ({ eventId: `event-${sequence}`, type: 'message.created', schemaVersion: 2, shopId: 'shop-1', resourceType: 'message', resourceId: 'message-1', resourceVersion: 1, occurredAt: '2026-10-08T00:00:00Z', sequence, ...extra });
 const ui = (value = scope) => <QueryClientProvider client={cache}><ScopeContext.Provider value={value}><ScopeEvents/></ScopeContext.Provider></QueryClientProvider>;
 beforeEach(() => { Stream.instances = []; invalidate.mockReset().mockResolvedValue(undefined); cache.invalidateQueries = invalidate; refreshSession.mockClear(); vi.stubGlobal('EventSource', Stream); });
@@ -53,7 +54,7 @@ it.each(['gap', 'resync', 'unrecognized', 'invalid', 'open', 'reconnect'] as con
         if (kind === 'invalid') stream.onmessage?.({ data: 'malformed-json' });
         if (kind === 'open' || kind === 'reconnect') { if (kind === 'reconnect') stream.onerror?.(); stream.onopen?.(); }
     });
-    expect(invalidate).toHaveBeenCalledExactlyOnceWith({ queryKey: key });
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
 });
 
 it('F09 revocation closes the stream and refreshes the session even when its sequence is old', () => {
@@ -84,13 +85,53 @@ it.each([
     expect(keys).not.toContainEqual(key);expect(keys).not.toContainEqual([...key,unrelated]);
     invalidate.mockClear();
     act(()=>stream.emit(event(11,{type,resourceType:'unexpected-resource'})));
-    expect(invalidate).toHaveBeenCalledExactlyOnceWith({queryKey:key});
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
     invalidate.mockClear();
     act(()=>stream.emit(event(13,{type,resourceType})));
-    expect(invalidate).toHaveBeenCalledExactlyOnceWith({queryKey:key});
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
     invalidate.mockClear();
     act(()=>stream.emit(event(14,{type,resourceType,schemaVersion:3})));
-    expect(invalidate).toHaveBeenCalledExactlyOnceWith({queryKey:key});
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
+});
+
+it.each(['journal.updated', 'opening_balance.updated'] as const)('financial event %s refreshes dashboard figures', type => {
+    render(ui());
+    act(() => Stream.instances[0].emit(event(10, { type, resourceType: type === 'journal.updated' ? 'journal' : 'opening_balance' })));
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toContainEqual([...key, 'getDashboard']);
+});
+
+it.each(['reconnect', 'gap', 'opening balance'] as const)('%s also refreshes the active Shell shop snapshot', kind => {
+    render(ui()); const stream = Stream.instances[0];
+    if (kind === 'gap') act(() => stream.emit(event(10)));
+    invalidate.mockClear();
+    act(() => {
+        if (kind === 'reconnect') { stream.onerror?.(); stream.onopen?.(); }
+        if (kind === 'gap') stream.emit(event(12));
+        if (kind === 'opening balance') stream.emit(event(11, { type: 'opening_balance.updated', resourceType: 'opening_balance' }));
+    });
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toContainEqual(shopKey);
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).not.toContainEqual(['shop', 'user-1', 'shop-2', 1]);
+});
+
+it('refetches active dashboard and Shell data after a financial event and reconnect', async () => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } });
+    let revenue = 100;
+    let shopName = 'Trước khi đổi';
+    function Consumers() {
+        const dashboard = useQuery({ queryKey: [...key, 'getDashboard'], queryFn: async () => revenue });
+        const shop = useQuery({ queryKey: shopKey, queryFn: async () => shopName });
+        return <><div>Doanh thu: {dashboard.data}</div><div>Cửa hàng: {shop.data}</div><ScopeEvents/></>;
+    }
+    render(<QueryClientProvider client={client}><ScopeContext.Provider value={scope}><Consumers/></ScopeContext.Provider></QueryClientProvider>);
+    await screen.findByText('Doanh thu: 100');
+    await screen.findByText('Cửa hàng: Trước khi đổi');
+    revenue = 250;
+    act(() => Stream.instances[0].emit(event(10, { type: 'journal.updated', resourceType: 'journal' })));
+    await screen.findByText('Doanh thu: 250');
+    shopName = 'Sau khi đổi';
+    act(() => { Stream.instances[0].onerror?.(); Stream.instances[0].onopen?.(); });
+    await waitFor(() => expect(screen.getByText('Cửa hàng: Sau khi đổi')).toBeTruthy());
+    client.clear();
 });
 
 it.each([

@@ -6,7 +6,7 @@ const read = path => readFileSync(path, 'utf8');
 const routeManifest = JSON.parse(read('../botsales-kit/contracts/route-manifest.json'));
 const openapi = JSON.parse(read('../botsales-kit/contracts/openapi.json'));
 const operations = JSON.parse(read('packages/contracts/src/operations.json'));
-const moduleSource = read('apps/web/src/modules/operations/index.tsx');
+const moduleSource = ['index.tsx', 'approvals.tsx'].map(file => read('apps/web/src/modules/operations/' + file)).join('\n');
 const mockSource = read('apps/web/src/mocks/fulfillment.ts');
 const serviceSource = read('apps/web/src/mocks/service.ts');
 

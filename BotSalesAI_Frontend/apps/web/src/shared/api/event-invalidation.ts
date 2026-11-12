@@ -8,8 +8,8 @@ const inboxReads: readonly QueryOperationId[] = [
 ];
 const warehouseReads: readonly QueryOperationId[] = ['listWarehouses', 'getWarehouse', 'listStockSnapshots', 'listStockMovements', 'listReorderRules', 'listPurchaseSuggestions', 'listPurchaseOrders', 'getPurchaseOrder', 'listOrders', 'getOrder'];
 const addressReads: readonly QueryOperationId[] = ['listCustomerAddresses', 'getCustomerAddress', 'getCustomer', 'listCustomers', 'listOrders', 'getOrder'];
-const accountReads: readonly QueryOperationId[] = ['listAccounts', 'getAccount', 'listJournals', 'getJournal', 'getProfitLoss', 'getCashflow', 'getLedger', 'getTrialBalance', 'getBalanceSheet'];
-const journalReads:readonly QueryOperationId[] = ['listJournals','getJournal','listFinanceEntries','getFinanceEntry','getLedger','getTrialBalance','getBalanceSheet','getCashflow','getProfitLoss'];
+const accountReads: readonly QueryOperationId[] = ['listAccounts', 'getAccount', 'listJournals', 'getJournal', 'getProfitLoss', 'getCashflow', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getDashboard'];
+const journalReads:readonly QueryOperationId[] = ['listJournals','getJournal','listFinanceEntries','getFinanceEntry','getLedger','getTrialBalance','getBalanceSheet','getCashflow','getProfitLoss','getDashboard'];
 const openingReads:readonly QueryOperationId[] = [...journalReads,'listOpeningBalances','getOpeningBalance','listStockSnapshots','getShop'];
 const purchaseReads: readonly QueryOperationId[] = ['listPurchaseOrders', 'getPurchaseOrder', 'listPurchaseSuggestions', 'listReorderRules'];
 /** Known resource relationships are narrowed; malformed and unknown events request full resync. */

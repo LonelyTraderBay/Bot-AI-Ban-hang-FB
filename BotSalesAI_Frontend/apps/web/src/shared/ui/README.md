@@ -131,7 +131,7 @@ Khi thay default, migrate mọi consumer liên quan cùng contract; giữ form r
 | `stats.valueGap` | INTERNAL | Stat value content | `apps/web/src/shared/ui/components.tsx` |
 | `stats.noteGap` | INTERNAL | Stat value-to-note | `apps/web/src/shared/ui/components.tsx` |
 | `pager.actionsGap` | INTERNAL | Pager action siblings/wrap | `apps/web/src/shared/ui/components.tsx` |
-| `notice.afterGap` | SPACING | Notice boundary to following content | `apps/web/src/modules/bot/index.tsx`, `apps/web/src/modules/catalog/index.tsx`, `apps/web/src/modules/finance/index.tsx`, `apps/web/src/modules/inbox/conversation-components.tsx`, `apps/web/src/modules/integrations/index.tsx`, `apps/web/src/modules/inventory/index.tsx`, `apps/web/src/modules/knowledge/index.tsx`, `apps/web/src/modules/operations/index.tsx`, `apps/web/src/modules/orders/index.tsx`, `apps/web/src/modules/reports/index.tsx`, `apps/web/src/modules/workspace/index.tsx`, `apps/web/src/shared/ui/components.tsx`, `apps/web/src/shared/ui/composition.tsx` |
+| `notice.afterGap` | SPACING | Notice boundary to following content | `apps/web/src/modules/bot/index.tsx`, `apps/web/src/modules/catalog/index.tsx`, `apps/web/src/modules/finance/index.tsx`, `apps/web/src/modules/inbox/conversation-components.tsx`, `apps/web/src/modules/integrations/index.tsx`, `apps/web/src/modules/inventory/index.tsx`, `apps/web/src/modules/knowledge/index.tsx`, `apps/web/src/modules/operations/index.tsx`, `apps/web/src/modules/orders/returns.tsx`, `apps/web/src/modules/reports/index.tsx`, `apps/web/src/modules/workspace/index.tsx`, `apps/web/src/shared/ui/components.tsx`, `apps/web/src/shared/ui/composition.tsx` |
 | `notice.contentGap` | INTERNAL | Error/partial notice content | `apps/web/src/modules/finance/index.tsx`, `apps/web/src/modules/fulfillment/index.tsx`, `apps/web/src/modules/knowledge/index.tsx`, `apps/web/src/shared/ui/components.tsx` |
 | `dialog.viewportMargin` | GEOMETRY | EditDialog/ConfirmDialog/Shell discard viewport safety | `apps/web/src/app/DraftNavigationGuard.tsx`, `apps/web/src/shared/ui/components.tsx` |
 | `dialog.descriptionAfterGap` | INTERNAL | Dialog description-to-actions content flow | `apps/web/src/shared/ui/components.tsx` |
@@ -142,7 +142,7 @@ Khi thay default, migrate mọi consumer liên quan cùng contract; giữ form r
 | `shell.mainFill` | GEOMETRY | App shell flex main fill | `apps/web/src/app/Shell.tsx` |
 | `shell.demoBanner` | SPACING | Mock disclosure banner inset | `apps/web/src/app/Shell.tsx` |
 | `shell.statusBanner` | SPACING | Shell/API/session status notice boundary | `apps/web/src/app/CommandRecovery.tsx`, `apps/web/src/app/ScopeEvents.tsx`, `apps/web/src/app/Shell.tsx` |
-| `shell.pageFallbackInset` | SPACING | Route/page fallback content | `apps/web/src/app/Shell.tsx`, `apps/web/src/app/router.tsx`, `apps/web/src/modules/workspace/index.tsx` |
+| `shell.pageFallbackInset` | SPACING | Route/page fallback content | `apps/web/src/app/Shell.tsx`, `apps/web/src/app/router.tsx`, `apps/web/src/modules/workspace/index.tsx`, `apps/web/src/modules/workspace/privacy.tsx` |
 | `shell.demoControls` | SPACING | Mock-tool sibling controls and wrapping | `apps/web/src/app/Shell.tsx` |
 | `shell.demoControl` | GEOMETRY | Mock-tool intrinsic height, bounded text-relative width and row-only flex basis | `apps/web/src/app/Shell.tsx` |
 | `shell.demoToggle` | GEOMETRY | Responsive mock-tools toggle target | `apps/web/src/app/Shell.tsx` |

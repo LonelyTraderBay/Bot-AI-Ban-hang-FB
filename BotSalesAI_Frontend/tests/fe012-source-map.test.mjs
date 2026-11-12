@@ -10,7 +10,7 @@ test('FE012 routes, operations, permissions and DTO limits map to canonical cont
         readJson('../../botsales-kit/contracts/route-manifest.json'),
         readJson('../../botsales-kit/contracts/openapi.json'),
         readJson('../packages/contracts/src/operations.json'),
-        readText('../apps/web/src/modules/orders/index.tsx'),
+        Promise.all(['index.tsx', 'draft-form.tsx', 'returns.tsx'].map(file => readText('../apps/web/src/modules/orders/' + file))).then(parts => parts.join('\n')),
         readText('../apps/web/src/app/Shell.tsx'),
         readText('../apps/web/src/modules/fulfillment/index.tsx'),
         readText('../apps/web/src/app/CommandRecovery.tsx'),
