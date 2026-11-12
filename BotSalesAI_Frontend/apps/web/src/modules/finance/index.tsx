@@ -42,8 +42,9 @@ export function CashflowPage() {
 export function EntriesPage() {
     const { shop } = useScope();
     const list = useApi('listFinanceEntries', { query: useListQuery('listFinanceEntries') });
-    const post = useCommand('postFinanceEntry', ['listFinanceEntries', 'getCashflow', 'getProfitLoss', 'listJournals']);
-    const reverse = useCommand('reverseFinanceEntry', ['listFinanceEntries', 'getCashflow', 'getProfitLoss', 'listJournals']);
+    const affected = ['listFinanceEntries', 'getFinanceEntry', 'listJournals', 'getJournal', 'listDebtItems', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getCashflow', 'getProfitLoss', 'getDashboard'] as const;
+    const post = useCommand('postFinanceEntry', affected);
+    const reverse = useCommand('reverseFinanceEntry', affected);
     const [entryId, setEntryId] = useState<string | null>(null);
     const detail = useApi('getFinanceEntry', { path: { entryId: entryId || '' } }, Boolean(entryId));
     const selectedEntry = detail.data?.data;

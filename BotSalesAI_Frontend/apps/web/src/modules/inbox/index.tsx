@@ -98,7 +98,7 @@ function ConversationPanel({ conversationId }: {
     const messages = useApi('listMessages', { path: { conversationId }, query: { cursor: messageCursor, limit: 100 } });
     const takeover = useCommand('takeoverConversation', ['getConversation', 'listConversations']);
     const release = useCommand('releaseConversation', ['getConversation', 'listConversations']);
-    const resolve = useCommand('resolveConversation', ['getConversation', 'listConversations']);
+    const resolve = useCommand('resolveConversation', ['getConversation', 'listConversations', 'getDashboard']);
     const feedback = useCommand('createFeedback', ['listFeedback']);
     const [action, setAction] = useState<'takeover' | 'release' | 'resolve' | null>(null);
     const [ratingMessage, setRatingMessage] = useState<Message | null>(null);

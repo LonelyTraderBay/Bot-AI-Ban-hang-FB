@@ -1,10 +1,177 @@
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
 let url = '';
 let close: (() => Promise<void>) | undefined;
 test.beforeAll(async () => { const server = await startDemoServer(); url = server.url; close = server.close; });
 test.afterAll(async () => close?.());
+
+async function disconnectEvents(page: Page) {
+    await page.addInitScript(() => {
+        class DisconnectedStream {
+            onopen = null; onmessage = null; onerror = null;
+            close() {}
+        }
+        Object.defineProperty(window, 'EventSource', { value: DisconnectedStream });
+    });
+}
+
+test('finance entry detail follows posting and reversal without SSE', async ({ page }) => {
+    await disconnectEvents(page);
+    await page.goto(`${url}/s/shop-demo/finance/entries`);
+    await page.getByRole('button', { name: 'Tạo phiếu', exact: true }).click();
+    const editor = page.getByRole('dialog', { name: 'Phiếu thu chi mới' });
+    await editor.getByLabel('Số tiền (VND)').fill('10000');
+    await editor.getByLabel('Thời điểm ISO 8601').fill('2026-09-29T14:00:00Z');
+    await editor.getByLabel('Diễn giải', { exact: true }).fill('Kiểm tra đồng bộ phiếu');
+    const created = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/finance/entries'));
+    await editor.getByRole('button', { name: 'Lưu nháp' }).click();
+    const entry = (await (await created).json()).data;
+    await expect(editor).toBeHidden();
+    await page.getByRole('row').filter({ hasText: entry.id }).getByRole('button', { name: 'Chi tiết', exact: true }).click();
+    const detail = page.getByRole('dialog', { name: `Chứng từ ${entry.id}` });
+    await detail.getByRole('button', { name: 'Ghi sổ', exact: true }).click();
+    const post = page.getByRole('dialog', { name: 'Ghi sổ phiếu đã kiểm' });
+    await post.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Kiểm tra đồng bộ phiếu');
+    const posted = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/finance/entries/${entry.id}/post`));
+    await post.getByRole('button', { name: 'Ghi sổ phiếu', exact: true }).click();
+    expect((await posted).status()).toBe(202);
+    await expect(post).toBeHidden();
+    await expect(detail.getByRole('button', { name: 'Đảo phiếu', exact: true })).toBeVisible();
+    await expect(detail.getByRole('button', { name: 'Ghi sổ', exact: true })).toHaveCount(0);
+    await detail.getByRole('button', { name: 'Đảo phiếu', exact: true }).click();
+    const reverse = page.getByRole('dialog', { name: 'Đảo phiếu đã ghi' });
+    await reverse.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Đối chiếu việc đảo phiếu');
+    const reversed = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/finance/entries/${entry.id}/reverse`));
+    await reverse.getByRole('button', { name: 'Đảo phiếu', exact: true }).click();
+    expect((await reversed).status()).toBe(202);
+    await expect(reverse).toBeHidden();
+    await expect(detail.getByRole('button', { name: 'Đảo phiếu', exact: true })).toHaveCount(0);
+    await expect(detail).toContainText('Đã đảo');
+});
+
+test('resolved conversation updates dashboard count without SSE', async ({ page }) => {
+    await disconnectEvents(page);
+    await page.goto(`${url}/s/shop-demo/inbox/cv1`);
+    await expect(page.getByRole('button', { name: 'Giải quyết', exact: true })).toBeEnabled();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    const count = page.locator('main a[href="/s/shop-demo/inbox"]');
+    await expect(count).toHaveText('4');
+    await page.goBack();
+    await page.getByRole('button', { name: 'Giải quyết', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Đánh dấu đã giải quyết' });
+    await dialog.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Kiểm tra đồng bộ hội thoại');
+    const result = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/resolve'));
+    await dialog.getByRole('button', { name: 'Đánh dấu đã giải quyết', exact: true }).click();
+    expect((await result).status()).toBe(202);
+    await expect(dialog).toBeHidden();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    await expect(count).toHaveText('3');
+});
+
+test('cancelled order updates dashboard count without SSE', async ({ page }) => {
+    await disconnectEvents(page);
+    await page.goto(`${url}/s/shop-demo/orders/DH-1001`);
+    await expect(page.getByRole('button', { name: 'Hủy đơn', exact: true })).toBeEnabled();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    const count = page.locator('main a[href="/s/shop-demo/orders"]').first();
+    await expect(count).toHaveText('1');
+    await page.goBack();
+    await page.getByRole('button', { name: 'Hủy đơn', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Hủy đơn hàng' });
+    await dialog.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Kiểm tra đồng bộ đơn hàng');
+    const result = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/cancel'));
+    await dialog.getByRole('button', { name: 'Hủy đơn hàng', exact: true }).click();
+    expect((await result).status()).toBe(202);
+    await expect(dialog).toBeHidden();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    await expect(count).toHaveText('0');
+});
+
+test('created order updates dashboard count without SSE', async ({ page }) => {
+    await disconnectEvents(page);
+    await page.goto(`${url}/s/shop-demo/overview`);
+    const count = page.locator('main a[href="/s/shop-demo/orders"]').first();
+    await expect(count).toHaveText('1');
+    await page.getByRole('link', { name: 'Tạo đơn hàng', exact: true }).click();
+    await page.getByRole('combobox', { name: 'Khách hàng', exact: true }).click();
+    await page.getByRole('option', { name: 'Linh (khách mẫu)', exact: true }).click();
+    await page.getByRole('combobox', { name: 'Sản phẩm 1', exact: true }).click();
+    await page.getByRole('option', { name: 'Áo thun Essential · L · Than · AO-002', exact: true }).click();
+    const created = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders'));
+    await page.getByRole('button', { name: 'Lưu đơn nháp', exact: true }).click();
+    expect((await created).status()).toBe(201);
+    await expect(page.getByRole('heading', { name: /^Đơn order-/ })).toBeVisible();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    await expect(count).toHaveText('2');
+});
+
+test('posted receipt updates dashboard and ledger without SSE', async ({ page }) => {
+    await disconnectEvents(page);
+    await page.goto(`${url}/s/shop-demo/finance/ledger?fromDate=2026-09-01&toDate=2026-10-01`);
+    await expect(page.getByRole('heading', { name: 'Sổ cái', exact: true })).toBeVisible();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Sổ thu chi', exact: true }).click();
+    await page.getByRole('button', { name: 'Tạo phiếu', exact: true }).click();
+    const editor = page.getByRole('dialog', { name: 'Phiếu thu chi mới' });
+    await editor.getByRole('combobox', { name: 'Loại phiếu' }).click();
+    await page.getByRole('option', { name: 'Thu tiền', exact: true }).click();
+    await editor.getByRole('combobox', { name: 'Phân loại' }).click();
+    await page.getByRole('option', { name: 'Thu bán hàng', exact: true }).click();
+    await editor.getByLabel('Số tiền (VND)').fill('10000');
+    await editor.getByLabel('Thời điểm ISO 8601').fill('2026-09-29T14:00:00Z');
+    await editor.getByLabel('Diễn giải', { exact: true }).fill('Thu bán hàng kiểm tra liên trang');
+    const created = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/finance/entries'));
+    await editor.getByRole('button', { name: 'Lưu nháp' }).click();
+    const entry = (await (await created).json()).data;
+    await expect(editor).toBeHidden();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    await expect(page.getByText('Doanh thu đã ghi nhận')).toBeVisible();
+    await page.goBack();
+    await page.getByRole('row').filter({ hasText: entry.id }).getByRole('button', { name: 'Chi tiết', exact: true }).click();
+    const detail = page.getByRole('dialog', { name: `Chứng từ ${entry.id}` });
+    await detail.getByRole('button', { name: 'Ghi sổ', exact: true }).click();
+    const post = page.getByRole('dialog', { name: 'Ghi sổ phiếu đã kiểm' });
+    await post.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Ghi sổ để kiểm tra báo cáo');
+    await post.getByRole('button', { name: 'Ghi sổ phiếu', exact: true }).click();
+    await expect(post).toBeHidden();
+    await expect(detail.getByRole('button', { name: 'Đảo phiếu', exact: true })).toBeVisible();
+    await detail.getByRole('button', { name: 'Đóng', exact: true }).last().click();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    await expect(page.getByText('10.000 ₫', { exact: true })).toHaveCount(2);
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Sổ cái', exact: true }).click();
+    await page.getByLabel('Từ ngày', { exact: true }).fill('2026-09-01');
+    await page.getByLabel('Đến trước ngày', { exact: true }).fill('2026-10-01');
+    await expect(page.getByRole('table', { name: 'Sổ cái theo chứng từ' })).toContainText('Thu bán hàng kiểm tra liên trang');
+});
+
+test('order payment updates dashboard cash and finance entries without SSE', async ({ page }) => {
+    await disconnectEvents(page);
+    await page.goto(`${url}/s/shop-demo/orders/DH-1001`);
+    await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
+    await page.getByRole('button', { name: 'Mô phỏng khách đồng ý báo giá' }).click();
+    const confirmed = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/confirm'));
+    await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();
+    expect((await confirmed).status()).toBe(202);
+    await expect(page.getByRole('button', { name: 'Ghi nhận tiền đã thu' })).toBeVisible();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    const cash = page.getByText('Tiền đã thu', { exact: true }).locator('..');
+    await expect(cash).toContainText('0 ₫');
+    await page.goBack();
+    await page.getByRole('button', { name: 'Ghi nhận tiền đã thu' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Ghi nhận tiền đã thu' });
+    await dialog.getByLabel('Mã tham chiếu giao dịch').fill('SYNC-PAYMENT-01');
+    await dialog.getByLabel('Mã chứng từ đã xác minh').fill('SYNC-EVIDENCE-01');
+    await dialog.getByLabel('Lý do').fill('Kiểm tra đồng bộ thanh toán');
+    const paid = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/pay'));
+    await dialog.getByRole('button', { name: 'Ghi nhận chứng từ' }).click();
+    expect((await paid).status()).toBe(202);
+    await expect(dialog).toBeHidden();
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    await expect(cash).toContainText('249.000 ₫');
+    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Sổ thu chi', exact: true }).click();
+    await expect(page.getByRole('table', { name: 'Chứng từ thu chi' })).toContainText('Kiểm tra đồng bộ thanh toán');
+});
 
 test('posted journal refreshes the dashboard across pages without relying on SSE', async ({ page }) => {
     await page.addInitScript(() => {

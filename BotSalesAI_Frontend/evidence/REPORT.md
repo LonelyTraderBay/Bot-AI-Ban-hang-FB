@@ -1,5 +1,9 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Đồng bộ dữ liệu khi SSE gián đoạn — 13/11/2026
+
+Phạm vi frontend/MSW: sửa làm mới chi tiết phiếu, dashboard và các báo cáo phụ thuộc sau thao tác thành công. [Contract và baseline](data-sync-followup-20261113/CONTRACT.md), [kết quả và giới hạn](data-sync-followup-20261113/RESULT.md). Không đóng S17, backend, hosted CI hoặc owner acceptance.
+
 ## Tách trách nhiệm orders, operations, workspace — 13/11/2026
 
 Phạm vi frontend/MSW: tách code theo trách nhiệm trong ba module, giữ public route và dữ liệu; [contract/baseline](module-structure-20261113/CONTRACT.md), [kết quả và giới hạn](module-structure-20261113/RESULT.md). Các kiểm tra ở đây không đóng S17, backend, hosted CI hoặc owner acceptance.
