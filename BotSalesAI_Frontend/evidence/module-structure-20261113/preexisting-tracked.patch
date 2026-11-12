@@ -1,0 +1,321 @@
+diff --git a/BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx b/BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx
+index 1d5e8b20..bc04c3c9 100644
+--- a/BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx
++++ b/BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx
+@@ -17,9 +17,14 @@ export function ScopeEvents() {
+         const seen = new Set<string>();
+         const stream = new EventSource(operationUrl('subscribeEvents', { shopId: shop.id }), { withCredentials: true });
+         const key = ['scope', session.user.id, shop.id, membership.permissionVersion];
++        const shopKey = ['shop', session.user.id, shop.id, membership.permissionVersion];
++        const resync = () => {
++            void cache.invalidateQueries({ queryKey: key });
++            void cache.invalidateQueries({ queryKey: shopKey });
++        };
+         stream.onopen = () => { if (live) {
+             setDisconnected(false);
+-            void cache.invalidateQueries({ queryKey: key });
++            resync();
+         } };
+         stream.onerror = () => { if (live)
+             setDisconnected(true); };
+@@ -46,10 +51,11 @@ export function ScopeEvents() {
+                 const affected = gap ? null : eventInvalidations(payload);
+                 if (affected) {
+                     for (const operation of affected) void cache.invalidateQueries({ queryKey: [...key, operation] });
+-                } else void cache.invalidateQueries({ queryKey: key });
++                    if (affected.includes('getShop')) void cache.invalidateQueries({ queryKey: shopKey });
++                } else resync();
+             }
+             catch {
+-                void cache.invalidateQueries({ queryKey: key });
++                resync();
+             }
+         };
+         return () => { live = false; stream.close(); };
+diff --git a/BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx b/BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx
+index 81f261d9..0d7c0e69 100644
+--- a/BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx
++++ b/BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx
+@@ -1,18 +1,17 @@
+ import {visualSx} from '@/shared/ui/visual';
+-import {JournalEditor} from './journal-editor';
++import { JournalsPage as JournalsView } from './journals';
+ import {FinanceEntryEditor,financeEntryClasses as classes} from './entry-editor';
+ import {StatementDialog} from './statement-import';
+ import {BookProvenance,CreatePeriodDialog} from './management';
+ import {ReportWarnings} from './report-warnings';
+ export {OpeningBalancesPage,LedgerPage,TrialBalancePage,BalanceSheetPage} from './management';
+ import {useReportRange,ReportRangeFields} from './report-range';
+-import {label as businessLabel} from '@/shared/model/labels';
+ export { AccountsPage } from './accounts';
+ import { ActionGroup, FormFields, PageSections, SurfaceContent } from '../../shared/ui/composition';
+ import { useState, type SyntheticEvent } from 'react';
+ import { useSearchParams } from 'react-router-dom';
+ import { Alert, Box, Button, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
+-import type { AccountingPeriod, CODSettlement, FinanceEntry, Journal, ReconciliationCase } from '@botsales/contracts';
++import type { AccountingPeriod, CODSettlement, FinanceEntry, ReconciliationCase } from '@botsales/contracts';
+ import { useApi, useCommand, usePagedApi } from '../../shared/api/hooks';
+ import { useScope } from '../../shared/model/scope';
+ import { useListQuery } from '../../shared/model/filters';
+@@ -21,6 +20,8 @@ import { Amount, ConfirmDialog, DataTable, DetailLine, EditDialog, ErrorNotice,
+ import { explainProfitLoss, profitLossQuestions, type ProfitLossQuestionId } from './report-explanations';
+ import { layoutSx } from '../../shared/ui/layout';
+ 
++export function JournalsPage() { return <JournalsView />; }
++
+ function decimalUnits(value: string): bigint | null {
+     if (!/^\d+(\.\d{1,4})?$/.test(value)) return null;
+     const [whole = '', fraction = ''] = value.split('.');
+@@ -118,32 +119,6 @@ export function ProfitLossPage() {
+         </QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}
+     </>;
+ }
+-export function JournalsPage() {
+-    const list = useApi('listJournals', { query: useListQuery('listJournals') });
+-    const [journalParams,setJournalParams]=useSearchParams();
+-    const viewId=journalParams.get('journalId');
+-    const setViewId=(id:string|null)=>{const next=new URLSearchParams(journalParams);if(id)next.set('journalId',id);else next.delete('journalId');setJournalParams(next);};
+-    const detail = useApi('getJournal', { path: { resourceId: viewId || '' } }, Boolean(viewId));
+-    const viewedJournal = detail.data?.data;
+-    const post=useCommand('postJournal',['listJournals','getJournal','getLedger','getTrialBalance','getBalanceSheet','getProfitLoss','getCashflow']),reverse=useCommand('reverseJournal',['listJournals','getJournal','getLedger','getTrialBalance','getBalanceSheet','getProfitLoss','getCashflow']);
+-    const [open,setOpen]=useState(false),[replacement,setReplacement]=useState<Journal|null>(null),[saved,setSaved]=useState(false),[selected,setSelected]=useState<{journal:Journal;action:'post'|'reverse'}|null>(null);
+-    return <>{saved&&<Alert severity="success" role="status">Đã lưu bút toán nháp; kiểm lại trước khi ghi.</Alert>}<PageHeader title="Bút toán" subtitle="Sổ kép có chứng từ nguồn, kiểm cân bằng tại API và không sửa bút toán đã ghi." actions={<MutationButton permission="finance.post" variant="contained" onClick={() => {setReplacement(null);setOpen(true);}}>Tạo bút toán nháp</MutationButton>}/><Panel><Toolbar operation="listJournals"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable label="Danh sách bút toán" rows={list.data.data} rowKey={journal => journal.id} columns={[
+-        { key: 'id', label: 'Bút toán', render: journal => <Button onClick={() => setViewId(journal.id)}>{journal.id}</Button> },
+-        { key: 'date', label: 'Ngày hiệu lực', render: journal => formatDateOnly(journal.effectiveDate) },
+-        { key: 'source', label: 'Nguồn', render: journal => `${businessLabel(journal.sourceType)} / Mã chứng từ: ${journal.sourceId}` },
+-        { key: 'state', label: 'Trạng thái', render: journal => <Status value={journal.status}/> },
+-        { key: 'actions', label: 'Thao tác', render: journal => <Button onClick={() => setViewId(journal.id)}>Chi tiết</Button> },
+-    ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
+-    <EditDialog open={Boolean(viewId)} title={viewedJournal ? `Bút toán ${viewedJournal.id}` : 'Đang tải bút toán'} onClose={() => setViewId(null)} actions={<Button onClick={() => setViewId(null)}>Đóng</Button>}><QueryState query={detail}>{viewedJournal && <><Status value={viewedJournal.status}/><DataTable label="Các dòng của bút toán" rows={viewedJournal.lines.map((line, index) => ({ ...line, key: String(index) }))} rowKey={line => line.key} columns={[
+-        { key: 'account', label: 'Tài khoản', render: line => line.accountId },
+-        { key: 'debit', label: 'Nợ', render: line => <Amount value={line.debit}/> },
+-        { key: 'credit', label: 'Có', render: line => <Amount value={line.credit}/> },
+-        { key: 'note', label: 'Diễn giải', render: line => line.description },
+-    ]}/><DetailLine label="Chính sách">{viewedJournal.policyVersion}</DetailLine><DetailLine label="Bút toán gốc">{viewedJournal.reversalOf || '—'}</DetailLine>{viewedJournal.status==='reversed'&&!['opening_balance','finance_entry','goods_receipt','shipment_dispatch','order_delivery','return_inspection','stock_adjustment'].includes(viewedJournal.sourceType)&&<MutationButton permission="finance.post" onClick={()=>{setReplacement(viewedJournal);setViewId(null);setOpen(true);}}>Thay thế bút toán</MutationButton>}{viewedJournal.status === 'draft' && <MutationButton permission="finance.post" onClick={() => setSelected({ journal: viewedJournal, action: 'post' })}>Ghi sổ</MutationButton>}{viewedJournal.status === 'posted' && !['opening_balance','finance_entry','goods_receipt','shipment_dispatch','order_delivery','return_inspection','stock_adjustment'].includes(viewedJournal.sourceType) && <MutationButton permission="finance.post" onClick={() => setSelected({ journal: viewedJournal, action: 'reverse' })}>Đảo bút toán</MutationButton>}</>}</QueryState></EditDialog>
+-    {open&&<JournalEditor key={replacement?.id||'new'} replacement={replacement} onClose={()=>setOpen(false)} onSaved={()=>setSaved(true)}/>}
+-    <ConfirmDialog open={!!selected} title={selected?.action === 'post' ? 'Ghi sổ bút toán' : 'Đảo bút toán'} confirmLabel={selected?.action === "post" ? "Ghi sổ bút toán" : "Đảo bút toán"} description={`Bút toán ${selected?.journal.id || ""}: ${selected?.action === "post" ? "ghi vào sổ sau khi kiểm kỳ, cân bằng và nguồn chứng từ; bản đã ghi không được sửa trực tiếp." : "tạo bút toán đảo, giữ nguyên chứng từ gốc và lịch sử."}`} requireReason={selected?.action === 'reverse'} onClose={() => setSelected(null)} error={post.error || reverse.error} busy={post.pending || reverse.pending} onConfirm={confirmReason => selected?.action === 'post' ? post.execute({ path: { resourceId: selected.journal.id }, body: { expectedVersion: selected.journal.version } }) : reverse.execute({ path: { resourceId: selected?.journal.id || '' }, body: { expectedVersion: selected?.journal.version || 1, reason: confirmReason } })}/></>;
+-}
+-
+ export function ReconciliationPage() {
+     const { shop } = useScope();
+     const [params, setParams] = useSearchParams();
+diff --git a/BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx b/BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx
+index 2f541f59..cb0dbae5 100644
+--- a/BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx
++++ b/BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx
+@@ -89,7 +89,7 @@ export function OpeningBalancesPage() {
+     const [open,setOpen]=useState(false),[selected,setSelected]=useState<OpeningBalance|null>(null),[postRow,setPostRow]=useState<OpeningBalance|null>(null),[success,setSuccess]=useState('');
+     const detail=useApi('getOpeningBalance',{path:{openingId:selected?.id||''}},open&&Boolean(selected));
+     const accounts=usePagedApi('listAccounts',{query:{status:'active'}}),warehouses=usePagedApi('listWarehouses',{query:{status:'active'}}),products=usePagedApi('listProducts',{query:{status:'active'}});
+-    const create=useCommand('createOpeningBalance',['listOpeningBalances']),update=useCommand('updateOpeningBalance',['listOpeningBalances','getOpeningBalance']),post=useCommand('postOpeningBalance',['listOpeningBalances','getOpeningBalance','listStockSnapshots','getLedger','getTrialBalance','getBalanceSheet','getProfitLoss','getCashflow','listJournals']);
++    const create=useCommand('createOpeningBalance',['listOpeningBalances']),update=useCommand('updateOpeningBalance',['listOpeningBalances','getOpeningBalance']),post=useCommand('postOpeningBalance',['listOpeningBalances','getOpeningBalance','listStockSnapshots','getLedger','getTrialBalance','getBalanceSheet','getProfitLoss','getCashflow','listJournals','getDashboard']);
+     const empty:OpeningFields={effectiveDate:dateOnlyInTimezone(new Date(),shop.timezone),policyVersion:'synthetic-policy-1',reason:'',lines:[],inventory:[]};
+     const form=useForm<OpeningFields>({defaultValues:empty,resolver:zodResolver(openingSchema)});useWatch({control:form.control});
+     const lines=useFieldArray({control:form.control,name:'lines'}),inventory=useFieldArray({control:form.control,name:'inventory'}),formRef=useRef<HTMLFormElement|null>(null);
+diff --git a/BotSalesAI_Frontend/apps/web/src/shared/api/event-invalidation.ts b/BotSalesAI_Frontend/apps/web/src/shared/api/event-invalidation.ts
+index 0a5e184b..c157b938 100644
+--- a/BotSalesAI_Frontend/apps/web/src/shared/api/event-invalidation.ts
++++ b/BotSalesAI_Frontend/apps/web/src/shared/api/event-invalidation.ts
+@@ -8,8 +8,8 @@ const inboxReads: readonly QueryOperationId[] = [
+ ];
+ const warehouseReads: readonly QueryOperationId[] = ['listWarehouses', 'getWarehouse', 'listStockSnapshots', 'listStockMovements', 'listReorderRules', 'listPurchaseSuggestions', 'listPurchaseOrders', 'getPurchaseOrder', 'listOrders', 'getOrder'];
+ const addressReads: readonly QueryOperationId[] = ['listCustomerAddresses', 'getCustomerAddress', 'getCustomer', 'listCustomers', 'listOrders', 'getOrder'];
+-const accountReads: readonly QueryOperationId[] = ['listAccounts', 'getAccount', 'listJournals', 'getJournal', 'getProfitLoss', 'getCashflow', 'getLedger', 'getTrialBalance', 'getBalanceSheet'];
+-const journalReads:readonly QueryOperationId[] = ['listJournals','getJournal','listFinanceEntries','getFinanceEntry','getLedger','getTrialBalance','getBalanceSheet','getCashflow','getProfitLoss'];
++const accountReads: readonly QueryOperationId[] = ['listAccounts', 'getAccount', 'listJournals', 'getJournal', 'getProfitLoss', 'getCashflow', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getDashboard'];
++const journalReads:readonly QueryOperationId[] = ['listJournals','getJournal','listFinanceEntries','getFinanceEntry','getLedger','getTrialBalance','getBalanceSheet','getCashflow','getProfitLoss','getDashboard'];
+ const openingReads:readonly QueryOperationId[] = [...journalReads,'listOpeningBalances','getOpeningBalance','listStockSnapshots','getShop'];
+ const purchaseReads: readonly QueryOperationId[] = ['listPurchaseOrders', 'getPurchaseOrder', 'listPurchaseSuggestions', 'listReorderRules'];
+ /** Known resource relationships are narrowed; malformed and unknown events request full resync. */
+diff --git a/BotSalesAI_Frontend/apps/web/tests/scope-events.test.tsx b/BotSalesAI_Frontend/apps/web/tests/scope-events.test.tsx
+index ceaedb98..db53fb58 100644
+--- a/BotSalesAI_Frontend/apps/web/tests/scope-events.test.tsx
++++ b/BotSalesAI_Frontend/apps/web/tests/scope-events.test.tsx
+@@ -1,6 +1,6 @@
+ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+-import { act, cleanup, render } from '@testing-library/react';
+-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
++import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
++import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+ import { ScopeEvents } from '../src/app/ScopeEvents';
+ import { ScopeContext } from '../src/shared/model/scope';
+ import type { Scope } from '../src/shared/model/scope';
+@@ -23,6 +23,7 @@ const scope: Scope = { membership, online: true, refreshSession,
+ const cache = new QueryClient();
+ const invalidate = vi.fn<QueryClient['invalidateQueries']>();
+ const key = ['scope', 'user-1', 'shop-1', 1];
++const shopKey = ['shop', 'user-1', 'shop-1', 1];
+ const event = (sequence: number, extra: object = {}) => ({ eventId: `event-${sequence}`, type: 'message.created', schemaVersion: 2, shopId: 'shop-1', resourceType: 'message', resourceId: 'message-1', resourceVersion: 1, occurredAt: '2026-10-08T00:00:00Z', sequence, ...extra });
+ const ui = (value = scope) => <QueryClientProvider client={cache}><ScopeContext.Provider value={value}><ScopeEvents/></ScopeContext.Provider></QueryClientProvider>;
+ beforeEach(() => { Stream.instances = []; invalidate.mockReset().mockResolvedValue(undefined); cache.invalidateQueries = invalidate; refreshSession.mockClear(); vi.stubGlobal('EventSource', Stream); });
+@@ -53,7 +54,7 @@ it.each(['gap', 'resync', 'unrecognized', 'invalid', 'open', 'reconnect'] as con
+         if (kind === 'invalid') stream.onmessage?.({ data: 'malformed-json' });
+         if (kind === 'open' || kind === 'reconnect') { if (kind === 'reconnect') stream.onerror?.(); stream.onopen?.(); }
+     });
+-    expect(invalidate).toHaveBeenCalledExactlyOnceWith({ queryKey: key });
++    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
+ });
+ 
+ it('F09 revocation closes the stream and refreshes the session even when its sequence is old', () => {
+@@ -84,13 +85,53 @@ it.each([
+     expect(keys).not.toContainEqual(key);expect(keys).not.toContainEqual([...key,unrelated]);
+     invalidate.mockClear();
+     act(()=>stream.emit(event(11,{type,resourceType:'unexpected-resource'})));
+-    expect(invalidate).toHaveBeenCalledExactlyOnceWith({queryKey:key});
++    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
+     invalidate.mockClear();
+     act(()=>stream.emit(event(13,{type,resourceType})));
+-    expect(invalidate).toHaveBeenCalledExactlyOnceWith({queryKey:key});
++    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
+     invalidate.mockClear();
+     act(()=>stream.emit(event(14,{type,resourceType,schemaVersion:3})));
+-    expect(invalidate).toHaveBeenCalledExactlyOnceWith({queryKey:key});
++    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
++});
++
++it.each(['journal.updated', 'opening_balance.updated'] as const)('financial event %s refreshes dashboard figures', type => {
++    render(ui());
++    act(() => Stream.instances[0].emit(event(10, { type, resourceType: type === 'journal.updated' ? 'journal' : 'opening_balance' })));
++    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toContainEqual([...key, 'getDashboard']);
++});
++
++it.each(['reconnect', 'gap', 'opening balance'] as const)('%s also refreshes the active Shell shop snapshot', kind => {
++    render(ui()); const stream = Stream.instances[0];
++    if (kind === 'gap') act(() => stream.emit(event(10)));
++    invalidate.mockClear();
++    act(() => {
++        if (kind === 'reconnect') { stream.onerror?.(); stream.onopen?.(); }
++        if (kind === 'gap') stream.emit(event(12));
++        if (kind === 'opening balance') stream.emit(event(11, { type: 'opening_balance.updated', resourceType: 'opening_balance' }));
++    });
++    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toContainEqual(shopKey);
++    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).not.toContainEqual(['shop', 'user-1', 'shop-2', 1]);
++});
++
++it('refetches active dashboard and Shell data after a financial event and reconnect', async () => {
++    const client = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } });
++    let revenue = 100;
++    let shopName = 'Trước khi đổi';
++    function Consumers() {
++        const dashboard = useQuery({ queryKey: [...key, 'getDashboard'], queryFn: async () => revenue });
++        const shop = useQuery({ queryKey: shopKey, queryFn: async () => shopName });
++        return <><div>Doanh thu: {dashboard.data}</div><div>Cửa hàng: {shop.data}</div><ScopeEvents/></>;
++    }
++    render(<QueryClientProvider client={client}><ScopeContext.Provider value={scope}><Consumers/></ScopeContext.Provider></QueryClientProvider>);
++    await screen.findByText('Doanh thu: 100');
++    await screen.findByText('Cửa hàng: Trước khi đổi');
++    revenue = 250;
++    act(() => Stream.instances[0].emit(event(10, { type: 'journal.updated', resourceType: 'journal' })));
++    await screen.findByText('Doanh thu: 250');
++    shopName = 'Sau khi đổi';
++    act(() => { Stream.instances[0].onerror?.(); Stream.instances[0].onopen?.(); });
++    await waitFor(() => expect(screen.getByText('Cửa hàng: Sau khi đổi')).toBeTruthy());
++    client.clear();
+ });
+ 
+ it.each([
+diff --git a/BotSalesAI_Frontend/evidence/REPORT.md b/BotSalesAI_Frontend/evidence/REPORT.md
+index 7fb5903f..b847c448 100644
+--- a/BotSalesAI_Frontend/evidence/REPORT.md
++++ b/BotSalesAI_Frontend/evidence/REPORT.md
+@@ -1,4 +1,8 @@
+ # Báo cáo Frontend — nguồn kết quả hiện hành
++
++## Đồng bộ cache liên trang và tách trang bút toán — 12/11/2026
++
++Phạm vi frontend/MSW: làm mới dashboard khi bút toán thay đổi, đồng bộ cache cửa hàng của Shell khi resync và tách R48 trong module finance. [Contract và baseline](data-sync-20261112/CONTRACT.md), [kết quả kiểm chứng và giới hạn](data-sync-20261112/RESULT.md). Kết quả theo đúng source và phạm vi đo; không đóng S17, hosted CI, backend hoặc owner acceptance.
+ 
+ ## UI61 — sửa theo audit toàn bộ 61 màn hình, 20/10/2026
+ 
+diff --git a/BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json b/BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json
+index 4b696657..e9953396 100644
+--- a/BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json
++++ b/BotSalesAI_Frontend/evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+   "step": "S17",
+-  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical. PR 20 CI correction 20261111: retained actor ID and updated accessible selectors; select values wrap under text stress. Hosted and native acceptance remain separate. Accessibility follow-up 20261111 records selected native zoom, text resize and service-case results; screen-reader and physical mobile acceptance remain open. Inbox follow-up: desktop native text-only initially found clipped conversation list text; final runs retest after wrapping. Shared dialog heading follow-up 20261111 fixes its accessible name; browser semantics and selected reflow checks are not a screen-reader speech verdict. Two named S17 tables received a scoped mobile reflow on 20261112; the remaining tables and acceptance stay open.",
++  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical. PR 20 CI correction 20261111: retained actor ID and updated accessible selectors; select values wrap under text stress. Hosted and native acceptance remain separate. Accessibility follow-up 20261111 records selected native zoom, text resize and service-case results; screen-reader and physical mobile acceptance remain open. Inbox follow-up: desktop native text-only initially found clipped conversation list text; final runs retest after wrapping. Shared dialog heading follow-up 20261111 fixes its accessible name; browser semantics and selected reflow checks are not a screen-reader speech verdict. Two named S17 tables received a scoped mobile reflow on 20261112; the remaining tables and acceptance stay open. Data synchronization follow-up 20261112 updates changed source fingerprints; scoped baseline, tests and limitations are in evidence/data-sync-20261112. S17 remains IN_PROGRESS.",
+   "recordedAt": "2026-11-12T09:03:32.756Z",
+   "status": "IN_PROGRESS",
+   "checks": [
+@@ -4081,6 +4081,8 @@
+     "reason": "S17 validates governance evidence and does not change rendered UI. UI comparison baselines are recorded in S11, S12, S15 and S16 artifacts."
+   },
+   "sourceFingerprints": {
++    "BotSalesAI_Frontend/apps/web/src/modules/finance/journals.tsx": "fede7c3f5a0d5d7be80c4b567e52c838e663e709d40be8bc6e90067c8588f7a4",
++    "BotSalesAI_Frontend/tests/data-sync-cross-page.spec.ts": "b4f08550da24372bab8fad3d2623afb1f9c434c49e5d6519fbc5a5bb99655306",
+     "BotSalesAI_Frontend/apps/web/src/app/bootstrap.css": "3379c7160d961586913648b5c8e9583ebf17333cab5efa251b7e8525d91b7082",
+     "BotSalesAI_Frontend/apps/web/src/app/CommandRecovery.tsx": "79b0d4e7044cde5a64ae0cabb0af879ac99dabf5145a41fe6e86a6426b21f7ac",
+     "BotSalesAI_Frontend/apps/web/src/app/dirty-drafts.ts": "3fe77d4a7c65a176fe0ce52124338fbb135dea08c8477292a7b27d7aae5fba13",
+@@ -4092,7 +4094,7 @@
+     "BotSalesAI_Frontend/apps/web/src/app/navigation.ts": "b5bf552ed925eafe273686222bc29b6842b3cf753bf7b8d2ea3558672b011373",
+     "BotSalesAI_Frontend/apps/web/src/app/route-metadata.tsx": "23f6f44496dd85db7e01680348c184ccbedc77764511b95ef9aabfe01778887e",
+     "BotSalesAI_Frontend/apps/web/src/app/router.tsx": "12d6b0dbe0dca8b8c5262b37854ebc6407026d658a7a202a557fbb339db4c520",
+-    "BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx": "cfea6704a8f8a08ca735700ae3aef4444dd40d8b6a8fb121d06cbab60085c0aa",
++    "BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx": "4a6df7c5573c9c86e5f56a88587f8093684228c5b410bb4e4620335fad60fa4e",
+     "BotSalesAI_Frontend/apps/web/src/app/SessionProvider.tsx": "13a7556aca5e858b0e0004fe454234b07889751459562ac985497e9eb520641e",
+     "BotSalesAI_Frontend/apps/web/src/app/Shell.tsx": "a47120af8953de861adc47fd9a9b8eae2d3759bf9ce1668ff52c29340ee22f97",
+     "BotSalesAI_Frontend/apps/web/src/app/tokens.css": "880fa854d2e6f0592bb02e78cb3209a3de2e4c99222ec6f4fa0ccfa96debd2c2",
+@@ -4126,9 +4128,9 @@
+     "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "f495d13a461ac220302bfc153cd3e86831f663c5dfe474d4e51ec9b68de73255",
+     "BotSalesAI_Frontend/apps/web/src/modules/finance/accounts.tsx": "77be37cccfd6cacd6ec3bce2277d29117a1a51914ea1a3f2c22d97eb6d9f9869",
+     "BotSalesAI_Frontend/apps/web/src/modules/finance/entry-editor.tsx": "7c8bca51ea7fc49556246d09a90cf09fd98eba6cf39b7cc88451b54cea1818e7",
+-    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "78479c77f8f2e259cac3de12eefa6518ddab0a3dcece84fee644b63c6b8d875d",
++    "BotSalesAI_Frontend/apps/web/src/modules/finance/index.tsx": "991d04aaa9d3ca74e05952ef054718eb79ea26629070765464a49e9c84b51c27",
+     "BotSalesAI_Frontend/apps/web/src/modules/finance/journal-editor.tsx": "e766deaad59f3a4341d281d7c794e050e5a38bc5d3b8b3db4a5fedf8e6b4f82f",
+-    "BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx": "a9c3a0423113d0bd1b395483e1f00edd219c8bf3b5e4bab7a1b65a7a8c2884e3",
++    "BotSalesAI_Frontend/apps/web/src/modules/finance/management.tsx": "29d9044640810fd49e506cbcfcb68f62ebfd82be9af65a8ec9269d2f6aa8f036",
+     "BotSalesAI_Frontend/apps/web/src/modules/finance/report-explanations.ts": "39f06fd30ba8c7e913d4ec77327044b2042978a910ca0486a56487459a990020",
+     "BotSalesAI_Frontend/apps/web/src/modules/finance/report-range.tsx": "e768dbab02a6831983e68809b29fa6347ef15f21057e8739b120ab1ce63b3f04",
+     "BotSalesAI_Frontend/apps/web/src/modules/finance/statement-import.tsx": "0fbfc2b95f057fdcc88779bd8ac425e0b04aa768645771f8dbfef8d39f83009e",
+@@ -4150,7 +4152,7 @@
+     "BotSalesAI_Frontend/apps/web/src/shared/api/client.ts": "14f723eb00cb9e7e5e244b440c1de7dfd534be499c991cf25288b5a7506c65ae",
+     "BotSalesAI_Frontend/apps/web/src/shared/api/client.type-contracts.ts": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e",
+     "BotSalesAI_Frontend/apps/web/src/shared/api/errors.ts": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227",
+-    "BotSalesAI_Frontend/apps/web/src/shared/api/event-invalidation.ts": "01ee6ec6384d675b492c5476286e28c2352a7a2df5feddf53a88638ba82f1848",
++    "BotSalesAI_Frontend/apps/web/src/shared/api/event-invalidation.ts": "9b179da65ca453688d2e10638112253e7927e180c33adb9bb85343ae2ce34f8b",
+     "BotSalesAI_Frontend/apps/web/src/shared/api/hooks.ts": "a2e4affeb1c25aa798766df58431e28a5ac6fcdccb98cbc72bef6a6ce854c213",
+     "BotSalesAI_Frontend/apps/web/src/shared/api/intents.ts": "3ac04111ea98ec3a7bb4f67f296764c966e6788a1000793d212b02244ab3912b",
+     "BotSalesAI_Frontend/apps/web/src/shared/api/validation.ts": "5dabe9985b9eb9dea4b67233713cf007a99d6fc55276bd3a285664977f58f1a1",
+@@ -4189,7 +4191,7 @@
+     "BotSalesAI_Frontend/apps/web/tests/push-capabilities.test.ts": "260bb3d89b3ebd391981084b46b199ae99442f4099b6f35ae987fd5d1c160e87",
+     "BotSalesAI_Frontend/apps/web/tests/report-utils.test.ts": "ed3a365e175bfd161ad4141f58b584df8563392cfdb95e56748ae91ccf7e3fb8",
+     "BotSalesAI_Frontend/apps/web/tests/route-metadata.test.ts": "df45de615f3fb3e380ef7dd8af69504314ac2aac1042c093eda55f8333ab9660",
+-    "BotSalesAI_Frontend/apps/web/tests/scope-events.test.tsx": "e1ed34a5c53b5f9947dc6ab4226b84497e86169fbd78431075739533b7bfcb78",
++    "BotSalesAI_Frontend/apps/web/tests/scope-events.test.tsx": "ae56f5fcd01b06d8648e3eb8ea8853363def84f13a21437dbf6cdde35a9f23e4",
+     "BotSalesAI_Frontend/apps/web/tests/setup.ts": "0bc83a22027f5438a4e4c3e86e9a2f07bd5194ccd4d0812f57d47f045effc9f5",
+     "BotSalesAI_Frontend/apps/web/tests/shared-ui-render-contract.test.tsx": "bce56874da70a4c376be8eec2fd957a004d3caf56fdbd331e4a246a13c0469e1",
+     "BotSalesAI_Frontend/apps/web/tests/states/fe023-state.test.tsx": "dc06b9ac16112bfaf27c2f3545b093115c0c26ec6eeca23e986e40f0d178c67c",
+@@ -4253,7 +4255,7 @@
+     "BotSalesAI_Frontend/tests/fe013.spec.ts": "385f345a785b439b464eb77deacf35f9f056390a931301c223d3ae98293b5d01",
+     "BotSalesAI_Frontend/tests/fe014-source-map.test.mjs": "cced9f897b0765024a3990412d1cbcd4989cd38fc5bedc571037e8096fa3a5d0",
+     "BotSalesAI_Frontend/tests/fe014.spec.ts": "34f16f233774ed4be6bee3d451552efbd46c730c32cdb4b946cd927ce9c2029c",
+-    "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "d9fecd32da5996ade5cb41a635dda25c8b8e88791064867cd81f98aeff5dd837",
++    "BotSalesAI_Frontend/tests/fe015-source-map.test.mjs": "f8107de5989f5632240bebb2557fb08edd7c8f2e78a79810b2b7e762a8fe9629",
+     "BotSalesAI_Frontend/tests/fe015.spec.ts": "0cae5ac3d4bde930445b727af6695c42ca19303f09a4d477f72234f29c4ce379",
+     "BotSalesAI_Frontend/tests/fe016-source-map.test.mjs": "15359771691c02c534f4b998305cb67772c72c5e65468bd832ae79c59cf47d3e",
+     "BotSalesAI_Frontend/tests/fe016.spec.ts": "55e4aba4171d5476e0172bb3398bfd32479758b52c20b01135b498d82275bbba",
+@@ -4360,7 +4362,7 @@
+     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "2a99544c37f5635110d4d64a4931b27d23116b7269504d2ab0299f36c737eeb9",
+     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
+     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
+-    "BotSalesAI_Frontend/evidence/REPORT.md": "c44cdbbedb1abd689fa0a3907f021df1def90f00f61db923e5d719d6071fc7a4",
++    "BotSalesAI_Frontend/evidence/REPORT.md": "8f00283844eb425eef64a6b1e557a912b1e786a30e617596e2d919b533ab4a01",
+     "BotSalesAI_Frontend/tests/ui-overlay-theme.spec.ts": "ad70fc60a8e712ffbeceed270a5e5b0d62ba4cd6a7e9bc158b5d623c2b58c757",
+     "BotSalesAI_Frontend/apps/web/src/mocks/service-worker-update-recovery.ts": "62cf0f795b6f0415bb319d4d928eed6fcd6ed8266a546da6828955d4f2dad1b4",
+     "BotSalesAI_Frontend/apps/web/tests/service-worker-update-recovery.test.ts": "3a5f1376694d85ad1fb65d8e289685a9d5cdb8d021eea0b0a8301f22d0426b38",
+diff --git a/BotSalesAI_Frontend/tests/fe015-source-map.test.mjs b/BotSalesAI_Frontend/tests/fe015-source-map.test.mjs
+index c70c4e59..9112128c 100644
+--- a/BotSalesAI_Frontend/tests/fe015-source-map.test.mjs
++++ b/BotSalesAI_Frontend/tests/fe015-source-map.test.mjs
+@@ -16,7 +16,7 @@ test('FE015 finance routes, capabilities, operations and DTOs follow canonical c
+         readText('../apps/web/src/shared/api/hooks.ts'),
+         readText('../../botsales-kit/execution/frontend-evidence/FE015/S01-route-operation-map.md'),
+     ]);
+-    const currentUi = await readText('../apps/web/src/modules/finance/entry-editor.tsx') + await readText('../apps/web/src/modules/finance/statement-import.tsx') + ui + await readText('../apps/web/src/modules/finance/journal-editor.tsx') + await readText('../apps/web/src/modules/finance/accounts.tsx');
++    const currentUi = await readText('../apps/web/src/modules/finance/entry-editor.tsx') + await readText('../apps/web/src/modules/finance/statement-import.tsx') + ui + await readText('../apps/web/src/modules/finance/journals.tsx') + await readText('../apps/web/src/modules/finance/journal-editor.tsx') + await readText('../apps/web/src/modules/finance/accounts.tsx');
+     const checks = [];
+     const eq = (actual, expected, label) => { assert.deepEqual(actual, expected, label); checks.push(label); };
+     const ok = (condition, label) => { assert.ok(condition, label); checks.push(label); };

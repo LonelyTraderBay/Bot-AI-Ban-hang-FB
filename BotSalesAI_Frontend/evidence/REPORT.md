@@ -1,5 +1,13 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Tách trách nhiệm orders, operations, workspace — 13/11/2026
+
+Phạm vi frontend/MSW: tách code theo trách nhiệm trong ba module, giữ public route và dữ liệu; [contract/baseline](module-structure-20261113/CONTRACT.md), [kết quả và giới hạn](module-structure-20261113/RESULT.md). Các kiểm tra ở đây không đóng S17, backend, hosted CI hoặc owner acceptance.
+
+## Đồng bộ cache liên trang và tách trang bút toán — 12/11/2026
+
+Phạm vi frontend/MSW: làm mới dashboard khi bút toán thay đổi, đồng bộ cache cửa hàng của Shell khi resync và tách R48 trong module finance. [Contract và baseline](data-sync-20261112/CONTRACT.md), [kết quả kiểm chứng và giới hạn](data-sync-20261112/RESULT.md). Kết quả theo đúng source và phạm vi đo; không đóng S17, hosted CI, backend hoặc owner acceptance.
+
 ## UI61 — sửa theo audit toàn bộ 61 màn hình, 20/10/2026
 
 Scope local frontend/MSW: khắc phục sáu nhóm UI-A01–06 theo P1/P2 tại owner, chuẩn hóa card nghiệp vụ 12px, inset và flow trạng thái, bảng rỗng/Pager và cảnh báo tài chính. 61 route × desktop/mobile có ảnh và số đo; ba route job/challenge có kiểm bổ sung hợp lệ. 26 ca mới +40 hồi quy Chromium/Firefox và full verify/256 Vitest PASS. [Contract](ui61-consistency-20261020/CONTRACT.md), [kết quả và giới hạn](ui61-consistency-20261020/RESULT.md), [coverage/hash runtime](ui61-consistency-20261020/runtime-summary.json). Native zoom/text-only resize, screen reader, mobile vật lý và owner acceptance chưa được chứng minh; cảnh báo flushSync cũ còn được ghi nhận. Trạng thái chỉ tại plan §16.6; các kết quả dưới đây giữ nguyên lịch sử.
