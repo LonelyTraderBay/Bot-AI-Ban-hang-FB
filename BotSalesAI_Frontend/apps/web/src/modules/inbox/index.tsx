@@ -71,10 +71,10 @@ export function InboxPage() {
                                 <Avatar sx={{ bgcolor: colors.raised, color: 'text.primary', width: 38, height: 38 }}>{c.displayName.slice(0, 1)}</Avatar>
                                 <Box sx={{ minWidth: 0, flex: 1 }}>
                                     <Stack direction="row" justifyContent="space-between" sx={[layoutSx.surface.compactContentGap, { alignItems: 'center' }]}>
-                                        <Typography fontWeight={visualSx.typography.fontWeight.strong} noWrap>{c.displayName}</Typography>
-                                        {c.unreadCount > 0 && <Box data-testid="inbox-unread-count" sx={[layoutSx.inbox.unreadCountInset, { bgcolor: 'primary.main', color: colors.onAccent, borderRadius: visualSx.radius.large, fontSize: tokens.fontSizes.meta }]}>{c.unreadCount}</Box>}
+                                        <Typography fontWeight={visualSx.typography.fontWeight.strong} sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{c.displayName}</Typography>
+                                        {c.unreadCount > 0 && <Box data-testid="inbox-unread-count" sx={[layoutSx.inbox.unreadCountInset, { bgcolor: 'primary.main', color: colors.onAccent, borderRadius: visualSx.radius.large, fontSize: tokens.fontSizes.meta, flexShrink: 0 }]}>{c.unreadCount}</Box>}
                                     </Stack>
-                                    <Typography variant="body2" noWrap color="text.secondary" sx={[layoutSx.surface.titleDescriptionGap, { display: 'block' }]}>{c.lastMessagePreview || 'Chưa có tin nhắn'}</Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={[layoutSx.surface.titleDescriptionGap, { display: 'block', overflowWrap: 'anywhere' }]}>{c.lastMessagePreview || 'Chưa có tin nhắn'}</Typography>
                                     <Box sx={layoutSx.inbox.listStatusBeforeGap}><Status value={c.mode} /></Box>
                                 </Box>
                             </ListItemButton>

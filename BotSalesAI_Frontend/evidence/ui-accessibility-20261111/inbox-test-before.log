@@ -1,0 +1,38 @@
+
+Running 1 test using 1 worker
+
+
+
+(node:85992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] [chromium] › tests\ui-inbox-text-resize.spec.ts:8:1 › conversation names and message previews wrap at enlarged text sizes
+  1) [chromium] › tests\ui-inbox-text-resize.spec.ts:8:1 › conversation names and message previews wrap at enlarged text sizes 
+
+    Error: expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "nowrap"
+
+      17 |         for (const element of await text.all()) {
+      18 |             const size = await element.evaluate(node => ({ client: node.clientWidth, scroll: node.scrollWidth, whiteSpace: getComputedStyle(node).whiteSpace }));
+    > 19 |             expect(size.whiteSpace).not.toBe('nowrap');
+         |                                         ^
+      20 |             expect(size.scroll).toBeLessThanOrEqual(size.client + 1);
+      21 |         }
+      22 |         await first.focus();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-inbox-text-resize.spec.ts:19:41
+
+    Error Context: test-results\playwright-83396-3bfa6ed4-1c25-4014-8477-a25f6c70e0b0\ui-inbox-text-resize-conve-f00f6-wrap-at-enlarged-text-sizes-chromium\error-context.md
+
+    Error Context: test-results\playwright-83396-3bfa6ed4-1c25-4014-8477-a25f6c70e0b0\ui-inbox-text-resize-conve-f00f6-wrap-at-enlarged-text-sizes-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-83396-3bfa6ed4-1c25-4014-8477-a25f6c70e0b0\ui-inbox-text-resize-conve-f00f6-wrap-at-enlarged-text-sizes-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-83396-3bfa6ed4-1c25-4014-8477-a25f6c70e0b0\ui-inbox-text-resize-conve-f00f6-wrap-at-enlarged-text-sizes-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\ui-inbox-text-resize.spec.ts:8:1 › conversation names and message previews wrap at enlarged text sizes 

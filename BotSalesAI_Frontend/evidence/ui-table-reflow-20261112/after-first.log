@@ -1,0 +1,145 @@
+
+Running 4 tests using 1 worker
+
+
+
+(node:36128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/4] [chromium] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling
+  1) [chromium] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 321
+    Received:    337
+
+      16 |             const geometry = await region.evaluate(node => ({ client: node.clientWidth, scroll: node.scrollWidth }));
+      17 |             if (width < 600 && process.env.TABLE_CAPTURE !== 'before') expect(geometry.scroll, `${route} ${width}`).toBeLessThanOrEqual(geometry.client + 1);
+    > 18 |             expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+         |                                                                                     ^
+      19 |             if (route === 'inventory/movements') await expect(table.getByText('Áo mẫu A · M · Xanh · DEMO-001').first()).toBeVisible();
+      20 |             else { await table.getByRole('button', { name: 'Chi tiết nhân sự', exact: true }).first().click(); await expect(page.getByRole('dialog', { name: 'Chi tiết nhân sự' })).toBeVisible(); }
+      21 |         }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-table-reflow.spec.ts:18:85
+
+    Error Context: test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-chromium\error-context.md
+
+    Error Context: test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:28996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/4] [chromium] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling
+  2) [chromium] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 321
+    Received:    337
+
+      16 |             const geometry = await region.evaluate(node => ({ client: node.clientWidth, scroll: node.scrollWidth }));
+      17 |             if (width < 600 && process.env.TABLE_CAPTURE !== 'before') expect(geometry.scroll, `${route} ${width}`).toBeLessThanOrEqual(geometry.client + 1);
+    > 18 |             expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+         |                                                                                     ^
+      19 |             if (route === 'inventory/movements') await expect(table.getByText('Áo mẫu A · M · Xanh · DEMO-001').first()).toBeVisible();
+      20 |             else { await table.getByRole('button', { name: 'Chi tiết nhân sự', exact: true }).first().click(); await expect(page.getByRole('dialog', { name: 'Chi tiết nhân sự' })).toBeVisible(); }
+      21 |         }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-table-reflow.spec.ts:18:85
+
+    Error Context: test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-chromium\error-context.md
+
+    Error Context: test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:41728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/4] [firefox] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling
+  3) [firefox] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 321
+    Received:    337
+
+      16 |             const geometry = await region.evaluate(node => ({ client: node.clientWidth, scroll: node.scrollWidth }));
+      17 |             if (width < 600 && process.env.TABLE_CAPTURE !== 'before') expect(geometry.scroll, `${route} ${width}`).toBeLessThanOrEqual(geometry.client + 1);
+    > 18 |             expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+         |                                                                                     ^
+      19 |             if (route === 'inventory/movements') await expect(table.getByText('Áo mẫu A · M · Xanh · DEMO-001').first()).toBeVisible();
+      20 |             else { await table.getByRole('button', { name: 'Chi tiết nhân sự', exact: true }).first().click(); await expect(page.getByRole('dialog', { name: 'Chi tiết nhân sự' })).toBeVisible(); }
+      21 |         }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-table-reflow.spec.ts:18:85
+
+    Error Context: test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-firefox\error-context.md
+
+    Error Context: test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:39192) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/4] [firefox] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling
+  4) [firefox] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 321
+    Received:    337
+
+      16 |             const geometry = await region.evaluate(node => ({ client: node.clientWidth, scroll: node.scrollWidth }));
+      17 |             if (width < 600 && process.env.TABLE_CAPTURE !== 'before') expect(geometry.scroll, `${route} ${width}`).toBeLessThanOrEqual(geometry.client + 1);
+    > 18 |             expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+         |                                                                                     ^
+      19 |             if (route === 'inventory/movements') await expect(table.getByText('Áo mẫu A · M · Xanh · DEMO-001').first()).toBeVisible();
+      20 |             else { await table.getByRole('button', { name: 'Chi tiết nhân sự', exact: true }).first().click(); await expect(page.getByRole('dialog', { name: 'Chi tiết nhân sự' })).toBeVisible(); }
+      21 |         }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-table-reflow.spec.ts:18:85
+
+    Error Context: test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-firefox\error-context.md
+
+    Error Context: test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-37052-e5eca58d-4d10-4e36-8bca-1e787f013184\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  4 failed
+    [chromium] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling 
+    [chromium] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling 
+    [firefox] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling 
+    [firefox] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling 
+COMMAND_EXIT=1

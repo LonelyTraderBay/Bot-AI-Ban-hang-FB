@@ -43,7 +43,8 @@ test('Inventory R15/R16 preserve shared gutter and contain table overflow at 320
                 scrollWidth: element.scrollWidth,
             }));
             expect(tableGeometry.clientWidth, `${route.id} table region width at ${width}px`).toBeLessThanOrEqual(width);
-            if (width < 768) expect(tableGeometry.scrollWidth, `${route.id} table can scroll at ${width}px`).toBeGreaterThan(tableGeometry.clientWidth);
+            if (width < 768 && route.id === 'R15') expect(tableGeometry.scrollWidth, `${route.id} table can scroll at ${width}px`).toBeGreaterThan(tableGeometry.clientWidth);
+            if (width < 768 && route.id === 'R16') expect(tableGeometry.scrollWidth, `${route.id} table reflows at ${width}px`).toBeLessThanOrEqual(tableGeometry.clientWidth + 1);
             observations.push({ route: route.id, width, ...geometry, tableRegion: tableGeometry });
         }
     }

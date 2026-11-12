@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+const sha = bytes => createHash('sha256').update(bytes).digest('hex');
+const manifest = 'evidence/frontend-ui-improvements/ui-governance-rollout-20261007/S17-current-evidence.json';
+const evidence = JSON.parse(fs.readFileSync(manifest));
+const log = fs.readFileSync('evidence/ui-accessibility-20261111/verify-before-catalog.log');
+assert.match(log.toString(), /MutationButton: documented uses 127, source uses 128/);
+evidence.sourceFingerprints['BotSalesAI_Frontend/apps/web/src/shared/ui/README.md'] = sha(fs.readFileSync('apps/web/src/shared/ui/README.md'));
+evidence.checks.push({ id: 'accessibility-verify-before-catalog-20261111', command: 'npm run verify', exitCode: 1, result: 'FAIL', expected: 'All frontend verification gates pass.', observed: 'UI composition catalog fixture found MutationButton documented uses 127 while source uses 128; other executed lanes passed.', log: { path: 'BotSalesAI_Frontend/evidence/ui-accessibility-20261111/verify-before-catalog.log', sha256: sha(log) } });
+evidence.recordedAt = new Date().toISOString();
+fs.writeFileSync(manifest, JSON.stringify(evidence, null, 2) + '\n');

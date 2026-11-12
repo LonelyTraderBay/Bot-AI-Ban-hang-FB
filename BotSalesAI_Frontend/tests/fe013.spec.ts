@@ -240,6 +240,7 @@ test('FE013.AC03 unknown handover cannot be repeated before command reconciliati
     expect((await create).status()).toBe(201);
 
     await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+    await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
     const shipmentRow = page.getByRole('row').filter({ hasText: 'DH-1001' });
     await expect(shipmentRow).toBeVisible();
     await shipmentRow.getByRole('button', { name: 'Bàn giao' }).click();

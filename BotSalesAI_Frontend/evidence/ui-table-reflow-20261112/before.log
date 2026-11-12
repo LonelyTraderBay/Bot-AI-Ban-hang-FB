@@ -1,0 +1,79 @@
+
+Running 2 tests using 1 worker
+
+
+
+(node:38224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/2] [chromium] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling
+  1) [chromium] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling 
+
+    Error: inventory/movements 320
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 287
+    Received:    760
+
+      15 |             await page.screenshot({ path: path.join('evidence/ui-table-reflow-20261112', `${process.env.TABLE_CAPTURE || 'after'}-${info.project.name}-${route.replaceAll('/', '-')}-${width}.png`), fullPage: true });
+      16 |             const geometry = await region.evaluate(node => ({ client: node.clientWidth, scroll: node.scrollWidth }));
+    > 17 |             if (width < 600) expect(geometry.scroll, `${route} ${width}`).toBeLessThanOrEqual(geometry.client + 1);
+         |                                                                           ^
+      18 |             expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+      19 |             if (route === 'inventory/movements') await expect(table.getByText('Áo mẫu A · M · Xanh · DEMO-001').first()).toBeVisible();
+      20 |             else { await table.getByRole('button', { name: 'Chi tiết nhân sự', exact: true }).first().click(); await expect(page.getByRole('dialog', { name: 'Chi tiết nhân sự' })).toBeVisible(); }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-table-reflow.spec.ts:17:75
+
+    Error Context: test-results\playwright-36068-b3fb4d14-ad84-4b4a-bb45-b7c1de1329d1\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-chromium\error-context.md
+
+    Error Context: test-results\playwright-36068-b3fb4d14-ad84-4b4a-bb45-b7c1de1329d1\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-36068-b3fb4d14-ad84-4b4a-bb45-b7c1de1329d1\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-36068-b3fb4d14-ad84-4b4a-bb45-b7c1de1329d1\ui-table-reflow-inventory--d3117-ithout-horizontal-scrolling-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:41492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/2] [chromium] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling
+  2) [chromium] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling 
+
+    Error: settings/team 320
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 287
+    Received:    600
+
+      15 |             await page.screenshot({ path: path.join('evidence/ui-table-reflow-20261112', `${process.env.TABLE_CAPTURE || 'after'}-${info.project.name}-${route.replaceAll('/', '-')}-${width}.png`), fullPage: true });
+      16 |             const geometry = await region.evaluate(node => ({ client: node.clientWidth, scroll: node.scrollWidth }));
+    > 17 |             if (width < 600) expect(geometry.scroll, `${route} ${width}`).toBeLessThanOrEqual(geometry.client + 1);
+         |                                                                           ^
+      18 |             expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+      19 |             if (route === 'inventory/movements') await expect(table.getByText('Áo mẫu A · M · Xanh · DEMO-001').first()).toBeVisible();
+      20 |             else { await table.getByRole('button', { name: 'Chi tiết nhân sự', exact: true }).first().click(); await expect(page.getByRole('dialog', { name: 'Chi tiết nhân sự' })).toBeVisible(); }
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-table-reflow.spec.ts:17:75
+
+    Error Context: test-results\playwright-36068-b3fb4d14-ad84-4b4a-bb45-b7c1de1329d1\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-chromium\error-context.md
+
+    Error Context: test-results\playwright-36068-b3fb4d14-ad84-4b4a-bb45-b7c1de1329d1\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-36068-b3fb4d14-ad84-4b4a-bb45-b7c1de1329d1\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-36068-b3fb4d14-ad84-4b4a-bb45-b7c1de1329d1\ui-table-reflow-settings-t-837dc-ithout-horizontal-scrolling-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\ui-table-reflow.spec.ts:8:5 › inventory/movements reflows without horizontal scrolling 
+    [chromium] › tests\ui-table-reflow.spec.ts:8:5 › settings/team reflows without horizontal scrolling 
+COMMAND_EXIT=1

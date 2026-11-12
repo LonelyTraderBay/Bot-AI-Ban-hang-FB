@@ -1,0 +1,3 @@
+# Heading accessibility contract
+
+Preserve Graphite Gold and all existing dialog visuals, labels, close behavior, permissions and focus handling. The shared EditDialog is the owner and affects all its consumers. Its dialog heading must expose only the dialog title, while the close control remains a separately named button. Compare loaded service-case detail at 390 and 1440 CSS px; test an additional product edit dialog. Freeze current S17 source hashes before changing shared UI. Native screen-reader speech acceptance remains open until observed; browser accessibility semantics are not speech verification.

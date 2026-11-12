@@ -701,3 +701,15 @@ At the S08 snapshot, the strict `frontend-design-premium` v1.4.0 audit exited 1 
 ## Xử lý CI khi cập nhật main — 10/11/2026
 
 [Báo cáo](ci-push-unblock-20261110/REPORT.md) lưu nguyên nhân và kiểm thử của thay đổi sau snapshot UI: override minimatch trong typescript-estree để xử lý advisory, cập nhật locator và assertion test phù hợp header/copy hiện tại. Audit dependency 0 lỗi, 12/12 scoped E2E và `npm run verify` 12/12 bước đạt trên source này. Kết quả UI toàn trang ở trên thuộc snapshot trước thay đổi CI. Trạng thái hosted CI phụ thuộc kết quả GitHub Actions của PR.
+
+## Reflow hai bảng S17 — 12/11/2026
+
+R16 lịch sử kho và R32 nhân sự dùng profile mobile mới; [kết quả, baseline, lỗi trung gian và giới hạn](ui-table-reflow-20261112/RESULT.md). S17 vẫn IN_PROGRESS: các bảng còn lại và nghiệm thu/zoom thủ công chưa được chứng minh.
+
+
+## Chụp lại ảnh zoom 200% — 12/11/2026
+
+Collector W30 tái chạy 5/5 theo phép đo DOM; bốn ảnh viewport của hai tình huống vẫn trống. Bốn ảnh mới trên source hiện tại dùng native Chrome zoom 200% và CDP clip; [kết quả, ảnh và giới hạn](ui-zoom-capture-20261112/RESULT.md). 16 ảnh lịch sử giữ nguyên, không dùng ảnh hiện tại thay cho baseline cũ; S17 vẫn IN_PROGRESS.
+
+
+Đối chiếu bốn trạng thái source và chụp lại có giới hạn: [kết quả và fingerprint](ui-zoom-capture-20261112/RESULT.md#đối-chiếu-bốn-source-lịch-sử--12112026). 16 bản sao ảnh mới trùng byte với bốn ảnh hiện có đã được loại bỏ; bằng chứng lịch sử vẫn OPEN.
