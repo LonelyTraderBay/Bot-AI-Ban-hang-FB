@@ -1,0 +1,139 @@
+
+Running 3 tests using 1 worker
+
+
+
+(node:40544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/3] [chromium] › tests\data-sync-cross-page.spec.ts:20:1 › finance entry detail follows posting and reversal without SSE
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\deps\react-dom_client.js?v=6af9b563 as it exceeds the max of 500KB.
+  1) [chromium] › tests\data-sync-cross-page.spec.ts:20:1 › finance entry detail follows posting and reversal without SSE 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('dialog', { name: 'Chứng từ financeentry-10001' }).getByRole('button', { name: 'Đảo phiếu', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('dialog', { name: 'Chứng từ financeentry-10001' }).getByRole('button', { name: 'Đảo phiếu', exact: true }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Chứng từ financeentry-10001' }).getByRole('button', { name: 'Đảo phiếu', exact: true })
+
+
+      39 |     expect((await posted).status()).toBe(202);
+      40 |     await expect(post).toBeHidden();
+    > 41 |     await expect(detail.getByRole('button', { name: 'Đảo phiếu', exact: true })).toBeVisible();
+         |                                                                                  ^
+      42 |     await expect(detail.getByRole('button', { name: 'Ghi sổ', exact: true })).toHaveCount(0);
+      43 |     await detail.getByRole('button', { name: 'Đảo phiếu', exact: true }).click();
+      44 |     const reverse = page.getByRole('dialog', { name: 'Đảo phiếu đã ghi' });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\data-sync-cross-page.spec.ts:41:82
+
+    Error Context: test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-finan-aea5e-ng-and-reversal-without-SSE-chromium\error-context.md
+
+    Error Context: test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-finan-aea5e-ng-and-reversal-without-SSE-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-finan-aea5e-ng-and-reversal-without-SSE-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-finan-aea5e-ng-and-reversal-without-SSE-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:12964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[2/3] [chromium] › tests\data-sync-cross-page.spec.ts:54:1 › resolved conversation updates dashboard count without SSE
+  2) [chromium] › tests\data-sync-cross-page.spec.ts:54:1 › resolved conversation updates dashboard count without SSE 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('main a[href="/s/shop-demo/inbox"]')
+    Expected: "3"
+    Received: "4"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" locator('main a[href="/s/shop-demo/inbox"]') with timeout 5000ms
+      - waiting for locator('main a[href="/s/shop-demo/inbox"]')
+        - locator resolved to <a tabindex="0" data-discover="true" href="/s/shop-demo/inbox" aria-label="Danh sách hội thoại" class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-disableElevation MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-disableElevation css-j3jts3-MuiButtonBase-root-MuiButton-root">…</a>
+        - unexpected value ""
+        13 × locator resolved to <a data-discover="true" href="/s/shop-demo/inbox" class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-nv1n36-MuiTypography-root-MuiLink-root">4</a>
+           - unexpected value "4"
+
+
+      68 |     await expect(dialog).toBeHidden();
+      69 |     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    > 70 |     await expect(count).toHaveText('3');
+         |                         ^
+      71 | });
+      72 |
+      73 | test('cancelled order updates dashboard count without SSE', async ({ page }) => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\data-sync-cross-page.spec.ts:70:25
+
+    Error Context: test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-resol-0049b-dashboard-count-without-SSE-chromium\error-context.md
+
+    Error Context: test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-resol-0049b-dashboard-count-without-SSE-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-resol-0049b-dashboard-count-without-SSE-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-resol-0049b-dashboard-count-without-SSE-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:32736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/3] [chromium] › tests\data-sync-cross-page.spec.ts:73:1 › cancelled order updates dashboard count without SSE
+  3) [chromium] › tests\data-sync-cross-page.spec.ts:73:1 › cancelled order updates dashboard count without SSE 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('main a[href="/s/shop-demo/orders"]').first()
+    Expected: "0"
+    Received: "1"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" locator('main a[href="/s/shop-demo/orders"]').first() with timeout 5000ms
+      - waiting for locator('main a[href="/s/shop-demo/orders"]').first()
+        2 × locator resolved to <a tabindex="0" data-discover="true" href="/s/shop-demo/orders" class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-disableElevation MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeSmall MuiButton-textSizeSmall MuiButton-colorPrimary MuiButton-disableElevation css-1qlnezv-MuiButtonBase-root-MuiButton-root">…</a>
+          - unexpected value "Danh sách đơn"
+        12 × locator resolved to <a data-discover="true" href="/s/shop-demo/orders" class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineHover css-nv1n36-MuiTypography-root-MuiLink-root">1</a>
+           - unexpected value "1"
+
+
+      87 |     await expect(dialog).toBeHidden();
+      88 |     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    > 89 |     await expect(count).toHaveText('0');
+         |                         ^
+      90 | });
+      91 |
+      92 | test('posted journal refreshes the dashboard across pages without relying on SSE', async ({ page }) => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\data-sync-cross-page.spec.ts:89:25
+
+    Error Context: test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-cance-9bbbc-dashboard-count-without-SSE-chromium\error-context.md
+
+    Error Context: test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-cance-9bbbc-dashboard-count-without-SSE-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-cance-9bbbc-dashboard-count-without-SSE-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-21768-6296c2c9-bb58-4f34-a95c-e0f7567ef8fc\data-sync-cross-page-cance-9bbbc-dashboard-count-without-SSE-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  3 failed
+    [chromium] › tests\data-sync-cross-page.spec.ts:20:1 › finance entry detail follows posting and reversal without SSE 
+    [chromium] › tests\data-sync-cross-page.spec.ts:54:1 › resolved conversation updates dashboard count without SSE 
+    [chromium] › tests\data-sync-cross-page.spec.ts:73:1 › cancelled order updates dashboard count without SSE 
