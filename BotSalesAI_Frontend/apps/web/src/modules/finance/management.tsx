@@ -89,7 +89,7 @@ export function OpeningBalancesPage() {
     const [open,setOpen]=useState(false),[selected,setSelected]=useState<OpeningBalance|null>(null),[postRow,setPostRow]=useState<OpeningBalance|null>(null),[success,setSuccess]=useState('');
     const detail=useApi('getOpeningBalance',{path:{openingId:selected?.id||''}},open&&Boolean(selected));
     const accounts=usePagedApi('listAccounts',{query:{status:'active'}}),warehouses=usePagedApi('listWarehouses',{query:{status:'active'}}),products=usePagedApi('listProducts',{query:{status:'active'}});
-    const create=useCommand('createOpeningBalance',['listOpeningBalances']),update=useCommand('updateOpeningBalance',['listOpeningBalances','getOpeningBalance']),post=useCommand('postOpeningBalance',['listOpeningBalances','getOpeningBalance','listStockSnapshots','getLedger','getTrialBalance','getBalanceSheet','getProfitLoss','getCashflow','listJournals']);
+    const create=useCommand('createOpeningBalance',['listOpeningBalances']),update=useCommand('updateOpeningBalance',['listOpeningBalances','getOpeningBalance']),post=useCommand('postOpeningBalance',['listOpeningBalances','getOpeningBalance','listStockSnapshots','getLedger','getTrialBalance','getBalanceSheet','getProfitLoss','getCashflow','listJournals','getDashboard']);
     const empty:OpeningFields={effectiveDate:dateOnlyInTimezone(new Date(),shop.timezone),policyVersion:'synthetic-policy-1',reason:'',lines:[],inventory:[]};
     const form=useForm<OpeningFields>({defaultValues:empty,resolver:zodResolver(openingSchema)});useWatch({control:form.control});
     const lines=useFieldArray({control:form.control,name:'lines'}),inventory=useFieldArray({control:form.control,name:'inventory'}),formRef=useRef<HTMLFormElement|null>(null);

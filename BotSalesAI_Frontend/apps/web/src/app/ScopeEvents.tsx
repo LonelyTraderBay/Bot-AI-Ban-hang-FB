@@ -17,9 +17,14 @@ export function ScopeEvents() {
         const seen = new Set<string>();
         const stream = new EventSource(operationUrl('subscribeEvents', { shopId: shop.id }), { withCredentials: true });
         const key = ['scope', session.user.id, shop.id, membership.permissionVersion];
+        const shopKey = ['shop', session.user.id, shop.id, membership.permissionVersion];
+        const resync = () => {
+            void cache.invalidateQueries({ queryKey: key });
+            void cache.invalidateQueries({ queryKey: shopKey });
+        };
         stream.onopen = () => { if (live) {
             setDisconnected(false);
-            void cache.invalidateQueries({ queryKey: key });
+            resync();
         } };
         stream.onerror = () => { if (live)
             setDisconnected(true); };
@@ -46,10 +51,11 @@ export function ScopeEvents() {
                 const affected = gap ? null : eventInvalidations(payload);
                 if (affected) {
                     for (const operation of affected) void cache.invalidateQueries({ queryKey: [...key, operation] });
-                } else void cache.invalidateQueries({ queryKey: key });
+                    if (affected.includes('getShop')) void cache.invalidateQueries({ queryKey: shopKey });
+                } else resync();
             }
             catch {
-                void cache.invalidateQueries({ queryKey: key });
+                resync();
             }
         };
         return () => { live = false; stream.close(); };

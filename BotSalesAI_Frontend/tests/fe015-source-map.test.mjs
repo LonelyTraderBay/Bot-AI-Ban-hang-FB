@@ -16,7 +16,7 @@ test('FE015 finance routes, capabilities, operations and DTOs follow canonical c
         readText('../apps/web/src/shared/api/hooks.ts'),
         readText('../../botsales-kit/execution/frontend-evidence/FE015/S01-route-operation-map.md'),
     ]);
-    const currentUi = await readText('../apps/web/src/modules/finance/entry-editor.tsx') + await readText('../apps/web/src/modules/finance/statement-import.tsx') + ui + await readText('../apps/web/src/modules/finance/journal-editor.tsx') + await readText('../apps/web/src/modules/finance/accounts.tsx');
+    const currentUi = await readText('../apps/web/src/modules/finance/entry-editor.tsx') + await readText('../apps/web/src/modules/finance/statement-import.tsx') + ui + await readText('../apps/web/src/modules/finance/journals.tsx') + await readText('../apps/web/src/modules/finance/journal-editor.tsx') + await readText('../apps/web/src/modules/finance/accounts.tsx');
     const checks = [];
     const eq = (actual, expected, label) => { assert.deepEqual(actual, expected, label); checks.push(label); };
     const ok = (condition, label) => { assert.ok(condition, label); checks.push(label); };
