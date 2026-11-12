@@ -1,0 +1,848 @@
+{
+  "schemaVersion": 1,
+  "task": "UI028.W30",
+  "recordedAt": "2026-11-10T19:01:31.904Z",
+  "scope": "Isolated Chromium with local React demo and synthetic MSW; no backend or persistent app writes",
+  "sourceSha256": {
+    "../botsales-kit/contracts/route-manifest.json": "383a248e1732030509fe9bb9dcf550217345481e5577e473559e427c3ac5eba4",
+    "apps/web/src/app/Shell.tsx": "a47120af8953de861adc47fd9a9b8eae2d3759bf9ce1668ff52c29340ee22f97",
+    "apps/web/src/app/tokens.css": "880fa854d2e6f0592bb02e78cb3209a3de2e4c99222ec6f4fa0ccfa96debd2c2",
+    "apps/web/src/modules/catalog/index.tsx": "0991ae0be94c3804997fa7f28a479a7c86f2ca37965c1093624607ec1547ce8d",
+    "apps/web/src/modules/inbox/index.tsx": "856b72425fe29e7b441b61b317c169f194b2349a37d896cc8f27e237e697f6fb",
+    "apps/web/src/modules/reports/index.tsx": "57aa4797d4478133f766588e2651c120b62baae692ce7c094b0b1aa430a97c11",
+    "tests/ui028-w30-stress.spec.ts": "54c71563d0be5266c3ac495bfe7ca36252adf6812ec3db665559cd76d6cd9d36",
+    "tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
+    "evidence/frontend-ui-improvements/UI028/W30/design-contract-pre-stress-current-20261006.md": "359fad0f5b642b39c237ce0f7bd236f7cafa4f520acee5956a0996ce7d8fa6ee",
+    "evidence/frontend-ui-improvements/UI028/W30/capture-actual-browser-zoom-200-current-20261006.mjs": "ff4edbaa1047b41bd97c6caff044dc807a81d663bb021efcc79db4a2c49929ed"
+  },
+  "method": {
+    "browser": "Google Chrome stable, headed, fresh temporary profile",
+    "mechanism": "The native Page zoom select in chrome://settings/appearance is set and read back through the browser Settings UI; the app viewport and devicePixelRatio are measured after navigation.",
+    "baselineViewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "targetZoomFactor": 2,
+    "note": "This changes Chrome native Page zoom, not CSS zoom, emulated viewport, device scale, or injected font size. No extension is installed.",
+    "browserVersion": "157.0.8103.38",
+    "initialPageZoom": {
+      "before": "1",
+      "value": "1",
+      "label": "100%",
+      "settingsRoute": "chrome://settings/appearance"
+    }
+  },
+  "scenarios": [
+    {
+      "id": "form-error-short",
+      "route": "/s/shop-demo/products/new",
+      "browserZoom": {
+        "startingZoom": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 1
+        },
+        "baselineSetting": {
+          "before": "1",
+          "value": "1",
+          "label": "100%",
+          "settingsRoute": "chrome://settings/appearance"
+        },
+        "requestedFactor": 2,
+        "reportedFactor": "2",
+        "reportedLabel": "200%",
+        "settingsRoute": "chrome://settings/appearance"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635,
+        "route": "/s/shop-demo/products/new"
+      },
+      "baselineScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-100-form-error-short-baseline-a11y-20261111-post-inbox.png",
+        "sha256": "224f331fcce1cd560a8e643958be27406519fb862906579ce0b410585752afc2"
+      },
+      "focusedTarget": {
+        "active": true,
+        "visibleArea": 5470.78125,
+        "visibleBounds": {
+          "left": 494.6640625,
+          "top": 239.234375,
+          "right": 619,
+          "bottom": 283.234375
+        },
+        "bounds": {
+          "x": 494.6640625,
+          "y": 239.234375,
+          "right": 619,
+          "bottom": 283.234375
+        },
+        "receivesPointerAtVisibleCenter": true,
+        "hitTag": "button",
+        "hitRole": null,
+        "hitText": "Lưu sản phẩm"
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 1838,
+          "scrollY": 1478,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "main h1",
+            "found": true,
+            "x": 16,
+            "y": -1246,
+            "width": 603,
+            "height": 33.59,
+            "right": 619,
+            "bottom": -1212.41,
+            "scrollWidth": 603,
+            "clientWidth": 603,
+            "scrollHeight": 35,
+            "clientHeight": 34,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 13
+          },
+          {
+            "selector": "input[name=\"name\"]",
+            "found": true,
+            "x": 29,
+            "y": -1036.86,
+            "width": 577,
+            "height": 53.13,
+            "right": 606,
+            "bottom": -983.73,
+            "scrollWidth": 893,
+            "clientWidth": 549,
+            "scrollHeight": 53,
+            "clientHeight": 53,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "fontSize": "14px",
+            "textLength": 142
+          },
+          {
+            "selector": "input[name=\"variants.0.sku\"]",
+            "found": true,
+            "x": 29,
+            "y": -371.94,
+            "width": 577,
+            "height": 53.13,
+            "right": 606,
+            "bottom": -318.81,
+            "scrollWidth": 1257,
+            "clientWidth": 549,
+            "scrollHeight": 53,
+            "clientHeight": 53,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "fontSize": "14px",
+            "textLength": 172
+          },
+          {
+            "selector": "button[type=\"submit\"]",
+            "found": true,
+            "x": 494.66,
+            "y": 239.23,
+            "width": 124.34,
+            "height": 44,
+            "right": 619,
+            "bottom": 283.23,
+            "scrollWidth": 124,
+            "clientWidth": 124,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 12
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Góp ý màn hình",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 512.015625,
+            "right": 619,
+            "y": 308.234375,
+            "bottom": 352.234375
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-form-error-short-focused-a11y-20261111-post-inbox.png",
+        "sha256": "2d45f2588cd0ee131f78976fa651794a3ba79322062ff8d78574ba7a55b03be5"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-form-error-short-after-tab-a11y-20261111-post-inbox.png",
+        "sha256": "2d45f2588cd0ee131f78976fa651794a3ba79322062ff8d78574ba7a55b03be5"
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "mobile-menu-long-label",
+      "route": "/s/shop-demo/overview",
+      "browserZoom": {
+        "startingZoom": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 1
+        },
+        "baselineSetting": {
+          "before": "2",
+          "value": "1",
+          "label": "100%",
+          "settingsRoute": "chrome://settings/appearance"
+        },
+        "requestedFactor": 2,
+        "reportedFactor": "2",
+        "reportedLabel": "200%",
+        "settingsRoute": "chrome://settings/appearance"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635,
+        "route": "/s/shop-demo/overview"
+      },
+      "baselineScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-100-mobile-menu-long-label-baseline-a11y-20261111-post-inbox.png",
+        "sha256": "0986a24a59bd2f0a52dff1b14e3c16762219c80953fd04507009d04264c78a71"
+      },
+      "focusedTarget": {
+        "active": true,
+        "visibleArea": 37037,
+        "visibleBounds": {
+          "left": 8,
+          "top": 129.296875,
+          "right": 267,
+          "bottom": 272.296875
+        },
+        "bounds": {
+          "x": 8,
+          "y": 62.796875,
+          "right": 267,
+          "bottom": 338.796875
+        },
+        "receivesPointerAtVisibleCenter": true,
+        "hitTag": "p",
+        "hitRole": null,
+        "hitText": "Sản phẩm Danh mục sản phẩm nhãn dài Danh mục sản phẩm nhãn dài Danh mục sản phẩm"
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 640,
+          "documentWidth": 640,
+          "pageOverflow": 0,
+          "scrollHeight": 2408,
+          "scrollY": 0,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-w30-long-label=\"true\"]",
+            "found": true,
+            "x": 8,
+            "y": -101.7,
+            "width": 259,
+            "height": 276,
+            "right": 267,
+            "bottom": 174.3,
+            "scrollWidth": 259,
+            "clientWidth": 259,
+            "scrollHeight": 276,
+            "clientHeight": 276,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 300
+          },
+          {
+            "selector": "main h1",
+            "found": true,
+            "x": 33,
+            "y": 257,
+            "width": 569,
+            "height": 31.51,
+            "right": 602,
+            "bottom": 288.51,
+            "scrollWidth": 569,
+            "clientWidth": 569,
+            "scrollHeight": 34,
+            "clientHeight": 32,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "27px",
+            "textLength": 18
+          }
+        ],
+        "navigationLabelLayout": {
+          "labelContainedByLink": true,
+          "directTextChild": false,
+          "labelFollowingOverlap": 0,
+          "linkFollowingOverlap": 0
+        },
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "a",
+          "role": null,
+          "label": "Danh mục",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 8,
+            "right": 267,
+            "y": 178.296875,
+            "bottom": 223.296875
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-mobile-menu-long-label-focused-a11y-20261111-post-inbox.png",
+        "sha256": "deaf8e10dba29ff4205976a9c80912cd758da93420e32d17ed24e52547e0c2f0"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-mobile-menu-long-label-after-tab-a11y-20261111-post-inbox.png",
+        "sha256": "6166ecc21260ad82551884e7e764c2e56e68b3d6017753489d294ed1e54bd709"
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "report-long-id",
+      "route": "/s/shop-demo/reports/marketing",
+      "browserZoom": {
+        "startingZoom": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 1
+        },
+        "baselineSetting": {
+          "before": "2",
+          "value": "1",
+          "label": "100%",
+          "settingsRoute": "chrome://settings/appearance"
+        },
+        "requestedFactor": 2,
+        "reportedFactor": "2",
+        "reportedLabel": "200%",
+        "settingsRoute": "chrome://settings/appearance"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635,
+        "route": "/s/shop-demo/reports/marketing"
+      },
+      "baselineScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-100-report-long-id-baseline-a11y-20261111-post-inbox.png",
+        "sha256": "dc7ab5dfee6f1f81457f0965cf50a5a1dc0a72e85d141ff4dcc180baa0328334"
+      },
+      "focusedTarget": {
+        "active": true,
+        "visibleArea": 1936,
+        "visibleBounds": {
+          "left": 16,
+          "top": 5.5,
+          "right": 60,
+          "bottom": 49.5
+        },
+        "bounds": {
+          "x": 16,
+          "y": 5.5,
+          "right": 60,
+          "bottom": 49.5
+        },
+        "receivesPointerAtVisibleCenter": true,
+        "hitTag": "path",
+        "hitRole": null,
+        "hitText": ""
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 4057,
+          "scrollY": 0,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[data-w30-long-id=\"true\"]",
+            "found": true,
+            "x": 16,
+            "y": 246,
+            "width": 603,
+            "height": 84,
+            "right": 619,
+            "bottom": 330,
+            "scrollWidth": 603,
+            "clientWidth": 603,
+            "scrollHeight": 84,
+            "clientHeight": 84,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 258
+          },
+          {
+            "selector": "main h1",
+            "found": true,
+            "x": 16,
+            "y": 344,
+            "width": 603,
+            "height": 33.59,
+            "right": 619,
+            "bottom": 377.59,
+            "scrollWidth": 603,
+            "clientWidth": 603,
+            "scrollHeight": 35,
+            "clientHeight": 34,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 23
+          },
+          {
+            "selector": "button[aria-label=\"Mở menu\"]",
+            "found": true,
+            "x": 16,
+            "y": 5.5,
+            "width": 44,
+            "height": 44,
+            "right": 60,
+            "bottom": 49.5,
+            "scrollWidth": 44,
+            "clientWidth": 44,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "24px",
+            "textLength": 0
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "a",
+          "role": null,
+          "label": "Thông báo",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 535,
+            "right": 579,
+            "y": 5.5,
+            "bottom": 49.5
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-report-long-id-focused-a11y-20261111-post-inbox.png",
+        "sha256": "3e4dfc9cb24ea32ea1410316244442b623b9a333729eb6846b0f343d906fd0a7"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-report-long-id-after-tab-a11y-20261111-post-inbox.png",
+        "sha256": "d4a01aa87589dc1c5eb20eff29fe90be6f4cededaa381f4daa19e004f00565b2"
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "inbox-long-composer",
+      "route": "/s/shop-demo/inbox/cv1",
+      "browserZoom": {
+        "startingZoom": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 1
+        },
+        "baselineSetting": {
+          "before": "2",
+          "value": "1",
+          "label": "100%",
+          "settingsRoute": "chrome://settings/appearance"
+        },
+        "requestedFactor": 2,
+        "reportedFactor": "2",
+        "reportedLabel": "200%",
+        "settingsRoute": "chrome://settings/appearance"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635,
+        "route": "/s/shop-demo/inbox/cv1"
+      },
+      "baselineScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-100-inbox-long-composer-baseline-a11y-20261111-post-inbox.png",
+        "sha256": "7eb252bad3c5c679db266b14c5d515d28feb7c3351f89b6f907bbdd5aa9838e6"
+      },
+      "focusedTarget": {
+        "active": true,
+        "visibleArea": 76860,
+        "visibleBounds": {
+          "left": 43,
+          "top": 170.140625,
+          "right": 592,
+          "bottom": 310.140625
+        },
+        "bounds": {
+          "x": 43,
+          "y": 170.140625,
+          "right": 592,
+          "bottom": 310.140625
+        },
+        "receivesPointerAtVisibleCenter": true,
+        "hitTag": "textarea",
+        "hitRole": null,
+        "hitText": "Nội dung trả lời khách hàng tổng hợp. Giải thích chi tiết về trạng thái đơn hàng"
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 635,
+          "documentWidth": 635,
+          "pageOverflow": 0,
+          "scrollHeight": 2355,
+          "scrollY": 1555.5,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "textarea",
+            "found": true,
+            "x": 43,
+            "y": -665.36,
+            "width": 549,
+            "height": 140,
+            "right": 592,
+            "bottom": -525.36,
+            "scrollWidth": 544,
+            "clientWidth": 544,
+            "scrollHeight": 403,
+            "clientHeight": 140,
+            "overflowX": "auto",
+            "overflowY": "auto",
+            "fontSize": "14px",
+            "textLength": 1678
+          },
+          {
+            "selector": "button[type=\"submit\"]",
+            "found": true,
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "right": 0,
+            "bottom": 0,
+            "scrollWidth": 0,
+            "clientWidth": 0,
+            "scrollHeight": 0,
+            "clientHeight": 0,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "14px",
+            "textLength": 8
+          },
+          {
+            "selector": "main h1",
+            "found": true,
+            "x": 16,
+            "y": -1323.5,
+            "width": 603,
+            "height": 33.59,
+            "right": 619,
+            "bottom": -1289.91,
+            "scrollWidth": 603,
+            "clientWidth": 603,
+            "scrollHeight": 35,
+            "clientHeight": 34,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "28px",
+            "textLength": 18
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": null,
+        "activeFocus": {
+          "tag": "aside",
+          "role": null,
+          "label": "Bối cảnh khách hàng",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 16,
+            "right": 619,
+            "y": -361.859375,
+            "bottom": 722.3125
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-inbox-long-composer-focused-a11y-20261111-post-inbox.png",
+        "sha256": "2d45f2588cd0ee131f78976fa651794a3ba79322062ff8d78574ba7a55b03be5"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-inbox-long-composer-after-tab-a11y-20261111-post-inbox.png",
+        "sha256": "2d45f2588cd0ee131f78976fa651794a3ba79322062ff8d78574ba7a55b03be5"
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    },
+    {
+      "id": "dialog-long-reason",
+      "route": "/s/shop-demo/inbox/cv1",
+      "browserZoom": {
+        "startingZoom": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 1
+        },
+        "baselineSetting": {
+          "before": "2",
+          "value": "1",
+          "label": "100%",
+          "settingsRoute": "chrome://settings/appearance"
+        },
+        "requestedFactor": 2,
+        "reportedFactor": "2",
+        "reportedLabel": "200%",
+        "settingsRoute": "chrome://settings/appearance"
+      },
+      "defaultViewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 1
+      },
+      "renderedAfterZoom": {
+        "cssViewport": {
+          "width": 640,
+          "height": 360
+        },
+        "devicePixelRatio": 2,
+        "documentWidth": 635,
+        "route": "/s/shop-demo/inbox/cv1"
+      },
+      "baselineScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-100-dialog-long-reason-baseline-a11y-20261111-post-inbox.png",
+        "sha256": "150afd678b256beec3389fe0119b2d5ea96dfca5a9e439d8c84fcc03b787f9b9"
+      },
+      "focusedTarget": {
+        "active": true,
+        "visibleArea": 20232.75,
+        "visibleBounds": {
+          "left": 63,
+          "top": 218.25,
+          "right": 572,
+          "bottom": 258
+        },
+        "bounds": {
+          "x": 63,
+          "y": 218.25,
+          "right": 572,
+          "bottom": 319.25
+        },
+        "receivesPointerAtVisibleCenter": true,
+        "hitTag": "textarea",
+        "hitRole": null,
+        "hitText": "Lý do tổng hợp để kiểm tra reflow. Mã hội thoại CV-2026-Mã hội thoại CV-2026-Mã "
+      },
+      "measurements": {
+        "viewport": {
+          "width": 640,
+          "height": 360,
+          "clientWidth": 640,
+          "documentWidth": 640,
+          "pageOverflow": 0,
+          "scrollHeight": 2255,
+          "scrollY": 24,
+          "devicePixelRatio": 2,
+          "visualViewportScale": 1
+        },
+        "targets": [
+          {
+            "selector": "[role=\"dialog\"]",
+            "found": true,
+            "x": 32,
+            "y": 32,
+            "width": 576,
+            "height": 296,
+            "right": 608,
+            "bottom": 328,
+            "scrollWidth": 574,
+            "clientWidth": 574,
+            "scrollHeight": 294,
+            "clientHeight": 294,
+            "overflowX": "auto",
+            "overflowY": "auto",
+            "fontSize": "14px",
+            "textLength": 202
+          },
+          {
+            "selector": "[role=\"dialog\"] textarea",
+            "found": true,
+            "x": 63,
+            "y": 218.25,
+            "width": 509,
+            "height": 101,
+            "right": 572,
+            "bottom": 319.25,
+            "scrollWidth": 509,
+            "clientWidth": 509,
+            "scrollHeight": 101,
+            "clientHeight": 101,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "fontSize": "14px",
+            "textLength": 329
+          },
+          {
+            "selector": "[role=\"dialog\"] button",
+            "found": true,
+            "x": 547,
+            "y": 49,
+            "width": 44,
+            "height": 44,
+            "right": 591,
+            "bottom": 93,
+            "scrollWidth": 44,
+            "clientWidth": 44,
+            "scrollHeight": 44,
+            "clientHeight": 44,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "fontSize": "24px",
+            "textLength": 0
+          }
+        ],
+        "navigationLabelLayout": null,
+        "textClips": [],
+        "dialog": {
+          "x": 32,
+          "y": 32,
+          "width": 576,
+          "height": 296,
+          "right": 608,
+          "bottom": 328,
+          "scrollWidth": 574,
+          "clientWidth": 574,
+          "scrollHeight": 294,
+          "clientHeight": 294,
+          "overflowX": "auto",
+          "overflowY": "auto",
+          "fontSize": "14px",
+          "textLength": 202
+        },
+        "activeFocus": {
+          "tag": "button",
+          "role": null,
+          "label": "Hủy",
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(246, 200, 95)",
+          "boxShadow": "none",
+          "bounds": {
+            "x": 425.5546875,
+            "right": 489.5546875,
+            "y": 271,
+            "bottom": 315
+          }
+        }
+      },
+      "focusedScreenshot": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-dialog-long-reason-focused-a11y-20261111-post-inbox.png",
+        "sha256": "d69a44ea5782913ae9dce978550571aefca918d307c9f4fcb81572235a0c2b38"
+      },
+      "screenshotAfterTab": {
+        "path": "evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-dialog-long-reason-after-tab-a11y-20261111-post-inbox.png",
+        "sha256": "97d8202820068c34b5967ba0f76ecad8e54a18d0be16bafe43ec41a5210edd67"
+      },
+      "writeRequests": [],
+      "pageErrors": [],
+      "issues": [],
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

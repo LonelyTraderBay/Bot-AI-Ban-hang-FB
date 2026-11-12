@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "step": "S17",
-  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical. PR 20 CI correction 20261111: retained actor ID and updated accessible selectors; select values wrap under text stress. Hosted and native acceptance remain separate.",
-  "recordedAt": "2026-11-10T17:46:21.873Z",
+  "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical. PR 20 CI correction 20261111: retained actor ID and updated accessible selectors; select values wrap under text stress. Hosted and native acceptance remain separate. Accessibility follow-up 20261111 records selected native zoom, text resize and service-case results; screen-reader and physical mobile acceptance remain open. Inbox follow-up: desktop native text-only initially found clipped conversation list text; final runs retest after wrapping. Shared dialog heading follow-up 20261111 fixes its accessible name; browser semantics and selected reflow checks are not a screen-reader speech verdict. Two named S17 tables received a scoped mobile reflow on 20261112; the remaining tables and acceptance stay open.",
+  "recordedAt": "2026-11-12T08:06:19.703Z",
   "status": "IN_PROGRESS",
   "checks": [
     {
@@ -2440,6 +2440,402 @@
         "path": "BotSalesAI_Frontend/evidence/ci-pr20-20261111/verify-final.log",
         "sha256": "18fb6a38199a1ee41c1f615b17aea5cc482a49345db72f416927d355ef8a506f"
       }
+    },
+    {
+      "id": "accessibility-service-cases-20261111",
+      "command": "Playwright: ui-service-cases-accessibility and ui-customers-layout on Chromium and Firefox",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "8 cases passed; includes 320/390/1440 CSS px, keyboard entry, customer ID fallback and existing dialog layouts.",
+      "observed": "8 cases passed; includes 320/390/1440 CSS px, keyboard entry, customer ID fallback and existing dialog layouts.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/service-case-test-final.log",
+        "sha256": "c0810dceaeb62713fc2c40633c067a0a7971f3bf1dfcdcbcfebc295e1da30e14"
+      }
+    },
+    {
+      "id": "accessibility-chrome-zoom-20261111",
+      "command": "Native Chrome page zoom 200%; W30 five synthetic scenarios",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "5 of 5 selected W30 scenarios passed with native Chrome page zoom 200%.",
+      "observed": "5 of 5 selected W30 scenarios passed with native Chrome page zoom 200%.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/chrome-zoom-final.log",
+        "sha256": "c9777acd30c458ee81799a8a7d67285ff4e4574ca2f5a6945cf521090882ef81"
+      }
+    },
+    {
+      "id": "accessibility-firefox-text-20261111",
+      "command": "Native Firefox text-only zoom 200%; W30 five synthetic scenarios",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "5 of 5 selected W30 scenarios passed with native Firefox text-only zoom 200%.",
+      "observed": "5 of 5 selected W30 scenarios passed with native Firefox text-only zoom 200%.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/firefox-text-final.log",
+        "sha256": "e89e21bd135a8a9d96edfef16b95cc3b6eb44a6822bf4fee8e27629def2ffaf7"
+      }
+    },
+    {
+      "id": "accessibility-service-case-zoom-20261111",
+      "command": "Native Chrome 200% page zoom: service case details and processing",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Native Chrome 200% at 640 by 360 CSS px: service-case dialog geometry and detail-to-processing flow passed.",
+      "observed": "Native Chrome 200% at 640 by 360 CSS px: service-case dialog geometry and detail-to-processing flow passed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/service-case-chrome-zoom-final.log",
+        "sha256": "d8180819533d7f05316131a393b10586830778f85eb5c43a0365060ac9729e72"
+      }
+    },
+    {
+      "id": "accessibility-screen-reader-attempt-20261111",
+      "command": "Attempt Narrator speech recap and mobile screen reader",
+      "exitCode": 1,
+      "result": "NOT_RUN",
+      "expected": "Observe actual screen-reader speech on desktop and mobile.",
+      "observed": "Narrator window was inaccessible at higher integrity; no speech captured. TalkBack and physical mobile were not tested.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/screen-reader-attempt.md",
+        "sha256": "8c055700fde79efa411cf19d0ca3323646d2d298c338f5fc23fcf078ebd3487d"
+      }
+    },
+    {
+      "id": "accessibility-verify-before-catalog-20261111",
+      "command": "npm run verify",
+      "exitCode": 1,
+      "result": "FAIL",
+      "expected": "All frontend verification gates pass.",
+      "observed": "UI composition catalog fixture found MutationButton documented uses 127 while source uses 128; other executed lanes passed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/verify-before-catalog.log",
+        "sha256": "01bc9ac7b92f17c44735956f8e8fc9e04a49e4b43ef43c0fd48b6fe0e237af1d"
+      }
+    },
+    {
+      "id": "accessibility-desktop-text-before-20261111",
+      "command": "Firefox native text-only 200%, desktop 1280x900 before inbox fix",
+      "exitCode": 1,
+      "result": "FAIL",
+      "expected": "Three desktop text-only scenarios pass without clipped text.",
+      "observed": "One scenario passed; two detected eight clipped conversation names/previews before the inbox fix.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/firefox-text-desktop.log",
+        "sha256": "f8434937a3d76d9641265eb636f75659a9859dc4da203e19cb74e914e5ec797f"
+      }
+    },
+    {
+      "id": "accessibility-desktop-text-after-20261111",
+      "command": "Firefox native text-only 200%, desktop 1280x900 after inbox fix",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Three selected desktop Firefox text-only scenarios passed after the inbox fix.",
+      "observed": "Three selected desktop Firefox text-only scenarios passed after the inbox fix.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/firefox-text-desktop-final.log",
+        "sha256": "c7b83b80dccd31e13f7b5fbacc3af3b91585444ef8e69fb1d2d27c089b159bff"
+      }
+    },
+    {
+      "id": "accessibility-inbox-wrap-20261111",
+      "command": "Playwright inbox text wrap, Chromium and Firefox",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Two browser cases passed at 390 and 1440 CSS px with enlarged conversation names and previews.",
+      "observed": "Two browser cases passed at 390 and 1440 CSS px with enlarged conversation names and previews.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/inbox-test-final.log",
+        "sha256": "5a521cc338b6ea91e842e6c5876f9602ebc03abad6787196a45cfc3510a76c10"
+      }
+    },
+    {
+      "id": "accessibility-post-inbox-chrome-20261111",
+      "command": "Native Chrome page zoom 200%; W30 scenarios after inbox fix",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Five selected Chrome native 200% page-zoom scenarios passed on the final UI source.",
+      "observed": "Five selected Chrome native 200% page-zoom scenarios passed on the final UI source.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/chrome-zoom-post-inbox.log",
+        "sha256": "500dfa7a497459786174b4c702e52dcdf902d818a70b19ec6d2ce7e6b8311ab1"
+      }
+    },
+    {
+      "id": "accessibility-post-inbox-firefox-attempt-20261111",
+      "command": "Native Firefox text-only 200%; first post-fix attempt",
+      "exitCode": 1,
+      "result": "FAIL",
+      "expected": "Five selected Firefox native text-only scenarios complete.",
+      "observed": "Four scenarios passed; the next navigation was rejected by a beforeunload prompt. The full five-scenario retry is recorded separately.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/firefox-text-post-inbox.log",
+        "sha256": "ea16922082656173ff714caec7098fe976076767006380b3fbc3afe9a62c150c"
+      }
+    },
+    {
+      "id": "accessibility-post-inbox-firefox-20261111",
+      "command": "Native Firefox text-only 200%; W30 retry after inbox fix",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Five selected Firefox native 200% text-only scenarios passed on the final UI source.",
+      "observed": "Five selected Firefox native 200% text-only scenarios passed on the final UI source.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/firefox-text-post-inbox-retry.log",
+        "sha256": "11f48a629b483de5fa6ff5e094fdc40cb2a26ca781fe523977f8c306102b566d"
+      }
+    },
+    {
+      "id": "accessibility-service-regression-20261111",
+      "command": "Playwright frontend-completeness R54 on Chromium and Firefox",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "8 service-case detail cases passed, covering delayed data and 403, 404 and 503 responses on both browsers.",
+      "observed": "8 service-case detail cases passed, covering delayed data and 403, 404 and 503 responses on both browsers.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/service-case-regression.log",
+        "sha256": "6b990673ba8b1a4a3484ca8c54e02b97b9bd2bbaec68a5253f04a21c725200a1"
+      }
+    },
+    {
+      "id": "accessibility-verify-20261111",
+      "command": "npm run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Full frontend verify passed, including 263 Vitest tests and S17 validation.",
+      "observed": "Full frontend verify passed, including 263 Vitest tests and S17 validation.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/verify-final.log",
+        "sha256": "fb5c985612b1ce9955293bf347406401fdd0e3d661ca44fafbd293f67e36cf17"
+      }
+    },
+    {
+      "id": "screen-reader-follow-up-attempt-20261111",
+      "command": "Manual Narrator and Android emulator TalkBack attempt",
+      "exitCode": 1,
+      "result": "NOT_RUN",
+      "expected": "Observe actual Narrator and TalkBack speech on the local demo.",
+      "observed": "Narrator window is above helper integrity; TalkBack requests full-control permission and Chrome first run requires Terms acceptance. No speech on the app was observed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-readers-20261111/ATTEMPT.md",
+        "sha256": "9a79933136a82e3883f94b66da9f9b3606a2dd95d3a15b73db5ff3fdc40e91a0"
+      }
+    },
+    {
+      "id": "heading-a11y-before-20261111",
+      "command": "Playwright dialog heading negative test before shared fix",
+      "exitCode": 1,
+      "result": "FAIL",
+      "expected": "Heading has the title alone as its accessible name.",
+      "observed": "The heading accessible name included the separately named close button before the fix.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/test-before.log",
+        "sha256": "59dff6e00710b88edbd66e9c7eecb1b3224b7c45c6a1e8bc7b10c05c27d8e65b"
+      }
+    },
+    {
+      "id": "heading-a11y-after-20261111",
+      "command": "Playwright dialog headings on Chromium and Firefox",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Two browser cases passed for two dialogs at 390 and 1440 CSS px, including separate close name and focus restoration.",
+      "observed": "Two browser cases passed for two dialogs at 390 and 1440 CSS px, including separate close name and focus restoration.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/test-final.log",
+        "sha256": "9752a1d683db8e542408b2e93bdc76624fb0fa4807138f4ce9c78a49b4341ead"
+      }
+    },
+    {
+      "id": "heading-dialog-regression-20261111",
+      "command": "Playwright service-case detail regression on Chromium and Firefox",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Eight service-case detail cases passed, including loading and error states on both browsers.",
+      "observed": "Eight service-case detail cases passed, including loading and error states on both browsers.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/dialog-regression.log",
+        "sha256": "0ff1f846f3b3696f200553197ff78670c27cced444ad45f9415dbcb39dbec245"
+      }
+    },
+    {
+      "id": "heading-native-chrome-20261111",
+      "command": "Chrome native 200% page zoom five W30 scenarios",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Five selected native Chrome 200% page-zoom scenarios passed after the shared change.",
+      "observed": "Five selected native Chrome 200% page-zoom scenarios passed after the shared change.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/chrome-zoom.log",
+        "sha256": "4042e79f5dc547d8c9d2967fb655736ff329fdfc6a7cb3e1d64859266e29b09c"
+      }
+    },
+    {
+      "id": "heading-native-firefox-20261111",
+      "command": "Firefox native 200% text-only zoom five W30 scenarios",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Five selected native Firefox 200% text-only scenarios passed after the shared change.",
+      "observed": "Five selected native Firefox 200% text-only scenarios passed after the shared change.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/firefox-text.log",
+        "sha256": "bc305e2282c437eb4c58e776dc5d1bb271c3bc38aba70ccfe02d57bf3df2d494"
+      }
+    },
+    {
+      "id": "heading-screen-reader-session-20261111",
+      "command": "Attempt Narrator and TalkBack speech on resumed session",
+      "exitCode": 1,
+      "result": "NOT_RUN",
+      "expected": "Observe Narrator and TalkBack speech on the local demo.",
+      "observed": "Earlier windows were absent; the restarted emulator had TalkBack off and Narrator remained above helper integrity. No speech was observed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/screen-reader-session.md",
+        "sha256": "530059b67e048d8be69d1aa29a6cd9ebdcbf9a8fd33232601c3df2d64fae84f5"
+      }
+    },
+    {
+      "id": "heading-narrator-scoped-20261111",
+      "command": "Manual Narrator Speech recap on local service-case demo",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Narrator Speech recap visibly reported the service-case table, detail dialog close button and customer link; Escape visibly returned focus.",
+      "observed": "Narrator Speech recap visibly reported the service-case table, detail dialog close button and customer link; Escape visibly returned focus.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/narrator-observation.md",
+        "sha256": "7f908aa21a73aea16ea07b7f8706d49809f9e4752b0cd89e35228458536c1ef5"
+      }
+    },
+    {
+      "id": "heading-capture-after-20261111",
+      "command": "Chromium paired service-case detail captures at 390 and 1440 CSS px",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Two selected service-case dialog captures show the title as the heading name and the close button as a separate control.",
+      "observed": "Two selected service-case dialog captures show the title as the heading name and the close button as a separate control.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/capture-after.log",
+        "sha256": "f90c9aa35f1ce1b400cab2fc756d0820f76d994da85ce539b776bf7deaa334e8"
+      }
+    },
+    {
+      "id": "heading-verify-20261111",
+      "command": "npm run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Full frontend verify passed, including 263 Vitest tests and S17 validation.",
+      "observed": "Full frontend verify passed, including 263 Vitest tests and S17 validation.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/verify.log",
+        "sha256": "9a278650ee4ed670051b8f42ecba35a9ed344acbb6fb1508959c444d9f1d19ea"
+      }
+    },
+    {
+      "id": "talkback-5570-state-20261111",
+      "command": "Inspect current TalkBack state on Android emulator 5570",
+      "exitCode": 1,
+      "result": "NOT_RUN",
+      "expected": "Observe TalkBack speech on the local application.",
+      "observed": "The user reported TalkBack enabled, but this emulator currently reports accessibility disabled and the system permission dialog is awaiting user action. No application speech observed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-talkback-5570-20261111/ATTEMPT.md",
+        "sha256": "6341487cebad8fbaa3c794619beb06e78b9b0b4e089e9f5be53468f0d0c93dad"
+      }
+    },
+    {
+      "id": "talkback-system-output-20261111",
+      "command": "Observe enabled TalkBack and speech output overlay on Android emulator 5570",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "TalkBack service is enabled and its on-screen speech output displays Android system content.",
+      "observed": "TalkBack service is enabled and its on-screen speech output displays Android system content.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-talkback-enabled-20261111/OBSERVATION.md",
+        "sha256": "df8136200a4e424965ccdae3695ade51b6d3b13136eb970ffc8d4ffa14545a83"
+      }
+    },
+    {
+      "id": "talkback-app-blocked-20261111",
+      "command": "Attempt TalkBack on BotSales in Android Chrome",
+      "exitCode": 1,
+      "result": "NOT_RUN",
+      "expected": "Observe TalkBack speech on the local application.",
+      "observed": "Chrome first-run requests acceptance of Terms; the application was not opened and no application speech was observed.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-talkback-enabled-20261111/OBSERVATION.md",
+        "sha256": "df8136200a4e424965ccdae3695ade51b6d3b13136eb970ffc8d4ffa14545a83"
+      }
+    },
+    {
+      "id": "table-reflow-regression-20261112",
+      "command": "Playwright tests/ui-table-reflow.spec.ts, ui-remaining-tables.spec.ts, ui-team-mobile-dialog.spec.ts and ui-inventory-layout.spec.ts on Chromium and Firefox",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "20 scoped browser cases passed on Chromium and Firefox for inventory, team and prior regressions.",
+      "observed": "20 scoped browser cases passed on Chromium and Firefox for inventory, team and prior regressions.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-table-reflow-20261112/browser-regression.log",
+        "sha256": "43b075603a53bb397d5ba6c5f4e859340173ff485fe209e1fa13240183a14197"
+      }
+    },
+    {
+      "id": "table-reflow-semantics-20261112",
+      "command": "Playwright tests/ui-table-reflow.spec.ts on Chromium and Firefox",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Four browser cases checked reflow, column headers, rows, cell containment and actions at 320, 390 and 1440 CSS px.",
+      "observed": "Four browser cases checked reflow, column headers, rows, cell containment and actions at 320, 390 and 1440 CSS px.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-table-reflow-20261112/semantic-final.log",
+        "sha256": "c705467e613222966a9a01ba076cd441f57f971719e085aa68051df095db8558"
+      }
+    },
+    {
+      "id": "table-reflow-composition-20261112",
+      "command": "npm run test:ui-composition",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Shared UI composition and catalog gate passed after updating the catalog.",
+      "observed": "Shared UI composition and catalog gate passed after updating the catalog.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-table-reflow-20261112/composition.log",
+        "sha256": "17e64424b113351468929b0ceb62d0eacb6938666a6b5f4244745d59b10f90e9"
+      }
+    },
+    {
+      "id": "table-reflow-verify-20261112",
+      "command": "npm run verify",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "All local verify gates passed; S17 remains IN_PROGRESS and UI acceptance remains open.",
+      "observed": "All local verify gates passed; S17 remains IN_PROGRESS and UI acceptance remains open.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-table-reflow-20261112/verify-final.log",
+        "sha256": "fefb6ab5ef14f504410fc05c1c62f3d41d56dfad190319f98405ee971ab9ef32"
+      }
+    },
+    {
+      "id": "zoom-image-recapture-20261112",
+      "command": "node evidence/ui-zoom-capture-20261112/diagnose-capture.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Four current-source Chrome native 200% diagnostic clips were captured and checked for matching hashes, dimensions, viewport, DPR and scroll; historical screenshot captures remain unchanged.",
+      "observed": "Four current-source Chrome native 200% diagnostic clips were captured and checked for matching hashes, dimensions, viewport, DPR and scroll; historical screenshot captures remain unchanged.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/recapture-v5-run.log",
+        "sha256": "af08a64f8e8f6097e5815e85797b40651c31dd66f2bde342798a944383a03be3"
+      }
+    },
+    {
+      "id": "zoom-historical-source-recheck-20261112",
+      "command": "node evidence/ui-zoom-capture-20261112/recheck-historical.mjs",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "Four reconstructed-source rechecks each matched 106 recorded input fingerprints and produced four CDP captures byte-identical to the four retained current-source images; old historical captures remain blank and unchanged.",
+      "observed": "Four reconstructed-source rechecks each matched 106 recorded input fingerprints and produced four CDP captures byte-identical to the four retained current-source images; old historical captures remain blank and unchanged.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/screen-heading/run.log",
+        "sha256": "55131d8e7ff1ca99a6ff5d56521f9de8bdb4102f542a7db157934a6e6ef5cd70"
+      }
     }
   ],
   "coverage": [
@@ -3622,6 +4018,38 @@
       "missing": 1,
       "result": "OPEN",
       "reason": "Route smoke covers entry states only. Native browser zoom, Firefox text-only resizing, all roles and states, screen reader, physical mobile and owner acceptance remain unverified."
+    },
+    {
+      "name": "accessibility-followup-acceptance-20261111",
+      "expected": 1,
+      "observed": 0,
+      "missing": 1,
+      "result": "OPEN",
+      "reason": "Selected native zoom/text-only and synthetic browser tests do not cover every route, permission or state. Firefox text-only was not tested on the changed service-case detail. Narrator speech, TalkBack, physical mobile, hosted and owner acceptance remain unverified. The pre-edit dialog screenshots were captured during its opening transition and are not paired visual acceptance."
+    },
+    {
+      "name": "heading-screen-reader-acceptance-20261111",
+      "expected": 1,
+      "observed": 0,
+      "missing": 1,
+      "result": "OPEN",
+      "reason": "Selected service-case Narrator speech recap was observed; other dialogs, states and roles, TalkBack speech, physical mobile and owner acceptance remain unverified."
+    },
+    {
+      "name": "table-reflow-acceptance-20261112",
+      "expected": 1,
+      "observed": 0,
+      "missing": 1,
+      "result": "OPEN",
+      "reason": "Only stock movement history and team tables were reflowed and checked in the 20261112 batch. Other multi-action and read-only tables remain open; complete states and permissions, native zoom, text-only resize, screen reader, physical mobile and owner acceptance remain unverified."
+    },
+    {
+      "name": "zoom-historical-screenshot-reconciliation-20261112",
+      "expected": 16,
+      "observed": 0,
+      "missing": 16,
+      "result": "OPEN",
+      "reason": "Sixteen historical W30 screenshots from four previous source snapshots are blank; four new current-source clips do not recreate those historical screenshots or prove their visual baselines. Native zoom capture is scoped to Chrome DPR 2 and two scenarios."
     }
   ],
   "baseline": {
@@ -3670,7 +4098,7 @@
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "2690e23e2afa4d01004929f35ae96c7c51315904dd18cbc8bf502ea7173d6a47",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/index.tsx": "0991ae0be94c3804997fa7f28a479a7c86f2ca37965c1093624607ec1547ce8d",
     "BotSalesAI_Frontend/apps/web/src/modules/customers/addresses.tsx": "4c81fc0c8eea9ccf270895f9e2e0ad92fd8b6d7b7418561e99955176f8592305",
-    "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "0b78f57f4f9690a85391a9d71cdf9d8db1df175e05ecb1e391d30321a955485f",
+    "BotSalesAI_Frontend/apps/web/src/modules/customers/index.tsx": "5fbd1d4b05a3fa8394657a36aebcada43221e375ca92eb2c1a003b78076a4ac7",
     "BotSalesAI_Frontend/apps/web/src/modules/dashboard/index.tsx": "f495d13a461ac220302bfc153cd3e86831f663c5dfe474d4e51ec9b68de73255",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/accounts.tsx": "77be37cccfd6cacd6ec3bce2277d29117a1a51914ea1a3f2c22d97eb6d9f9869",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/entry-editor.tsx": "7c8bca51ea7fc49556246d09a90cf09fd98eba6cf39b7cc88451b54cea1818e7",
@@ -3682,9 +4110,9 @@
     "BotSalesAI_Frontend/apps/web/src/modules/finance/statement-import.tsx": "0fbfc2b95f057fdcc88779bd8ac425e0b04aa768645771f8dbfef8d39f83009e",
     "BotSalesAI_Frontend/apps/web/src/modules/fulfillment/index.tsx": "b6d5e7380830977c878f8f02f4e6e6dd134dc571fb69209649b3739f80ce53af",
     "BotSalesAI_Frontend/apps/web/src/modules/inbox/conversation-components.tsx": "bb6428789bdf63d790180bd6ef04735ce44767568560568b4dbc0d6a5223979a",
-    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "b279542844044b040e097e61d421b471fef5ca160bda32b9662258948a112f9e",
+    "BotSalesAI_Frontend/apps/web/src/modules/inbox/index.tsx": "856b72425fe29e7b441b61b317c169f194b2349a37d896cc8f27e237e697f6fb",
     "BotSalesAI_Frontend/apps/web/src/modules/integrations/index.tsx": "710bce114d8194505317db19adf44fa531ba0a480fc439bd673e8884fed77b4d",
-    "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "a8fd2d3d60ea51f9529c3deeab30c491b1caa6616f7a843b773498fea6dc72cc",
+    "BotSalesAI_Frontend/apps/web/src/modules/inventory/index.tsx": "39e9b1d6bf68d26071e89e325a28126ed55706ad0e1ec7917d425621dc4bdc3d",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/warehouses.tsx": "f9dfdc374cf28993f736d82d63afc121c282936843ab08590a4d06983b6604b6",
     "BotSalesAI_Frontend/apps/web/src/modules/knowledge/index.tsx": "0e7cf207254c76c06c7ac7f1c44c32bc1b7c2ed1dedcd69e04e6e139bd5d0b98",
     "BotSalesAI_Frontend/apps/web/src/modules/notifications/index.tsx": "dd83ccbde1453b18cb0fc0cdbc9ad119121b536e78441f965e435e0a530728d2",
@@ -3694,7 +4122,7 @@
     "BotSalesAI_Frontend/apps/web/src/modules/procurement/index.tsx": "ac70303639fd5c4b3d1620183bf3d5ad7d1b299dd9fdaa6a312a6873891db34e",
     "BotSalesAI_Frontend/apps/web/src/modules/reports/index.tsx": "57aa4797d4478133f766588e2651c120b62baae692ce7c094b0b1aa430a97c11",
     "BotSalesAI_Frontend/apps/web/src/modules/reports/report-utils.ts": "d93b2d30c8584daee5f52aaba6cad7b7ae2ccde6f5d196509ad7362431ea6ed0",
-    "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx": "bfa565fb2569b291d0740f40a22d3e46fd5f1717b625302d0704bf98d0711174",
+    "BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx": "e58f2d0683ef0860f375ac1b5868f2b13e4f4cf2e74d9a114475591ff8f49caf",
     "BotSalesAI_Frontend/apps/web/src/shared/api/client.ts": "14f723eb00cb9e7e5e244b440c1de7dfd534be499c991cf25288b5a7506c65ae",
     "BotSalesAI_Frontend/apps/web/src/shared/api/client.type-contracts.ts": "7680d437fe4b70a66cda471dad6be05e6f9201c197377fad6798777ca20b9a5e",
     "BotSalesAI_Frontend/apps/web/src/shared/api/errors.ts": "dacb2b086a75c4695f64ad4714c0cda0199b59e491e3293c8813c08c10f5b227",
@@ -3711,11 +4139,11 @@
     "BotSalesAI_Frontend/apps/web/src/shared/model/list-return.ts": "1ec5a32a482a728d7398290a6d2347b7d2a279646af6f1074fc2821ac9a6b5a0",
     "BotSalesAI_Frontend/apps/web/src/shared/model/scope.tsx": "76a5d2b8c898c1429f2d1fe1b08f83983c0235a9fe035c731598e2e45b3cec22",
     "BotSalesAI_Frontend/apps/web/src/shared/model/versioned-draft.ts": "2709b663ed7025ada096328573e30c530e9659389af1b548f2380ee764af794b",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "0f6c9e4563599129a8e7f3e04ad849a6dff42be73d464625371326be6c496c88",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/components.tsx": "fdfb20912cddb3d9b241ff0f421b9f85b17131fe3e2dc60229465387321742f9",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/composition.tsx": "83a83d65df1aa1f50adc531d299b1b33e0cdec702818c97d1fba728da637c8a0",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/draft-conflict.tsx": "5841adfe33ab0521c767eb018b1cfa40d4b2f7eeffa074f1b338ff27f5e1bf49",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/layout.ts": "ee98d2dc219d10b9ab58f993be6500ebc73362d921a05f4215d7cb95a61c990f",
-    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "cc0630d482bdfa540471fb4ddecf785b85d1efaaa07b895cdf63b9592c24b325",
+    "BotSalesAI_Frontend/apps/web/src/shared/ui/README.md": "9371ec81d9a0887a55403bd87b464d0ba037d5855a05a75df25ca48f2523dd59",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/theme.ts": "21f4b5151cf9890d8d88332fe89ae7c8bf6bc183537b4ee525cf8faaf4dfb39c",
     "BotSalesAI_Frontend/apps/web/src/shared/ui/visual.ts": "f662e786fffe12898d0f19c13444ef3fbb1ab5c1744f7d01a30fdd380f8c5d11",
     "BotSalesAI_Frontend/apps/web/src/vite-env.d.ts": "b170bc219541531edc57716a974c8e6c2aa8fa366b6d4cc672b032e8bf1fbbbc",
@@ -3859,7 +4287,7 @@
     "BotSalesAI_Frontend/tests/ui-fulfillment-layout.spec.ts": "f49012236d218c326dd681299931e39af916a5570bb1bf3caf99351f0789ba46",
     "BotSalesAI_Frontend/tests/ui-import-scope.test.mjs": "02d21b1e9efd724c9c0539a6a61bc2ac1f1a9cda9a9fb5513892e9e2bb414fe4",
     "BotSalesAI_Frontend/tests/ui-integrations-layout.spec.ts": "874ecc9cca75a45fd465aa91a7993583115e04556a9b254eb7f451f66d50c0d6",
-    "BotSalesAI_Frontend/tests/ui-inventory-layout.spec.ts": "3ec58e1ad8fdaff03921c5a3f488b3e33ead8763baec9067e2cf489cb1aaf2c7",
+    "BotSalesAI_Frontend/tests/ui-inventory-layout.spec.ts": "515b2cb8a0f56c979f3d747ed133226c179b645dbd1f8516a2e76339c497a974",
     "BotSalesAI_Frontend/tests/ui-knowledge-layout.spec.ts": "591b833bae530b19fb231d3aacab2058d4546d2e2648cdaf603c5b973b4a33f6",
     "BotSalesAI_Frontend/tests/ui-layout-binding-gates.test.mjs": "cfa755414b0d73581bd60fefec240027c8c3529c3eed001453c6be399abb5e3d",
     "BotSalesAI_Frontend/tests/ui-master-resources.spec.ts": "e4068c0d2fa34c0632871c7e0b249648c809439a041e1569ce38b68e7e814275",
@@ -3908,7 +4336,7 @@
     "BotSalesAI_Frontend/tests/session/playwright-run-isolation.test.mjs": "2a99544c37f5635110d4d64a4931b27d23116b7269504d2ab0299f36c737eeb9",
     "BotSalesAI_Frontend/apps/web/tests/command-read-scope.test.ts": "e9689fb72cb698a91fef79d63d5cf1b5b56761fb65466a3fd619862acc723a0a",
     "BotSalesAI_Frontend/apps/web/tests/pager-retention.test.tsx": "92359f1b834e890304bc537e3bd279635a0164e0da92d4e1d4d4c4b6c03e0ba6",
-    "BotSalesAI_Frontend/evidence/REPORT.md": "8bde28fcd152fdfc6f978650ea976c3de2251e6a8e9e09600b959a171609a534",
+    "BotSalesAI_Frontend/evidence/REPORT.md": "c44cdbbedb1abd689fa0a3907f021df1def90f00f61db923e5d719d6071fc7a4",
     "BotSalesAI_Frontend/tests/ui-overlay-theme.spec.ts": "ad70fc60a8e712ffbeceed270a5e5b0d62ba4cd6a7e9bc158b5d623c2b58c757",
     "BotSalesAI_Frontend/apps/web/src/mocks/service-worker-update-recovery.ts": "62cf0f795b6f0415bb319d4d928eed6fcd6ed8266a546da6828955d4f2dad1b4",
     "BotSalesAI_Frontend/apps/web/tests/service-worker-update-recovery.test.ts": "3a5f1376694d85ad1fb65d8e289685a9d5cdb8d021eea0b0a8301f22d0426b38",
@@ -3984,10 +4412,39 @@
     "BotSalesAI_Frontend/tests/ui-mobile-followup.spec.ts": "41d20f054bed32d1b0b29073911cf72460bda98671b7c380af9f9467854611d9",
     "BotSalesAI_Frontend/apps/web/tests/ui-audit-fixes.test.tsx": "54fd6de547362be6a72303f31e7fa02efae4957e32d2bf8092c216ea3692cc1d",
     "BotSalesAI_Frontend/tests/ui-order-permission-followup.spec.ts": "6a71fa4ca1a12881b1ef9fd4454232644293137cffaac0c350e24893c7e2e68f",
-    "BotSalesAI_Frontend/tests/ui-remaining-tables.spec.ts": "0951de34bf0a337fdedfde562e34f95b63334f0cb228303bfc2887a9c60b3bac",
+    "BotSalesAI_Frontend/tests/ui-remaining-tables.spec.ts": "1f61e78659bce16ebe3bf884ea7cc2b6449706a063c14dd5042ac3bbd8fb5d5c",
     "BotSalesAI_Frontend/tests/ui-team-mobile-dialog.spec.ts": "1250a52b1e14c0fe845e47f47b2dc5d4b6aef6138088b314d6e11ce7cb9dcd12",
     "BotSalesAI_Frontend/apps/web/tests/team-display-name.test.tsx": "13946e8190ca4829ab01c981c92ace489faa990d066d12c85764bc86cc6b13f3",
-    "BotSalesAI_Frontend/evidence/ci-pr20-20261111/playwright-fe011.config.ts": "6f7761fbc96b7fa990a9d43c5e965ad7e28b78198d996b41f99c6c1d5148d60b"
+    "BotSalesAI_Frontend/evidence/ci-pr20-20261111/playwright-fe011.config.ts": "6f7761fbc96b7fa990a9d43c5e965ad7e28b78198d996b41f99c6c1d5148d60b",
+    "BotSalesAI_Frontend/tests/ui-service-cases-accessibility.spec.ts": "34b52538b189d9cf4ce128f98c0fa5d534d6181dd382b6c5d0122f046e728ab5",
+    "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/service-cases-capture.mjs": "f289179ed140e42a35aa2587048ff941d1e2267b0e7b168a134fafedd9f63f65",
+    "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/service-case-chrome-zoom.mjs": "b13937bc442b26a7c1b7dddf8b3d4573dd97226a14c667b88f4f470a137a2ffd",
+    "BotSalesAI_Frontend/tests/ui-inbox-text-resize.spec.ts": "4473eb27511655e9b2c284dfd8c5c1ea10c9fe59b188887c1182850ac8f1cc34",
+    "BotSalesAI_Frontend/evidence/ui-accessibility-20261111/inbox-capture.mjs": "4da9d78dc795bfd68fc25f8191b6be1e140e7f1072191a4ee34f1baabb41a448",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/capture-native-text-only-desktop-a11y-20261111.mjs": "fd43ef2444b8bf80ce699e990b0e2e9febecb1e2f68028fc011b57cb0cd6d8b6",
+    "BotSalesAI_Frontend/tests/ui-dialog-heading-accessibility.spec.ts": "468dae61dac409828f2becdc948e31db1aff80f48149558d8a008911d9c28fb4",
+    "BotSalesAI_Frontend/evidence/ui-screen-reader-heading-20261111/capture.mjs": "32b002c311e487f30397f524e381c28b318ade853b54b956f90b22f681a89410",
+    "BotSalesAI_Frontend/tests/ui-table-reflow.spec.ts": "912f64092f7b453c75dcb9a69e40a48f0e51a198488d7e67de13062fc4f7f869",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/diagnose-capture.mjs": "413104397d329c01f0f7e5448a54753536323b9ff24518b57b0104a6290bd4b6",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/RESULT.md": "25c856e720001f620f48d37df59e8a49b38d38565a0294d962051eefc2bd4f07",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/recapture-v5/diagnostic.json": "6239edfc53a25cefa4d93344bb66698666f7451cf3a7a1b9a77878aacf254407",
+    "BotSalesAI_Frontend/evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-current-image-recapture-20261112.json": "6fab66b029ba09716e25f8dfa2d364c0bf25349c5ac48f57a47921c448a4a3a5",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/recapture-v5/form-error-short-focused-cdp-clip.png": "45cbf56c10424f6b275545cc806b2dbc6a2dfcb2e1fd438a21c095665089669d",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/recapture-v5/form-error-short-after-tab-cdp-clip.png": "a047f19d037b17b517df93d4c22d805bd382535b1b8718eeab65a756dcce0c94",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/recapture-v5/inbox-long-composer-focused-cdp-clip.png": "a2887ba02983b8886859eba4e6623d3db5948d3d03a9ea15a04704ed662d9f3c",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/recapture-v5/inbox-long-composer-after-tab-cdp-clip.png": "4823f3645a334a12e134bd0a5acba16301e8cf4567a1e8ebcb0d7cde10c50cb6",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/recheck-historical.mjs": "f973ad2336083ff5995ed875443e8f7d8bb2a9d169a7c840ea5a56bfccec1708",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/reconcile-historical.mjs": "e12cee092203057201c9e1544e46c0838789b0baedf077ec3cf65da2aed81c55",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/source-reconciliation.json": "43d902d08117291f7c06692d09f500329d56edcf3e2dfc81aaa378fd46a4c554",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/deduplication.json": "d8c1f597b0ec991092163997cca95b49c5e7299c2179376f92db259e376cec63",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/baseline/diagnostic.json": "ca6280b8f4fb5064f85cdb0da34e491e068a0faa12912cec39a9af955ad504cc",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/baseline/run.log": "423e009a081fc9db2e54cff6e5e0e9a3bc4da94f83a34405fc16065826f215c4",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/final/diagnostic.json": "c4606d3c193b4f317423853bfc4d7b997ea5776aba2e2830e50e5742f920fa62",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/final/run.log": "64b417a99d23f3f004ef3c3507860925ef52f7634efd0594c15a3077a25ad93f",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/post-inbox/diagnostic.json": "48392452a733a2701f5b1350b9a84e6084c23fcc16181758ac0752472d9e09b6",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/post-inbox/run.log": "1da433d05d7ba73e88f854119e42ab0ff142ba4cd545eea6ef00a67bc60fbe5a",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/screen-heading/diagnostic.json": "b60bc0e4ce81bccef9a5519f99ba55f2fb2f042c7bebb401c630aff8aad337ec",
+    "BotSalesAI_Frontend/evidence/ui-zoom-capture-20261112/historical-source-recheck/screen-heading/run.log": "55131d8e7ff1ca99a6ff5d56521f9de8bdb4102f542a7db157934a6e6ef5cd70"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",
@@ -4044,6 +4501,16 @@
     "CI unblock 2026-11-10: previous UI and verify checks belong to the source before the minimatch override and selector changes. The current scoped checks are recorded separately in evidence/ci-push-unblock-20261110; hosted CI status remains external.",
     "Paired before/after baselines, all changed route states and permissions, native browser zoom, text-only resizing, screen reader and physical mobile have not been verified.",
     "Other multi-action and read-only mobile tables remain horizontally scrollable. Paired screenshots cover six routes only; native zoom, Firefox text-only resize, all permissions and states, screen reader, physical mobile, backend and human acceptance remain unverified.",
-    "Route smoke covers entry states only. Native browser zoom, Firefox text-only resizing, all roles and states, screen reader, physical mobile and owner acceptance remain unverified."
+    "Route smoke covers entry states only. Native browser zoom, Firefox text-only resizing, all roles and states, screen reader, physical mobile and owner acceptance remain unverified.",
+    "Selected native zoom/text-only and synthetic browser tests do not cover every route, permission or state. Firefox text-only was not tested on the changed service-case detail. Narrator speech, TalkBack, physical mobile, hosted and owner acceptance remain unverified. The pre-edit dialog screenshots were captured during its opening transition and are not paired visual acceptance.",
+    "The 1280px Firefox native text-only run covers three scenarios, not every desktop screen; mobile-width Firefox runs are desktop browser viewports, not TalkBack or a physical phone. The service-case route itself was not tested with native Firefox text-only resize.",
+    "2026-11-11 follow-up: Narrator speech remains unobserved due to integrity separation; Android emulator TalkBack is awaiting full-control permission and Chrome first-run terms. Physical device and all screen-reader acceptance remain open.",
+    "The shared heading semantics are checked on selected dialogs; other dialogs, states and roles are not fully covered. Narrator and TalkBack speech have not been observed in the current session, and physical mobile and owner acceptance remain open.",
+    "The initial screen-reader attempt in this follow-up is superseded for one desktop service-case flow by the later Narrator Speech recap; it is not a full Narrator or TalkBack acceptance.",
+    "Current 5570 follow-up: Android settings and visible UI report TalkBack off; the permission dialog remains awaiting user action. No TalkBack speech or physical mobile acceptance was observed.",
+    "TalkBack and its speech output overlay are enabled on emulator 5570, superseding the prior off state. Chrome first-run remains incomplete; BotSales TalkBack speech and physical-device acceptance are unverified.",
+    "Only stock movement history and team tables were reflowed and checked in the 20261112 batch. Other multi-action and read-only tables remain open; complete states and permissions, native zoom, text-only resize, screen reader, physical mobile and owner acceptance remain unverified.",
+    "Sixteen historical W30 screenshots from four previous source snapshots are blank; four new current-source clips do not recreate those historical screenshots or prove their visual baselines. Native zoom capture is scoped to Chrome DPR 2 and two scenarios.",
+    "Historical-source rechecks are new captures using current Chrome and dependencies; 106 matched recorded inputs do not establish the complete historical environment or prove original blank images. Some source fingerprints were recorded after the historical runs. Original screenshot coverage remains OPEN."
   ]
 }

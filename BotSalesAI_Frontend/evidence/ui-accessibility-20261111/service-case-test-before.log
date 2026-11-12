@@ -1,0 +1,46 @@
+
+Running 1 test using 1 worker
+
+
+
+(node:29672) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/1] [chromium] › tests\ui-service-cases-accessibility.spec.ts:9:1 › service case details and processing are reachable on narrow screens and retain customer name
+  1) [chromium] › tests\ui-service-cases-accessibility.spec.ts:9:1 › service case details and processing are reachable on narrow screens and retain customer name 
+
+    Error: expect(locator).toBeInViewport() failed
+
+    Locator: getByRole('region', { name: 'Yêu cầu chăm sóc sau bán' }).getByRole('row').nth(1).getByRole('cell').first().getByRole('button', { name: 'Chi tiết yêu cầu', exact: true })
+    Expected: in viewport
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeInViewport" getByRole('region', { name: 'Yêu cầu chăm sóc sau bán' }).getByRole('row').nth(1).getByRole('cell').first().getByRole('button', { name: 'Chi tiết yêu cầu', exact: true }) with timeout 5000ms
+      - waiting for getByRole('region', { name: 'Yêu cầu chăm sóc sau bán' }).getByRole('row').nth(1).getByRole('cell').first().getByRole('button', { name: 'Chi tiết yêu cầu', exact: true })
+
+
+      17 |         const customerName = await row.getByRole('cell').nth(1).innerText();
+      18 |         const detailButton = width < 768 ? row.getByRole('cell').first().getByRole('button', { name: 'Chi tiết yêu cầu', exact: true }) : row.getByRole('button', { name: 'Chi tiết yêu cầu', exact: true });
+    > 19 |         await expect(detailButton).toBeInViewport();
+         |                                    ^
+      20 |         await detailButton.focus();
+      21 |         await page.keyboard.press('Enter');
+      22 |         const detail = page.getByRole('dialog', { name: 'Chi tiết yêu cầu sau bán' });
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\ui-service-cases-accessibility.spec.ts:19:36
+
+    Error Context: test-results\playwright-29616-318cb30b-449d-4b25-8b4c-e27665191228\ui-service-cases-accessibi-38a4e-ns-and-retain-customer-name-chromium\error-context.md
+
+    Error Context: test-results\playwright-29616-318cb30b-449d-4b25-8b4c-e27665191228\ui-service-cases-accessibi-38a4e-ns-and-retain-customer-name-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-29616-318cb30b-449d-4b25-8b4c-e27665191228\ui-service-cases-accessibi-38a4e-ns-and-retain-customer-name-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-29616-318cb30b-449d-4b25-8b4c-e27665191228\ui-service-cases-accessibi-38a4e-ns-and-retain-customer-name-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [chromium] › tests\ui-service-cases-accessibility.spec.ts:9:1 › service case details and processing are reachable on narrow screens and retain customer name 
