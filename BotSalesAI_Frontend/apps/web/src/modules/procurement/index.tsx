@@ -306,7 +306,7 @@ export function ReceiptsPage() {
     const receiptDetail = useApi('getGoodsReceipt', { path: { resourceId: selectedId || '' } }, !!selectedId);
     const receipt: GoodsReceipt | undefined = receiptDetail.data?.data;
     const create = useCommand('createGoodsReceipt', ['listGoodsReceipts']);
-    const post = useCommand('postGoodsReceipt', ['getGoodsReceipt', 'getPurchaseOrder', 'listGoodsReceipts', 'listPurchaseOrders', 'listStockSnapshots', 'listDebtItems', 'listJournals']);
+    const post = useCommand('postGoodsReceipt', ['getGoodsReceipt', 'getPurchaseOrder', 'listGoodsReceipts', 'listPurchaseOrders', 'listStockSnapshots', 'listStockMovements', 'listDebtItems', 'listJournals', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getProfitLoss', 'getDashboard']);
     const receiptLines = order?.lines.flatMap(line => {
         const input = quantities[line.id] || { accepted: '0', rejected: '0', reason: '' };
         const accepted = Number(input.accepted || 0), rejected = Number(input.rejected || 0);

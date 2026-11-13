@@ -27,7 +27,7 @@ export function ReturnsPage() {
     }, [orderSearchInput]);
     const orders = usePagedApi('listOrders', { query: { q: orderSearch || undefined } }, canReadOrders);
     const create = useCommand('createReturnCase', ['listReturnCases']);
-    const inspect = useCommand('inspectReturn', ['listReturnCases', 'getReturnCase', 'listStockSnapshots', 'getProfitLoss']);
+    const inspect = useCommand('inspectReturn', ['listReturnCases', 'getReturnCase', 'getOrder', 'listOrders', 'listStockSnapshots', 'listStockMovements', 'listJournals', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getProfitLoss', 'getDashboard']);
     const [open, setOpen] = useState(false), [orderId, setOrder] = useState(params.get('orderId') || ''), [reason, setReason] = useState(''), [quantities, setQuantities] = useState<Record<string, string>>({});
     const selectedOrderDetail = useApi('getOrder', { path: { orderId } }, canReadOrders && !!orderId);
     const selectedOrder = orders.data?.data.find(order => order.id === orderId) || selectedOrderDetail.data?.data;

@@ -1,5 +1,9 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Đồng bộ trả hàng, duyệt mua và nhận hàng — 13/11/2026
+
+Phạm vi frontend/MSW: làm mới các dữ liệu liên quan sau kiểm hàng trả, phê duyệt đơn mua và ghi nhận hàng nhập. [Contract và baseline](data-sync-return-receipt-20261113/CONTRACT.md), [kết quả và giới hạn](data-sync-return-receipt-20261113/RESULT.md). Không đóng S17, backend, hosted CI hoặc owner acceptance.
+
 ## Đồng bộ dữ liệu khi SSE gián đoạn — 13/11/2026
 
 Phạm vi frontend/MSW: sửa làm mới chi tiết phiếu, dashboard và các báo cáo phụ thuộc sau thao tác thành công. [Contract và baseline](data-sync-followup-20261113/CONTRACT.md), [kết quả và giới hạn](data-sync-followup-20261113/RESULT.md). Không đóng S17, backend, hosted CI hoặc owner acceptance.

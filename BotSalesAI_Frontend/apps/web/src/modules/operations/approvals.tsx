@@ -18,7 +18,7 @@ export function ApprovalsPage() {
     const list = useApi('listApprovals', { query: useListQuery('listApprovals') });
     const [approvalId, setApprovalId] = useState<string | null>(null);
     const detail = useApi('getApproval', { path: { resourceId: approvalId || '' } }, Boolean(approvalId));
-    const decide = useCommand('decideApproval', ['getApproval', 'listApprovals', 'listPurchaseOrders', 'getOperationsSummary']);
+    const decide = useCommand('decideApproval', ['getApproval', 'listApprovals', 'getPurchaseOrder', 'listPurchaseOrders', 'getOperationsSummary']);
     const [decision, setDecision] = useState<'approve' | 'reject'>('approve');
     const [reason, setReason] = useState('');
     const approval = detail.data?.data;
