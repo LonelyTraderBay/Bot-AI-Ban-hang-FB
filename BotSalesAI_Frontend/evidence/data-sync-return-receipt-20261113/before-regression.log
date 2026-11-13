@@ -1,0 +1,133 @@
+
+Running 3 tests using 1 worker
+
+
+
+(node:11460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/3] [chromium] › tests\data-sync-cross-page.spec.ts:26:1 › return inspection refreshes dashboard, order and stock history without SSE
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\ea27c7577456f6009d55\playwright-webserver\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\deps\react-dom_client.js?v=f7ada154 as it exceeds the max of 500KB.
+  1) [chromium] › tests\data-sync-cross-page.spec.ts:26:1 › return inspection refreshes dashboard, order and stock history without SSE 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Hoàn một phần', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('Hoàn một phần', { exact: true }) with timeout 5000ms
+      - waiting for getByText('Hoàn một phần', { exact: true })
+
+
+      53 |     await expect(dialog).toBeHidden();
+      54 |     await row.getByRole('link', { name: 'DH-DEMO-RETURN-02', exact: true }).click();
+    > 55 |     await expect(page.getByText('Hoàn một phần', { exact: true })).toBeVisible();
+         |                                                                    ^
+      56 |     await nav.getByRole('link', { name: 'Tổng quan', exact: true }).click();
+      57 |     await expect(revenue).toContainText('-249.000 ₫');
+      58 |     await nav.getByRole('link', { name: 'Lịch sử kho', exact: true }).click();
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\data-sync-cross-page.spec.ts:55:68
+
+    Error Context: test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-retur-6ded1-d-stock-history-without-SSE-chromium\error-context.md
+
+    Error Context: test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-retur-6ded1-d-stock-history-without-SSE-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-retur-6ded1-d-stock-history-without-SSE-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-retur-6ded1-d-stock-history-without-SSE-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:4764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/3] [chromium] › tests\data-sync-cross-page.spec.ts:62:1 › approval refreshes the cached purchase detail without SSE
+  2) [chromium] › tests\data-sync-cross-page.spec.ts:62:1 › approval refreshes the cached purchase detail without SSE 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('dialog', { name: 'Đơn mua purchaseorder-10002' }).getByText('Đã duyệt', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('dialog', { name: 'Đơn mua purchaseorder-10002' }).getByText('Đã duyệt', { exact: true }) with timeout 5000ms
+      - waiting for getByRole('dialog', { name: 'Đơn mua purchaseorder-10002' }).getByText('Đã duyệt', { exact: true })
+
+
+      87 |     await page.getByRole('row').filter({ hasText: purchase.id }).getByRole('button', { name: 'Xem chi tiết' }).click();
+      88 |     const details = page.getByRole('dialog', { name: `Đơn mua ${purchase.id}` });
+    > 89 |     await expect(details.getByText('Đã duyệt', { exact: true })).toBeVisible();
+         |                                                                  ^
+      90 |     await expect(details.getByRole('button', { name: 'Gửi đơn mua' })).toBeVisible();
+      91 | });
+      92 |
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\data-sync-cross-page.spec.ts:89:66
+
+    Error Context: test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-appro-52955-purchase-detail-without-SSE-chromium\error-context.md
+
+    Error Context: test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-appro-52955-purchase-detail-without-SSE-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-appro-52955-purchase-detail-without-SSE-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-appro-52955-purchase-detail-without-SSE-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:16532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[3/3] [chromium] › tests\data-sync-cross-page.spec.ts:93:1 › posted goods receipt refreshes stock history without SSE
+  3) [chromium] › tests\data-sync-cross-page.spec.ts:93:1 › posted goods receipt refreshes stock history without SSE 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByRole('table', { name: 'Lịch sử biến động kho' })
+    Expected substring: "goodsreceipt-10001"
+    Received string:    "Thời gianLoạiBiến thểKhoTồn ±Giữ ±NguồnNgười thực hiệnLý doThời gian21:00 29/9/26LoạiNhập khoBiến thểÁo mẫu A · M · Xanh · DEMO-001KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±8Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểÁo thun Essential · L · Than · AO-002KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±24Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểQuần linen Relaxed · M · Cát · QU-003KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±3Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểTúi tote Everyday · Kem · TU-004KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±18Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểSơ mi Oxford · L · Xanh · AO-005KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±12Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểMũ Studio · Đen · MU-006KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±0Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểQuần short Weekend · L · Xanh · QU-007KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±9Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểTúi đeo chéo Mini · Xám · TU-008KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±2Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫu"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" getByRole('table', { name: 'Lịch sử biến động kho' }) with timeout 5000ms
+      - waiting for getByRole('table', { name: 'Lịch sử biến động kho' })
+        13 × locator resolved to <table aria-label="Lịch sử biến động kho" class="MuiTable-root css-18z14wi-MuiTable-root">…</table>
+           - unexpected value "Thời gianLoạiBiến thểKhoTồn ±Giữ ±NguồnNgười thực hiệnLý doThời gian21:00 29/9/26LoạiNhập khoBiến thểÁo mẫu A · M · Xanh · DEMO-001KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±8Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểÁo thun Essential · L · Than · AO-002KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±24Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểQuần linen Relaxed · M · Cát · QU-003KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±3Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểTúi tote Everyday · Kem · TU-004KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±18Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểSơ mi Oxford · L · Xanh · AO-005KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±12Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểMũ Studio · Đen · MU-006KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±0Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểQuần short Weekend · L · Xanh · QU-007KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±9Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫuThời gian21:00 29/9/26LoạiNhập khoBiến thểTúi đeo chéo Mini · Xám · TU-008KhoMAIN · Kho chính · dữ liệu tổng hợpTồn ±2Giữ ±0NguồnĐiều chỉnh thủ côngNgười thực hiệnJokertrader · tài khoản mẫuMã nhân sự: user-demoLý doKhởi tạo tồn mẫu"
+
+
+      123 |     await details.getByRole('button', { name: 'Đóng', exact: true }).last().click();
+      124 |     await nav.getByRole('link', { name: 'Lịch sử kho', exact: true }).click();
+    > 125 |     await expect(history).toContainText(receipt.id);
+          |                           ^
+      126 | });
+      127 |
+      128 | test('finance entry detail follows posting and reversal without SSE', async ({ page }) => {
+        at C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB\BotSalesAI_Frontend\tests\data-sync-cross-page.spec.ts:125:27
+
+    Error Context: test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-poste-14b19-s-stock-history-without-SSE-chromium\error-context.md
+
+    Error Context: test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-poste-14b19-s-stock-history-without-SSE-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-poste-14b19-s-stock-history-without-SSE-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\playwright-27404-4bf14535-1e9b-4e75-aa57-7b2439d08042\data-sync-cross-page-poste-14b19-s-stock-history-without-SSE-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  3 failed
+    [chromium] › tests\data-sync-cross-page.spec.ts:26:1 › return inspection refreshes dashboard, order and stock history without SSE 
+    [chromium] › tests\data-sync-cross-page.spec.ts:62:1 › approval refreshes the cached purchase detail without SSE 
+    [chromium] › tests\data-sync-cross-page.spec.ts:93:1 › posted goods receipt refreshes stock history without SSE 
