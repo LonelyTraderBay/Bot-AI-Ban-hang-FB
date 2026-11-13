@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
@@ -18,6 +18,13 @@ test.afterEach(async () => closeDemo?.());
 
 async function gotoDemo(page: import('@playwright/test').Page, route: string) {
     await page.goto(new URL(route, demoUrl).toString());
+}
+
+async function gotoBotConfigReady(page: import('@playwright/test').Page) {
+    const response = await navigateDemoAndRead(page, new URL('/s/shop-demo/bot', demoUrl).toString(),
+        result => result.request().method() === 'GET' && new URL(result.url()).pathname === '/api/v2/shops/shop-demo/bot/config');
+    expect(response.status()).toBe(200);
+    expect(await response.finished()).toBeNull();
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, option: string) {
@@ -144,8 +151,23 @@ test('FE018.S01 maps routes and operations to the canonical OpenAPI permissions'
     expect(byId.get('updateBudgetPolicy')?.['x-permission']).toBe('operations.manage');
 });
 
+test('FE018 waits for the initial bot configuration before checking the human confirmation warning', async ({ page }) => {
+    await page.addInitScript(() => {
+        const originalFetch = window.fetch;
+        window.fetch = async (input, init) => {
+            const url = new URL(input instanceof Request ? input.url : String(input), location.href);
+            if (url.pathname === '/api/v2/shops/shop-demo/bot/config' && (init?.method || 'GET') === 'GET') {
+                await new Promise(resolve => setTimeout(resolve, 6000));
+            }
+            return originalFetch.call(window, input, init);
+        };
+    });
+    await gotoBotConfigReady(page);
+    await expect(page.getByRole('alert').filter({ hasText: 'Đơn do AI đề xuất vẫn cần người có quyền kiểm tra và xác nhận.' })).toBeVisible();
+});
+
 test('FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict', async ({ page }) => {
-    await gotoDemo(page, '/s/shop-demo/bot');
+    await gotoBotConfigReady(page);
     await expect(page.getByRole('alert').filter({ hasText: 'Đơn do AI đề xuất vẫn cần người có quyền kiểm tra và xác nhận.' })).toBeVisible();
     await page.getByRole('button', { name: 'Sửa bản nháp' }).click();
     const dialog = page.getByRole('dialog', { name: 'Cấu hình bản nháp' });
