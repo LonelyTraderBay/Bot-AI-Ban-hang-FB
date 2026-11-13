@@ -1,0 +1,17 @@
+SOURCE_SHA256=b7f2f556e5e7b964e6542f6007fad6b7a8d0e166f2fe7e94cba8f49163e45c6b
+COMMAND=node node_modules/@playwright/test/cli.js test tests/fe018.spec.ts --project=chromium --project=firefox --grep "waits for the initial bot configuration|draft saves use the contract version"; RUNTIME=preview; WORKERS=1
+
+Running 4 tests using 1 worker
+
+(node:10580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\fe018.spec.ts:154:1 › FE018 waits for the initial bot configuration before checking the human confirmation warning (7.1s)
+  ok 2 [chromium] › tests\fe018.spec.ts:169:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict (3.0s)
+(node:34580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [firefox] › tests\fe018.spec.ts:154:1 › FE018 waits for the initial bot configuration before checking the human confirmation warning (7.5s)
+  ok 4 [firefox] › tests\fe018.spec.ts:169:1 › FE018.AC01/04 draft saves use the contract version and keep human order confirmation locked after a conflict (3.2s)
+
+  4 passed (22.7s)
+SOURCE_AFTER_SHA256=b7f2f556e5e7b964e6542f6007fad6b7a8d0e166f2fe7e94cba8f49163e45c6b
+COMMAND_EXIT=0
