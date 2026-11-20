@@ -36,11 +36,14 @@ export const labels: Record<string, string> = {
     planned: 'Dự kiến', label_pending: 'Đang tạo mã vận đơn', label_ready: 'Đã có mã vận đơn', awaiting_goods: 'Chờ nhận hàng trả',
     suspended: 'Tạm ngừng', suggested: 'Có gợi ý đối chiếu', disputed: 'Có sai lệch', part_settled: 'Đối soát một phần', closing: 'Đang khóa',
     ai_usage: 'Sử dụng AI', notification: 'Thông báo', procurement: 'Mua hàng', down: 'Ngừng hoạt động',
+    collection: 'Thu tiền', refund: 'Hoàn tiền', cod_pending: 'Chờ đối soát COD', refund_due: 'Còn phải hoàn',
+    needs_check: 'Cần đối chiếu dữ liệu', counting: 'Đang kiểm đếm', submitted: 'Chờ duyệt', closed_short: 'Đã đóng thiếu',
 };
 
 const movementLabels = {
     receipt: 'Nhập kho', adjustment: 'Điều chỉnh tồn', reserve: 'Giữ hàng',
     release: 'Giải phóng hàng giữ', fulfillment: 'Xuất kho', return: 'Nhập hàng trả',
+    transfer_out: 'Xuất chuyển kho', transfer_in: 'Nhận chuyển kho',
 } satisfies Record<StockMovement['kind'], string>;
 const periodLabels = { open: 'Đang mở', closing: 'Đang khóa', closed: 'Đã khóa' } satisfies Record<AccountingPeriod['state'], string>;
 const capabilityLabels = { supported: 'Có hỗ trợ', unsupported: 'Không hỗ trợ', unknown: 'Chưa xác minh' } satisfies Record<Capabilities['text'], string>;

@@ -30,11 +30,13 @@ export function DraftForm({ initial, onSaved, onBusyChange }: {
     const [productSearch, setProductSearch] = useState('');
     const customers = usePagedApi('listCustomers', { query: { q: customerSearch.trim() || undefined, limit: 20 } }, canReadCustomers);
     const products = usePagedApi('listProducts', { query: { q: productSearch.trim() || undefined, limit: 20 } }, canReadProducts);
-    const create = useCommand('createOrder', ['listOrders', 'getDashboard']);
-    const update = useCommand('updateOrderDraft', ['getOrder', 'listOrders']);
+    const promotions = usePagedApi('listPromotions', { query: { effective: 'yes', limit: 20 } }, canReadProducts);
+    const create = useCommand('createOrder', ['listOrders', 'getDashboard', 'listPaymentReviews']);
+    const update = useCommand('updateOrderDraft', ['getOrder', 'listOrders', 'listPaymentReviews']);
     useEffect(() => { onBusyChange?.(create.pending || update.pending); }, [create.pending, update.pending, onBusyChange]);
     const initialNotes = typeof initial?.notes === 'string' ? initial.notes : '';
     const [customerId, setCustomer] = useState(initial?.customerId || params.get('customerId') || ''), [conversationId, setConversation] = useState(initial?.conversationId || params.get('conversationId') || ''), [warehouse, setWarehouse] = useState(initial?.warehouseId || shop.defaultWarehouseId), [addressId, setAddress] = useState(initial?.shippingAddressId || ''), [method, setMethod] = useState<'cod' | 'prepay'>(initial?.paymentMethod || 'cod'), [notes, setNotes] = useState(initialNotes);
+    const [promotionId, setPromotion] = useState(initial ? initial.promotionId ?? '' : params.get('promotionId') ?? '');
     const warehouses = usePagedApi('listWarehouses', { query: { status: 'active', limit: 20 } }, useCan('inventory.read'));
     const addresses = usePagedApi('listCustomerAddresses', { path: { customerId }, query: { status: 'active', limit: 20 } }, !!customerId && canReadCustomers);
     const conv = usePagedApi('listConversations', { query: { customerId: customerId || undefined, limit: 20 } }, canReadConversations && !!customerId);
@@ -49,13 +51,13 @@ export function DraftForm({ initial, onSaved, onBusyChange }: {
     };
     const fresh = useApi('getOrder', { path: { orderId: resource?.id || '' } }, !!resource);
     const current = fresh.data && (!resource || fresh.data.data.version >= resource.version) ? fresh.data.data : resource;
-    const values = { customerId, conversationId, warehouse, addressId, notes, lines: lines.map(line => ({ variantId: line.variantId, quantity: line.quantity })) };
+    const values = { customerId, conversationId, warehouse, addressId, notes, promotionId, lines: lines.map(line => ({ variantId: line.variantId, quantity: line.quantity })) };
     const editor = useVersionedDraft({
         identity: `${shop.id}:order:${resource?.id || 'new'}`,
         source: current ? orderSnapshot(current) : undefined,
         draft: values,
         apply: value => {
-            setCustomer(value.customerId); setConversation(value.conversationId); setWarehouse(value.warehouse); setAddress(value.addressId); setNotes(value.notes);
+            setCustomer(value.customerId); setConversation(value.conversationId); setWarehouse(value.warehouse); setAddress(value.addressId); setNotes(value.notes); setPromotion(value.promotionId);
             setLines(existing => value.lines.map(line => ({ ...line, key: existing.find(item => item.variantId === line.variantId)?.key || crypto.randomUUID(), variantLabel: existing.find(item => item.variantId === line.variantId)?.variantLabel || '' })));
         }, refresh: () => fresh.refetch({ throwOnError: true }),
     });
@@ -74,8 +76,9 @@ export function DraftForm({ initial, onSaved, onBusyChange }: {
                 ...(prepared.patch.addressId !== undefined ? { shippingAddressId: addressId || null } : {}),
                 ...(prepared.patch.lines !== undefined ? { lines: body.lines } : {}),
                 ...(prepared.patch.notes !== undefined ? { notes: body.notes } : {}),
+                ...(prepared.patch.promotionId !== undefined ? { promotionId: promotionId || null } : {}),
             } });
-        } else response = await create.execute({ body: { ...body, paymentMethod: method, shippingAddressId: addressId || null } });
+        } else response = await create.execute({ body: { ...body, paymentMethod: method, shippingAddressId: addressId || null, ...(promotionId ? { promotionId } : {}) } });
         const clean = editor.committed(orderSnapshot(response.data), values, `${shop.id}:order:${response.data.id}`);
         if (clean) { if (formRef.current) markDraftClean(formRef.current); onSaved(response.data); }
         else setCreated(response.data);
@@ -89,7 +92,7 @@ export function DraftForm({ initial, onSaved, onBusyChange }: {
         conv.isError && conv.data ? 'hội thoại' : undefined,
     ].filter((name): name is string => Boolean(name));
     return <Box component="form" ref={form => { const element = form as HTMLFormElement | null; formRef.current = element; bindDraft(element); }} onSubmit={event => { event.preventDefault(); if (valid) void save(); }}><PageSections >
-        <ErrorNotice error={create.error || update.error}/><DraftConflict editor={editor} labels={{ customerId: 'Khách hàng', conversationId: 'Hội thoại', warehouse: 'Kho xuất', addressId: 'Địa chỉ giao hàng', notes: 'Ghi chú', lines: 'Dòng đơn hàng' }} busy={create.pending || update.pending}/>
+        <ErrorNotice error={create.error || update.error}/><DraftConflict editor={editor} labels={{ customerId: 'Khách hàng', conversationId: 'Hội thoại', warehouse: 'Kho xuất', addressId: 'Địa chỉ giao hàng', notes: 'Ghi chú', promotionId: 'Ưu đãi', lines: 'Dòng đơn hàng' }} busy={create.pending || update.pending}/>
         {staleLookupNames.length > 0 && <Alert severity="warning" role="status">Danh sách {staleLookupNames.join(', ')} đã tải có thể đã cũ. Bản nháp được giữ; hãy thử tải lại trước khi lưu.</Alert>}
         {!canReadCustomers && <Alert severity="warning">Bạn cần quyền customers.read để tìm và tạo đơn với khách hàng. Đơn nháp hiện có vẫn giữ nguyên mã khách.</Alert>}
         {!canReadProducts && <Alert severity="warning">Bạn cần quyền catalog.read để tìm và chọn sản phẩm cho đơn hàng.</Alert>}
@@ -148,6 +151,16 @@ export function DraftForm({ initial, onSaved, onBusyChange }: {
                     </FormFields>;
                 })}
                 <LookupLoadMore label="sản phẩm" loadedCount={products.loadedCount} hasMore={products.hasMore} busy={products.isLoadingMore} onLoadMore={products.loadMore}/>
+                {canReadProducts && <>
+                    {promotions.error && <ErrorNotice error={promotions.error} />}
+                    <TextField select label="Ưu đãi combo" value={promotionId} onChange={event => setPromotion(event.target.value)}
+                        helperText="API kiểm đủ SKU, tồn kho, hiệu lực và biên lợi nhuận.">
+                        <MenuItem value="">Không áp dụng</MenuItem>
+                        {promotionId && !promotions.data?.data.some(item => item.id === promotionId) && <MenuItem value={promotionId}>{`Ưu đãi đã chọn · ${promotionId}`}</MenuItem>}
+                        {promotions.data?.data.map(item => <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)}
+                    </TextField>
+                    <LookupLoadMore label="ưu đãi" loadedCount={promotions.loadedCount} hasMore={promotions.hasMore} busy={promotions.isLoadingMore} onLoadMore={promotions.loadMore} />
+                </>}
                 {lines.length >= 100 && <Alert severity="warning">Đơn nháp đạt giới hạn 100 dòng theo hợp đồng.</Alert>}
                 <Alert severity="info">Tổng tiền và khả năng giữ hàng được tính lại bởi API khi lấy báo giá và xác nhận; không tin tổng do trình duyệt tự tính.</Alert>
                 <TextField label="Ghi chú chuẩn bị" value={notes} onChange={e => setNotes(limitCodePoints(e.target.value, 2000))} error={codePointLength(notes) > 2_000} helperText={`${codePointLength(notes)}/2.000 ký tự`} multiline minRows={2} />
@@ -157,6 +170,6 @@ export function DraftForm({ initial, onSaved, onBusyChange }: {
     </PageSections></Box>;
 }
 function orderSnapshot(order: Order) {
-    return { version: order.version, values: { customerId: order.customerId, conversationId: order.conversationId || '', warehouse: order.warehouseId, addressId: order.shippingAddressId || '', notes: typeof order.notes === 'string' ? order.notes : '', lines: order.lines.map(line => ({ variantId: line.variantId, quantity: String(line.quantity) })) } };
+    return { version: order.version, values: { customerId: order.customerId, conversationId: order.conversationId || '', warehouse: order.warehouseId, addressId: order.shippingAddressId || '', notes: typeof order.notes === 'string' ? order.notes : '', promotionId: order.promotionId || '', lines: order.lines.map(line => ({ variantId: line.variantId, quantity: String(line.quantity) })) } };
 }
 

@@ -5,11 +5,12 @@ import { useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, Checkbox, FormControlLabel, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import type { ShipmentEventWrite } from '@botsales/contracts';
 import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
-import { useScope } from '@/shared/model/scope';
+import { useCan, useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { limitCodePoints, codePointLength, dateTime, dateTimeLocalInput, dateTimeLocalToISOString } from '@/shared/model/format';
 import { layoutSx } from '@/shared/ui/layout';
 import { Amount, PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
+export { ShippingPolicyPage } from './shipping-policy';
 
 type ShipmentDialogMode = 'view' | 'handover' | 'event';
 
@@ -166,6 +167,7 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
 
 export function ShipmentsPage() {
     const { shop } = useScope();
+    const canManageShipping = useCan('shop.manage');
     const [searchParams] = useSearchParams();
     const list = useApi('listShipments', { query: useListQuery('listShipments') });
     const [previewOpen, setPreviewOpen] = useState(false);
@@ -178,7 +180,7 @@ export function ShipmentsPage() {
     const orders = usePagedApi('listOrders', { query: { q: orderSearch || undefined } });
     const create = useCommand('createShipment', ['listShipments', 'listOrders']);
     const handover = useCommand('handoverShipment', ['getShipment', 'listShipments', 'listOrders', 'listStockSnapshots', 'listStockMovements', 'listPrepJobs', 'listWorkItems']);
-    const event = useCommand('recordShipmentEvent', ['getShipment', 'listShipments', 'listOrders', 'listDebtItems', 'getProfitLoss', 'getDashboard']);
+    const event = useCommand('recordShipmentEvent', ['getShipment', 'listShipments', 'listOrders', 'listDebtItems', 'getProfitLoss', 'getDashboard', 'listPaymentReviews']);
     const [open, setOpen] = useState(false);
     const [orderId, setOrderId] = useState(() => searchParams.get('orderId') || '');
     const selectedOrderDetail = useApi('getOrder', { path: { orderId } }, !!orderId);
@@ -231,7 +233,10 @@ export function ShipmentsPage() {
     }
 
     return <>
-        <PageHeader title="Vận đơn & giao hàng" subtitle="Bàn giao hàng, khách nhận hàng và tiền về là ba sự kiện khác nhau." actions={<MutationButton permission="fulfillment.write" variant="contained" onClick={() => setOpen(true)}>Tạo vận đơn</MutationButton>} />
+        <PageHeader title="Vận đơn & giao hàng" subtitle="Bàn giao hàng, khách nhận hàng và tiền về là ba sự kiện khác nhau." actions={<ActionGroup direction="row">
+            {canManageShipping && <RouteLink to={`/s/${shop.id}/settings/shipping`}>Cấu hình giao hàng</RouteLink>}
+            <MutationButton permission="fulfillment.write" variant="contained" onClick={() => setOpen(true)}>Tạo vận đơn</MutationButton>
+        </ActionGroup>} />
         <PageSections>
             <Panel>
                 <Toolbar operation="listShipments" />

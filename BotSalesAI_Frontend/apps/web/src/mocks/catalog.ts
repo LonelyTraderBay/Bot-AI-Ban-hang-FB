@@ -76,25 +76,42 @@ export function catalog(op: string, input: Input): Row | undefined {
             checkVersion(s, input);
             ensure(num(body.quantityDelta) !== 0, 'Số lượng điều chỉnh phải khác 0.', 422);
             variant(shopId, str(body.variantId));
-            const oldValue=carryingValue(s),oldQuantity=num(s.onHand),newQuantity=oldQuantity+num(body.quantityDelta),currency=str(find('shops',shopId,shopId).currency);
-            ensure(newQuantity>=0,'Điều chỉnh vượt tồn hiện có.',409,'INSUFFICIENT_STOCK');
-            if(body.unitCost)ensure(record(body.unitCost).currency===currency&&units(body.unitCost)>=0n,'Giá vốn phải không âm và dùng đồng tiền cửa hàng.',422);
-            const nextValue=body.unitCost?units(body.unitCost)*BigInt(newQuantity):oldValue===null?null:oldQuantity===0?(newQuantity===0?0n:null):num(body.quantityDelta)<0?oldValue-oldValue*BigInt(-num(body.quantityDelta))/BigInt(oldQuantity):oldValue+oldValue*BigInt(num(body.quantityDelta))/BigInt(oldQuantity);
-            move(input, s, num(body.quantityDelta), 0, 'adjustment', str(body.reason), null);
-            if(nextValue!==null) {
-                setStockValue(s,nextValue,newQuantity,currency);
-                if(oldValue!==null&&nextValue!==oldValue) {
-                    const delta=nextValue-oldValue,movement=all('movements',shopId).at(-1);
-                    postBusinessJournal(shopId,'stock_adjustment',str(movement?.id),delta>0n?[{code:'156',debit:delta,credit:0n,description:'Điều chỉnh tăng giá trị tồn'},{code:'711',debit:0n,credit:delta,description:'Đối ứng điều chỉnh tồn có nguồn'}]:[{code:'642',debit:-delta,credit:0n,description:'Điều chỉnh giảm giá trị tồn'},{code:'156',debit:0n,credit:-delta,description:'Giảm giá trị tồn có nguồn'}]);
-                }
-            }else {
-                s.carryingValue=null;s.unitCost=null;
-            }
+            applyStockAdjustment(input, s, num(body.quantityDelta), str(body.reason), null, body.unitCost);
             return command(shopId, op, { type: 'stock', id: s.id });
         }
         default: return undefined;
     }
 }
+
+export function applyStockAdjustment(input: Input, stock: Row, quantity: number, reason: string, source: Row | null, unitCost?: unknown) {
+    const { shopId } = input;
+    const currentValue = carryingValue(stock), currentQuantity = num(stock.onHand);
+    const nextQuantity = currentQuantity + quantity;
+    const currency = str(find('shops', shopId, shopId).currency);
+    ensure(nextQuantity >= num(stock.reserved), 'Tồn sau điều chỉnh thấp hơn lượng đang giữ.', 409, 'INSUFFICIENT_STOCK');
+    if (unitCost) ensure(record(unitCost).currency === currency && units(unitCost) >= 0n, 'Giá vốn phải không âm và dùng đồng tiền cửa hàng.', 422);
+    const movement = move(input, stock, quantity, 0, 'adjustment', reason, source);
+    const nextValue = unitCost ? units(unitCost) * BigInt(nextQuantity)
+        : nextQuantity === 0 ? 0n
+        : currentValue === null || currentQuantity === 0 ? null
+        : currentValue + currentValue * BigInt(quantity) / BigInt(currentQuantity);
+    if (nextValue === null) {
+        stock.carryingValue = null;
+        stock.unitCost = null;
+        return;
+    }
+    setStockValue(stock, nextValue, nextQuantity, currency);
+    if (currentValue === null || nextValue === currentValue) return;
+    const difference = nextValue - currentValue;
+    postBusinessJournal(shopId, 'stock_adjustment', str(movement.id), difference > 0n ? [
+        { code: '156', debit: difference, credit: 0n, description: 'Điều chỉnh tăng giá trị tồn' },
+        { code: '711', debit: 0n, credit: difference, description: 'Đối ứng điều chỉnh tồn có nguồn' },
+    ] : [
+        { code: '642', debit: -difference, credit: 0n, description: 'Điều chỉnh giảm giá trị tồn' },
+        { code: '156', debit: 0n, credit: -difference, description: 'Giảm giá trị tồn có nguồn' },
+    ]);
+}
+
 export function pricedLines(shopId: string, items: Row[]) {
     ensure(items.length > 0, 'Đơn hàng cần có sản phẩm.', 422);
     ensure(new Set(items.map(l => l.variantId)).size === items.length, 'Gộp số lượng của cùng một biến thể.', 422);

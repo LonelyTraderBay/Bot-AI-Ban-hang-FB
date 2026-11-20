@@ -104,7 +104,7 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             ensure(body.warehouseId === order.warehouseId, 'Kho không khớp đơn.', 422);
             ensure(rows(order.lines).length === (Array.isArray(body.orderLineIds) ? body.orderLineIds.length : 0), 'Mô phỏng này bàn giao toàn bộ dòng của đơn.', 422);
             const shipment = insert('shipments', 'Shipment', shopId, {
-                orderId: order.id, warehouseId: order.warehouseId, carrierId: body.carrierId ?? null, trackingCode: null, state: 'planned', shippingFeeQuote: null, shippingFeeActual: null, events: []
+                orderId: order.id, warehouseId: order.warehouseId, carrierId: body.carrierId ?? null, trackingCode: null, state: 'planned', shippingFeeQuote: recordMoney(order.shippingRate).fee ?? null, shippingFeeActual: null, events: []
             });
             order.shipmentIds = [shipment.id];
             touch(order);
@@ -175,25 +175,31 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             ensure(!['inspected', 'closed', 'rejected'].includes(str(r.state)), 'Yêu cầu trả đã xử lý.');
             const order = find('orders', str(r.orderId), shopId);
             let refund = 0n,restoredCost=0n;
-            for (const inspected of rows(body.lines)) {
+            const inspectedLines = rows(body.lines);
+            ensure(new Set(inspectedLines.map(line => line.orderLineId)).size === inspectedLines.length, 'Dòng trả bị lặp.', 422);
+            for (const inspected of inspectedLines) {
                 const line = rows(r.lines).find(l => l.orderLineId === inspected.orderLineId);
                 ensure(line, 'Dòng trả không hợp lệ.', 422);
                 const acceptedQuantity = num(inspected.acceptedQuantity);
                 ensure(Number.isInteger(acceptedQuantity) && acceptedQuantity >= 0 && acceptedQuantity <= num(line.quantity), 'Số lượng nhận phải là số nguyên từ 0 đến số lượng đã yêu cầu.', 422);
                 const original = rows(order.lines).find(l => l.id === line.orderLineId);
                 ensure(original, 'Dòng đơn không tồn tại.');
+                const prior = all('returns', shopId).filter(other => other.id !== r.id && other.orderId === order.id && ['inspected','closed'].includes(str(other.state)))
+                    .flatMap(other => rows(other.lines)).filter(otherLine => otherLine.orderLineId === original.id)
+                    .reduce((total, otherLine) => total + num(otherLine.acceptedQuantity), 0);
+                const sold = BigInt(num(original.quantity));
+                const refundShare = units(original.lineTotal);
+                refund += refundShare * BigInt(prior + acceptedQuantity) / sold - refundShare * BigInt(prior) / sold;
                 line.acceptedQuantity=acceptedQuantity;
                 line.disposition = inspected.disposition;
                 line.reason = inspected.reason;
                 if (inspected.disposition === 'sellable' && acceptedQuantity > 0) {
                     ensure(original.costSnapshot!==null&&original.costSnapshot!==undefined,'Không dùng giá vốn hiện tại thay lịch sử đã giao.',409,'COST_NOT_KNOWN');
                     const stock=stockFor(shopId,str(original.variantId),str(order.warehouseId)),value=carryingValue(stock);ensure(value!==null,'Giá trị tồn hiện tại chưa đối chiếu.',409,'COST_NOT_KNOWN');
-                    const prior=all('returns',shopId).filter(other=>other.id!==r.id&&other.orderId===order.id&&['inspected','closed'].includes(str(other.state))).flatMap(other=>rows(other.lines)).filter(l=>l.orderLineId===original.id).reduce((n,l)=>n+num(l.acceptedQuantity),0);
                     const cost=units(original.costSnapshot)*BigInt(prior+acceptedQuantity)/BigInt(num(original.quantity))-units(original.costSnapshot)*BigInt(prior)/BigInt(num(original.quantity));
                     setStockValue(stock,value+cost,num(stock.onHand)+acceptedQuantity,str(recordMoney(original.costSnapshot).currency));restoredCost+=cost;
                     move(input,stock,acceptedQuantity,0,'return',str(inspected.reason),{type:'return',id:r.id});
                 }
-                refund += units(original.unitPrice) * BigInt(acceptedQuantity);
             }
             ensure(rows(r.lines).every(l => l.disposition !== 'pending'), 'Phải kiểm đủ các dòng.');
             if(refund>0n||restoredCost>0n)postBusinessJournal(shopId,'return_inspection',str(r.id),[{code:'521',debit:refund,credit:0n,description:'Hàng bán được nhận trả'},{code:'338',debit:0n,credit:refund,description:'Nghĩa vụ hoàn tiền, chưa ghi tiền đã hoàn'},{code:'156',debit:restoredCost,credit:0n,description:'Nhập lại theo giá vốn gốc'},{code:'632',debit:0n,credit:restoredCost,description:'Đảo giá vốn phần hàng bán được nhập lại'}]);

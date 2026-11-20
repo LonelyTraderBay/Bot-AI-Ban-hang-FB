@@ -12,6 +12,7 @@ import { Alert, Box, Button, Checkbox, FormControlLabel, IconButton, MenuItem, S
 import AddRounded from '@mui/icons-material/AddRounded';
 import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import type { Category, Product, ProductWritePatch } from '@botsales/contracts';
+export { PromotionsPage } from './promotions';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { currentSearchParams, useListQuery } from '@/shared/model/filters';

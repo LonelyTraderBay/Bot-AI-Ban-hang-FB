@@ -12,6 +12,7 @@ import { useState, type SyntheticEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import type { AccountingPeriod, CODSettlement, FinanceEntry, ReconciliationCase } from '@botsales/contracts';
+export { PaymentReviewsPage } from './payment-reviews';
 import { useApi, useCommand, usePagedApi } from '../../shared/api/hooks';
 import { useScope } from '../../shared/model/scope';
 import { useListQuery } from '../../shared/model/filters';
@@ -42,7 +43,7 @@ export function CashflowPage() {
 export function EntriesPage() {
     const { shop } = useScope();
     const list = useApi('listFinanceEntries', { query: useListQuery('listFinanceEntries') });
-    const affected = ['listFinanceEntries', 'getFinanceEntry', 'listJournals', 'getJournal', 'listDebtItems', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getCashflow', 'getProfitLoss', 'getDashboard'] as const;
+    const affected = ['listFinanceEntries', 'getFinanceEntry', 'listJournals', 'getJournal', 'listDebtItems', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getCashflow', 'getProfitLoss', 'getDashboard', 'listPaymentReviews'] as const;
     const post = useCommand('postFinanceEntry', affected);
     const reverse = useCommand('reverseFinanceEntry', affected);
     const [entryId, setEntryId] = useState<string | null>(null);
@@ -128,8 +129,8 @@ export function ReconciliationPage() {
     const banks = useApi('listBankTransactions', { query: useListQuery('listBankTransactions', 'bankCursor') });
     const cod = useApi('listCODSettlements', { query: useListQuery('listCODSettlements', 'codCursor') });
     const cases = useApi('listReconciliationCases', { query: useListQuery('listReconciliationCases', 'caseCursor') });
-    const match = useCommand('matchCODSettlement', ['listCODSettlements', 'listBankTransactions', 'listDebtItems', 'getCashflow']);
-    const matchBank = useCommand('matchSettlement', ['listReconciliationCases', 'listBankTransactions', 'listDebtItems']);
+    const match = useCommand('matchCODSettlement', ['listCODSettlements', 'listBankTransactions', 'listDebtItems', 'getCashflow', 'listPaymentReviews']);
+    const matchBank = useCommand('matchSettlement', ['listReconciliationCases', 'listBankTransactions', 'listDebtItems', 'listPaymentReviews']);
     const [selected, setSelected] = useState<CODSettlement | null>(null), [caseItem, setCase] = useState<ReconciliationCase | null>(null), [transaction, setTransaction] = useState(''), [fees, setFees] = useState('0'), [evidence, setEvidence] = useState(''), [resourceId, setResource] = useState(''), [allocation, setAllocation] = useState(''), [reason, setReason] = useState(''), [importOpen, setImport] = useState(false);
     const bankChoices = usePagedApi('listBankTransactions', {}, Boolean(selected));
     const caseBank = useApi('getBankTransaction', { path: { resourceId: caseItem?.transactionId || '' } }, Boolean(caseItem));
@@ -145,7 +146,7 @@ export function ReconciliationPage() {
         else next.set('tab', value);
         setParams(next, { replace: true, flushSync: true });
     };
-    return <><PageHeader title="Đối soát ngân hàng & COD" subtitle="Khách trả tiền cho đơn vị giao hàng chưa đồng nghĩa tiền đã về shop." actions={<MutationButton permission="finance.reconcile" variant="contained" onClick={() => setImport(true)}>Nhập bảng đối soát</MutationButton>}/><Tabs
+    return <><PageHeader title="Đối soát ngân hàng & COD" subtitle="Khách trả tiền cho đơn vị giao hàng chưa đồng nghĩa tiền đã về shop." actions={<ActionGroup direction="row"><RouteLink to={`/s/${shop.id}/finance/payment-reviews`}>Xác minh thu và hoàn tiền</RouteLink><MutationButton permission="finance.reconcile" variant="contained" onClick={() => setImport(true)}>Nhập bảng đối soát</MutationButton></ActionGroup>}/><Tabs
         aria-label="Nhóm đối soát ngân hàng và COD"
         value={tab}
         onChange={selectTab}

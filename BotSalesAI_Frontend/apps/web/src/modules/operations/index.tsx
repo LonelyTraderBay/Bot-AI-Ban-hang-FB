@@ -13,18 +13,15 @@ import { codePointLength, dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, Stats, Stat, DataTable, Empty, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, DetailLine, ConfirmDialog, LookupLoadMore } from '@/shared/ui/components';
 import { roleNames } from './role-labels';
 import { ApprovalsPage as ApprovalsView } from './approvals';
+import { CommandDetails, commandNames } from './command-details';
+export { ExceptionsPage } from './exceptions';
 const workItemActions = ['begin', 'complete', 'block', 'reassign'] as const;
 type WorkItemAction = typeof workItemActions[number];
-const commandNames: Record<string, string> = {
-    createInventoryAdjustment: 'Điều chỉnh tồn kho', postFinanceEntry: 'Ghi nhận thu chi', postGoodsReceipt: 'Nhận hàng',
-    sendPurchaseOrder: 'Gửi đơn mua', refundOrder: 'Hoàn tiền', payOrder: 'Ghi nhận thanh toán', handoverShipment: 'Bàn giao vận đơn', confirmOrder: 'Xác nhận đơn',
-};
 function CommandsPanel() {
     const { shop } = useScope();
     const [params] = useSearchParams();
     const list = useApi('listCommands', { query: { limit: 10, cursor: params.get('commandCursor') || undefined } });
     const [commandId, setCommandId] = useState('');
-    const detail = useApi('getCommand', { path: { commandId } }, Boolean(commandId));
     return <Panel title="Trạng thái thao tác" beforeGap="section">
         <SurfaceContent bodyMode="inset"><Typography color="text.secondary">Trạng thái do API trả về. Kết quả chưa rõ cần kiểm tra riêng; xem lịch sử không mở khóa thao tác đang chờ đối soát.</Typography></SurfaceContent>
         <QueryState query={list} pendingProfile="section">{list.data && <>
@@ -35,15 +32,7 @@ function CommandsPanel() {
                 { key: 'detail', label: 'Thao tác', render: command => <Button onClick={() => setCommandId(command.id)}>Chi tiết thao tác</Button> },
             ]}/><Pager page={list.data.page} cursorParam="commandCursor"/>
         </>}</QueryState>
-        <EditDialog open={!!commandId} title="Chi tiết trạng thái thao tác" onClose={() => setCommandId('')} actions={<ActionGroup direction="row"><Button disabled={detail.isFetching} onClick={() => void detail.refetch()}>Kiểm tra trạng thái</Button><Button onClick={() => setCommandId('')}>Đóng</Button></ActionGroup>}>
-            <QueryState query={detail}>{detail.data && <SurfaceContent>
-                <DetailLine label="Mã thao tác">{detail.data.data.id}</DetailLine><DetailLine label="Thao tác">{commandNames[detail.data.data.kind] || 'Thao tác khác'}</DetailLine>
-                <DetailLine label="Trạng thái"><Status value={detail.data.data.status}/></DetailLine><DetailLine label="Cập nhật">{dateTime(detail.data.data.updatedAt, shop.timezone)}</DetailLine>
-                <DetailLine label="Đối tượng kết quả">{detail.data.data.result ? detail.data.data.result.type + ' · ' + detail.data.data.result.id : 'Chưa có kết quả được xác minh'}</DetailLine>
-                {detail.data.data.status === 'unknown' && <Alert severity="warning">Kết quả chưa rõ. Không gửi lại hoặc coi là thất bại chỉ dựa vào thời gian chờ.</Alert>}
-                {detail.data.data.problem && <Alert severity="error">Thao tác có lỗi; đối chiếu mã thao tác trong quy trình xử lý được cấp quyền.</Alert>}
-            </SurfaceContent>}</QueryState>
-        </EditDialog>
+        {commandId && <CommandDetails commandId={commandId} close={() => setCommandId('')} />}
     </Panel>;
 }
 
@@ -79,7 +68,8 @@ export function OperationsPage() {
     const visibleItems = exceptionsOnly ? exceptionItems : workItems;
 
     return <>
-        <PageHeader title="Công việc hôm nay" subtitle="Giao việc → nhận việc → hoàn thành → kiểm tra kết quả." />
+        <PageHeader title="Công việc hôm nay" subtitle="Giao việc → nhận việc → hoàn thành → kiểm tra kết quả."
+            actions={<RouteLink to={`/s/${shop.id}/operations/exceptions`}>Ngoại lệ và tác vụ nền</RouteLink>} />
         <Alert severity="info" sx={layoutSx.notice.afterGap}>Dữ liệu vận hành và trạng thái dịch vụ đang được mô phỏng; chưa xác minh worker hoặc backend thật.</Alert>
         <QueryState query={summary} pendingProfile="section">
             {summary.data && <Stats>

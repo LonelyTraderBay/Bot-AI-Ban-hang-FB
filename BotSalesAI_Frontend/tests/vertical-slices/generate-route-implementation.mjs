@@ -14,7 +14,15 @@ const requireFile = relative => {
 const sourceMap=read('docs/route-source-map.json');
 if (process.argv.includes('--source-only')) {
     const routes=read('../botsales-kit/contracts/route-manifest.json').routes;
+    const selected = process.argv.slice(process.argv.indexOf('--source-only') + 1);
+    for (const id of selected) if (!routes.some(route => route.id === id)) throw new Error(`Unknown route ${id}`);
+    const previous = selected.length ? read('docs/route-implementation.json') : [];
     const sourceOnly=routes.map(route=>{
+        if (selected.length && !selected.includes(route.id)) {
+            const entry = previous.find(item => item.routeId === route.id && item.route === route.path);
+            if (!entry) throw new Error(`Missing existing route ${route.id}; include it in --source-only.`);
+            return entry;
+        }
         const owner=sourceMap[route.id];
         if(!owner || !requireFile(owner.source).includes(`function ${owner.component}(`)) throw new Error(`Missing reviewed source/component for ${route.id}`);
         return {routeId:route.id,route:route.path,...owner,state:'SOURCE_IMPLEMENTED_BROWSER_NOT_REVALIDATED',routeEvidence:{result:'NOT_RUN'},journeys:[],acceptanceScenarioIds:route.acceptanceScenarioIds,featureCoverage:[]};

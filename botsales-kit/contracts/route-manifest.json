@@ -256,7 +256,8 @@
         "listMessages",
         "getCommand",
         "getInboxMetadata",
-        "getFile"
+        "getFile",
+        "listPromotions"
       ],
       "actions": [
         {
@@ -906,7 +907,8 @@
       "readOperations": [
         "listCustomers",
         "listProducts",
-        "getShop"
+        "getShop",
+        "listPromotions"
       ],
       "actions": [
         {
@@ -956,7 +958,8 @@
       "readPermission": "orders.read",
       "readOperations": [
         "getOrder",
-        "getCommand"
+        "getCommand",
+        "listPromotions"
       ],
       "actions": [
         {
@@ -3158,6 +3161,274 @@
       ],
       "featureIds": [
         "G05"
+      ]
+    },
+    {
+      "id": "R62",
+      "requirementId": "FR2-R62",
+      "path": "/s/:shopId/settings/shipping",
+      "title": "Cấu hình giao hàng",
+      "module": "fulfillment",
+      "readPermission": "shop.manage",
+      "readOperations": [
+        "getShippingPolicy"
+      ],
+      "actions": [
+        {
+          "label": "Lưu biểu phí giao hàng",
+          "operationId": "updateShippingPolicy",
+          "permission": "shop.manage"
+        }
+      ],
+      "purpose": "Quản lý vùng phục vụ và phí giao dự kiến của cửa hàng.",
+      "content": "Một biểu phí thủ công theo quốc gia và tỉnh/thành, tên dịch vụ và số tiền theo tiền tệ của shop.",
+      "behavior": "Áp dụng biểu phí theo địa chỉ tại bước báo giá đơn. Báo giá lưu phiên bản phí. Đơn giữ nguyên phí đã xác nhận và vận đơn kế thừa phí dự kiến.",
+      "edgeCases": "Chặn trùng vùng sau chuẩn hóa. Địa chỉ ngoài vùng hoặc chính sách đã đổi cần xử lý trước khi xác nhận đơn. Biểu phí trống chỉ hỗ trợ luồng báo giá thủ công chưa có phí tự động.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-C04"
+      ],
+      "featureIds": [
+        "C04"
+      ]
+    },
+    {
+      "id": "R63",
+      "requirementId": "FR2-R63",
+      "path": "/s/:shopId/operations/exceptions",
+      "title": "Ngoại lệ và tác vụ nền",
+      "module": "operations",
+      "readPermission": "operations.read",
+      "readOperations": [
+        "listWorkItems",
+        "listJobs",
+        "getJob",
+        "listCommands",
+        "getCommand"
+      ],
+      "actions": [
+        {
+          "label": "Nhận công việc",
+          "operationId": "claimWorkItem",
+          "permission": "operations.claim"
+        }
+      ],
+      "purpose": "Tìm và xử lý việc cần can thiệp, tác vụ nền lỗi và thao tác chưa rõ kết quả.",
+      "content": "Ba danh sách theo quyền. Bộ lọc và truy vấn theo mã chạy trước phân trang. Dẫn tới công việc, tác vụ hoặc hồ sơ liên quan.",
+      "behavior": "Dùng chung công việc với R37. Tác vụ nền và thao tác yêu cầu jobs.read. Chi tiết thao tác đối chiếu chỉ đọc khi kết quả chưa rõ.",
+      "edgeCases": "Đổi bộ lọc đặt lại con trỏ. Chặn truy cập chéo shop và chặn phát lại mù quáng.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-F02",
+        "SC2-F03",
+        "SC2-H01",
+        "SC2-H04"
+      ],
+      "featureIds": [
+        "F02",
+        "F03",
+        "H01",
+        "H04"
+      ]
+    },
+    {
+      "id": "R64",
+      "requirementId": "FR2-R64",
+      "path": "/s/:shopId/products/promotions",
+      "title": "Ưu đãi và combo",
+      "module": "catalog",
+      "readPermission": "catalog.read",
+      "readOperations": [
+        "listPromotions",
+        "listProducts"
+      ],
+      "actions": [
+        {
+          "label": "Tạo nháp",
+          "operationId": "createPromotion",
+          "permission": "catalog.write"
+        },
+        {
+          "label": "Sửa chương trình",
+          "operationId": "updatePromotion",
+          "permission": "catalog.write"
+        },
+        {
+          "label": "Duyệt bật hoặc tạm dừng",
+          "operationId": "decidePromotion",
+          "permission": "shop.manage"
+        }
+      ],
+      "purpose": "Tạo và duyệt ưu đãi có quy tắc giá.",
+      "content": "Combo gồm nhiều SKU, mức giảm theo đơn, biên lợi nhuận tối thiểu và ngày hiệu lực theo múi giờ shop.",
+      "behavior": "Một ưu đãi cho mỗi đơn. Duyệt đúng bản nháp rồi dùng ở hội thoại, đơn và báo giá. Lưu phiên bản và mức giảm đã áp dụng.",
+      "edgeCases": "Chặn thiếu SKU, thiếu tồn, sai phiên bản, hết hiệu lực, giá vốn chưa rõ hoặc biên lợi nhuận thấp. Đổi giá phải báo lại.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-B05",
+        "SC2-G03"
+      ],
+      "featureIds": [
+        "B05",
+        "G03"
+      ]
+    },
+    {
+      "id": "R65",
+      "requirementId": "FR2-R65",
+      "path": "/s/:shopId/finance/payment-reviews",
+      "title": "Xác minh thu tiền và hoàn tiền",
+      "module": "finance",
+      "readPermission": "finance.read",
+      "readOperations": [
+        "listPaymentReviews"
+      ],
+      "actions": [],
+      "purpose": "Tập trung khoản cần xác minh hoặc cần hoàn.",
+      "content": "Số dự kiến, đã xác minh và còn lại, đến hạn, người phụ trách, đơn/phiếu trả, giao dịch, bút toán.",
+      "behavior": "Bộ lọc theo dữ liệu cửa hàng. Ghi nhận nghiệp vụ qua đơn, đổi trả và đối soát hiện có.",
+      "edgeCases": "COD đang giữ và dữ liệu chưa đủ có trạng thái riêng. Số dư nghĩa vụ được đối chiếu từ nguồn ghi sổ.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-E04",
+        "SC2-E05",
+        "SC2-C07"
+      ],
+      "featureIds": [
+        "E04",
+        "E05",
+        "C07"
+      ]
+    },
+    {
+      "id": "R66",
+      "requirementId": "FR2-R66",
+      "path": "/s/:shopId/inventory/stocktakes",
+      "title": "Phiên kiểm kê kho",
+      "module": "inventory",
+      "readPermission": "inventory.read",
+      "readOperations": [
+        "listStocktakes",
+        "listWarehouses",
+        "listStockSnapshots"
+      ],
+      "actions": [
+        {
+          "label": "Mở phiên",
+          "operationId": "createStocktake",
+          "permission": "inventory.adjust"
+        },
+        {
+          "label": "Nhập đếm hoặc gửi duyệt",
+          "operationId": "updateStocktake",
+          "permission": "inventory.adjust"
+        },
+        {
+          "label": "Duyệt và ghi tồn",
+          "operationId": "postStocktake",
+          "permission": "warehouses.manage"
+        }
+      ],
+      "purpose": "Đếm và duyệt sai lệch theo phiên.",
+      "content": "Chọn kho, nhóm SKU, tồn tại mốc mở, số đếm và chênh lệch.",
+      "behavior": "Chụp phiên bản từng vị trí. Duyệt và ghi chênh lệch nguyên tử theo phiên. Dòng đã đổi cần đếm lại sau làm mới mốc.",
+      "edgeCases": "Chặn số đếm thấp hơn lượng đang giữ, phiên bản cũ, khóa kỳ và ghi lặp.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-D01"
+      ],
+      "featureIds": [
+        "D01"
+      ]
+    },
+    {
+      "id": "R67",
+      "requirementId": "FR2-R67",
+      "path": "/s/:shopId/inventory/transfers",
+      "title": "Phiếu chuyển kho",
+      "module": "inventory",
+      "readPermission": "inventory.read",
+      "readOperations": [
+        "listStockTransfers",
+        "listWarehouses",
+        "listStockSnapshots"
+      ],
+      "actions": [
+        {
+          "label": "Mở phiếu",
+          "operationId": "createStockTransfer",
+          "permission": "inventory.adjust"
+        },
+        {
+          "label": "Xuất, nhận, hủy hoặc đóng thiếu",
+          "operationId": "updateStockTransfer",
+          "permission": "inventory.adjust"
+        }
+      ],
+      "purpose": "Điều chuyển hàng giữa kho.",
+      "content": "Kho gửi/nhận, các SKU, số xuất/nhận/đang đi và thiếu.",
+      "behavior": "Xuất chỉ giảm tồn bán được ở kho gửi. Kho đích tăng sau mỗi lần nhận. Đóng thiếu có lý do và quyền quản trị kho.",
+      "edgeCases": "Chặn hai kho trùng, khác shop, vượt tồn khả dụng hoặc nhận quá số đã gửi; bảo toàn giá vốn qua từng lần nhận.",
+      "states": [
+        "loading",
+        "empty",
+        "error",
+        "forbidden",
+        "stale_or_offline",
+        "success",
+        "command_unknown",
+        "capability_unavailable"
+      ],
+      "acceptanceScenarioIds": [
+        "SC2-D01"
+      ],
+      "featureIds": [
+        "D01"
       ]
     }
   ],

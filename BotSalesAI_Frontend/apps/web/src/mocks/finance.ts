@@ -233,7 +233,7 @@ export function finance(op: string, input: Input): Row | undefined {
             tx.matchState = c.state;
             touch(tx);
             const entry=insert('financeEntries', 'FinanceEntry', shopId, {
-                kind: tx.direction === 'credit' ? 'receipt' : 'disbursement', classification: 'other', amount: money(total, str(record(tx.amount).currency)), status: 'posted', occurredAt: tx.occurredAt, description: body.reason, sourceRef: { type: 'bank_allocation', id: tx.id }, reversalOf: null
+                kind: tx.direction === 'credit' ? 'receipt' : 'disbursement', classification: 'other', amount: money(total, str(record(tx.amount).currency)), status: 'posted', occurredAt: tx.occurredAt, description: body.reason, sourceRef: { type: 'bank_allocation', id: tx.id }, reconciledDebtIds: allocations.map(allocation => str(record(allocation.resource).id)), reversalOf: null
             });
             postBusinessJournal(shopId,'finance_entry',str(entry.id),postingLines,fiscalDate(shopId,str(tx.occurredAt)),str(body.reason));
             return command(shopId, op, { type: 'reconciliation', id: c.id });
