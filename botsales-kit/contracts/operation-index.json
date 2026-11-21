@@ -1715,6 +1715,104 @@
       "path": "/shops/{shopId}/purchase-delegation-reservations",
       "permission": "procurement.delegation.manage",
       "module": "operations"
+    },
+    {
+      "operationId": "getShippingPolicy",
+      "method": "GET",
+      "path": "/shops/{shopId}/shipping-policy",
+      "permission": "shop.manage",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "updateShippingPolicy",
+      "method": "PUT",
+      "path": "/shops/{shopId}/shipping-policy",
+      "permission": "shop.manage",
+      "module": "fulfillment"
+    },
+    {
+      "operationId": "listPromotions",
+      "method": "GET",
+      "path": "/shops/{shopId}/promotions",
+      "permission": "catalog.read",
+      "module": "catalog"
+    },
+    {
+      "operationId": "createPromotion",
+      "method": "POST",
+      "path": "/shops/{shopId}/promotions",
+      "permission": "catalog.write",
+      "module": "catalog"
+    },
+    {
+      "operationId": "updatePromotion",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/promotions/{resourceId}",
+      "permission": "catalog.write",
+      "module": "catalog"
+    },
+    {
+      "operationId": "decidePromotion",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/promotions/{resourceId}/decision",
+      "permission": "shop.manage",
+      "module": "catalog"
+    },
+    {
+      "operationId": "listPaymentReviews",
+      "method": "GET",
+      "path": "/shops/{shopId}/payment-reviews",
+      "permission": "finance.read",
+      "module": "finance"
+    },
+    {
+      "operationId": "listStocktakes",
+      "method": "GET",
+      "path": "/shops/{shopId}/inventory/stocktakes",
+      "permission": "inventory.read",
+      "module": "inventory"
+    },
+    {
+      "operationId": "createStocktake",
+      "method": "POST",
+      "path": "/shops/{shopId}/inventory/stocktakes",
+      "permission": "inventory.adjust",
+      "module": "inventory"
+    },
+    {
+      "operationId": "updateStocktake",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/inventory/stocktakes/{resourceId}",
+      "permission": "inventory.adjust",
+      "module": "inventory"
+    },
+    {
+      "operationId": "postStocktake",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/inventory/stocktakes/{resourceId}/posting",
+      "permission": "warehouses.manage",
+      "module": "inventory"
+    },
+    {
+      "operationId": "listStockTransfers",
+      "method": "GET",
+      "path": "/shops/{shopId}/inventory/transfers",
+      "permission": "inventory.read",
+      "module": "inventory"
+    },
+    {
+      "operationId": "createStockTransfer",
+      "method": "POST",
+      "path": "/shops/{shopId}/inventory/transfers",
+      "permission": "inventory.adjust",
+      "module": "inventory"
+    },
+    {
+      "operationId": "updateStockTransfer",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/inventory/transfers/{resourceId}",
+      "permission": "inventory.adjust",
+      "module": "inventory"
     }
   ]
 }

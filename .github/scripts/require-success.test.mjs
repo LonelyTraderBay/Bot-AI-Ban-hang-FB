@@ -33,9 +33,20 @@ test('build rendezvous rejects every unsuccessful terminal result and unknown st
     for (const job of [buildJob('unknown'), buildJob('in_progress', 'success')])
         await assert.rejects(waitForBuild(buildEnv, fakeBuildClock([inventory([job])])), /not successful/);
 });
-test('build rendezvous rejects incomplete metadata and cross-attempt or duplicate identities', async () => {
+test('build rendezvous retries mismatched counts and accepts only a complete response', async () => {
     const good = buildJob('completed', 'success');
-    for (const payload of [null, {}, { total_count: 1, jobs: [] }, inventory([good, good]),
+    const tooFew = { total_count: 2, jobs: [good] };
+    const tooMany = { total_count: 0, jobs: [good] };
+    const ready = await waitForBuild(buildEnv, fakeBuildClock([tooFew, tooMany, inventory([good])]));
+    assert.equal(ready.waitedSeconds, 0.010);
+    await assert.rejects(waitForBuild(buildEnv, fakeBuildClock([tooFew])), /Timed out.*2 reported, 1 returned/);
+    const failed = { total_count: 2, jobs: [buildJob('completed', 'failure')] };
+    await assert.rejects(waitForBuild(buildEnv, fakeBuildClock([failed])), /Build is not successful/);
+});
+test('build rendezvous rejects malformed metadata and cross-attempt or duplicate identities', async () => {
+    const good = buildJob('completed', 'success');
+    for (const payload of [null, {}, { total_count: -1, jobs: [] }, { total_count: 101, jobs: [] },
+        { total_count: 2, jobs: [{ ...good, run_attempt: 1 }] }, inventory([good, good]),
         inventory([{ ...good, run_id: 124 }]), inventory([{ ...good, run_attempt: 1 }]),
         inventory([good, { ...good, id: 5 }]), inventory([{ ...good, id: '4' }])])
         await assert.rejects(waitForBuild(buildEnv, fakeBuildClock([payload])), /inventory|identity/);

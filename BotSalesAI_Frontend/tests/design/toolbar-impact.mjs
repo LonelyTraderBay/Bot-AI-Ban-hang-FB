@@ -27,8 +27,12 @@ export function toolbarImpact(root) {
     const bindings = new Map([...router.matchAll(/^\s+(R\d+): (\w+),$/gm)].map(match => [match[1], match[2]]));
     const manifest = JSON.parse(fs.readFileSync(path.join(root, '../botsales-kit/contracts/route-manifest.json'), 'utf8'));
     const operations = JSON.parse(fs.readFileSync(path.join(root, 'packages/contracts/src/operations.json'), 'utf8'));
-    const rows = manifest.routes.flatMap(route => calls.filter(call => bindings.get(route.id) === call.owner).map(call => ({
-        ...call, id: route.id, path: route.path.replace(':shopId', 'shop-demo').replace(':conversationId', 'cv1'), title: route.title,
+    const routeSources = JSON.parse(fs.readFileSync(path.join(root, 'docs/route-source-map.json'), 'utf8'));
+    const exceptionTabs = new Map([['WorkQueue', ''], ['JobQueue', '?view=jobs'], ['CommandQueue', '?view=commands']]);
+    const isExceptionTab = (route, call) => route.id === 'R63' && call.file === routeSources.R63?.source && exceptionTabs.has(call.owner);
+    const rows = manifest.routes.flatMap(route => calls.filter(call => bindings.get(route.id) === call.owner || isExceptionTab(route, call)).map(call => ({
+        ...call, id: route.id, path: route.path.replace(':shopId', 'shop-demo').replace(':conversationId', 'cv1')
+            + (isExceptionTab(route, call) ? exceptionTabs.get(call.owner) : ''), title: route.title,
         supportsSearch: operations[call.operation].queryParameters.some(parameter => parameter.name === 'q'),
     })));
     for (const call of calls) if (!rows.some(row => row.owner === call.owner)) throw new Error(`Missing route: ${call.owner}`);

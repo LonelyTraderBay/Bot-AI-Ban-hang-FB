@@ -759,17 +759,19 @@ test('FE016.S03 stale takeover preserves reason and reports the version conflict
     await expect(page.getByText('Trợ lý tự động')).toBeVisible();
 });
 
-test('FE016.B05 cross-sell promotion preview shows sample rules without applying a discount', async ({ page }) => {
+test('FE016.B05 cross-sell reads effective promotions without changing the conversation or order', async ({ page }) => {
     const writes: string[] = [];
     page.on('request', request => {
         if (request.method() !== 'GET' && new URL(request.url()).pathname.startsWith('/api/v2/'))
             writes.push(`${request.method()} ${new URL(request.url()).pathname}`);
     });
+    const read = page.waitForResponse(response => {
+        const request = new URL(response.url());
+        return request.pathname.endsWith('/shops/shop-demo/promotions') && request.searchParams.get('effective') === 'yes';
+    });
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
-    await page.getByRole('button', { name: 'Xem điều kiện combo mẫu' }).click();
-    const preview = page.getByTestId('mock-promotion-preview');
-    await expect(preview).toContainText('DEMO-PROMO-01');
-    await expect(preview).toContainText('Không áp dụng giảm giá');
+    expect((await read).status()).toBe(200);
+    await expect(page.getByText('Chưa có ưu đãi đang hiệu lực.')).toBeVisible();
     expect(writes).toEqual([]);
 });
 

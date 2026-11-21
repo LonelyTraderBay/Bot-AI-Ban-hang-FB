@@ -12,6 +12,11 @@ import { clearFileState, files, upload } from './files';
 import { marketingSummary } from './marketing-report';
 import { masters, visibleOrderAddress } from './masters';
 import { privacy as privacyOperations, safeConsentChallenge } from './privacy';
+import { shippingPolicyOperations } from './shipping-policy';
+import { promotionCurrent, promotionDate, promotionOperations } from './promotions';
+import { paymentReviews } from './payment-reviews';
+import { stocktakeOperations } from './stocktakes';
+import { stockTransferOperations } from './stock-transfers';
 import type { EventEnvelope } from '@botsales/contracts';
 export { MockFailure };
 export const CSRF = 'botsales-demo-csrf-not-a-real-secret';
@@ -131,6 +136,8 @@ function read(op: string, input: Input): unknown {
         };
     if (op === 'getMarketingSummary')
         return marketingSummary(input);
+    if (op === 'listPaymentReviews')
+        return paymentReviews(input);
     if (op === 'getReportSummary')
         return {
             shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'].filter(type => grantedPermissions(role).includes(({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[type] || '')), warnings: ['Dữ liệu mô phỏng trong phiên, không có tài khoản quảng cáo thật.']
@@ -154,7 +161,27 @@ function read(op: string, input: Input): unknown {
         return undefined;
     if (responseSchema?.endsWith('ListResponse')) {
         let data = all(collection, shopId);
+        if (op === 'listPromotions' && input.query.get('effective') === 'yes') {
+            const date = promotionDate(shopId);
+            data = data.filter(row => promotionCurrent(row, date));
+        }
         if (op === 'listCommands') data = data.filter(canReadCommand);
+        if (op === 'listWorkItems') {
+            const assignee = input.query.get('assignee');
+            const due = input.query.get('due');
+            const asOf = Date.parse(now());
+            const overdue = (task: Row) => Boolean(task.dueAt) && Date.parse(str(task.dueAt)) <= asOf;
+            if (assignee === 'me') data = data.filter(task => task.assigneeUserId === input.userId);
+            if (assignee === 'unassigned') data = data.filter(task => !task.assigneeUserId);
+            if (due === 'overdue') data = data.filter(overdue);
+            if (due === 'unscheduled') data = data.filter(task => !task.dueAt);
+            if (input.query.get('exception') === 'active') {
+                data = data.filter(task => !['completed', 'cancelled'].includes(str(task.state))
+                    && (task.state === 'blocked' || (task.state === 'queued' && !task.assigneeUserId)
+                        || overdue(task)
+                        || ['payment_mismatch', 'late_shipment', 'recovery'].includes(str(task.kind))));
+            }
+        }
         if (input.path.conversationId)
             data = data.filter(r => r.conversationId === input.path.conversationId);
         if (input.path.knowledgeId)
@@ -169,11 +196,6 @@ function read(op: string, input: Input): unknown {
         const search = input.query.get('q')?.toLocaleLowerCase('vi');
         if (search)
             data = data.filter(r => JSON.stringify(r).toLocaleLowerCase('vi').includes(search));
-        if (fault === 'empty' || fault === 'empty_persistent') {
-            if (fault === 'empty')
-                fault = 'none';
-            return [];
-        }
         if (collection === 'stock' && !grantedPermissions(role).includes('finance.read'))
             data = data.map(s => ({ ...s, unitCost: null, carryingValue: null }));
         if (collection === 'consentChallenges')
@@ -334,10 +356,10 @@ async function execute(request: MockRequest): Promise<MockResult> {
     const snapshot = structuredClone(db);
     try {
         let data: unknown = masters(request.op,input);
-        if (meta.method === 'GET' && Array.isArray(data) && (fault === 'empty' || fault === 'empty_persistent')) {
-            if (fault === 'empty') fault = 'none';
-            data = [];
-        }
+        if (data === undefined) data = shippingPolicyOperations(request.op, input);
+        if (data === undefined) data = promotionOperations(request.op, input);
+        if (data === undefined) data = stocktakeOperations(request.op, input);
+        if (data === undefined) data = stockTransferOperations(request.op, input);
         if (request.op === 'uploadFile') {
             ensure(request.form, 'Thiếu file.', 422);
             data = await upload(input, request.form);
@@ -360,6 +382,11 @@ async function execute(request: MockRequest): Promise<MockResult> {
             data = await privacyOperations(request.op, input);
         if (data === undefined)
             data = files(request.op, input);
+        if (meta.method === 'GET' && meta.responseSchema?.endsWith('ListResponse') && Array.isArray(data)
+            && (fault === 'empty' || fault === 'empty_persistent')) {
+            if (fault === 'empty') fault = 'none';
+            data = [];
+        }
         if (data === undefined)
             throw new MockFailure(501, 'NOT_SIMULATED', `Thao tác ${request.op} chưa được mô phỏng. Giao diện không ghi nhận thành công giả.`);
         const reorderEvents = request.op === 'evaluateReorder' ? {

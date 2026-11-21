@@ -457,8 +457,9 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
                 p256dh: 'synthetic-device-public-key', auth: 'synthetic-device-auth',
             });
             await navigateInApp(page, '/s/shop-demo/notifications/devices');
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
             const row = page.getByRole('table', { name: 'Thiết bị nhận thông báo' }).getByRole('row').filter({ hasText: `UIC07 ${role}` });
+            await expect(row).toBeVisible();
+            await chooseMockOption(page, 'Vai trò mô phỏng', role);
             await expect(row).toBeVisible();
             await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
             const response = page.waitForResponse(candidate => candidate.request().method() === 'POST'

@@ -84,7 +84,11 @@ scripts/                 generator, kiểm nguồn/ranh giới, thiết lập v�
 samples/                 CSV mẫu để thử import
 ```
 
-`apps/web/src/app/router.tsx` là nơi ghép route; module không import module khác. Không đưa nghiệp vụ vào `shared` hoặc gọi trực tiếp SDK Facebook/AI từ trình duyệt. `docs/route-implementation.json` liên kết từng R01–R54 tới component nguồn; việc có component chưa đồng nghĩa route đã chạy trong browser.
+`apps/web/src/app/router.tsx` là nơi ghép route. Module độc lập theo nghiệp vụ và dùng API chung. `docs/route-implementation.json` liên kết từng route chuẩn tới component nguồn và mốc bằng chứng tương ứng.
+
+R62 cấu hình biểu phí giao dự kiến và R63 theo dõi ngoại lệ trong cửa hàng. Xem [phạm vi demo và kiểm chứng](evidence/pilot-shipping-exceptions-20261120/REPORT.md).
+
+R64–R67 bổ sung ưu đãi combo, xác minh thu và hoàn tiền, kiểm kê theo phiên và phiếu chuyển kho. Xem [phạm vi demo và kiểm chứng P1](evidence/p1-promotion-payments-inventory-20261120/REPORT.md).
 
 **Màu chuẩn chỉ sửa tại `../botsales-kit/design/tokens.json` sau một quyết định đổi màu được duyệt**, rồi chạy `npm run generate`; không sửa `tokens.css` hoặc HEX trong component. Bản bàn giao giữ palette đã chốt, không có light/system/toggle.
 

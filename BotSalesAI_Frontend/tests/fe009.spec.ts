@@ -186,7 +186,7 @@ test('FE009.G01 shop setup checklist guides to supported pages and leaves missin
     await expect(page.getByText(/Quốc gia kinh doanh không được suy ra từ múi giờ/)).toBeVisible();
     await expect(page.getByText('Quốc gia và giờ kinh doanh',{exact:true})).toBeVisible();
     await expect(page.getByText('Chưa có trường cấu hình trong contract',{exact:true})).toBeVisible();
-    await expect(page.getByRole('link',{name:'Xem preview phí giao',exact:true})).toHaveAttribute('href','/s/shop-demo/shipments');
+    await expect(page.locator('main#main-content').getByRole('link',{name:'Cấu hình giao hàng',exact:true})).toHaveAttribute('href','/s/shop-demo/settings/shipping');
     await expect(page.getByRole('link',{name:'Quản lý thành viên',exact:true})).toHaveAttribute('href','/s/shop-demo/settings/team');
     expect(writes).toEqual([]);
 });

@@ -69,7 +69,7 @@ export function ShopSettingsPage() {
                 <Stack sx={layoutSx.surface.compactContentGap}>
                     <Alert severity="info">{__MOCK__ ? 'Bản xem trước mô phỏng. Chỉ tên, tiền tệ, múi giờ và ngôn ngữ được lưu qua API hiện tại.' : 'API hiện chỉ cho phép sửa thông tin cơ sở được hỗ trợ.'} Quốc gia kinh doanh không được suy ra từ múi giờ.</Alert>
                     <SetupChecklistItem title="Quốc gia và giờ kinh doanh" status="Chưa có trường cấu hình trong contract" />
-                    <SetupChecklistItem title="Địa chỉ, vùng giao và phí vận chuyển" status={__MOCK__ ? 'Có preview mô phỏng, chưa lưu cấu hình' : 'Chưa có operation cấu hình vùng giao'} to={`/s/${shop.id}/shipments`} action="Xem preview phí giao" />
+                    <SetupChecklistItem title="Địa chỉ, vùng giao và phí vận chuyển" status="Khai báo phí dự kiến theo tỉnh/thành và quốc gia." to={canManageShop ? `/s/${shop.id}/settings/shipping` : undefined} action="Cấu hình giao hàng" />
                     <SetupChecklistItem title="Người duyệt và thành viên" status="Quyền lấy từ membership; chưa có API gán chính sách duyệt" to={`/s/${shop.id}/settings/team`} action="Quản lý thành viên" />
                     <SetupChecklistItem title="Kết nối kênh bán hàng" status={__MOCK__ ? 'Kết nối mô phỏng; không có quyền provider thật' : 'Kiểm tra trạng thái kết nối'} to={`/s/${shop.id}/integrations/channels`} action="Mở kết nối" />
                     <SetupChecklistItem title="Kết nối AI" status={__MOCK__ ? 'Danh sách nhà cung cấp mô phỏng' : 'Kiểm tra danh sách nhà cung cấp'} to={`/s/${shop.id}/integrations/ai`} action="Mở nhà cung cấp AI" />

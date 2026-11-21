@@ -4,7 +4,7 @@
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
-Nguồn chuẩn: contracts/route-manifest.json. File này sinh bởi scripts/generate-reference.py. 61 route là hợp đồng màn hình sản phẩm; prototype có phạm vi riêng tại prototype/PROTOTYPE_SCOPE.json.
+Nguồn chuẩn: contracts/route-manifest.json. File này sinh bởi scripts/generate-reference.py. 67 route là hợp đồng màn hình sản phẩm; prototype có phạm vi riêng tại prototype/PROTOTYPE_SCOPE.json.
 
 Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệt và design/tokens.json, dark-only, session/tenant/permission, lỗi/empty/stale/unknown và navigation keyboard ở docs/03,08,09. Actions phải có backend allowedActions, không chỉ đủ permission string.
 
@@ -128,7 +128,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Trường hợp cần xử lý:** Policy unknown/blocked disable gửi; takeover race; send timeout unknown; duplicate/out-of-order event; 403 gỡ messages; không tự gửi lại.; policy media thiếu/không hợp lệ thì tắt đính kèm; MIME/size/count/scope/purpose sai hoặc scan chưa ready thì không gửi; send unknown giữ bản nháp và chặn gửi trùng; object URL bị thu hồi khi bỏ tệp/đóng composer.
 
-**API đọc:** getConversation, listMessages, getCommand, getInboxMetadata, getFile
+**API đọc:** getConversation, listMessages, getCommand, getInboxMetadata, getFile, listPromotions
 
 | Hành động | operationId | Quyền |
 |---|---|---|
@@ -405,7 +405,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Trường hợp cần xử lý:** Variant archived/out of stock; customer/variant khác shop; trùng submit; thiếu quyền xem khách; intent seeded từ inbox vẫn revalidate.
 
-**API đọc:** listCustomers, listProducts, getShop
+**API đọc:** listCustomers, listProducts, getShop, listPromotions
 
 | Hành động | operationId | Quyền |
 |---|---|---|
@@ -423,7 +423,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Nội dung:** Snapshot dòng hàng, totals, ba state, source customer/conversation, version, các action server cho phép.
 
-**Hành vi:** Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass.
+**Hành vi:** Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass. Khi mở Sửa đơn nháp, kiểm quyền catalog.read trước khi gọi listPromotions để chọn ưu đãi.
 
 **Trường hợp cần xử lý:** Double submit, last SKU race, expired quote, unknown delivery outcome, partial returns, COD outstanding and closed period. No real money movement initiated by this UI.
 
@@ -1483,3 +1483,139 @@ Không tự merge cùng tên/số bị che; scope mismatch denied.
 **States:** loading, empty, error, success, command_unknown, capability_unavailable
 
 **Kịch bản:** SC2-G05, SC2-C07-CONSENT. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R62 — Cấu hình giao hàng
+
+**Route:** `/s/:shopId/settings/shipping` · **Module:** `fulfillment` · **Đọc:** `shop.manage`
+
+**Mục đích:** Quản lý vùng phục vụ và phí giao dự kiến của cửa hàng.
+
+**Nội dung:** Một biểu phí thủ công theo quốc gia và tỉnh/thành, tên dịch vụ và số tiền theo tiền tệ của shop.
+
+**Hành vi:** Áp dụng biểu phí theo địa chỉ tại bước báo giá đơn. Báo giá lưu phiên bản phí. Đơn giữ nguyên phí đã xác nhận và vận đơn kế thừa phí dự kiến.
+
+**Trường hợp cần xử lý:** Chặn trùng vùng sau chuẩn hóa. Địa chỉ ngoài vùng hoặc chính sách đã đổi cần xử lý trước khi xác nhận đơn. Biểu phí trống chỉ hỗ trợ luồng báo giá thủ công chưa có phí tự động.
+
+**API đọc:** getShippingPolicy
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Lưu biểu phí giao hàng | `updateShippingPolicy` | `shop.manage` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-C04. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R63 — Ngoại lệ và tác vụ nền
+
+**Route:** `/s/:shopId/operations/exceptions` · **Module:** `operations` · **Đọc:** `operations.read`
+
+**Mục đích:** Tìm và xử lý việc cần can thiệp, tác vụ nền lỗi và thao tác chưa rõ kết quả.
+
+**Nội dung:** Ba danh sách theo quyền. Bộ lọc và truy vấn theo mã chạy trước phân trang. Dẫn tới công việc, tác vụ hoặc hồ sơ liên quan.
+
+**Hành vi:** Dùng chung công việc với R37. Tác vụ nền và thao tác yêu cầu jobs.read. Chi tiết thao tác đối chiếu chỉ đọc khi kết quả chưa rõ.
+
+**Trường hợp cần xử lý:** Đổi bộ lọc đặt lại con trỏ. Chặn truy cập chéo shop và chặn phát lại mù quáng.
+
+**API đọc:** listWorkItems, listJobs, getJob, listCommands, getCommand
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Nhận công việc | `claimWorkItem` | `operations.claim` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-F02, SC2-F03, SC2-H01, SC2-H04. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R64 — Ưu đãi và combo
+
+**Route:** `/s/:shopId/products/promotions` · **Module:** `catalog` · **Đọc:** `catalog.read`
+
+**Mục đích:** Tạo và duyệt ưu đãi có quy tắc giá.
+
+**Nội dung:** Combo gồm nhiều SKU, mức giảm theo đơn, biên lợi nhuận tối thiểu và ngày hiệu lực theo múi giờ shop.
+
+**Hành vi:** Một ưu đãi cho mỗi đơn. Duyệt đúng bản nháp rồi dùng ở hội thoại, đơn và báo giá. Lưu phiên bản và mức giảm đã áp dụng.
+
+**Trường hợp cần xử lý:** Chặn thiếu SKU, thiếu tồn, sai phiên bản, hết hiệu lực, giá vốn chưa rõ hoặc biên lợi nhuận thấp. Đổi giá phải báo lại.
+
+**API đọc:** listPromotions, listProducts
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Tạo nháp | `createPromotion` | `catalog.write` |
+| Sửa chương trình | `updatePromotion` | `catalog.write` |
+| Duyệt bật hoặc tạm dừng | `decidePromotion` | `shop.manage` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-B05, SC2-G03. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R65 — Xác minh thu tiền và hoàn tiền
+
+**Route:** `/s/:shopId/finance/payment-reviews` · **Module:** `finance` · **Đọc:** `finance.read`
+
+**Mục đích:** Tập trung khoản cần xác minh hoặc cần hoàn.
+
+**Nội dung:** Số dự kiến, đã xác minh và còn lại, đến hạn, người phụ trách, đơn/phiếu trả, giao dịch, bút toán.
+
+**Hành vi:** Bộ lọc theo dữ liệu cửa hàng. Ghi nhận nghiệp vụ qua đơn, đổi trả và đối soát hiện có.
+
+**Trường hợp cần xử lý:** COD đang giữ và dữ liệu chưa đủ có trạng thái riêng. Số dư nghĩa vụ được đối chiếu từ nguồn ghi sổ.
+
+**API đọc:** listPaymentReviews
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-E04, SC2-E05, SC2-C07. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R66 — Phiên kiểm kê kho
+
+**Route:** `/s/:shopId/inventory/stocktakes` · **Module:** `inventory` · **Đọc:** `inventory.read`
+
+**Mục đích:** Đếm và duyệt sai lệch theo phiên.
+
+**Nội dung:** Chọn kho, nhóm SKU, tồn tại mốc mở, số đếm và chênh lệch.
+
+**Hành vi:** Chụp phiên bản từng vị trí. Duyệt và ghi chênh lệch nguyên tử theo phiên. Dòng đã đổi cần đếm lại sau làm mới mốc.
+
+**Trường hợp cần xử lý:** Chặn số đếm thấp hơn lượng đang giữ, phiên bản cũ, khóa kỳ và ghi lặp.
+
+**API đọc:** listStocktakes, listWarehouses, listStockSnapshots
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Mở phiên | `createStocktake` | `inventory.adjust` |
+| Nhập đếm hoặc gửi duyệt | `updateStocktake` | `inventory.adjust` |
+| Duyệt và ghi tồn | `postStocktake` | `warehouses.manage` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-D01. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R67 — Phiếu chuyển kho
+
+**Route:** `/s/:shopId/inventory/transfers` · **Module:** `inventory` · **Đọc:** `inventory.read`
+
+**Mục đích:** Điều chuyển hàng giữa kho.
+
+**Nội dung:** Kho gửi/nhận, các SKU, số xuất/nhận/đang đi và thiếu.
+
+**Hành vi:** Xuất chỉ giảm tồn bán được ở kho gửi. Kho đích tăng sau mỗi lần nhận. Đóng thiếu có lý do và quyền quản trị kho.
+
+**Trường hợp cần xử lý:** Chặn hai kho trùng, khác shop, vượt tồn khả dụng hoặc nhận quá số đã gửi; bảo toàn giá vốn qua từng lần nhận.
+
+**API đọc:** listStockTransfers, listWarehouses, listStockSnapshots
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Mở phiếu | `createStockTransfer` | `inventory.adjust` |
+| Xuất, nhận, hủy hoặc đóng thiếu | `updateStockTransfer` | `inventory.adjust` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-D01. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.

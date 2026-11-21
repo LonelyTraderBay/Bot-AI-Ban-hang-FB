@@ -134,7 +134,7 @@ test('UI61 A05 Pager count and three actions reflow consistently with 44px targe
     await info.attach('pager-geometry.json', { body: JSON.stringify(observations), contentType: 'application/json' });
 });
 
-for (const width of [390,1440]) test(`UI61 all 61 canonical routes retain loaded layout at ${width}px`, async ({ page }, info) => {
+for (const width of [390,1440]) test(`UI61 all canonical routes retain loaded layout at ${width}px`, async ({ page }, info) => {
     test.setTimeout(300_000); const errors: string[] = [], observations = [];
     page.on('pageerror', error => errors.push(error.message)); await page.setViewportSize({ width, height: 900 });
     for (const route of manifest.routes) {
@@ -143,6 +143,7 @@ for (const width of [390,1440]) test(`UI61 all 61 canonical routes retain loaded
         expect(geometry.document, route.id).toBeLessThanOrEqual(geometry.viewport);
         observations.push({ id: route.id, state: ['R14','R36','R61'].includes(route.id) ? 'missing-fixture-state' : 'seed-content', ...geometry });
     }
-    expect(observations).toHaveLength(61); expect(errors).toEqual([]);
+    expect(observations.map(({ id }) => id)).toEqual(manifest.routes.map(({ id }) => id));
+    expect(errors).toEqual([]);
     await info.attach(`routes-${width}.json`, { body: JSON.stringify(observations), contentType:'application/json' });
 });

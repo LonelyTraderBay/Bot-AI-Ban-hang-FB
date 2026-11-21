@@ -323,6 +323,14 @@ export function MarketingPage() {
                         </Stack>
                     </Box>
                 </Panel>
+                {!!m.promotionResults?.length && <Panel title="Kết quả ưu đãi" subtitle="Đơn đã chốt trong kỳ. Tiền hàng tính sau giảm, trước các khoản hoàn." geometry={{ gridColumn: '1 / -1' }}>
+                    <DataTable label="Kết quả ưu đãi" reflowOnMobile rows={m.promotionResults} rowKey={row => row.promotionId} columns={[
+                        { key: 'program', label: 'Chương trình', render: row => row.name },
+                        { key: 'orders', label: 'Đơn đã chốt', align: 'right', render: row => row.orders },
+                        { key: 'discount', label: 'Tổng giảm', align: 'right', render: row => <Amount value={row.discount} /> },
+                        { key: 'net', label: 'Tiền hàng sau giảm', align: 'right', render: row => <Amount value={row.netSales} /> },
+                    ]} />
+                </Panel>}
                 <Panel title="Lý do không chốt đơn" subtitle="Biểu đồ và bảng dùng cùng một payload API.">
                     <Box role="img" aria-label={`Biểu đồ lý do không chốt đơn, ${m.lostSaleReasons.length} nhóm`} data-testid="marketing-loss-chart" sx={[{ height: 260 }, layoutSx.report.chartViewportInset]}>
                         {m.lostSaleReasons.length ? <ResponsiveContainer width="100%" height="100%"><BarChart data={m.lostSaleReasons} accessibilityLayer>

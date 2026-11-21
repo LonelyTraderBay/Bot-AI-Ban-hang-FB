@@ -181,7 +181,7 @@ function ConversationPanel({ conversationId }: {
                     </Box>
                     <ConversationContextPanel conversation={conversation}>
                         {__MOCK__ && <MockSalesFlowPreview customerId={conversation.customerId} conversationId={conversation.id} />}
-                        {__MOCK__ && <MockUpsellPreview />}
+                        <ConversationPromotions customerId={conversation.customerId} conversationId={conversation.id} />
                     </ConversationContextPanel>
                     <ConfirmDialog
                         open={!!action}
@@ -327,16 +327,20 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
     </Panel>;
 }
 
-function MockUpsellPreview() {
-    const [open, setOpen] = useState(false);
+function ConversationPromotions({ customerId, conversationId }: { customerId: string; conversationId: string }) {
+    const { shop } = useScope();
+    const canRead = useCan('catalog.read');
+    const canWrite = useCan('orders.write');
+    const result = useApi('listPromotions', { query: { effective: 'yes', limit: 3 } }, canRead);
+    if (!canRead) return null;
+    const items = result.data?.data ?? [];
     return <SurfaceContent beforeGap="surface">
-        <Typography component="h3" variant="subtitle2">Gợi ý bán kèm mẫu · DEMO-PROMO-01</Typography>
-        <Alert severity="info">Combo áo thun + túi tote chỉ minh họa giao diện. Không có API khuyến mại; giá, lợi nhuận, SKU và tồn kho chưa được xác thực.</Alert>
-        <Button size="small" variant="outlined" onClick={() => setOpen(value => !value)}>{open ? 'Ẩn điều kiện mẫu' : 'Xem điều kiện combo mẫu'}</Button>
-        {open && <Stack role="status" data-testid="mock-promotion-preview" sx={[layoutSx.surface.compactContentGap, layoutSx.surface.compactInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }]}>
-            <Typography component="h3" variant="subtitle2">Combo mẫu · DEMO-PROMO-01</Typography>
-            <Typography variant="body2">Điều kiện minh họa: có ít nhất một áo và một phụ kiện trong đơn nháp.</Typography>
-            <Typography variant="caption" color="text.secondary">Không áp dụng giảm giá, không sửa đơn và không khẳng định đạt biên lợi nhuận.</Typography>
-        </Stack>}
+        <Typography component="h3" variant="subtitle2">Ưu đãi đang hiệu lực</Typography>
+        <QueryState query={result}>{items.length ? items.map(item => <SurfaceContent key={item.id} bodyMode="compactOutlined">
+            <Typography variant="body2">{item.name} · giảm <Amount wrap value={{ amount: item.discountAmount, currency: shop.currency }} /></Typography>
+            <Typography variant="caption">{item.lines.map(line => `${line.sku} × ${line.quantity}`).join(' · ')}</Typography>
+            {canWrite && <RouteLink to={`/s/${shop.id}/orders/new?` + new URLSearchParams({ customerId, conversationId, promotionId: item.id })}>Kiểm tra trên đơn nháp</RouteLink>}
+        </SurfaceContent>) : <Typography color="text.secondary">Chưa có ưu đãi đang hiệu lực.</Typography>}</QueryState>
+        {result.data?.page.hasMore && <RouteLink to={`/s/${shop.id}/products/promotions?effective=yes`}>Xem đủ chương trình</RouteLink>}
     </SurfaceContent>;
 }

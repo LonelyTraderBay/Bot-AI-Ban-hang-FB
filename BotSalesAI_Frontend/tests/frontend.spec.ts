@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoPreview, startDemoServer, startLiveServer } from './session/demo-server.mjs';
@@ -89,6 +89,8 @@ test('dirty drafts block in-app navigation and preserve input until the user dec
 });
 
 test('all canonical routes render inside the real React demo application', async ({ context }) => {
+    // Each route opens a fresh page and bootstraps its own session.
+    test.setTimeout(240_000);
     const errors: string[] = [];
     // The route walk verifies the shipped demo. Source chunk-failure checks below
     // continue to use their separate live dev server.
@@ -101,14 +103,18 @@ test('all canonical routes render inside the real React demo application', async
                 const path = route.path
                     .replace(':shopId', 'shop-demo')
                     .replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
-                await page.goto(new URL(path, built.url).toString());
+                const url = new URL(path, built.url).toString();
                 if (route.path.startsWith('/s/')) {
+                    const session = await navigateDemoAndRead(page, url, response => response.request().method() === 'GET'
+                        && new URL(response.url()).pathname === '/api/v2/session');
+                    expect(session.status(), route.id + ' should load the demo session').toBe(200);
                     const main = page.locator('main#main-content');
-                    await expect(main, `${route.id} should mount the shop-scoped page`).toBeVisible();
+                    await expect(main, `${route.id} should mount the shop-scoped page`).toBeVisible({ timeout: 15_000 });
                     await expect(main.getByRole('heading').first(), `${route.id} should render page content`).toBeVisible();
                     await expect(main.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }), `${route.id} should not fall through to the router error boundary`).toHaveCount(0);
                     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true }), `${route.id} should disclose the synthetic data source`).toBeVisible();
                 } else {
+                    await page.goto(url);
                     const heading = page.getByRole('heading').first();
                     await expect(heading, `${route.id} should render its public page content`).toBeVisible();
                     await expect(page.getByRole('heading', { name: 'Không thể mở màn hình', exact: true })).toHaveCount(0);

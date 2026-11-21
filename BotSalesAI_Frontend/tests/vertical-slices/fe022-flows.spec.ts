@@ -331,7 +331,9 @@ test('FE022.S05 route and feature matrix covers canonical IDs with executed case
     expect(new Set(matrix.map(route => route.routeId))).toEqual(new Set(routeManifest.routes.map(route => route.id)));
     expect(new Set(routeManifest.routes.map(route => route.id)).size).toBe(routeManifest.routes.length);
     expect(new Set(featureCatalog.features.map(feature => feature.id)).size).toBe(featureCatalog.features.length);
-    const sourceOnly = matrix.every(row => row.state === 'SOURCE_IMPLEMENTED_BROWSER_NOT_REVALIDATED');
+    // PR #27 added these screens incrementally. Keep the historical interaction evidence
+    // for existing rows and require explicit NOT_RUN until each new row has linked evidence.
+    const routesPendingEvidence = new Set(['R62', 'R63', 'R64', 'R65', 'R66', 'R67']);
     for (const feature of featureCatalog.features) {
         expect(feature.routeIds.length).toBeGreaterThan(0);
         expect(feature.routeIds.every(id => routeManifest.routes.some(route => route.id === id))).toBe(true);
@@ -341,7 +343,8 @@ test('FE022.S05 route and feature matrix covers canonical IDs with executed case
         const row = matrix.find(item => item.routeId === route.id);
         expect(row).toMatchObject({ route: route.path, acceptanceScenarioIds: route.acceptanceScenarioIds });
         expect(fs.readFileSync(path.resolve(process.cwd(), row!.source), 'utf8')).toContain(`function ${row!.component}(`);
-        if (sourceOnly) {
+        if (row?.state === 'SOURCE_IMPLEMENTED_BROWSER_NOT_REVALIDATED') {
+            expect(routesPendingEvidence.has(route.id), route.id + ' must retain browser evidence').toBe(true);
             expect(row).toMatchObject({ state: 'SOURCE_IMPLEMENTED_BROWSER_NOT_REVALIDATED', routeEvidence: { result: 'NOT_RUN' }, journeys: [], featureCoverage: [] });
             expect(Object.keys(row!.routeEvidence)).toEqual(['result']);
             continue;
@@ -377,15 +380,13 @@ test('FE022.S05 route and feature matrix covers canonical IDs with executed case
     }
     const mappedIds = new Set(matrix.flatMap(route => route.featureCoverage.map(feature => feature.featureId)));
     const canonicalIds = new Set(featureCatalog.features.map(feature => feature.id));
-    if (sourceOnly) expect(mappedIds.size).toBe(0);
-    else expect(mappedIds).toEqual(canonicalIds);
+    expect(mappedIds).toEqual(canonicalIds);
     expect(journeySource).toContain('FE022.VS01');
     expect(journeySource).toContain('FE022.VS02');
     expect(journeySource).toContain('FE022.VS03');
     expect(journeySource).toContain('FE022.VS04');
     for (const featureId of ['B06', 'C04', 'E08', 'G05', 'F03']) {
         expect(canonicalIds.has(featureId)).toBeTruthy();
-        if (sourceOnly) continue;
         const feature = matrix.flatMap(route => route.featureCoverage).find(item => item.featureId === featureId);
         expect(feature?.coverage).toBe('FRONTEND_INTERACTION_VERIFIED_SYNTHETIC');
     }

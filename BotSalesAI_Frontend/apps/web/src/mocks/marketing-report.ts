@@ -1,6 +1,6 @@
 import type { MarketingBucket, MarketingSummary, MarketingTrendPoint } from '@botsales/contracts';
 import { dateOnlyInTimezone, isValidDateOnly } from '../shared/model/format';
-import { ensure, first, now } from './database';
+import { all, ensure, first, money, now, record, str, units } from './database';
 import type { Input } from './database';
 import { marketingFixture } from './marketing-fixture';
 
@@ -103,5 +103,21 @@ export function marketingSummary(input: Input, asOf = now()): MarketingSummary {
         fromDate = addDays(toDate, 1);
     }
     const totals = aggregate(source, range.fromDate, range.toDate, currency);
-    return { asOf, period: { ...range, timezone }, trend: points, ...totals };
+    const usedPromotions = new Map<string, { name: string; orders: number; discount: bigint; sales: bigint }>();
+    for (const order of all('orders', input.shopId)) {
+        if (order.orderState === 'cancelled' || !order.promotionAppliedAt || !order.promotion || !order.total) continue;
+        const instant = str(order.promotionAppliedAt);
+        const date = dateOnlyInTimezone(new Date(instant), timezone);
+        if (instant > asOf || date < range.fromDate || date > range.toDate) continue;
+        const rule = record(order.promotion), key = str(rule.id);
+        const group = usedPromotions.get(key) ?? { name: str(rule.name), orders: 0, discount: 0n, sales: 0n };
+        group.orders++;
+        group.discount += units(rule.discount);
+        group.sales += units(order.total);
+        usedPromotions.set(key, group);
+    }
+    const promotionResults = Array.from(usedPromotions, ([promotionId, group]) => ({
+        promotionId, name: group.name, orders: group.orders, discount: money(group.discount, currency), netSales: money(group.sales, currency),
+    }));
+    return { asOf, period: { ...range, timezone }, trend: points, ...totals, ...(promotionResults.length ? { promotionResults } : {}) };
 }

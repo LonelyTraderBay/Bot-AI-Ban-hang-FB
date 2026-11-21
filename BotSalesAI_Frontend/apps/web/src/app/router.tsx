@@ -20,11 +20,14 @@ const InboxPage = lazy(() => import('../modules/inbox').then(m => ({ default: m.
 const CustomersPage = lazy(() => import('../modules/customers').then(m => ({ default: m.CustomersPage })));
 const CustomerPage = lazy(() => import('../modules/customers').then(m => ({ default: m.CustomerPage })));
 const ProductsPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ProductsPage })));
+const PromotionsPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.PromotionsPage })));
 const ProductEditorPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ProductEditorPage })));
 const CategoriesPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.CategoriesPage })));
 const ImportsPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ImportsPage })));
 const ImportResultPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ImportResultPage })));
 const InventoryPage = lazy(() => import('../modules/inventory').then(m => ({ default: m.InventoryPage })));
+const StocktakesPage = lazy(() => import('../modules/inventory').then(m => ({ default: m.StocktakesPage })));
+const StockTransfersPage = lazy(() => import('../modules/inventory').then(m => ({ default: m.StockTransfersPage })));
 const WarehousesPage = lazy(() => import('../modules/inventory').then(m => ({ default: m.WarehousesPage })));
 const AccountsPage = lazy(() => import('../modules/finance').then(m => ({ default: m.AccountsPage })));
 const OpeningBalancesPage = lazy(() => import('../modules/finance').then(m => ({ default: m.OpeningBalancesPage })));
@@ -54,11 +57,14 @@ const PrivacyPage = lazy(() => import('../modules/workspace').then(m => ({ defau
 const ConsentConfirmationPage = lazy(() => import('../modules/workspace').then(m => ({ default: m.ConsentConfirmationPage })));
 const JobPage = lazy(() => import('../modules/workspace').then(m => ({ default: m.JobPage })));
 const OperationsPage = lazy(() => import('../modules/operations').then(m => ({ default: m.OperationsPage })));
+const ExceptionsPage = lazy(() => import('../modules/operations').then(m => ({ default: m.ExceptionsPage })));
+const PaymentReviewsPage = lazy(() => import('../modules/finance').then(m => ({ default: m.PaymentReviewsPage })));
 const ApprovalsPage = lazy(() => import('../modules/operations').then(m => ({ default: m.ApprovalsPage })));
 const NotificationsPage = lazy(() => import('../modules/notifications').then(m => ({ default: m.NotificationsPage })));
 const DevicesPage = lazy(() => import('../modules/notifications').then(m => ({ default: m.DevicesPage })));
 const FulfillmentPage = lazy(() => import('../modules/fulfillment').then(m => ({ default: m.FulfillmentPage })));
 const ShipmentsPage = lazy(() => import('../modules/fulfillment').then(m => ({ default: m.ShipmentsPage })));
+const ShippingPolicyPage = lazy(() => import('../modules/fulfillment').then(m => ({ default: m.ShippingPolicyPage })));
 const ReturnsPage = lazy(() => import('../modules/orders').then(m => ({ default: m.ReturnsPage })));
 const SuppliersPage = lazy(() => import('../modules/procurement').then(m => ({ default: m.SuppliersPage })));
 const ReplenishmentPage = lazy(() => import('../modules/procurement').then(m => ({ default: m.ReplenishmentPage })));
@@ -142,6 +148,12 @@ export const pages: Record<string, ComponentType> = {
     R59: TrialBalancePage,
     R60: BalanceSheetPage,
     R61: ConsentConfirmationPage,
+    R62: ShippingPolicyPage,
+    R63: ExceptionsPage,
+    R64: PromotionsPage,
+    R65: PaymentReviewsPage,
+    R66: StocktakesPage,
+    R67: StockTransfersPage,
 };
 function Loading({ inset = false }: { inset?: boolean }) {
     const progress = <LinearProgress aria-label="Đang tải màn hình" />;

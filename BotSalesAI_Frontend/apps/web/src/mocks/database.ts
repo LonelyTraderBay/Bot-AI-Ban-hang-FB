@@ -129,7 +129,7 @@ export function units(value: unknown): bigint {
     ensure(integer.length > 0, 'Số tiền không hợp lệ.', 422, 'INVALID_MONEY');
     return (BigInt(integer) * SCALE + BigInt(fraction.padEnd(4, '0'))) * (negative ? -1n : 1n);
 }
-export function money(value: bigint, currency = 'VND'): Row {
+export function money(value: bigint, currency = 'VND') {
     const abs = value < 0n ? -value : value;
     const remainder = (abs % SCALE).toString().padStart(4, '0').replace(/0+$/, '');
     return { amount: `${value < 0n ? '-' : ''}${abs / SCALE}${remainder ? '.' + remainder : ''}`, currency };
@@ -161,7 +161,7 @@ export function move(input: Input, stock: Row, quantity: number, reserved: numbe
     stock.available = num(stock.onHand) - num(stock.reserved);
     stock.asOf = now();
     touch(stock);
-    insert('movements', 'StockMovement', input.shopId, {
+    return insert('movements', 'StockMovement', input.shopId, {
         variantId: stock.variantId, warehouseId: stock.warehouseId, kind, quantityDelta: quantity, reservedDelta: reserved, reason, sourceRef: source, actorId: input.userId
     });
 }

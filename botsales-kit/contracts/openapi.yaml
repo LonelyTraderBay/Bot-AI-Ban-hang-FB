@@ -8620,6 +8620,14 @@ paths:
       - $ref: '#/components/parameters/Query'
       - $ref: '#/components/parameters/StatusFilter'
       - $ref: '#/components/parameters/Sort'
+      - name: kind
+        in: query
+        required: false
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 80
+        description: Lọc theo loại bản ghi trước phân trang.
       responses:
         '200':
           description: Success
@@ -8800,6 +8808,14 @@ paths:
       - $ref: '#/components/parameters/Query'
       - $ref: '#/components/parameters/StatusFilter'
       - $ref: '#/components/parameters/Sort'
+      - name: kind
+        in: query
+        required: false
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 80
+        description: Lọc theo loại bản ghi trước phân trang.
       responses:
         '200':
           description: Success
@@ -10355,6 +10371,56 @@ paths:
           $ref: '#/components/schemas/Id'
       - $ref: '#/components/parameters/Limit'
       - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Query'
+      - name: kind
+        in: query
+        required: false
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 80
+        description: Lọc theo loại bản ghi trước phân trang.
+      - name: state
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - queued
+          - claimed
+          - working
+          - blocked
+          - completed
+          - cancelled
+        description: Trạng thái công việc.
+      - name: assignee
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - me
+          - unassigned
+        description: Công việc của tôi hoặc chưa có người nhận.
+      - name: exception
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - active
+        description: Công việc còn mở đang bị chặn, quá hạn, chưa nhận, chênh lệch
+          thanh toán, vận đơn trễ hoặc cần phục hồi.
+      - name: due
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - overdue
+          - unscheduled
+        description: Lọc việc đã quá hạn theo giờ server hoặc chưa đặt hạn trước phân
+          trang.
       description: Scope from authenticated principal + current resource policy. Mutation
         idempotency binds body hash. expectedVersion/If-Match required where applicable.
         No client-supplied totals/approval can override authoritative calculation.
@@ -22608,6 +22674,1299 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/shipping-policy:
+    get:
+      operationId: getShippingPolicy
+      summary: getShippingPolicy
+      tags:
+      - fulfillment
+      x-permission: shop.manage
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingPolicyResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      description: Cấu hình biểu phí thủ công theo quốc gia và tỉnh/thành của cửa
+        hàng. Trả phiên bản 1 và vùng rỗng khi chưa thiết lập.
+    put:
+      operationId: updateShippingPolicy
+      summary: updateShippingPolicy
+      tags:
+      - fulfillment
+      x-permission: shop.manage
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingPolicyResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingPolicyUpdate'
+      description: Thay thế danh sách vùng trong phiên bản đã đọc. Mỗi quốc gia và
+        tỉnh/thành sau chuẩn hóa chỉ có một mức phí. Dùng tiền tệ cơ sở của cửa hàng.
+  /shops/{shopId}/promotions:
+    get:
+      operationId: listPromotions
+      summary: listPromotions
+      description: Danh sách chương trình combo có phân trang.
+      tags:
+      - catalog
+      x-permission: catalog.read
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Query'
+      - $ref: '#/components/parameters/StatusFilter'
+      - name: effective
+        in: query
+        schema:
+          type: string
+          enum:
+          - 'yes'
+        description: Chỉ lấy ưu đãi đang hiệu lực theo thời gian cửa hàng.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromotionListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    post:
+      operationId: createPromotion
+      summary: createPromotion
+      description: Tạo nháp ưu đãi combo.
+      tags:
+      - catalog
+      x-permission: catalog.write
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromotionResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromotionDraft'
+  /shops/{shopId}/promotions/{resourceId}:
+    patch:
+      operationId: updatePromotion
+      summary: updatePromotion
+      description: Sửa phiên bản nháp hoặc tạm dừng. Chương trình đang bật cần tạm
+        dừng trước.
+      tags:
+      - catalog
+      x-permission: catalog.write
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: resourceId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromotionResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromotionDraft'
+  /shops/{shopId}/promotions/{resourceId}/decision:
+    patch:
+      operationId: decidePromotion
+      summary: decidePromotion
+      description: Chủ shop duyệt bật hoặc tạm dừng theo phiên bản.
+      tags:
+      - catalog
+      x-permission: shop.manage
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: resourceId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromotionResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromotionDecision'
+  /shops/{shopId}/payment-reviews:
+    get:
+      operationId: listPaymentReviews
+      summary: listPaymentReviews
+      description: Danh sách chỉ đọc tổng hợp nguồn thu/hoàn. Không suy đã thu từ
+        ảnh, yêu cầu hoặc trạng thái giao.
+      tags:
+      - finance
+      x-permission: finance.read
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Query'
+      - name: kind
+        in: query
+        schema:
+          type: string
+          enum:
+          - collection
+          - refund
+        description: Loại khoản cần xử lý.
+      - name: stage
+        in: query
+        schema:
+          type: string
+          enum:
+          - open
+          - settled
+        description: Việc còn mở hoặc đã đối chiếu.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentReviewListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/inventory/stocktakes:
+    get:
+      operationId: listStocktakes
+      summary: listStocktakes
+      description: Phiên kiểm kê theo kho và trạng thái.
+      tags:
+      - inventory
+      x-permission: inventory.read
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Query'
+      - $ref: '#/components/parameters/StatusFilter'
+      - $ref: '#/components/parameters/WarehouseFilter'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StocktakeListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    post:
+      operationId: createStocktake
+      summary: createStocktake
+      description: Chụp tồn và phiên bản từng SKU hiện tại.
+      tags:
+      - inventory
+      x-permission: inventory.adjust
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StocktakeResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StocktakeDraft'
+  /shops/{shopId}/inventory/stocktakes/{resourceId}:
+    patch:
+      operationId: updateStocktake
+      summary: updateStocktake
+      description: Nhập đếm, gửi duyệt, cập nhật mốc và đánh dấu đếm lại dòng đã đổi
+        hoặc hủy phiên.
+      tags:
+      - inventory
+      x-permission: inventory.adjust
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: resourceId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StocktakeResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StocktakeUpdate'
+  /shops/{shopId}/inventory/stocktakes/{resourceId}/posting:
+    patch:
+      operationId: postStocktake
+      summary: postStocktake
+      description: Duyệt phiên đã gửi và áp dụng toàn bộ chênh lệch nếu mọi vị trí
+        còn đúng phiên bản.
+      tags:
+      - inventory
+      x-permission: warehouses.manage
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: resourceId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StocktakeResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StocktakePost'
+  /shops/{shopId}/inventory/transfers:
+    get:
+      operationId: listStockTransfers
+      summary: listStockTransfers
+      description: Danh sách phiếu điều chuyển và số nhận/thiếu.
+      tags:
+      - inventory
+      x-permission: inventory.read
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Query'
+      - $ref: '#/components/parameters/StatusFilter'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockTransferListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    post:
+      operationId: createStockTransfer
+      summary: createStockTransfer
+      description: Tạo phiếu nháp giữa hai kho đang hoạt động.
+      tags:
+      - inventory
+      x-permission: inventory.adjust
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockTransferResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockTransferDraft'
+  /shops/{shopId}/inventory/transfers/{resourceId}:
+    patch:
+      operationId: updateStockTransfer
+      summary: updateStockTransfer
+      description: Xuất, nhận từng phần, đóng thiếu có lý do hoặc hủy nháp. Đóng thiếu
+        yêu cầu thêm warehouses.manage.
+      tags:
+      - inventory
+      x-permission: inventory.adjust
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: resourceId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockTransferResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockTransferUpdate'
 components:
   securitySchemes:
     SessionCookie:
@@ -23642,6 +25001,8 @@ components:
           - release
           - fulfillment
           - return
+          - transfer_out
+          - transfer_in
         quantityDelta:
           type: integer
         reservedDelta:
@@ -23842,6 +25203,24 @@ components:
           anyOf:
           - $ref: '#/components/schemas/AddressSnapshot'
           - type: 'null'
+        shippingRate:
+          anyOf:
+          - $ref: '#/components/schemas/ShippingRateSnapshot'
+          - type: 'null'
+          description: Phí giao dự kiến được lưu độc lập với tiền hàng. Có giá trị
+            khi biểu phí thủ công khớp địa chỉ và đã được dùng cho báo giá.
+        promotionId:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
+        promotion:
+          anyOf:
+          - $ref: '#/components/schemas/PromotionSnapshot'
+          - type: 'null'
+        promotionAppliedAt:
+          anyOf:
+          - $ref: '#/components/schemas/DateTime'
+          - type: 'null'
       required:
       - id
       - shopId
@@ -23907,6 +25286,10 @@ components:
           anyOf:
           - $ref: '#/components/schemas/Id'
           - type: 'null'
+        promotionId:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
       required:
       - customerId
       - conversationId
@@ -23943,6 +25326,16 @@ components:
         shippingAddressSnapshot:
           anyOf:
           - $ref: '#/components/schemas/AddressSnapshot'
+          - type: 'null'
+        shippingRate:
+          anyOf:
+          - $ref: '#/components/schemas/ShippingRateSnapshot'
+          - type: 'null'
+          description: Phí giao dự kiến được lưu độc lập với tiền hàng. Có giá trị
+            khi biểu phí thủ công khớp địa chỉ và đã được dùng cho báo giá.
+        promotion:
+          anyOf:
+          - $ref: '#/components/schemas/PromotionSnapshot'
           - type: 'null'
       required:
       - id
@@ -24116,6 +25509,22 @@ components:
           anyOf:
           - $ref: '#/components/schemas/Id'
           - type: 'null'
+        paymentReference:
+          anyOf:
+          - type: string
+            minLength: 1
+            maxLength: 500
+          - type: 'null'
+        evidenceRef:
+          anyOf:
+          - type: string
+            minLength: 1
+            maxLength: 500
+          - type: 'null'
+        reconciledDebtIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
       required:
       - id
       - shopId
@@ -26829,6 +28238,10 @@ components:
           anyOf:
           - $ref: '#/components/schemas/Id'
           - type: 'null'
+        promotionId:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
       additionalProperties: false
       minProperties: 1
       description: 'PATCH partial: omitted fields remain unchanged. Explicit null
@@ -29360,6 +30773,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MarketingTrendPoint'
+        promotionResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromotionPerformance'
       required:
       - asOf
       - knownAttributedOrders
@@ -32219,4 +33636,763 @@ components:
       - unknownAttributionOrders
       - estimatedSpend
       - actualSpend
+      additionalProperties: false
+    ShippingRateRule:
+      type: object
+      properties:
+        countryCode:
+          type: string
+          pattern: ^[A-Z]{2}$
+        province:
+          type: string
+          minLength: 1
+          maxLength: 120
+        serviceName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        amount:
+          type: string
+          pattern: ^(0|[1-9][0-9]{0,11})(\.[0-9]{1,4})?$
+      required:
+      - countryCode
+      - province
+      - serviceName
+      - amount
+      additionalProperties: false
+    ShippingPolicy:
+      type: object
+      properties:
+        shopId:
+          $ref: '#/components/schemas/Id'
+        version:
+          type: integer
+          minimum: 1
+        rules:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/ShippingRateRule'
+      required:
+      - shopId
+      - version
+      - rules
+      additionalProperties: false
+    ShippingPolicyUpdate:
+      type: object
+      properties:
+        rules:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/ShippingRateRule'
+      required:
+      - rules
+      additionalProperties: false
+    ShippingRateSnapshot:
+      type: object
+      properties:
+        policyVersion:
+          type: integer
+          minimum: 1
+        countryCode:
+          type: string
+          pattern: ^[A-Z]{2}$
+        province:
+          type: string
+          minLength: 1
+          maxLength: 120
+        serviceName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        fee:
+          $ref: '#/components/schemas/Money'
+      required:
+      - policyVersion
+      - countryCode
+      - province
+      - serviceName
+      - fee
+      additionalProperties: false
+    ShippingPolicyResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ShippingPolicy'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+      additionalProperties: true
+    VariantQuantity:
+      type: object
+      properties:
+        variantId:
+          $ref: '#/components/schemas/Id'
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 1000000
+      required:
+      - variantId
+      - quantity
+      additionalProperties: false
+    PromotionDraft:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        startsOn:
+          $ref: '#/components/schemas/DateOnly'
+        endsOn:
+          $ref: '#/components/schemas/DateOnly'
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantQuantity'
+          minItems: 2
+          maxItems: 30
+        discountAmount:
+          type: string
+          pattern: ^(0|[1-9][0-9]{0,11})(\.[0-9]{1,4})?$
+        minMarginPercent:
+          type: integer
+          minimum: 0
+          maximum: 99
+      required:
+      - name
+      - startsOn
+      - endsOn
+      - lines
+      - discountAmount
+      - minMarginPercent
+      additionalProperties: false
+    Promotion:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        shopId:
+          $ref: '#/components/schemas/Id'
+        version:
+          type: integer
+          minimum: 1
+        createdAt:
+          $ref: '#/components/schemas/DateTime'
+        updatedAt:
+          $ref: '#/components/schemas/DateTime'
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        startsOn:
+          $ref: '#/components/schemas/DateOnly'
+        endsOn:
+          $ref: '#/components/schemas/DateOnly'
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromotionLine'
+          minItems: 2
+          maxItems: 30
+        discountAmount:
+          type: string
+          pattern: ^(0|[1-9][0-9]{0,11})(\.[0-9]{1,4})?$
+        minMarginPercent:
+          type: integer
+          minimum: 0
+          maximum: 99
+        status:
+          type: string
+          enum:
+          - draft
+          - active
+          - paused
+      required:
+      - id
+      - shopId
+      - version
+      - createdAt
+      - updatedAt
+      - name
+      - startsOn
+      - endsOn
+      - lines
+      - discountAmount
+      - minMarginPercent
+      - status
+      additionalProperties: false
+    PromotionDecision:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - activate
+          - pause
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+      required:
+      - action
+      - reason
+      additionalProperties: false
+    PromotionSnapshot:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        version:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        discount:
+          $ref: '#/components/schemas/Money'
+      required:
+      - id
+      - version
+      - name
+      - discount
+      additionalProperties: false
+    PromotionPerformance:
+      type: object
+      properties:
+        promotionId:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        orders:
+          type: integer
+          minimum: 1
+        discount:
+          $ref: '#/components/schemas/Money'
+        netSales:
+          $ref: '#/components/schemas/Money'
+      required:
+      - promotionId
+      - name
+      - orders
+      - discount
+      - netSales
+      additionalProperties: false
+    PaymentReview:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        orderId:
+          $ref: '#/components/schemas/Id'
+        kind:
+          type: string
+          enum:
+          - collection
+          - refund
+        status:
+          type: string
+          enum:
+          - unpaid
+          - partial
+          - cod_pending
+          - refund_due
+          - settled
+          - needs_check
+        expected:
+          $ref: '#/components/schemas/Money'
+        verified:
+          anyOf:
+          - $ref: '#/components/schemas/Money'
+          - type: 'null'
+        remaining:
+          anyOf:
+          - $ref: '#/components/schemas/Money'
+          - type: 'null'
+        dueAt:
+          anyOf:
+          - $ref: '#/components/schemas/DateTime'
+          - type: 'null'
+        assigneeUserId:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
+        workItemId:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
+        returnIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+        financeEntryIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+        journalIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+        bankTransactionIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+        codSettlementIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+        references:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 500
+        updatedAt:
+          $ref: '#/components/schemas/DateTime'
+      required:
+      - id
+      - orderId
+      - kind
+      - status
+      - expected
+      - verified
+      - remaining
+      - dueAt
+      - assigneeUserId
+      - workItemId
+      - returnIds
+      - financeEntryIds
+      - journalIds
+      - bankTransactionIds
+      - codSettlementIds
+      - references
+      - updatedAt
+      additionalProperties: false
+    StocktakeDraft:
+      type: object
+      properties:
+        warehouseId:
+          $ref: '#/components/schemas/Id'
+        variantIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+          minItems: 1
+          maxItems: 100
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+      required:
+      - warehouseId
+      - variantIds
+      - reason
+      additionalProperties: false
+    StocktakeCount:
+      type: object
+      properties:
+        variantId:
+          $ref: '#/components/schemas/Id'
+        counted:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+      - variantId
+      - counted
+      additionalProperties: false
+    StocktakeUpdate:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - count
+          - submit
+          - rebase
+          - cancel
+        counts:
+          type: array
+          items:
+            $ref: '#/components/schemas/StocktakeCount'
+          maxItems: 100
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+      required:
+      - action
+      additionalProperties: false
+    StocktakeLine:
+      type: object
+      properties:
+        variantId:
+          $ref: '#/components/schemas/Id'
+        sku:
+          type: string
+          minLength: 1
+          maxLength: 160
+        baselineVersion:
+          type: integer
+          minimum: 1
+        expected:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+        counted:
+          anyOf:
+          - type: integer
+            minimum: 0
+            maximum: 9007199254740991
+          - type: 'null'
+        reserved:
+          type: integer
+          minimum: 0
+          maximum: 9007199254740991
+      required:
+      - variantId
+      - sku
+      - baselineVersion
+      - expected
+      - counted
+      - reserved
+      additionalProperties: false
+    Stocktake:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        shopId:
+          $ref: '#/components/schemas/Id'
+        version:
+          type: integer
+          minimum: 1
+        createdAt:
+          $ref: '#/components/schemas/DateTime'
+        updatedAt:
+          $ref: '#/components/schemas/DateTime'
+        warehouseId:
+          $ref: '#/components/schemas/Id'
+        status:
+          type: string
+          enum:
+          - counting
+          - submitted
+          - posted
+          - cancelled
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/StocktakeLine'
+          minItems: 1
+          maxItems: 100
+        countedBy:
+          $ref: '#/components/schemas/Id'
+        reviewedBy:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
+        reviewReason:
+          anyOf:
+          - type: string
+            minLength: 5
+            maxLength: 500
+          - type: 'null'
+        postedAt:
+          anyOf:
+          - $ref: '#/components/schemas/DateTime'
+          - type: 'null'
+      required:
+      - id
+      - shopId
+      - version
+      - createdAt
+      - updatedAt
+      - warehouseId
+      - status
+      - reason
+      - lines
+      - countedBy
+      - reviewedBy
+      - reviewReason
+      - postedAt
+      additionalProperties: false
+    StockTransferDraft:
+      type: object
+      properties:
+        fromWarehouseId:
+          $ref: '#/components/schemas/Id'
+        toWarehouseId:
+          $ref: '#/components/schemas/Id'
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantQuantity'
+          minItems: 1
+          maxItems: 100
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+      required:
+      - fromWarehouseId
+      - toWarehouseId
+      - lines
+      - reason
+      additionalProperties: false
+    StockTransferUpdate:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - dispatch
+          - receive
+          - close_short
+          - cancel
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantQuantity'
+          maxItems: 100
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+      required:
+      - action
+      additionalProperties: false
+    StockTransferLine:
+      type: object
+      properties:
+        variantId:
+          $ref: '#/components/schemas/Id'
+        sku:
+          type: string
+          minLength: 1
+          maxLength: 160
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 1000000
+        received:
+          type: integer
+          minimum: 0
+          maximum: 1000000
+        missing:
+          type: integer
+          minimum: 0
+          maximum: 1000000
+      required:
+      - variantId
+      - sku
+      - quantity
+      - received
+      - missing
+      additionalProperties: false
+    StockTransfer:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        shopId:
+          $ref: '#/components/schemas/Id'
+        version:
+          type: integer
+          minimum: 1
+        createdAt:
+          $ref: '#/components/schemas/DateTime'
+        updatedAt:
+          $ref: '#/components/schemas/DateTime'
+        fromWarehouseId:
+          $ref: '#/components/schemas/Id'
+        toWarehouseId:
+          $ref: '#/components/schemas/Id'
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockTransferLine'
+          minItems: 1
+          maxItems: 100
+        status:
+          type: string
+          enum:
+          - draft
+          - in_transit
+          - completed
+          - closed_short
+          - cancelled
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+        discrepancyReason:
+          anyOf:
+          - type: string
+            minLength: 5
+            maxLength: 500
+          - type: 'null'
+        dispatchedAt:
+          anyOf:
+          - $ref: '#/components/schemas/DateTime'
+          - type: 'null'
+        closedAt:
+          anyOf:
+          - $ref: '#/components/schemas/DateTime'
+          - type: 'null'
+      required:
+      - id
+      - shopId
+      - version
+      - createdAt
+      - updatedAt
+      - fromWarehouseId
+      - toWarehouseId
+      - lines
+      - status
+      - reason
+      - discrepancyReason
+      - dispatchedAt
+      - closedAt
+      additionalProperties: false
+    PromotionResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Promotion'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+      additionalProperties: false
+    PromotionListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Promotion'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        page:
+          $ref: '#/components/schemas/Page'
+      required:
+      - data
+      - meta
+      - page
+      additionalProperties: false
+    StocktakeResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Stocktake'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+      additionalProperties: false
+    StocktakeListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stocktake'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        page:
+          $ref: '#/components/schemas/Page'
+      required:
+      - data
+      - meta
+      - page
+      additionalProperties: false
+    StockTransferResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/StockTransfer'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+      additionalProperties: false
+    StockTransferListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockTransfer'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        page:
+          $ref: '#/components/schemas/Page'
+      required:
+      - data
+      - meta
+      - page
+      additionalProperties: false
+    PaymentReviewListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentReview'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        page:
+          $ref: '#/components/schemas/Page'
+      required:
+      - data
+      - meta
+      - page
+      additionalProperties: false
+    StocktakePost:
+      type: object
+      properties:
+        reason:
+          type: string
+          minLength: 5
+          maxLength: 500
+      required:
+      - reason
+      additionalProperties: false
+    PromotionLine:
+      type: object
+      properties:
+        variantId:
+          $ref: '#/components/schemas/Id'
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 1000000
+        sku:
+          type: string
+          minLength: 1
+          maxLength: 160
+        label:
+          type: string
+          minLength: 1
+          maxLength: 500
+      required:
+      - variantId
+      - quantity
+      - sku
+      - label
       additionalProperties: false

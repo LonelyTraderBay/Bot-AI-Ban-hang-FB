@@ -8,6 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Alert, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import type { StockMovement, StockSnapshot } from '@botsales/contracts';
+export { StocktakesPage } from './stocktakes';
+export { StockTransfersPage } from './stock-transfers';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
 import { useCan, useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
@@ -116,7 +118,7 @@ export function InventoryPage() {
     const submitting = adjust.pending || isSubmitting;
 
     return <>
-        <PageHeader title="Tồn kho" subtitle="Tồn thực tế, đã giữ cho đơn và số còn có thể bán." actions={<RouteLink to={`/s/${shop.id}/inventory/movements`}>Lịch sử biến động</RouteLink>}/>
+        <PageHeader title="Tồn kho" subtitle="Tồn thực tế, đã giữ cho đơn và số còn có thể bán." actions={<ActionGroup direction="row"><RouteLink to={`/s/${shop.id}/inventory/movements`}>Lịch sử biến động</RouteLink><RouteLink to={`/s/${shop.id}/inventory/stocktakes`}>Kiểm kê kho</RouteLink><RouteLink to={`/s/${shop.id}/inventory/transfers`}>Chuyển kho</RouteLink></ActionGroup>}/>
         <Alert severity="info" sx={layoutSx.page.sectionAfter}>Số tồn tại thời điểm cập nhật không cộng hàng đang về hoặc hàng cách ly vào số có thể bán. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
         {completedCommandId && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>Điều chỉnh đã được xác nhận. Mã lệnh: {completedCommandId}. Tồn kho và lịch sử đã được tải lại.</Alert>}
         <Panel><Toolbar operation="listStockSnapshots" placeholder="Tìm SKU hoặc mã biến thể…" filters={<InventoryFilters/>}/><QueryState query={list} pendingProfile="section">{list.data && <>

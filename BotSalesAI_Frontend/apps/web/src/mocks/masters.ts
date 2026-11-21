@@ -91,6 +91,8 @@ export function masters(op: string, input: Input): Row | Row[] | undefined {
             ensure(find('shops',shopId,shopId).defaultWarehouseId!==warehouse.id,'Kho mặc định phải được giữ hoạt động.',409,'DEFAULT_WAREHOUSE');
             ensure(!all('stock',shopId).some(stock => stock.warehouseId===warehouse.id && (num(stock.onHand)!==0 || num(stock.reserved)!==0 || num(stock.quarantined)>0)),'Kho còn tồn hoặc hàng đang giữ.',409,'WAREHOUSE_STOCK');
             ensure(!all('orders',shopId).some(order => order.warehouseId===warehouse.id && !['completed','cancelled'].includes(str(order.orderState))) && !all('purchases',shopId).some(purchase => purchase.warehouseId===warehouse.id && !['received','cancelled'].includes(str(purchase.status))) && !all('shipments',shopId).some(shipment => shipment.warehouseId===warehouse.id && !['delivered','returned','cancelled'].includes(str(shipment.state))),'Kho còn nghiệp vụ đang mở.',409,'WAREHOUSE_OPEN_WORK');
+            ensure(!all('stockTransfers', shopId).some(transfer => transfer.toWarehouseId === warehouse.id && transfer.status === 'in_transit'),
+                'Kho còn hàng điều chuyển đang đi.', 409, 'WAREHOUSE_OPEN_WORK');
             ensure(!all('reorderRules',shopId).some(rule => rule.warehouseId===warehouse.id && rule.enabled),'Kho còn quy tắc nhập hàng đang bật.',409,'WAREHOUSE_ACTIVE_RULE');
             warehouse.status='archived';touch(warehouse);return command(shopId,op,{type:'warehouse',id:warehouse.id});
         }
