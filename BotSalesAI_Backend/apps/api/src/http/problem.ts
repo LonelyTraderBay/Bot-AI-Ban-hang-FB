@@ -11,6 +11,18 @@ const errorCodes: Readonly<Record<number, string>> = {
     503: 'SERVICE_UNAVAILABLE',
 };
 
+function problemStatus(error: unknown): number {
+    if (error instanceof HttpException) return error.getStatus();
+
+    // Express parser errors carry matching status fields and an exposure flag.
+    if (error instanceof Error && 'statusCode' in error && 'status' in error && 'expose' in error &&
+        typeof error.statusCode === 'number' && typeof error.expose === 'boolean' &&
+        error.status === error.statusCode && error.statusCode >= 400 && Object.hasOwn(STATUS_CODES, error.statusCode)) {
+        return error.statusCode;
+    }
+    return 500;
+}
+
 export function requestTrace(request: TracedRequest, response: ServerResponse, next: () => void): void {
     request.requestId = randomUUID();
     response.setHeader('X-Request-Id', request.requestId);
@@ -25,7 +37,7 @@ export class ProblemFilter implements ExceptionFilter {
         const http = host.switchToHttp();
         const request = http.getRequest<TracedRequest>();
         const response = http.getResponse<ServerResponse>();
-        const status = error instanceof HttpException ? error.getStatus() : 500;
+        const status = problemStatus(error);
         const requestId = request.requestId ?? randomUUID();
         const code = error instanceof InvalidInput ? 'VALIDATION_FAILED' : (errorCodes[status] ?? 'HTTP_ERROR');
         if (status === 500) this.logger.error({ requestId, code });

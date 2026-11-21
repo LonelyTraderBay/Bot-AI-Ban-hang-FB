@@ -23,8 +23,8 @@ before(async () => {
 });
 after(async () => { await app?.close(); });
 
-async function readProblem(path, status, code) {
-    const response = await fetch(base + path);
+async function readProblem(path, status, code, options) {
+    const response = await fetch(base + path, options);
     assert.equal(response.status, status);
     assert.match(response.headers.get('content-type'), /^application\/problem\+json\b/);
     const problem = await response.json();
@@ -52,6 +52,14 @@ test('schema rejects unknown query input in HTTP and matches the canonical Probl
     const problem = await readProblem('/api/v2/health/ready?unknown=value', 400, 'VALIDATION_FAILED');
     assert.deepEqual(problem.errors.map(item => item.code), ['additionalProperties']);
     assert.doesNotMatch(JSON.stringify(problem), /unknown=value/);
+});
+
+test('oversized JSON returns the canonical 413 Problem envelope', async () => {
+    await readProblem('/api/v2/health/live', 413, 'PAYLOAD_TOO_LARGE', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ sample: 'x'.repeat(110 * 1024) }),
+    });
 });
 
 test('liveness remains healthy when readiness fails and readiness can recover', async () => {
