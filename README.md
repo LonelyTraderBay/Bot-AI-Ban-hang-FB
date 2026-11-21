@@ -1,14 +1,14 @@
 # BotSales AI
 
-Repository tổng hợp cho đặc tả sản phẩm và các module BotSales AI. Mã Backend chưa có trong checkout hiện tại; thư mục Backend rỗng ở máy không được Git lưu.
+Repository tổng hợp cho đặc tả sản phẩm và các module BotSales AI. Checkout hiện tại có frontend và workspace API backend. Trạng thái triển khai được ghi trong kế hoạch BE.
 
 ## Cấu trúc
 
 - [`botsales-kit/`](botsales-kit/README.md) — hợp đồng API, route, quyền, token thiết kế và kế hoạch tham chiếu toàn sản phẩm. `IMPLEMENTATION_PLAN.md` là tài liệu sinh từ nguồn kế hoạch trong `execution/`.
 - [`BotSalesAI_Frontend/`](BotSalesAI_Frontend/README.md) — workspace React/TypeScript độc lập. `apps/`, `packages/`, `tests/`, `scripts/`, `docs/` và `evidence/` bên trong thuộc phạm vi Frontend.
-- `.github/` — workflow cấp repository; workflow Frontend chạy trong `BotSalesAI_Frontend/` và theo dõi thay đổi ở cả Frontend lẫn `botsales-kit/`.
+- `.github/` — workflow cấp repository; workflow Frontend chạy trong `BotSalesAI_Frontend/` và workflow Backend chạy trong `BotSalesAI_Backend/`.
 - `AGENTS.md` và `.gitignore` — hướng dẫn ranh giới chung và quy tắc bỏ qua artifact/cache cấp repository; mỗi workspace vẫn giữ hướng dẫn và ignore rule riêng khi cần.
-- `BotSalesAI_Backend/` — vị trí dự kiến cho mã Backend; Git chỉ lưu thư mục này sau khi có file thật.
+- [`BotSalesAI_Backend/`](BotSalesAI_Backend/README.md) — workspace NestJS độc lập. Phạm vi và bằng chứng của từng đầu việc lưu trong [kế hoạch BE](BotSalesAI_Backend/BACKEND_PLAN.md).
 
 ## Chạy Frontend
 
