@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "step": "S17",
   "scope": "Governance ledger with current source fingerprints after the CI dependency and selector fixes. Existing command records are historical snapshots, including the prior UI pass; current CI/dependency validation is documented in evidence/ci-push-unblock-20261110. Does not close owner, screen-reader, native zoom or hosted acceptance. UI follow-up 20261110 records current source and limited local demo checks; earlier checks remain historical snapshots. S17 is not UI acceptance. Remaining tables and names 20261110: current synthetic demo results cover the affected routes and bounded lookup behavior; prior records remain historical. PR 20 CI correction 20261111: retained actor ID and updated accessible selectors; select values wrap under text stress. Hosted and native acceptance remain separate. Accessibility follow-up 20261111 records selected native zoom, text resize and service-case results; screen-reader and physical mobile acceptance remain open. Inbox follow-up: desktop native text-only initially found clipped conversation list text; final runs retest after wrapping. Shared dialog heading follow-up 20261111 fixes its accessible name; browser semantics and selected reflow checks are not a screen-reader speech verdict. Two named S17 tables received a scoped mobile reflow on 20261112; the remaining tables and acceptance stay open. Data synchronization follow-up 20261112 updates changed source fingerprints; scoped baseline, tests and limitations are in evidence/data-sync-20261112. S17 remains IN_PROGRESS. Module structure follow-up 20261113 updates only impacted fingerprints; scoped baseline and verification are in evidence/module-structure-20261113. S17 remains IN_PROGRESS. Data synchronization follow-up 20261113 updates impacted source fingerprints; current behavioral evidence is in evidence/data-sync-followup-20261113. S17 remains IN_PROGRESS. Return, approval and receipt synchronization follow-up 20261113 updates affected fingerprints; evidence is in evidence/data-sync-return-receipt-20261113. S17 remains IN_PROGRESS. Pilot shipping and exception queue 20261120 refreshes fingerprints for the affected routes and contracts. See evidence/pilot-shipping-exceptions-20261120/REPORT.md for the scoped mock checks. S17 remains IN_PROGRESS. P1 commerce and inventory routes R64-R67 on 20261120 refresh the affected source fingerprints. Scoped results are in evidence/p1-promotion-payments-inventory-20261120/REPORT.md.",
-  "recordedAt": "2026-11-13T06:26:16.401Z",
+  "recordedAt": "2026-11-21T01:34:02.336Z",
   "status": "IN_PROGRESS",
   "checks": [
     {
@@ -2872,6 +2872,18 @@
         "path": "BotSalesAI_Frontend/evidence/ci-fe018-20261113/focused.log",
         "sha256": "e302c2d2c586adb5de64d520d0f055af2b0be17a253279e18d88363fb68dace5"
       }
+    },
+    {
+      "id": "pr27-20261121-p1-regression",
+      "command": "node node_modules/vitest/vitest.mjs run --config apps/web/vitest.config.ts apps/web/tests/p1-commerce-inventory.test.ts --reporter=json",
+      "exitCode": 0,
+      "result": "PASS",
+      "expected": "5/5 Vitest P1 cases, including temporary and persistent empty payment reviews while preserving authorization.",
+      "observed": "5/5 Vitest P1 cases, including temporary and persistent empty payment reviews while preserving authorization.",
+      "log": {
+        "path": "BotSalesAI_Frontend/evidence/pr27-ci-recovery-20261121/p1-regression-results.json",
+        "sha256": "934b8c79d6448ccabd25e9603ed0bdebe51c421d1b0d03908f87b092a9b65a38"
+      }
     }
   ],
   "coverage": [
@@ -4086,6 +4098,13 @@
       "missing": 16,
       "result": "OPEN",
       "reason": "Sixteen historical W30 screenshots from four previous source snapshots are blank; four new current-source clips do not recreate those historical screenshots or prove their visual baselines. Native zoom capture is scoped to Chrome DPR 2 and two scenarios."
+    },
+    {
+      "name": "pr27-20261121-p1-regression",
+      "expected": 5,
+      "observed": 5,
+      "missing": 0,
+      "result": "COMPLETE"
     }
   ],
   "baseline": {
@@ -4136,7 +4155,7 @@
     "BotSalesAI_Frontend/apps/web/src/mocks/privacy.ts": "8d31769c7c124dbe1db96e98100c178767be7fb2bbf491253aa673fc805ea443",
     "BotSalesAI_Frontend/apps/web/src/mocks/procurement.ts": "ebb52ca3f76ce64cc1c65aba249bd7e7ce2894ed72f9dbff3f350a3665b701be",
     "BotSalesAI_Frontend/apps/web/src/mocks/seed.json": "401685b3e5d3067a611d4512f2cd68d59eba21b0d9dff350f52c9d8fc308dd71",
-    "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "a3dd8aee46822b367ebe37c522ee4ac74ca44e32d9db953fcfb94215f7a27cc2",
+    "BotSalesAI_Frontend/apps/web/src/mocks/service.ts": "b86f59988993a7f1b74ee64c899fa3911fa95edfdb55dafe22ff1add1dc0a689",
     "BotSalesAI_Frontend/apps/web/src/modules/bot/index.tsx": "ce4b788834e03e0e3303c81845291159e747918634a64c56d4f76dd9882794ed",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/import-file.ts": "27c5b75075cdd099577f17678f614998afbe95d8a2b2e7c843fa421792dd988f",
     "BotSalesAI_Frontend/apps/web/src/modules/catalog/imports.tsx": "2690e23e2afa4d01004929f35ae96c7c51315904dd18cbc8bf502ea7173d6a47",
@@ -4220,7 +4239,7 @@
     "BotSalesAI_Frontend/packages/contracts/src/index.ts": "bcc7e843b4ad0f8e5609e262fb9d0d1e9f1845bd88b6153e3a9ef63cf7fde2c7",
     "BotSalesAI_Frontend/packages/contracts/src/operations.json": "203d530447fbfac1124029a59d20f07af4de99bc2f9522862870d1a84b4d9007",
     "BotSalesAI_Frontend/packages/contracts/src/permissions.json": "ea7ed6f846c16ecd36c00d55cf2a8953eb950ae744238c2fafc1c3e44884e32c",
-    "BotSalesAI_Frontend/packages/contracts/src/routes.json": "38115dbe6a82c16971783fa7b50c474187aac03a09ca450d5a4b226eb23e666f",
+    "BotSalesAI_Frontend/packages/contracts/src/routes.json": "8e9598fe7080705c4de45ec1856aef43568a41edaadd5275028fd9ee98d3acac",
     "BotSalesAI_Frontend/packages/contracts/src/schemas.json": "0176244d6f446e268d20837f271c7f1df66b318361a59fd34d6221c0a0bc91cc",
     "BotSalesAI_Frontend/packages/contracts/src/statement-formats.json": "13e6ecc23c2f6e314f70e265b48df7e976f6c38d543cf33bd52981bf57572e7f",
     "BotSalesAI_Frontend/packages/design-tokens/src/index.ts": "e14a11a006fc239bc8a51bbf929ba3646aefe1e12cbb1ce1ec988e6e2a2ec0df",
@@ -4263,10 +4282,10 @@
     "BotSalesAI_Frontend/tests/design/ui012-route-contrast-audit.mjs": "f63f9db32a4984bbd4a63daa2280e7e17e7737413019f6c18b07ba5c65b47b7c",
     "BotSalesAI_Frontend/tests/domain-scenarios.cjs": "a4b6977835d0c551ad59dd17ac6a580a7af026689686c3f6b09d58e14a1d856f",
     "BotSalesAI_Frontend/tests/evidence-run-id.mjs": "1c5ada3f62eb51cc420a03107fb6bebd4c56fec75bce934d1bf60e5de4c99781",
-    "BotSalesAI_Frontend/tests/fe009.spec.ts": "f1e98bf05944aa7c9761a2868ca720a885805428af9efcca5af1a2f18960e628",
+    "BotSalesAI_Frontend/tests/fe009.spec.ts": "2a4ede31fbc119f9e5146c7b0a1011715a0043204fc04197d8f4e866b56d172c",
     "BotSalesAI_Frontend/tests/fe010.spec.ts": "2aa84bfb8515a6af4b7b4e56784b08a4f2c49cbdd0ef5316e51bf968eb8ace84",
     "BotSalesAI_Frontend/tests/fe011-source-map.test.mjs": "422db817da901192ee2a80924aebef3115ddf7c00b45ae4297e58ce782e9fef9",
-    "BotSalesAI_Frontend/tests/fe011.spec.ts": "93d287a1df5ac24c9cbeca9da8e0ae05d54cc548cdf8de050f902090e9e693b8",
+    "BotSalesAI_Frontend/tests/fe011.spec.ts": "6af47a4a89514cdbae5ff9d71692e755d89ea143cec8282f5cef9a381019fe01",
     "BotSalesAI_Frontend/tests/fe012-source-map.test.mjs": "1bcee1b253aa9dddbee763c4709f8b36d28707cc57d69872d2917e50491a5da4",
     "BotSalesAI_Frontend/tests/fe012.spec.ts": "f78c87611ec7a331612ae18b97c314f3fb4f2ccf07642fc1aa99f2a5572aeff9",
     "BotSalesAI_Frontend/tests/fe013-source-map.test.mjs": "2f3086d0beee91d8890cfd352ce09df8034d0071e1516ca14e23e7565fa24260",
@@ -4395,7 +4414,7 @@
     "BotSalesAI_Frontend/evidence/overview-consistency-20261019/refresh-s17.mjs": "cbd340961e9926c6d467ec4faf24f3ca4d9afd35e8dcf2152c753e7b509d9c18",
     "BotSalesAI_Frontend/apps/web/src/modules/finance/report-warnings.tsx": "907021efd2da1157a68bb3fbf9f0163c4a2e63f1d627596c36d2a7f0d2adc6fe",
     "BotSalesAI_Frontend/apps/web/tests/report-warnings.test.tsx": "8c039cbc9ea2eb9f1ab45ff0d3a3123aff9cc7f156004d37f80f271b410021e5",
-    "BotSalesAI_Frontend/tests/ui61-consistency.spec.ts": "7340538353ae18a5effab8dced734f2a364d9010975392e6139ab606f6d3a5d7",
+    "BotSalesAI_Frontend/tests/ui61-consistency.spec.ts": "024732c415f90fe72b7717d61caf932bf6baa3781d29cf5a77f14794c3a5cae4",
     "BotSalesAI_Frontend/tests/ui61-states.spec.ts": "5b19157fecdb2de43c0a08a808c8a0badb5fe7b08af596c4b7e62cda380fece6",
     "BotSalesAI_Frontend/tests/design/report-warnings-fixture.tsx": "888b79fce2b5378c9876633107100b4d95871c1d93185b7062ecc40fc09c1a0a",
     "BotSalesAI_Frontend/evidence/ui61-consistency-20261020/CONTRACT.md": "714926bed77ad2623f65bf9781f00fa28c59e7e19c1d6fcb767245df98a10100",
@@ -4507,8 +4526,9 @@
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/stocktakes.tsx": "68d40a6194d4d797c576c00e4000a4051c2921d2594b6db64305e5278a442c1e",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/stock-transfers.tsx": "c4b986724d5a84dced04613f6ed25f1b379d7e094fe31311bb3afade1159c264",
     "BotSalesAI_Frontend/apps/web/src/modules/inventory/warehouse-forms.tsx": "c639a30c41584adbe77007551597a92ee8c78eb7e170fc5130b6bf29f3fe23cd",
-    "BotSalesAI_Frontend/apps/web/tests/p1-commerce-inventory.test.ts": "4ea082a32471cb74494a3952a936f398aaaa7408335e3182a91ab60a14ca4d0c",
-    "BotSalesAI_Frontend/tests/p1-commerce-inventory.spec.ts": "cb8a824ab8f72082542863b347422060353402fb4f4c105aa29c034528098d75"
+    "BotSalesAI_Frontend/apps/web/tests/p1-commerce-inventory.test.ts": "b2df878751f55049422d88761a572fb5ad0bfe42b9d062fd51020203186a7263",
+    "BotSalesAI_Frontend/tests/p1-commerce-inventory.spec.ts": "3d7f64a78d1ab1852fdc8557afa37f8765c974eee1f1579cfa7ba5c83db00b9e",
+    "botsales-kit/contracts/route-manifest.json": "600f9b92a74aa2c541cd6a1ac97fcfe7bd43246b7803d8444a80360ba1aedfd1"
   },
   "knownLimits": [
     "Passing provenance checks show that referenced files and logs match recorded hashes; the validator cannot prove that browser evidence is genuine or that a declared observation is semantically correct.",

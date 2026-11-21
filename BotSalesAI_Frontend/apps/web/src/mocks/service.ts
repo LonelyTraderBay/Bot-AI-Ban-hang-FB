@@ -196,11 +196,6 @@ function read(op: string, input: Input): unknown {
         const search = input.query.get('q')?.toLocaleLowerCase('vi');
         if (search)
             data = data.filter(r => JSON.stringify(r).toLocaleLowerCase('vi').includes(search));
-        if (fault === 'empty' || fault === 'empty_persistent') {
-            if (fault === 'empty')
-                fault = 'none';
-            return [];
-        }
         if (collection === 'stock' && !grantedPermissions(role).includes('finance.read'))
             data = data.map(s => ({ ...s, unitCost: null, carryingValue: null }));
         if (collection === 'consentChallenges')
@@ -365,10 +360,6 @@ async function execute(request: MockRequest): Promise<MockResult> {
         if (data === undefined) data = promotionOperations(request.op, input);
         if (data === undefined) data = stocktakeOperations(request.op, input);
         if (data === undefined) data = stockTransferOperations(request.op, input);
-        if (meta.method === 'GET' && Array.isArray(data) && (fault === 'empty' || fault === 'empty_persistent')) {
-            if (fault === 'empty') fault = 'none';
-            data = [];
-        }
         if (request.op === 'uploadFile') {
             ensure(request.form, 'Thiếu file.', 422);
             data = await upload(input, request.form);
@@ -391,6 +382,11 @@ async function execute(request: MockRequest): Promise<MockResult> {
             data = await privacyOperations(request.op, input);
         if (data === undefined)
             data = files(request.op, input);
+        if (meta.method === 'GET' && meta.responseSchema?.endsWith('ListResponse') && Array.isArray(data)
+            && (fault === 'empty' || fault === 'empty_persistent')) {
+            if (fault === 'empty') fault = 'none';
+            data = [];
+        }
         if (data === undefined)
             throw new MockFailure(501, 'NOT_SIMULATED', `Thao tác ${request.op} chưa được mô phỏng. Giao diện không ghi nhận thành công giả.`);
         const reorderEvents = request.op === 'evaluateReorder' ? {

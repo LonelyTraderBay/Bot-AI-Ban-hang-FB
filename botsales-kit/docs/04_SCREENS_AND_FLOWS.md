@@ -423,11 +423,11 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Nội dung:** Snapshot dòng hàng, totals, ba state, source customer/conversation, version, các action server cho phép.
 
-**Hành vi:** Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass.
+**Hành vi:** Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass. Khi mở Sửa đơn nháp, kiểm quyền catalog.read trước khi gọi listPromotions để chọn ưu đãi.
 
 **Trường hợp cần xử lý:** Double submit, last SKU race, expired quote, unknown delivery outcome, partial returns, COD outstanding and closed period. No real money movement initiated by this UI.
 
-**API đọc:** getOrder, getCommand, listPromotions
+**API đọc:** getOrder, getCommand
 
 | Hành động | operationId | Quyền |
 |---|---|---|

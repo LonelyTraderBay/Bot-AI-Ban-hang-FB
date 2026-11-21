@@ -70,6 +70,25 @@ test('R64 creates and approves a combo that appears in the Inbox and order draft
     await expect(content.getByText('Ưu đãi trên báo giá', { exact: true })).toBeVisible();
 });
 
+test('R19 loads combo options only when editing a draft', async ({ page }) => {
+    const comboRequests: string[] = [];
+    const isComboRead = (target: string) => new URL(target).pathname.endsWith('/shops/shop-demo/promotions');
+    page.on('request', request => {
+        if (request.method() === 'GET' && isComboRead(request.url())) comboRequests.push(request.url());
+    });
+    await page.goto(url + shop + '/orders/DH-1001');
+    const edit = main(page).getByRole('button', { name: 'Sửa đơn nháp', exact: true });
+    await expect(edit).toBeEnabled();
+    expect(comboRequests).toHaveLength(0);
+    const loaded = page.waitForResponse(response => response.request().method() === 'GET' && isComboRead(response.url()));
+    await edit.click();
+    const response = await loaded;
+    expect(response.status()).toBe(200);
+    expect(new URL(response.url()).searchParams.get('effective')).toBe('yes');
+    expect((await response.json()).data).toEqual([]);
+    await expect(page.getByRole('dialog', { name: 'Sửa đơn nháp' }).getByRole('combobox', { name: 'Ưu đãi combo' })).toBeVisible();
+});
+
 test('R65 filters refund records and opens their source documents on narrow screens', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 850 });
     await page.goto(url + shop + '/finance/payment-reviews');

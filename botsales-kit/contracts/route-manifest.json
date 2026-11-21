@@ -958,8 +958,7 @@
       "readPermission": "orders.read",
       "readOperations": [
         "getOrder",
-        "getCommand",
-        "listPromotions"
+        "getCommand"
       ],
       "actions": [
         {
@@ -1005,7 +1004,7 @@
       ],
       "purpose": "Vận hành workflow dựa trên allowedActions và quyền, không sửa status tùy ý.",
       "content": "Snapshot dòng hàng, totals, ba state, source customer/conversation, version, các action server cho phép.",
-      "behavior": "Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass.",
+      "behavior": "Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass. Khi mở Sửa đơn nháp, kiểm quyền catalog.read trước khi gọi listPromotions để chọn ưu đãi.",
       "edgeCases": "Double submit, last SKU race, expired quote, unknown delivery outcome, partial returns, COD outstanding and closed period. No real money movement initiated by this UI.",
       "states": [
         "loading",

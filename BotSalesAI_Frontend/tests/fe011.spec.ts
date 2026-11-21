@@ -106,8 +106,13 @@ test('FE011.AC03 conflict and insufficient stock preserve the draft and never up
     await expect(dialog.getByLabel('Thay đổi số lượng')).toHaveValue('1');
 
     await dialog.getByLabel('Thay đổi số lượng').fill('-100');
+    const rejectedAdjustment = page.waitForResponse(response => response.request().method() === 'POST'
+        && new URL(response.url()).pathname.endsWith('/inventory/adjustments'));
     await dialog.getByRole('button', { name: 'Xác nhận điều chỉnh' }).click();
-    const insufficientStock = dialog.getByRole('alert').filter({ hasText: 'Điều chỉnh vượt tồn hiện có.' });
+    const rejected = await rejectedAdjustment;
+    expect(rejected.status()).toBe(409);
+    expect(await rejected.json()).toMatchObject({ code: 'INSUFFICIENT_STOCK' });
+    const insufficientStock = dialog.getByRole('alert').filter({ hasText: 'Tồn sau điều chỉnh thấp hơn lượng đang giữ.' });
     await expect(insufficientStock).toBeVisible();
     await expect(insufficientStock).not.toContainText('Tải lại dữ liệu mới nhất');
     await expect(dialog.getByLabel('Thay đổi số lượng')).toHaveValue('-100');

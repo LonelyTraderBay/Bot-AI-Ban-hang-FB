@@ -2,7 +2,7 @@ import { beforeEach, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
 import type { Order, OrderQuote, PaymentReview, Promotion, Stocktake, StockTransfer, Warehouse } from '@botsales/contracts';
 import { all, db, record, rows, stockFor, sum, units } from '../src/mocks/database';
-import { CSRF, handle, mockCustomerConfirmation, resetService, setRole } from '../src/mocks/service';
+import { CSRF, handle, mockCustomerConfirmation, resetService, setFault, setRole } from '../src/mocks/service';
 import { assertSchema } from '../src/shared/api/validation';
 
 const shopId = 'shop-demo';
@@ -105,6 +105,12 @@ it('projects collection and refund evidence by order and exposes conflicts witho
         expect.objectContaining({ kind: 'collection', status: 'needs_check', remaining: null }),
         expect.objectContaining({ kind: 'refund', status: 'settled', remaining: { amount: '0', currency } }),
     ]));
+    setFault('empty');
+    expect(await list('listPaymentReviews', 'q=DH-DEMO-PAID-01')).toEqual([]);
+    expect(await list('listPaymentReviews', 'q=DH-DEMO-PAID-01')).toEqual(samples);
+    setFault('empty_persistent');
+    expect(await list('listPaymentReviews')).toEqual([]);
+    expect(await list('listOrders')).toEqual([]);
     setRole('viewer');
     await expect(list('listPaymentReviews')).rejects.toMatchObject({ status: 403 });
 });
