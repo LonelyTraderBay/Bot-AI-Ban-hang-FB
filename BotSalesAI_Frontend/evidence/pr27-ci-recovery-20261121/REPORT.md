@@ -33,3 +33,9 @@
 
 - Firefox 6/9 ở run 44852149730 và Chromium 2/9 ở run 44852858444 dừng trước browser tests do inventory của API không nhất quán. Bộ chờ kiểm lại phản hồi có số job chưa khớp trong thời hạn sẵn có. Snapshot đầy đủ và build completed/success của đúng run/attempt vẫn là điều kiện tải artifact. API lỗi, danh tính sai và job trùng tiếp tục thất bại. [Run đầu](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44852149730) · [Run thứ hai](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44852858444)
 - 139/139 ca kiểm workflow và vệ sinh repo đạt. Ca mới xác nhận inventory lệch không thể trả artifact, lần đọc đầy đủ mới tiếp tục, thời hạn hết vẫn thất bại và build lỗi vẫn bị chặn ngay.
+
+## Khởi tạo phiên trong lượt mở toàn bộ màn
+
+- Firefox 3/9 ở run 44853159729 tới đúng URL R62. Trace cho thấy màn còn hiển thị tiến trình tải phiên khi hết thời gian đợi 5 giây. Tách bước chờ HTTP phiên và bước chờ shell trên từng trang mới, giữ các điều kiện render, lỗi router và nhãn dữ liệu mô phỏng. [CI Firefox và trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44853159729/job/136689198543)
+- Lượt source verify báo ba SHA-256 của policy và script CI đã cũ sau khi đổi bước chờ build. Đã cập nhật các dấu vân tay và chạy lại bộ kiểm evidence.
+- Bản sửa đạt 4/4 lượt mở đủ 67 màn, hai lượt mỗi engine trên preview. `npm run verify` đạt cùng nội dung source, gồm đủ 417 SHA-256 của S17.
