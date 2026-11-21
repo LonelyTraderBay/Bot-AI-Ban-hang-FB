@@ -20,23 +20,29 @@ export async function waitForBuild(env = process.env, {
     while (true) {
         const payload = await readAttemptJobs({ repository: env.GITHUB_REPOSITORY,
             runId, attempt, token: env.GITHUB_TOKEN }, fetchImpl);
-        if (!payload || !Array.isArray(payload.jobs) || !Number.isInteger(payload.total_count)
-            || payload.total_count !== payload.jobs.length || payload.total_count > 100)
-            throw new Error('Incomplete or invalid job inventory while waiting for build.');
+        const { jobs, total_count: totalCount } = payload ?? {};
+        if (!Array.isArray(jobs) || !Number.isInteger(totalCount)
+            || totalCount < 0 || totalCount > 100 || jobs.length > 100)
+            throw new Error('Invalid job inventory while waiting for build.');
+        const complete = totalCount === jobs.length;
         const ids = new Set(), names = new Set();
-        for (const job of payload.jobs) {
+        for (const job of jobs) {
             if (!job || !Number.isSafeInteger(job.id) || job.run_id !== runId || job.run_attempt !== attempt
                 || typeof job.name !== 'string' || ids.has(job.id) || names.has(job.name))
                 throw new Error('Invalid or duplicate job identity while waiting for build.');
             ids.add(job.id); names.add(job.name);
         }
-        const build = payload.jobs.find(job => job.name === 'build (browser artifacts)');
-        if (build?.status === 'completed' && build.conclusion === 'success')
+        const build = jobs.find(job => job.name === 'build (browser artifacts)');
+        const buildSucceeded = build?.status === 'completed' && build.conclusion === 'success';
+        if (complete && buildSucceeded)
             return { runId, attempt, buildJobId: build.id, waitedSeconds: (now() - start) / 1000 };
-        if (build && (!['queued', 'in_progress'].includes(build.status) || build.conclusion !== null))
+        if (build && !buildSucceeded && (!['queued', 'in_progress'].includes(build.status) || build.conclusion !== null))
             throw new Error(`Build is not successful: ${build.status}/${build.conclusion}.`);
         const remaining = deadline - now();
-        if (remaining <= 0) throw new Error('Timed out waiting for this attempt to produce a successful build.');
+        if (remaining <= 0) {
+            if (!complete) throw new Error('Timed out waiting for a complete job inventory (' + totalCount + ' reported, ' + jobs.length + ' returned).');
+            throw new Error('Timed out waiting for this attempt to produce a successful build.');
+        }
         await sleep(Math.min(pollMs, remaining));
     }
 }

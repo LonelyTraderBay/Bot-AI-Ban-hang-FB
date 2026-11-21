@@ -28,3 +28,8 @@
 - Lượt CI `44852149730` ghi một lỗi lấy inventory của job build trước khi chạy Firefox 6/9. Giữ nguyên quy tắc CI yêu cầu artifact và kết quả của đúng run.
 - Trace Chromium 7/9 cho thấy ca R40 của manager đã bấm nút công cụ demo khi route mới còn đang tải. Sau click, disclosure vẫn đóng trong snapshot và hết thời gian đợi. Tám lần chạy riêng trên hai engine đều đạt. Ca hồi quy sẽ đợi dòng thiết bị vừa tạo hiển thị trên R40 trước thao tác đổi vai trò, sau đó kiểm lại dòng này với vai trò manager. [CI Chromium và trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44852149730/job/136685759060)
 - Sau khi đổi điều kiện chờ, preview đạt 12/12 cho owner và manager trên Chromium và Firefox. Bộ kiểm evidence S17 và kiểm inventory Playwright 620/620 ca trên mỗi engine đạt.
+
+## Inventory Actions khi chờ build
+
+- Firefox 6/9 ở run 44852149730 và Chromium 2/9 ở run 44852858444 dừng trước browser tests do inventory của API không nhất quán. Bộ chờ kiểm lại phản hồi có số job chưa khớp trong thời hạn sẵn có. Snapshot đầy đủ và build completed/success của đúng run/attempt vẫn là điều kiện tải artifact. API lỗi, danh tính sai và job trùng tiếp tục thất bại. [Run đầu](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44852149730) · [Run thứ hai](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44852858444)
+- 139/139 ca kiểm workflow và vệ sinh repo đạt. Ca mới xác nhận inventory lệch không thể trả artifact, lần đọc đầy đủ mới tiếp tục, thời hạn hết vẫn thất bại và build lỗi vẫn bị chặn ngay.
