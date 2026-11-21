@@ -39,3 +39,10 @@
 - Firefox 3/9 ở run 44853159729 tới đúng URL R62. Trace cho thấy màn còn hiển thị tiến trình tải phiên khi hết thời gian đợi 5 giây. Tách bước chờ HTTP phiên và bước chờ shell trên từng trang mới, giữ các điều kiện render, lỗi router và nhãn dữ liệu mô phỏng. [CI Firefox và trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44853159729/job/136689198543)
 - Lượt source verify báo ba SHA-256 của policy và script CI đã cũ sau khi đổi bước chờ build. Đã cập nhật các dấu vân tay và chạy lại bộ kiểm evidence.
 - Bản sửa đạt 4/4 lượt mở đủ 67 màn, hai lượt mỗi engine trên preview. `npm run verify` đạt cùng nội dung source, gồm đủ 417 SHA-256 của S17.
+
+## Nhận xét review về nghiệp vụ
+
+- Hai nhận xét review còn mở khi CI đã đạt 26/26. Kho nhận đang có phiếu chuyển đang đi không thể lưu trữ. Đối soát tiền phải giữ các khoản thu độc lập và trừ đúng phần giảm phải thu đã ghi từ cùng một phiếu thu đơn. [Review kho đích](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/27#discussion_r4640359329) · [Review đối soát](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/27#discussion_r4640359344)
+- Kho có 0 tồn vẫn trả HTTP 409 `WAREHOUSE_OPEN_WORK` khi đang nhận điều chuyển. Bản ghi kho giữ nguyên phiên bản và sau đó nhận từng phần bình thường.
+- Hai ca COD xác nhận khoản thu 249.000 VND chỉ được tính một lần, còn khi có thêm phiếu thu công nợ 50.000 VND thì tổng xác minh là 299.000 VND và trạng thái `needs_check` nằm ở hàng chờ mở.
+- Vitest P1 đạt 7/7 và Playwright P1 đạt 10/10 trên Chromium, Firefox. `npm run verify` đạt với 279 Vitest, 122 kiểm tra nghiệp vụ/HTTP và bộ kiểm evidence.

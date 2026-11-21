@@ -1,7 +1,7 @@
 import { beforeEach, expect, it, vi } from 'vitest';
 import { webcrypto } from 'node:crypto';
 import type { Order, OrderQuote, PaymentReview, Promotion, Stocktake, StockTransfer, Warehouse } from '@botsales/contracts';
-import { all, db, record, rows, stockFor, sum, units } from '../src/mocks/database';
+import { all, db, insert, record, rows, stockFor, sum, units } from '../src/mocks/database';
 import { CSRF, handle, mockCustomerConfirmation, resetService, setFault, setRole } from '../src/mocks/service';
 import { assertSchema } from '../src/shared/api/validation';
 
@@ -115,6 +115,39 @@ it('projects collection and refund evidence by order and exposes conflicts witho
     await expect(list('listPaymentReviews')).rejects.toMatchObject({ status: 403 });
 });
 
+it.each([0, 50000])('counts independent debt receipt %i and only counts its order payment once', async partialReceipt => {
+    const order = all('orders', shopId).find(row => row.id === 'DH-1001')!;
+    const orderId = String(order.id);
+    const version = Number(order.version);
+    Object.assign(order, { orderState: 'completed', fulfillmentState: 'delivered' });
+    const debt = insert('debts', 'DebtItem', shopId, {
+        source: { type: 'order', id: orderId }, direction: 'receivable', counterpartyType: 'carrier', counterpartyId: 'manual-carrier',
+        originalAmount: order.total, outstandingAmount: order.total, disputed: false,
+    });
+    if (partialReceipt) {
+        const entry = await write<{ id: string; version: number }>('createFinanceEntry', {
+            kind: 'receipt', classification: 'sales_receipt', amount: { amount: String(partialReceipt), currency },
+            occurredAt: '2026-09-29T14:00:00Z', description: reason, sourceRef: { type: 'debt', id: debt.id },
+        });
+        await write('postFinanceEntry', { reason }, { id: entry.id, version: entry.version });
+        expect(await list('listPaymentReviews', 'kind=collection&stage=open&q='+orderId)).toMatchObject([
+            { status: 'partial', verified: { amount: '50000', currency }, remaining: { amount: '199000', currency } },
+        ]);
+    }
+    await write('payOrder', { expectedVersion: version, amount: order.total, method: 'bank_transfer', reference: 'R65-ORDER', evidenceRef: 'R65-EVIDENCE', reason }, { orderId, version });
+    const query = 'kind=collection&q='+orderId;
+    const stage = partialReceipt ? 'open' : 'settled';
+    const [review] = await list<PaymentReview>('listPaymentReviews', query+'&stage='+stage);
+    assertSchema('PaymentReview', review);
+    expect(review).toMatchObject({
+        status: partialReceipt ? 'needs_check' : 'settled',
+        verified: { amount: String(249000 + partialReceipt), currency },
+        remaining: partialReceipt ? null : { amount: '0', currency },
+    });
+    expect(review?.financeEntryIds).toHaveLength(partialReceipt ? 2 : 1);
+    expect(await list('listPaymentReviews', query+'&stage='+(partialReceipt ? 'settled' : 'open'))).toEqual([]);
+});
+
 it('requires recount after stock changes and posts only the approved difference once', async () => {
     const created = await write<Stocktake>('createStocktake', { warehouseId, variantIds: ['v-p1', 'v-p2'], reason });
     assertSchema('Stocktake', created);
@@ -154,6 +187,8 @@ it('holds transferred units in transit, receives a subset, blocks duplicate/over
     assertSchema('StockTransfer', sent);
     expect(stockFor(shopId, 'v-p1', warehouseId).onHand).toBe(4);
     expect(stockFor(shopId, 'v-p1', target.id).onHand).toBe(0);
+    await expect(write('archiveWarehouse', { reason }, { id: target.id, version: target.version })).rejects.toMatchObject({ status: 409, code: 'WAREHOUSE_OPEN_WORK' });
+    expect(all('warehouses', shopId).find(row => row.id === target.id)).toMatchObject({ status: 'active', version: target.version });
     const half = await change(sent, 'receive', { lines: [{ variantId: 'v-p1', quantity: 2 }] });
     expect(half).toMatchObject({ status: 'in_transit', lines: [{ received: 2, missing: 0 }] });
     await expect(change(sent, 'receive', { lines: [{ variantId: 'v-p1', quantity: 1 }] })).rejects.toMatchObject({ status: 412 });

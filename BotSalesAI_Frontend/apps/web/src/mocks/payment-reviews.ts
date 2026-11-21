@@ -14,6 +14,7 @@ export function paymentReviews(input: Input) {
     const journals = all('journals', shopId).filter(row => row.status === 'posted');
     const transfers = all('codSettlements', shopId);
     const returns = all('returns', shopId);
+    const debtApplications = new Map(all('orderReceiptDebtApplications', shopId).map(row => [row.financeEntryId, units(row.amount)]));
     const assignments = all('workItems', shopId).filter(row => row.kind === 'payment_mismatch' && !['completed', 'cancelled'].includes(str(row.state)));
     const result: Row[] = [];
     for (const order of all('orders', shopId)) {
@@ -50,8 +51,17 @@ export function paymentReviews(input: Input) {
         const postedReceipts = sum(receipts, 'amount');
         const outstanding = sum(relatedDebts, 'outstandingAmount');
         const debtSettled = sum(relatedDebts, 'originalAmount') - outstanding;
-        // A direct receipt may also have updated the receivable. Use the larger proof, never sum both projections.
-        const verified = postedReceipts > debtSettled ? postedReceipts : debtSettled;
+        // Remove only the receivable reduction written by the same order receipt.
+        const recordedOverlap = receipts.reduce((total, row) => total + (debtApplications.get(row.id) ?? 0n), 0n);
+        const independentDebtReceipts = sum(debtReceipts, 'amount');
+        const debtProjection = debtSettled - recordedOverlap;
+        // Historical receipts lack application links. Keep their possible overlap separate
+        // from independent posted receipts already known to belong to this debt.
+        const historicalReceipts = sum(receipts.filter(row => !debtApplications.has(row.id)), 'amount');
+        const unexplainedDebtReduction = debtProjection > independentDebtReceipts ? debtProjection - independentDebtReceipts : 0n;
+        const historicalOverlap = historicalReceipts < unexplainedDebtReduction ? historicalReceipts : unexplainedDebtReduction;
+        const otherCollections = debtProjection - historicalOverlap;
+        const verified = postedReceipts + (otherCollections > independentDebtReceipts ? otherCollections : independentDebtReceipts);
         const saysPaid = ['verified', 'settled', 'part_refunded', 'refunded'].includes(str(order.paymentState));
         const disputed = relatedDebts.some(row => row.disputed) || verified > expected || debtSettled < 0n
             || (relatedDebts.length > 0 && outstanding > expected - verified)

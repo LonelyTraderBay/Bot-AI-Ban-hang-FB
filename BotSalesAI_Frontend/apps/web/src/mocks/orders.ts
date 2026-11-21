@@ -1,4 +1,4 @@
-import { all, find, insert, ensure, checkVersion, touch, command, str, num, rows, now, future, stockFor, move, units, sum, money, record, assertOpenPeriod } from './database';
+import { all, db, find, insert, ensure, checkVersion, touch, command, str, num, rows, now, future, stockFor, move, units, sum, money, record, assertOpenPeriod } from './database';
 import type { Input, Row } from './database';
 import { pricedLines } from './catalog';
 import { postBusinessJournal, fiscalDate } from './accounting';
@@ -161,7 +161,14 @@ export async function orders(op: string, input: Input): Promise<Row | undefined>
             ensure(record(body.amount).currency===record(order.total).currency,'Không ghi thu khác đồng tiền đơn.',422,'PAYMENT_CURRENCY');
             const delivered=['delivered','part_returned','returned'].includes(str(order.fulfillmentState)),counterpart=delivered?(order.paymentMethod==='cod'?'138':'131'):'337';
             postBusinessJournal(shopId,'finance_entry',str(entry.id),[{code:body.method==='cash'?'111':'112',debit:units(body.amount),credit:0n,description:'Tiền thu có bằng chứng tổng hợp'},{code:counterpart,debit:0n,credit:units(body.amount),description:delivered?'Giảm phải thu':'Tiền ứng trước, chưa ghi doanh thu'}]);
-            for(const debt of all('debts',shopId).filter(d=>record(d.source).type==='order'&&record(d.source).id===order.id)){debt.outstandingAmount=money(0n,str(record(order.total).currency));touch(debt);}
+            let appliedToDebt = 0n;
+            const currency = str(record(order.total).currency);
+            for (const debt of all('debts', shopId).filter(row => record(row.source).type === 'order' && record(row.source).id === order.id)) {
+                appliedToDebt += units(debt.outstandingAmount);
+                debt.outstandingAmount = money(0n, currency);
+                touch(debt);
+            }
+            (db.orderReceiptDebtApplications ??= []).push({ shopId, financeEntryId: entry.id, amount: money(appliedToDebt, currency) });
             order.paymentState = 'verified';
             touch(order);
             return command(shopId, op, { type: 'order', id: order.id });
