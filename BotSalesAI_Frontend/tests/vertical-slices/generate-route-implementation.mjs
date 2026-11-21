@@ -17,11 +17,25 @@ if (process.argv.includes('--source-only')) {
     const selected = process.argv.slice(process.argv.indexOf('--source-only') + 1);
     for (const id of selected) if (!routes.some(route => route.id === id)) throw new Error(`Unknown route ${id}`);
     const previous = selected.length ? read('docs/route-implementation.json') : [];
+    const features = selected.length ? read('../botsales-kit/contracts/feature-catalog.json').features : [];
     const sourceOnly=routes.map(route=>{
         if (selected.length && !selected.includes(route.id)) {
             const entry = previous.find(item => item.routeId === route.id && item.route === route.path);
             if (!entry) throw new Error(`Missing existing route ${route.id}; include it in --source-only.`);
-            return entry;
+            if (entry.state === 'SOURCE_IMPLEMENTED_BROWSER_NOT_REVALIDATED') return entry;
+            const expectedFeatures = features.filter(feature => feature.routeIds.includes(route.id));
+            const coverageById = new Map(entry.featureCoverage.map(coverage => [coverage.featureId, coverage]));
+            if (entry.featureCoverage.length !== expectedFeatures.length || expectedFeatures.some(feature => !coverageById.has(feature.id))) {
+                throw new Error('Feature membership changed for ' + route.id + '; include it in --source-only or refresh browser evidence.');
+            }
+            const featureCoverage = expectedFeatures.map(feature => {
+                const coverage = coverageById.get(feature.id);
+                if (coverage.title !== feature.title || coverage.scenarioId !== feature.scenarioId) {
+                    throw new Error('Feature definition changed for ' + route.id + ' / ' + feature.id + '; refresh its evidence.');
+                }
+                return { ...coverage, canonicalRouteIds: feature.routeIds };
+            });
+            return { ...entry, featureCoverage };
         }
         const owner=sourceMap[route.id];
         if(!owner || !requireFile(owner.source).includes(`function ${owner.component}(`)) throw new Error(`Missing reviewed source/component for ${route.id}`);
