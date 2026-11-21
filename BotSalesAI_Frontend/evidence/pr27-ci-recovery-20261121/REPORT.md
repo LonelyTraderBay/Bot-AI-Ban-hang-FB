@@ -22,3 +22,9 @@
 - Sinh lại ma trận từ feature catalog. Kiểm kết quả sinh lại ổn định và 61 bản ghi giữ nguyên bằng chứng tương tác đã lưu. Sáu route mới vẫn hiện rõ `NOT_RUN` trong ledger FE022 đến khi liên kết bằng chứng theo route. Bộ kiểm browser của CI tiếp tục chạy smoke cho toàn bộ route và các ca nghiệp vụ mới.
 - FE022.S05 so đủ 67 ID, kiểm trạng thái theo từng route và giữ ràng buộc có bằng chứng tương tác cho đủ 64 feature ID. Chỉ sáu route mới được ghi thiếu bằng chứng liên kết trong ma trận.
 - Lượt hồi quy local trên Chromium và Firefox đạt 14/14. Phạm vi gồm smoke đủ 67 màn trên mỗi engine, FE022.S05, lookup R19 và bốn luồng nghiệp vụ R64–R67. Chạy lại `npm run verify` và bộ kiểm evidence S17 đạt.
+
+## Kiểm tra race ở R40
+
+- Lượt CI `44852149730` ghi một lỗi lấy inventory của job build trước khi chạy Firefox 6/9. Giữ nguyên quy tắc CI yêu cầu artifact và kết quả của đúng run.
+- Trace Chromium 7/9 cho thấy ca R40 của manager đã bấm nút công cụ demo khi route mới còn đang tải. Sau click, disclosure vẫn đóng trong snapshot và hết thời gian đợi. Tám lần chạy riêng trên hai engine đều đạt. Ca hồi quy sẽ đợi dòng thiết bị vừa tạo hiển thị trên R40 trước thao tác đổi vai trò, sau đó kiểm lại dòng này với vai trò manager. [CI Chromium và trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44852149730/job/136685759060)
+- Sau khi đổi điều kiện chờ, preview đạt 12/12 cho owner và manager trên Chromium và Firefox. Bộ kiểm evidence S17 và kiểm inventory Playwright 620/620 ca trên mỗi engine đạt.
