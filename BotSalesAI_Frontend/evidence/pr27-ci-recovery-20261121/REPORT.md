@@ -46,3 +46,9 @@
 - Kho có 0 tồn vẫn trả HTTP 409 `WAREHOUSE_OPEN_WORK` khi đang nhận điều chuyển. Bản ghi kho giữ nguyên phiên bản và sau đó nhận từng phần bình thường.
 - Hai ca COD xác nhận khoản thu 249.000 VND chỉ được tính một lần, còn khi có thêm phiếu thu công nợ 50.000 VND thì tổng xác minh là 299.000 VND và trạng thái `needs_check` nằm ở hàng chờ mở.
 - Vitest P1 đạt 7/7 và Playwright P1 đạt 10/10 trên Chromium, Firefox. `npm run verify` đạt với 279 Vitest, 122 kiểm tra nghiệp vụ/HTTP và bộ kiểm evidence.
+
+## Ổn định lượt axe trên main sau merge
+
+- Trên merge commit b9a54c31, cả hai lượt frontend của run 44856461106 dừng ở giới hạn 300 giây của bài Firefox axe chạy nối tiếp toàn bộ 67 màn. Lượt Firefox preview chạy riêng kiểm đủ 67 màn và trạng thái tải R04, ghi nhận 0 lỗi axe và 0 lỗi trang. [Lượt 1](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44856461106/attempts/1) · [Lượt 2](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44856461106/attempts/2)
+- Phạm vi sửa là cách chia lượt kiểm ở frontend. Các route vẫn lấy từ manifest, giữ bộ rule WCAG 2.1 A/AA, kiểm bàn phím và trạng thái tải, cùng kiểm tổng inventory của CI.
+- Bốn nhóm R01–R17, R18–R34, R35–R51 và R52–R67 giữ thời hạn riêng và bảo toàn báo cáo chung. Check khởi động báo route cụ thể và dùng thời hạn 15 giây cho root và shell. Firefox preview đạt 5/5, báo cáo có đủ 67 màn theo đúng thứ tự manifest, trạng thái tải R04 và 0 lỗi. npm run verify đạt.
