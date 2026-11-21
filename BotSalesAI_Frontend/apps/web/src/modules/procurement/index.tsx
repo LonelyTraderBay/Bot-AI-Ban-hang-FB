@@ -1,7 +1,7 @@
 import { useVersionedDraft } from '@/shared/model/versioned-draft';
 import { DraftConflict } from '@/shared/ui/draft-conflict';
 import { FieldGroup, FormFields } from '../../shared/ui/composition';
-import { useState, useSyncExternalStore } from 'react';
+import { useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, Button, Checkbox, FormControlLabel, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
@@ -11,7 +11,6 @@ import { ApiError, UnknownResultError } from '@/shared/api/errors';
 import { useScope, useCan } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { limitCodePoints, codePointLength, dateTime } from '@/shared/model/format';
-import { intentSnapshot, subscribeIntents } from '@/shared/api/intents';
 import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
 import { layoutSx } from '@/shared/ui/layout';
 export function SuppliersPage() {
@@ -275,7 +274,7 @@ function PurchaseDialog({ resourceId, onClose }: {
     const confirm = useCommand('confirmPurchaseOrder', ['getPurchaseOrder', 'listPurchaseOrders']);
     const cancel = useCommand('cancelPurchaseOrder', ['getPurchaseOrder', 'listPurchaseOrders', 'listPurchaseSuggestions']);
     const [action, setAction] = useState<'send' | 'cancel' | 'confirm' | null>(null), [external, setExternal] = useState(''), [proof, setProof] = useState(''), [draftCommit, setDraftCommit] = useState<{ scope: string | null; sequence: number }>();
-    const unresolvedSend = useSyncExternalStore(subscribeIntents, intentSnapshot, intentSnapshot).some(intent => intent.shopId === shop.id && intent.operation === 'sendPurchaseOrder');
+    const unresolvedSend = send.unresolved;
     const sendPurchase = async () => {
         try {
             return await send.execute({ path: { resourceId }, body: { expectedVersion: p?.version || 1, approvalId: p?.approvalId || '', intentHash: p?.intentHash || '' } });

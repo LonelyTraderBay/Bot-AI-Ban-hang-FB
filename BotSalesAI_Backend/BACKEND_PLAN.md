@@ -1,15 +1,15 @@
 # Kế hoạch triển khai và theo dõi backend BotSales AI
 
-**Phiên bản 1.6 · 21/11/2026.** Mỗi hành vi có một nơi triển khai và bộ ca kiểm theo thao tác. Kế hoạch xác định baseline tích hợp, cách kiểm ma trận tự động và tiêu chí nghiệm thu ở từng mốc. Mục tiêu Enterprise-Grade được đánh giá trên mã, dữ liệu và artifact triển khai có bằng chứng.
+**Phiên bản 1.18 · 21/11/2026.** Mỗi hành vi có một nơi triển khai và bộ ca kiểm theo thao tác. Kế hoạch xác định baseline tích hợp, cách kiểm ma trận tự động và tiêu chí nghiệm thu ở từng mốc. Mục tiêu Enterprise-Grade được đánh giá trên mã, dữ liệu và artifact triển khai có bằng chứng.
 
-**Việc kế tiếp [BE-03](#be-03).** Dựng PostgreSQL, migration và dữ liệu thử cho hai shop. Mốc tích hợp đầu tiên là đăng nhập, chọn cửa hàng, tạo sản phẩm và tải lại trang để đọc sản phẩm từ PostgreSQL qua frontend `dev:live`.
+**Việc kế tiếp [BE-13](#be-13).** Nối chuẩn bị, bàn giao, giao hàng, trả hàng và thông báo.
 
-- [Kiến trúc](#kiến-trúc-backend-v1) · [Dữ liệu và giao dịch](#quyền-sở-hữu-dữ-liệu-và-giao-dịch) · [Bảng tiến độ](#bảng-theo-dõi) · [Kiểm chứng từng thao tác](#kiểm-chứng-từng-thao-tác)
+- [Kiến trúc](#kiến-trúc-backend-v1) · [Dữ liệu và giao dịch](#quyền-sở-hữu-dữ-liệu-và-giao-dịch) · [Bảng tiến độ](#bảng-theo-dõi) · [Commit theo nhóm](#commit-theo-nhóm) · [Kiểm chứng từng thao tác](#kiểm-chứng-từng-thao-tác)
 - [Mốc nghiệm thu](#mốc-nghiệm-thu) · [Kiểm chứng theo module](#kiểm-chứng-theo-module) · [Nhật ký](#nhật-ký-tiến-độ-và-bằng-chứng) · [Ma trận truy vết](#ma-trận-truy-vết-baseline)
 
 ## Hiện trạng ngày 21/11/2026
 
-- BE-01 và BE-02 đã kiểm chứng. BE-02 đạt kiểm workspace, HTTP và ma trận trên checkout sạch và CI. BE-03–BE-24 chưa bắt đầu. [Kết quả BE-02](#kết-quả-kiểm-be-02)
+- BE-01 và BE-02 đã kiểm chứng. BE-03–BE-12 đã kiểm chứng cục bộ trên PostgreSQL 18.7, Redis 8.0.5 và HTTPS thử nghiệm. Đợt 1 đủ 10 việc. Luồng thử gồm xác nhận đơn, giữ tồn, ghi tiền theo bằng chứng và điều chỉnh kho kèm bút toán. [Kết quả BE-02](#kết-quả-kiểm-be-02) · [Kết quả BE-03](#kết-quả-kiểm-be-03) · [Kết quả BE-04](#kết-quả-kiểm-be-04) · [Kết quả BE-05](#kết-quả-kiểm-be-05) · [Kết quả BE-06](#kết-quả-kiểm-be-06) · [Kết quả BE-07](#kết-quả-kiểm-be-07) · [Kết quả BE-10](#kết-quả-kiểm-be-10) · [Kết quả BE-08](#kết-quả-kiểm-be-08) · [Kết quả BE-09](#kết-quả-kiểm-be-09) · [Kết quả BE-11](#kết-quả-kiểm-be-11) · [Kết quả BE-12](#kết-quả-kiểm-be-12)
 - Baseline thiết kế và tích hợp là `main@e22bb99d`. Hợp đồng từ [PR #27](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/27) giữ nguyên sau [PR #28](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/28). Phạm vi gồm R01–R67, 16 module, 259 thao tác và 376 schema. OpenAPI sản phẩm dùng phiên bản `2.6.0`. [Bằng chứng CI](#xử-lý-ci-pr-27-và-chọn-baseline) · [SHA-256](#dấu-vân-tay-nguồn)
 - Frontend hiện có bản demo MSW. Chế độ `dev:live` gửi API cùng origin qua `/api`, với `API_PROXY_TARGET` mặc định `http://127.0.0.1:3000`. Luồng đăng nhập live yêu cầu URL ủy quyền HTTPS. [Cấu hình frontend](../BotSalesAI_Frontend/README.md#6-nối-backend-sau-này)
 - Đã kiểm preflight Node/npm, NestJS, PostgreSQL/Prisma và HTTPS/OIDC với fixture cô lập. Mốc chạy backend từ checkout sạch thuộc BE-02, migration/seed của dự án thuộc BE-03 và phiên live thuộc BE-04. [Bằng chứng kiểm môi trường](#bằng-chứng-kiểm-môi-trường-be-01)
@@ -44,7 +44,7 @@ Quyết định về phiên bản thư viện, nhà cung cấp cụ thể, tải
 2. **Trong code**, mỗi operation đăng ký một handler chính. HTTP map DTO vào use case, worker và công cụ AI gọi cùng nghiệp vụ khi thực hiện cùng hành vi. Mỗi mô hình dữ liệu có một chủ sở hữu ghi. Truyền transaction qua public port khi nhiều module cần cập nhật cùng nhau. Tách các chính sách có ý nghĩa nghiệp vụ khác nhau để mỗi bên vẫn thay đổi đúng theo điều kiện của mình.
 3. **Khi review**, lần theo cả đường đọc và ghi từ đầu vào đến DB, sự kiện và kết quả hiển thị. Kiểm handler đăng ký trùng, hàm quyết định trạng thái lặp ở nhiều module, truy cập bảng ngoài quyền sở hữu, phép tính tiền lặp và validation bị bỏ qua. Kiểm import boundary và đăng ký operation trong CI từ BE-02. Dùng lint, typecheck, contract check và ma trận ca kiểm tương ứng. Đường dẫn khác nhau có thể kiểm quyền ở các thời điểm khác nhau bằng cùng một chính sách.
 4. **Khi đổi schema đã có dữ liệu**, thử thứ tự **mở rộng → chuyển dữ liệu → chuyển bên đọc và ghi → thu hẹp** trên DB thử. Ghi cách xử lý nếu quá trình chuyển dừng giữa chừng. Thử phương án quay về phiên bản ứng dụng tương thích hoặc chạy sửa tiến tới theo thiết kế migration.
-5. **Khi đóng việc**, đối chiếu bằng chứng với đúng commit, contract, migration và môi trường. Chỉ đánh dấu **Đã kiểm chứng** sau khi đủ ca bắt buộc. Nếu phát hiện sai lệch, sửa tại module sở hữu và chạy lại test của các bên phụ thuộc. Mốc staging và nghiệm thu người dùng được theo dõi ở BE-22–BE-24.
+5. **Khi đóng việc**, đối chiếu bằng chứng với đúng phiên bản mã nguồn, contract, migration và môi trường. Dùng commit nền cùng phần thay đổi đã kiểm khi nhóm còn ở máy cục bộ. Chỉ đánh dấu **Đã kiểm chứng** sau khi đủ ca bắt buộc. Nếu phát hiện sai lệch, sửa tại module sở hữu và chạy lại test của các bên phụ thuộc. Mốc staging và nghiệm thu người dùng được theo dõi ở BE-22–BE-24.
 
 ### Trách nhiệm triển khai và tái sử dụng
 
@@ -100,9 +100,23 @@ Các nhóm dưới đây làm chủ việc **ghi**. Module đọc chung có th�
 ## Cách theo dõi tiến độ
 
 1. Chọn việc có ưu tiên backend cao nhất theo **P0 → P1 → P2 → P3** và đã đủ phụ thuộc. Trong cùng mức, dùng thứ tự trong bảng. Mã BE giữ ổn định khi đổi thứ tự. Nếu một việc bị chặn, ghi điều kiện gỡ chặn rồi tiếp tục việc độc lập có ưu tiên cao nhất.
-2. Khi bắt đầu, đặt trạng thái **Đang thực hiện**. Đánh dấu từng checkbox khi bước đó đạt yêu cầu. Khi code đã có trên một commit và vẫn chờ kiểm tích hợp, đặt **Đã code** và ghi điều còn thiếu.
+2. Khi bắt đầu, đặt trạng thái **Đang thực hiện**. Đánh dấu từng checkbox khi bước đó đạt yêu cầu. Khi đã triển khai và còn chờ kiểm tích hợp, đặt **Đã code** và ghi điều còn thiếu.
 3. Khi đủ bằng chứng cho mọi tiêu chí của việc, đặt **Đã kiểm chứng**. Nếu thiếu đầu vào hoặc hạ tầng, đặt **Bị chặn** và ghi yêu cầu cụ thể trong nhật ký. Khi thay đổi hợp đồng, migration hoặc bất biến làm mất hiệu lực của bằng chứng, đưa việc liên quan về **Đã code** và chạy lại ca bị ảnh hưởng.
-4. Cuối mỗi phiên, ghi commit, bằng chứng, tình trạng và mã BE tiếp theo. Đếm tiến độ từ bảng. **Đã code hoặc đã kiểm chứng** cho biết số việc đã có triển khai đủ để đưa đi kiểm. **Đã kiểm chứng** cho biết số việc đã đạt nghiệm thu. Nếu bị chặn sau khi đã viết code, giữ dấu các bước đã hoàn thành và ghi commit gần nhất vào [nhật ký](#nhật-ký-tiến-độ-và-bằng-chứng).
+4. Cuối mỗi phiên, ghi bằng chứng, tình trạng và mã BE tiếp theo. Với thay đổi cục bộ, ghi commit nền, phạm vi đã kiểm và đường dẫn bằng chứng. Điền SHA commit nhóm khi chốt. Đếm tiến độ từ bảng. **Đã code hoặc đã kiểm chứng** cho biết số việc đã có triển khai đủ để đưa đi kiểm. **Đã kiểm chứng** cho biết số việc đã đạt nghiệm thu. Nếu bị chặn, giữ dấu các bước đã hoàn thành và ghi lý do vào [nhật ký](#nhật-ký-tiến-độ-và-bằng-chứng).
+
+### Commit theo nhóm
+
+1. **Mặc định gom khoảng 10 đầu việc đã kiểm chứng thành một commit.** Mỗi mã `BE-xx` tính là một đầu việc. Thực hiện theo độ ưu tiên và phụ thuộc trong bảng tiến độ. Mỗi việc vẫn chạy các ca liên quan và cập nhật tracker ngay khi có kết quả. Phần mã, test, migration và tài liệu của nhóm tích lũy trên nhánh triển khai cho tới lúc chốt.
+2. Khi chốt nhóm, rà diff, chạy `npm run verify` và các ca tích hợp liên quan trên toàn bộ thay đổi. Ghi danh sách mã BE và bằng chứng vào nhật ký. Đặt thông điệp commit tiếng Việt ghi rõ phạm vi. Nếu công việc cần một SHA để kiểm trên staging, hoặc nhóm còn việc bị chặn bởi đầu vào bên ngoài, có thể chốt sớm phần đã kiểm chứng và ghi rõ lý do. Nhóm cuối gom toàn bộ đầu việc còn lại đã đủ điều kiện.
+3. Khi đưa nhóm lên GitHub, mở PR cho cả nhóm. Kiểm CI trên đúng SHA đầu PR và trên merge commit thực tế của `main`. Ghi PR, SHA và link CI vào nhật ký. Gom phần bổ sung bằng chứng sau merge vào lần commit kế tiếp. Với nhóm cuối, ghi phần này trong bàn giao. [Chính sách CI của repo](../.github/CI_POLICY.md)
+
+| Nhóm dự kiến | Thứ tự đầu việc | Số việc |
+|---|---|---:|
+| Đợt 1 | BE-03 → BE-04 → BE-05 → BE-06 → BE-07 → BE-10 → BE-08 → BE-09 → BE-11 → BE-12 | 10 |
+| Đợt 2 | BE-13 → BE-14 → BE-15 → BE-16 → BE-17 → BE-18 → BE-19 → BE-20 → BE-21 → BE-22 | 10 |
+| Đợt cuối | BE-23 → BE-24 | 2 |
+
+Đợt 1 có 10/10 việc đã kiểm chứng cục bộ gồm BE-03–BE-12. Chốt một commit cục bộ cho cả đợt trước khi triển khai BE-13. BE-01 và BE-02 đã kết thúc trước khi áp dụng cách gom này.
 
 ## Bảng theo dõi
 
@@ -110,16 +124,16 @@ Các nhóm dưới đây làm chủ việc **ghi**. Module đọc chung có th�
 |---|---|---|---|---|
 | [BE-01](#be-01) | P0 | — | Baseline backend, xử lý CI PR #27 và cấu hình thử | Đã kiểm chứng |
 | [BE-02](#be-02) | P0 | BE-01 | Workspace, HTTP và kiểm ma trận tự động trong CI | Đã kiểm chứng |
-| [BE-03](#be-03) | P0 | BE-02 | PostgreSQL, migration và dữ liệu thử | Chưa bắt đầu |
-| [BE-04](#be-04) | P0 | BE-03 | OIDC thử nghiệm và phiên backend | Chưa bắt đầu |
-| [BE-05](#be-05) | P0 | BE-04 | Cô lập cửa hàng và quyền server | Chưa bắt đầu |
-| [BE-06](#be-06) | P0 | BE-05 | Chống ghi trùng, nhật ký và outbox | Chưa bắt đầu |
-| [BE-07](#be-07) | P0 | BE-06 | Tạo sản phẩm qua frontend live | Chưa bắt đầu |
-| [BE-10](#be-10) | P1 | BE-06 | Worker và phục hồi tác vụ | Chưa bắt đầu |
-| [BE-08](#be-08) | P1 | BE-07, BE-10 | Danh mục, biến thể, khách và địa chỉ | Chưa bắt đầu |
-| [BE-09](#be-09) | P1 | BE-08 | Sổ kho, số tồn và giữ hàng | Chưa bắt đầu |
-| [BE-11](#be-11) | P1 | BE-09, BE-10 | Đơn nháp, báo giá, chốt đơn, R62 và đọc ưu đãi | Chưa bắt đầu |
-| [BE-12](#be-12) | P1 | BE-11 | Thu tiền, COD, sổ kép và điều chỉnh kho có đối ứng | Chưa bắt đầu |
+| [BE-03](#be-03) | P0 | BE-02 | PostgreSQL, migration và dữ liệu thử | Đã kiểm chứng |
+| [BE-04](#be-04) | P0 | BE-03 | OIDC thử nghiệm và phiên backend | Đã kiểm chứng |
+| [BE-05](#be-05) | P0 | BE-04 | Cô lập cửa hàng và quyền server | Đã kiểm chứng cục bộ |
+| [BE-06](#be-06) | P0 | BE-05 | Chống ghi trùng, nhật ký và outbox | Đã kiểm chứng cục bộ |
+| [BE-07](#be-07) | P0 | BE-06 | Tạo sản phẩm qua frontend live | Đã kiểm chứng cục bộ |
+| [BE-10](#be-10) | P1 | BE-06 | Worker và phục hồi tác vụ | Đã kiểm chứng cục bộ |
+| [BE-08](#be-08) | P1 | BE-07, BE-10 | Danh mục, biến thể, khách và địa chỉ | Đã kiểm chứng cục bộ |
+| [BE-09](#be-09) | P1 | BE-08 | Sổ kho, số tồn và giữ hàng | Đã kiểm chứng cục bộ |
+| [BE-11](#be-11) | P1 | BE-09, BE-10 | Đơn nháp, báo giá, chốt đơn, R62 và đọc ưu đãi | Đã kiểm chứng cục bộ |
+| [BE-12](#be-12) | P1 | BE-11 | Thu tiền, COD, sổ kép và điều chỉnh kho có đối ứng | Đã kiểm chứng cục bộ |
 | [BE-13](#be-13) | P1 | BE-12 | Chuẩn bị, giao, trả hàng và thông báo | Chưa bắt đầu |
 | [BE-14](#be-14) | P2 | BE-13 | Combo và hoàn theo giá sau giảm R64 | Chưa bắt đầu |
 | [BE-15](#be-15) | P2 | BE-09, BE-12 | Kiểm kê R66 và chuyển kho R67 | Chưa bắt đầu |
@@ -213,7 +227,7 @@ Dữ liệu BE-03 tạo hai shop A/B có kho mặc định thuộc đúng shop. 
 | P0-04 | BE-04 | Callback state sai/lặp, nonce sai, issuer/audience không khớp, code/PKCE sai hoặc giao dịch hết hạn bị từ chối và không tạo phiên. URL trả về ngoài allowlist không được làm đích. Phiên hết hạn hoặc đã logout trả 401 ở `getSession`; `logout` hợp lệ 204, thiếu/sai CSRF bị từ chối. |
 | P0-05 | BE-05 | `listShops` chỉ trả membership hiện hành và `getShop` đọc đúng shop. `p0-reader` đọc A nhưng không thấy B; gọi trực tiếp resource chéo shop trả 404 theo policy ẩn tài nguyên. Thu hồi membership rồi gọi lại, kết quả phải phản ánh quyền mới. |
 | P0-06 | BE-06 | Cùng khóa + nội dung cho một lần ghi kể cả khi gửi song song; đổi nội dung với cùng khóa trả 409. Khóa ghi, kết quả và audit/outbox liên quan cùng transaction. Các ca 412/428 áp dụng khi triển khai operation có `If-Match`. Hợp đồng `createProduct` dùng CSRF và idempotency key. |
-| P0-07 | BE-06, chạy lại ở BE-07 | Commit DB rồi làm mất phản hồi trước khi UI biết kết quả. Reload và tra theo intent dùng cơ chế đã chốt ở BE-06, không tạo thêm lần ghi. API tra thực thi quyền và shop ở thời điểm tra. DB có đúng một sản phẩm cho intent. |
+| P0-07 | BE-06, chạy lại ở BE-07 | Commit DB rồi làm mất phản hồi trước khi UI biết kết quả. Tải lại và tra theo intent bằng quyền hiện hành, đúng người tạo và đúng shop. DB có đúng một membership ở ca BE-06. BE-07 áp dụng lại tiêu chí cho SKU thật. |
 | P0-08 | BE-07 | Firefox hoặc Chromium chạy `dev:live` từ R01 → R02 → R04 → R09 → R10 → R11. `getDashboard` 200 theo contract; `listCategories` và `listProducts` trả đúng shop; `createProduct` 201; `getProduct` và danh sách đọc đúng SKU sau reload và sau restart API. Đối chiếu với PostgreSQL. |
 | P0-09 | BE-07 | `p0-reader` xem được catalog A nhưng `createProduct` bị 403; API cũng từ chối khi gọi trực tiếp. SKU trùng cùng shop 409, cùng SKU khác shop được phép với người có quyền ghi ở shop đó. Bài thử đối chứng danh sách rỗng vẫn 200 đúng schema. |
 | P0-10 | BE-07 | Shell vào shop trong cấu hình SSE còn giới hạn; kiểm trạng thái giao diện và tải lại đọc đúng dữ liệu. Lưu giới hạn realtime trong bằng chứng P0. BE-10 nghiệm thu phát lại và mất kết nối SSE cùng worker. |
@@ -255,47 +269,118 @@ Kiểm ma trận là một phần của CI backend từ BE-02. Báo cáo cho bi�
 | CI trước merge | [PR #29](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/29) có đầu nhánh `42790b0d78fa1ee3250d3f4eb78dd643dd1f1894`. Đủ 27/27 job thành công (1 backend, 23 frontend, 3 vệ sinh repo). Mỗi workflow được đối chiếu theo sự kiện `pull_request` và đúng lần chạy. Checkout hợp nhất do GitHub tạo là `be37cac50550f15f46f2200795b33ba100aa285e`. [Backend](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44865789619/attempts/1) · [Frontend](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44865789635/attempts/1) · [Vệ sinh repo](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44865789632/attempts/1) · [Báo cáo ma trận](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44865789619/artifacts/14691597918) |
 | CI sau merge | Merge commit trên `main` là `859fed45ac5b8c4e87f2820acf9af6e806ece976`. Đủ 27/27 job thành công với sự kiện `push`. Báo cáo ma trận đạt, mang đúng SHA merge commit, dùng baseline `e22bb99d` và khớp SHA-256 artifact. [Backend](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44866613596/attempts/1) · [Frontend](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44866613542/attempts/1) · [Vệ sinh repo](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44866613509/attempts/1) · [Báo cáo ma trận](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/44866613596/artifacts/14692396194) |
 
-**Bằng chứng đóng BE-02.** Đủ 5/5 mục. P0-01 đã đạt trên checkout sạch cục bộ và CI. Readiness hiện phản ánh tiến trình và phần phụ thuộc có ở BE-02; kiểm kết nối PostgreSQL bắt đầu ở BE-03. API sản phẩm và phiên OIDC vẫn theo thứ tự BE-03–BE-07. Tham chiếu [hướng dẫn chạy backend](README.md) và [phạm vi đăng ký](api-scope.json).
+**Bằng chứng đóng BE-02.** Đủ 5/5 mục. P0-01 đã đạt trên checkout sạch cục bộ và CI. Ở BE-02, readiness được kiểm bằng điều kiện phụ thuộc thử. BE-03 nối kiểm tra vào PostgreSQL. [Hướng dẫn chạy backend](README.md) · [Phạm vi đăng ký hiện tại](api-scope.json)
 
 ### BE-03
 
 **Dựng PostgreSQL và nền dữ liệu** · T013
 
-- [ ] Tạo Prisma schema và migration cho user, shop, membership, session và các bảng hạ tầng cần ở BE-06. Có dữ liệu kho tối thiểu dùng chung với BE-09 vì `Shop` yêu cầu `defaultWarehouseId`. Dùng khóa ngoại và unique theo `shopId` cho tài nguyên thuộc cửa hàng. Tách quyền chạy ứng dụng và quyền chạy migration.
-- [ ] Viết seed dữ liệu thử có thể chạy lại an toàn cho hai shop, thành viên theo quyền khác nhau và kho mặc định thuộc đúng shop. BE-07 thêm danh mục mẫu qua mô hình Catalog. Kiểm cấu hình tiền tệ, thời gian, ID, trường phiên bản và kiểu số chính xác trước khi làm bảng giao dịch.
-- [ ] Kiểm chứng migration từ DB trống và test tích hợp trên PostgreSQL. Dữ liệu còn sau khi khởi động lại API. Truy vấn có thể tham gia cùng transaction, ghi liên shop sai bị khóa ngoại từ chối, readiness phản ánh việc thiếu DB.
+- [x] Tạo Prisma schema và migration cho user, shop, membership, session và các bảng hạ tầng cần ở BE-06. Có dữ liệu kho tối thiểu dùng chung với BE-09 vì `Shop` yêu cầu `defaultWarehouseId`. Dùng khóa ngoại và unique theo `shopId` cho tài nguyên thuộc cửa hàng. Tách quyền chạy ứng dụng và quyền chạy migration.
+- [x] Viết seed dữ liệu thử có thể chạy lại an toàn cho hai shop, thành viên theo quyền khác nhau và kho mặc định thuộc đúng shop. BE-07 thêm danh mục mẫu qua mô hình Catalog. Kiểm cấu hình tiền tệ, thời gian, ID, trường phiên bản và kiểu số chính xác trước khi làm bảng giao dịch.
+- [x] Kiểm chứng migration từ DB trống và test tích hợp trên PostgreSQL. Dữ liệu còn sau khi khởi động lại API. Truy vấn có thể tham gia cùng transaction, ghi liên shop sai bị khóa ngoại từ chối, readiness phản ánh việc thiếu DB.
+
+#### Kết quả kiểm BE-03
+
+| Phạm vi | Bằng chứng ngày 21/11/2026 |
+|---|---|
+| PostgreSQL và migration | PostgreSQL 18.7 trên Ubuntu WSL, Node 24.22.3 và npm 11.17.0 trên Windows. Schema `public` có 0 bảng trước khi chạy `npm run db:migrate`. Lượt đầu áp dụng `20261121000100_be03_foundation`, lượt hai báo hết migration chờ. `prisma migrate diff --from-config-datasource --to-schema apps/api/prisma/schema.prisma --exit-code` báo không có khác biệt. [Schema](apps/api/prisma/schema.prisma) · [Migration](apps/api/prisma/migrations/20261121000100_be03_foundation/migration.sql) |
+| Seed và kiểu dữ liệu | `npm run db:seed` tạo 2 shop, 2 kho mặc định cùng shop, 3 user và 3 membership theo preset đã chốt. Hai lượt seed đồng thời giữ nguyên số bản ghi, ID và dữ liệu fixture. A dùng VND và `Asia/Ho_Chi_Minh`, B dùng LAK và `Asia/Vientiane`. Seed và schema kiểm UUID, version dương, phiên hết hạn dạng thời điểm UTC và phép cộng PostgreSQL `NUMERIC` cho kết quả chính xác `0.3`. Bảng nghiệp vụ tiền bắt đầu ở mốc sở hữu. [Fixture](apps/api/prisma/p0-fixture.mjs) |
+| Phạm vi shop và rollback | PostgreSQL cho cùng mã kho ở hai shop, từ chối trùng trong cùng shop và từ chối FK kho mặc định, actor của command hay command của outbox tham chiếu sang shop khác. Truy vấn dùng khóa ghép trả rỗng khi tra kho A dưới shop B. Rollback giữ 0 bản ghi phát sinh trong cả command, audit và outbox. Role runtime bị từ chối DDL và cập nhật audit. Quyền truy cập theo membership ở HTTP thuộc BE-05. [Bộ ca tích hợp DB](tests/integration/database/postgres.test.mjs) |
+| Readiness và độ bền | Tiến trình API thực trả readiness 503 trước migration và 200 sau migration và seed. Dừng PostgreSQL làm readiness trả 503 `SERVICE_UNAVAILABLE` theo schema `Problem` trong khi liveness vẫn 200. Sau khi khởi động lại PostgreSQL, readiness tự về 200. Khởi động lại API và đọc lại xác nhận cả hai shop cùng dữ liệu fixture vẫn còn. |
+| Bộ kiểm và môi trường CI | `npm run verify` đạt 19/19 ca, `npm run test:postgres` đạt 6/6 ca và `npm audit` báo 0 lỗ hổng tại thời điểm kiểm. Giữ Prisma 7.10.1 và khóa phụ thuộc CLI `effect` ở bản vá 3.22.1. Workflow đã nối bộ kiểm PostgreSQL bằng Compose với volume riêng, chờ lượt chạy GitHub Actions khi đưa mã lên PR. Môi trường nghiệm thu cục bộ dùng PostgreSQL tương đương trên WSL. [Workflow](../.github/workflows/backend.yml) · [Bản vá phụ thuộc](https://github.com/advisories/GHSA-7589-6fvf-x4pw) |
+
+**Bằng chứng đóng BE-03.** Đủ 3/3 mục và đạt P0-02 cục bộ. Mã gốc là `main@c873f1eb` cùng thay đổi BE-03 đang kiểm. Log chạy DB ở `test-results/backend/be03/postgres.txt` (SHA-256 `853270129c42aa1cc26c9f78756a02fed658eab9c467f6de26a47de21595cf59`). Snapshot schema ở `test-results/backend/be03/schema.sql` (SHA-256 `3f009537eaa34293e947b3d4b3e4d1eb743205bc91e7fc65e6897288ad4ce015`). [Quy trình cài và khôi phục](README.md)
 
 ### BE-04
 
 **Nối đăng nhập OIDC thử nghiệm và phiên** · T014
 
-- [ ] Triển khai `getCsrfToken`, `beginLogin`, `completeLogin`, `getSession` và `logout`. Dùng IdP thử nghiệm qua HTTPS, kiểm state, nonce, PKCE và đích quay về. Phiên cookie dùng chính sách cùng origin và bảo vệ CSRF.
-- [ ] Nối frontend `dev:live` qua origin HTTPS và callback đã chốt ở BE-01. Dùng một đích trả về hợp lệ có sẵn ở mốc này để kiểm callback, cookie, `getSession`, refresh, hết hạn và logout. BE-05 kiểm chuyển sang danh sách shop qua `listShops` và BE-07 kiểm luồng sản phẩm.
-- [ ] Kiểm chứng phản hồi đúng contract, cookie và CSRF hợp lệ, phiên hết hạn bị chặn, token và nội dung định danh nhạy cảm được loại khỏi log.
+- [x] Triển khai `getCsrfToken`, `beginLogin`, `completeLogin`, `getSession` và `logout`. Dùng IdP thử nghiệm qua HTTPS, kiểm state, nonce, PKCE và đích quay về. Phiên cookie dùng chính sách cùng origin và bảo vệ CSRF.
+- [x] Nối frontend `dev:live` qua origin HTTPS và callback đã chốt ở BE-01. Dùng một đích trả về hợp lệ có sẵn ở mốc này để kiểm callback, cookie, `getSession`, refresh, hết hạn và logout. BE-05 kiểm chuyển sang danh sách shop qua `listShops` và BE-07 kiểm luồng sản phẩm.
+- [x] Kiểm chứng phản hồi đúng contract, cookie và CSRF hợp lệ, phiên hết hạn bị chặn, token và nội dung định danh nhạy cảm được loại khỏi log.
+
+#### Kết quả kiểm BE-04
+
+| Phạm vi | Bằng chứng ngày 21/11/2026 |
+|---|---|
+| P0-03 · Vòng HTTPS | Firefox dùng profile riêng tin CA thử. Frontend `dev:live` tại `https://localhost:5173` gọi API loopback và chuyển tới IdP tại `https://127.0.0.1:9443`. Callback thật trả 302 về `/login`, frontend nhận phiên 200 và giữ phiên sau khi tải lại. Nút tiếp tục hiển thị trên bản dev. Cookie `__Host-bs_session` có Secure, HttpOnly, SameSite=Lax, Path=/ và phạm vi host. [Cách chạy OIDC thử](README.md#chạy-oidc-thử-qua-https) |
+| P0-04 · Ca đối chứng | Sáu ca tích hợp HTTPS kiểm đúng response OpenAPI, CSRF, origin, idempotency key và đích quay về. Callback sai state, sai trình duyệt, code, PKCE, nonce, issuer, audience, chữ ký hoặc hết hạn bị từ chối. Hai callback đồng thời chỉ tạo một phiên. Đăng nhập lại thu hồi phiên cũ. Logout trả 204, phiên đã thu hồi hoặc hết hạn trả 401. [Bộ ca OIDC](tests/integration/auth/auth.test.mjs) |
+| Dữ liệu và phiên | Lượt đăng nhập trong PostgreSQL có thời hạn 10 phút và xóa nonce/verifier khi callback nhận xử lý. Session lưu hash của cookie và hết hạn sau 8 giờ. Định danh theo issuer/subject. Migrate từ DB trống và từ bản sao BE-03 đều đạt. Seed chuyển ba danh tính fixture sang issuer thực của IdP thử, giữ nguyên ID user, membership, hai shop và hai kho. [Migration OIDC](apps/api/prisma/migrations/20261121000200_be04_oidc/migration.sql) |
+| Log và hồi quy | Đã đối chiếu log tiến trình khi chạy Firefox với giá trị cookie, CSRF, client secret, email thử, state và authorization code. Các giá trị này vắng mặt trong log. `npm run verify` đạt 20/20 ca, bộ PostgreSQL 6/6 và bộ OIDC 6/6. Kiểm ma trận xác nhận 5 operation xác thực cùng 2 route vận hành. [Phạm vi đăng ký](api-scope.json) |
+| CI và phạm vi tiếp theo | Workflow backend đã nối bộ kiểm HTTPS với DB và chứng thư thử độc lập. Kết quả GitHub Actions sẽ ghi khi đợt 1 lên PR. BE-05 nghiệm thu danh sách shop và quyền trên tài nguyên. BE-22 nghiệm thu IdP được cấp quyền. [Workflow backend](../.github/workflows/backend.yml) |
+
+**Bằng chứng đóng BE-04.** Đủ 3/3 mục và đạt P0-03/P0-04 cục bộ. Mã nền `main@c873f1eb` cùng thay đổi BE-03 và BE-04. Log OIDC ở `test-results/backend/be04/oidc.txt` (SHA-256 `358dd2df6cdded1051d6201e0ba7f9398734f7005407248bff3c3687144bd4b9`). Log Firefox ở `test-results/backend/be04/firefox.txt` (SHA-256 `033875b5e2a5d1d5b3cea01d927c9812c100eba1be16888d34c2b4fdeae8f25a`). Log nâng cấp DB ở `test-results/backend/be04/upgrade.txt` (SHA-256 `b79ca44d8ef0dd85efeab0bae7db0a12ef3dcd577a001459c720c365379f8131`).
 
 ### BE-05
 
 **Cô lập dữ liệu và quyền theo cửa hàng** · T015, T018
 
-- [ ] Triển khai `listShops`, `getShop` và quyền hiệu lực theo membership. Dùng một ngữ cảnh quyền đã xác minh cho truy vấn, ghi và các capability mà UI nhận qua `allowedActions`.
-- [ ] Nối chọn shop ở R02 sau đăng nhập, xem membership và thu hồi quyền. Kiểm danh sách, chi tiết, ghi và tài nguyên đoán được ID qua API. SSE và worker tái sử dụng kiểm tra quyền khi có ở BE-10.
-- [ ] Kiểm chứng với shop A và B, người đọc và người ghi, membership đã bị thu hồi. Quyền UI và khả năng gọi trực tiếp API cho cùng kết quả nghiệp vụ.
+- [x] Triển khai `listShops`, `getShop` và quyền hiệu lực theo membership. Cùng ngữ cảnh quyền kiểm truy vấn nhân sự, ghi thu hồi và capability `revokeMembership` trả qua `allowedActions`.
+- [x] Nối chọn shop ở R02 sau đăng nhập, xem membership và thu hồi quyền trên R32. Kiểm danh sách, chi tiết, ghi và tài nguyên theo ID qua API. SSE và worker tái sử dụng kiểm tra quyền khi có ở BE-10.
+- [x] Kiểm chứng P0-05 với shop A và B, người đọc và người quản trị, membership đã bị thu hồi. Quyền UI và khả năng gọi trực tiếp API cho cùng kết quả khi frontend đọc lại phiên và phạm vi shop.
+- [x] Hoàn tất `inviteMember` và `updateMemberRoles` của R32 theo ma trận. Kiểm vòng đời lời mời, quyền đổi vai trò, phiên bản quyền, chống ghi trùng và audit.
+
+#### Kết quả kiểm BE-05
+
+| Phạm vi | Bằng chứng ngày 21/11/2026 |
+|---|---|
+| P0-05 · Phạm vi shop | `p0-reader` và `p0-editor` chỉ nhận shop A, `p0-editor-b` chỉ nhận shop B. Đọc chi tiết shop khác hoặc ID hợp lệ không tồn tại trả cùng dạng 404. Danh sách lọc quyền trước khi phân trang. Ca kiểm có tìm kiếm theo tên và con trỏ qua hai trang cùng phạm vi. [Bộ ca workspace](tests/integration/workspace/shops.test.mjs) |
+| Nhân sự và thu hồi | Xem chi tiết member dùng khóa ghép shop và member. Người đọc cùng shop bị từ chối quyền quản trị. Thu hồi hợp lệ tăng `permissionVersion`, ghi audit và command trong một transaction, trả 204. Hai request cùng intent chỉ ghi một lần. Hai chủ shop thu hồi lẫn nhau đồng thời chỉ một yêu cầu thành công, chủ shop còn lại vẫn hoạt động. Server kiểm CSRF, If-Match và scope trước khi ghi. |
+| Firefox · R02 và R32 | Frontend `dev:live` trên HTTPS đăng nhập vào R02, chọn shop A và nhận `getShop` 200. Đường dẫn trực tiếp sang B hiện cảnh báo quyền. Chủ shop thu hồi reader qua nút ở R32. Với chính cookie cũ của reader, `getSession` vẫn 200, danh sách shop rỗng và URL shop A bị từ chối. Dữ liệu Tổng quan được nối ở BE-07. [Bộ kiểm trình duyệt](tests/integration/workspace/browser-cases.mjs) |
+| Migration và hồi quy | PostgreSQL 18.7 áp dụng từ DB trống và trên bản sao BE-04. Migration bổ sung `created_at` và index phân trang, giữ nguyên shop, membership và phiên hiện có. Prisma không báo lệch schema. `npm run verify` đạt 20/20, PostgreSQL 6/6, OIDC 6/6, workspace 5/5. Ma trận có 10 operation được bật và 2 route vận hành. [Migration](apps/api/prisma/migrations/20261121000300_be05_membership_order/migration.sql) · [Phạm vi đăng ký](api-scope.json) |
+| R32 · Tạo và nhận lời mời | `inviteMember` trả 201 và tạo membership `invited` có hạn 7 ngày. Membership chỉ có hiệu lực sau callback của đúng issuer và email đã xác minh. Lời mời hết hạn, đã thu hồi, email chưa xác minh hoặc sai issuer không tạo quyền. Chủ shop có thể mời lại sau khi hết hạn. Người quay lại với email đã thay đổi giữ nguyên danh tính theo issuer/subject và lịch sử membership. Fixture HTTPS kiểm cả trường hợp subject khác dùng cùng email với lời mời đã gắn danh tính. R32 ghi lời mời trong hệ thống. Phần gửi thư cần tích hợp kênh email riêng. [Bộ ca HTTPS OIDC](tests/integration/auth/auth.test.mjs) |
+| R32 · Quyền và phiên bản | Quyền được kiểm theo shop và phiên hiện hành. Chỉ cấp preset trong phạm vi quyền của người thao tác. Tự sửa vai trò hoặc cấp/sửa vai trò `owner` bị từ chối. Luồng xác minh nâng cao thuộc BE-21. `updateMemberRoles` trả 428 khi thiếu `If-Match` và 412 với phiên bản cũ. Vai trò thay đổi tăng `permissionVersion` và có hiệu lực ở lần đọc tiếp theo của phiên hiện có. Cùng khóa và nội dung ghi một lần, nội dung khác trên khóa cũ trả 409. Vai trò giữ nguyên không tăng phiên bản. [Bộ ca workspace](tests/integration/workspace/shops.test.mjs) |
+| R32 · Transaction và audit | Ghi thay đổi, audit và command trong cùng transaction đối với thao tác quản trị. Callback ghi kích hoạt, audit và phiên đăng nhập trong cùng transaction. Audit lưu shop, actor, member, mã truy vết, phiên bản hoặc thay đổi vai trò theo hành vi. Đã kiểm audit khi tạo, đổi vai trò, nhận lời mời, thu hồi, hết hạn khi mời lại và đối chiếu thành viên quay lại. Email và dữ liệu xác thực không nằm trong audit. |
+| R32 · Kiểm giao diện live | Firefox qua HTTPS thực hiện mời và đổi vai trò trên desktop, xác minh hạn và thao tác được phép ở chiều rộng 390 px, rồi kiểm thu hồi với phiên cũ. Frontend dùng `allowedActions` từ server và báo đã tạo lời mời trong hệ thống. Bằng chứng cục bộ có ảnh baseline trước khi sửa câu báo thành công và log kiểm sau sửa. `npm run verify` frontend đạt, gồm 279 ca Vitest và kiểm hash S17 của consumer. [Ca trình duyệt](tests/integration/workspace/browser-cases.mjs) · [Frontend workspace](../BotSalesAI_Frontend/apps/web/src/modules/workspace/index.tsx) |
+| R32 · Migration và hồi quy | PostgreSQL 18.7 áp dụng đủ 4 migration từ DB trống và nâng cấp bản sao BE-05 P0. Snapshot trước/sau nâng cấp giữ nguyên shop, membership, phiên và cặp định danh OIDC. Prisma không báo lệch schema. `npm run verify` backend 20/20, PostgreSQL 6/6, OIDC 9/9, workspace 6/6. Ma trận có 12 operation sản phẩm và 2 route vận hành. [Migration lời mời](apps/api/prisma/migrations/20261121000400_be05_member_invites/migration.sql) · [Phạm vi đăng ký](api-scope.json) |
+| Trạng thái bàn giao | BE-05 đã kiểm chứng cục bộ, đạt 4/4 mục. Workflow backend gọi các ca PostgreSQL, OIDC và workspace. Kết quả GitHub Actions được ghi theo SHA khi đợt 1 lên PR. [Workflow backend](../.github/workflows/backend.yml) |
+
+Mã nền `main@c873f1eb` cùng thay đổi BE-03 đến BE-05 cục bộ. Log API ở `test-results/backend/be05/workspace-api.txt` (SHA-256 `fe1741f0c7838b56315b5091fec8caa7fa7975c219e14560ffb1c0349a209e09`). Log Firefox ở `test-results/backend/be05/firefox.txt` (SHA-256 `4cf8a272ba0d8fd3c172fab9bf07e4d5da95e8d742b7382559def35d8fe3894d`). Log nâng cấp ở `test-results/backend/be05/upgrade.txt`.
+
+Bằng chứng bổ sung của R32 được lưu cục bộ trong `test-results/backend/be05/r32/`. Các log chính gồm `oidc-and-invite.txt` (SHA-256 `7ed426f25a6b7b8b8c4fb3ca9bb2d45028e9a8f1f1cd73ef505809b6150158ae`), `workspace-api.txt` (SHA-256 `ec41485bf741655d505d36cae88a11362dec8076cb34aaa59b988d18658152cf`), `firefox.txt` (SHA-256 `ee9bf04a57d066c2e1958a623f92942c3302b8be5ce16359cd5cdb52b609b1ca`), `upgrade.txt` và `frontend-verify.txt`. Phạm vi dùng dữ liệu và IdP tổng hợp. IdP được cấp quyền nghiệm thu ở BE-22.
 
 ### BE-06
 
 **Chống ghi trùng và ghi nhật ký bền vững** · T016
 
-- [ ] Lưu khóa `Idempotency-Key` theo chủ thể, shop và thao tác, kèm hash nội dung và kết quả lệnh. Cập nhật có phiên bản theo `If-Match` ở những endpoint yêu cầu. Ghi thay đổi nghiệp vụ, audit và outbox trong cùng transaction khi áp dụng.
-- [ ] Triển khai `listCommands` và `getCommand` theo contract. Chốt phương án tra theo intent trước khi nhận `commandId`. Quy định ai được tra theo shop, chủ thể và operation, quyền điều phối nếu cần, thời gian giữ tham chiếu và cách tìm lại sau reload. Phân biệt lệnh đang chạy, đã kết thúc và chưa xác định được. Dùng tham chiếu tối thiểu, kiểm quyền hiện hành, chưa gửi lại khi kết quả chưa rõ. Nếu cần đổi API, cập nhật nguồn chuẩn, consumer, scenario và migration record cùng một lượt.
-- [ ] Kiểm chứng ghi lặp cùng khóa và cùng nội dung, xung đột `409`, phiên bản cũ `412`, thiếu phiên bản `428` theo từng thao tác. Kiểm chuỗi DB commit → mất phản hồi trước `commandId` → reload → tra đúng kết quả → DB chỉ ghi một lần. Thử tra sai shop, sai chủ thể, quyền đã thu hồi và yêu cầu đang xử lý. BE-07 kiểm lại trường hợp mất phản hồi bằng luồng tạo SKU thật.
+- [x] Dùng chung bộ ghi command cho R32. Khóa chống trùng theo người tạo, shop và operation, kèm hash nội dung đã chuẩn hóa và tham chiếu kết quả. Giữ `If-Match` ở các thao tác cần phiên bản. Ghi thay đổi nghiệp vụ, audit và outbox trong cùng transaction.
+- [x] Nối `listCommands`, `getCommand` và `listAuditEvents` trên hợp đồng hiện có. Chốt tra theo mã đối chiếu trước khi biết `commandId`, phạm vi người đọc, thời gian giữ tham chiếu và trạng thái có thể đối chiếu sau khi tải lại.
+- [x] Kiểm 409, 412, 428, ghi song song, rollback, mất phản hồi sau commit, tra sai shop/chủ thể, mất quyền và trạng thái chưa kết thúc. BE-07 áp dụng lại ca mất phản hồi cho SKU thật.
+
+#### Kết quả kiểm BE-06
+
+| Phạm vi | Bằng chứng ngày 21/11/2026 |
+|---|---|
+| P0-06 · Giao dịch | Gửi hai yêu cầu mời song song cùng khóa và cùng ý nghĩa chỉ tạo một membership, một command, một audit và một sự kiện `command.updated`. Đổi nội dung với khóa cũ trả 409. Sửa vai trò và thu hồi giữ kiểm 412/428. Lỗi chủ động trước commit hủy cả bốn bản ghi. [Bộ ca workspace](tests/integration/workspace/shops.test.mjs) |
+| P0-07 · Tra cứu và phân quyền | Nếu đã biết mã lệnh, đọc bằng `getCommand`. Nếu chưa biết, dùng `listCommands` với `kind` là operation và `q` là SHA-256 dạng hex của khóa intent. Transaction đọc yêu cầu membership hiện hành, `jobs.read`, quyền của thao tác nguồn và đúng người tạo. R32 đã đăng ký chính sách nguồn. Lệnh được lọc trước khi phân trang. Phạm vi điều phối liên chủ thể chưa được cấp. Phản hồi chỉ trả tham chiếu kết quả an toàn, không trả khóa gốc hoặc hash yêu cầu. |
+| P0-07 · Mất phản hồi sau commit | Firefox qua HTTPS đã xác nhận lỗi baseline làm mất mã đối chiếu khi tải lại. Sau sửa, trình kiểm chuyển đúng POST tới API, nhận 201 từ upstream rồi ngắt phản hồi trước khi frontend thấy kết quả. Tải lại tab và tra được `succeeded` qua GET ở 390 px. Đối chiếu DB có đúng một membership, một command, một outbox và một audit. R34 đọc được bản ghi đó. [Ca trình duyệt](tests/integration/workspace/browser-cases.mjs) |
+| Trạng thái và lưu giữ | Trình duyệt ghi mã đối chiếu, operation và phạm vi người dùng/shop vào `sessionStorage` trước khi gửi. Tham chiếu giữ qua tải lại trong cùng tab và được xóa khi xác nhận `succeeded` hoặc `failed`. Không tìm thấy lệnh, `accepted`, `running` và `unknown` tiếp tục giữ chặn gửi lại. Ledger PostgreSQL giữ tham chiếu bền vững. Quy tắc lưu giữ dữ liệu thật thuộc BE-21. |
+| R34 · Audit và outbox | `listAuditEvents` yêu cầu `audit.read` trong shop. Phản hồi gồm tác nhân, hành động, tham chiếu tài nguyên, thời gian, tóm tắt và mã truy vết. DB giữ audit chỉ thêm đối với role runtime. Outbox lưu tham chiếu lệnh trong cùng transaction. BE-10 xử lý lease, phát sự kiện và phục hồi phân phối. |
+| Migration và hồi quy | PostgreSQL 18.7 chạy đủ 5 migration từ DB trống, Prisma không báo lệch schema. Nâng cấp bản sao BE-05 giữ nguyên snapshot command và số audit/outbox, đồng thời điền mã đối chiếu cho 8/8 command cũ. Backend `verify` 20/20, PostgreSQL 6/6, OIDC 9/9, workspace 9/9. Ma trận có 15 operation sản phẩm và 2 route vận hành. [Migration](apps/api/prisma/migrations/20261121000500_be06_command_lookup/migration.sql) · [Phạm vi đăng ký](api-scope.json) |
+| Hồi quy frontend | `npm run verify` đạt với 279 ca Vitest và validator hash S17 cho các consumer đã sửa. Hoàn tất 4/4 ca demo về kết quả lệnh chưa rõ ở R19 và R46 trên Chromium/Firefox. |
+| Trạng thái bàn giao | BE-06 đạt 3/3 mục cục bộ. Ca phục hồi đã chạy với lời mời R32 và dữ liệu thử. GitHub Actions được đối chiếu theo SHA khi đợt 1 lên PR. [Workflow backend](../.github/workflows/backend.yml) |
+
+Mã nền `main@c873f1eb` cùng thay đổi BE-03–BE-06 cục bộ. Bằng chứng nằm ở `test-results/backend/be06/`. Các log chính gồm `workspace-api.txt` (SHA-256 `8f12e5cb9c1273cb34b964609a59e4f7f62afe5fd7182c19b3beba9a30a8118d`), `browser-firefox.txt` (SHA-256 `3fd9ad2a46c04e7635f54bdd0b8b1030c8947cad435a6a656324e770c2895c69`), `upgrade-proof.txt` (SHA-256 `85c9412640b03d549da1b06f2cccc18f67df8294a37cf098d05a504c583df3cf`), `frontend-verify.txt` và `frontend-recovery-demo.txt`.
 
 ### BE-07
 
 **Hoàn thành luồng sản phẩm thật đầu tiên** · T019
 
-- [ ] Nối `getDashboard` với một bộ tổng hợp và hợp đồng phản hồi giữ đến BE-20. Dùng hai shop thử từ BE-03. Thể hiện khả năng chưa cấu hình bằng trạng thái bot, dữ liệu tiền nullable và cảnh báo mà OpenAPI cho phép. BE-20 nối số liệu nghiệp vụ từ nguồn sở hữu. Nối `listCategories`, `listProducts`, `createProduct`, `getProduct` cho R09–R11 và thêm seed danh mục tối thiểu. P0 tạo và đọc SKU cơ bản, ảnh và chỉnh sửa thuộc BE-08.
-- [ ] Viết kiểm thử HTTP với PostgreSQL và kiểm từ trình duyệt ở `dev:live`. Đăng nhập, chọn shop, tạo một SKU, mở trang chi tiết và tải lại danh sách sau khi khởi động lại API. Kiểm cả hai đường đọc ID và danh sách.
-- [ ] Kiểm chứng quyền đọc mà thiếu quyền tạo, SKU trùng theo phạm vi shop và dữ liệu rỗng. Kiểm mất phản hồi sau khi tạo SKU, tra lại theo BE-06 và đối chiếu DB chỉ có một bản ghi. Shell hiện mở SSE khi vào shop. Ghi cảnh báo mất cập nhật trực tiếp của P0 và xác nhận tải lại vẫn đọc DB chính xác. BE-10 nghiệm thu luồng SSE thật. Ghi commit, lệnh và kết quả vào nhật ký trước khi đóng P0.
+- [x] Nối `getDashboard` với bộ tổng hợp và hợp đồng phản hồi để mở rộng ở BE-20. Nối `listCategories`, `listProducts`, `createProduct`, `getProduct`, seed danh mục và đăng ký chính sách nguồn `createProduct` cho tra cứu command. Ảnh và chỉnh sửa thuộc BE-08.
+- [x] Kiểm HTTP bằng PostgreSQL và trình duyệt `dev:live`. Đăng nhập, chọn shop, tạo SKU, mở chi tiết và kiểm lại danh sách lẫn chi tiết sau khi khởi động lại API.
+- [x] Kiểm quyền đọc và ghi, SKU trùng theo shop, danh sách rỗng và mất phản hồi sau commit. Xác nhận cảnh báo khi SSE chưa có và tải lại vẫn đọc được dữ liệu PostgreSQL.
+
+#### Kết quả kiểm BE-07
+
+| Phạm vi | Bằng chứng ngày 21/11/2026 |
+|---|---|
+| P0-08 · Browser live | Firefox qua HTTPS chạy R01 → R02 → R04 → R09 → R10 → R11. Tổng quan 200, chọn được danh mục từ API, tạo SKU 201, đọc được cùng sản phẩm qua danh sách và chi tiết sau restart API. Giao diện hiển thị cảnh báo mất cập nhật trực tiếp của P0. [Ca trình duyệt](tests/integration/catalog/browser-cases.mjs) |
+| P0-07 · Mất phản hồi SKU | API commit rồi phản hồi tạo SKU bị chặn trước trình duyệt. Tải lại tab và tra theo khóa đối chiếu nhận `succeeded` cùng ID sản phẩm. DB có đúng một sản phẩm, biến thể, command, audit và outbox. |
+| P0-09 · Quyền và dữ liệu | Viewer đọc được nhưng POST trả 403. SKU không phân biệt hoa thường khi kiểm trùng trong một shop. Hai yêu cầu tranh cùng SKU trong shop trả 201 và 409, cùng SKU ở hai shop hợp lệ. Tra ID hoặc gắn danh mục ngoài shop bị từ chối. Bộ lọc và cursor áp dụng trước phân trang. Giá lưu và đọc dạng thập phân chính xác. [Ca HTTP](tests/integration/catalog/catalog.test.mjs) |
+| Tổng quan | Trả bot `unconfigured`, tài chính `null` và cảnh báo nguồn chỉ số chưa kết nối. Số liệu theo nguồn nghiệp vụ thuộc BE-20. |
+| Migration và hồi quy | Đạt trên PostgreSQL 18.7 từ DB trống và bản sao BE-06, không có drift Prisma. Seed chạy lại giữ nguyên danh mục. Backend `verify` 20/20, PostgreSQL 6/6, OIDC 9/9, workspace 9/9, catalog 4/4 và hai ca Firefox live đạt. Ma trận có 20 operation sản phẩm và 2 route vận hành. Workflow dùng bộ ca HTTP catalog qua script PostgreSQL. [Migration](apps/api/prisma/migrations/20261121000600_be07_product_catalog/migration.sql) |
+
+BE-07 đạt 3/3 mục cục bộ trên `main@c873f1eb` cùng thay đổi BE-03–BE-07. Log ở `test-results/backend/be07/`, gồm `catalog-browser.txt` (SHA-256 `b599d77c221d31106339b2a6deb76d5208d78ffeb637089e12a0684fb1030cd8`), `catalog-api.txt` (SHA-256 `9a1c75da976324b253e13973c4ae75ec5e4753e175f6981ba84b4369422a76f7`) và `upgrade.txt` (SHA-256 `3e07f6e4701db4985294296d7fb43a64c011ac6248bffa04ab19379126d639d3`).
 
 ## P1 Luồng bán hàng và vận hành cốt lõi
 
@@ -303,42 +388,99 @@ Kiểm ma trận là một phần của CI backend từ BE-02. Báo cáo cho bi�
 
 **Dựng worker và realtime** · T017
 
-- [ ] Tạo worker BullMQ/Redis dùng cùng tầng nghiệp vụ với API. Đọc intent và outbox từ BE-06, ghi lease và lần thử cho cùng định danh. Dùng chung trạng thái command và cách đối chiếu từ BE-06. Đảm bảo replay không tạo command hoặc bút toán mới cho cùng intent.
-- [ ] Triển khai SSE `text/event-stream` cho `onmessage` của frontend. Mỗi thông báo có `data` theo schema và trường `id` để nối lại theo `Last-Event-ID`. Phát lại theo thứ tự trong đúng phạm vi shop. Khi thiếu đoạn lịch sử, dùng cơ chế resync theo hợp đồng. Kiểm quyền lúc mở, nối lại và khi quyền bị thu hồi trên stream đang mở. Thêm health và độ trễ hàng đợi. [Frontend SSE](../BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx) · [Chuẩn SSE](https://html.spec.whatwg.org/multipage/server-sent-events.html#the-last-event-id-header)
-- [ ] Kiểm chứng restart worker, mất Redis rồi phát lại từ DB, lặp sự kiện, ngắt giữa hai sự kiện, nối theo đúng ID, ID của shop khác, lịch sử hết hạn và thu hồi quyền trên stream đang mở. Kiểm retry giới hạn và tác vụ chưa rõ kết quả.
+- [x] Worker BullMQ/Redis chạy trên outbox và job bền vững trong PostgreSQL. Dùng lease và số lần thử theo ID. Dùng chung ledger command và tra cứu hiện hành. Gắn API `listJobs` và `getJob` cho mốc kế tiếp.
+- [x] SSE `text/event-stream` dùng schema chuẩn cho `onmessage`, phát lại theo shop bằng `Last-Event-ID` và yêu cầu tải lại khi cursor ngoài cửa sổ phát lại. Kiểm phiên, membership và quyền nguồn trong stream. Worker báo trạng thái và độ trễ outbox. [Frontend SSE](../BotSalesAI_Frontend/apps/web/src/app/ScopeEvents.tsx) · [Chuẩn SSE](https://html.spec.whatwg.org/multipage/server-sent-events.html#the-last-event-id-header)
+- [x] Kiểm restart worker, mất Redis thật, phát lại từ DB, nối lại sau ngắt, cursor khác shop, lịch sử hết hạn, thu hồi quyền và giới hạn retry. Kiểm kết quả chưa rõ với nhà cung cấp tổng hợp.
+
+#### Kết quả kiểm BE-10
+
+| Phạm vi | Bằng chứng ngày 21/11/2026 |
+|---|---|
+| Outbox và Redis | PostgreSQL giữ trạng thái xuất bản, lease và sequence tăng trong shop. BullMQ dùng định danh ổn định. Khi dừng Redis, API vẫn commit command và outbox ở DB. Khởi động Redis trống, worker đang chạy nối lại và phát đúng một sự kiện. Sự kiện lỗi bị loại khỏi hàng chờ sau 3 lần. |
+| SSE | Bộ ca 3/3 đạt HTTP, schema, thứ tự phát lại, sai shop, cursor hết hạn và thu hồi quyền trên stream đang mở. Cửa sổ phát lại thử là 24 giờ. Firefox qua HTTPS nhận `command.updated` của SKU thật bằng `EventSource.onmessage` và hồi quy luồng SKU vẫn đạt. [Bộ ca SSE](tests/integration/workers/events.test.mjs) · [Ca Firefox](tests/integration/catalog/browser-cases.mjs) |
+| Worker và job | Bộ ca 2/2 đạt job đến hạn, dừng tiến trình trước tác động, thay hàng đợi rỗng rồi khôi phục từ DB. Job dùng `dueAt` dạng timestamp UTC do nguồn nghiệp vụ tính. Dừng tiến trình sau khi adapter thử báo nhận để lại command `unknown` và job `awaiting_confirmation`, giữ số lần chạy ở 1. Kiểm dừng mềm của worker sau khi xử lý. [Bộ ca job](tests/integration/workers/jobs.test.mjs) |
+| Truy cập | `listJobs`, `getJob` và command gắn job kiểm đúng người tạo, shop, `jobs.read` và quyền nguồn hiện hành. API chỉ trả trường công khai và tham chiếu tối thiểu. Bộ xử lý nhập sản phẩm thật được nối ở BE-08 qua cùng worker. |
+| Migration và hồi quy | Áp dụng 8 migration từ DB trống và nâng cấp bản sao BE-07. Giữ sản phẩm, SKU, command, audit và trạng thái outbox; Prisma không báo drift. Backend `verify` 20/20, PostgreSQL 6/6, OIDC 9/9, workspace 9/9, catalog 4/4, SSE 3/3, job 2/2 và hai ca Firefox live đạt. Có 23 operation sản phẩm và 2 route vận hành. Script CI đã gọi các bộ worker. GitHub Actions được đối chiếu khi đợt 1 lên PR. |
+
+BE-10 đạt 3/3 mục cục bộ trên `main@c873f1eb` cùng thay đổi BE-03–BE-07 và BE-10. Log ở `test-results/backend/be10/`, gồm `events.txt` (SHA-256 `a797fd5dc772926db4f0f686128554a46fe2fad66d21d194a324680a3442d8b4`), `jobs.txt` (SHA-256 `285c9c8a275172fd6d643165776ef0600b74c2554f7228137aaad5649f024096`), `redis-recovery.txt` (SHA-256 `59945f6f2818e599583691e7a71cf95d9ef06612b85aa7c61c8b6a428c289d30`) và `catalog-browser.txt`.
 
 ### BE-08
 
 **Hoàn thiện danh mục và khách hàng** · T020–T021
 
-- [ ] Hoàn thiện biến thể, SKU, giá, danh mục, tra cứu khách và CRUD địa chỉ giao hàng. Lưu nguồn định danh khách theo phạm vi shop và kênh. Tạo snapshot địa chỉ để dùng trong báo giá và giao hàng.
-- [ ] Nối ảnh, upload và import theo contract. `uploadFile` và `getFile` dùng một pipeline metadata, kiểm loại/kích thước, cách ly và quyền tải. Ảnh và import catalog dùng policy theo mục đích. R13–R14 đọc trạng thái qua `listJobs` và `getJob` của BE-10. Import có bước xem trước, lỗi từng dòng và commit chống lặp qua cùng quy tắc của catalog.
-- [ ] Kiểm chứng phân trang và tìm kiếm trên dữ liệu vượt một trang, tệp sai quyền, dòng nhập trùng và thay đổi địa chỉ sau khi đã lưu snapshot. Chạy R13 → R14 qua `dev:live` gồm xem trước, tra job và commit một lần.
+- [x] Hoàn thiện biến thể, SKU, giá, danh mục, tra cứu khách và CRUD địa chỉ giao hàng. Lưu nguồn định danh khách theo phạm vi shop và kênh. Tạo snapshot địa chỉ để dùng trong báo giá và giao hàng.
+- [x] Nối ảnh, upload và import theo contract. `uploadFile` và `getFile` dùng một pipeline metadata, kiểm loại/kích thước, cách ly và quyền tải. Ảnh và import catalog dùng policy theo mục đích. R13–R14 đọc trạng thái qua `listJobs` và `getJob` của BE-10. Import có bước xem trước, lỗi từng dòng và commit chống lặp qua cùng quy tắc của catalog.
+- [x] Kiểm chứng phân trang và tìm kiếm trên dữ liệu vượt một trang, tệp sai quyền, dòng nhập trùng và thay đổi địa chỉ sau khi đã lưu snapshot. Chạy R13 → R14 qua `dev:live` gồm xem trước, tra job và commit một lần.
+
+#### Kết quả kiểm BE-08
+
+| Phạm vi | Kết quả trên fixture |
+| --- | --- |
+| Catalog và khách hàng | 7/7 ca catalog và 3/3 ca customers đạt. Khóa SKU theo shop, giá decimal, sửa biến thể giữ ID, soft archive, `If-Match`, cây danh mục không chu trình và phân trang ổn định. Định danh khách theo kênh không gộp nhầm. Địa chỉ giữ bản chụp lịch sử và cấm đọc hoặc ghi trường đã che. |
+| Tệp | PNG, JPEG và WebP qua kiểm MIME và decode. CSV UTF-8 và XLSX giới hạn 5 MB và 1.000 dòng dữ liệu. Tệp sai cấu trúc được cách ly theo metadata. URL đọc ký trong 5 phút, ràng buộc chủ thể và kiểm lại quyền hiện hành. Blob lưu trong PostgreSQL ở môi trường thử. Bộ điều hợp kho đối tượng và quét tệp staging thuộc BE-22. |
+| Import và phục hồi | 3/3 ca import qua PostgreSQL, Redis và worker. CSV ghi dòng hợp lệ và giữ lỗi từng dòng. XLSX giữ giá decimal chính xác. Token dùng một lần trong 30 phút, gắn với shop, chủ thể và phiên bản catalog. Gửi lại cùng intent trả về cùng job, tra command được sau mất phản hồi và audit ghi một lần. |
+| Frontend live | Firefox qua HTTPS xác nhận R13 → R14 từ upload CSV đến kết quả nhập một phần, có một SKU hợp lệ. R13 chọn được XLSX và báo rõ tệp bị máy chủ cách ly. Kiểm bố cục 1440 và 390 px. Frontend `verify` đạt, gồm 280 ca Vitest và gate S17. Native zoom và trình đọc màn hình chưa có bằng chứng mới cho lượt này. |
+| Migration và hồi quy | 11 migration áp dụng từ PostgreSQL 18.7 trống và từ bản sao BE-10. Prisma diff xác nhận hai database khớp schema. Backend `verify` 20/20, PostgreSQL 6/6, OIDC 9/9, workspace 9/9, SSE 3/3, jobs 2/2. Ma trận đối chiếu 46 operation sản phẩm và 2 route vận hành. Firefox kiểm lại ca BE-06 mất phản hồi sau commit, có đúng một lần ghi membership, command, audit và outbox. |
+
+Bằng chứng tại `test-results/backend/be08/`. Log `fresh-verify.txt` có SHA-256 `8dd0bac31c29e88c5d7366f512c1e01abb86ac901108660c18378c65c37cb13b`, `fresh-test-imports.txt` có SHA-256 `50af364389c8d7f907dc79ad2e90b673dd8a29ae12d44a3a729caa65cf5f157d` và `fresh-test-imports-browser.txt` có SHA-256 `3c2596470673545332f80bbf97068d719b3cb5b2fe2b58d1ea1c4d882e3ddf29`. BE-09 nối điều kiện tồn và giữ hàng khi lưu trữ biến thể. BE-11 nối dòng đơn, bản chụp địa chỉ và liên kết yêu cầu sau bán với đơn. CI GitHub của mốc đi cùng đợt 1.
 
 ### BE-09
 
 **Xây sổ kho và giữ hàng** · T022–T023
 
-- [ ] Tạo kho, vị trí tồn, lịch sử biến động và projection `listStockSnapshots`. Phân biệt tồn thực, giữ hàng, khả dụng và hàng đang đi. Ràng buộc không âm ở tầng ghi và kiểm theo một nguồn dữ liệu. Kiểm sổ trên fixture PostgreSQL. `createInventoryAdjustment` mở ở BE-12 cùng phần ghi đối ứng, dùng lại cổng ghi của Inventory.
-- [ ] Xây tạo, giải phóng, tiêu thụ giữ hàng trong transaction theo SKU và kho. Cung cấp use case hết hạn để BE-10 có thể gọi khi BE-11 nối luồng đơn.
-- [ ] Kiểm chứng tranh mua SKU cuối, đặt nhiều SKU rồi rollback khi một SKU thiếu, giải phóng và tiêu thụ đúng một lần. Kiểm đối chiếu tồn hiện tại với sổ biến động.
+- [x] Tạo kho, vị trí tồn, lịch sử biến động và projection `listStockSnapshots`. Phân biệt tồn thực, giữ hàng, khả dụng và hàng đang đi. Ràng buộc không âm ở tầng ghi và kiểm theo một nguồn dữ liệu. Kiểm sổ trên fixture PostgreSQL. `createInventoryAdjustment` mở ở BE-12 cùng phần ghi đối ứng, dùng lại cổng ghi của Inventory.
+- [x] Xây tạo, giải phóng, tiêu thụ giữ hàng trong transaction theo SKU và kho. Dùng projection cùng giao dịch để chặn lưu trữ biến thể còn tồn hoặc còn giữ hàng. Cung cấp use case hết hạn để BE-10 có thể gọi khi BE-11 nối luồng đơn.
+- [x] Kiểm chứng tranh mua SKU cuối, đặt nhiều SKU rồi rollback khi một SKU thiếu, giải phóng và tiêu thụ đúng một lần. Kiểm đối chiếu tồn hiện tại với sổ biến động.
+
+#### Kết quả kiểm BE-09
+
+| Phạm vi | Kết quả trên fixture |
+| --- | --- |
+| Tồn và sổ biến động | `listStockSnapshots` và `listStockMovements` áp dụng bộ lọc trước cursor. Tồn khả dụng bằng tồn có thể bán trừ lượng giữ. Hàng cách ly, đang giao và đang về theo dõi riêng. Giá vốn che theo `finance.read`. PostgreSQL chặn tồn âm, giữ vượt tồn và sửa lịch sử bằng role runtime. |
+| Cạnh tranh và phục hồi | 100 yêu cầu giữ SKU còn một đơn vị có 1 thành công và 99 conflict. Lỗi khóa dòng retry có giới hạn. Thiếu một SKU rollback toàn bộ. Nhận lại cùng intent, giải phóng, tiêu thụ và hết hạn giữ hàng đều kiểm một lần ghi. Tổng số lượng và giá trị đối chiếu với movement. |
+| Kho và catalog | Tạo, đọc, sửa và lưu trữ kho theo shop, quyền, phiên bản và audit. Chặn kho mặc định, kho/biến thể còn hàng và race giữa nhập kho với lưu trữ kho. Worker phát metadata `warehouse.updated` theo quyền đọc kho. |
+| Browser và hồi quy | Firefox qua HTTPS đạt R55 tạo/sửa/ngừng dùng kho, R15 tồn, R16 lịch sử. `verify` 20/20, inventory 6/6, catalog 7/7, import 3/3, SSE 4/4 và jobs 2/2. Có 53 operation sản phẩm và 2 route vận hành. Prisma diff khớp sau migration thứ 12 từ DB trống và DB đã có dữ liệu BE-08. |
+
+Bằng chứng tại `test-results/backend/be09/`. SHA-256 của `test-inventory.txt` là `e46cd2bfeaee42188689917e4c779e659a02e8efbb1a06a4c93982ba6ca160dd`, của `browser.txt` là `f5d50b077307aa5f0f13183adc91db59247e4d8d245007b1da9b57e2141300d8`. BE-11 nối giữ hàng và mở/đóng nghiệp vụ đơn trong cùng giao dịch. Khi bổ sung đơn, giao hàng, chuyển kho và mua, module tương ứng phải dùng khóa kho chung và mở rộng phép kiểm nghiệp vụ còn mở trước khi lưu trữ kho. BE-12 nối endpoint điều chỉnh và bút toán đối ứng. CI GitHub đi cùng đợt 1.
 
 ### BE-11
 
 **Chốt luồng đơn hàng, biểu phí giao R62 và đọc ưu đãi** · T024–T026
 
-- [ ] Nối đơn nháp, báo giá, bằng chứng khách xác nhận và chốt đơn. API tính giá, phí và thời hạn qua cùng pipeline định giá cho nháp, báo giá và kiểm khi chốt. Dùng snapshot `unitPrice`, `discount`, `lineTotal` của `OrderLine` từ đầu, với số giảm bằng 0 khi không có ưu đãi. Gắn báo giá với khách, phiên bản, nội dung và thời hạn hiệu lực.
-- [ ] Chốt quy tắc độ chính xác, làm tròn và phân bổ phần dư cho giá, giảm giá, hoàn và giá vốn trước migration liên quan. Thêm [bộ ca phân bổ dùng chung](#ca-đối-chứng-phân-bổ-từng-phần), dùng lại ở BE-12–BE-17.
-- [ ] Nối biểu phí R62 theo khu vực, lưu phí dự kiến trong snapshot và tách phí thực tế. Gắn chốt đơn, giữ tồn, audit và outbox vào một transaction. Nối tác vụ hết hạn. Triển khai `listPromotions` của Catalog ngay vì R18 đọc khi người dùng có quyền catalog. Query đọc dữ liệu thật, lọc quyền và hiệu lực theo shop trước cursor. Môi trường P1 của luồng bán dùng shop chưa có combo hoạt động. BE-14 nối điều kiện áp dụng và vòng đời combo trên cùng nguồn dữ liệu.
-- [ ] Kiểm chứng R18–R19 qua `dev:live`. Tạo bằng chứng khách tổng hợp gắn với báo giá đã lưu, qua mô hình tin nhắn/định danh dùng lại ở BE-18 trên DB thử. Kiểm thiếu hoặc sai `sourceMessageId`, xác nhận không còn hiệu lực, tranh SKU cuối, retry khi timeout, phí dự kiến và danh sách ưu đãi rỗng hợp lệ. Kiểm `listPromotions` bằng fixture riêng có combo hiệu lực, hết hạn và khác shop. Chỉ bật áp dụng ưu đãi khi BE-14 đạt, kể cả với yêu cầu API có `promotionId` gửi trực tiếp. Chỉ mở xác nhận bằng tin thật khi nguồn tiếp nhận tương ứng đã được kiểm.
+- [x] Nối đơn nháp, báo giá, bằng chứng khách xác nhận và chốt đơn. API tính giá, phí và thời hạn qua cùng pipeline định giá cho nháp, báo giá và kiểm khi chốt. Dùng snapshot `unitPrice`, `discount`, `lineTotal` của `OrderLine` từ đầu, với số giảm bằng 0 khi không có ưu đãi. Gắn báo giá với khách, phiên bản, nội dung và thời hạn hiệu lực.
+- [x] Chốt quy tắc độ chính xác, làm tròn và phân bổ phần dư cho giá, giảm giá, hoàn và giá vốn trước migration liên quan. Thêm [bộ ca phân bổ dùng chung](#ca-đối-chứng-phân-bổ-từng-phần), dùng lại ở BE-12–BE-17.
+- [x] Nối biểu phí R62 theo khu vực, lưu phí dự kiến trong snapshot và tách phí thực tế. Gắn chốt đơn, giữ tồn, audit và outbox vào một transaction. Nối tác vụ hết hạn. Triển khai `listPromotions` của Catalog ngay vì R18 đọc khi người dùng có quyền catalog. Query đọc dữ liệu thật, lọc quyền và hiệu lực theo shop trước cursor. Môi trường P1 của luồng bán dùng shop chưa có combo hoạt động. BE-14 nối điều kiện áp dụng và vòng đời combo trên cùng nguồn dữ liệu.
+- [x] Kiểm chứng R18–R19 qua `dev:live`. Tạo bằng chứng khách tổng hợp gắn với báo giá đã lưu, qua mô hình tin nhắn/định danh dùng lại ở BE-18 trên DB thử. Kiểm thiếu hoặc sai `sourceMessageId`, xác nhận không còn hiệu lực, tranh SKU cuối, retry khi timeout, phí dự kiến và danh sách ưu đãi rỗng hợp lệ. Kiểm `listPromotions` bằng fixture riêng có combo hiệu lực, hết hạn và khác shop. Chỉ bật áp dụng ưu đãi khi BE-14 đạt, kể cả với yêu cầu API có `promotionId` gửi trực tiếp. Chỉ mở xác nhận bằng tin thật khi nguồn tiếp nhận tương ứng đã được kiểm.
+
+#### Kết quả kiểm BE-11
+
+| Phạm vi | Kết quả trên fixture |
+| --- | --- |
+| Đơn và báo giá | Dùng giá SKU hiện hành, decimal đến 18 chữ số lẻ và snapshot dòng đơn. Báo giá thử hiệu lực 15 phút, hash gắn khách, dòng, địa chỉ, phí và phiên bản. Giá, địa chỉ hoặc biểu phí đổi làm báo giá cũ không còn hiệu lực. Sau chốt, sửa địa chỉ hiện tại giữ nguyên snapshot. |
+| Chốt và giữ hàng | Tin tổng hợp đúng shop, hội thoại, định danh, báo giá và thời điểm mới được ghi nhận. Hai đơn tranh đơn vị cuối cho một lệnh thành công. Tra intent khôi phục kết quả một lần. Giữ hàng thử cho COD là 24 giờ. Worker chuyển đơn chưa thu tiền và đang giữ sang hủy cùng giao dịch giải phóng khi hết hạn. |
+| R18–R19 và R62 | Firefox HTTPS đạt chọn khách, hội thoại và địa chỉ, tạo nháp, báo giá có phí dự kiến, nhập bằng chứng và chốt COD. `listConversations` mở phần đọc chọn hội thoại trên nguồn sẽ dùng tiếp ở BE-18. `listPromotions` kiểm hiệu lực/trùng scope trước cursor. Áp dụng combo thuộc BE-14. |
+| Migration và hồi quy | 15 migration áp dụng từ DB trống và DB có dữ liệu trước mốc. Prisma diff khớp ở hai DB. `verify` 22/22, orders 5/5, inventory 6/6, customers 3/3, catalog 7/7, imports 3/3, SSE 4/4 và jobs 2/2. Có 65 operation sản phẩm và 2 route vận hành. |
+
+Log tại `test-results/backend/be11/`. SHA-256 của `verify.txt` là `02a72b8fc139df248aaeaa5559394bd45b6cd8bc2a1480d33b92e5a0206a9c5a`, của `test-orders.txt` là `405a7a6fdc140de53970618ee22e81822a9fb3af962953a58a5eda8f107f0f6a` và của `browser.txt` là `38062dc8b3c58a177144a8c4d4ff4ecf1de1f5b24002764271ce4a427db83a5a`. Log tích hợp có cảnh báo deprecation từ Prisma PostgreSQL adapter khi chuẩn bị nâng `pg` lên 9. Kiểm tiền trả trước ở BE-12, luồng chuẩn bị/giao ở BE-13 và nguồn tin nhắn thật ở BE-18/BE-22.
 
 ### BE-12
 
 **Dựng thu tiền, COD, sổ kép cơ sở và điều chỉnh kho** · T027–T030
 
-- [ ] Thực hiện ghi nhận tiền, bằng chứng thu, COD và số còn phải thu. Phân biệt xác minh ảnh, tiền khách trả hãng và tiền đã được quyết toán về shop.
-- [ ] Tạo tài khoản, bút toán cân bằng, nguồn chống trùng và cơ chế khóa kỳ dùng chung với BE-17. Dùng số thập phân chính xác trong DB và chuỗi thập phân trên API. Ghi sửa sai bằng bút toán đảo theo quyền và chính sách kỳ. Triển khai `createInventoryAdjustment` cùng cổng ghi Inventory của BE-09 và đối ứng Finance khi phát sinh giá trị.
-- [ ] Kiểm chứng với [ca nghiệp vụ tài chính chuẩn](../botsales-kit/docs/10_TESTING_ACCEPTANCE.md#golden-business-fixtures), gồm thu từng phần, trùng chứng từ, từ chối ghi kỳ khóa, đúng currency và rollback khi ghi đối ứng điều chỉnh kho thất bại. Thử nghiệm dùng dữ liệu tổng hợp.
+- [x] Thực hiện ghi nhận tiền, bằng chứng thu, COD và số còn phải thu. Phân biệt xác minh ảnh, tiền khách trả hãng và tiền đã được quyết toán về shop.
+- [x] Tạo tài khoản, bút toán cân bằng, nguồn chống trùng và cơ chế khóa kỳ dùng chung với BE-17. Dùng số thập phân chính xác trong DB và chuỗi thập phân trên API. Ghi sửa sai bằng bút toán đảo theo quyền và chính sách kỳ. Triển khai `createInventoryAdjustment` cùng cổng ghi Inventory của BE-09 và đối ứng Finance khi phát sinh giá trị.
+- [x] Kiểm chứng các bước tài chính thuộc phạm vi BE-12 trong [ca nghiệp vụ tài chính chuẩn](../botsales-kit/docs/10_TESTING_ACCEPTANCE.md#golden-business-fixtures). Đạt thu từng phần, trùng chứng từ, từ chối ghi kỳ khóa, đúng currency và rollback khi ghi đối ứng điều chỉnh kho thất bại. Thử nghiệm dùng dữ liệu tổng hợp.
+
+#### Kết quả kiểm BE-12
+
+| Phạm vi | Kết quả trên fixture |
+| --- | --- |
+| Thu, hoàn và COD | Đơn trả trước cần bằng chứng đã xác minh đúng shop, đơn, nguồn và số tiền. Sum theo chuỗi thập phân giữ đủ số đã trả, đã hoàn và còn phải thu. Lặp bằng chứng bị chặn. COD đã thu qua hãng có trạng thái riêng và chưa làm tăng tiền đã về shop. Thu/hoàn chỉ ghi nhận chứng từ đã có. |
+| Sổ kép và kỳ | Tài khoản và kỳ theo quyền. Bút toán chặn mất cân bằng và sửa lịch sử sau ghi. Phép đảo có chứng từ và liên kết gốc. Ledger tính số đầu kỳ, cuối kỳ và tổng Nợ/Có trên toàn cửa sổ, sau đó phân trang dòng. Mở sổ khớp tồn với giá trị tài khoản hàng tồn kho và ghi một lần. |
+| Điều chỉnh kho | Tồn, giá trị, bút toán, audit và biên nhận command cùng transaction. Ca thiếu tài khoản đối ứng rollback cả stock movement và số tồn. Kiểm kỳ khóa, phiên bản cũ, tiền sai và tài khoản khác shop. |
+| Hồi quy và browser | PostgreSQL 18.7 đạt migration từ DB trống và nâng cấp DB có dữ liệu. Prisma diff khớp sau 17 migration. `verify` 22/22 và ma trận 93 operation sản phẩm, 2 route vận hành. Finance 4/4, orders 5/5, inventory 6/6, customers 3/3, catalog 7/7, imports 3/3, SSE 4/4 và jobs 2/2. Firefox HTTPS đạt điều chỉnh R15, ghi khoản thu R19 và xem bút toán R48. |
+
+Log tại `test-results/backend/be12/`. SHA-256 của `verify.txt` là `0933e2407e1a75e277d0cd4ec3b3712314ae5e72992403e6f2dfa214d24b72b0`, của `test-finance.txt` là `56b939b234df4a396604bcc73be524034e8069e81834019ea289a31cfd5adb92` và của `browser.txt` là `fdac4e5cb52715a546d79737e3c1fa8c28766654c53c8eebeae73c851035d15d`. Quyết toán COD, đối soát ngân hàng và thao tác khóa/mở kỳ nối ở BE-17. Các khoản thu/hoàn kiểm trên chứng từ tổng hợp. CI GitHub sẽ được đối chiếu khi có PR đợt 1.
 
 ### BE-13
 
@@ -468,11 +610,11 @@ Trước khi code mỗi operation hoặc tác vụ, ghi mã BE, module sở hữ
 
 Mỗi bất biến có ca đối chứng chính ở module sở hữu. Các bên gọi lại dùng fixture và kỳ vọng chuẩn, bổ sung ca riêng cho phần chúng chịu trách nhiệm như mapping HTTP, quyền khi thực thi worker hoặc UI xử lý trạng thái. Khi hai ca chứng minh cùng hành vi ở cùng lớp kiểm, gom dữ liệu thành các trường hợp có tham số. Cố định thời gian trong fixture khi kiểm phiên, báo giá, hạn mức và kỳ. Với kiểm cạnh tranh, dùng điểm đồng bộ để hai yêu cầu thực sự giao nhau.
 
-Khi đóng việc, ghi mã test hoặc vị trí suite, kết quả, commit, baseline hợp đồng và môi trường. Review toàn bộ diff để đối chiếu handler, chính sách và nguồn dữ liệu đã dùng lại. Các ca bỏ qua hoặc chưa chạy thuộc trạng thái đang mở của chính đầu việc.
+Khi đóng việc, ghi mã test hoặc vị trí suite, kết quả, phiên bản mã nguồn, baseline hợp đồng và môi trường. Review toàn bộ diff để đối chiếu handler, chính sách và nguồn dữ liệu đã dùng lại. Các ca bỏ qua hoặc chưa chạy thuộc trạng thái đang mở của chính đầu việc.
 
 ### Ca đối chứng phân bổ từng phần
 
-Dùng chung fixture tổng hợp cho BE-11–BE-17. Ví dụ chia tổng 100 đơn vị tiền cho ba phần bằng nhau. Chốt trước cách phần dư được gán vào các phần theo chính sách và thứ tự đã chọn. Cùng đầu vào phải cho cùng kết quả. So sánh theo đơn vị tiền chính xác và currency của nguồn.
+Dùng chung fixture tổng hợp cho BE-11–BE-17. Giá và tổng nội bộ lưu đến 18 chữ số thập phân. Giữ số chính xác khi nhân số lượng và cộng dòng. Phân bổ theo thứ tự nguồn ổn định bằng chênh lệch giá trị cộng dồn đã làm tròn half-even ở độ chính xác của nguồn. Phần cuối nhận đúng phần còn lại để bảo toàn tổng. Ví dụ 100 đơn vị tiền chia ba phần ở độ chính xác 0 chữ số cho `33, 34, 33`. Cổng nghiệp vụ của chứng từ cung cấp độ chính xác và currency đã chốt. [Hàm tính tiền](apps/api/src/platform/money/index.ts) · [Ca đối chứng](tests/money.test.mjs)
 
 | Luồng | Bất biến cần chứng minh |
 |---|---|
@@ -571,6 +713,18 @@ Thêm một dòng khi chuyển trạng thái hoặc có kết quả kiểm mới
 | 21/11/2026 | BE-01 | Đã kiểm chứng | `main@e22bb99d` | 5/5 mục, kiểm preflight Nest/Prisma/PostgreSQL 18.7 và Firefox HTTPS/OIDC, chốt 10 ca P0. [Bằng chứng](#bằng-chứng-kiểm-môi-trường-be-01) | BE-02 dựng workspace, kiểm checkout sạch và ma trận. |
 | 21/11/2026 | BE-02 | Đang thực hiện | Snapshot kiểm cục bộ `68313db3` | Checkout sạch, lockfile ổn định, 17/17 ca, HTTP 200/400 và fail đúng khi ma trận thiếu operation. [Kết quả](#kết-quả-kiểm-be-02) | Xác nhận CI backend trên GitHub trước khi đóng BE-02. |
 | 21/11/2026 | BE-02 · T007–T009 | Đã kiểm chứng | [PR #29](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/29) · `main@859fed45` | 5/5 mục. CI trước và sau merge đều đạt 27/27 job. Báo cáo ma trận khớp SHA checkout và SHA-256 artifact. [Kết quả](#kết-quả-kiểm-be-02) | BE-03 dựng PostgreSQL, migration và seed hai shop. |
+| 21/11/2026 | BE-03 · T013 | Đã kiểm chứng | `main@c873f1eb` + thay đổi BE-03 cục bộ | 3/3 mục. PostgreSQL 18.7 trống migrate, seed replay giữ dữ liệu, cô lập hai shop và readiness phục hồi sau restart. 19/19 ca nền và 6/6 ca DB đạt. [Kết quả](#kết-quả-kiểm-be-03) | BE-04 nối OIDC thử nghiệm và phiên. |
+| 21/11/2026 | — | Cập nhật kế hoạch v1.8 | Thay đổi cục bộ | Gom khoảng 10 việc đã kiểm chứng thành một commit. Giữ kết quả từng việc trong tracker và kiểm CI theo SHA ở cấp nhóm. [Commit theo nhóm](#commit-theo-nhóm) | Đợt 1 có BE-03 đã kiểm chứng. Tiếp tục BE-04. |
+| 21/11/2026 | BE-04 · T014 | Đã kiểm chứng | `main@c873f1eb` + thay đổi cục bộ | 3/3 mục. Firefox qua HTTPS đạt callback, refresh và logout. 20/20 ca nền, 6/6 ca DB và 6/6 ca OIDC. [Kết quả](#kết-quả-kiểm-be-04) | Đợt 1 đạt 2/10. Tiếp tục BE-05. |
+| 21/11/2026 | BE-05 · T015, T018 | Đang thực hiện | `main@c873f1eb` + thay đổi cục bộ | P0-05 đạt. Chọn shop, xem và thu hồi thành viên được kiểm trên HTTP và Firefox. Bộ workspace 5/5. [Kết quả](#kết-quả-kiểm-be-05) | Hoàn tất mời thành viên và đổi vai trò ở R32 trước khi chốt BE-05. |
+| 21/11/2026 | BE-05 · T015, T018 | Đã kiểm chứng cục bộ | `main@c873f1eb` + thay đổi cục bộ | 4/4 mục. R32 mời và đổi vai trò đạt API, PostgreSQL, OIDC và Firefox qua HTTPS. [Kết quả](#kết-quả-kiểm-be-05) | Đợt 1 đạt 3/10. Tiếp tục BE-06. |
+| 21/11/2026 | BE-06 · T016 | Đã kiểm chứng cục bộ | `main@c873f1eb` + thay đổi cục bộ | 3/3 mục. P0-06 đạt ghi đúng một lần và rollback. P0-07 đạt mất phản hồi sau commit, tải lại và đối chiếu qua Firefox. [Kết quả](#kết-quả-kiểm-be-06) | Đợt 1 đạt 4/10. Tiếp tục BE-07. |
+| 21/11/2026 | BE-07 · T019 | Đã kiểm chứng cục bộ | `main@c873f1eb` + thay đổi cục bộ | 3/3 mục. Tạo và đọc SKU sau restart API, phục hồi khi mất phản hồi, kiểm quyền và SKU trùng theo shop. [Kết quả](#kết-quả-kiểm-be-07) | Đợt 1 đạt 5/10. Tiếp tục BE-10. |
+| 21/11/2026 | BE-10 · T017 | Đã kiểm chứng cục bộ | `main@c873f1eb` + thay đổi cục bộ | 3/3 mục. Cưỡng bức mất Redis, phục hồi từ PostgreSQL, kiểm crash worker, SSE và API job. [Kết quả](#kết-quả-kiểm-be-10) | Đợt 1 đạt 6/10. Tiếp tục BE-08. |
+| 21/11/2026 | BE-08 · T020–T021 | Đã kiểm chứng cục bộ | `main@c873f1eb` + thay đổi cục bộ | 3/3 mục. Catalog, khách hàng, upload riêng tư và import CSV/XLSX đạt các ca tích hợp. R13–R14 đạt trên Firefox qua HTTPS. [Kết quả](#kết-quả-kiểm-be-08) | Đợt 1 đạt 7/10. Tiếp tục BE-09. |
+| 21/11/2026 | BE-09 · T022–T023 | Đã kiểm chứng cục bộ | `main@c873f1eb` + thay đổi cục bộ | 3/3 mục. Chiếc cuối 1/100 giữ được, rollback khi thiếu SKU, đối chiếu sổ, cùng luồng R15/R16/R55 qua Firefox. [Kết quả](#kết-quả-kiểm-be-09) | Đợt 1 đạt 8/10. Tiếp tục BE-11. |
+| 21/11/2026 | BE-11 · T024–T026 | Đã kiểm chứng cục bộ | `main@c873f1eb` + thay đổi cục bộ | 4/4 mục. R18–R19 đạt từ nháp đến COD đã giữ hàng. API kiểm phí R62, phiên bản giá, nguồn xác nhận, chống trùng và hết hạn. [Kết quả](#kết-quả-kiểm-be-11) | Đợt 1 đạt 9/10. Tiếp tục BE-12. |
+| 21/11/2026 | BE-12 · T027–T030 | Đã kiểm chứng cục bộ | `main@c873f1eb` + thay đổi cục bộ | 3/3 mục. Thu từng phần, COD, sổ kép, mở sổ, điều chỉnh có đối ứng và rollback. R15/R19/R48 kiểm qua Firefox. [Kết quả](#kết-quả-kiểm-be-12) | Đợt 1 đạt 10/10. Chốt commit cục bộ rồi tiếp tục BE-13. |
 
 ## Ma trận truy vết baseline
 

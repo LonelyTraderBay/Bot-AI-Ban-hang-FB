@@ -1,5 +1,15 @@
 import { isIP } from 'node:net';
 
+export function readDatabaseUrl(environment: NodeJS.ProcessEnv): string {
+    const value = environment.DATABASE_URL;
+    if (!value?.trim()) throw new Error('Missing required configuration: DATABASE_URL');
+    const url = URL.parse(value);
+    if (!url || !['postgres:', 'postgresql:'].includes(url.protocol) || !url.hostname || url.pathname.length < 2 || url.hash) {
+        throw new Error('DATABASE_URL must be a direct PostgreSQL URL with a database name');
+    }
+    return value;
+}
+
 export function readHttpConfig(environment: NodeJS.ProcessEnv): { bind: string; port: number } {
     const bind = environment.API_BIND;
     const portText = environment.API_PORT;

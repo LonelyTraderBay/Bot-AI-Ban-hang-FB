@@ -13,18 +13,50 @@
   "packageManager": "npm@11.17.0",
   "scripts": {
     "start": "node --env-file-if-exists=.env apps/api/dist/main.js",
-    "build": "tsc -p apps/api/tsconfig.json",
-    "typecheck": "tsc -p apps/api/tsconfig.json --noEmit",
+    "start:worker": "node --env-file-if-exists=.env apps/worker/src/main.mjs",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "node --env-file-if-exists=.env apps/api/prisma/seed.mjs",
+    "dev:idp": "node --env-file-if-exists=.env infra/p0/oidc/idp.mjs",
+    "dev:frontend:https": "node --env-file-if-exists=.env infra/p0/oidc/dev-live.mjs",
+    "build": "npm run db:generate && tsc -p apps/api/tsconfig.json",
+    "typecheck": "npm run db:generate && tsc -p apps/api/tsconfig.json --noEmit",
     "lint": "eslint . --max-warnings 0 && node scripts/check-boundaries.mjs",
     "test": "node --test \"tests/*.test.mjs\"",
+    "test:postgres": "node --env-file-if-exists=.env --test tests/integration/database/postgres.test.mjs",
+    "test:oidc": "node --env-file-if-exists=.env --test tests/integration/auth/auth.test.mjs",
+    "test:oidc:browser": "node --env-file-if-exists=.env tests/integration/auth/browser-smoke.mjs",
+    "test:workspace": "node --env-file-if-exists=.env --test tests/integration/workspace/shops.test.mjs",
+    "test:workspace:browser": "node --env-file-if-exists=.env tests/integration/auth/browser-smoke.mjs --workspace",
+    "test:catalog": "node --env-file-if-exists=.env --test tests/integration/catalog/catalog.test.mjs",
+    "test:imports": "node --env-file-if-exists=.env --test tests/integration/catalog/imports.test.mjs",
+    "test:inventory": "node --env-file-if-exists=.env --test tests/integration/inventory/inventory.test.mjs",
+    "test:orders": "node --env-file-if-exists=.env --test tests/integration/orders/orders.test.mjs",
+    "test:finance": "node --env-file-if-exists=.env --test tests/integration/finance/finance.test.mjs",
+    "test:customers": "node --env-file-if-exists=.env --test tests/integration/customers/customers.test.mjs",
+    "test:catalog:browser": "node --env-file-if-exists=.env tests/integration/auth/browser-smoke.mjs --catalog",
+    "test:imports:browser": "node --env-file-if-exists=.env tests/integration/auth/browser-smoke.mjs --imports",
+    "test:inventory:browser": "node --env-file-if-exists=.env tests/integration/auth/browser-smoke.mjs --inventory",
+    "test:orders:browser": "node --env-file-if-exists=.env tests/integration/auth/browser-smoke.mjs --orders",
+    "test:finance:browser": "node --env-file-if-exists=.env tests/integration/auth/browser-smoke.mjs --finance",
+    "test:events": "node --env-file-if-exists=.env --test tests/integration/workers/events.test.mjs",
+    "test:jobs": "node --env-file-if-exists=.env --test tests/integration/workers/jobs.test.mjs",
     "verify:matrix": "node scripts/check-matrix.mjs",
-    "verify": "npm run lint && npm run typecheck && npm run build && npm run verify:matrix && npm test"
+    "verify": "npm run lint && npm run db:validate && npm run build && npm run verify:matrix && npm test"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@types/node": "24.19.2",
     "eslint": "10.15.0",
+    "oidc-provider": "9.15.1",
+    "prisma": "7.10.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.73.0"
+  },
+  "overrides": {
+    "@prisma/config": {
+      "effect": "3.22.1"
+    }
   }
 }

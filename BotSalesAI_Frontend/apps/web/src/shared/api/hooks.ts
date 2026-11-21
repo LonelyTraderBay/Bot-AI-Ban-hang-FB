@@ -7,7 +7,10 @@ import { request, subscribeScopeCancellation } from './client';
 import type { ApiArguments, ApiOptions, MutationOperationId, QueryApiOptions, QueryOperationId } from './client';
 import { ApiError, UnknownResultError } from './errors';
 import { useScope } from '../model/scope';
-import { rememberUnknown, hasUnknownIntent, subscribeIntents, intentSnapshot } from './intents';
+import {
+    rememberUnknown, hasUnknownIntent, subscribeIntents, intentSnapshot, intentInScope,
+    persistIntent, prepareIntent, resolveObservedIntent, type UnresolvedIntent,
+} from './intents';
 export function useApi<K extends QueryOperationId>(op: K, options: Omit<QueryApiOptions<K>, 'signal'> = {}, enabled = true) {
     const scope = useScope();
     const { user } = scope.session;
@@ -63,7 +66,7 @@ export function useCommand<K extends MutationOperationId>(op: K, invalidate: rea
     const [error, setError] = useState<Error | null>(null);
     const inFlight = useRef(false);
     const intents = useSyncExternalStore(subscribeIntents, intentSnapshot, intentSnapshot);
-    const unresolved = intents.some(intent => intent.shopId === scope.shop.id && intent.operation === op);
+    const unresolved = intents.some(intent => intentInScope(intent, scope.shop.id, scope.session.user.id) && intent.operation === op);
     const mounted = useRef(false);
     const controllers = useRef(new Set<AbortController>());
     const identity = `${scope.session.user.id}:${scope.shop.id}:${scope.membership.permissionVersion}:${op}`;
@@ -82,7 +85,7 @@ export function useCommand<K extends MutationOperationId>(op: K, invalidate: rea
         const options = (args[0] ?? {}) as ApiOptions<K>;
         if (!mounted.current || currentIdentity.current !== identity || options.signal?.aborted)
             throw new DOMException('Màn hình hoặc phạm vi đã đóng.', 'AbortError');
-        if (inFlight.current || hasUnknownIntent(scope.shop.id, op))
+        if (inFlight.current || hasUnknownIntent(scope.shop.id, op, scope.session.user.id))
             throw new ApiError(409, 'IN_FLIGHT', 'Thao tác đang xử lý hoặc chưa xác minh kết quả.');
         if (!scope.online)
             throw new ApiError(0, 'OFFLINE', 'Đang ngoại tuyến. Không gửi thay đổi.');
@@ -99,8 +102,16 @@ export function useCommand<K extends MutationOperationId>(op: K, invalidate: rea
         const intentId = options.idempotencyKey || crypto.randomUUID();
         let commandId: string | undefined;
         let unsettled = false;
+        let recovery: UnresolvedIntent | undefined;
+        let retainRecovery = false;
         try {
             assertAlive();
+            if (!__MOCK__ && operations[op].headers.some(header => header.name === 'Idempotency-Key' && header.required)) {
+                recovery = await prepareIntent(scope.session.user.id, scope.shop.id, op, intentId);
+                assertAlive();
+                // A tab reload can happen before fetch reports a network error.
+                persistIntent(recovery);
+            }
             const result = await request(op, { ...options, path: { shopId: scope.shop.id, ...options.path }, signal: controller.signal, idempotencyKey: intentId });
             let settledResult = result;
             if (operations[op].responseSchema === 'CommandResponse' && result && typeof result === 'object' && 'data' in result) {
@@ -140,16 +151,21 @@ export function useCommand<K extends MutationOperationId>(op: K, invalidate: rea
         catch (e) {
             const error = e instanceof Error ? e : new Error('Yêu cầu thất bại');
             if (alive()) setError(error);
-            if (error instanceof UnknownResultError) {
+            if (recovery && (error instanceof UnknownResultError || unsettled)) {
+                retainRecovery = true;
+                rememberUnknown({ ...recovery, commandId: (error instanceof UnknownResultError ? error.commandId : commandId) || null });
+            }
+            else if (error instanceof UnknownResultError && __MOCK__) {
                 rememberUnknown({ intentId: error.intentId, commandId: error.commandId || null, shopId: scope.shop.id, operation: op });
             }
-            else if (unsettled) {
+            else if (unsettled && __MOCK__) {
                 rememberUnknown({ intentId, commandId: commandId || null, shopId: scope.shop.id, operation: op });
             }
             if (!alive()) throw new DOMException('Màn hình hoặc phạm vi đã đóng; kết quả chưa rõ được giữ để đối chiếu.', 'AbortError');
             throw error;
         }
         finally {
+            if (recovery && !retainRecovery) resolveObservedIntent(recovery);
             inFlight.current = false;
             if (mounted.current && currentIdentity.current === identity) setPending(false);
             unsubscribe();

@@ -3,8 +3,9 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { after, before, test } from 'node:test';
 import { createApp } from '../apps/api/dist/app.js';
-import { readHttpConfig } from '../apps/api/dist/config.js';
+import { readDatabaseUrl, readHttpConfig } from '../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../apps/api/dist/http/contracts.js';
+import { readAuthConfig } from '../apps/api/dist/modules/workspace/index.js';
 
 const spec = JSON.parse(readFileSync(new URL('../../botsales-kit/contracts/openapi.json', import.meta.url)));
 const validator = createContractValidator(spec.components.schemas);
@@ -74,9 +75,12 @@ test('liveness remains healthy when readiness fails and readiness can recover', 
     assert.equal((await fetch(base + '/api/v2/health/ready')).status, 200);
 });
 
-test('route outside the API prefix and product routes return canonical 404', async () => {
+test('routes outside the API prefix and unknown operations return canonical 404', async () => {
     await readProblem('/health/live', 404, 'NOT_FOUND');
-    await readProblem('/api/v2/shops', 404, 'NOT_FOUND');
+    await readProblem('/api/v2/shops/shop-demo/unknown-operation', 404, 'NOT_FOUND');
+    await readProblem('/api/v2/shops/shop-demo/orders', 401, 'UNAUTHENTICATED');
+    await readProblem('/api/v2/shops/shop-demo/dashboard', 401, 'UNAUTHENTICATED');
+    await readProblem('/api/v2/shops', 401, 'UNAUTHENTICATED');
 });
 
 test('shared validator uses the canonical schema without data coercion', () => {
@@ -100,4 +104,36 @@ test('production process fails before listening if required configuration is abs
     const result = spawnSync(process.execPath, ['apps/api/dist/main.js'], { env, encoding: 'utf8', timeout: 10000 });
     assert.equal(result.status, 1, result.stderr);
     assert.match(result.stderr, /Missing required configuration: API_BIND, API_PORT/);
+});
+
+test('database configuration requires a direct URL and never echoes the supplied value', () => {
+    assert.throws(() => readDatabaseUrl({}), /Missing required configuration: DATABASE_URL/);
+    const value = 'http://synthetic-user:unprinted-secret@127.0.0.1/test';
+    assert.throws(() => readDatabaseUrl({ DATABASE_URL: value }),
+        error => /direct PostgreSQL URL/.test(error.message) && !error.message.includes('unprinted-secret'));
+    const connectionString = 'postgresql://127.0.0.1/botsales_be_dev';
+    assert.equal(readDatabaseUrl({ DATABASE_URL: connectionString }), connectionString);
+    const env = { ...process.env, API_BIND: '127.0.0.1', API_PORT: '3000' };
+    delete env.DATABASE_URL;
+    const result = spawnSync(process.execPath, ['apps/api/dist/main.js'], { env, encoding: 'utf8', timeout: 10000 });
+    assert.equal(result.status, 1, result.stderr);
+    assert.match(result.stderr, /Missing required configuration: DATABASE_URL/);
+});
+
+test('OIDC config pins a distinct HTTPS hostname and exact callback', async () => {
+    const configuration = {
+        APP_ORIGIN: 'https://localhost:5173',
+        OIDC_ISSUER: 'https://127.0.0.1:9443',
+        OIDC_CLIENT_ID: 'fixture',
+        OIDC_CLIENT_SECRET: 'fixture-secret',
+        OIDC_REDIRECT_URI: 'https://localhost:5173/api/v2/auth/callback',
+        AUTH_SIGNING_KEY: '1'.repeat(64),
+    };
+    assert.equal(readAuthConfig(configuration).redirectUri, configuration.OIDC_REDIRECT_URI);
+    assert.throws(() => readAuthConfig({ ...configuration, OIDC_ISSUER: 'https://localhost:9443' }), /different hostname/);
+    assert.throws(() => readAuthConfig({ ...configuration, OIDC_ISSUER: 'http://127.0.0.1:9443' }), /HTTPS URL/);
+    assert.throws(() => readAuthConfig({ ...configuration, OIDC_REDIRECT_URI: 'https://outside.invalid/callback' }), /configured application callback/);
+    assert.equal(readAuthConfig({}), undefined);
+    await readProblem('/api/v2/auth/csrf', 503, 'SERVICE_UNAVAILABLE');
+    assert.equal((await fetch(base + '/api/v2/health/ready')).status, 200);
 });

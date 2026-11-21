@@ -2,10 +2,10 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 export default [
-    { ignores: ['**/dist/**', 'test-results/**'] },
+    { ignores: ['**/dist/**', 'apps/api/src/generated/prisma/**', 'test-results/**'] },
     {
         files: ['**/*.mjs'],
-        languageOptions: { globals: { Buffer: 'readonly', console: 'readonly', fetch: 'readonly', process: 'readonly', structuredClone: 'readonly', URL: 'readonly' } },
+        languageOptions: { globals: { AbortController: 'readonly', AbortSignal: 'readonly', Buffer: 'readonly', console: 'readonly', fetch: 'readonly', process: 'readonly', structuredClone: 'readonly', URL: 'readonly' } },
         rules: eslint.configs.recommended.rules,
     },
     ...tseslint.configs.recommended.map(config => ({ ...config, files: ['**/*.ts'] })),

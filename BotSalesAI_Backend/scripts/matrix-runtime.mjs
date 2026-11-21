@@ -20,7 +20,7 @@ export function checkRegistration(source, scope, registrations, workspace) {
         }
         for (const entry of cases) {
             if (!source.caseIds.has(entry.id)) issues.push(id + ': unknown verification case ' + entry.id);
-            if (!/^tests\/[a-zA-Z0-9._-]+\.test\.mjs$/.test(entry.file) || !existsSync(resolve(workspace, entry.file))) {
+            if (!/^tests\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9._-]+\.test\.mjs$/.test(entry.file) || !existsSync(resolve(workspace, entry.file))) {
                 issues.push(id + ': missing test file for ' + entry.id);
             }
         }

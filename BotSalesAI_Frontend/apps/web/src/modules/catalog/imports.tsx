@@ -37,12 +37,12 @@ export function ImportsPage() {
                 <FormFields >
                     {__MOCK__ && <Alert severity="info">Trong demo mô phỏng: CSV UTF-8 tối đa 5 MB và 1.000 dòng dữ liệu. Khi nối backend thật, giới hạn được lấy từ API.</Alert>}
                     <Button variant="outlined" onClick={() => fileInput.current?.click()}>
-                        {file ? file.name : 'Chọn CSV UTF-8'}
+                        {file ? file.name : __MOCK__ ? 'Chọn CSV UTF-8' : 'Chọn CSV hoặc XLSX'}
                     </Button>
-                        <input ref={fileInput} hidden type="file" accept=".csv,text/csv" aria-describedby={fileError ? 'product-import-file-error' : undefined} onChange={event => {
+                        <input ref={fileInput} hidden type="file" accept={__MOCK__ ? '.csv,text/csv' : '.csv,.xlsx'} aria-describedby={fileError ? 'product-import-file-error' : undefined} onChange={event => {
                             const input = event.currentTarget;
                             const next = input.files?.[0] || null;
-                            const error = productImportFileError(next, __MOCK__ ? PRODUCT_IMPORT_MAX_BYTES : undefined);
+                            const error = productImportFileError(next, __MOCK__ ? PRODUCT_IMPORT_MAX_BYTES : undefined, !__MOCK__);
                             setFileError(error);
                             setFile(error ? null : next);
                             if (error)
@@ -50,7 +50,9 @@ export function ImportsPage() {
                         }} />
                     {fileError && <Alert id="product-import-file-error" severity="error" role="alert">{fileError}</Alert>}
                     <FieldGroup direction={{ xs: 'column', sm: 'row' }}  alignItems={{ xs: 'stretch', sm: 'center' }}>
-                        <Typography variant="body2" color="text.secondary">Mẫu CSV tổng hợp để kiểm tra import. XLSX chưa có parser được chốt; chuyển sang CSV, không đổi đuôi tệp.</Typography>
+                        <Typography variant="body2" color="text.secondary">{__MOCK__
+                            ? 'Mẫu CSV tổng hợp để kiểm tra import. XLSX chưa có parser được chốt; chuyển sang CSV, không đổi đuôi tệp.'
+                            : 'Máy chủ nhận CSV UTF-8 hoặc XLSX tối đa 5 MB và 1.000 dòng dữ liệu.'}</Typography>
                         <Button component="a" href={import.meta.env.BASE_URL + 'samples/products.csv'} download="botsales-products.csv" size="small">Tải CSV mẫu</Button>
                     </FieldGroup>
                     {mapping.map((item, index) => <FormFields key={index} bodyMode="outlined" density="compact"><FieldGroup direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'start' }}>
@@ -73,10 +75,15 @@ export function ImportsPage() {
                         if (!file)
                             return;
                         try {
+                            setFileError('');
                             const form = new FormData();
                             form.append('file', file);
                             form.append('purpose', 'product_import');
                             const uploaded = await upload.execute({ form });
+                            if (!__MOCK__ && uploaded.data.status !== 'ready') {
+                                setFileError('Máy chủ chưa chấp nhận tệp này. Kiểm tra định dạng và chọn lại tệp.');
+                                return;
+                            }
                             const result = await dry.execute({ body: { fileId: uploaded.data.id, mapping, duplicateStrategy: strategy, dryRun: true } });
                             nav('/s/' + shop.id + '/imports/' + result.data.id);
                         }

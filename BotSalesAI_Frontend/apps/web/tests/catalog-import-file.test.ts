@@ -16,6 +16,11 @@ describe('catalog import file boundary', () => {
   it('leaves live size limits to the API contract', () => {
     expect(productImportFileError({ name: 'large.csv', size: 100 * 1024 * 1024 })).toBe('');
   });
+
+  it('accepts XLSX in live mode and rejects other extensions', () => {
+    expect(productImportFileError({ name: 'products.XLSX', size: 10 }, undefined, true)).toBe('');
+    expect(productImportFileError({ name: 'products.xlsm', size: 10 }, undefined, true)).toContain('.csv hoặc .xlsx');
+  });
 });
 
 describe('product image file boundary', () => {
