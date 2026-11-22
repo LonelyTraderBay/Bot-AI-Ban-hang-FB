@@ -124,8 +124,22 @@ export async function replaceProductImages(tx: Prisma.TransactionClient, scope: 
     await tx.productImage.createMany({ data: ids.map((fileId, position) => ({ shopId: scope.shopId, productId, fileId, position })) });
 }
 
+function pcmWave(bytes: Buffer) {
+    if (bytes.length < 46 || bytes.toString('latin1', 0, 4) !== 'RIFF' || bytes.readUInt32LE(4) !== bytes.length - 8 ||
+        bytes.toString('latin1', 8, 16) !== 'WAVEfmt ' || bytes.readUInt32LE(16) !== 16 || bytes.readUInt16LE(20) !== 1 ||
+        bytes.toString('latin1', 36, 40) !== 'data' || bytes.readUInt32LE(40) !== bytes.length - 44) return false;
+    const channels = bytes.readUInt16LE(22);
+    const sampleRate = bytes.readUInt32LE(24);
+    const frame = channels * 2;
+    return (channels === 1 || channels === 2) && sampleRate >= 8000 && sampleRate <= 48000 && bytes.readUInt16LE(34) === 16 &&
+        bytes.readUInt16LE(32) === frame && bytes.readUInt32LE(28) === sampleRate * frame && (bytes.length - 44) % frame === 0;
+}
+
 async function inspect(file: UploadPart, name: string, purpose: FilePurpose) {
     try {
+        if (purpose === 'conversation_media' && file.mimetype === 'audio/wav') {
+            return extname(name).toLowerCase() === '.wav' && pcmWave(file.buffer) ? { bytes: file.buffer, mimeType: file.mimetype } : null;
+        }
         if (purpose === 'product_image' || purpose === 'conversation_media') {
             if (!Array.from(rasterMime.values()).includes(file.mimetype)) return null;
             const image = sharp(file.buffer, { limitInputPixels: 8_000_000, failOn: 'warning' });

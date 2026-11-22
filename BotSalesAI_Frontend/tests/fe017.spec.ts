@@ -314,3 +314,47 @@ test('FE027.G03 policy revisions keep the published snapshot immutable when a dr
     await expect(page.getByText('Bản nháp', { exact: true }).first()).toBeVisible();
     await expect(page.getByText('Bản đã xuất bản', { exact: true })).toBeVisible();
 });
+
+test('B01 saves a structured draft for review with policies and the advising persona', async ({ page }) => {
+    await gotoDemo(page, '/s/shop-demo/knowledge?template=sales_script');
+    const title = 'Kịch bản tư vấn phụ kiện';
+    await page.getByRole('textbox', { name: 'Tiêu đề bản nháp' }).fill(title);
+    await page.getByRole('textbox', { name: 'Ngành hàng' }).fill('Phụ kiện');
+    await page.getByRole('textbox', { name: 'Vai trò và giọng tư vấn' }).fill('Tư vấn viên của cửa hàng');
+    await page.getByRole('textbox', { name: 'Câu hỏi tìm hiểu nhu cầu' }).fill('Khách cần sử dụng ở đâu?');
+    await page.getByRole('textbox', { name: 'Thông tin bắt buộc cần xác nhận' }).fill('Mẫu và tồn');
+    await page.getByRole('textbox', { name: 'Giới hạn và điều không được hứa' }).fill('Chuyển người phụ trách khi thiếu thông tin');
+    await page.getByRole('textbox', { name: 'Chính sách giao hàng đã kiểm' }).fill('Theo lịch khu vực đã xác nhận');
+    await page.getByRole('textbox', { name: 'Chính sách đổi trả đã kiểm' }).fill('Theo phiếu đổi trả');
+    const saved = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/knowledge'));
+    await page.getByRole('button', { name: 'Lưu nháp kiến thức' }).click();
+    const response = await saved;
+    expect(response.status()).toBe(201);
+    expect(response.request().postDataJSON()).toMatchObject({ title, template: {
+        kind: 'sales_script', persona: 'Tư vấn viên của cửa hàng', shippingPolicy: 'Theo lịch khu vực đã xác nhận',
+    } });
+    await page.getByRole('link', { name: 'Mở phiên bản để gửi duyệt' }).click();
+    await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
+});
+
+test('G02 opens the product knowledge form from shop settings and saves a linked draft', async ({ page }) => {
+    await gotoDemo(page, '/s/shop-demo/settings/shop');
+    await page.getByRole('link', { name: 'Soạn hồ sơ nội dung sản phẩm' }).click();
+    const title = 'Hồ sơ sản phẩm kiểm duyệt';
+    await page.getByRole('textbox', { name: 'Tiêu đề bản nháp' }).fill(title);
+    const save = page.getByRole('button', { name: 'Lưu nháp kiến thức' });
+    await expect(save).toBeDisabled();
+    await page.getByRole('combobox', { name: 'Sản phẩm nguồn' }).click();
+    const product = page.getByRole('listbox').getByRole('option').filter({ hasNotText: 'Chọn sản phẩm' }).first();
+    await product.click();
+    const source = page.getByRole('link', { name: 'Xem ảnh và thông tin sản phẩm nguồn' });
+    await expect(source).toHaveAttribute('href', /^\/s\/shop-demo\/products\/[^/]+$/);
+    const productId = (await source.getAttribute('href'))?.split('/').at(-1);
+    await page.getByRole('textbox', { name: 'Chủ nguồn nội dung' }).fill('Nhóm sản phẩm');
+    const saved = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/knowledge'));
+    await save.click();
+    const response = await saved;
+    expect(response.status()).toBe(201);
+    expect(response.request().postDataJSON()).toMatchObject({ title, template: { kind: 'product_content', productId, sourceOwner: 'Nhóm sản phẩm' } });
+    await expect(page.getByRole('link', { name: 'Mở phiên bản để gửi duyệt' })).toBeVisible();
+});

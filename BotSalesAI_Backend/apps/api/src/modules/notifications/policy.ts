@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Put, Req, Res, UnprocessableEntityException } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Param, Put, Req, Res, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:http';
-import type { NotificationPolicy, PrismaClient } from '../../generated/prisma/client.js';
+import { Prisma, type NotificationPolicy, type PrismaClient } from '../../generated/prisma/client.js';
 import { validator } from '../../http/contract-source.js';
 import { schemaFromContract, SchemaPipe } from '../../http/contracts.js';
 import { ContractOperation } from '../../http/operations.js';
@@ -11,11 +11,13 @@ import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig } f
 import { availableRecipients, notificationFixture } from './deliveries.js';
 import { telegramFallbackDevice } from './schedule.js';
 import type { TelegramConfig } from './telegram.js';
+import { notificationPriorities, type EventPriorities } from './event-priorities.js';
 
 type Policy = {
     enabled: boolean; timezone: string; quietHours: { start: string; end: string } | null; remindAfterMinutes: number | null;
     maxReminders: number; primaryUserIds: string[]; fallbackUserIds: string[];
     fallbackChannel: 'none' | 'telegram'; urgentMayBypassQuietHours: boolean; expectedVersion: number;
+    eventPriorities?: EventPriorities;
 };
 const policyBody = new SchemaPipe(validator.compile(schemaFromContract('NotificationPolicyWrite')));
 export const notificationPolicyCommand = { operationId: 'updateNotificationPolicy', resourceType: 'notification_policy' };
@@ -29,6 +31,7 @@ function policyView(shop: { id: string; timezone: string; createdAt: Date }, pol
         remindAfterMinutes: policy?.remindAfterMinutes ?? null, maxReminders: policy?.maxReminders ?? 0,
         primaryUserIds: policy?.primaryUserIds ?? [], fallbackUserIds: policy?.fallbackUserIds ?? [],
         fallbackChannel: policy?.fallbackChannel ?? 'none', urgentMayBypassQuietHours: policy?.urgentMayBypassQuietHours ?? false,
+        ...(policy?.eventPriorities ? { eventPriorities: notificationPriorities(policy) } : {}),
     };
 }
 
@@ -50,6 +53,7 @@ export class NotificationPolicyService {
         }, async (tx, scope) => {
             const shop = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, include: { notificationPolicy: true } });
             requireVersion(shop.notificationPolicy?.version ?? 1, input.expectedVersion);
+            if (input.urgentMayBypassQuietHours && !scope.roles.includes('owner')) throw new ForbiddenException();
             const ids = [...new Set([...input.primaryUserIds, ...input.fallbackUserIds])];
             if (input.timezone !== shop.timezone || (input.quietHours && input.quietHours.start === input.quietHours.end) ||
                 input.maxReminders > 48 || (input.remindAfterMinutes !== null && input.remindAfterMinutes > 10080) ||
@@ -67,17 +71,21 @@ export class NotificationPolicyService {
                 });
                 if (!linked) throw new UnprocessableEntityException();
             }
+            const priorities = input.eventPriorities ?? (shop.notificationPolicy?.eventPriorities
+                ? notificationPriorities(shop.notificationPolicy) : null);
             const values = {
                 enabled: input.enabled, timezone: input.timezone, quietStart: input.quietHours?.start ?? null,
                 quietEnd: input.quietHours?.end ?? null, remindAfterMinutes: input.remindAfterMinutes, maxReminders: input.maxReminders,
                 fallbackChannel: input.fallbackChannel === 'telegram' ? 'telegram' as const : null,
                 primaryUserIds: input.primaryUserIds, fallbackUserIds: input.fallbackUserIds,
                 urgentMayBypassQuietHours: input.urgentMayBypassQuietHours,
+                eventPriorities: priorities ?? Prisma.DbNull,
                 version: input.expectedVersion + 1,
             };
             await tx.notificationPolicy.upsert({ where: { shopId }, create: { shopId, ...values }, update: values });
             await recordAudit(tx, { shopId, actorId: scope.userId, action: operationId, requestId,
-                resourceType, resourceId: shopId, metadata: { version: values.version, enabled: input.enabled } });
+                resourceType, resourceId: shopId, metadata: { version: values.version, enabled: input.enabled,
+                    eventPriorities: priorities, urgentMayBypassQuietHours: values.urgentMayBypassQuietHours } });
             return { type: resourceType, id: shopId };
         }, async tx => {
             const shop = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, include: { notificationPolicy: true } });

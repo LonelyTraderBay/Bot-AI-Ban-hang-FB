@@ -10,7 +10,7 @@ import { channelTestHandler, readMetaInboundConfig } from '../../../apps/api/dis
 import { dispatchMessengerMessages } from '../../../apps/api/dist/modules/inbox/index.js';
 import { signMessengerFixtureEvent } from '../../../apps/api/dist/modules/inbox/messenger-fixture.js';
 import { recordStockMovement } from '../../../apps/api/dist/modules/inventory/index.js';
-import { knowledgeIndexHandler, publishedKnowledge } from '../../../apps/api/dist/modules/knowledge/index.js';
+import { assignedKnowledge, knowledgeIndexHandler, publishedKnowledge } from '../../../apps/api/dist/modules/knowledge/index.js';
 import { erasedIdentityKey } from '../../../apps/api/dist/modules/privacy/index.js';
 import { readAuthConfig, requireShopAccess } from '../../../apps/api/dist/modules/workspace/index.js';
 import { recordCommand } from '../../../apps/api/dist/platform/commands/index.js';
@@ -531,12 +531,30 @@ test('SC-034 SC-035 SC-036 SC-037 SC2-B07 SC2-B08: media stays scoped and takeov
     assert.equal(sent.text, '');
     assert.equal(sent.attachments[0].fileId, image.id);
     assert.equal(sent.id, command.result.id);
+    await send(resource + '/notes', { text: 'Nguồn hình không thể là bản chép lời',
+        transcriptSource: { messageId: sent.id, fileId: image.id } }, 'Problem', { expected: 422 });
+    const wave = Buffer.from('524946462600000057415645666d74201000000001000100401f0000803e00000200100064617461020000000000', 'hex');
+    const wav = await upload('conversation_media', wave, 'voice.wav', 'audio/wav', conversationId);
+    assert.equal(wav.status, 'ready');
+    const audioReply = await send(resource + '/messages', { clientMessageId: randomUUID(),
+        expectedConversationVersion: (await get(resource, 'ConversationResponse')).version, fileIds: [wav.id] },
+    'CommandResponse', { expected: 202 });
+    await dispatchMessengerMessages(db, config);
+    const audioMessage = (await get('commands/' + audioReply.id, 'CommandResponse')).result.id;
+    const reviewBody = { text: 'Bản chép lời đã đối chiếu nội bộ', transcriptSource: { messageId: audioMessage, fileId: wav.id } };
+    const transcriptKey = randomUUID();
+    const transcript = await send(resource + '/notes', reviewBody, 'MessageResponse', { expected: 201, key: transcriptKey });
+    assert.equal(transcript.direction, 'internal');
+    assert.deepEqual(transcript.sourceEvidence, [{ type: 'voice_transcript_file', id: wav.id }, { type: 'voice_transcript_message', id: audioMessage }]);
+    assert.equal((await send(resource + '/notes', reviewBody, 'MessageResponse', { expected: 201, key: transcriptKey })).id, transcript.id);
+    assert.equal(await db.messageDispatch.count({ where: { shopId: shopA.id, messageId: transcript.id } }), 0);
     const updatedConversation = await get(resource, 'ConversationResponse');
     await send(resource + '/messages', { ...reply, expectedConversationVersion: updatedConversation.version }, 'Problem', { expected: 409 });
     const anotherEvent = inbound(channel);
     await event(anotherEvent);
     const another = await conversationFor(channel, anotherEvent.conversationId);
     const anotherPath = 'conversations/' + another.id;
+    await send(anotherPath + '/notes', reviewBody, 'Problem', { expected: 422 });
     await send(anotherPath + '/takeover', { expectedVersion: another.version, reason: 'Mở hội thoại khác khi kiểm tệp' },
         'CommandResponse', { expected: 202 });
     const anotherVersion = (await get(anotherPath, 'ConversationResponse')).version;
@@ -674,4 +692,54 @@ test('SC-039 SC-040 SC-041 SC-042 SC2-G03 SC2-G06: knowledge drafts, file indexi
     assert.deepEqual(await db.$transaction(tx => publishedKnowledge(tx, shopA.id, marker)), []);
     assert.equal((await get(path + '/revisions/' + indexed.draftRevisionId, 'KnowledgeRevisionResponse')).status, 'retired');
     await get(path, 'Problem', { shop: shopB, actor: other, expected: 404 });
+});
+
+test('SC2-B01 SC2-G02: structured knowledge checks source shop, required policies and published revisions', async () => {
+    const [product, foreignProduct] = await Promise.all([shopA, shopB].map(shop => writer.product.create({
+        data: { shopId: shop.id, name: 'Nguồn đã kiểm ' + randomUUID().slice(0, 8), description: '', status: 'active' },
+    })));
+    const manual = { sourceKind: 'manual', fileId: null, content: null };
+    const productTemplate = {
+        kind: 'product_content', sourceOwner: 'Phụ trách danh mục', productId: product.id,
+        features: 'Dùng trong nhà', sizeUse: 'Kích cỡ S', warranty: 'Kiểm chứng phiếu bảo hành',
+        alternatives: 'Hỏi lại mẫu', forbiddenPromises: 'Không hứa miễn phí ngoài chính sách',
+    };
+    const item = { ...manual, title: product.name, template: productTemplate };
+    await send('knowledge', { ...item, template: { ...productTemplate, productId: foreignProduct.id } }, 'Problem', { expected: 422 });
+    const productDraft = await send('knowledge', item, 'KnowledgeResponse', { expected: 201 });
+    assert.deepEqual(productDraft.template, productTemplate);
+    const productPath = 'knowledge/' + productDraft.id;
+    await writer.product.update({ where: { shopId_id: { shopId: shopA.id, id: product.id } }, data: { status: 'archived' } });
+    await send(productPath + '/submit-review', { expectedVersion: productDraft.version, reason: 'Kiểm nguồn đã lưu trữ' }, 'Problem', { expected: 422 });
+
+    const marker = 'SCRIPT-' + randomUUID().slice(0, 8);
+    const template = {
+        kind: 'sales_script', industry: marker, persona: 'Nhân viên tư vấn của cửa hàng', needs: 'Hỏi nhu cầu sử dụng', requiredFacts: 'Xác nhận mẫu và tồn',
+        boundaries: 'Thiếu chính sách thì hỏi người phụ trách', shippingPolicy: '', returnPolicy: 'Theo tài liệu đổi trả đã duyệt',
+    };
+    const draft = await send('knowledge', { ...manual, title: marker, template }, 'KnowledgeResponse', { expected: 201 });
+    const path = 'knowledge/' + draft.id;
+    const submit = { expectedVersion: draft.version, reason: 'Gửi thẩm định kịch bản theo ngành' };
+    await send(path + '/submit-review', submit, 'Problem', { expected: 422 });
+    const updated = await send(path, { template: { ...template, shippingPolicy: 'Theo lịch giao đã xác nhận' } }, 'KnowledgeResponse', {
+        method: 'PATCH', version: draft.version,
+    });
+    const job = await send(path + '/submit-review', { ...submit, expectedVersion: updated.version }, 'JobResponse', { expected: 202 });
+    await runJob(db, { shopId: shopA.id, id: job.id, sourceOperation: 'submitKnowledgeReview' }, knowledgeIndexHandler(db), authorize);
+    const indexed = await get(path, 'KnowledgeResponse');
+    const revision = await get(path + '/revisions/' + indexed.draftRevisionId, 'KnowledgeRevisionResponse');
+    assert.equal(indexed.status, 'ready_for_review');
+    assert.deepEqual(await db.$transaction(tx => assignedKnowledge(tx, shopA.id, [revision.id])), []);
+    const evaluation = await writer.evaluation.create({ data: {
+        shopId: shopA.id, configRevision: 1, datasetVersion: 'fixture-structured-knowledge', knowledgeRevisionId: revision.id,
+        knowledgeHash: revision.contentHash, policyVersion: (await db.shop.findUniqueOrThrow({ where: { id: shopA.id } })).policyVersion,
+        status: 'passed', totalCases: 2, passedCases: 2, criticalFailures: 0, fixture: true,
+    } });
+    await send(path + '/publish', {
+        expectedVersion: indexed.version, revisionId: revision.id, evaluationRunId: evaluation.id, reason: 'Đã thẩm định nội dung và chính sách',
+    }, 'CommandResponse', { expected: 202 });
+    assert.equal((await db.$transaction(tx => assignedKnowledge(tx, shopA.id, [revision.id])))[0].id, revision.id);
+    assert.deepEqual(await db.$transaction(tx => assignedKnowledge(tx, shopB.id, [revision.id])), []);
+    const [match] = await db.$transaction(tx => publishedKnowledge(tx, shopA.id, marker));
+    assert.match(match.indexedText, /Theo lịch giao đã xác nhận/);
 });

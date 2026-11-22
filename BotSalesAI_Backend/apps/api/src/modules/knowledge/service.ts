@@ -13,6 +13,7 @@ import { extractKnowledgeText, fileContents, readReadyFileBytes } from '../files
 import { readAsSession, requireShopAccess, usesLocalOidcFixture, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
 import { currentStatus, documentDetails, documentInShop, documentView, initializeDocument, knowledgeKey, knowledgeText,
     revisionInDocument, revisionView, sourceInShop, type Document, type KnowledgeWrite } from './data.js';
+import { readKnowledgeTemplate, requireTemplateReady } from './templates.js';
 
 export type VersionReason = { expectedVersion: number; reason: string };
 export type Publish = VersionReason & { revisionId: string; evaluationRunId: string };
@@ -42,7 +43,7 @@ async function appendRevision(tx: Prisma.TransactionClient, document: Document, 
             data: { status: 'retired', version: { increment: 1 } } });
     }
     const revision = await tx.knowledgeRevision.create({ data: {
-        shopId: document.shopId, documentId: document.id, revision: document.latestRevision + 1, ...data,
+        shopId: document.shopId, documentId: document.id, revision: document.latestRevision + 1, ...data, template: data.template ?? undefined,
     } });
     await tx.knowledgeDocument.update({ where: knowledgeKey(document.shopId, document.id), data: {
         draftRevisionId: revision.id, status: 'draft', latestRevision: revision.revision, version: { increment: 1 },
@@ -108,9 +109,11 @@ export class KnowledgeService {
             requireVersion(document.version, version);
             const draft = document.draft;
             if (!draft || currentStatus(draft) === 'processing') throw new ConflictException();
+            if (patch.template && readKnowledgeTemplate(draft.template)?.kind !== readKnowledgeTemplate(patch.template)?.kind) throw new UnprocessableEntityException();
             const data = await sourceInShop(tx, shopId, scope.userId, {
                 title: patch.title ?? draft.title, content: patch.content === undefined ? draft.content : patch.content,
                 sourceKind: patch.sourceKind ?? draft.sourceKind, fileId: patch.fileId === undefined ? draft.fileId : patch.fileId,
+                template: patch.template ?? draft.template,
             }, draft.fileId);
             if (data.sourceKind === 'feedback' && !document.feedbackId) throw new UnprocessableEntityException();
             await tx.knowledgeRevision.update({ where: knowledgeKey(shopId, draft.id), data: {
@@ -125,7 +128,9 @@ export class KnowledgeService {
         return this.change({ headers, shopId, operationId: 'createKnowledgeRevision', payload: { id, input }, requestId }, async (tx, scope) => {
             const document = await documentInShop(tx, shopId, id);
             if (input.sourceKind === 'feedback' && !document.feedbackId) throw new UnprocessableEntityException();
-            const data = await sourceInShop(tx, shopId, scope.userId, input, document.published?.fileId);
+            const previous = document.draft ?? document.published ?? document.revisions[0];
+            if (input.template && readKnowledgeTemplate(previous?.template)?.kind !== readKnowledgeTemplate(input.template)?.kind) throw new UnprocessableEntityException();
+            const data = await sourceInShop(tx, shopId, scope.userId, { ...input, template: input.template ?? previous?.template }, document.published?.fileId);
             const revision = await appendRevision(tx, document, data);
             return { id: revision.id, metadata: { documentId: id, revision: revision.revision } };
         }, async (tx, result) => revisionView(await revisionInDocument(tx, shopId, id, result.id), await documentInShop(tx, shopId, id)));
@@ -151,6 +156,7 @@ export class KnowledgeService {
                 requireVersion(document.version, input.expectedVersion);
                 const draft = document.draft;
                 if (!draft || !['draft', 'failed', 'rejected'].includes(currentStatus(draft))) throw new ConflictException();
+                await requireTemplateReady(tx, shopId, draft.template);
                 const job = await scheduleJob(tx, { shopId, actorId: scope.userId, sourceOperation: indexOperation, kind: 'knowledge_index', commandId,
                     input: { documentId: id, revisionId: draft.id, version: draft.version + 1 } });
                 await tx.knowledgeRevision.update({ where: knowledgeKey(shopId, draft.id), data: {
@@ -170,6 +176,7 @@ export class KnowledgeService {
                 const draft = document.draft;
                 if (!draft || draft.id !== input.revisionId || draft.status !== 'ready_for_review' || !draft.contentHash || !draft.indexedText ||
                     !validUuid(input.evaluationRunId)) throw new ConflictException();
+                await requireTemplateReady(tx, shopId, draft.template);
                 const evaluation = await tx.evaluation.findUnique({ where: knowledgeKey(shopId, input.evaluationRunId) });
                 const { policyVersion } = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: { policyVersion: true } });
                 if (evaluation?.status !== 'passed' || evaluation.knowledgeRevisionId !== draft.id || evaluation.knowledgeHash !== draft.contentHash ||

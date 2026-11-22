@@ -4,7 +4,8 @@ import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { lockAutomationFence, notificationBudgetAvailable } from '../operations/index.js';
 import { availableRecipients, deliverNotification } from './deliveries.js';
 import { notificationTarget, type NotificationProviders } from './notification-target.js';
-import { duringQuietHours, preparationNotice, queuedDelivery, telegramFallbackDevice } from './schedule.js';
+import { preparationNotice, queuedDelivery, telegramFallbackDevice } from './schedule.js';
+import { notificationBlockedByQuietHours, notificationPriorities } from './event-priorities.js';
 import type { ProviderObservation } from './web-push.js';
 
 const unsent = { deliveryStatus: 'queued', pushDeviceId: { not: null } } as const;
@@ -17,9 +18,10 @@ async function activeWork(tx: Prisma.TransactionClient, notice: AppNotification,
         (await lockAutomationFence(tx, shopId)).paused) return undefined;
     const work = await tx.workItem.findUnique({ where: { shopId_id: { shopId, id: workItemId } } });
     const policy = await tx.notificationPolicy.findUnique({ where: { shopId } });
+    const priority = notificationPriorities(policy).order;
     if (work?.state !== 'queued' || work.assigneeUserId || work.version !== notice.pushWorkVersion ||
         (work.dueAt && work.dueAt <= now) || !policy?.enabled || policy.version !== notice.pushPolicyVersion ||
-        (policy.quietStart && policy.quietEnd && duringQuietHours(now, policy.timezone, policy.quietStart, policy.quietEnd))) return undefined;
+        priority === 'off' || notificationBlockedByQuietHours(policy, priority, now)) return undefined;
     return { work, policy, deadline: pushDeadlineAt };
 }
 
@@ -55,7 +57,7 @@ async function queueFallback(tx: Prisma.TransactionClient, notice: AppNotificati
     ] }, select: { id: true } })) return;
     const device = await telegramFallbackDevice(tx, policy, providers.telegram);
     if (!device || !await notificationBudgetAvailable(tx, notice.shopId, policy.timezone, now)) return;
-    await deliverNotification(tx, { ...preparationNotice(work, device.userId), ...queuedDelivery(device, policy.version, work, now),
+    await deliverNotification(tx, { ...preparationNotice(work, device.userId, notificationPriorities(policy).order), ...queuedDelivery(device, policy.version, work, now),
         channel: 'telegram', pushDeadlineAt: deadline }, notice.deliveryIntent);
 }
 

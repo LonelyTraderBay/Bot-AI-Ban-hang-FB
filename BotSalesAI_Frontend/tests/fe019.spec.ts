@@ -288,6 +288,8 @@ test('FE019.A05 reminder policy saves shop-local schedule and quiet hours throug
     await page.getByLabel('Có giờ yên lặng').check();
     await page.getByLabel('Từ').fill('21:00');
     await page.getByLabel('Đến').fill('08:00');
+    await page.getByRole('combobox', { name: 'Tồn kho thấp' }).click();
+    await page.getByRole('option', { name: 'Khẩn', exact: true }).click();
 
     const requestWait = page.waitForRequest(request => request.method() === 'PUT' && new URL(request.url()).pathname.endsWith('/notification-policy'));
     const responseWait = page.waitForResponse(response => response.request().method() === 'PUT' && new URL(response.url()).pathname.endsWith('/notification-policy'));
@@ -302,6 +304,7 @@ test('FE019.A05 reminder policy saves shop-local schedule and quiet hours throug
         maxReminders: 3,
         quietHours: { start: '21:00', end: '08:00' },
         fallbackChannel: 'none',
+        eventPriorities: { order: 'normal', lowStock: 'urgent', lateShipment: 'off', paymentMismatch: 'off', operationalError: 'off' },
     });
     await expect(page.getByText('Theo múi giờ Asia/Vientiane', { exact: true })).toBeVisible();
 });

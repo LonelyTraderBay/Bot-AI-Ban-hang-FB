@@ -1,5 +1,17 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Bổ sung chức năng theo thứ tự ưu tiên · 22/11/2026
+
+Baseline mã `main@1054b73f`. R38 chọn hồ sơ trên một trang, gọi `decideApproval` lần lượt và hiển thị kết quả từng hàng. Hai ca kiểm trên Chromium và Firefox xác nhận lô gồm hồ sơ cũ + hồ sơ còn hiệu lực, và lô dừng ngay khi phản hồi đầu tiên chưa rõ. [Duyệt theo lô](../tests/fe020.spec.ts)
+
+R63 lọc tồn dưới ngưỡng và khoản chưa đối soát. R40 lưu ưu tiên từng nhóm, R39 dẫn tới công việc khi có quyền đọc. R22 dùng số liệu và chứng từ của snapshot `getProfitLoss` với bộ lọc hiện tại. [Thông báo](../tests/fe019.spec.ts) · [Tài chính](../tests/fe015.spec.ts)
+
+R06 và R33 mở biểu mẫu kịch bản và hồ sơ sản phẩm ở R23. Cả hai lưu qua API tri thức với phiên bản và cổng duyệt hiện có. R06 cho phép duyệt bản chép lời và gửi vào ghi chú nội bộ bằng đúng ID tệp nguồn. Phần trả lời riêng từ bình luận Facebook vẫn chờ quyền và phép kiểm trên Page thật. [Tri thức](../tests/fe017.spec.ts) · [Hộp thư](../tests/fe016.spec.ts) · [Kế hoạch BE](../../BotSalesAI_Backend/BACKEND_PLAN.md#thứ-tự-bổ-sung-bảy-chức-năng-sau-rà-soát)
+
+Bộ kiểm chọn theo chức năng đạt 48/48 lượt trên Chromium và Firefox với MSW. Hai trình duyệt kiểm bản build demo qua preview và cùng đo 506.695 byte JavaScript gzip tải đầu, dưới ngưỡng 512.000 byte. Ca Firefox qua HTTPS và OIDC thử nghiệm dùng PostgreSQL thật, đối chiếu danh sách liên kết chứng từ R22 với `sourceJournalIds` của API và xác nhận hành động giải thích không phát sinh API ghi. [Ca live R22](../../BotSalesAI_Backend/tests/integration/finance/browser-cases.mjs)
+
+Trên head đầu của PR #33, Chromium 9/9 nhận HTTP 200 ở ca FE013 đang chờ HTTP 412. Ca kiểm giờ đợi menu ổn định, xác nhận đúng lựa chọn và chờ xác nhận trạng thái mô phỏng đã được áp dụng trước khi gửi. Bộ FE013 chạy trên artifact preview đạt 40/40 lượt qua hai trình duyệt. [Job ban đầu](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45044330301/job/137275493987) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45044330301/artifacts/14763037896)
+
 ## Quan sát tải đơn gần đây trong UI007 · 22/11/2026
 
 Chromium 2/9 trên `main@ca18335f` không thấy tiến trình tải của đơn gần đây trong hồ sơ khách. Trace đặt phản hồi GET của khách `c1` ngay quanh thời điểm bắt đầu kiểm progressbar. Khoảng trì hoãn 900 ms có thể hết trước lần đọc DOM dưới tải CI. Ca kiểm giữ phản hồi GET trong dịch vụ mock tới khi đã quan sát tên khách, progressbar và số phản hồi bằng 0. Sau khi bỏ giữ, ca kiểm tiếp tục xác nhận HTTP 200 và liên kết mở danh sách đơn hàng. Thời hạn kiểm và các ca lỗi 503, 403, retry giữ theo nguồn hiện hành. [Job Chromium](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45016438569/job/137189649144) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45016438569/artifacts/14751796837)

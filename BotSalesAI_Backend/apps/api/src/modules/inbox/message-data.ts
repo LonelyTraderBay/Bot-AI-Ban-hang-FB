@@ -22,6 +22,7 @@ type Message = Prisma.ChannelMessageGetPayload<{ include: typeof messageDetails 
 
 const evidencePermissions: Readonly<Record<string, string>> = {
     variant: 'catalog.read', knowledge_revision: 'knowledge.read', order: 'orders.read',
+    voice_transcript_file: 'conversations.read', voice_transcript_message: 'conversations.read',
 };
 
 export function messageView(message: Message, permissions: readonly string[]) {

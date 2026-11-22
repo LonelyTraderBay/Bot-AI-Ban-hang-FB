@@ -82,10 +82,32 @@ export async function verifyFinanceFlow(page, csrfToken) {
         await page.goto(app + '/finance/journals');
         await page.getByRole('heading', { name: 'Bút toán', exact: true }).waitFor();
         await page.getByRole('row').filter({ hasText: proof.id }).waitFor();
+
+        const tomorrow = localAccountingDate(new Date(now.getTime() + 86400000), shop.timezone);
+        const reportResponse = page.waitForResponse(result => result.request().method() === 'GET' &&
+            result.url().split('?')[0] === api + '/finance/profit-loss');
+        await page.goto(app + '/finance/profit-loss?fromDate=' + date + '&toDate=' + tomorrow);
+        const report = await payload(reportResponse, 200);
+        assert.ok(report.sourceJournalIds.includes(stockJournal.id));
+        const writes = [];
+        const trackWrite = request => {
+            if (request.url().startsWith(api + '/') && !['GET', 'HEAD'].includes(request.method())) writes.push(request.method());
+        };
+        page.on('request', trackWrite);
+        try {
+            await page.getByRole('button', { name: 'Giải thích báo cáo', exact: true }).click();
+            const explanation = page.getByRole('region', { name: 'Giải thích báo cáo', exact: true });
+            await explanation.getByText('Dữ liệu nguồn trong snapshot', { exact: true }).waitFor();
+            const journalLinks = explanation.getByRole('link', { name: /^Chứng từ / });
+            assert.deepEqual(await journalLinks.allTextContents(), report.sourceJournalIds.map(id => 'Chứng từ ' + id));
+            assert.deepEqual(writes, []);
+        } finally {
+            page.off('request', trackWrite);
+        }
     } finally {
         await writer.$disconnect();
     }
-    console.log('Firefox dev:live BE-12: R15 adjustment, R19 verified observed receipt, R48 posted journal.');
+    console.log('Firefox dev:live BE-12: R15 adjustment, R19 verified observed receipt, R48 posted journal and R22 source-based explanation.');
 }
 
 async function payload(pending, status) {

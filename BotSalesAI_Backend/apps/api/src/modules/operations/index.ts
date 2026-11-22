@@ -19,6 +19,7 @@ import { GovernanceController } from './governance-controller.js';
 import { OperationsOverview } from './overview.js';
 
 export { approvalCommands, approvalInShop, approvalView, recordApproval, requireApprovalPolicy, updateApprovalState, type ApprovalResource } from './approvals.js';
+export { refreshOperationExceptions } from './exception-rules.js';
 export { controlCommand, lockAutomationFence, readAutomationFence, roleCommand, roleInShop, roleIsReady, salesAutomationAllowed, salesAutomationState } from './automation.js';
 export { applicableAiBudget, budgetCommand, budgetInShop, budgetPeriodKey, notificationBudgetAvailable } from './budgets.js';
 export { publishOwnerDigests } from './overview.js';
@@ -28,7 +29,7 @@ const updateBody = new SchemaPipe(validator.compile(schemaFromContract('UpdateWo
 const active: WorkItemState[] = ['queued', 'claimed', 'working', 'blocked'];
 export const claimCommand = { operationId: 'claimWorkItem', resourceType: 'work_item' };
 export const updateWorkCommand = { operationId: 'updateWorkItem', resourceType: 'work_item' };
-type WorkUpdate = Pick<Prisma.WorkItemUncheckedCreateInput, 'shopId' | 'kind' | 'sourceType' | 'sourceId' | 'dueAt'>;
+type WorkUpdate = Pick<Prisma.WorkItemUncheckedCreateInput, 'shopId' | 'kind' | 'sourceType' | 'sourceId' | 'dueAt' | 'ruleVersion'>;
 type WorkAction = 'begin' | 'complete' | 'block' | 'reassign';
 type WorkRequest = { expectedVersion: number; action: WorkAction; assigneeUserId?: string | null; reason: string };
 
@@ -67,7 +68,7 @@ function workActions(work: WorkItem, scope: ShopScope) {
     actions.push('reassign');
     if (assigneeUserId && (state === 'claimed' || state === 'blocked')) actions.push('begin');
     if (state !== 'blocked') actions.push('block');
-    if (kind !== 'payment_mismatch' && state === 'working') actions.push('complete');
+    if (!work.ruleVersion && kind !== 'payment_mismatch' && state === 'working') actions.push('complete');
     return actions;
 }
 
@@ -81,6 +82,7 @@ function workView(work: WorkItem, scope: ShopScope) {
 
 async function workCompletionAllowed(tx: Prisma.TransactionClient, work: WorkItem) {
     const { shopId, kind, sourceType, sourceId } = work;
+    if (work.ruleVersion) return false;
     if (kind === 'customer_handoff' && sourceType === 'conversation') {
         return (await tx.channelConversation.findUnique({ where: { shopId_id: { shopId, id: sourceId } }, select: { status: true } }))?.status === 'resolved';
     }
@@ -114,7 +116,7 @@ class OperationsService {
             const exceptions = query.exception === 'active' ? {
                 state: { in: active },
                 OR: [{ state: 'blocked' as const }, { assigneeUserId: null }, { dueAt: { lt: now } },
-                    { kind: { in: ['payment_mismatch', 'late_shipment', 'recovery'] satisfies WorkItemKind[] } }],
+                    { kind: { in: ['payment_mismatch', 'late_shipment', 'low_stock', 'unmatched_bank', 'recovery'] satisfies WorkItemKind[] } }],
             } : {};
             const q = query.q?.trim();
             const keyword = q ? { OR: [

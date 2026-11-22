@@ -1,4 +1,5 @@
 import { ServiceUnavailableException } from '@nestjs/common';
+import { setTimeout as delay } from 'node:timers/promises';
 import { Prisma, type PrismaClient } from '../../generated/prisma/client.js';
 
 function adapterWriteConflict(error: unknown): boolean {
@@ -21,7 +22,10 @@ export async function serializable<T>(db: PrismaClient, action: (tx: Prisma.Tran
             return await db.$transaction(action, { isolationLevel: 'Serializable', timeout });
         } catch (error) {
             if (!retryable(error, retryUnique)) throw error;
-            if (attempt >= 2) throw new ServiceUnavailableException();
+            if (attempt >= 3) throw new ServiceUnavailableException();
+            // Let competing transactions settle before taking a fresh snapshot.
+            const backoff = 20 * 2 ** attempt;
+            await delay(backoff + Math.floor(Math.random() * backoff));
         }
     }
 }

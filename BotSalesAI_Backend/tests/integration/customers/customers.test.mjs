@@ -138,6 +138,18 @@ test('SC2-C05-ADDRESS: addresses are scoped to their customer, snapshots stay im
     assert.equal((await read(detail, ownerA, 200, 'CustomerAddressResponse')).data.status, 'archived');
 });
 
+test('SC2-G04: concurrent customer commands keep distinct intents and replay one shared key', async () => {
+    const route = path(shopA, 'customers');
+    const body = { displayName: 'Khách đồng thời ' + randomUUID(), phone: null, email: null, notes: '' };
+    const firstKey = randomUUID();
+    const keys = [firstKey, firstKey, randomUUID(), randomUUID(), randomUUID(), randomUUID()];
+    const receipts = await Promise.all(keys.map(key =>
+        send(route, ownerA, 201, 'CustomerResponse', 'POST', body, { 'idempotency-key': key })));
+    assert.equal(receipts[0].data.id, receipts[1].data.id);
+    assert.equal(new Set(receipts.map(receipt => receipt.data.id)).size, 5);
+    assert.equal(await db.customer.count({ where: { shopId: shopA.id, displayName: body.displayName } }), 5);
+});
+
 test('SC2-G04: service case uses current customer scope and expected version for transitions', async () => {
     const customer = await newCustomer(shopA, ownerA);
     const foreign = await newCustomer(shopB, ownerB);

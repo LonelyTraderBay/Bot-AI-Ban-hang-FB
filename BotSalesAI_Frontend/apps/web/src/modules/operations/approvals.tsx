@@ -2,38 +2,71 @@ import { label as businessLabel } from '@/shared/model/labels';
 import { PageSections } from '../../shared/ui/composition';
 import { ActionGroup, FormFields, SurfaceContent } from '../../shared/ui/composition';
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { visualSx } from '@/shared/ui/visual';
-import { Alert, Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Checkbox, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { layoutSx } from '../../shared/ui/layout';
-import type { BudgetPolicy, PurchaseDelegation, PurchaseDelegationReservation, SupplierOffer } from '@botsales/contracts';
+import type { Approval, BudgetPolicy, PurchaseDelegation, PurchaseDelegationReservation, SupplierOffer } from '@botsales/contracts';
 import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, Amount, DetailLine, ConfirmDialog } from '@/shared/ui/components';
 import { roleNames } from './role-labels';
+import { ApprovalBatchDialog } from './approval-batch';
 
 export function ApprovalsPage() {
+    const { shop, session, membership } = useScope();
+    return <ApprovalQueue key={JSON.stringify([shop.id, session.user.id, membership.permissionVersion])}
+        toolbar={<Toolbar operation="listApprovals" />} />;
+}
+
+function ApprovalQueue({ toolbar }: { toolbar: ReactNode }) {
     const { shop } = useScope();
+    const canDecide = useCan('approvals.decide');
     const list = useApi('listApprovals', { query: useListQuery('listApprovals') });
     const [approvalId, setApprovalId] = useState<string | null>(null);
     const detail = useApi('getApproval', { path: { resourceId: approvalId || '' } }, Boolean(approvalId));
     const decide = useCommand('decideApproval', ['getApproval', 'listApprovals', 'getPurchaseOrder', 'listPurchaseOrders', 'getOperationsSummary']);
     const [decision, setDecision] = useState<'approve' | 'reject'>('approve');
     const [reason, setReason] = useState('');
+    const [selected, setSelected] = useState<Approval[]>([]);
+    const [batch, setBatch] = useState<readonly Approval[] | null>(null);
     const approval = detail.data?.data;
     const simulatedNow = detail.data?.meta.asOf;
     const expiryVerified = Boolean(simulatedNow);
     const expired = approval ? !simulatedNow || Date.parse(approval.expiresAt) <= Date.parse(simulatedNow) : true;
+    const selectedOnPage = selected.filter(entry => list.data?.data.some(current => current.id === entry.id));
+    const openBatch = () => {
+        decide.clearError();
+        setBatch(selectedOnPage);
+    };
 
     return <>
         <PageHeader title="Cần phê duyệt" subtitle="Quyết định gắn với đúng nội dung, phiên bản và hạn hiệu lực — không phải một nút đồng ý chung." />
         <PageSections>
             <Panel>
-            <Toolbar operation="listApprovals" />
+            {toolbar}
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
+                    {canDecide && <SurfaceContent beforeGap="surface">
+                        <ActionGroup>
+                            <MutationButton permission="approvals.decide" disabled={!selectedOnPage.length || decide.unresolved || decide.pending} onClick={openBatch}>
+                                Duyệt mục đã chọn ({selectedOnPage.length})
+                            </MutationButton>
+                        </ActionGroup>
+                    </SurfaceContent>}
                     <DataTable label="Yêu cầu phê duyệt" rows={list.data.data} rowKey={entry => entry.id} columns={[
+                        ...(canDecide ? [{
+                            key: 'selection', label: 'Chọn', render: (entry: Approval) => {
+                                const checked = selected.some(current => current.id === entry.id);
+                                return <Checkbox checked={checked} disabled={!checked && entry.status !== 'pending'}
+                                    slotProps={{ input: { 'aria-label': 'Chọn phê duyệt ' + entry.resource.id } }}
+                                    onChange={(_, checked) => setSelected(current => checked
+                                        ? [...current.filter(item => item.id !== entry.id), entry]
+                                        : current.filter(item => item.id !== entry.id))} />;
+                            },
+                        }] : []),
                         { key: 'action', label: 'Nội dung', render: entry => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{businessLabel(entry.action)}</Typography><Typography variant="caption">{businessLabel(entry.resource.type)} · {entry.action} · Mã đối tượng: {entry.resource.id}</Typography></Stack> },
                         { key: 'amount', label: 'Số tiền', render: entry => <Amount value={entry.amount} /> },
                         { key: 'state', label: 'Trạng thái', render: entry => <Status value={entry.status} /> },
@@ -53,6 +86,10 @@ export function ApprovalsPage() {
             </Panel>
             <PurchaseDelegationsPanel />
         </PageSections>
+        {batch && <ApprovalBatchDialog items={batch} onClose={() => setBatch(null)} onComplete={() => setSelected([])}
+            execute={(entry, reason) => decide.execute({ path: { resourceId: entry.id }, body: {
+                expectedVersion: entry.version, intentHash: entry.intentHash, decision: 'approve', reason,
+            } })} />}
         <EditDialog open={Boolean(approvalId)} title="Xem xét phê duyệt" onClose={() => setApprovalId(null)} busy={decide.pending} actions={<MutationButton permission="approvals.decide" variant="contained" busy={decide.pending} disabled={!approval || detail.isPending || approval.status !== 'pending' || expired || codePointLength(reason.trim()) < 5} onClick={async () => {
             if (!approval || approval.status !== 'pending' || expired) return;
             try {

@@ -10,7 +10,7 @@ import { ActionGroup, FieldGroup, PageSections } from '@/shared/ui/composition';
 import { DataTable, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Status, Toolbar } from '@/shared/ui/components';
 import { CommandDetails, commandNames, RelatedResourceLink } from './command-details';
 
-const workKinds = ['prepare_order', 'purchase_review', 'payment_mismatch', 'customer_handoff', 'late_shipment', 'recovery'];
+const workKinds = ['prepare_order', 'purchase_review', 'payment_mismatch', 'customer_handoff', 'late_shipment', 'low_stock', 'unmatched_bank', 'recovery'];
 const jobKinds = ['import', 'export', 'knowledge_index', 'evaluation', 'privacy', 'connection_test'];
 
 function QueueFilter({ name, label, options, initial = '' }: {

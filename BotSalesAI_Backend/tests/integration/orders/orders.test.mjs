@@ -787,6 +787,7 @@ test('SC2-A03, SC2-A04, SC2-A05, SC2-A06 and SC2-A08: shop policy, paired fallba
     const update = input => send('notification-policy', input, { method: 'PUT' });
     const input = { ...previous, expectedVersion: version, enabled: true, remindAfterMinutes: 1, maxReminders: 2,
         primaryUserIds: [owner.userId], fallbackUserIds: [owner.userId], fallbackChannel: 'telegram',
+        ...(previous.eventPriorities ? { eventPriorities: { ...previous.eventPriorities, order: 'normal' } } : {}),
         quietHours: { start: clock.format(at(-1)), end: clock.format(at(2)) }, urgentMayBypassQuietHours: true };
     await json(await update({ ...input, primaryUserIds: [other.userId] }), 422, 'Problem');
     await json(await update({ ...input, primaryUserIds: [viewer.userId] }), 422, 'Problem');
@@ -796,17 +797,19 @@ test('SC2-A03, SC2-A04, SC2-A05, SC2-A06 and SC2-A08: shop policy, paired fallba
         await json(await update(input), 412, 'Problem');
         const { prep } = await confirmedOrder(1);
         const notices = () => db.appNotification.findMany({ where: { shopId, workItemId: prep.workItemId }, orderBy: { createdAt: 'asc' } });
-        assert.deepEqual((await notices()).map(notice => notice.channel), ['in_app']);
+        const initialChannels = configured.eventPriorities ? [] : ['in_app'];
+        assert.deepEqual((await notices()).map(notice => notice.channel), initialChannels);
         await dispatchPreparationNotifications(db, auth, at(1));
-        assert.deepEqual((await notices()).map(notice => notice.channel), ['in_app']);
+        assert.deepEqual((await notices()).map(notice => notice.channel), initialChannels);
         await Promise.all([dispatchPreparationNotifications(db, auth, at(3)), dispatchPreparationNotifications(db, auth, at(3))]);
         const delivered = await notices();
-        assert.deepEqual(delivered.map(notice => notice.channel), ['in_app', 'telegram']);
-        assert.equal(delivered[1].deliveryStatus, 'accepted_by_provider');
-        assert.equal(delivered[1].openedAt, null);
-        assert.equal(delivered[1].acknowledgedAt, null);
-        await json(await request(route('notifications/' + delivered[1].id, shopB), other), 404, 'Problem');
-        const alert = await json(await request(route('notifications/' + delivered[1].id)), 200, 'NotificationResponse');
+        assert.deepEqual(delivered.map(notice => notice.channel).sort(), ['in_app', 'telegram']);
+        const deliveredTelegram = delivered.find(notice => notice.channel === 'telegram');
+        assert.equal(deliveredTelegram.deliveryStatus, 'accepted_by_provider');
+        assert.equal(deliveredTelegram.openedAt, null);
+        assert.equal(deliveredTelegram.acknowledgedAt, null);
+        await json(await request(route('notifications/' + deliveredTelegram.id, shopB), other), 404, 'Problem');
+        const alert = await json(await request(route('notifications/' + deliveredTelegram.id)), 200, 'NotificationResponse');
         assert.ok(alert.allowedActions.includes('acknowledge'));
         const acknowledged = await json(await send('notifications/' + alert.id + '/acknowledge', { expectedVersion: alert.version }),
             200, 'NotificationResponse');

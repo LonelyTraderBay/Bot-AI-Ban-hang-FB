@@ -19,6 +19,7 @@ export const acknowledgeCommand = { operationId: 'acknowledgeNotification', reso
 export { acceptFixturePairing, deviceCommands, deviceTestHandler } from './devices.js';
 export { notificationPolicyCommand } from './policy.js';
 export { dispatchPreparationNotifications, duringQuietHours, notifyPreparation } from './schedule.js';
+export { publishOperationNotices } from './operation-notices.js';
 export { deliverNotification } from './deliveries.js';
 export { readWebPushConfig, type WebPushConfig } from './web-push.js';
 export { dispatchExternalNotifications } from './notification-dispatch.js';
