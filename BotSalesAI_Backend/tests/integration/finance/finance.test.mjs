@@ -443,13 +443,16 @@ test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, pa
     const bank = await fixedAccount('bank', shop);
     const buyer = await admin.customer.create({ data: { shopId, displayName: 'Khách đối chiếu tổng hợp' } });
     const same = await deliveredDebt(admin, db, shop, buyer.id, at);
+    const direct = await deliveredDebt(admin, db, shop, buyer.id, at);
     const independent = await deliveredDebt(admin, db, shop, buyer.id, at);
-    const evidence = await admin.paymentEvidence.create({ data: {
-        shopId, orderId: same.order.id, kind: 'carrier_collection', amount: '249000', reference: 'CARRIER-COLLECT-' + randomUUID(),
-        currency, verifiedAt: at, observedAt: at,
-    } });
-    await json(await send('orders/' + same.order.id + '/pay', { expectedVersion: same.order.version, method: 'external', amount: money('249000', shop),
-        reference: evidence.reference, evidenceRef: evidence.id, reason: 'Chứng từ khách trả cho hãng giao hàng' }, { shop }), 202, 'CommandResponse');
+    for (const { order } of [same, direct]) {
+        const evidence = await admin.paymentEvidence.create({ data: {
+            shopId, orderId: order.id, kind: 'carrier_collection', amount: '249000', reference: 'CARRIER-COLLECT-' + randomUUID(),
+            currency, verifiedAt: at, observedAt: at,
+        } });
+        await json(await send('orders/' + order.id + '/pay', { expectedVersion: order.version, method: 'external', amount: money('249000', shop),
+            reference: evidence.reference, evidenceRef: evidence.id, reason: 'Chứng từ khách trả cho hãng giao hàng' }, { shop }), 202, 'CommandResponse');
+    }
     const separateReceipt = await independentReceipt(admin, db, shop, independent.order.id, at, today, 'OBSERVED-OTHER-' + randomUUID());
     const priorAccount = await admin.financeAccount.create({ data: {
         shopId, group: 'asset', code: 'BANK-' + randomUUID().slice(0, 8), name: 'Tài khoản ngân hàng cũ',
@@ -489,16 +492,17 @@ test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, pa
         await post(route, input, 'Problem', 409);
         return { file, body };
     }
-    const external = { b: 'BANK-INDEPENDENT-' + randomUUID(), first: 'BANK-COD-1-' + randomUUID(),
+    const external = { b: 'BANK-INDEPENDENT-' + randomUUID(), direct: 'BANK-CARRIER-DIRECT-' + randomUUID(), first: 'BANK-COD-1-' + randomUUID(),
         last: 'BANK-COD-2-' + randomUUID(), deferred: 'BANK-BEFORE-PAY-' + randomUUID() };
     const line = (id, amount, reference) => [id, amount, currency, 'credit', at.toISOString(), reference].join(',');
     const csv = ['externalTransactionId,amount,currency,direction,occurredAt,referenceText',
         line(external.b, '249000', independent.order.id), line(external.first, '100000', same.order.id),
+        line(external.direct, '249000', direct.order.id),
         line(external.last, '129000', same.order.id), line(separateReceipt.reference, '50000', 'Đã ghi trước khi nhập sao kê'),
         line(external.deferred, '1000', 'Ghi nhận phiếu sau khi nhập sao kê'),
         line(priorReceipt.reference, '50000', 'Trùng mã với giao dịch trên tài khoản khác'),
         line(external.b, '249000', independent.order.id)].join('\n');
-    const imported = await ingest('bank', csv, bank.id, [6, 1]);
+    const imported = await ingest('bank', csv, bank.id, [7, 1]);
     const previous = await post('finance/statement-import-preview', { ...imported.body, sourceBatchId: randomUUID() }, 'StatementPreviewResponse');
     assert.equal(previous.validRows, 0);
     await json(await request(path('uploads/' + imported.file.id, shopB), other), 404, 'Problem');
@@ -532,6 +536,19 @@ test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, pa
     const [linkedPayment] = await get('payment-reviews?kind=collection&stage=settled&q=' + prepay.id, 'PaymentReviewListResponse');
     assert.deepEqual(linkedPayment.bankTransactionIds, [incoming.id]);
     const debts = await get('debts', 'DebtItemListResponse');
+    const directBank = bankByRef.get(external.direct);
+    const directReview = byTransaction.get(directBank.id);
+    const directDebt = debts.find(item => item.source.id === direct.order.id);
+    await post('reconciliation-cases/' + directReview.id + '/match', {
+        transactionId: directBank.id, expectedVersion: directReview.version, reason: 'Đã đối chiếu khoản hãng vận chuyển chuyển về',
+        allocations: [{ resource: { type: 'debt', id: directDebt.id }, amount: money('249000', shop) }],
+    }, 'CommandResponse', 202);
+    assert.equal((await get('orders/' + direct.order.id, 'OrderResponse')).paymentState, 'settled');
+    const [directPayment] = await get('payment-reviews?kind=collection&stage=settled&q=' + direct.order.id, 'PaymentReviewListResponse');
+    assert.deepEqual(directPayment.verified, money('249000', shop));
+    assert.deepEqual(directPayment.bankTransactionIds, [directBank.id]);
+    assert.deepEqual(directPayment.codSettlementIds, []);
+    assert.equal(await db.workItem.count({ where: { shopId, kind: 'payment_mismatch', sourceType: 'order', sourceId: direct.order.id } }), 0);
     const debt = debts.find(item => item.source.id === independent.order.id);
     const bankTx = bankByRef.get(external.b);
     assert.equal((await get('bank-transactions/' + bankTx.id, 'BankTransactionResponse')).externalTransactionId, external.b);
@@ -591,7 +608,12 @@ test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, pa
     const order = await get('orders/' + same.order.id, 'OrderResponse');
     assert.deepEqual(order.cashReceived, money('229000', shop));
     assert.equal(order.paymentState, 'settled');
-    assert.equal((await db.collectionApplication.aggregate({ where: { shopId }, _sum: { amount: true } }))._sum.amount.toFixed(), '249000');
+    for (const { order } of [same, direct]) {
+        const applications = await db.collectionApplication.aggregate({
+            where: { shopId, allocation: { orderId: order.id } }, _sum: { amount: true },
+        });
+        assert.equal(applications._sum.amount.toFixed(), '249000');
+    }
     const lockedByReview = await get('periods/' + period.id, 'AccountingPeriodResponse');
     assert.deepEqual(lockedByReview.blockingIssues, [
         'Còn giao dịch ngân hàng chưa đối soát trong kỳ.', 'Còn khoản thu hoặc hoàn có chênh lệch cần kiểm trong kỳ.',
@@ -619,7 +641,7 @@ test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, pa
     const to = new Date(Date.now() + 86400000).toISOString();
     const window = '?' + new URLSearchParams({ from, to, timezone: shop.timezone });
     const cashflow = await get('finance/cashflow' + window, 'CashflowResponse');
-    assert.deepEqual(cashflow.receipts, money('529000', shop));
+    assert.deepEqual(cashflow.receipts, money('778000', shop));
     assert.deepEqual(cashflow.disbursements, money('9900', shop));
     assert.deepEqual((await get('finance/profit-loss' + window, 'ProfitLossResponse')).shippingExpense, money('20000', shop));
     await json(await request(path('payment-reviews', shop), other), 404, 'Problem');

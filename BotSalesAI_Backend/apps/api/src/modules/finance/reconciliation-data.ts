@@ -142,8 +142,8 @@ export async function postAllocation(tx: Prisma.TransactionClient, bank: BankTra
         const { debt, amount, bankAmount } = part;
         const created = await tx.settlementAllocation.create({ data: { shopId, journalId: journal.id, debtLineId: debt.id,
             transactionId: bank.id, codSettlementId: codId, orderId: debt.orderId, amount, bankAmount } });
-        if (codId) await linkCarrierCollections(tx, created);
         if (debt.orderId) {
+            if (debt.counterpartyType === 'carrier') await linkCarrierCollections(tx, created);
             const settled = amount.eq(debt.outstanding);
             const order = await tx.salesOrder.findUniqueOrThrow({ where: financeKey(shopId, debt.orderId), select: {
                 total: true, paymentState: true,
