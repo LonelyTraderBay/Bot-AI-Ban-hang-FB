@@ -280,9 +280,13 @@ test('order payment updates dashboard cash and finance entries without SSE', asy
     await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();
     expect((await confirmed).status()).toBe(202);
     await expect(page.getByRole('button', { name: 'Ghi nhận tiền đã thu' })).toBeVisible();
-    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
+    await expect(page.getByText('Báo giá và xác nhận khách', { exact: true })).toBeHidden();
+    const nav = page.getByRole('navigation', { name: 'Điều hướng chính' });
+    const overview = nav.getByRole('link', { name: 'Tổng quan', exact: true });
+    await overview.press('Enter');
+    await expect(page).toHaveURL(/\/s\/shop-demo\/overview$/);
     const cash = page.getByText('Tiền đã thu', { exact: true }).locator('..');
-    await expect(cash).toContainText('0 ₫');
+    await expect(cash.getByText('0 ₫', { exact: true })).toBeVisible();
     await page.goBack();
     await page.getByRole('button', { name: 'Ghi nhận tiền đã thu' }).click();
     const dialog = page.getByRole('dialog', { name: 'Ghi nhận tiền đã thu' });
@@ -293,9 +297,10 @@ test('order payment updates dashboard cash and finance entries without SSE', asy
     await dialog.getByRole('button', { name: 'Ghi nhận chứng từ' }).click();
     expect((await paid).status()).toBe(202);
     await expect(dialog).toBeHidden();
-    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Tổng quan', exact: true }).click();
-    await expect(cash).toContainText('249.000 ₫');
-    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Sổ thu chi', exact: true }).click();
+    await overview.press('Enter');
+    await expect(page).toHaveURL(/\/s\/shop-demo\/overview$/);
+    await expect(cash.getByText('249.000 ₫', { exact: true })).toBeVisible();
+    await nav.getByRole('link', { name: 'Sổ thu chi', exact: true }).press('Enter');
     await expect(page.getByRole('table', { name: 'Chứng từ thu chi' })).toContainText('Kiểm tra đồng bộ thanh toán');
 });
 

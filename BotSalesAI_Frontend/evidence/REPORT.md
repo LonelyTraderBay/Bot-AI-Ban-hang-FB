@@ -1,5 +1,11 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Kiểm đồng bộ tiền đã thu sau xác nhận đơn · 23/11/2026
+
+Firefox 1/9 trên `main@5f4bfae8` ghi nhận API xác nhận đơn trả 202, nhưng thao tác nhấp “Tổng quan” vẫn ở trang đơn hàng và chưa gọi API dashboard. Ca kiểm chờ bảng xác nhận báo giá đóng, dùng Enter trên liên kết và xác nhận URL Tổng quan ở cả hai lượt. Ca kiểm vẫn tắt SSE, xác nhận đúng số tiền `0 ₫` rồi `249.000 ₫` và kiểm chứng từ trong Sổ thu chi. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45049851876/job/137292337817) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45049851876/artifacts/14765102753)
+
+Chạy lặp trên bản demo đã build với ba worker đạt 10/10 lượt, gồm năm lượt Chromium và năm lượt Firefox.
+
 ## Chờ dữ liệu danh mục trước khi kiểm FE010 · 23/11/2026
 
 Firefox 3/9 trên `main@5064ed35` bắt đầu kiểm tiêu đề “Thêm sản phẩm” trong lúc phiên demo và route vẫn khởi tạo. Trace ghi GET phiên, shop và danh mục đều trả 200. Tiêu đề đã có trong snapshot chẩn đoán sau khi hết hạn khẳng định. Ca kiểm hiện đăng ký quan sát trước khi điều hướng, chờ GET danh mục của shop, xác nhận HTTP 200 rồi mới kiểm tiêu đề và biểu mẫu. Giữ thời hạn cho các khẳng định UI và các ca kiểm lưu, ảnh, phiên bản hiện có. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45046690809/job/137282745518) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45046690809/artifacts/14763713005)
