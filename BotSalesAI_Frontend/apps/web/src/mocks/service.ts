@@ -31,7 +31,7 @@ export type Fault = 'none' | 'slow' | 'error' | 'error_persistent' | 'error_pers
 let fault: Fault = 'none';
 type OperationFailure = { status: number; code: string; message: string };
 const operationFailures = new Map<string, OperationFailure>();
-const operationDelays = new Map<string, number>();
+const operationDelays = new Map<string, number | Promise<void>>();
 type ChangeEvent = EventEnvelope;
 let eventSequence = 0;
 const listeners = new Set<(event: ChangeEvent) => void>();
@@ -69,10 +69,10 @@ export function setOperationFailure(op: string, failure: OperationFailure | null
     else
         operationFailures.delete(op);
 }
-/** DEV/TEST ONLY. Delays only the response for one mock API operation. */
-export function setOperationDelay(op: string, delayMs: number | null) {
-    if (delayMs && delayMs > 0)
-        operationDelays.set(op, delayMs);
+/** DEV/TEST ONLY. Delays one mock response for a duration or until the test releases it. */
+export function setOperationDelay(op: string, delay: number | Promise<void> | null) {
+    if (delay && (typeof delay !== 'number' || delay > 0))
+        operationDelays.set(op, delay);
     else
         operationDelays.delete(op);
 }
@@ -210,10 +210,13 @@ let serial: Promise<unknown> = Promise.resolve();
 export function handle(request: MockRequest): Promise<MockResult> {
     const run = serial.then(() => execute(request));
     serial = run.catch(() => undefined);
-    const delayMs = operationDelays.get(request.op) || 0;
-    if (!delayMs)
+    const delay = operationDelays.get(request.op);
+    if (delay === undefined)
         return run;
-    return run.then(result => new Promise<MockResult>(resolve => setTimeout(() => resolve(result), delayMs)));
+    return run.then(async result => {
+        await (typeof delay === 'number' ? new Promise<void>(resolve => setTimeout(resolve, delay)) : delay);
+        return result;
+    });
 }
 async function execute(request: MockRequest): Promise<MockResult> {
     const meta = opMap[request.op];

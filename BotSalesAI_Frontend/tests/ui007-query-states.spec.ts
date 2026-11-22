@@ -30,31 +30,35 @@ function panel(page: import('@playwright/test').Page, title: string) {
 test('UI007 secondary order query loads independently while the customer profile remains available', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/customers');
     await expect(page.getByRole('heading', { name: 'Khách hàng', exact: true })).toBeVisible();
+    let releaseOrders!: () => void;
+    const holdOrders = new Promise<void>(resolve => { releaseOrders = resolve; });
+    await page.exposeFunction('waitForUI007Orders', () => holdOrders);
     await page.evaluate(async () => {
         const mock = await import('/src/mocks/service.ts');
-        mock.setOperationDelay('listOrders', 900);
+        const browser = window as Window & { waitForUI007Orders: () => Promise<void> };
+        mock.setOperationDelay('listOrders', browser.waitForUI007Orders());
     });
     const orderResponses: number[] = [];
     page.on('response', response => {
         const url = new URL(response.url());
         if (url.pathname.endsWith('/orders') && url.searchParams.get('customerId') === 'c1') orderResponses.push(response.status());
     });
-    await page.getByRole('row').filter({ hasText: 'Linh (khách mẫu)' }).getByRole('link', { name: 'Hồ sơ', exact: true }).click();
-
     const ordersPanel = panel(page, 'Đơn hàng gần đây');
-    await expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible();
-    await expect(ordersPanel.getByRole('progressbar')).toBeVisible();
-    expect(orderResponses).toHaveLength(0);
-    const ordersResponse = await page.waitForResponse(response => {
-        const url = new URL(response.url());
-        return response.request().method() === 'GET' && url.pathname.endsWith('/orders') && url.searchParams.get('customerId') === 'c1';
-    });
-    expect(ordersResponse.status()).toBe(200);
-    await page.evaluate(async () => {
-        const mock = await import('/src/mocks/service.ts');
-        mock.setOperationDelay('listOrders', null);
-    });
-    await expect(ordersPanel.getByRole('link', { name: 'Mở danh sách đơn hàng' })).toBeVisible();
+    try {
+        await page.getByRole('row').filter({ hasText: 'Linh (khách mẫu)' }).getByRole('link', { name: 'Hồ sơ', exact: true }).click();
+        await expect(page.getByRole('heading', { name: 'Linh (khách mẫu)', exact: true })).toBeVisible();
+        await expect(ordersPanel.getByRole('progressbar')).toBeVisible();
+        expect(orderResponses).toHaveLength(0);
+        const ordersResponse = page.waitForResponse(response => {
+            const url = new URL(response.url());
+            return response.request().method() === 'GET' && url.pathname.endsWith('/orders') && url.searchParams.get('customerId') === 'c1';
+        });
+        releaseOrders();
+        expect((await ordersResponse).status()).toBe(200);
+        await expect(ordersPanel.getByRole('link', { name: 'Mở danh sách đơn hàng' })).toBeVisible();
+    } finally {
+        releaseOrders();
+    }
 });
 
 test('UI007 order query 503 is isolated from the primary customer query and retries only that query', async ({ page }) => {

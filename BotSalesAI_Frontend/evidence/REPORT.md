@@ -1,5 +1,9 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Quan sát tải đơn gần đây trong UI007 · 22/11/2026
+
+Chromium 2/9 trên `main@ca18335f` không thấy tiến trình tải của đơn gần đây trong hồ sơ khách. Trace đặt phản hồi GET của khách `c1` ngay quanh thời điểm bắt đầu kiểm progressbar. Khoảng trì hoãn 900 ms có thể hết trước lần đọc DOM dưới tải CI. Ca kiểm giữ phản hồi GET trong dịch vụ mock tới khi đã quan sát tên khách, progressbar và số phản hồi bằng 0. Sau khi bỏ giữ, ca kiểm tiếp tục xác nhận HTTP 200 và liên kết mở danh sách đơn hàng. Thời hạn kiểm và các ca lỗi 503, 403, retry giữ theo nguồn hiện hành. [Job Chromium](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45016438569/job/137189649144) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45016438569/artifacts/14751796837)
+
 ## Chờ hộp thoại đơn mua trong UI006.C05 · PR #31 · 22/11/2026
 
 Trên head `b81f1b44`, trace của Chromium 8/9 cho thấy ca UI006.C05 bấm nút đóng khi URL vẫn là `/s/shop-demo/purchases`. Sau đó URL chuyển sang `?purchaseId=…`, hộp thoại chi tiết mở và ca kiểm chờ liên kết “Đơn hàng” đến hết thời gian. Selector trước đó khớp cả tiêu đề “Đơn mua mới” và tiêu đề chi tiết. Ca kiểm lấy ID từ phản hồi 201 của `createPurchaseOrder`, chờ hộp thoại chi tiết của đúng ID rồi kiểm hộp thoại đã đóng trước khi điều hướng. Dữ liệu tổng hợp, xác nhận POST, ca phân trang và thời hạn giữ theo nguồn hiện hành. [Job Chromium](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45014635122/job/137184339455) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45014635122/artifacts/14750763974)

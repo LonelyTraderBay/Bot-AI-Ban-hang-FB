@@ -45,8 +45,7 @@ jobs:
             BotSalesAI_Backend/test-results/backend/npm-audit.json
             BotSalesAI_Backend/test-results/backend/object-storage-ci.txt
           if-no-files-found: error
-      - name: Build and verify the release candidate at the main SHA
-        if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+      - name: Build and verify the release candidate at the checkout SHA
         shell: bash
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
@@ -69,10 +68,11 @@ jobs:
           cmp package-lock.json "$runtime/package-lock.json"
           npm --prefix "$runtime" ci --omit=dev --no-audit
           npm --prefix "$runtime" ls --omit=dev --all --json > /dev/null
-          npm --prefix "$runtime" query '*' --json > "$extracted/installed-tree.json"
+          installed_tree="$extracted.installed-tree.json"
+          npm --prefix "$runtime" query '*' --json > "$installed_tree"
           npm --prefix "$runtime" sbom --package-lock-only --include=dev --sbom-format=cyclonedx --sbom-type=application > "$archive.sbom.cdx.json"
           cp test-results/backend/npm-audit.json "$archive.audit.json"
-          node scripts/release-dependency-evidence.mjs "$archive" "$extracted" "$extracted/installed-tree.json"
+          node scripts/release-dependency-evidence.mjs "$archive" "$extracted" "$installed_tree"
           manifest_digest=$(sha256sum "$extracted/release-manifest.json")
           bash scripts/verify-postgres.sh --release "$extracted" "${manifest_digest%% *}" > "$archive.runtime.json"
           archive_digest=$(sha256sum "$archive")
