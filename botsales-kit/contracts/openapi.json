@@ -41981,6 +41981,18 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 10000
+          },
+          "transcriptSource": {
+            "type": "object",
+            "properties": {
+              "messageId": { "$ref": "#/components/schemas/Id" },
+              "fileId": { "$ref": "#/components/schemas/Id" }
+            },
+            "required": [
+              "messageId",
+              "fileId"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [
@@ -42133,6 +42145,9 @@
                 "type": "null"
               }
             ]
+          },
+          "template": {
+            "$ref": "#/components/schemas/KnowledgeTemplate"
           }
         },
         "required": [
@@ -42192,6 +42207,9 @@
                 "type": "null"
               }
             ]
+          },
+          "template": {
+            "$ref": "#/components/schemas/KnowledgeTemplate"
           }
         },
         "required": [
@@ -43680,25 +43698,50 @@
           {
             "type": "object",
             "properties": {
-              "action": { "const": "begin" },
-              "shopId": { "type": "string", "format": "uuid" },
-              "privacyRequestId": { "type": "string", "format": "uuid" }
+              "action": {
+                "const": "begin"
+              },
+              "shopId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "privacyRequestId": {
+                "type": "string",
+                "format": "uuid"
+              }
             },
-            "required": ["action", "shopId", "privacyRequestId"],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": { "action": { "const": "complete" } },
-            "required": ["action"],
+            "required": [
+              "action",
+              "shopId",
+              "privacyRequestId"
+            ],
             "additionalProperties": false
           },
           {
             "type": "object",
             "properties": {
-              "password": { "type": "string", "minLength": 1, "maxLength": 1024, "writeOnly": true }
+              "action": {
+                "const": "complete"
+              }
             },
-            "required": ["password"],
+            "required": [
+              "action"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "password": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024,
+                "writeOnly": true
+              }
+            },
+            "required": [
+              "password"
+            ],
             "additionalProperties": false
           }
         ]
@@ -43708,19 +43751,36 @@
           {
             "type": "object",
             "properties": {
-              "authorizationUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
-              "expiresAt": { "$ref": "#/components/schemas/DateTime" }
+              "authorizationUrl": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https://"
+              },
+              "expiresAt": {
+                "$ref": "#/components/schemas/DateTime"
+              }
             },
-            "required": ["authorizationUrl", "expiresAt"],
+            "required": [
+              "authorizationUrl",
+              "expiresAt"
+            ],
             "additionalProperties": false
           },
           {
             "type": "object",
             "properties": {
-              "reauthToken": { "type": "string", "minLength": 16 },
-              "expiresAt": { "$ref": "#/components/schemas/DateTime" }
+              "reauthToken": {
+                "type": "string",
+                "minLength": 16
+              },
+              "expiresAt": {
+                "$ref": "#/components/schemas/DateTime"
+              }
             },
-            "required": ["reauthToken", "expiresAt"],
+            "required": [
+              "reauthToken",
+              "expiresAt"
+            ],
             "additionalProperties": false
           }
         ]
@@ -44923,6 +44983,9 @@
           },
           "documentId": {
             "$ref": "#/components/schemas/Id"
+          },
+          "template": {
+            "$ref": "#/components/schemas/KnowledgeTemplate"
           }
         },
         "required": [
@@ -45397,6 +45460,9 @@
                 "type": "null"
               }
             ]
+          },
+          "template": {
+            "$ref": "#/components/schemas/KnowledgeTemplate"
           }
         },
         "additionalProperties": false,
@@ -45745,6 +45811,8 @@
               "payment_mismatch",
               "customer_handoff",
               "late_shipment",
+              "low_stock",
+              "unmatched_bank",
               "recovery"
             ]
           },
@@ -46282,6 +46350,42 @@
         ],
         "additionalProperties": false
       },
+      "NotificationPriority": {
+        "type": "string",
+        "enum": [
+          "off",
+          "normal",
+          "urgent"
+        ]
+      },
+      "NotificationEventPriorities": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "$ref": "#/components/schemas/NotificationPriority"
+          },
+          "lateShipment": {
+            "$ref": "#/components/schemas/NotificationPriority"
+          },
+          "lowStock": {
+            "$ref": "#/components/schemas/NotificationPriority"
+          },
+          "paymentMismatch": {
+            "$ref": "#/components/schemas/NotificationPriority"
+          },
+          "operationalError": {
+            "$ref": "#/components/schemas/NotificationPriority"
+          }
+        },
+        "required": [
+          "order",
+          "lateShipment",
+          "lowStock",
+          "paymentMismatch",
+          "operationalError"
+        ],
+        "additionalProperties": false
+      },
       "NotificationPolicy": {
         "type": "object",
         "properties": {
@@ -46354,6 +46458,9 @@
           },
           "urgentMayBypassQuietHours": {
             "type": "boolean"
+          },
+          "eventPriorities": {
+            "$ref": "#/components/schemas/NotificationEventPriorities"
           }
         },
         "required": [
@@ -46430,6 +46537,9 @@
           },
           "urgentMayBypassQuietHours": {
             "type": "boolean"
+          },
+          "eventPriorities": {
+            "$ref": "#/components/schemas/NotificationEventPriorities"
           },
           "expectedVersion": {
             "type": "integer",
@@ -54144,6 +54254,115 @@
           "label"
         ],
         "additionalProperties": false
+      },
+      "ProductKnowledgeTemplate": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "product_content"
+            ]
+          },
+          "productId": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "sourceOwner": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "features": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "sizeUse": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "warranty": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "alternatives": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "forbiddenPromises": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "kind",
+          "productId",
+          "sourceOwner",
+          "features",
+          "sizeUse",
+          "warranty",
+          "alternatives",
+          "forbiddenPromises"
+        ],
+        "additionalProperties": false
+      },
+      "SalesScriptKnowledgeTemplate": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "sales_script"
+            ]
+          },
+          "industry": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "persona": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "needs": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "requiredFacts": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "boundaries": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "shippingPolicy": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "returnPolicy": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "kind",
+          "industry",
+          "persona",
+          "needs",
+          "requiredFacts",
+          "boundaries",
+          "shippingPolicy",
+          "returnPolicy"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeTemplate": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ProductKnowledgeTemplate"
+          },
+          {
+            "$ref": "#/components/schemas/SalesScriptKnowledgeTemplate"
+          }
+        ]
       }
     }
   }

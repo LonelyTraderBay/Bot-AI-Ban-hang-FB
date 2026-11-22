@@ -22,7 +22,7 @@ import { MetaMessenger, MetaMessengerController } from './meta-messenger.js';
 const body = (schema: string) => new SchemaPipe(validator.compile(schemaFromContract(schema)));
 const requestId = (response: ServerResponse) => String(response.getHeader('X-Request-Id'));
 type MessageWrite = { clientMessageId: string; expectedConversationVersion: number; text?: string; fileIds?: string[] };
-type NoteWrite = { text: string };
+type NoteWrite = { text: string; transcriptSource?: { messageId: string; fileId: string } };
 type VersionedReason = { expectedVersion: number; reason: string };
 type Assignment = { expectedVersion: number; userId: string | null };
 const modeOperations = ['takeoverConversation', 'releaseConversation', 'resolveConversation', 'assignConversation'] as const;
@@ -130,11 +130,24 @@ class ConversationsService {
             async (tx, scope) => {
                 const conversation = await conversationInShop(tx, shopId, conversationId);
                 if (conversation.identity.customer.privacyErasedAt) throw new ConflictException();
+                const source = input.transcriptSource;
+                if (source) {
+                    await requireShopAccess(tx, scope.userId, shopId, 'conversations.read');
+                    if (!validUuid(source.messageId) || !validUuid(source.fileId) || !await tx.channelAttachment.findFirst({
+                        where: { shopId, messageId: source.messageId, fileId: source.fileId,
+                            message: { conversationId, redactedAt: null, direction: { not: 'internal' } },
+                            file: { resourceId: conversationId, purpose: 'conversation_media', status: 'ready',
+                                mimeType: { startsWith: 'audio/' } } },
+                        select: { fileId: true },
+                    })) throw new UnprocessableEntityException('Chọn tệp âm thanh sẵn sàng của đúng hội thoại.');
+                }
                 const note = await tx.channelMessage.create({ data: { shopId, conversationId, text, externalId: randomUUID(),
-                    direction: 'internal', origin: 'fixture', senderKind: 'human' } });
+                    direction: 'internal', origin: 'fixture', senderKind: 'human', ...(source ? { sourceEvidence: [
+                        { type: 'voice_transcript_file', id: source.fileId }, { type: 'voice_transcript_message', id: source.messageId },
+                    ] } : {}) } });
                 await enqueueResourceUpdate(tx, 'message.created', note);
                 await recordAudit(tx, { shopId, actorId: scope.userId, action: operationId, requestId: trace, resourceType: 'message',
-                    resourceId: note.id, metadata: { conversationId } });
+                    resourceId: note.id, metadata: { conversationId, ...(source ? { transcriptSource: source } : {}) } });
                 return { type: 'message', id: note.id };
             }, async (tx, scope, result) => messageView(await tx.channelMessage.findUniqueOrThrow({ where: inboxKey(shopId, result.id), include: messageDetails }), scope.permissions));
     }

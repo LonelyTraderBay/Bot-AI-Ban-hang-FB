@@ -6,7 +6,7 @@ let demoUrl = '';
 let closeDemo: (() => Promise<void>) | undefined;
 
 test.beforeAll(async () => {
-    const server = await startDemoServer();
+    const server = await startDemoServer({ runtime: 'dev' });
     demoUrl = server.url;
     closeDemo = server.close;
 });
@@ -84,6 +84,86 @@ test('FE020.AC01 approval detail is fetched and a changed source resource reject
     expect((await decisionResponse).status()).toBe(409);
     await expect(dialog.getByRole('alert').filter({ hasText: 'Đơn mua đã thay đổi sau khi xin duyệt.' })).toBeVisible();
     await expect(dialog.getByRole('textbox', { name: 'Lý do quyết định' })).toHaveValue('Không duyệt vì nguồn đã thay đổi sau khi xin duyệt.');
+});
+
+async function createSecondPurchaseApproval(page: import('@playwright/test').Page) {
+    return page.evaluate(async () => {
+        const { data } = await fetch('/api/v2/auth/csrf').then(response => response.json());
+        const post = (path: string, body: object) => fetch('/api/v2/shops/shop-demo' + path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': data.csrfToken, 'Idempotency-Key': crypto.randomUUID() },
+            body: JSON.stringify(body),
+        });
+        const created = await post('/purchase-orders', {
+            supplierId: 'supplier-01', warehouseId: 'warehouse-01', suggestionId: null,
+            lines: [{ variantId: 'v-p1', supplierOfferId: 'offer-p1', quantity: 10 }],
+        });
+        if (created.status !== 201) throw new Error('Cannot create second approval source');
+        const { data: purchase } = await created.json();
+        const requested = await post('/purchase-orders/' + purchase.id + '/request-approval', { expectedVersion: purchase.version });
+        if (requested.status !== 200) throw new Error('Cannot request second approval (HTTP ' + requested.status + ')');
+        return { purchaseId: purchase.id, approval: (await requested.json()).data };
+    });
+}
+
+test('F04 batch records each decision and excludes a changed source while approving the valid row', async ({ page }) => {
+    const stale = await createPendingPurchaseApproval(page);
+    const valid = await createSecondPurchaseApproval(page);
+    await page.getByRole('link', { name: /Xem phê duyệt/ }).click();
+    for (const item of [stale, valid]) {
+        await page.getByRole('checkbox', { name: 'Chọn phê duyệt ' + item.purchaseId, exact: true }).check();
+    }
+    await page.getByRole('button', { name: 'Duyệt mục đã chọn (2)', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Duyệt các hồ sơ đã chọn' });
+    const confirm = dialog.getByRole('button', { name: 'Xác nhận duyệt 2 hồ sơ' });
+    await expect(confirm).toBeDisabled();
+    const cancelled = await page.evaluate(async ({ id, version }) => {
+        const { data } = await fetch('/api/v2/auth/csrf').then(response => response.json());
+        const response = await fetch('/api/v2/shops/shop-demo/purchase-orders/' + id + '/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': data.csrfToken, 'Idempotency-Key': crypto.randomUUID() },
+            body: JSON.stringify({ expectedVersion: version, reason: 'Nguồn đổi sau khi chọn duyệt theo lô.' }),
+        });
+        return response.status;
+    }, { id: stale.purchaseId, version: stale.approval.resourceVersion });
+    expect(cancelled).toBe(202);
+    const decisions: string[] = [];
+    page.on('request', request => {
+        if (request.method() === 'POST' && /\/approvals\/[^/]+\/decision$/.test(new URL(request.url()).pathname)) {
+            decisions.push(request.url().split('/').at(-2)!);
+        }
+    });
+    await dialog.getByRole('textbox', { name: 'Lý do duyệt' }).fill('Đã đối chiếu nội dung hai hồ sơ.');
+    await confirm.click();
+    await expect(dialog.getByRole('row').filter({ hasText: stale.purchaseId })).toContainText('Đã loại');
+    await expect(dialog.getByRole('row').filter({ hasText: valid.purchaseId })).toContainText('Đã duyệt');
+    expect(decisions).toEqual([stale.approval.id, valid.approval.id]);
+    await expect(confirm).toHaveCount(0);
+});
+
+test('F04 batch pauses after an unknown decision and does not submit the next row', async ({ page }) => {
+    const first = await createPendingPurchaseApproval(page);
+    const next = await createSecondPurchaseApproval(page);
+    await page.getByRole('link', { name: /Xem phê duyệt/ }).click();
+    for (const item of [first, next]) {
+        await page.getByRole('checkbox', { name: 'Chọn phê duyệt ' + item.purchaseId, exact: true }).check();
+    }
+    await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationFailure('decideApproval', {
+        status: 503, code: 'FIXTURE_DECISION_UNKNOWN', message: 'Chưa nhận được kết quả',
+    }));
+    const decisions: string[] = [];
+    page.on('request', request => {
+        if (request.method() === 'POST' && /\/approvals\/[^/]+\/decision$/.test(new URL(request.url()).pathname)) {
+            decisions.push(request.url().split('/').at(-2)!);
+        }
+    });
+    await page.getByRole('button', { name: 'Duyệt mục đã chọn (2)', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Duyệt các hồ sơ đã chọn' });
+    await dialog.getByRole('textbox', { name: 'Lý do duyệt' }).fill('Xác minh trường hợp mất phản hồi.');
+    await dialog.getByRole('button', { name: 'Xác nhận duyệt 2 hồ sơ' }).click();
+    await expect(dialog.getByRole('row').filter({ hasText: first.purchaseId })).toContainText('Chưa rõ kết quả');
+    await expect(dialog.getByRole('row').filter({ hasText: next.purchaseId })).toContainText('Chưa gửi');
+    expect(decisions).toEqual([first.approval.id]);
 });
 
 test('FE020.AC02/03 work-item actions follow allowedActions and operations health stays explicitly synthetic', async ({ page }) => {

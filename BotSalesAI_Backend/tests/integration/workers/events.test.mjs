@@ -13,6 +13,7 @@ import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.j
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { redisTarget } from '../../../scripts/staging-data-config.mjs';
+import { fixtureWriter } from '../orders/fixtures.mjs';
 import { assertFixtureDatabase, fixtureSession, restoreReader } from '../workspace/session-fixture.mjs';
 
 const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit/contracts/openapi.json', import.meta.url)));
@@ -221,18 +222,25 @@ test('BE-10-SSE: invalid outbox work is isolated after bounded attempts', async 
     assert.equal(beforeFailure.result.observations.terminalOutboxFailures, 0);
     assert.ok(!beforeFailure.result.issues.includes('OUTBOX_TERMINAL_FAILURE'));
     const event = await db.outboxEvent.create({ data: { shopId: shopA.id, eventType: 'fixture.unsupported', payload: {} } });
-    const row = await until(async () => {
-        const candidate = await db.outboxEvent.findUniqueOrThrow({ where: { shopId_id: { shopId: shopA.id, id: event.id } } });
-        return candidate.failedAt ? candidate : undefined;
-    });
-    assert.equal(row.attempts, 3);
-    assert.equal(row.sequence, null);
-    assert.equal(row.publishedAt, null);
-    assert.equal(row.leaseToken, null);
-    const afterFailure = observeQueue();
-    assert.equal(afterFailure.exitCode, 2);
-    assert.equal(afterFailure.result.status, 'ATTENTION');
-    assert.equal(afterFailure.result.observations.terminalOutboxFailures, 1);
-    assert.equal(afterFailure.result.observations.outboxLagMs, 0);
-    assert.ok(afterFailure.result.issues.includes('OUTBOX_TERMINAL_FAILURE'));
+    const where = { shopId_id: { shopId: shopA.id, id: event.id } };
+    try {
+        const row = await until(async () => {
+            const candidate = await db.outboxEvent.findUniqueOrThrow({ where });
+            return candidate.failedAt ? candidate : undefined;
+        });
+        assert.equal(row.attempts, 3);
+        assert.equal(row.sequence, null);
+        assert.equal(row.publishedAt, null);
+        assert.equal(row.leaseToken, null);
+        const afterFailure = observeQueue();
+        assert.equal(afterFailure.exitCode, 2);
+        assert.equal(afterFailure.result.status, 'ATTENTION');
+        assert.equal(afterFailure.result.observations.terminalOutboxFailures, 1);
+        assert.equal(afterFailure.result.observations.outboxLagMs, 0);
+        assert.ok(afterFailure.result.issues.includes('OUTBOX_TERMINAL_FAILURE'));
+    } finally {
+        const fixture = fixtureWriter();
+        try { await fixture.outboxEvent.delete({ where }); }
+        finally { await fixture.$disconnect(); }
+    }
 });

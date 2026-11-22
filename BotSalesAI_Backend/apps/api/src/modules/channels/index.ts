@@ -44,7 +44,7 @@ export const channelCommands = [
 export const messengerFixtureEnabled = (config?: AuthConfig): config is AuthConfig =>
     process.env.MESSENGER_FIXTURE_ADAPTER === '1' && Boolean(config && usesLocalOidcFixture(config));
 
-const fixtureMedia = { allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'], maxAttachmentCount: 5, maxFileSizeBytes: 5 * 1024 * 1024 };
+const fixtureMedia = { allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'audio/wav'], maxAttachmentCount: 5, maxFileSizeBytes: 5 * 1024 * 1024 };
 export function channelMediaPolicy(channel: { status: ChannelStatus; policyVersion: string | null }) {
     return channel.status === 'connected' && channel.policyVersion === fixturePolicy ? fixtureMedia : null;
 }

@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { openDemoControls, waitForDemoMenu } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -20,8 +20,12 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
     if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
+    const select = page.getByRole('combobox', { name: label });
+    await select.click();
+    await waitForDemoMenu(page, label);
     await page.getByRole('option', { name: value, exact: true }).click();
+    await expect(select).toHaveText(value);
+    if (label === 'Trạng thái thử') await expect(page.getByText('Trạng thái thử đã được áp dụng.', { exact: true })).toBeVisible();
 }
 
 async function confirmSeedOrder(page: import('@playwright/test').Page) {

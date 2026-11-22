@@ -18,6 +18,8 @@ const sourceRoutes = {
     shipment: { permission: 'fulfillment.read', path: (id: string) => 'shipments?q=' + id, label: 'Tìm vận đơn' },
     purchase_order: { permission: 'procurement.read', path: (id: string) => 'purchases?purchaseId=' + id, label: 'Mở đơn mua' },
     bank_transaction: { permission: 'finance.read', path: () => 'finance/reconciliation', label: 'Mở đối soát' },
+    reconciliation_case: { permission: 'finance.read', path: () => 'finance/reconciliation', label: 'Mở đối soát' },
+    stock_position: { permission: 'inventory.read', path: () => 'inventory', label: 'Mở tồn kho' },
 } as const;
 
 export function RelatedResourceLink({ source }: { source: ResourceRef }) {

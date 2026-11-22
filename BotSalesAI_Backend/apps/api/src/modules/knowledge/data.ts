@@ -1,8 +1,10 @@
 import { ConflictException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import type { KnowledgeRevision, KnowledgeSourceKind, Prisma } from '../../generated/prisma/client.js';
 import { validUuid } from '../../http/query.js';
+import { requireShopAccess } from '../workspace/index.js';
+import { readKnowledgeTemplate, templateContent } from './templates.js';
 
-export type KnowledgeWrite = { title: string; sourceKind: KnowledgeSourceKind; fileId: string | null; content: string | null };
+export type KnowledgeWrite = { title: string; sourceKind: KnowledgeSourceKind; fileId: string | null; content: string | null; template?: Prisma.JsonValue };
 export const knowledgeKey = (shopId: string, id: string) => ({ shopId_id: { shopId, id } });
 const indexJob = { select: { status: true } } satisfies Prisma.KnowledgeRevision$indexJobArgs;
 const revisionDetails = { indexJob } satisfies Prisma.KnowledgeRevisionInclude;
@@ -24,10 +26,11 @@ export function currentStatus(revision: Revision) {
 }
 
 function revisionFields(revision: Revision, document: Pick<Document, 'publishedRevisionId' | 'draftRevisionId'>) {
-    const { title, sourceKind, fileId, content, contentHash, publishedAt, approvedBy, warnings } = revision;
+    const { title, sourceKind, fileId, content, contentHash, publishedAt, approvedBy, warnings, template } = revision;
     const status = currentStatus(revision);
     return { title, sourceKind, fileId, content, contentHash, publishedAt, approvedBy,
         status, revision: revision.revision, publishedRevisionId: document.publishedRevisionId, draftRevisionId: document.draftRevisionId,
+        ...(template ? { template } : {}),
         warnings: status === 'failed' && !warnings.length ? ['Lần kiểm nguồn đã kết thúc. Có thể gửi kiểm lại.'] : warnings };
 }
 
@@ -59,6 +62,12 @@ export async function revisionInDocument(tx: Prisma.TransactionClient, shopId: s
 
 export async function sourceInShop(tx: Prisma.TransactionClient, shopId: string, actorId: string, input: KnowledgeWrite, existingFile?: string | null) {
     const title = knowledgeText(input.title);
+    const template = readKnowledgeTemplate(input.template);
+    if (template) {
+        if (input.sourceKind !== 'manual' || input.fileId !== null) throw new UnprocessableEntityException();
+        if (template.kind === 'product_content') await requireShopAccess(tx, actorId, shopId, 'catalog.read');
+        return { title, content: await templateContent(tx, shopId, template), sourceKind: input.sourceKind, fileId: null, template };
+    }
     const content = input.content === null ? null : knowledgeText(input.content, 0) || null;
     if (input.sourceKind === 'file') {
         if (!input.fileId || !validUuid(input.fileId) || !await tx.fileObject.findFirst({
@@ -73,7 +82,7 @@ export async function sourceInShop(tx: Prisma.TransactionClient, shopId: string,
 
 export async function initializeDocument(tx: Prisma.TransactionClient, shopId: string, data: KnowledgeWrite, feedbackId?: string) {
     const document = await tx.knowledgeDocument.create({ data: { shopId, feedbackId } });
-    const draft = await tx.knowledgeRevision.create({ data: { shopId, documentId: document.id, revision: 1, ...data } });
+    const draft = await tx.knowledgeRevision.create({ data: { shopId, documentId: document.id, revision: 1, ...data, template: data.template ?? undefined } });
     await tx.knowledgeDocument.update({ where: knowledgeKey(shopId, document.id), data: { draftRevisionId: draft.id } });
     return document;
 }
@@ -92,10 +101,20 @@ export function assignedKnowledge(tx: Prisma.TransactionClient, shopId: string, 
 async function activeKnowledge(tx: Prisma.TransactionClient, shopId: string, selection: Prisma.KnowledgeRevisionWhereInput, limit: number) {
     if (!limit) return [];
     const { policyVersion } = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: { policyVersion: true } });
-    return tx.knowledgeRevision.findMany({
+    const found = await tx.knowledgeRevision.findMany({
         where: { shopId, status: 'published', publishedPolicy: policyVersion, publishedOf: { some: { shopId } },
             AND: [selection, { OR: [{ fileId: null }, { file: { status: 'ready' } }] }] },
-        select: { id: true, documentId: true, revision: true, title: true, indexedText: true, contentHash: true },
+        select: { id: true, documentId: true, revision: true, title: true, indexedText: true, contentHash: true, template: true },
         orderBy: [{ publishedAt: 'desc' }, { id: 'desc' }], take: limit,
     });
+    const withSources = found.map(row => ({ row, template: readKnowledgeTemplate(row.template) }));
+    const productIds = withSources.flatMap(({ template }) => template?.kind === 'product_content' ? [template.productId] : []);
+    const active = new Set(productIds.length ? (await tx.product.findMany({
+        where: { shopId, id: { in: productIds }, status: 'active' }, select: { id: true },
+    })).map(row => row.id) : []);
+    return withSources.filter(({ template }) => template?.kind !== 'product_content' || active.has(template.productId))
+        .map(({ row: { template, ...row } }) => {
+            void template;
+            return row;
+        });
 }

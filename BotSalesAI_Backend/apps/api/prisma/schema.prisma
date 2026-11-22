@@ -228,6 +228,8 @@ enum WorkItemKind {
   payment_mismatch
   customer_handoff
   late_shipment
+  low_stock
+  unmatched_bank
   recovery
 
   @@map("work_item_kind")
@@ -2343,6 +2345,7 @@ model KnowledgeRevision {
   sourceKind        KnowledgeSourceKind @map("source_kind")
   fileId            String?        @map("file_id") @db.Uuid
   content           String?
+  template          Json?
   indexedText       String?        @map("indexed_text")
   status            KnowledgeStatus @default(draft)
   contentHash       String?        @map("content_hash") @db.VarChar(64)
@@ -2759,6 +2762,7 @@ model WorkItem {
   state          WorkItemState @default(queued)
   assigneeUserId String?       @map("assignee_user_id") @db.Uuid
   dueAt          DateTime?     @map("due_at") @db.Timestamptz(3)
+  ruleVersion    String?       @map("rule_version") @db.VarChar(48)
   blockedReason  String?       @map("blocked_reason") @db.VarChar(1000)
   version        Int           @default(1)
   createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -2904,6 +2908,7 @@ model NotificationPolicy {
   fallbackUserIds  String[] @map("fallback_user_ids") @db.Uuid
   fallbackChannel  NotificationChannel? @map("fallback_channel")
   urgentMayBypassQuietHours Boolean @default(false) @map("urgent_may_bypass_quiet_hours")
+  eventPriorities Json?     @map("event_priorities")
   shop             Shop     @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
 
   @@map("notification_policies")

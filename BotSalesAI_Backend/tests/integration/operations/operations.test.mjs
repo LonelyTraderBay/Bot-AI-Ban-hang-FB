@@ -2,13 +2,16 @@ import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { after, before, test } from 'node:test';
 import { createApp } from '../../../apps/api/dist/app.js';
+import { Prisma } from '../../../apps/api/dist/generated/prisma/client.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
 import { openapi } from '../../../apps/api/dist/http/contract-source.js';
 import { aiJobHandlers } from '../../../apps/api/dist/modules/ai/index.js';
 import { localAccountingDate } from '../../../apps/api/dist/modules/finance/index.js';
 import { recordStockMovement } from '../../../apps/api/dist/modules/inventory/index.js';
+import { dispatchPreparationNotifications, notifyPreparation, publishOperationNotices } from '../../../apps/api/dist/modules/notifications/index.js';
 import { publishOwnerDigests } from '../../../apps/api/dist/modules/operations/index.js';
+import { refreshOperationExceptions } from '../../../apps/api/dist/modules/operations/exception-rules.js';
 import { dispatchPurchases } from '../../../apps/api/dist/modules/procurement/index.js';
 import { readAuthConfig, requireShopAccess } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
@@ -99,6 +102,94 @@ function decide(row, actor = owner, options = {}) {
     return post('approvals/' + row.id + '/decision', { expectedVersion: row.version, intentHash: row.intentHash, decision: 'approve', reason: 'Đã đọc chính xác hạn mức' },
         options.schema ?? 'ApprovalResponse', { actor, ...options });
 }
+
+test('SC2-F03 derives exceptions from recurring sources without double opening across workers', async () => {
+    const now = new Date();
+    const older = minutes => new Date(+now - minutes * 60_000);
+    const customer = await admin.customer.create({ data: { shopId, displayName: 'Khách tổng hợp F03' } });
+    const { conversation } = await orderConversation(admin, shopId, customer.id);
+    await admin.channelConnection.update({ where: key(conversation.channelId),
+        data: { status: 'connected', policyVersion: 'F03-fixture', policyVerifiedAt: now } });
+    await admin.channelConversation.update({ where: key(conversation.id), data: { lastInboundAt: older(20) } });
+    const order = await admin.salesOrder.create({ data: { shopId, warehouseId, customerId: customer.id,
+        paymentMethod: 'cod', total: '0', currency, notes: '' } });
+    const shipment = await admin.shipment.create({ data: { shopId, warehouseId, orderId: order.id, currency,
+        state: 'in_transit', handedOverAt: older(49 * 60), lastEventAt: older(49 * 60) } });
+    const prep = await admin.workItem.create({ data: { shopId, kind: 'prepare_order', sourceType: 'order', sourceId: order.id, dueAt: older(10) } });
+    const product = await admin.product.create({ data: { shopId, status: 'active', name: 'Hàng kiểm ngưỡng', description: '' } });
+    const sku = 'F03-' + randomUUID();
+    const variant = await admin.variant.create({ data: { shopId, productId: product.id, sku, skuKey: sku.toLowerCase(),
+        name: 'SKU F03', options: {}, priceAmount: '10', priceCurrency: currency, position: 0 } });
+    const stock = await admin.stockPosition.create({ data: { shopId, warehouseId, variantId: variant.id, lowStockThreshold: 2 } });
+
+    await Promise.all([refreshOperationExceptions(db, now), refreshOperationExceptions(db, now)]);
+    const sources = [conversation.id, shipment.id, stock.id];
+    const expected = new Map([[conversation.id, 'customer_handoff'], [shipment.id, 'late_shipment'], [stock.id, 'low_stock']]);
+    const automated = () => db.workItem.findMany({ where: { shopId, sourceId: { in: sources }, ruleVersion: { not: null } } });
+    const first = await automated();
+    assert.equal(first.length, 3);
+    for (const row of first) {
+        assert.equal(row.kind, expected.get(row.sourceId));
+        assert.equal(row.state, 'queued');
+        assert.equal(row.ruleVersion, 'operations.exceptions.v1');
+    }
+    const low = first.find(row => row.kind === 'low_stock');
+    await request('work-items/' + low.id, 'Problem', { actor: foreign, status: 404 });
+    const unassigned = await request('work-items?kind=prepare_order&assignee=unassigned&exception=active', 'WorkItemListResponse');
+    assert.ok(unassigned.some(row => row.id === prep.id));
+
+    const prior = await db.notificationPolicy.findUnique({ where: { shopId } });
+    const priorities = { order: 'normal', lateShipment: 'normal', lowStock: 'urgent', paymentMismatch: 'off', operationalError: 'off' };
+    const body = {
+        enabled: true, timezone: shopA.timezone, expectedVersion: prior?.version ?? 1, maxReminders: 0,
+        remindAfterMinutes: 5, primaryUserIds: [owner.userId], fallbackUserIds: [], fallbackChannel: 'none',
+        quietHours: { start: '00:00', end: '23:59' }, urgentMayBypassQuietHours: true, eventPriorities: priorities,
+    };
+    try {
+        await put('notification-policy', body, 'Problem', { actor: reviewer, status: 403 });
+        const policy = await put('notification-policy', body, 'NotificationPolicyResponse');
+        assert.deepEqual(policy.eventPriorities, priorities);
+        const checkTime = new Date('2026-11-22T16:58:00.000Z');
+        await Promise.all([publishOperationNotices(db, checkTime), publishOperationNotices(db, checkTime)]);
+        const notifications = await db.appNotification.findMany({
+            where: { shopId, sourceType: 'work_item', sourceId: { in: first.map(row => row.id) } },
+            select: { sourceId: true, recipientUserId: true, title: true },
+        });
+        assert.deepEqual(notifications, [{ sourceId: low.id, recipientUserId: owner.userId, title: 'Khẩn · Tồn kho dưới ngưỡng' }]);
+        const outsideQuietHours = new Date(+checkTime + 60_000);
+        await admin.workItem.update({ where: key(prep.id), data: { dueAt: new Date(+checkTime + 360_000) } });
+        await db.$transaction(tx => notifyPreparation(tx, prep, owner.userId, checkTime));
+        const orderAlerts = () => db.appNotification.count({ where: { shopId, workItemId: prep.id, channel: 'in_app' } });
+        await dispatchPreparationNotifications(db, undefined, checkTime);
+        assert.equal(await orderAlerts(), 0);
+        await dispatchPreparationNotifications(db, undefined, outsideQuietHours);
+        assert.equal(await orderAlerts(), 1);
+    } finally {
+        if (prior) {
+            const { eventPriorities, version, ...saved } = prior;
+            await admin.notificationPolicy.update({ where: { shopId }, data: {
+                ...saved, eventPriorities: eventPriorities ?? Prisma.DbNull, version: version + 2,
+            } });
+        }
+        else await admin.notificationPolicy.deleteMany({ where: { shopId } });
+    }
+
+    await admin.channelConversation.update({ where: key(conversation.id), data: { status: 'resolved' } });
+    await admin.shipment.update({ where: key(shipment.id), data: { state: 'delivered', deliveredAt: now, lastEventAt: now } });
+    await admin.stockPosition.update({ where: key(stock.id), data: { lowStockThreshold: 0 } });
+    await refreshOperationExceptions(db, now);
+    assert.ok((await automated()).every(row => row.state === 'completed'));
+    await admin.stockPosition.update({ where: key(stock.id), data: { lowStockThreshold: 2 } });
+    await refreshOperationExceptions(db, now);
+    assert.equal((await db.workItem.findUniqueOrThrow({ where: key(low.id) })).state, 'completed');
+    await refreshOperationExceptions(db, new Date(Date.now() + 31 * 60_000));
+    const reopened = await db.workItem.findUniqueOrThrow({ where: key(low.id) });
+    assert.equal(reopened.state, 'queued');
+    assert.equal(reopened.version, low.version + 2);
+    assert.equal((await automated()).length, 3);
+    await admin.stockPosition.update({ where: key(stock.id), data: { lowStockThreshold: 0 } });
+    await refreshOperationExceptions(db);
+});
 
 test('SC2-F01 SC2-F04 SC2-H02 SC2-H03 -- role fences, immutable approved amount and expiry', async () => {
     const roles = await request('agent-roles?limit=100', 'AgentRoleListResponse');

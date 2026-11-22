@@ -12,7 +12,8 @@ import { request } from '@/shared/api/client';
 import { useApi, useCommand } from '@/shared/api/hooks';
 import { useCan, useScope } from '@/shared/model/scope';
 import { limitCodePoints, dateTime } from '@/shared/model/format';
-import { DetailLine, ErrorNotice, MutationButton, Panel, RouteLink, Status } from '@/shared/ui/components';
+import { DetailLine, EditDialog, ErrorNotice, MutationButton, Panel, RouteLink, Status } from '@/shared/ui/components';
+import { FormFields } from '@/shared/ui/composition';
 import { layoutSx } from '@/shared/ui/layout';
 
 type DraftAttachment = {
@@ -231,7 +232,7 @@ export function ConversationComposer({ conversation }: {
                     >
                         Đính kèm
                     </Button>
-                    {mediaPolicy && <Typography variant="caption" color="text.secondary">Tối đa {mediaPolicy.maxAttachmentCount} tệp, mỗi tệp {Math.ceil(mediaPolicy.maxFileSizeBytes / 1048576)} MB; chỉ gửi sau khi kiểm tra mô phỏng đạt.</Typography>}
+                    {mediaPolicy && <Typography variant="caption" color="text.secondary">Tối đa {mediaPolicy.maxAttachmentCount} tệp, mỗi tệp {Math.ceil(mediaPolicy.maxFileSizeBytes / 1048576)} MB. {__MOCK__ ? 'Chỉ gửi sau khi kiểm tra mô phỏng đạt.' : 'Chỉ gửi tệp ở trạng thái sẵn sàng.'}</Typography>}
                     {mediaError && <Alert severity="warning" onClose={() => setMediaError('')}>{mediaError}</Alert>}
                     {attachments.map(attachment => (
                         <Stack key={attachment.localId} direction="row" alignItems="center" sx={[layoutSx.inbox.composerActionGap, layoutSx.surface.compactInset, { minWidth: 0, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }]}>
@@ -243,7 +244,7 @@ export function ConversationComposer({ conversation }: {
                             <Stack sx={{ minWidth: 0, flex: 1 }}>
                                 <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>{attachment.file.name}</Typography>
                                 <Typography role="status" variant="caption" color={attachment.status === 'error' || attachment.status === 'not_ready' ? 'error.main' : 'text.secondary'}>
-                                    {attachment.status === 'uploading' ? 'Đang tải và kiểm tra tệp…' : attachment.status === 'ready' ? 'Sẵn sàng gửi · kiểm tra mô phỏng đạt' : attachment.error || 'Chưa thể gửi tệp'}
+                                    {attachment.status === 'uploading' ? 'Đang tải và kiểm tra tệp…' : attachment.status === 'ready' ? (__MOCK__ ? 'Sẵn sàng gửi · kiểm tra mô phỏng đạt' : 'Sẵn sàng gửi') : attachment.error || 'Chưa thể gửi tệp'}
                                 </Typography>
                                 {attachment.status === 'error' && <Button size="small" onClick={() => void uploadAttachment(attachment)}>Thử tải lại</Button>}
                             </Stack>
@@ -255,6 +256,8 @@ export function ConversationComposer({ conversation }: {
                 </Stack>
             )}
             {!internal && !mediaSupported && <Alert severity="info">Kênh này chưa khai báo loại tệp được hỗ trợ; bạn vẫn có thể gửi văn bản.</Alert>}
+            {!internal && !__MOCK__ &&
+                <Typography variant="caption" color="text.secondary">Chưa hỗ trợ trả lời riêng từ bình luận Facebook.</Typography>}
             </Box>
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={[layoutSx.inbox.composerControlsBeforeGap, layoutSx.inbox.composerActionGap, { flexShrink: 0 }]}>
                 <Typography variant="caption" color="text.secondary">
@@ -278,8 +281,21 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
     timezone: string;
     onRate: (message: Message) => void;
 }) {
-    return messages.slice().sort((a, b) => a.createdAt.localeCompare(b.createdAt)).map(message => {
-        const senderLabel = message.direction === 'internal' ? 'Ghi chú nội bộ' : message.senderKind === 'customer' ? 'Khách' : message.senderKind === 'bot' ? 'Trợ lý AI' : 'Nhân viên';
+    const note = useCommand('addInternalNote', ['listMessages']);
+    const [review, setReview] = useState<{ conversationId: string; messageId: string; fileId: string; name: string } | null>(null);
+    const [transcript, setTranscript] = useState('');
+    const submitReview = async () => {
+        if (!review || !transcript.trim()) return;
+        try {
+            await note.execute({ path: { conversationId: review.conversationId }, body: {
+                text: transcript.trim(), transcriptSource: { messageId: review.messageId, fileId: review.fileId },
+            } });
+            setReview(null);
+        } catch { /* Giữ bản chép lời và lỗi để đối chiếu. */ }
+    };
+    return <>{messages.slice().sort((a, b) => a.createdAt.localeCompare(b.createdAt)).map(message => {
+        const reviewed = message.sourceEvidence.some(reference => reference.type === 'voice_transcript_file');
+        const senderLabel = message.direction === 'internal' ? reviewed ? 'Bản chép lời đã kiểm' : 'Ghi chú nội bộ' : message.senderKind === 'customer' ? 'Khách' : message.senderKind === 'bot' ? 'Trợ lý AI' : 'Nhân viên';
         const messageText = (message.text || '').replace(/\s+/g, ' ').trim();
         const mockConfirmation = __MOCK__ ? message.text?.match(/^\[CONFIRM:([^\]]+)\]\s*/) : null;
         const displayText = mockConfirmation ? message.text?.slice(mockConfirmation[0].length) : message.text;
@@ -301,7 +317,12 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
                         </Typography>
                         {messageText && <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{displayText}</Typography>}
                         {mockConfirmation && <Typography variant="caption" color="text.secondary">Xác nhận mẫu · mã báo giá {mockConfirmation[1]}</Typography>}
-                        {message.attachments?.map(attachment => <MessageAttachmentView key={attachment.fileId} attachment={attachment} />)}
+                        {message.attachments?.map(attachment => <MessageAttachmentView key={attachment.fileId} attachment={attachment}
+                            onReview={() => {
+                                setTranscript('');
+                                note.clearError();
+                                setReview({ conversationId: message.conversationId, messageId: message.id, fileId: attachment.fileId, name: attachment.name });
+                            }} />)}
                     </Stack>
                     {message.sourceEvidence.length > 0 && (
                         <Stack direction="row" sx={[layoutSx.surface.compactContentGap, { flexWrap: 'wrap' }]} aria-label="Nguồn tham chiếu">
@@ -323,10 +344,21 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
                 </Stack>
             </Box>
         </Stack>;
-    });
+    })}
+        <EditDialog open={Boolean(review)} title="Duyệt bản chép lời" onClose={() => setReview(null)} busy={note.pending}
+            description={review ? 'Tệp nguồn ' + review.name : undefined}
+            actions={<MutationButton permission="conversations.reply" variant="contained" busy={note.pending}
+                disabled={!transcript.trim() || note.unresolved} onClick={() => void submitReview()}>Lưu bản chép lời nội bộ</MutationButton>}>
+            <FormFields>
+                <ErrorNotice error={note.error} />
+                <TextField label="Bản chép lời đã đối chiếu" multiline minRows={4} value={transcript}
+                    onChange={event => setTranscript(limitCodePoints(event.target.value, 10000))} />
+            </FormFields>
+        </EditDialog>
+    </>;
 }
 
-function MessageAttachmentView({ attachment }: { attachment: MessageAttachment }) {
+function MessageAttachmentView({ attachment, onReview }: { attachment: MessageAttachment; onReview: () => void }) {
     const { shop, membership } = useScope();
     const [readUrl, setReadUrl] = useState<string | null>(null);
     const [failed, setFailed] = useState(false);
@@ -361,7 +393,10 @@ function MessageAttachmentView({ attachment }: { attachment: MessageAttachment }
     if (failed) return <Typography role="status" variant="caption" color="text.secondary">Không thể đọc tệp này theo quyền hoặc phạm vi hiện tại.</Typography>;
     if (!readUrl) return <Typography role="status" variant="caption" color="text.secondary">Đang tải tệp an toàn…</Typography>;
     if (attachment.mimeType.startsWith('image/')) return <Box component="img" src={readUrl} alt={attachment.name} sx={{ display: 'block', maxWidth: 'min(100%, 360px)', maxHeight: 280, objectFit: 'contain', borderRadius: visualSx.radius.control }} />;
-    if (attachment.mimeType.startsWith('audio/')) return <audio controls preload="metadata" src={readUrl} aria-label={`Phát ${attachment.name}`} style={{ maxWidth: '100%' }} />;
+    if (attachment.mimeType.startsWith('audio/')) return <FormFields>
+        <audio controls preload="metadata" src={readUrl} aria-label={`Phát ${attachment.name}`} style={{ maxWidth: '100%' }} />
+        <MutationButton permission="conversations.reply" onClick={onReview}>Duyệt bản chép lời</MutationButton>
+    </FormFields>;
     return <a href={readUrl} download={attachment.name}>{attachment.name} · tải tệp</a>;
 }
 

@@ -839,6 +839,16 @@ test('FE016.B08 capability-driven image, voice and document media upload and sen
     const urls = await page.evaluate(() => (window as unknown as { __mediaUrls: { created: string[]; revoked: string[] } }).__mediaUrls);
     expect(urls.created.length).toBeGreaterThanOrEqual(6);
     expect(urls.revoked).toEqual(expect.arrayContaining(urls.created.slice(0, 3)));
+    const noteWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/notes'));
+    await page.getByRole('button', { name: 'Duyệt bản chép lời', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Duyệt bản chép lời' });
+    const transcript = 'Khách đã nhờ xác nhận lại thời gian giao.';
+    await dialog.getByRole('textbox', { name: 'Bản chép lời đã đối chiếu' }).fill(transcript);
+    await dialog.getByRole('button', { name: 'Lưu bản chép lời nội bộ' }).click();
+    expect((await noteWait).postDataJSON()).toMatchObject({
+        text: transcript, transcriptSource: { messageId: expect.any(String), fileId: uploadIds[1] },
+    });
+    await expect(page.getByTestId('inbox-message-groups').getByText(transcript, { exact: true })).toBeVisible();
 });
 
 test('FE016.B09 pending media send preserves newer text and blocks blind retry after unknown outcome', async ({ page }) => {

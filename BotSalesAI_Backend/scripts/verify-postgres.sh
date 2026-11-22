@@ -102,6 +102,9 @@ test "$(pg_query 'SELECT count(*) FROM public.shops')" = 2
 configure_tls
 npm run test:oidc
 npm run test:workspace
+# The SSE cases check consecutive sequence numbers and an empty initial outbox.
+# Run them before the business suites generate unrelated work for both shops.
+npm run test:events
 mkdir -p test-results/backend
 bash scripts/verify-object-storage.sh 2>&1 | tee test-results/backend/object-storage-ci.txt
 npm run test:catalog
@@ -114,6 +117,5 @@ npm run test:procurement
 npm run test:inbox
 npm run test:ai
 npm run test:operations
-npm run test:events
 npm run test:jobs
 npm run test:privacy

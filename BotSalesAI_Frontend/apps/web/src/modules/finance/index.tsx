@@ -72,7 +72,7 @@ export function ProfitLossPage() {
     const p = data.data?.data;
     const [question, setQuestion] = useState<ProfitLossQuestionId>('summary');
     const [generatedKey, setGeneratedKey] = useState('');
-    const currentKey = p ? `${report.range.from}|${report.range.to}|${p.asOf}|${question}` : '';
+    const currentKey = p ? JSON.stringify([shop.id, report.range.from, report.range.to, p.asOf, p.policyVersion, question]) : '';
     const explanation = p && generatedKey === currentKey ? explainProfitLoss(p, question) : null;
     return <>
         <PageHeader title="Lợi nhuận quản trị" subtitle="Số liệu do API tổng hợp từ nguồn giao dịch, không tính từ trang danh sách đang mở." />
@@ -95,18 +95,19 @@ export function ProfitLossPage() {
                         <ReportWarnings warnings={p.warnings}/>
                     </Panel>
                     <Panel title="Hỏi đáp có nguồn" subtitle="Giải thích giới hạn theo đúng snapshot đang hiển thị." bodyMode="inset">
-                        {__MOCK__ ? <>
-                            <Alert severity="info" sx={layoutSx.notice.afterGap}>Chế độ mô phỏng: câu trả lời theo mẫu cố định, chỉ đọc dữ liệu P&L API tổng hợp này; không gọi AI và không ghi sổ.</Alert>
+                        <Alert severity="info" sx={layoutSx.notice.afterGap}>{__MOCK__
+                            ? 'Chế độ mô phỏng: câu trả lời theo mẫu cố định, chỉ đọc dữ liệu P&L API tổng hợp này; không gọi AI và không ghi sổ.'
+                            : 'Câu trả lời theo mẫu đọc số liệu và chứng từ nguồn của kỳ đang hiển thị.'}</Alert>
                             <FormFields>
                                 <TextField select label="Câu hỏi về báo cáo" value={question} onChange={event => { setQuestion(event.target.value as ProfitLossQuestionId); setGeneratedKey(''); }}>
                                     {profitLossQuestions.map(item => <MenuItem key={item.id} value={item.id}>{item.label}</MenuItem>)}
                                 </TextField>
                             </FormFields>
                             <ActionGroup direction="column" beforeGap="form">
-                                <Button variant="contained" onClick={() => setGeneratedKey(currentKey)} disabled={!currentKey}>Tạo giải thích mô phỏng</Button>
+                                <Button variant="contained" onClick={() => setGeneratedKey(currentKey)} disabled={!currentKey}>{__MOCK__ ? 'Tạo giải thích mô phỏng' : 'Giải thích báo cáo'}</Button>
                             </ActionGroup>
                             {explanation && <SurfaceContent beforeGap="surface">
-                                <Box role="region" aria-label="Giải thích báo cáo mô phỏng" data-testid="profit-loss-explanation" sx={{ ...layoutSx.surface.inset, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }}>
+                                <Box role="region" aria-label={__MOCK__ ? 'Giải thích báo cáo mô phỏng' : 'Giải thích báo cáo'} data-testid="profit-loss-explanation" sx={{ ...layoutSx.surface.inset, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }}>
                                     <Typography sx={layoutSx.notice.afterGap}>{explanation.answer}</Typography>
                                     <Typography variant="subtitle2" sx={layoutSx.report.subheadingAfterGap}>Dữ liệu nguồn trong snapshot</Typography>
                                     {explanation.sources.map(source => <DetailLine key={source.label} label={source.label}>{source.value}</DetailLine>)}
@@ -114,7 +115,6 @@ export function ProfitLossPage() {
                                     <BookProvenance report={p}/>
                                 </Box>
                             </SurfaceContent>}
-                        </> : <Alert severity="info">Chức năng giải thích chỉ có bản xem trước mô phỏng. API hiện chưa có operation hỏi đáp báo cáo.</Alert>}
                     </Panel>
                 </PageSections>
             </>}

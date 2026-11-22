@@ -3,19 +3,24 @@ import { serializable } from '../../platform/database/transactions.js';
 import { createWorkItem, lockAutomationFence, notificationBudgetAvailable } from '../operations/index.js';
 import type { AuthConfig } from '../workspace/index.js';
 import { availableRecipients, deliverNotification, notificationFixture } from './deliveries.js';
+import { notificationBlockedByQuietHours, notificationPriorities, type EventPriority } from './event-priorities.js';
 import type { NotificationProviders } from './notification-target.js';
 import { openTelegramChat, type TelegramConfig } from './telegram.js';
 
 type Source = { shopId: string; id: string; sourceType: string; sourceId: string };
 
-export function preparationNotice(work: Source, recipientUserId: string) {
+export { duringQuietHours } from './event-priorities.js';
+
+export function preparationNotice(work: Source, recipientUserId: string, priority: EventPriority = 'normal') {
     return { shopId: work.shopId, workItemId: work.id, sourceType: work.sourceType, sourceId: work.sourceId, recipientUserId,
-        title: 'Đơn cần chuẩn bị', safeBody: 'Có công việc đang chờ nhận.' };
+        title: priority === 'urgent' ? 'Khẩn · Đơn cần chuẩn bị' : 'Đơn cần chuẩn bị', safeBody: 'Có công việc đang chờ nhận.' };
 }
 
 export async function notifyPreparation(tx: Prisma.TransactionClient, work: Source, confirmedBy: string, now = new Date()) {
     const { shopId, id: workItemId } = work;
     const policy = await tx.notificationPolicy.findUnique({ where: { shopId } });
+    const priority = notificationPriorities(policy).order;
+    if (priority === 'off') return;
     let recipients = [confirmedBy];
     if (policy?.enabled) {
         const primary = await availableRecipients(tx, shopId, policy.primaryUserIds);
@@ -24,14 +29,9 @@ export async function notifyPreparation(tx: Prisma.TransactionClient, work: Sour
         await tx.workNotificationSchedule.create({
             data: { shopId, workItemId, policyVersion: policy.version, nextDueAt: now },
         });
+        if (policy.eventPriorities && notificationBlockedByQuietHours(policy, priority, now)) return;
     }
-    for (const id of recipients) await deliverNotification(tx, preparationNotice(work, id));
-}
-
-export function duringQuietHours(now: Date, timeZone: string, start: string, end: string) {
-    const parts = new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(now);
-    const current = parts.filter(part => part.type === 'hour' || part.type === 'minute').map(part => part.value).join(':');
-    return end > start ? current >= start && current < end : current >= start || current < end;
+    for (const id of recipients) await deliverNotification(tx, preparationNotice(work, id, priority));
 }
 
 export async function telegramFallbackDevice(tx: Prisma.TransactionClient,
@@ -70,12 +70,13 @@ export async function dispatchPreparationNotifications(db: PrismaClient, config?
             if (!schedule?.nextDueAt || schedule.nextDueAt > now) return;
             const { workItem, reminderCount } = schedule;
             const policy = await tx.notificationPolicy.findUnique({ where: { shopId: key.shopId } });
+            const priority = notificationPriorities(policy).order;
             if (!policy?.enabled || schedule.policyVersion !== policy.version || policy.remindAfterMinutes === null ||
-                workItem.state !== 'queued' || workItem.assigneeUserId || (workItem.dueAt && workItem.dueAt <= now)) {
+                priority === 'off' || workItem.state !== 'queued' || workItem.assigneeUserId || (workItem.dueAt && workItem.dueAt <= now)) {
                 await tx.workNotificationSchedule.update({ where, data: { nextDueAt: null } });
                 return;
             }
-            if (policy.quietStart && policy.quietEnd && duringQuietHours(now, policy.timezone, policy.quietStart, policy.quietEnd)) {
+            if (notificationBlockedByQuietHours(policy, priority, now)) {
                 await tx.workNotificationSchedule.update({ where, data: { nextDueAt: new Date(now.getTime() + 60000) } });
                 return;
             }
@@ -110,11 +111,15 @@ export async function dispatchPreparationNotifications(db: PrismaClient, config?
                 delivered.add(device.userId);
                 const delivery = device.pushSubscriptionCiphertext || device.telegramChatCiphertext ? queuedDelivery(device, policy.version, workItem, now)
                     : { deliveryStatus: device.fixtureOutcome };
-                await deliverNotification(tx, { ...preparationNotice(workItem, device.userId), channel: device.channel, ...delivery }, reminderCount);
+                await deliverNotification(tx, { ...preparationNotice(workItem, device.userId, priority), channel: device.channel, ...delivery }, reminderCount);
             }
-            if (reminderCount > 0) {
+            if (reminderCount === 0 && policy.eventPriorities) {
                 for (const recipient of primary.length ? primary : fallback) {
-                    if (!delivered.has(recipient)) await deliverNotification(tx, preparationNotice(workItem, recipient), reminderCount);
+                    await deliverNotification(tx, preparationNotice(workItem, recipient, priority));
+                }
+            } else if (reminderCount > 0) {
+                for (const recipient of primary.length ? primary : fallback) {
+                    if (!delivered.has(recipient)) await deliverNotification(tx, preparationNotice(workItem, recipient, priority), reminderCount);
                 }
             }
             await tx.workNotificationSchedule.update({ where, data: {

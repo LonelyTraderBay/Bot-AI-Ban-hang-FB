@@ -10,6 +10,7 @@ import { fixtureAccounts } from '../../../apps/api/dist/modules/finance/account-
 import { bookInspectedReturn, financeJobHandlers, localAccountingDate } from '../../../apps/api/dist/modules/finance/index.js';
 import { manualCarrierId } from '../../../apps/api/dist/modules/finance/debts.js';
 import { periodIntent } from '../../../apps/api/dist/modules/finance/period-data.js';
+import { refreshOperationExceptions } from '../../../apps/api/dist/modules/operations/index.js';
 import { readAuthConfig, requireShopAccess } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { runJob } from '../../../apps/api/dist/platform/jobs/index.js';
@@ -539,11 +540,17 @@ test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, pa
     const directBank = bankByRef.get(external.direct);
     const directReview = byTransaction.get(directBank.id);
     const directDebt = debts.find(item => item.source.id === direct.order.id);
+    const nextDay = new Date(Date.now() + 25 * 60 * 60_000);
+    await refreshOperationExceptions(db, nextDay);
+    const bankException = { shopId, kind: 'unmatched_bank', sourceType: 'reconciliation_case', sourceId: directReview.id };
+    assert.equal((await db.workItem.findFirstOrThrow({ where: bankException })).state, 'queued');
     await post('reconciliation-cases/' + directReview.id + '/match', {
         transactionId: directBank.id, expectedVersion: directReview.version, reason: 'Đã đối chiếu khoản hãng vận chuyển chuyển về',
         allocations: [{ resource: { type: 'debt', id: directDebt.id }, amount: money('249000', shop) }],
     }, 'CommandResponse', 202);
     assert.equal((await get('orders/' + direct.order.id, 'OrderResponse')).paymentState, 'settled');
+    await refreshOperationExceptions(db, nextDay);
+    assert.equal((await db.workItem.findFirstOrThrow({ where: bankException })).state, 'completed');
     const [directPayment] = await get('payment-reviews?kind=collection&stage=settled&q=' + direct.order.id, 'PaymentReviewListResponse');
     assert.deepEqual(directPayment.verified, money('249000', shop));
     assert.deepEqual(directPayment.bankTransactionIds, [directBank.id]);

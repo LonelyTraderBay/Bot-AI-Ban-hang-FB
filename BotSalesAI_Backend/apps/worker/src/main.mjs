@@ -6,9 +6,9 @@ import { configuredFileStore, transferFileObjects } from '../../api/dist/modules
 import { channelTestHandler, readMetaInboundConfig } from '../../api/dist/modules/channels/index.js';
 import { dispatchMessengerMessages, processBotInbound } from '../../api/dist/modules/inbox/index.js';
 import { knowledgeIndexHandler } from '../../api/dist/modules/knowledge/index.js';
-import { deviceTestHandler, dispatchExternalNotifications, dispatchPreparationNotifications, readTelegramConfig,
+import { deviceTestHandler, dispatchExternalNotifications, dispatchPreparationNotifications, publishOperationNotices, readTelegramConfig,
     readWebPushConfig } from '../../api/dist/modules/notifications/index.js';
-import { publishOwnerDigests } from '../../api/dist/modules/operations/index.js';
+import { publishOwnerDigests, refreshOperationExceptions } from '../../api/dist/modules/operations/index.js';
 import { expireOrdersWithReservations } from '../../api/dist/modules/orders/index.js';
 import { privacyRequestHandler, runPrivacyMaintenance } from '../../api/dist/modules/privacy/index.js';
 import { dispatchPurchases, evaluateAutomaticReorder } from '../../api/dist/modules/procurement/index.js';
@@ -29,6 +29,8 @@ async function main() {
         ['checkChannelHealth', channelTestHandler(auth)], ['submitKnowledgeReview', knowledgeIndexHandler(db)],
         ['createExport', reportExportHandler], ['approvePrivacyRequest', privacyRequestHandler(auth)]]), undefined, async db => {
         await expireOrdersWithReservations(db);
+        await refreshOperationExceptions(db);
+        await publishOperationNotices(db);
         await dispatchPreparationNotifications(db, auth, new Date(), notifications);
         await publishOwnerDigests(db);
         await evaluateAutomaticReorder(db, auth);

@@ -5,6 +5,22 @@ import { resolveConversationAttachments } from './files';
 const capability = () => ({
     text: 'supported', streaming: 'unsupported', vision: 'unsupported', structuredOutput: 'unknown', toolCalling: 'unsupported', embeddings: 'unsupported', usageReporting: 'unsupported', lastVerifiedAt: null
 });
+
+function knowledgeContent(shopId: string, fields: Row, previous?: Row, requireReady = false) {
+    const template = fields.template ?? previous?.template;
+    if (!template) return fields;
+    const parsed = record(template);
+    ensure(!previous || record(previous.template ?? {}).kind === parsed.kind, 'Loại nguồn kiến thức đã được cố định.', 422);
+    if (requireReady) {
+        ensure(Object.values(parsed).every(value => str(value).trim()), 'Điền đầy đủ trường bắt buộc trước khi gửi duyệt hoặc xuất bản.', 422);
+    }
+    const product = parsed.kind === 'product_content' ? find('products', str(parsed.productId), shopId) : undefined;
+    ensure(!product || (product.status !== 'archived' && (!requireReady || product.status === 'active')),
+        'Sản phẩm nguồn phải còn sử dụng trong cửa hàng.', 422);
+    const text = Object.entries(parsed).filter(([key]) => !['kind', 'productId', 'sourceOwner'].includes(key))
+        .map(([, value]) => str(value).trim()).join('\n');
+    return { ...fields, template: parsed, content: product ? str(product.name) + '\n' + text : text };
+}
 export const providerCatalog = () => [{
         providerId: 'mock', label: 'Nhà cung cấp mô phỏng — không AI thật', adapterId: 'mock', adapterVersion: '1.0', endpointEditable: false, models: [{
                 modelId: 'synthetic-model', label: 'Kịch bản cố định', capabilities: capability(), contextLimit: null, inputPricePerMillion: null, outputPricePerMillion: null, pricingAsOf: null
@@ -42,6 +58,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
         case 'sendMessage': {
             const c = find('conversations', input.id, shopId);
             let attachments: Row[] = [];
+            let sourceEvidence: Row[] = [];
             const text = str(body.text).trim();
             if (op === 'sendMessage') {
                 ensure(body.expectedConversationVersion === c.version, 'Hội thoại đã đổi. Tải lại trước khi gửi.', 412, 'STALE_VERSION');
@@ -51,8 +68,18 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
                 ensure(text.length > 0 || attachments.length > 0, 'Nhập nội dung hoặc đính kèm ít nhất một tệp.', 422, 'MESSAGE_CONTENT_REQUIRED');
             }
             else ensure(text.length > 0, 'Nhập nội dung ghi chú.', 422, 'MESSAGE_CONTENT_REQUIRED');
+            if (op === 'addInternalNote' && body.transcriptSource) {
+                const source = record(body.transcriptSource);
+                const message = find('messages', str(source.messageId), shopId);
+                const file = find('files', str(source.fileId), shopId);
+                ensure(message.conversationId === c.id && message.direction !== 'internal' && file.resourceId === c.id &&
+                    file.purpose === 'conversation_media' && file.status === 'ready' && str(file.mimeType).startsWith('audio/') &&
+                    Array.isArray(message.attachments) && message.attachments.some(entry => record(entry).fileId === file.id),
+                'Chọn tệp âm thanh sẵn sàng của đúng hội thoại.', 422);
+                sourceEvidence = [{ type: 'voice_transcript_file', id: file.id }, { type: 'voice_transcript_message', id: message.id }];
+            }
             const message = insert('messages', 'Message', shopId, {
-                conversationId: c.id, direction: op === 'addInternalNote' ? 'internal' : 'outbound', senderKind: 'human', text, status: 'sent', clientMessageId: body.clientMessageId ?? null, sourceEvidence: [], ...(attachments.length ? { attachments } : {})
+                conversationId: c.id, direction: op === 'addInternalNote' ? 'internal' : 'outbound', senderKind: 'human', text, status: 'sent', clientMessageId: body.clientMessageId ?? null, sourceEvidence, ...(attachments.length ? { attachments } : {})
             });
             if (op === 'sendMessage') {
                 c.lastMessagePreview = text || `Đã gửi ${attachments.length} tệp đính kèm`;
@@ -108,11 +135,12 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             return touch(f);
         }
         case 'createKnowledge': {
-            ensure(str(body.content).trim() || body.fileId, 'Cần nội dung hoặc tệp nguồn.', 422);
+            const draft = knowledgeContent(shopId, body);
+            ensure(draft.template || str(body.content).trim() || body.fileId, 'Cần nội dung hoặc tệp nguồn.', 422);
             if (body.fileId)
                 find('files', str(body.fileId), shopId);
             const k = insert('knowledge', 'Knowledge', shopId, {
-                ...body, revision: 1, status: 'draft', contentHash: await hashValue(body.content), publishedAt: null, approvedBy: null, warnings: [], publishedRevisionId: null, draftRevisionId: null
+                ...draft, revision: 1, status: 'draft', contentHash: await hashValue(draft.content), publishedAt: null, approvedBy: null, warnings: [], publishedRevisionId: null, draftRevisionId: null
             });
             const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
             k.draftRevisionId = revision.id;
@@ -125,7 +153,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             ensure(k.status !== 'published', 'Bản đã xuất bản bất biến; hãy tạo revision mới.', 409);
             if (body.fileId)
                 find('files', str(body.fileId), shopId);
-            Object.assign(k, body);
+            Object.assign(k, knowledgeContent(shopId, body, k));
             k.revision = num(k.revision) + 1;
             k.status = 'draft';
             k.contentHash = await hashValue(k.content);
@@ -139,6 +167,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             const k = find('knowledge', input.id, shopId);
             checkVersion(k, input);
             ensure(['draft', 'rejected', 'failed'].includes(str(k.status)), 'Chỉ có thể gửi bản nháp để đánh giá.', 409);
+            knowledgeContent(shopId, k, undefined, true);
             ensure(k.content || k.fileId, 'Thiếu nội dung.', 422);
             k.status = 'ready_for_review';
             touch(k);
@@ -148,6 +177,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             const k = find('knowledge', input.id, shopId);
             checkVersion(k, input);
             ensure(k.status === 'ready_for_review', 'Tài liệu chưa sẵn sàng duyệt.');
+            knowledgeContent(shopId, k, undefined, true);
             ensure(k.draftRevisionId === body.revisionId, 'Phiên bản tài liệu không khớp.');
             const evaluation = find('evaluations', str(body.evaluationRunId), shopId);
             ensure(evaluation.status === 'passed' && evaluation.knowledgeRevisionId === body.revisionId, 'Chưa có đánh giá đạt đúng bản kiến thức.');
@@ -174,11 +204,11 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             if (op === 'restoreKnowledgeRevision') {
                 const old = find('revisions', str(input.path.revisionId), shopId);
                 ensure(old.documentId === k.id, 'Phiên bản không thuộc tài liệu.', 404);
-                content = { title: old.title, sourceKind: old.sourceKind, fileId: old.fileId, content: old.content };
+                content = { title: old.title, sourceKind: old.sourceKind, fileId: old.fileId, content: old.content, ...(old.template ? { template: old.template } : {}) };
             }
             if (content.fileId)
                 find('files', str(content.fileId), shopId);
-            Object.assign(k, content);
+            Object.assign(k, knowledgeContent(shopId, content, k));
             k.revision = num(k.revision) + 1;
             k.status = 'draft';
             k.contentHash = await hashValue(k.content);

@@ -164,6 +164,7 @@ function ConversationPanel({ conversationId }: {
                                 <QueryState query={messages}>
                                     <Stack data-testid="inbox-message-groups" sx={layoutSx.inbox.messageGroupGap}>
                                         <ConversationMessageList
+                                            key={conversation.id}
                                             messages={messages.data?.data || []}
                                             timezone={shop.timezone}
                                             onRate={message => {
@@ -180,6 +181,7 @@ function ConversationPanel({ conversationId }: {
                         </Panel>
                     </Box>
                     <ConversationContextPanel conversation={conversation}>
+                        <KnowledgeScriptLink />
                         {__MOCK__ && <MockSalesFlowPreview customerId={conversation.customerId} conversationId={conversation.id} />}
                         <ConversationPromotions customerId={conversation.customerId} conversationId={conversation.id} />
                     </ConversationContextPanel>
@@ -247,6 +249,12 @@ type SalesSourceRow = {
     variant: Product['variants'][number];
     snapshot: StockSnapshot;
 };
+function KnowledgeScriptLink() {
+    const { shop } = useScope();
+    const canWrite = useCan('knowledge.write');
+    return canWrite ? <RouteLink to={`/s/${shop.id}/knowledge?template=sales_script`}>Soạn kịch bản tư vấn theo ngành</RouteLink> : null;
+}
+
 const sampleSalesScripts = {
     fashion: {
         label: 'Thời trang',
