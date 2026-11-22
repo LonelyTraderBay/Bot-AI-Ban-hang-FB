@@ -917,11 +917,27 @@
       "executionStatus": "NOT_RUN_PRODUCT_TEST"
     },
     {
+      "id": "SC2-C07-CONSENT",
+      "featureId": "G05",
+      "given": "Hai shop có khách liên hệ được và một challenge marketing gắn với đúng shop, khách, kênh, nội dung và hạn.",
+      "when": "Khách đổi mã công khai, xác nhận qua cùng origin, thử dùng lại mã, đổi nội dung hoặc shop rồi tạo challenge rút quyền.",
+      "then": "Mã sai phạm vi, hết hạn, cũ phiên bản hoặc dùng lại với thao tác khác bị từ chối. Cùng khóa và cùng nội dung đọc lại một kết quả. Chỉ xác nhận hợp lệ ghi consent và bằng chứng. Tác vụ marketing gắn phiên bản cũ bị chặn sau khi rút quyền.",
+      "routeIds": [
+        "R35",
+        "R61"
+      ],
+      "taskIds": [
+        "T063",
+        "T066"
+      ],
+      "executionStatus": "NOT_RUN_PRODUCT_TEST"
+    },
+    {
       "id": "SC2-G05",
       "featureId": "G05",
       "given": "Service vs marketing permission, opt-out, retention/deletion scope and legal hold review.",
       "when": "Thực hiện luồng hợp lệ và các trường hợp từ chối/mất phản hồi dưới đây trên implementation đúng task.",
-      "then": "Opt-out suppresses marketing jobs queued before change; backups restore reapplies tombstones.",
+      "then": "Opt-out suppresses marketing jobs queued before change and restores reapply tombstones. R35 confirmation verifies the current identity and a fresh OIDC authentication, rotates the session and grants one approval for the selected shop and request.",
       "routeIds": [
         "R35",
         "R61"
@@ -929,6 +945,7 @@
       "taskIds": [
         "T021",
         "T063",
+        "T068",
         "T075",
         "T079"
       ],

@@ -265,8 +265,8 @@ test('FE019.AC05 notification policy validates canonical numeric bounds before s
 
     await gotoDemo(page, '/s/shop-demo/notifications');
     await expect(page.getByText('Có ghi nhận mở thông báo; chưa nhận việc.', { exact: true })).toHaveCount(0);
-    await expect(page.getByText(/Đã nhận việc lúc/)).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toHaveCount(0);
+    await expect(page.getByText(/Đã xác nhận thông báo lúc/)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Xác nhận đã xem' })).toHaveCount(0);
     await expect(page.getByText('Đã gửi', { exact: true })).toHaveCount(0);
 });
 
@@ -326,7 +326,7 @@ test('FE027.A02/A07 preparation notification keeps order evidence and separates 
     await expect(page.getByText(notice!.title, { exact: true })).toBeVisible();
     await expect(page.getByText(notice!.safeBody, { exact: true })).toBeVisible();
     await expect(page.getByText('Đang chờ', { exact: true })).toBeVisible();
-    await expect(page.getByText(/Đã nhận việc lúc/)).toBeVisible();
+    await expect(page.getByText(/Đã xác nhận thông báo lúc/)).toBeVisible();
     await expect(page.getByText('Đã gửi', { exact: true })).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Xem đơn', exact: true })).toHaveAttribute('href', '/s/shop-demo/orders/DH-DEMO-PAID-01');
 });

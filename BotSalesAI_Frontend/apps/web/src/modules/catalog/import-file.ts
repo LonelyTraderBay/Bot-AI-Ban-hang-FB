@@ -1,11 +1,12 @@
 export const PRODUCT_IMPORT_MAX_BYTES = 5 * 1024 * 1024;
 export const PRODUCT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 
-export function productImportFileError(file: Pick<File, 'name' | 'size'> | null, maxBytes?: number) {
+export function productImportFileError(file: Pick<File, 'name' | 'size'> | null, maxBytes?: number, allowXlsx = false) {
     if (!file)
         return '';
-    if (!file.name.toLowerCase().endsWith('.csv'))
-        return 'Chỉ nhận tệp có đuôi .csv. Đổi đuôi không chuyển đổi nội dung tệp.';
+    const name = file.name.toLowerCase();
+    if (!name.endsWith('.csv') && !(allowXlsx && name.endsWith('.xlsx')))
+        return allowXlsx ? 'Chỉ nhận tệp có đuôi .csv hoặc .xlsx.' : 'Chỉ nhận tệp có đuôi .csv. Đổi đuôi không chuyển đổi nội dung tệp.';
     if (maxBytes !== undefined && file.size > maxBytes)
         return `Tệp vượt giới hạn ${Math.floor(maxBytes / (1024 * 1024))} MB của bản mô phỏng.`;
     return '';

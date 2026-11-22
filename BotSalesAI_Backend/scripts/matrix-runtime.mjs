@@ -2,6 +2,9 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const operationalRoutes = new Set(['GET /health/live', 'GET /health/ready']);
+const providerCallbacks = new Set([
+    'GET /integrations/meta/messenger/webhook', 'POST /integrations/meta/messenger/webhook', 'POST /integrations/telegram/updates',
+]);
 
 export function checkRegistration(source, scope, registrations, workspace) {
     const issues = [];
@@ -20,7 +23,7 @@ export function checkRegistration(source, scope, registrations, workspace) {
         }
         for (const entry of cases) {
             if (!source.caseIds.has(entry.id)) issues.push(id + ': unknown verification case ' + entry.id);
-            if (!/^tests\/[a-zA-Z0-9._-]+\.test\.mjs$/.test(entry.file) || !existsSync(resolve(workspace, entry.file))) {
+            if (!/^tests\/(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9._-]+\.test\.mjs$/.test(entry.file) || !existsSync(resolve(workspace, entry.file))) {
                 issues.push(id + ': missing test file for ' + entry.id);
             }
         }
@@ -33,7 +36,7 @@ export function checkRegistration(source, scope, registrations, workspace) {
         if (routes.has(route)) issues.push('Duplicate HTTP registration: ' + route);
         routes.add(route);
         if (!operationId) {
-            if (!operationalRoutes.has(route)) issues.push(handler + ': missing ContractOperation on ' + route);
+            if (!operationalRoutes.has(route) && !providerCallbacks.has(route)) issues.push(handler + ': missing ContractOperation on ' + route);
             continue;
         }
         if (operations.has(operationId)) issues.push('Duplicate operation registration: ' + operationId);

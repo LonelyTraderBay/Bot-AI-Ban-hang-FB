@@ -245,7 +245,8 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
     catch (error) {
         if (mutation && sent && idempotencyParameter?.required && intent && (!(error instanceof ApiError) || error.status >= 500 || error.status < 300)) {
             const commandId = error instanceof ApiError ? error.problem?.commandId : undefined;
-            rememberUnknown({ intentId: intent, shopId: options.path?.shopId || '', operation: op, commandId: commandId || null });
+            if (__MOCK__)
+                rememberUnknown({ intentId: intent, shopId: options.path?.shopId || '', operation: op, commandId: commandId || null });
             throw new UnknownResultError(intent, commandId);
         }
         if (error instanceof ApiError)

@@ -1,5 +1,6 @@
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawnSync} from 'node:child_process';
 import {root,typescript,require} from './tools.mjs';
+import {compileContractValidators} from './contract-validators.mjs';
 import {runMockNetworkScenarios} from '../tests/fixtures/mock-network.mjs';
 const compiler=typescript();const dir=fs.mkdtempSync(path.join(os.tmpdir(),'botsales-domain-'));
 // Compiled mock modules use the same installed validators as the browser build.
@@ -14,6 +15,7 @@ try{
  const build=spawnSync(process.execPath,args,{cwd:root,encoding:'utf8'});
  fs.writeFileSync(path.join(root,'evidence/logs/mock-typecheck.log'),`${process.version}\nTypeScript ${compiler.ts.version} (${compiler.source})\n${build.stdout||''}${build.stderr||''}\nExit: ${build.status}\n`);
  if(build.status!==0)throw new Error(`Pure mock typecheck failed:\n${build.stdout}${build.stderr}`);
+ fs.writeFileSync(path.join(dir,'apps/web/src/shared/api/compiled-validators.js'),compileContractValidators({esm:false}));
  const service=require(path.join(dir,'apps/web/src/mocks/service.js'));const database=require(path.join(dir,'apps/web/src/mocks/database.js'));const fileModule=require(path.join(dir,'apps/web/src/mocks/files.js'));const operations=JSON.parse(fs.readFileSync(path.join(root,'packages/contracts/src/operations.json'),'utf8'));
  const {run}=require(path.join(root,'tests/domain-scenarios.cjs'));const result=await run({service,database,fileModule,operations});
  const network=await runMockNetworkScenarios({root});

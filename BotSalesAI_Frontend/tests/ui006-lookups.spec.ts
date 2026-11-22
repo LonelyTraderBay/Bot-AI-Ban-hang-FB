@@ -198,8 +198,14 @@ test('UI006.C05 lookup and table cursors reach records after 150 synthetic suppl
     const purchaseResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/purchase-orders'));
     await purchaseDialog.getByRole('button', { name: 'Lưu đơn nháp', exact: true }).click();
     expect((await purchaseRequest).postDataJSON()).toMatchObject({ supplierId: seeded.targetSupplierId, lines: [{ supplierOfferId: seeded.targetOfferId, variantId: 'v-p1', quantity: 1 }] });
-    expect((await purchaseResponse).status()).toBe(201);
-    await page.getByRole('dialog', { name: /Đơn mua / }).getByRole('button', { name: 'Đóng', exact: true }).last().click();
+    const created = await purchaseResponse;
+    expect(created.status()).toBe(201);
+    const { data: { id: purchaseId } } = await created.json() as { data: { id: string } };
+    expect(purchaseId).toBeTruthy();
+    const purchaseDetail = page.getByRole('dialog', { name: `Đơn mua ${purchaseId}`, exact: true });
+    await expect(purchaseDetail).toBeVisible();
+    await purchaseDetail.getByRole('button', { name: 'Đóng', exact: true }).last().click();
+    await expect(purchaseDetail).toBeHidden();
 
     await clickNavigation(page, 'Đơn hàng');
     const ordersTable = page.getByRole('table').first();
@@ -243,7 +249,7 @@ test('UI006.C02 selected order identity survives a failed search and cursor retr
     await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');
     await page.getByRole('button', { name: 'Tạo yêu cầu trả', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Yêu cầu trả hàng' });
-    const selectedOrder = dialog.getByRole('combobox', { name: 'Đơn hàng đã giao' });
+    const selectedOrder = dialog.getByRole('combobox', { name: 'Đơn đủ điều kiện trả' });
     await expect(selectedOrder).toContainText(selectedOrderId);
 
     const query = 'ui006-no-matching-order';

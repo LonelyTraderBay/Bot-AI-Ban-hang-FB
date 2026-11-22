@@ -4427,36 +4427,97 @@
         "additionalProperties": false
       },
       "StepUpRequest": {
-        "type": "object",
-        "properties": {
-          "password": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 1024,
-            "writeOnly": true
+        "description": "Start or complete an OIDC confirmation for a privacy approval. The password shape is available only to the local fixture.",
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "action": {
+                "const": "begin"
+              },
+              "shopId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "privacyRequestId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "action",
+              "shopId",
+              "privacyRequestId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": {
+                "const": "complete"
+              }
+            },
+            "required": [
+              "action"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "password": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024,
+                "writeOnly": true
+              }
+            },
+            "required": [
+              "password"
+            ],
+            "additionalProperties": false
           }
-        },
-        "required": [
-          "password"
-        ],
-        "additionalProperties": false
+        ]
       },
       "StepUpResult": {
-        "type": "object",
-        "properties": {
-          "reauthToken": {
-            "type": "string",
-            "minLength": 16
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "authorizationUrl": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https://"
+              },
+              "expiresAt": {
+                "$ref": "#/components/schemas/DateTime"
+              }
+            },
+            "required": [
+              "authorizationUrl",
+              "expiresAt"
+            ],
+            "additionalProperties": false
           },
-          "expiresAt": {
-            "$ref": "#/components/schemas/DateTime"
+          {
+            "type": "object",
+            "properties": {
+              "reauthToken": {
+                "type": "string",
+                "minLength": 16
+              },
+              "expiresAt": {
+                "$ref": "#/components/schemas/DateTime"
+              }
+            },
+            "required": [
+              "reauthToken",
+              "expiresAt"
+            ],
+            "additionalProperties": false
           }
-        },
-        "required": [
-          "reauthToken",
-          "expiresAt"
-        ],
-        "additionalProperties": false
+        ]
       },
       "CsrfResponse": {
         "type": "object",

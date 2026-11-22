@@ -16,7 +16,7 @@ const sourceRoutes = {
     order: { permission: 'orders.read', path: (id: string) => 'orders/' + id, label: 'Mở đơn hàng' },
     conversation: { permission: 'conversations.read', path: (id: string) => 'inbox/' + id, label: 'Mở hội thoại' },
     shipment: { permission: 'fulfillment.read', path: (id: string) => 'shipments?q=' + id, label: 'Tìm vận đơn' },
-    purchase_order: { permission: 'procurement.read', path: (id: string) => 'purchases?q=' + id, label: 'Tìm đơn mua' },
+    purchase_order: { permission: 'procurement.read', path: (id: string) => 'purchases?purchaseId=' + id, label: 'Mở đơn mua' },
     bank_transaction: { permission: 'finance.read', path: () => 'finance/reconciliation', label: 'Mở đối soát' },
 } as const;
 

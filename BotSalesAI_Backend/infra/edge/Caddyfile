@@ -1,0 +1,52 @@
+{
+	admin off
+	persist_config off
+	auto_https disable_redirects
+	servers {
+		protocols h1 h2
+	}
+	log {
+		output stderr
+		format filter {
+			wrap json
+			fields {
+				request delete
+			}
+		}
+	}
+}
+
+{$APP_ORIGIN} {
+	bind {$BOTSALES_EDGE_BIND:127.0.0.1}
+	tls "{$BOTSALES_EDGE_TLS_CERT}" "{$BOTSALES_EDGE_TLS_KEY}"
+	root * ./web
+	header {
+		-Server
+		Referrer-Policy no-referrer
+		X-Content-Type-Options nosniff
+		Content-Security-Policy "base-uri 'none'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; script-src 'self'; script-src-attr 'none'; worker-src 'self'"
+	}
+
+	@api path /api /api/*
+	@web not path /api /api/*
+	encode @web zstd gzip
+	handle @api {
+		reverse_proxy 127.0.0.1:{$API_PORT:3000}
+	}
+
+	@navigation {
+		method GET HEAD
+		path_regexp ^/(?:[^/.]+/)*[^/.]*$
+		not path /assets /assets/*
+	}
+	handle @navigation {
+		header Cache-Control no-cache
+		try_files {path} /index.html
+		file_server
+	}
+
+	handle {
+		header Cache-Control no-cache
+		file_server
+	}
+}

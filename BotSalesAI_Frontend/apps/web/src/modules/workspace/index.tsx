@@ -62,12 +62,17 @@ export function OnboardingPage() {
     const [name, setName] = useState(''), [currency, setCurrency] = useState('VND'), [timezone, setTimezone] = useState('Asia/Vientiane'), [pending, setPending] = useState(false), [error, setError] = useState<Error | null>(null), [timezoneTouched, setTimezoneTouched] = useState(false), [submitted, setSubmitted] = useState(false);
     const formElement = useRef<HTMLFormElement>(null);
     const baseline = useRef({name: '',currency: 'VND',timezone: 'Asia/Vientiane'});
+    const creation = useRef<{ content: string; key: string } | null>(null);
     const mounted = useRef(true);
     useEffect(() => { mounted.current=true; return () => { mounted.current=false; }; },[]);
     const bindDraft = useDraftForm(name!==baseline.current.name || currency!==baseline.current.currency || timezone!==baseline.current.timezone);
     const timezoneError = !isValidTimeZone(timezone) ? 'Nhập múi giờ hợp lệ, ví dụ Asia/Vientiane.' : '';
     const save = async () => { setSubmitted(true); if (pending || !name.trim() || timezoneError) return; setPending(true); setError(null); try {
-        const r = await request('createShop', { body: { name, currency, timezone, locale: 'vi-VN' } });
+        const body = { name: name.trim(), currency, timezone: timezone.trim(), locale: 'vi-VN' };
+        const content = JSON.stringify(body);
+        const intent = creation.current?.content === content ? creation.current : { content, key: crypto.randomUUID() };
+        creation.current = intent;
+        const r = await request('createShop', { body, idempotencyKey: intent.key });
         await refresh();
         await cache.invalidateQueries({ queryKey: ['shops'] });
         if (!mounted.current) return;
@@ -76,7 +81,11 @@ export function OnboardingPage() {
         navigate(`/s/${r.data.id}/overview`);
     }
     catch (e) {
-        if (mounted.current) setError(e instanceof Error ? e : new Error('Không tạo được cửa hàng'));
+        if (mounted.current) {
+            setError(e instanceof ApiError && e.code === 'RESULT_UNKNOWN'
+                ? new Error('Chưa đọc được kết quả tạo cửa hàng. Giữ nguyên thông tin và bấm Tạo cửa hàng để kiểm tra lại.')
+                : e instanceof Error ? e : new Error('Không tạo được cửa hàng'));
+        }
     }
     finally {
         if (mounted.current) setPending(false);
@@ -88,6 +97,11 @@ export function ShopSettingsPage() { return <ShopSettingsView />; }
 const roleLabels: Record<Role, string> = {
     owner: 'Chủ cửa hàng', manager: 'Quản lý', sales: 'Bán hàng', warehouse: 'Nhân viên kho', accountant: 'Kế toán', bot_admin: 'Quản trị AI', viewer: 'Chỉ xem'
 };
+function teamMemberActions(member: Membership): string[] | undefined {
+    if (__MOCK__) return undefined;
+    return Array.isArray(member.allowedActions)
+        ? member.allowedActions.filter((action): action is string => typeof action === 'string') : [];
+}
 export function TeamPage() {
     const { session, shop } = useScope();
     const list = useApi('listMembers', { query: useListQuery('listMembers') });
@@ -108,15 +122,16 @@ export function TeamPage() {
     return <><PageHeader title="Nhân sự & phân quyền" subtitle="Vai trò là bộ quyền mặc định; API quyết định quyền hiệu lực ở từng thao tác." actions={<MutationButton permission="members.manage" variant="contained" onClick={() => open(null)}>Mời nhân viên</MutationButton>}/>{savedMessage && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>{savedMessage}</Alert>}<Panel><Toolbar operation="listMembers" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable reflowOnMobile label="Nhân sự và quyền truy cập" rows={list.data.data} rowKey={m => m.id} columns={[
         { key: 'user', label: 'Nhân viên / vai trò', render: m => <Stack><Typography>{memberName(m.userId)}</Typography><Typography variant="caption" color="text.secondary">{m.roles.map(r => roleLabels[r]).join(', ')}</Typography></Stack> }, { key: 'status', label: 'Trạng thái', render: m => <Status value={m.status}/> }, { key: 'perms', label: 'Quyền hiệu lực', render: m => `${m.permissions.length} quyền · v${m.permissionVersion}` },
         {
-            key: 'actions', label: 'Thao tác', render: m => <ActionGroup direction="row"><Button onClick={() => setMemberId(m.id)}>Chi tiết nhân sự</Button><MutationButton permission="members.manage" onClick={() => open(m)}>Sửa quyền</MutationButton><MutationButton permission="members.manage" color="error" disabled={m.userId === session.user.id || m.status === 'revoked'} onClick={() => setRemove(m)}>Thu hồi</MutationButton></ActionGroup>
+            key: 'actions', label: 'Thao tác', render: m => <ActionGroup direction="row"><Button onClick={() => setMemberId(m.id)}>Chi tiết nhân sự</Button><MutationButton permission="members.manage" allowedActions={teamMemberActions(m)} action="updateMemberRoles" onClick={() => open(m)}>Sửa quyền</MutationButton><MutationButton permission="members.manage" allowedActions={teamMemberActions(m)} action="revokeMembership" color="error" disabled={m.userId === session.user.id || m.status === 'revoked'} onClick={() => setRemove(m)}>Thu hồi</MutationButton></ActionGroup>
         }
     ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
- <EditDialog open={!!memberId} title="Chi tiết nhân sự" onClose={() => setMemberId('')} actions={<><Button onClick={() => setMemberId('')}>Đóng</Button>{detail.data && <Box sx={{ display: { xs: 'block', md: 'none' } }}><ActionGroup direction="row"><MutationButton permission="members.manage" onClick={() => { setMemberId(''); open(detail.data!.data); }}>Sửa quyền</MutationButton><MutationButton permission="members.manage" color="error" disabled={detail.data.data.userId === session.user.id || detail.data.data.status === 'revoked'} onClick={() => { setMemberId(''); setRemove(detail.data!.data); }}>Thu hồi</MutationButton></ActionGroup></Box>}</>}>
+ <EditDialog open={!!memberId} title="Chi tiết nhân sự" onClose={() => setMemberId('')} actions={<><Button onClick={() => setMemberId('')}>Đóng</Button>{detail.data && <Box sx={{ display: { xs: 'block', md: 'none' } }}><ActionGroup direction="row"><MutationButton permission="members.manage" allowedActions={teamMemberActions(detail.data.data)} action="updateMemberRoles" onClick={() => { setMemberId(''); open(detail.data!.data); }}>Sửa quyền</MutationButton><MutationButton permission="members.manage" allowedActions={teamMemberActions(detail.data.data)} action="revokeMembership" color="error" disabled={detail.data.data.userId === session.user.id || detail.data.data.status === 'revoked'} onClick={() => { setMemberId(''); setRemove(detail.data!.data); }}>Thu hồi</MutationButton></ActionGroup></Box>}</>}>
     <QueryState query={detail}>{detail.data && <SurfaceContent>
         <DetailLine label="Nhân viên">{memberName(detail.data.data.userId)}</DetailLine>
         <DetailLine label="Mã thành viên">{detail.data.data.id}</DetailLine><DetailLine label="Trạng thái"><Status value={detail.data.data.status}/></DetailLine>
         <DetailLine label="Vai trò">{detail.data.data.roles.map(role => roleLabels[role]).join(', ')}</DetailLine>
         <DetailLine label="Phiên bản quyền">{detail.data.data.permissionVersion}</DetailLine><DetailLine label="Quyền hiệu lực">{detail.data.data.permissions.join(', ') || 'Không có quyền'}</DetailLine>
+        {typeof detail.data.data.invitationExpiresAt === 'string' && <DetailLine label="Hết hạn lời mời">{dateTime(detail.data.data.invitationExpiresAt, shop.timezone)}</DetailLine>}
     </SurfaceContent>}</QueryState>
  </EditDialog>
  <EditDialog open={edit !== undefined} title={edit ? 'Cập nhật quyền' : 'Mời nhân viên'} onClose={() => setEdit(undefined)} busy={invite.pending || update.pending} actions={<Button variant="contained" disabled={!roles.length || (!edit && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) || invite.pending || update.pending} onClick={async () => { try {
@@ -125,11 +140,12 @@ export function TeamPage() {
             setSavedMessage(`Đã cập nhật quyền truy cập của ${edit.userId}.`);
         } else {
             await invite.execute({ body: { email, roles } });
-            setSavedMessage(`Đã gửi lời mời đến ${email.trim()}.`);
+            setSavedMessage(__MOCK__ ? `Đã gửi lời mời đến ${email.trim()}.`
+                : `Đã tạo lời mời cho ${email.trim()}. Người được mời cần đăng nhập bằng email này.`);
         }
         setEdit(undefined);
     }
-    catch { /* visible */ } }}>Lưu</Button>}><ErrorNotice error={invite.error || update.error}/><FormFields >{!edit && <TextField label="Email nhân viên" type="email" value={email} onChange={e => setEmail(e.target.value)}/>}<Typography variant="subtitle2">Phân vai trò</Typography>{(Object.keys(roleLabels) as Role[]).map(role => <FormControlLabel key={role} label={`${roleLabels[role]} · ${permissionCatalog.rolePresets[role]?.length || 0} quyền`} control={<Checkbox checked={roles.includes(role)} onChange={e => setRoles(e.target.checked ? [...roles, role] : roles.filter(r => r !== role))}/>}/>)}<Alert severity="warning">Quyền mới phải được máy chủ kiểm lại. Thu hồi quyền làm mất hiệu lực cache và phiên truy cập liên quan.</Alert></FormFields></EditDialog><ConfirmDialog open={!!remove} title="Thu hồi quyền nhân viên" confirmLabel="Thu hồi quyền" description={`Nhân viên ${remove?.userId || ""} trong ${shop.name}: người này không được tiếp tục truy cập dữ liệu cửa hàng sau khi thu hồi. Lịch sử hoạt động được giữ.`} onClose={() => setRemove(null)} busy={revoke.pending} error={revoke.error} onConfirm={async () => {
+    catch { /* visible */ } }}>Lưu</Button>}><ErrorNotice error={invite.error || update.error}/><FormFields >{!edit && <TextField label="Email nhân viên" type="email" value={email} onChange={e => setEmail(e.target.value)}/>}<Typography variant="subtitle2">Phân vai trò</Typography>{(Object.keys(roleLabels) as Role[]).map(role => <FormControlLabel key={role} label={`${roleLabels[role]} · ${permissionCatalog.rolePresets[role]?.length || 0} quyền`} control={<Checkbox checked={roles.includes(role)} disabled={!__MOCK__ && role === 'owner'} onChange={e => setRoles(e.target.checked ? [...roles, role] : roles.filter(r => r !== role))}/>}/>)}<Alert severity="warning">Quyền mới phải được máy chủ kiểm lại. Thu hồi quyền làm mất hiệu lực cache và phiên truy cập liên quan.</Alert></FormFields></EditDialog><ConfirmDialog open={!!remove} title="Thu hồi quyền nhân viên" confirmLabel="Thu hồi quyền" description={`Nhân viên ${remove?.userId || ""} trong ${shop.name}: người này không được tiếp tục truy cập dữ liệu cửa hàng sau khi thu hồi. Lịch sử hoạt động được giữ.`} onClose={() => setRemove(null)} busy={revoke.pending} error={revoke.error} onConfirm={async () => {
         if (!remove) return;
         await revoke.execute({ path: { memberId: remove.id }, version: remove.permissionVersion });
     }}/></>;

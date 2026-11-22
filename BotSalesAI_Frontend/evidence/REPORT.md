@@ -1,5 +1,39 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Chờ hộp thoại đơn mua trong UI006.C05 · PR #31 · 22/11/2026
+
+Trên head `b81f1b44`, trace của Chromium 8/9 cho thấy ca UI006.C05 bấm nút đóng khi URL vẫn là `/s/shop-demo/purchases`. Sau đó URL chuyển sang `?purchaseId=…`, hộp thoại chi tiết mở và ca kiểm chờ liên kết “Đơn hàng” đến hết thời gian. Selector trước đó khớp cả tiêu đề “Đơn mua mới” và tiêu đề chi tiết. Ca kiểm lấy ID từ phản hồi 201 của `createPurchaseOrder`, chờ hộp thoại chi tiết của đúng ID rồi kiểm hộp thoại đã đóng trước khi điều hướng. Dữ liệu tổng hợp, xác nhận POST, ca phân trang và thời hạn giữ theo nguồn hiện hành. [Job Chromium](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45014635122/job/137184339455) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45014635122/artifacts/14750763974)
+
+## Ngân sách JavaScript của demo · PR #31 · 22/11/2026
+
+Firefox 9/9 trên head `9724078`, lượt `45013329691` lần 1, đo 559.050 byte gzip cho trang tổng quan demo. Giới hạn trong `demo-preview.spec.ts` là 512.000 byte. Phạm vi sửa là cấu hình build và bộ kiểm hợp đồng dùng chung. Nguồn schema là OpenAPI của kit và bản sinh cho frontend. Các trường hợp kiểm hợp đồng, route và ngưỡng tải giữ theo nguồn hiện hành. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45013329691/job/137180205282)
+
+Build demo tổng hợp dùng lại chế độ Ajv biên dịch theo nhu cầu từ cùng schema và tùy chọn kiểm. Build live và bộ kiểm hợp đồng tiếp tục dùng validator biên dịch sẵn để chạy với CSP. Hai trình duyệt đo cùng 505.682 byte gzip lúc mở trang tổng quan và 103.718 byte cho chunk gzip lớn nhất. Suite artifact đạt 6/6 và built-demo đạt 6/6 ở lượt chạy cục bộ. [Chỉ số Chromium](frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-pr31-budget-fix-20261122.json) · [Chỉ số Firefox](frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-pr31-budget-fix-20261122.json)
+
+## Bàn giao đơn mua thủ công R46 · 22/11/2026
+
+R46 sở hữu lời xác nhận trong `ConfirmDialog`. Kiểm theo quyền `procurement.send` và hành động API trả về. Lời xác nhận cho kênh thủ công phải nêu bước tạo công việc và cách ghi nhận chứng từ. Phạm vi gồm nút và hộp thoại R46, luồng tiếp tục qua chứng từ xác nhận R46 và phiếu nhận R47. Dùng `MutationButton` và `ConfirmDialog` hiện hành cho trạng thái quyền, chờ và báo lỗi.
+
+Baseline `b236c446` cùng thay đổi cục bộ có SHA-256 `df4bd1805b4157ed7abf043c5c405420999f84fa5529803b462c2b64d825d000` ở `modules/procurement/index.tsx`. Firefox thấy hộp thoại “Gửi đơn mua đã duyệt” dù API chỉ tạo bàn giao thủ công. Ảnh desktop và 390 px trong `BotSalesAI_Backend/test-results/backend/be22/manual-purchase/browser-baseline/` lần lượt có SHA-256 `c2b0a9ae17ec9a6451d851f4b13defd97ac430bf5f36b57948aa5843b8900979` và `2ec043a216cfc6667f552b4487699bd01e9fee161f1012d07b32d73c9d8b2e1f`.
+
+Từ gói đã đối chiếu manifest, Firefox qua HTTPS hiển thị **Bàn giao thủ công** cho cặp shop và nhà cung cấp đã cấp. Hộp thoại hướng dẫn tạo công việc và nhập bằng chứng, nút xác nhận nằm trong viewport 390 px. Sau bàn giao, ca kiểm nhập chứng từ qua công cụ vận hành, xác nhận ở R46 rồi ghi nhận một phần ở R47. Ảnh desktop và 390 px trong `BotSalesAI_Backend/test-results/backend/be22/manual-purchase/package/manual-browser/` có SHA-256 `8519608427e33fa248e4cdc277729570e6fee03e0e7691d6c777470ee2c0f228` và `2f51bc330bf814e3b8308a4fbea400dee9a342345728b936a33dce448518119a`. Phép kiểm giao diện dùng viewport trình duyệt. Zoom gốc, công nghệ hỗ trợ và nghiệm thu staging còn mở.
+
+## Mở hồ sơ ngoại lệ R63 và phản ánh nguồn dữ liệu vận hành — 21/11/2026
+
+Firefox qua HTTPS tái hiện hai lỗi trên backend PostgreSQL thử. R63 điều hướng sang R46 với `q` nhưng trang không đọc tham số đó để mở hồ sơ. R52 vẫn hiện thông báo mô phỏng khi nhận bản tin và trạng thái từ backend. Đường dẫn hồ sơ hiện truyền `purchaseId` và R46 đọc hồ sơ qua API chi tiết. R37, R38 và R52 chỉ hiện thông báo mô phỏng trong chế độ demo. Phạm vi thay đổi là luồng mở hồ sơ và nhãn nguồn dữ liệu. [Kiểm chứng BE-20](../../BotSalesAI_Backend/BACKEND_PLAN.md#kết-quả-kiểm-be-20)
+
+Trong chế độ live, R45 đọc hạn mức đang áp dụng từ chính sách ngân sách. Chế độ tự gửi xuất hiện để sử dụng sau khi quy tắc đã được lưu và có ủy quyền khớp. Trước sửa, bộ lọc giao diện chỉ nhận approval còn ở trạng thái `approved`, trong khi áp dụng hạn mức đã chuyển approval sang `consumed`. Ca Firefox dùng đúng cặp mã ngân sách và ủy quyền đã được backend xác minh.
+
+## Hợp đồng lưu quy tắc nhập lại R45 — 21/11/2026
+
+Baseline `b236c446`, `modules/procurement/index.tsx` SHA-256 `d7702eee35c26a3d0524e46ba27a239217640128723aceeedf024594a347c2c8`. Firefox qua HTTPS đã tạo và duyệt nhà cung cấp, lưu báo giá R44 rồi đứng ở lần lưu R45. `ReorderRuleCreate` từ chối trường ngoài hợp đồng, trong khi R45 gửi `purchaseDelegationId: null` từ payload dùng chung với `ReorderRuleWrite`. R45 sở hữu cách dựng payload. Ca hồi quy tiếp tục qua R46/R38/R47 sau khi sửa đường lưu R45.
+
+Sau khi tách payload tạo và cập nhật, Firefox qua API thật đã lưu quy tắc, tạo đề nghị, lập đơn mua, phê duyệt, gửi fixture và ghi nhận hàng từng phần. Kiểm này xác minh hành vi tích hợp trên Firefox desktop. Bằng chứng S17 về bố cục, zoom và trải nghiệm với công nghệ hỗ trợ tiếp tục theo dõi theo tiêu chí hiện hành. [Kết quả BE-16](../../BotSalesAI_Backend/BACKEND_PLAN.md#kết-quả-kiểm-be-16)
+
+## Tích hợp chuẩn bị, giao hàng và trả hàng — 21/11/2026
+
+Trên baseline `b236c446`, R39 đổi nhãn xác nhận đã xem để tách khỏi nhận việc ở R41. R43 đọc hành động trả từ API và tiếp tục hỗ trợ dữ liệu demo. R19 nhắc đưa hàng đã lấy về vị trí bán trước khi hủy. Kiểm Firefox desktop qua HTTPS với PostgreSQL/Redis cho R39–R43. Ba ca hồi quy demo liên quan đạt trên cả Chromium và Firefox. S17 tiếp tục theo dõi các tiêu chí UI đang mở. [Kết quả BE-13](../../BotSalesAI_Backend/BACKEND_PLAN.md#kết-quả-kiểm-be-13)
+
 ## Đồng bộ trả hàng, duyệt mua và nhận hàng — 13/11/2026
 
 Phạm vi frontend/MSW: làm mới các dữ liệu liên quan sau kiểm hàng trả, phê duyệt đơn mua và ghi nhận hàng nhập. [Contract và baseline](data-sync-return-receipt-20261113/CONTRACT.md), [kết quả và giới hạn](data-sync-return-receipt-20261113/RESULT.md). Không đóng S17, backend, hosted CI hoặc owner acceptance.
@@ -729,3 +763,10 @@ Collector W30 tái chạy 5/5 theo phép đo DOM; bốn ảnh viewport của hai
 
 
 Đối chiếu bốn trạng thái source và chụp lại có giới hạn: [kết quả và fingerprint](ui-zoom-capture-20261112/RESULT.md#đối-chiếu-bốn-source-lịch-sử--12112026). 16 bản sao ảnh mới trùng byte với bốn ảnh hiện có đã được loại bỏ; bằng chứng lịch sử vẫn OPEN.
+## Tích hợp BE-21 · R35 và R61
+
+Trước sửa, R35 chỉ tạo và liệt kê yêu cầu lưu giữ. Ca demo role xác nhận hàng yêu cầu chưa có hành động phê duyệt. R61 đã có form công khai, còn luồng rút quyền cần nội dung đúng với hành động trả về. Baseline của `workspace/privacy.tsx` là SHA-256 `a19daab3b813e6543a59523db858b6fccb5e114dde82cac4b906ecc3039e82a7`. Mã hiện tại dùng `EditDialog`, `FormFields`, `DataTable`, `RouteLink` và `MutationButton` cho thao tác theo quyền, giữ trạng thái bận, báo lỗi và điều hướng đến công việc. Nguồn áp dụng là R35/R61 và schema `PrivacyPolicy`, `StepUpRequest`, `ReauthApproval` của kit. Kiểm render và ghi kết quả theo phạm vi có thể quan sát bên dưới.
+
+R03 đã tạo shop và mở trang tổng quan qua Firefox trên API thật. Baseline của `workspace/index.tsx` là SHA-256 `d8001d1c5b094653909f6dbde4dc017203d937f806b92f535b5ca57ff66e7911`. Form gọi `createShop` với khóa sinh tự động ở mỗi request. Vì cửa hàng chỉ có ID sau khi tạo, form giữ khóa cho lần gửi lại cùng nội dung khi còn mở, theo hợp đồng `createShop`. Giữ nguyên bố cục `AuthCard` và toàn bộ consumer khác của workspace.
+
+`npm run test:privacy:browser` qua Firefox và HTTPS local đã xác nhận R03 gửi lại cùng khóa sau khi server ghi nhưng trình duyệt mất phản hồi. PostgreSQL có một shop. R33 lưu đúng thiết lập. R35 mở và gửi form xác minh ở viewport 390 px, không tràn ngang ở cấp trang. Worker ghi kết quả và cho tải đúng hồ sơ JSON qua R14, báo cáo CSV qua R31/R14. R61 trên phiên khách đã nhận consent rồi rút quyền. Log cục bộ `BotSalesAI_Backend/test-results/backend/be21/browser.txt` có SHA-256 `9948a804b43d43a02c01f59284db67f5a19e4c690f158a6c336d3b1feb831290`. Native zoom, screen reader, ảnh paired trước/sau của dialog mới, stage và IdP step-up thật còn chưa kiểm.
