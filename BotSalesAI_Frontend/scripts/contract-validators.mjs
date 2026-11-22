@@ -21,12 +21,13 @@ const runtimeHelpers = {
     [runtimeImports.equal + '.default']: 'equal',
     [runtimeImports.formats + '.fullFormats']: 'fullFormats',
 };
+const validatorOptions = { strict: false, allErrors: true, validateFormats: true };
 
 export function compileContractValidators({ esm = true } = {}) {
     const schemas = JSON.parse(readFileSync(schemaFile, 'utf8'));
     const operations = JSON.parse(readFileSync(operationFile, 'utf8'));
     const ajv = new Ajv({
-        strict: false, allErrors: true, validateFormats: true,
+        ...validatorOptions,
         inlineRefs: false, loopRequired: 4, loopEnum: 4,
         code: { source: true, esm, lines: true },
     });
@@ -74,17 +75,38 @@ ${maps}
 `;
 }
 
-export function contractValidators() {
+function demoContractValidators() {
+    return `import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
+import { schemaCatalog } from '@botsales/contracts';
+const ajv = new Ajv2020(${JSON.stringify(validatorOptions)});
+addFormats(ajv);
+ajv.addSchema({ $id: 'botsales', ...schemaCatalog });
+const parameters = new Map();
+export const componentValidators = {
+    get: name => ajv.getSchema('botsales#/components/schemas/' + name),
+};
+export const parameterValidators = {
+    get(key) {
+        if (!parameters.has(key)) parameters.set(key, ajv.compile(JSON.parse(key)));
+        return parameters.get(key);
+    },
+};`;
+}
+
+export function contractValidators({ demo = false } = {}) {
     return {
         name: 'botsales-contract-validators',
         config() {
-            return { optimizeDeps: { include: Object.values(runtimeImports).map(source => source + '.js') } };
+            const include = demo ? ['ajv/dist/2020.js', 'ajv-formats'] : Object.values(runtimeImports).map(source => source + '.js');
+            return { optimizeDeps: { include } };
         },
         load(id) {
             if (id !== contractValidatorModule) return;
             this.addWatchFile(schemaFile);
             this.addWatchFile(operationFile);
-            return compileContractValidators();
+            // Only synthetic demo builds permit runtime compilation. Live CSP forbids it.
+            return demo ? demoContractValidators() : compileContractValidators();
         },
         handleHotUpdate({ file, modules, server }) {
             if (file !== schemaFile && file !== operationFile) return;

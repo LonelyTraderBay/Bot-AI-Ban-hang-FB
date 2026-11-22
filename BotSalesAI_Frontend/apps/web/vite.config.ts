@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
   return {
     envDir: repoRoot,
     cacheDir,
-    plugins: [react(), contractValidators(), ...(mocks ? [completeDemoAssets] : []),{name:'exclude-mock-worker-from-live',writeBundle(options){if(mocks)return;const file=join(options.dir||'dist','mockServiceWorker.js');if(existsSync(file))unlinkSync(file);}}],
+    plugins: [react(), contractValidators({ demo: mocks }), ...(mocks ? [completeDemoAssets] : []),{name:'exclude-mock-worker-from-live',writeBundle(options){if(mocks)return;const file=join(options.dir||'dist','mockServiceWorker.js');if(existsSync(file))unlinkSync(file);}}],
     resolve: { alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@botsales/contracts': fileURLToPath(new URL('../../packages/contracts/src/index.ts', import.meta.url)),

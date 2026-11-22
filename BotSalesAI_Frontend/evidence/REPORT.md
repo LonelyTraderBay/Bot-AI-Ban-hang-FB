@@ -1,5 +1,11 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Ngân sách JavaScript của demo · PR #31 · 22/11/2026
+
+Firefox 9/9 trên head `9724078`, lượt `45013329691` lần 1, đo 559.050 byte gzip cho trang tổng quan demo. Giới hạn trong `demo-preview.spec.ts` là 512.000 byte. Phạm vi sửa là cấu hình build và bộ kiểm hợp đồng dùng chung. Nguồn schema là OpenAPI của kit và bản sinh cho frontend. Các trường hợp kiểm hợp đồng, route và ngưỡng tải giữ theo nguồn hiện hành. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45013329691/job/137180205282)
+
+Build demo tổng hợp dùng lại chế độ Ajv biên dịch theo nhu cầu từ cùng schema và tùy chọn kiểm. Build live và bộ kiểm hợp đồng tiếp tục dùng validator biên dịch sẵn để chạy với CSP. Hai trình duyệt đo cùng 505.682 byte gzip lúc mở trang tổng quan và 103.718 byte cho chunk gzip lớn nhất. Suite artifact đạt 6/6 và built-demo đạt 6/6 ở lượt chạy cục bộ. [Chỉ số Chromium](frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-pr31-budget-fix-20261122.json) · [Chỉ số Firefox](frontend-ui-improvements/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-pr31-budget-fix-20261122.json)
+
 ## Bàn giao đơn mua thủ công R46 · 22/11/2026
 
 R46 sở hữu lời xác nhận trong `ConfirmDialog`. Kiểm theo quyền `procurement.send` và hành động API trả về. Lời xác nhận cho kênh thủ công phải nêu bước tạo công việc và cách ghi nhận chứng từ. Phạm vi gồm nút và hộp thoại R46, luồng tiếp tục qua chứng từ xác nhận R46 và phiếu nhận R47. Dùng `MutationButton` và `ConfirmDialog` hiện hành cho trạng thái quyền, chờ và báo lỗi.
