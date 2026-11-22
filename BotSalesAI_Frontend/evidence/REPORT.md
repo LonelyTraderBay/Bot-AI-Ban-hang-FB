@@ -1,5 +1,17 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Chờ dữ liệu danh mục trước khi kiểm FE010 · 23/11/2026
+
+Firefox 3/9 trên `main@5064ed35` bắt đầu kiểm tiêu đề “Thêm sản phẩm” trong lúc phiên demo và route vẫn khởi tạo. Trace ghi GET phiên, shop và danh mục đều trả 200. Tiêu đề đã có trong snapshot chẩn đoán sau khi hết hạn khẳng định. Ca kiểm hiện đăng ký quan sát trước khi điều hướng, chờ GET danh mục của shop, xác nhận HTTP 200 rồi mới kiểm tiêu đề và biểu mẫu. Giữ thời hạn cho các khẳng định UI và các ca kiểm lưu, ảnh, phiên bản hiện có. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45046690809/job/137282745518) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45046690809/artifacts/14763713005)
+
+Ca kiểm trên preview đạt 10/10 lượt với ba worker, mỗi engine Chromium và Firefox chạy năm lượt. Cổng kiểm bằng chứng S17 đạt.
+
+Firefox 8/9 trên cùng SHA ghi nhận thao tác Enter vào “Đến nội dung chính” đã cập nhật fragment ở R31 nhưng vùng nội dung chính chưa nhận tiêu điểm. Liên kết đặt tiêu điểm lên vùng đích khi vùng này sẵn có, rồi trình duyệt thực hiện điều hướng fragment và cuộn như trước. Ca axe kiểm cả tiêu điểm lẫn fragment tại R31 sau khi URL nhận bộ lọc. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45046690809/job/137282745685) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45046690809/artifacts/14763738138)
+
+Lượt đầu kiểm bản sửa tiêu điểm cho thấy UI012 mất fragment `#main-content` ở Sổ thu chi do trình xử lý chặn hành vi mặc định. Sau khi giữ điều hướng fragment, UI012 và nhóm axe R18–R34 đạt 12/12 lượt cục bộ trên Chromium và Firefox. Build demo đạt và nhóm axe R18–R34 chạy trên preview đạt 2/2. [Job Chromium](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45048023670/job/137286946823) · [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45048023670/job/137286946786)
+
+Trong PR #34, FE014.S04 ghi nhận thao tác nhấp tạo ủy quyền đúng lúc API phê duyệt đang trả dữ liệu và bố cục hàng chờ thay đổi. Ca kiểm chờ hộp thoại tiếp tục đóng, chờ bảng phê duyệt hiển thị và kích hoạt nút tạo bằng Enter. Ca này đạt 10/10 lượt trên Chromium và Firefox qua preview, giữ các khẳng định về payload, phiên bản và kích hoạt ủy quyền. Lượt chạy đó cũng có lỗi HTTP 500 từ GitHub khi một job Firefox đọc metadata build. [FE014 Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45047488037/job/137285327151) · [Job gặp HTTP 500](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45047488037/job/137285327181)
+
 ## Bổ sung chức năng theo thứ tự ưu tiên · 22/11/2026
 
 Baseline mã `main@1054b73f`. R38 chọn hồ sơ trên một trang, gọi `decideApproval` lần lượt và hiển thị kết quả từng hàng. Hai ca kiểm trên Chromium và Firefox xác nhận lô gồm hồ sơ cũ + hồ sơ còn hiệu lực, và lô dừng ngay khi phản hồi đầu tiên chưa rõ. [Duyệt theo lô](../tests/fe020.spec.ts)

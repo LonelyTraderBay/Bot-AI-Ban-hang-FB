@@ -12,6 +12,12 @@ import './app/tokens.css';
 import './app/bootstrap.css';
 
 configureZod({ jitless: true });
+document.querySelector<HTMLAnchorElement>('a.skip-link')?.addEventListener('click', event => {
+    const main = document.getElementById('main-content');
+    if (!main || event.button !== 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    // Give the target focus before the browser updates the fragment and scroll position.
+    main.focus({ preventScroll: true });
+});
 const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: true, gcTime: 120000 }, mutations: { retry: false } } });
 async function start() {
     if (__MOCK__) {
