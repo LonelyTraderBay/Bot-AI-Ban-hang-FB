@@ -10,6 +10,20 @@ import { requireShopAccess, sessionPrincipal } from './access.js';
 
 export type ShopScope = Awaited<ReturnType<typeof requireShopAccess>>;
 
+export function writeAsSession<T>(db: PrismaClient | undefined, config: AuthConfig | undefined, headers: IncomingHttpHeaders,
+    apply: (tx: Prisma.TransactionClient, userId: string, config: AuthConfig, token: string) => Promise<T>) {
+    const token = requireSessionToken(headers);
+    if (!db || !config) throw new ServiceUnavailableException();
+    requireMutationCsrf(config, headers, token);
+    return serializable(db, async tx => apply(tx, await sessionPrincipal(tx, token), config, token), true);
+}
+
+export function requireIdempotencyKey(headers: IncomingHttpHeaders) {
+    const key = headerValue(headers, 'idempotency-key');
+    if (!validIdempotencyKey(key)) throw new BadRequestException();
+    return key;
+}
+
 export function writeShopCommand<T>(
     db: PrismaClient | undefined,
     config: AuthConfig | undefined,
@@ -17,15 +31,11 @@ export function writeShopCommand<T>(
     apply: (tx: Prisma.TransactionClient, scope: ShopScope, config: AuthConfig, command: CommandRef) => Promise<ResourceRef>,
     readResult: (tx: Prisma.TransactionClient, scope: ShopScope, result: ResourceRef, command: Command) => Promise<T>,
 ) {
-    const token = requireSessionToken(input.headers);
-    if (!db || !config) throw new ServiceUnavailableException();
-    requireMutationCsrf(config, input.headers, token);
-    const idempotencyKey = headerValue(input.headers, 'idempotency-key');
-    if (!validIdempotencyKey(idempotencyKey)) throw new BadRequestException();
-    return serializable(db, async tx => {
-        const scope = await requireShopAccess(tx, await sessionPrincipal(tx, token), input.shopId, input.permission);
+    return writeAsSession(db, config, input.headers, async (tx, userId, config) => {
+        const idempotencyKey = requireIdempotencyKey(input.headers);
+        const scope = await requireShopAccess(tx, userId, input.shopId, input.permission);
         const key = { shopId: scope.shopId, actorId: scope.userId, operationId: input.operationId, idempotencyKey };
         const { result, command } = await recordCommand(tx, key, input.payload, reference => apply(tx, scope, config, reference), input.deferred);
         return readResult(tx, scope, result, command);
-    }, true);
+    });
 }

@@ -1,13 +1,16 @@
 import assert from 'node:assert/strict';
 import { Blob } from 'node:buffer';
 import { createHash, randomUUID } from 'node:crypto';
+import { once } from 'node:events';
 import { readFileSync } from 'node:fs';
+import { createServer } from 'node:net';
 import { after, before, test } from 'node:test';
 import { URLSearchParams } from 'node:url';
 import sharp from 'sharp';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
+import { readFileScannerTarget } from '../../../apps/api/dist/modules/files/index.js';
 import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { fixtureCategory, fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
@@ -17,12 +20,12 @@ const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit
 const validator = createContractValidator(components.schemas);
 const [shopA, shopB] = fixtureShops;
 const path = (shop, resource) => '/shops/' + shop.id + '/' + resource;
-let origin, app, db, base, ownerA, ownerB, reader;
+let origin, app, db, base, ownerA, ownerB, reader, auth;
 
 before(async () => {
     const url = readDatabaseUrl(process.env);
     assertFixtureDatabase(url);
-    const auth = readAuthConfig(process.env);
+    auth = readAuthConfig(process.env);
     assert.ok(auth);
     origin = auth.appOrigin;
     const database = new Database(url);
@@ -71,6 +74,113 @@ function draft(shop, sku = 'BE07-' + randomUUID()) {
         variants: [{ sku, name: 'Mặc định', options: {}, price: { amount: '9007199254740993.000000000000000001', currency: shop.currency }, active: true }],
     };
 }
+
+const cleanUpload = 'sku,name\nCLEAN-FILE,File scan fixture\n';
+const flaggedUpload = 'sku,name\nFLAGGED-FILE,BOTSALES_SCAN_BLOCK_FIXTURE\n';
+
+async function scanningApi(t, fileScanner, authConfig = auth) {
+    const scanApp = await createApp({ database: new Database(readDatabaseUrl(process.env)), auth: authConfig, fileScanner, quiet: true });
+    t.after(() => scanApp.close());
+    await scanApp.listen(0, '127.0.0.1');
+    const root = await scanApp.getUrl() + '/api/v2';
+    const actor = ownerA;
+    const upload = (content, key = randomUUID(), headers = {}) => {
+        const payload = new globalThis.FormData();
+        payload.set('purpose', 'product_import');
+        payload.set('file', new Blob([content], { type: 'text/csv' }), 'scan.csv');
+        return fetch(root + path(shopA, 'uploads'), {
+            method: 'POST', headers: { cookie: actor.cookie, origin, 'x-csrf-token': actor.csrf, 'idempotency-key': key, ...headers },
+            body: payload,
+        });
+    };
+    return { root, upload };
+}
+
+async function scannerFixture(t) {
+    const observed = { scans: [], mode: 'normal' };
+    const server = createServer(socket => {
+        let input = Buffer.alloc(0);
+        socket.on('data', chunk => {
+            input = Buffer.concat([input, chunk]);
+            if (input.toString() === 'zPING\0') {
+                socket.end(observed.mode === 'normal' ? 'PONG\0' : 'UNAVAILABLE\0');
+                return;
+            }
+            const command = Buffer.from('zINSTREAM\0');
+            const start = command.length + 4;
+            if (input.length < start) return;
+            assert.deepEqual(input.subarray(0, command.length), command);
+            const size = input.readUInt32BE(command.length);
+            if (input.length < start + size + 4) return;
+            assert.equal(input.readUInt32BE(start + size), 0);
+            const bytes = input.subarray(start, start + size).toString();
+            observed.scans.push(bytes);
+            if (observed.mode === 'error') socket.end('stream: backend unavailable ERROR\0');
+            else if (observed.mode === 'truncated') socket.end('stream: OK');
+            else if (bytes === flaggedUpload) socket.end('stream: Synthetic.Marker FOUND\0');
+            else {
+                socket.write('stream:');
+                socket.end(' OK\0');
+            }
+        });
+    });
+    server.listen(0, '127.0.0.1');
+    await once(server, 'listening');
+    t.after(() => new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve())));
+    return { observed, target: { host: '127.0.0.1', port: server.address().port } };
+}
+
+test('SC-017: scanner gates upload bytes, outage leaves no new command and recovery preserves replay', async t => {
+    const { observed, target } = await scannerFixture(t);
+    const { root, upload } = await scanningApi(t, target);
+    await json(await upload(cleanUpload, randomUUID(), { 'x-csrf-token': 'invalid' }), 403, 'Problem');
+    await json(await upload(cleanUpload, 'invalid'), 400, 'Problem');
+    assert.deepEqual(observed.scans, []);
+    assert.equal((await fetch(root + '/health/ready')).status, 200);
+    const key = randomUUID();
+    const clean = (await json(await upload(cleanUpload, key), 201, 'FileObjectResponse')).data;
+    assert.equal(clean.status, 'ready');
+    assert.equal(await (await fetch(root.replace(/\/api\/v2$/, '') + clean.readUrl, { headers: { cookie: ownerA.cookie } })).text(), cleanUpload);
+    const blocked = (await json(await upload(flaggedUpload), 201, 'FileObjectResponse')).data;
+    assert.equal(blocked.status, 'quarantined');
+    assert.equal(blocked.readUrl, null);
+    assert.equal(await db.fileBlob.count({ where: { shopId: shopA.id, fileId: blocked.id } }), 0);
+    assert.equal((await db.auditEntry.findFirstOrThrow({ where: { shopId: shopA.id, action: 'uploadFile', resourceId: blocked.id } })).metadata.scan, 'blocked');
+    assert.deepEqual(observed.scans, [cleanUpload, flaggedUpload]);
+
+    const retryKey = randomUUID();
+    observed.mode = 'truncated';
+    await json(await upload(cleanUpload, retryKey), 503, 'Problem');
+    observed.mode = 'error';
+    assert.equal((await fetch(root + '/health/live')).status, 200);
+    assert.equal((await fetch(root + '/health/ready')).status, 503);
+    await json(await upload(cleanUpload, retryKey), 503, 'Problem');
+    assert.equal(await db.command.count({ where: { shopId: shopA.id, operationId: 'uploadFile', idempotencyKey: retryKey } }), 0);
+    assert.equal((await json(await upload(cleanUpload, key), 201, 'FileObjectResponse')).data.id, clean.id);
+    observed.mode = 'normal';
+    assert.equal((await fetch(root + '/health/ready')).status, 200);
+    assert.equal((await json(await upload(cleanUpload, retryKey), 201, 'FileObjectResponse')).data.status, 'ready');
+});
+
+test('SC-017: configured non-fixture auth requires a scanner for readiness and new uploads', async t => {
+    const { root, upload } = await scanningApi(t, undefined, { ...auth, clientId: 'real-client' });
+    assert.equal((await fetch(root + '/health/ready')).status, 503);
+    const key = randomUUID();
+    await json(await upload(cleanUpload, key), 503, 'Problem');
+    assert.equal(await db.command.count({ where: { shopId: shopA.id, operationId: 'uploadFile', idempotencyKey: key } }), 0);
+});
+
+test('SC-017: real local ClamAV daemon scans clean CSV and detects the harmless signature fixture', {
+    skip: !process.env.P0_CLAMD_PORT,
+}, async t => {
+    const target = readFileScannerTarget({ FILE_SCAN_PORT: process.env.P0_CLAMD_PORT });
+    const { root, upload } = await scanningApi(t, target, { ...auth, clientId: 'real-client' });
+    assert.equal((await fetch(root + '/health/ready')).status, 200);
+    const clean = (await json(await upload(cleanUpload), 201, 'FileObjectResponse')).data;
+    const blocked = (await json(await upload(flaggedUpload), 201, 'FileObjectResponse')).data;
+    assert.deepEqual([clean.status, blocked.status, blocked.readUrl], ['ready', 'quarantined', null]);
+    assert.equal(await db.fileBlob.count({ where: { shopId: shopA.id, fileId: blocked.id } }), 0);
+});
 
 test('P0-08: dashboard declares unconfigured sources and category lists stay in the authorized shop', async () => {
     await json(await request(path(shopA, 'dashboard')), 401, 'Problem');

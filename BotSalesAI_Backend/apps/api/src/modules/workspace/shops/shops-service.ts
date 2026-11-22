@@ -1,22 +1,33 @@
 import {
     ConflictException, ForbiddenException, NotFoundException, UnprocessableEntityException,
 } from '@nestjs/common';
+import { createHash, randomUUID } from 'node:crypto';
 import type { IncomingHttpHeaders } from 'node:http';
 import type { Membership, Prisma, PrismaClient, Role, Shop } from '../../../generated/prisma/client.js';
 import { MembershipStatus } from '../../../generated/prisma/enums.js';
 import { requireIfMatch, requireVersion } from '../../../http/response.js';
 import { listQuery, paging, validUuid } from '../../../http/query.js';
-import type { AuthConfig } from '../auth/config.js';
+import { recordAudit } from '../../../platform/audit/index.js';
+import { recordCommand } from '../../../platform/commands/index.js';
+import { provisionFixtureShopAccounts } from '../../finance/index.js';
+import { usesLocalOidcFixture, type AuthConfig } from '../auth/config.js';
+import type { CommandSource } from '../activity/activity-service.js';
 import { membershipAudit, type MemberOperation } from '../members/activity.js';
 import { clearInvitation, invitationEmail, inviteMembership } from '../members/invitations.js';
 import {
     activeMembership, canChangeMemberRoles, canRevokeMembership, membershipDto, requireAssignableRoles, requireShopAccess,
     readAsSession,
 } from '../policy/access.js';
-import { writeShopCommand } from '../policy/command-scope.js';
+import { requireIdempotencyKey, writeAsSession, writeShopCommand } from '../policy/command-scope.js';
 
 const membersManage = 'members.manage';
 type MemberWrite = { member: Membership; audit?: Prisma.InputJsonObject };
+export type ShopWrite = { name: string; timezone: string; locale: string; currency: string };
+export type ShopPatch = Partial<Omit<ShopWrite, 'currency'>>;
+export const shopCommands: CommandSource[] = [
+    { operationId: 'createShop', resourceType: 'shop', scopePermissions: { onboarding: 'shop.manage' } },
+    { operationId: 'updateShop', resourceType: 'shop' },
+];
 const shopFields = {
     id: true, name: true, currency: true, timezone: true, locale: true, defaultWarehouseId: true,
     version: true, policyVersion: true, createdAt: true,
@@ -53,6 +64,23 @@ function canonicalRoles(roles: Role[]): Role[] {
     return [...roles].sort();
 }
 
+async function shopSettings(tx: Prisma.TransactionClient, { name, locale, timezone }: Omit<ShopWrite, 'currency'>) {
+    const cleanName = name.trim();
+    const cleanZone = timezone.trim();
+    let cleanLocale: string;
+    try {
+        cleanLocale = new Intl.Locale(locale.trim()).toString();
+        new Intl.DateTimeFormat('en', { timeZone: cleanZone });
+    } catch {
+        throw new UnprocessableEntityException('Cửa hàng cần ngôn ngữ và múi giờ hợp lệ.');
+    }
+    if (!cleanName || cleanName.includes(String.fromCharCode(0)) || cleanLocale.length > 64 || cleanZone.length > 100 ||
+        !/^(?:UTC|[a-zA-Z][a-zA-Z0-9_+\/-]*)$/.test(cleanZone)) throw new UnprocessableEntityException();
+    const [zone] = await tx.$queryRaw<{ valid: boolean }[]>`SELECT EXISTS (SELECT FROM pg_timezone_names WHERE name=${cleanZone}) AS valid`;
+    if (!zone.valid) throw new UnprocessableEntityException('Múi giờ chưa có trong cơ sở dữ liệu.');
+    return { name: cleanName, timezone: cleanZone, locale: cleanLocale };
+}
+
 export class ShopsService {
     constructor(private readonly db?: PrismaClient, private readonly config?: AuthConfig) {}
 
@@ -83,6 +111,52 @@ export class ShopsService {
             if (!row) throw new NotFoundException();
             return shopDto(row);
         });
+    }
+
+    create(headers: IncomingHttpHeaders, body: ShopWrite, requestId: string) {
+        return writeAsSession(this.db, this.config, headers, async (tx, userId, config) => {
+            const idempotencyKey = requireIdempotencyKey(headers);
+            const fields = { ...await shopSettings(tx, body), currency: body.currency };
+            const requestHash = createHash('sha256').update(JSON.stringify(fields)).digest('hex');
+            const stored = await tx.shopCreationIntent.findUnique({ where: { actorId_idempotencyKey: { actorId: userId, idempotencyKey } } });
+            if (stored) {
+                await requireShopAccess(tx, userId, stored.shopId, 'shop.manage');
+                if (stored.requestHash !== requestHash) throw new ConflictException();
+                return shopDto(await tx.shop.findUniqueOrThrow({ where: { id: stored.shopId }, select: shopFields }));
+            }
+            const id = randomUUID();
+            const defaultWarehouseId = randomUUID();
+            await tx.$executeRaw`SET CONSTRAINTS "shops_default_warehouse_fkey" DEFERRED`;
+            const shop = await tx.shop.create({ data: { ...fields, id, defaultWarehouseId } });
+            await tx.warehouse.create({ data: { shopId: id, id: defaultWarehouseId, code: 'DEFAULT', name: 'Kho mặc định', addressLine: 'Chờ bổ sung địa chỉ kho' } });
+            await tx.membership.create({ data: { shopId: id, userId, roles: ['owner'] } });
+            if (usesLocalOidcFixture(config)) await provisionFixtureShopAccounts(tx, [id]);
+            await tx.shopCreationIntent.create({ data: { actorId: userId, shopId: id, idempotencyKey, requestHash } });
+            await recordCommand(tx, { shopId: id, actorId: userId, operationId: 'createShop', idempotencyKey }, fields, async () => {
+                await recordAudit(tx, { shopId: id, actorId: userId, requestId, action: 'createShop', resourceType: 'shop', resourceId: id,
+                    metadata: { currency: shop.currency, timezone: shop.timezone, defaultWarehouseId } });
+                return { type: 'shop', id, scope: 'onboarding' };
+            });
+            return shopDto(shop);
+        });
+    }
+
+    update(headers: IncomingHttpHeaders, shopId: string, patch: ShopPatch, requestId: string) {
+        const version = requireIfMatch(headers);
+        return writeShopCommand(this.db, this.config, { headers, shopId, permission: 'shop.manage', operationId: 'updateShop', payload: { patch, version } },
+            async (tx, scope) => {
+                const current = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: shopFields });
+                requireVersion(current.version, version);
+                const data = await shopSettings(tx, { ...current, ...patch });
+                const zoneChanged = data.timezone !== current.timezone;
+                const shop = await tx.shop.update({ where: { id: shopId }, data: { ...data, version: { increment: 1 },
+                    ...(zoneChanged ? { policyVersion: randomUUID() } : {}) } });
+                if (zoneChanged) await tx.notificationPolicy.updateMany({ where: { shopId },
+                    data: { timezone: shop.timezone, version: { increment: 1 } } });
+                await recordAudit(tx, { shopId, actorId: scope.userId, requestId, action: 'updateShop', resourceType: 'shop', resourceId: shopId,
+                    metadata: { version: shop.version, fields: Object.keys(patch), policyVersion: shop.policyVersion } });
+                return { type: 'shop', id: shopId };
+            }, async tx => shopDto(await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: shopFields })));
     }
 
     listMembers(headers: IncomingHttpHeaders, shopId: string, rawQuery: Record<string, unknown>) {

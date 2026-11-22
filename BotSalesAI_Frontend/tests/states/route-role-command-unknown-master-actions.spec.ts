@@ -610,7 +610,7 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         await expect(dialog).toBeVisible();
     });
 
-    test('R35 approvePrivacyRequest stays unavailable until the frontend has the required step-up flow', async ({ page }) => {
+    test('R35 hides approval in the demo without a live step-up capability', async ({ page }) => {
         assertPermittedCommand('owner', 'R35', 'approvePrivacyRequest');
         await page.goto(new URL('/s/shop-demo/settings/privacy', demoUrl).toString());
         await expect(page.locator('#main-content h1').first()).toBeVisible();
@@ -618,7 +618,7 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         await expect(requests).toBeVisible();
         await expect(requests.getByRole('button')).toHaveCount(0);
         await expect(page.getByRole('alert').filter({ hasText: 'Phê duyệt yêu cầu xóa cần xác thực nâng cao của backend' })).toBeVisible();
-        console.log(`BROWSER=${test.info().project.name} ROLE_STATE_NA=command_unknown ROLE=owner ROUTE=R35 OPERATION=approvePrivacyRequest REASON=frontend-step-up-not-implemented RESULT=PASS`);
+        console.log(`BROWSER=${test.info().project.name} ROLE_STATE_NA=command_unknown ROLE=owner ROUTE=R35 OPERATION=approvePrivacyRequest REASON=demo-without-live-step-up RESULT=PASS`);
     });
 
     for (const role of ['owner', 'warehouse'] as const) {

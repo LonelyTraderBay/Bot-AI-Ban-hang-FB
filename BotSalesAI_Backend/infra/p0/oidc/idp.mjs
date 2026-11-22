@@ -4,6 +4,7 @@ import { createServer } from 'node:https';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Provider } from 'oidc-provider';
+import { fixturePilotSubject } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { issuer, localTls, redirectUri } from './tls.mjs';
 
 const fixtureAccount = 'p0-editor';
@@ -86,6 +87,10 @@ export async function startFixtureProvider({
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-    await startFixtureProvider();
+    const pilot = process.env.P0_LOCAL_PILOT === '1';
+    await startFixtureProvider(pilot ? {
+        chooseAccount: () => fixturePilotSubject,
+        accounts: { [fixturePilotSubject]: { email: fixturePilotSubject + '@botsales.test', verified: true } },
+    } : undefined);
     console.log('Synthetic OIDC provider listening on ' + issuer);
 }

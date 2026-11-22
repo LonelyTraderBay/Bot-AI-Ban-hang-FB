@@ -97,6 +97,7 @@ enum OrderPaymentMethod {
 enum MessageDirection {
   inbound
   outbound
+  internal
 
   @@map("message_direction")
 }
@@ -106,6 +107,38 @@ enum MessageOrigin {
   provider
 
   @@map("message_origin")
+}
+
+enum MessageSenderKind {
+  customer
+  human
+  bot
+  system
+
+  @@map("message_sender_kind")
+}
+
+enum MessageDeliveryStatus {
+  queued
+  sending
+  sent
+  delivered
+  read
+  failed
+  unknown
+
+  @@map("message_delivery_status")
+}
+
+enum ChannelStatus {
+  unconfigured
+  validating
+  connected
+  degraded
+  expired
+  disabled
+
+  @@map("channel_status")
 }
 
 enum ConversationStatus {
@@ -189,6 +222,95 @@ enum PaymentEvidenceKind {
   @@map("payment_evidence_kind")
 }
 
+enum WorkItemKind {
+  prepare_order
+  purchase_review
+  payment_mismatch
+  customer_handoff
+  late_shipment
+  recovery
+
+  @@map("work_item_kind")
+}
+
+enum WorkItemState {
+  queued
+  claimed
+  working
+  blocked
+  completed
+  cancelled
+
+  @@map("work_item_state")
+}
+
+enum PreparationState {
+  queued
+  claimed
+  picking
+  packed
+  handed_over
+  cancelled
+
+  @@map("preparation_state")
+}
+
+enum ShipmentState {
+  planned
+  handed_over
+  in_transit
+  delivered
+  failed
+  returning
+  returned
+  cancelled
+
+  @@map("shipment_state")
+}
+
+enum ReturnState {
+  awaiting_goods
+  inspected
+
+  @@map("return_state")
+}
+
+enum ReturnDisposition {
+  pending
+  sellable
+  damaged
+  quarantined
+
+  @@map("return_disposition")
+}
+
+enum NotificationChannel {
+  in_app
+  web_push
+  telegram
+
+  @@map("notification_channel")
+}
+
+enum NotificationDelivery {
+  queued
+  accepted_by_provider
+  failed
+  unknown
+
+  @@map("notification_delivery")
+}
+
+enum DeviceStatus {
+  pending
+  active
+  denied
+  revoked
+  expired
+
+  @@map("device_status")
+}
+
 enum StockMovementKind {
   receipt
   adjustment
@@ -209,6 +331,97 @@ enum StockReservationStatus {
   consumed
 
   @@map("stock_reservation_status")
+}
+
+enum StocktakeStatus {
+  counting
+  submitted
+  posted
+  cancelled
+
+  @@map("stocktake_status")
+}
+
+enum StockTransferStatus {
+  draft
+  in_transit
+  completed
+  closed_short
+  cancelled
+
+  @@map("stock_transfer_status")
+}
+
+enum SupplierStatus {
+  draft
+  approved
+  suspended
+  archived
+
+  @@map("supplier_status")
+}
+
+enum SupplierSendMethod {
+  manual
+  approved_adapter
+
+  @@map("supplier_send_method")
+}
+
+enum SupplierDispatchOutcome {
+  accepted
+  unknown
+
+  @@map("supplier_dispatch_outcome")
+}
+
+enum ReorderMode {
+  notify_only
+  draft_for_approval
+  auto_send
+
+  @@map("reorder_mode")
+}
+
+enum ApprovalStatus {
+  pending
+  approved
+  rejected
+  expired
+  revoked
+  consumed
+
+  @@map("approval_status")
+}
+
+enum PurchaseStatus {
+  draft
+  pending_approval
+  approved
+  sending
+  unknown
+  sent
+  confirmed
+  part_received
+  received
+  cancelled
+
+  @@map("purchase_status")
+}
+
+enum ProcurementEvidenceKind {
+  supplier_confirmation
+  goods_receipt
+
+  @@map("procurement_evidence_kind")
+}
+
+enum ReceiptStatus {
+  draft
+  posted
+  reversed
+
+  @@map("receipt_status")
 }
 
 enum JobKind {
@@ -266,6 +479,8 @@ enum FilePurpose {
   bank_statement
   cod_statement
   conversation_media
+  report_export
+  privacy_export
 
   @@map("file_purpose")
 }
@@ -278,6 +493,14 @@ enum FileStatus {
   @@map("file_status")
 }
 
+enum FileStorageState {
+  pending
+  stored
+  purged
+
+  @@map("file_storage_state")
+}
+
 model AuthLoginAttempt {
   state              String    @id @db.VarChar(43)
   browserHash        String    @map("browser_hash") @db.VarChar(64)
@@ -288,6 +511,9 @@ model AuthLoginAttempt {
   pkceVerifier       String?   @map("pkce_verifier") @db.VarChar(128)
   expiresAt          DateTime  @map("expires_at") @db.Timestamptz(3)
   consumedAt         DateTime? @map("consumed_at") @db.Timestamptz(3)
+  stepUpSessionId    String?   @map("step_up_session_id") @db.Uuid
+  stepUpShopId       String?   @map("step_up_shop_id") @db.Uuid
+  stepUpResourceId   String?   @map("step_up_resource_id") @db.Uuid
 
   @@unique([browserHash, idempotencyKeyHash])
   @@index([expiresAt])
@@ -303,6 +529,7 @@ model User {
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
   memberships Membership[]
   sessions    Session[]
+  createdShops ShopCreationIntent[]
 
   @@unique([oidcIssuer, oidcSubject])
   @@map("users")
@@ -332,12 +559,216 @@ model Shop {
   shippingPolicy     ShippingPolicy?
   promotions         Promotion[]
   channels           ChannelConnection[]
+  channelIntents     ChannelAuthorization[]
+  knowledgeDocuments KnowledgeDocument[]
+  evaluations        Evaluation[]
+  aiConnections      AiConnection[]
+  botConfig          BotConfig?
+  botUsage           BotDailyUsage[]
+  automation         ShopAutomation?
+  agentRoles         AgentRole[]
+  budgetPolicies     BudgetPolicy[]
+  ownerDigests       OwnerDigest[]
+  creationIntent     ShopCreationIntent?
+  privacyPolicy      PrivacyPolicy?
   accounts           FinanceAccount[]
   periods            AccountingPeriod[]
   openingBalances    OpeningBalance[]
   financeEntries     FinanceEntry[]
+  codSettlements     CodSettlement[]
+  workItems          WorkItem[]
+  notificationPolicy NotificationPolicy?
+  suppliers          Supplier[]
+  supplierRoutes     SupplierDispatchRoute[]
 
   @@map("shops")
+}
+
+enum PrivacyRequestKind {
+  export
+  delete
+
+  @@map("privacy_request_kind")
+}
+
+enum PrivacyRequestState {
+  pending_approval
+  running
+  completed
+  rejected
+  legal_hold
+  failed
+
+  @@map("privacy_request_state")
+}
+
+enum ConsentChannel {
+  messenger
+  sms
+  email
+
+  @@map("consent_channel")
+}
+
+enum ConsentState {
+  granted
+  withdrawn
+
+  @@map("consent_state")
+}
+
+enum ConsentChallengeState {
+  pending
+  exchanged
+  confirmed
+  declined
+  expired
+
+  @@map("consent_challenge_state")
+}
+
+model StepUpGrant {
+  tokenHash  String    @id @map("token_hash") @db.VarChar(64)
+  sessionId  String    @map("session_id") @db.Uuid
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(3)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(3)
+  revealedAt DateTime? @map("revealed_at") @db.Timestamptz(3)
+  shopId     String?   @map("shop_id") @db.Uuid
+  resourceId String?   @map("resource_id") @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  session    Session   @relation(fields: [sessionId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@index([sessionId, expiresAt])
+  @@map("step_up_grants")
+}
+
+model PrivacyPolicy {
+  shopId            String   @id @map("shop_id") @db.Uuid
+  version           Int      @default(1)
+  chatRetentionDays Int?     @map("chat_retention_days")
+  jurisdictionNote  String   @default("") @map("jurisdiction_note") @db.VarChar(2000)
+  approvedBy        String?  @map("approved_by") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop              Shop     @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  approver          Membership? @relation("PrivacyPolicyApprover", fields: [shopId, approvedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+
+  @@map("privacy_policies")
+}
+
+model PrivacyRequest {
+  shopId           String    @map("shop_id") @db.Uuid
+  id               String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version          Int       @default(1)
+  customerId       String    @map("customer_id") @db.Uuid
+  kind             PrivacyRequestKind
+  status           PrivacyRequestState @default(pending_approval)
+  reason           String    @db.VarChar(2000)
+  createdBy        String    @map("created_by") @db.Uuid
+  approvedBy       String?   @map("approved_by") @db.Uuid
+  policyVersion    Int?      @map("policy_version")
+  jobId            String?   @map("job_id") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  customer         Customer  @relation(fields: [shopId, customerId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  requester        Membership @relation("PrivacyRequester", fields: [shopId, createdBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  approver         Membership? @relation("PrivacyApprover", fields: [shopId, approvedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  job              Job?      @relation(fields: [shopId, jobId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  consents         ConsentEvidence[]
+
+  @@id([shopId, id])
+  @@unique([shopId, jobId])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, customerId, kind, status])
+  @@map("privacy_requests")
+}
+
+model CustomerConsent {
+  shopId          String    @map("shop_id") @db.Uuid
+  id              String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerId      String    @map("customer_id") @db.Uuid
+  channel         ConsentChannel
+  version         Int       @default(1)
+  status          ConsentState
+  policyVersion   String    @map("policy_version") @db.VarChar(100)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  customer        Customer  @relation(fields: [shopId, customerId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  history         ConsentEvidence[]
+  confirmations   ConsentChallenge[]
+
+  @@id([shopId, id])
+  @@unique([shopId, customerId, channel])
+  @@index([shopId, createdAt, id])
+  @@map("customer_consents")
+}
+
+model ConsentChallenge {
+  shopId          String    @map("shop_id") @db.Uuid
+  id              String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerId      String    @map("customer_id") @db.Uuid
+  actorId         String    @map("actor_id") @db.Uuid
+  channel         ConsentChannel
+  withdraw        Boolean   @default(false)
+  status          ConsentChallengeState @default(pending)
+  version         Int       @default(1)
+  message         String    @db.VarChar(2000)
+  contentVersion  Int       @map("content_version")
+  policyVersion   String    @map("policy_version") @db.VarChar(100)
+  priorConsentVersion Int   @default(0) @map("prior_consent_version")
+  expiresAt       DateTime  @map("expires_at") @db.Timestamptz(3)
+  exchangeHash    String?   @map("exchange_hash") @db.VarChar(64)
+  confirmationHash String?  @map("confirmation_hash") @db.VarChar(64)
+  consentId       String?   @map("consent_id") @db.Uuid
+  resultVersion   Int?      @map("result_version")
+  resultStatus    ConsentState? @map("result_status")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  customer        Customer  @relation(fields: [shopId, customerId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  actor           Membership @relation(fields: [shopId, actorId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  consent         CustomerConsent? @relation(fields: [shopId, consentId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  evidence        ConsentEvidence[]
+
+  @@id([shopId, id])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, customerId, channel, status])
+  @@map("consent_challenges")
+}
+
+model ConsentEvidence {
+  shopId          String        @map("shop_id") @db.Uuid
+  id              String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  consentId       String        @map("consent_id") @db.Uuid
+  challengeId     String?       @map("challenge_id") @db.Uuid
+  privacyRequestId String?      @map("privacy_request_id") @db.Uuid
+  recoveryAuditId String?       @map("recovery_audit_id") @db.Uuid
+  contentVersion  Int?          @map("content_version")
+  action          String        @db.VarChar(20)
+  occurredAt      DateTime      @default(now()) @map("occurred_at") @db.Timestamptz(3)
+  consent         CustomerConsent @relation(fields: [shopId, consentId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  challenge       ConsentChallenge? @relation(fields: [shopId, challengeId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  privacyRequest  PrivacyRequest? @relation(fields: [shopId, privacyRequestId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  recoveryAudit   AuditEntry?  @relation(fields: [shopId, recoveryAuditId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, challengeId, action])
+  @@unique([shopId, privacyRequestId, consentId])
+  @@unique([shopId, recoveryAuditId, consentId])
+  @@index([shopId, consentId, occurredAt, id])
+  @@map("consent_evidence")
+}
+
+model ShopCreationIntent {
+  actorId        String   @map("actor_id") @db.Uuid
+  idempotencyKey String   @map("idempotency_key") @db.VarChar(128)
+  shopId         String   @unique @map("shop_id") @db.Uuid
+  requestHash    String   @map("request_hash") @db.VarChar(64)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  actor          User     @relation(fields: [actorId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  shop           Shop     @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([actorId, idempotencyKey])
+  @@map("shop_creation_intents")
 }
 
 model Customer {
@@ -348,6 +779,7 @@ model Customer {
   email          String?
   notes          String?
   redactedFields String[]          @default([]) @map("redacted_fields")
+  privacyErasedAt DateTime?         @map("privacy_erased_at") @db.Timestamptz(3)
   version        Int               @default(1)
   createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt      DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -356,6 +788,9 @@ model Customer {
   addresses      CustomerAddress[]
   serviceCases   ServiceCase[]
   orders         SalesOrder[]
+  privacyRequests PrivacyRequest[]
+  consents         CustomerConsent[]
+  consentChallenges ConsentChallenge[]
 
   @@id([shopId, id])
   @@index([shopId, createdAt, id])
@@ -505,6 +940,10 @@ model Variant {
   product       Product  @relation(fields: [shopId, productId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   stockPositions StockPosition[]
   promotionLines PromotionLine[]
+  stocktakeLines StocktakeLine[]
+  transferLines  StockTransferLine[]
+  supplierOffers SupplierOffer[]
+  reorderRules   ReorderRule[]
   orderLines OrderLine[]
 
   @@id([shopId, id])
@@ -536,6 +975,7 @@ model Promotion {
   updatedAt        DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
   shop             Shop            @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   lines            PromotionLine[]
+  orders           SalesOrder[]
 
   @@id([shopId, id])
   @@index([shopId, status, startsOn, endsOn])
@@ -573,6 +1013,13 @@ model Warehouse {
   defaultFor  Shop[]          @relation("DefaultWarehouse")
   stockPositions StockPosition[]
   orders      SalesOrder[]
+  shipments   Shipment[]
+  stocktakes  Stocktake[]
+  outboundTransfers StockTransfer[] @relation("TransferOrigin")
+  inboundTransfers  StockTransfer[] @relation("TransferDestination")
+  reorderRules ReorderRule[]
+  purchases    PurchaseOrder[]
+  purchaseDelegations PurchaseDelegation[]
 
   @@id([shopId, id])
   @@unique([shopId, code])
@@ -604,6 +1051,384 @@ model StockPosition {
   @@index([shopId, variantId, warehouseId])
   @@index([shopId, createdAt, id])
   @@map("stock_positions")
+}
+
+model Stocktake {
+  shopId       String          @map("shop_id") @db.Uuid
+  id           String          @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  warehouseId  String          @map("warehouse_id") @db.Uuid
+  countedBy    String          @map("counted_by") @db.Uuid
+  reviewedBy   String?         @map("reviewed_by") @db.Uuid
+  status       StocktakeStatus @default(counting)
+  reason       String          @db.VarChar(500)
+  reviewReason String?         @map("review_reason") @db.VarChar(500)
+  postedAt     DateTime?       @map("posted_at") @db.Timestamptz(3)
+  version      Int             @default(1)
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  warehouse    Warehouse       @relation(fields: [shopId, warehouseId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  counter      Membership      @relation("StocktakeCounter", fields: [shopId, countedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  reviewer     Membership?     @relation("StocktakeReviewer", fields: [shopId, reviewedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  lines        StocktakeLine[]
+
+  @@id([shopId, id])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, warehouseId, status])
+  @@map("stocktakes")
+}
+
+model StocktakeLine {
+  shopId          String @map("shop_id") @db.Uuid
+  stocktakeId     String @map("stocktake_id") @db.Uuid
+  variantId       String @map("variant_id") @db.Uuid
+  sku             String @db.VarChar(160)
+  position        Int
+  baselineVersion Int   @map("baseline_version")
+  expected        Int
+  reserved        Int
+  counted         Int?
+  stocktake       Stocktake @relation(fields: [shopId, stocktakeId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  variant         Variant   @relation(fields: [shopId, variantId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, stocktakeId, variantId])
+  @@unique([shopId, stocktakeId, position])
+  @@map("stocktake_lines")
+}
+
+model StockTransfer {
+  shopId            String              @map("shop_id") @db.Uuid
+  id                String              @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fromWarehouseId   String              @map("from_warehouse_id") @db.Uuid
+  toWarehouseId     String              @map("to_warehouse_id") @db.Uuid
+  status            StockTransferStatus @default(draft)
+  reason            String              @db.VarChar(500)
+  discrepancyReason String?             @map("discrepancy_reason") @db.VarChar(500)
+  dispatchedAt      DateTime?           @map("dispatched_at") @db.Timestamptz(3)
+  closedAt          DateTime?           @map("closed_at") @db.Timestamptz(3)
+  version           Int                 @default(1)
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+  fromWarehouse     Warehouse           @relation("TransferOrigin", fields: [shopId, fromWarehouseId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  toWarehouse       Warehouse           @relation("TransferDestination", fields: [shopId, toWarehouseId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  lines             StockTransferLine[]
+
+  @@id([shopId, id])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, toWarehouseId, status])
+  @@map("stock_transfers")
+}
+
+model StockTransferLine {
+  shopId      String   @map("shop_id") @db.Uuid
+  transferId  String   @map("transfer_id") @db.Uuid
+  variantId   String   @map("variant_id") @db.Uuid
+  sku         String   @db.VarChar(160)
+  position    Int
+  quantity    Int
+  received    Int      @default(0)
+  missing     Int      @default(0)
+  issuedValue Decimal? @map("issued_value") @db.Decimal(78, 18)
+  transfer    StockTransfer @relation(fields: [shopId, transferId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  variant     Variant       @relation(fields: [shopId, variantId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, transferId, variantId])
+  @@unique([shopId, transferId, position])
+  @@map("stock_transfer_lines")
+}
+
+model Supplier {
+  shopId            String             @map("shop_id") @db.Uuid
+  id                String             @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String             @db.VarChar(160)
+  status            SupplierStatus     @default(draft)
+  contactLabel      String             @map("contact_label") @db.VarChar(200)
+  currency          String             @db.VarChar(3)
+  leadTimeDays      Int                @map("lead_time_days")
+  paymentTerms      String             @map("payment_terms") @db.VarChar(500)
+  sendMethod        SupplierSendMethod @map("send_method")
+  approvedAdapterId String?            @map("approved_adapter_id") @db.Uuid
+  version           Int                @default(1)
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop              Shop               @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  dispatchRoute     SupplierDispatchRoute? @relation(fields: [shopId, approvedAdapterId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  offers            SupplierOffer[]
+  purchases         PurchaseOrder[]
+  delegations       PurchaseDelegation[]
+
+  @@id([shopId, id])
+  @@index([shopId, createdAt, id])
+  @@map("suppliers")
+}
+
+model SupplierDispatchRoute {
+  shopId    String                  @map("shop_id") @db.Uuid
+  id        String                  @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  enabled   Boolean                 @default(true)
+  outcome   SupplierDispatchOutcome
+  shop      Shop                    @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  suppliers Supplier[]
+
+  @@id([shopId, id])
+  @@map("supplier_dispatch_routes")
+}
+
+model SupplierOffer {
+  shopId          String   @map("shop_id") @db.Uuid
+  id              String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  supplierId      String   @map("supplier_id") @db.Uuid
+  variantId       String   @map("variant_id") @db.Uuid
+  unitCost        Decimal  @map("unit_cost") @db.Decimal(78, 18)
+  currency        String   @db.VarChar(3)
+  minimumQuantity Int      @map("minimum_quantity")
+  packSize        Int      @map("pack_size")
+  leadTimeDays    Int      @map("lead_time_days")
+  validUntil      DateTime? @map("valid_until") @db.Timestamptz(3)
+  version         Int      @default(1)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  supplier        Supplier @relation(fields: [shopId, supplierId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  variant         Variant  @relation(fields: [shopId, variantId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  reorderRules    ReorderRule[]
+  purchaseLines   PurchaseOrderLine[]
+
+  @@id([shopId, id])
+  @@unique([shopId, variantId, id])
+  @@unique([shopId, supplierId, variantId, id])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, supplierId, variantId, createdAt])
+  @@map("supplier_offers")
+}
+
+model ReorderRule {
+  shopId               String      @map("shop_id") @db.Uuid
+  id                   String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  variantId            String      @map("variant_id") @db.Uuid
+  warehouseId          String      @map("warehouse_id") @db.Uuid
+  supplierOfferId      String      @map("supplier_offer_id") @db.Uuid
+  reorderPoint         Int         @map("reorder_point")
+  targetQuantity       Int         @map("target_quantity")
+  safetyStock          Int         @map("safety_stock")
+  mode                 ReorderMode
+  enabled              Boolean
+  budgetPolicyId       String?     @map("budget_policy_id") @db.Uuid
+  purchaseDelegationId String?     @map("purchase_delegation_id") @db.Uuid
+  version              Int         @default(1)
+  createdAt            DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  variant              Variant     @relation(fields: [shopId, variantId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  warehouse            Warehouse   @relation(fields: [shopId, warehouseId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  offer                SupplierOffer @relation(fields: [shopId, variantId, supplierOfferId], references: [shopId, variantId, id], onDelete: Restrict, onUpdate: NoAction)
+  budget               BudgetPolicy? @relation(fields: [shopId, budgetPolicyId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  delegation           PurchaseDelegation? @relation(fields: [shopId, purchaseDelegationId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  suggestions          PurchaseSuggestion[]
+
+  @@id([shopId, id])
+  @@unique([shopId, warehouseId, variantId])
+  @@index([shopId, createdAt, id])
+  @@map("reorder_rules")
+}
+
+model PurchaseSuggestion {
+  shopId              String      @map("shop_id") @db.Uuid
+  id                  String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ruleId              String      @map("rule_id") @db.Uuid
+  ruleVersion         Int         @map("rule_version")
+  variantId           String      @map("variant_id") @db.Uuid
+  warehouseId         String      @map("warehouse_id") @db.Uuid
+  supplierOfferId     String      @map("supplier_offer_id") @db.Uuid
+  available           Int
+  confirmedInbound    Int         @map("confirmed_inbound")
+  openProposalQuantity Int        @map("open_proposal_quantity")
+  suggestedQuantity   Int         @map("suggested_quantity")
+  reason              String      @db.VarChar(1000)
+  autoSendReason      String?     @map("auto_send_reason") @db.VarChar(500)
+  sourceAsOf          DateTime    @map("source_as_of") @db.Timestamptz(3)
+  version             Int         @default(1)
+  createdAt           DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  rule                ReorderRule @relation(fields: [shopId, ruleId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  purchases           PurchaseOrder[]
+
+  @@id([shopId, id])
+  @@unique([shopId, warehouseId, variantId])
+  @@index([shopId, createdAt, id])
+  @@map("purchase_suggestions")
+}
+
+model Approval {
+  shopId          String          @map("shop_id") @db.Uuid
+  id              String          @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  action          String          @db.VarChar(100)
+  resourceType    String          @map("resource_type") @db.VarChar(100)
+  resourceId      String          @map("resource_id") @db.Uuid
+  resourceVersion Int             @map("resource_version")
+  policyVersion   String          @map("policy_version") @db.VarChar(100)
+  intentHash      String          @map("intent_hash") @db.VarChar(64)
+  amount          Decimal?        @db.Decimal(78, 18)
+  currency        String?         @db.VarChar(3)
+  status          ApprovalStatus  @default(pending)
+  expiresAt       DateTime        @map("expires_at") @db.Timestamptz(3)
+  requestedBy     String          @map("requested_by") @db.Uuid
+  decidedBy       String?         @map("decided_by") @db.Uuid
+  decisionReason  String?         @map("decision_reason") @db.VarChar(1000)
+  version         Int             @default(1)
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  requester       Membership      @relation("ApprovalRequester", fields: [shopId, requestedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  decider         Membership?     @relation("ApprovalDecider", fields: [shopId, decidedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  purchase        PurchaseOrder?
+  budgetPolicy    BudgetPolicy? @relation("BudgetApproval")
+
+  @@id([shopId, id])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, resourceType, resourceId, status])
+  @@map("approvals")
+}
+
+model PurchaseOrder {
+  shopId            String        @map("shop_id") @db.Uuid
+  id                String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  supplierId        String        @map("supplier_id") @db.Uuid
+  supplierVersion   Int           @map("supplier_version")
+  warehouseId       String        @map("warehouse_id") @db.Uuid
+  suggestionId      String?       @map("suggestion_id") @db.Uuid
+  status            PurchaseStatus @default(draft)
+  total             Decimal       @db.Decimal(78, 18)
+  currency          String        @db.VarChar(3)
+  intentHash        String        @map("intent_hash") @db.VarChar(64)
+  approvalId        String?       @map("approval_id") @db.Uuid
+  externalReference String?      @map("external_reference") @db.VarChar(200)
+  confirmationId    String?       @map("confirmation_id") @db.Uuid
+  version           Int           @default(1)
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  supplier          Supplier      @relation(fields: [shopId, supplierId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  warehouse         Warehouse     @relation(fields: [shopId, warehouseId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  suggestion        PurchaseSuggestion? @relation(fields: [shopId, suggestionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  approval          Approval?     @relation(fields: [shopId, approvalId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  confirmation      ProcurementEvidence? @relation("SupplierConfirmation", fields: [shopId, id, confirmationId], references: [shopId, purchaseOrderId, id], onDelete: Restrict, onUpdate: NoAction)
+  evidence          ProcurementEvidence[] @relation("PurchaseEvidence")
+  lines             PurchaseOrderLine[]
+  receipts          GoodsReceipt[]
+  dispatch          PurchaseDispatch?
+  budgetReservations PurchaseDelegationReservation[]
+
+  @@id([shopId, id])
+  @@unique([shopId, approvalId])
+  @@unique([shopId, id, confirmationId])
+  @@unique([shopId, supplierId, id])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, warehouseId, status])
+  @@index([shopId, supplierId, status])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderLine {
+  shopId           String @map("shop_id") @db.Uuid
+  id               String @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  purchaseOrderId  String @map("purchase_order_id") @db.Uuid
+  variantId        String @map("variant_id") @db.Uuid
+  supplierId       String @map("supplier_id") @db.Uuid
+  supplierOfferId  String @map("supplier_offer_id") @db.Uuid
+  offerVersion     Int    @map("offer_version")
+  quantity         Int
+  receivedQuantity Int    @default(0) @map("received_quantity")
+  rejectedQuantity Int    @default(0) @map("rejected_quantity")
+  unitCost         Decimal @map("unit_cost") @db.Decimal(78, 18)
+  position         Int
+  purchaseOrder    PurchaseOrder @relation(fields: [shopId, supplierId, purchaseOrderId], references: [shopId, supplierId, id], onDelete: Restrict, onUpdate: NoAction)
+  supplierOffer    SupplierOffer @relation(fields: [shopId, supplierId, variantId, supplierOfferId], references: [shopId, supplierId, variantId, id], onDelete: Restrict, onUpdate: NoAction)
+  receiptLines     GoodsReceiptLine[]
+
+  @@id([shopId, id])
+  @@unique([shopId, purchaseOrderId, id])
+  @@unique([shopId, purchaseOrderId, variantId])
+  @@unique([shopId, purchaseOrderId, position])
+  @@index([shopId, variantId])
+  @@map("purchase_order_lines")
+}
+
+model ProcurementEvidence {
+  shopId           String                  @map("shop_id") @db.Uuid
+  id               String                  @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  purchaseOrderId  String                  @map("purchase_order_id") @db.Uuid
+  kind             ProcurementEvidenceKind
+  externalRef      String                  @map("external_ref") @db.VarChar(200)
+  occurredAt       DateTime                @map("occurred_at") @db.Timestamptz(3)
+  attestationHash  String?                 @map("attestation_hash") @db.VarChar(64)
+  attestedVersion  Int?                    @map("attested_version")
+  order             PurchaseOrder           @relation("PurchaseEvidence", fields: [shopId, purchaseOrderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  confirmedOrder    PurchaseOrder?          @relation("SupplierConfirmation")
+  receipt           GoodsReceipt?
+
+  @@id([shopId, id])
+  @@unique([shopId, purchaseOrderId, id])
+  @@unique([shopId, purchaseOrderId, kind, externalRef])
+  @@map("procurement_evidence")
+}
+
+model GoodsReceipt {
+  shopId            String        @map("shop_id") @db.Uuid
+  id                String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  purchaseOrderId   String        @map("purchase_order_id") @db.Uuid
+  warehouseId       String        @map("warehouse_id") @db.Uuid
+  sourceDocumentRef String        @map("source_document_ref") @db.Uuid
+  status            ReceiptStatus @default(draft)
+  version           Int           @default(1)
+  postedAt          DateTime?     @map("posted_at") @db.Timestamptz(3)
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  purchaseOrder     PurchaseOrder @relation(fields: [shopId, purchaseOrderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  document          ProcurementEvidence @relation(fields: [shopId, purchaseOrderId, sourceDocumentRef], references: [shopId, purchaseOrderId, id], onDelete: Restrict, onUpdate: NoAction)
+  lines             GoodsReceiptLine[]
+
+  @@id([shopId, id])
+  @@unique([shopId, purchaseOrderId, id])
+  @@unique([shopId, purchaseOrderId, sourceDocumentRef])
+  @@index([shopId, createdAt, id])
+  @@map("goods_receipts")
+}
+
+model GoodsReceiptLine {
+  shopId           String       @map("shop_id") @db.Uuid
+  purchaseOrderId  String       @map("purchase_order_id") @db.Uuid
+  receiptId        String       @map("receipt_id") @db.Uuid
+  purchaseLineId   String       @map("purchase_line_id") @db.Uuid
+  acceptedQuantity Int          @map("accepted_quantity")
+  rejectedQuantity Int          @map("rejected_quantity")
+  reason           String       @db.VarChar(1000)
+  receipt          GoodsReceipt @relation(fields: [shopId, purchaseOrderId, receiptId], references: [shopId, purchaseOrderId, id], onDelete: Restrict, onUpdate: NoAction)
+  purchaseLine     PurchaseOrderLine @relation(fields: [shopId, purchaseOrderId, purchaseLineId], references: [shopId, purchaseOrderId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, receiptId, purchaseLineId])
+  @@map("goods_receipt_lines")
+}
+
+model PurchaseDispatch {
+  shopId          String        @map("shop_id") @db.Uuid
+  purchaseOrderId String        @map("purchase_order_id") @db.Uuid
+  commandId       String        @map("command_id") @db.Uuid
+  dueAt           DateTime?     @map("due_at") @db.Timestamptz(3)
+  manualHandoff   Boolean       @default(false) @map("manual_handoff")
+  purchase        PurchaseOrder @relation(fields: [shopId, purchaseOrderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  command         Command       @relation(fields: [shopId, commandId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, purchaseOrderId])
+  @@unique([shopId, commandId])
+  @@index([dueAt])
+  @@map("purchase_dispatches")
+}
+
+model ReorderEvaluation {
+  shopId       String   @map("shop_id") @db.Uuid
+  id           String   @db.Uuid
+  evaluatedAt  DateTime @default(now()) @map("evaluated_at") @db.Timestamptz(3)
+  ruleCount    Int      @map("rule_count")
+  command      Command  @relation(fields: [shopId, id], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@map("reorder_evaluations")
 }
 
 model StockMovement {
@@ -679,12 +1504,24 @@ model ChannelConnection {
   id           String                @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   provider     String                @db.VarChar(40)
   pageId       String                @map("page_id") @db.VarChar(160)
+  name         String?               @db.VarChar(160)
+  status       ChannelStatus         @default(unconfigured)
+  version      Int                   @default(1)
+  lastWebhookAt DateTime?            @map("last_webhook_at") @db.Timestamptz(3)
+  policyVersion String?              @map("policy_version") @db.VarChar(100)
+  policyVerifiedAt DateTime?         @map("policy_verified_at") @db.Timestamptz(3)
+  generation   Int                   @default(1)
   createdAt    DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime              @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   shop         Shop                  @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   conversations ChannelConversation[]
+  intents      ChannelAuthorization[]
+  events       ChannelEvent[]
 
   @@id([shopId, id])
   @@unique([shopId, provider, pageId])
+  @@index([provider, pageId, status])
+  @@index([shopId, createdAt, id])
   @@map("channel_connections")
 }
 
@@ -699,6 +1536,8 @@ model ChannelConversation {
   status             ConversationStatus @default(open)
   mode               ConversationMode @default(paused)
   unreadCount        Int              @default(0) @map("unread_count")
+  generation        Int              @default(1)
+  lastInboundAt     DateTime?        @map("last_inbound_at") @db.Timestamptz(3)
   version            Int              @default(1)
   createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt          DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -711,6 +1550,7 @@ model ChannelConversation {
   @@id([shopId, id])
   @@unique([shopId, customerId, id])
   @@unique([shopId, customerIdentityId, externalId])
+  @@unique([shopId, channelId, externalId])
   @@index([shopId, customerId, createdAt, id])
   @@index([shopId, createdAt, id])
   @@map("channel_conversations")
@@ -723,15 +1563,91 @@ model ChannelMessage {
   externalId     String              @map("external_id") @db.VarChar(160)
   direction      MessageDirection
   origin         MessageOrigin
+  senderKind     MessageSenderKind?  @map("sender_kind")
+  status         MessageDeliveryStatus @default(delivered)
+  clientMessageId String?            @map("client_message_id") @db.VarChar(128)
+  version        Int                 @default(1)
   text           String
+  sourceEvidence Json?                @map("source_evidence")
+  redactedAt      DateTime?            @map("redacted_at") @db.Timestamptz(3)
   createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
   conversation   ChannelConversation @relation(fields: [shopId, conversationId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   evidence       OrderCustomerConfirmation?
+  attachments    ChannelAttachment[]
+  dispatch       MessageDispatch?
+  botTask        BotInboundTask?
+  feedback       ConversationFeedback[]
 
   @@id([shopId, id])
   @@unique([shopId, conversationId, externalId])
+  @@unique([shopId, conversationId, id])
+  @@unique([shopId, conversationId, clientMessageId])
   @@index([shopId, conversationId, createdAt, id])
   @@map("channel_messages")
+}
+
+model ChannelAuthorization {
+  shopId      String              @map("shop_id") @db.Uuid
+  id          String              @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId     String              @map("actor_id") @db.Uuid
+  channelId   String?             @map("channel_id") @db.Uuid
+  generation  Int?
+  returnPath  String              @map("return_path") @db.VarChar(500)
+  expiresAt   DateTime            @map("expires_at") @db.Timestamptz(3)
+  usedAt      DateTime?           @map("used_at") @db.Timestamptz(3)
+  createdAt   DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  shop        Shop                @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  actor       Membership          @relation(fields: [shopId, actorId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  channel     ChannelConnection?  @relation(fields: [shopId, channelId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@index([shopId, actorId, expiresAt])
+  @@map("channel_authorizations")
+}
+
+model ChannelEvent {
+  shopId       String            @map("shop_id") @db.Uuid
+  channelId    String            @map("channel_id") @db.Uuid
+  externalId   String            @map("external_id") @db.VarChar(160)
+  contentHash  String            @map("content_hash") @db.VarChar(64)
+  occurredAt   DateTime          @map("occurred_at") @db.Timestamptz(3)
+  receivedAt   DateTime          @default(now()) @map("received_at") @db.Timestamptz(3)
+  channel      ChannelConnection @relation(fields: [shopId, channelId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, channelId, externalId])
+  @@map("channel_events")
+}
+
+model ChannelAttachment {
+  shopId       String        @map("shop_id") @db.Uuid
+  messageId    String        @map("message_id") @db.Uuid
+  fileId       String        @map("file_id") @db.Uuid
+  position     Int
+  message      ChannelMessage @relation(fields: [shopId, messageId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  file         FileObject     @relation(fields: [shopId, fileId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, messageId, fileId])
+  @@unique([shopId, messageId, position])
+  @@map("channel_attachments")
+}
+
+model MessageDispatch {
+  shopId                  String         @map("shop_id") @db.Uuid
+  messageId               String         @map("message_id") @db.Uuid
+  commandId               String         @map("command_id") @db.Uuid
+  conversationGeneration  Int            @map("conversation_generation")
+  channelGeneration       Int            @map("channel_generation")
+  botGeneration           Int?           @map("bot_generation")
+  startedAt               DateTime?      @map("started_at") @db.Timestamptz(3)
+  finishedAt              DateTime?      @map("finished_at") @db.Timestamptz(3)
+  createdAt               DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  command                 Command        @relation(fields: [shopId, commandId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  message                 ChannelMessage @relation(fields: [shopId, messageId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, messageId])
+  @@unique([shopId, commandId])
+  @@index([finishedAt, createdAt])
+  @@map("message_dispatches")
 }
 
 model SalesOrder {
@@ -752,6 +1668,9 @@ model SalesOrder {
   currency               String                   @db.VarChar(3)
   total                  Decimal                  @db.Decimal(78, 18)
   notes                  String                   @db.VarChar(2000)
+  promotionId            String?                  @map("promotion_id") @db.Uuid
+  promotionSnapshot      Json?                    @map("promotion_snapshot")
+  promotionAppliedAt     DateTime?                @map("promotion_applied_at") @db.Timestamptz(3)
   createdAt              DateTime                 @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt              DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(3)
   customer               Customer                 @relation(fields: [shopId, customerId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
@@ -765,6 +1684,11 @@ model SalesOrder {
   serviceCases           ServiceCase[]
   paymentEvidence        PaymentEvidence[]
   moneyEntries           FinanceEntry[]
+  settlementAllocations  SettlementAllocation[]
+  codSettlementOrder     CodSettlementOrder?
+  preparation            PrepJob?
+  shipments              Shipment[]
+  promotion              Promotion?               @relation(fields: [shopId, promotionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
 
   @@id([shopId, id])
   @@unique([shopId, customerId, id])
@@ -773,6 +1697,7 @@ model SalesOrder {
   @@index([shopId, createdAt, id])
   @@index([shopId, customerId, createdAt, id])
   @@index([shopId, warehouseId, orderState])
+  @@index([shopId, promotionId, promotionAppliedAt])
   @@map("sales_orders")
 }
 
@@ -792,10 +1717,132 @@ model OrderLine {
   retiredAt      DateTime?  @map("retired_at") @db.Timestamptz(3)
   order          SalesOrder @relation(fields: [shopId, orderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   variant        Variant    @relation(fields: [shopId, variantId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  preparationLines PreparationLine[]
+  shipmentLines  ShipmentLine[]
+  returnLines    OrderReturnLine[]
 
   @@id([shopId, id])
+  @@unique([shopId, orderId, id])
   @@index([shopId, orderId, position])
   @@map("order_lines")
+}
+
+model Shipment {
+  shopId           String        @map("shop_id") @db.Uuid
+  id               String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId          String        @map("order_id") @db.Uuid
+  warehouseId      String        @map("warehouse_id") @db.Uuid
+  carrierId        String?       @map("carrier_id") @db.Uuid
+  trackingCode     String?       @map("tracking_code") @db.VarChar(160)
+  shippingFeeQuote Decimal?      @map("shipping_fee_quote") @db.Decimal(78, 18)
+  shippingFeeActual Decimal?     @map("shipping_fee_actual") @db.Decimal(78, 18)
+  currency         String        @db.VarChar(3)
+  state            ShipmentState @default(planned)
+  version          Int           @default(1)
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  handedOverAt     DateTime?     @map("handed_over_at") @db.Timestamptz(3)
+  deliveredAt      DateTime?     @map("delivered_at") @db.Timestamptz(3)
+  lastEventAt      DateTime?     @map("last_event_at") @db.Timestamptz(3)
+  order            SalesOrder    @relation(fields: [shopId, orderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  warehouse        Warehouse     @relation(fields: [shopId, warehouseId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  lines            ShipmentLine[]
+  observations     ShipmentObservation[]
+  events           ShipmentEvent[]
+  returns          OrderReturn[]
+
+  @@id([shopId, id])
+  @@unique([shopId, orderId, id])
+  @@unique([shopId, orderId])
+  @@index([shopId, createdAt, id])
+  @@map("shipments")
+}
+
+model ShipmentLine {
+  shopId      String  @map("shop_id") @db.Uuid
+  orderId     String  @map("order_id") @db.Uuid
+  shipmentId  String  @map("shipment_id") @db.Uuid
+  orderLineId String  @map("order_line_id") @db.Uuid
+  quantity    Int
+  costValue   Decimal @default(0) @map("cost_value") @db.Decimal(78, 18)
+  shipment    Shipment @relation(fields: [shopId, orderId, shipmentId], references: [shopId, orderId, id], onDelete: Restrict, onUpdate: NoAction)
+  orderLine   OrderLine @relation(fields: [shopId, orderId, orderLineId], references: [shopId, orderId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, shipmentId, orderLineId])
+  @@map("shipment_lines")
+}
+
+model ShipmentObservation {
+  shopId          String        @map("shop_id") @db.Uuid
+  id              String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shipmentId      String        @map("shipment_id") @db.Uuid
+  externalEventId String        @map("external_event_id") @db.VarChar(160)
+  state           ShipmentState
+  occurredAt      DateTime      @map("occurred_at") @db.Timestamptz(3)
+  attestationHash String?       @map("attestation_hash") @db.VarChar(64)
+  observedAt      DateTime?     @map("observed_at") @db.Timestamptz(3)
+  shipment        Shipment      @relation(fields: [shopId, shipmentId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  event           ShipmentEvent?
+
+  @@id([shopId, id])
+  @@unique([shopId, shipmentId, id])
+  @@unique([shopId, shipmentId, externalEventId])
+  @@map("shipment_observations")
+}
+
+model ShipmentEvent {
+  shopId          String        @map("shop_id") @db.Uuid
+  shipmentId      String        @map("shipment_id") @db.Uuid
+  externalEventId String        @map("external_event_id") @db.VarChar(160)
+  state           ShipmentState
+  occurredAt      DateTime      @map("occurred_at") @db.Timestamptz(3)
+  observationId   String?       @map("observation_id") @db.Uuid
+  applied         Boolean
+  shipment        Shipment      @relation(fields: [shopId, shipmentId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  observation     ShipmentObservation? @relation(fields: [shopId, shipmentId, observationId], references: [shopId, shipmentId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, shipmentId, externalEventId])
+  @@unique([shopId, shipmentId, observationId])
+  @@map("shipment_events")
+}
+
+model OrderReturn {
+  shopId           String      @map("shop_id") @db.Uuid
+  id               String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId          String      @map("order_id") @db.Uuid
+  shipmentId       String      @map("shipment_id") @db.Uuid
+  state            ReturnState @default(awaiting_goods)
+  reason           String      @db.VarChar(1000)
+  version          Int         @default(1)
+  refundObligation Decimal?    @map("refund_obligation") @db.Decimal(78, 18)
+  receivableCredit Decimal?    @map("receivable_credit") @db.Decimal(78, 18)
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shipment         Shipment    @relation(fields: [shopId, orderId, shipmentId], references: [shopId, orderId, id], onDelete: Restrict, onUpdate: NoAction)
+  lines            OrderReturnLine[]
+
+  @@id([shopId, id])
+  @@unique([shopId, orderId, id])
+  @@index([shopId, orderId])
+  @@index([shopId, createdAt, id])
+  @@map("order_returns")
+}
+
+model OrderReturnLine {
+  shopId           String            @map("shop_id") @db.Uuid
+  orderId          String            @map("order_id") @db.Uuid
+  returnId         String            @map("return_id") @db.Uuid
+  orderLineId      String            @map("order_line_id") @db.Uuid
+  quantity         Int
+  acceptedQuantity Int               @default(0) @map("accepted_quantity")
+  disposition      ReturnDisposition @default(pending)
+  reason           String            @db.VarChar(1000)
+  returnCase       OrderReturn       @relation(fields: [shopId, orderId, returnId], references: [shopId, orderId, id], onDelete: Restrict, onUpdate: NoAction)
+  orderLine        OrderLine         @relation(fields: [shopId, orderId, orderLineId], references: [shopId, orderId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, returnId, orderLineId])
+  @@index([shopId, orderId, orderLineId])
+  @@map("order_return_lines")
 }
 
 model OrderQuote {
@@ -808,6 +1855,7 @@ model OrderQuote {
   quoteHash         String        @map("quote_hash") @db.VarChar(64)
   lines             Json
   shippingRate      Json?         @map("shipping_rate")
+  promotionSnapshot Json?         @map("promotion_snapshot")
   total             Decimal       @db.Decimal(78, 18)
   currency          String        @db.VarChar(3)
   warnings          String[]
@@ -855,6 +1903,7 @@ model FinanceAccount {
   updatedAt DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
   shop      Shop          @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   lines     FinanceJournalLine[]
+  bankTransactions BankTransaction[]
 
   @@id([shopId, id])
   @@unique([shopId, code])
@@ -910,6 +1959,7 @@ model FinanceJournal {
   lines             FinanceJournalLine[]
   opening           OpeningBalance?
   financeEntry      FinanceEntry?
+  settlementAllocations SettlementAllocation[]
 
   @@id([shopId, id])
   @@unique([shopId, sourceType, sourceId, eventType, sourceRevision], map: "finance_journals_source_key")
@@ -931,6 +1981,7 @@ model FinanceJournalLine {
   description String         @db.VarChar(300)
   journal     FinanceJournal @relation(fields: [shopId, journalId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   account     FinanceAccount @relation(fields: [shopId, accountId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  settlementAllocations SettlementAllocation[]
 
   @@id([shopId, id])
   @@unique([shopId, journalId, position])
@@ -964,6 +2015,7 @@ model FinanceEntry {
   evidence         PaymentEvidence?      @relation(fields: [shopId, evidenceId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   original         FinanceEntry?         @relation("FinanceReversal", fields: [shopId, reversalOf], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   reverse          FinanceEntry?         @relation("FinanceReversal")
+  collectionApplications CollectionApplication[]
 
   @@id([shopId, id])
   @@unique([shopId, journalId])
@@ -986,6 +2038,7 @@ model PaymentEvidence {
   verifiedAt  DateTime            @map("verified_at") @db.Timestamptz(3)
   order       SalesOrder          @relation(fields: [shopId, orderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   entry       FinanceEntry?
+  bankTransaction BankTransaction?
 
   @@id([shopId, id])
   @@unique([shopId, kind, reference])
@@ -1014,6 +2067,861 @@ model OpeningBalance {
   @@map("opening_balances")
 }
 
+enum BankDirection {
+  credit
+  debit
+
+  @@map("bank_direction")
+}
+
+enum ReconciliationState {
+  unmatched
+  suggested
+  matched
+  disputed
+
+  @@map("reconciliation_state")
+}
+
+enum CodSettlementState {
+  pending
+  part_settled
+  matched
+  disputed
+
+  @@map("cod_settlement_state")
+}
+
+enum StatementKind {
+  bank
+  cod
+
+  @@map("statement_kind")
+}
+
+model StatementBatch {
+  shopId              String        @map("shop_id") @db.Uuid
+  id                  String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kind                StatementKind
+  accountOrCarrierId  String        @map("account_or_carrier_id") @db.Uuid
+  sourceBatchId       String        @map("source_batch_id") @db.VarChar(200)
+  formatId            String        @map("format_id") @db.VarChar(100)
+  fileId              String        @map("file_id") @db.Uuid
+  jobId               String        @map("job_id") @db.Uuid
+  createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  file                FileObject    @relation(fields: [shopId, fileId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  job                 Job           @relation(fields: [shopId, jobId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  transactions        BankTransaction[]
+  settlements         CodSettlement[]
+
+  @@id([shopId, id])
+  @@unique([shopId, jobId])
+  @@unique([shopId, kind, accountOrCarrierId, sourceBatchId])
+  @@map("statement_batches")
+}
+
+model BankTransaction {
+  shopId                String       @map("shop_id") @db.Uuid
+  id                    String       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId             String       @map("account_id") @db.Uuid
+  paymentEvidenceId     String?      @map("payment_evidence_id") @db.Uuid
+  batchId               String       @map("batch_id") @db.Uuid
+  externalTransactionId String       @map("external_transaction_id") @db.VarChar(200)
+  amount                Decimal      @db.Decimal(78, 18)
+  currency              String       @db.VarChar(3)
+  direction             BankDirection
+  occurredAt            DateTime     @map("occurred_at") @db.Timestamptz(3)
+  referenceText         String       @map("reference_text") @db.VarChar(500)
+  version               Int          @default(1)
+  createdAt             DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  account               FinanceAccount @relation(fields: [shopId, accountId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  paymentEvidence       PaymentEvidence? @relation(fields: [shopId, paymentEvidenceId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  batch                 StatementBatch @relation(fields: [shopId, batchId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  reconciliation        ReconciliationCase?
+  lastForSettlements    CodSettlement[]
+  feeEvidence           CodFeeEvidence[]
+  allocations           SettlementAllocation[]
+
+  @@id([shopId, id])
+  @@unique([shopId, accountId, externalTransactionId])
+  @@unique([shopId, paymentEvidenceId])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, occurredAt, id])
+  @@map("bank_transactions")
+}
+
+model ReconciliationCase {
+  shopId           String              @map("shop_id") @db.Uuid
+  id               String              @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transactionId    String              @map("transaction_id") @db.Uuid
+  state            ReconciliationState @default(unmatched)
+  difference       Decimal             @db.Decimal(78, 18)
+  reason           String?             @db.VarChar(1000)
+  version          Int                 @default(1)
+  createdAt        DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+  transaction      BankTransaction     @relation(fields: [shopId, transactionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, transactionId])
+  @@index([shopId, createdAt, id])
+  @@map("reconciliation_cases")
+}
+
+model CodSettlement {
+  shopId            String             @map("shop_id") @db.Uuid
+  id                String             @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  carrierId         String             @map("carrier_id") @db.Uuid
+  externalBatchId   String             @map("external_batch_id") @db.VarChar(200)
+  batchId           String             @map("batch_id") @db.Uuid
+  grossDue          Decimal            @map("gross_due") @db.Decimal(78, 18)
+  actualFees        Decimal            @default(0) @map("actual_fees") @db.Decimal(78, 18)
+  bankReceived      Decimal            @default(0) @map("bank_received") @db.Decimal(78, 18)
+  currency          String             @db.VarChar(3)
+  status            CodSettlementState @default(pending)
+  bankTransactionId String?            @map("bank_transaction_id") @db.Uuid
+  version           Int                @default(1)
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop              Shop               @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  batch             StatementBatch     @relation(fields: [shopId, batchId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  bankTransaction   BankTransaction?   @relation(fields: [shopId, bankTransactionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  orders            CodSettlementOrder[]
+  feeEvidence       CodFeeEvidence[]
+  allocations       SettlementAllocation[]
+
+  @@id([shopId, id])
+  @@unique([shopId, carrierId, externalBatchId])
+  @@index([shopId, createdAt, id])
+  @@map("cod_settlements")
+}
+
+model CodSettlementOrder {
+  shopId          String        @map("shop_id") @db.Uuid
+  orderId         String        @map("order_id") @db.Uuid
+  settlementId    String        @map("settlement_id") @db.Uuid
+  order           SalesOrder    @relation(fields: [shopId, orderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  settlement      CodSettlement @relation(fields: [shopId, settlementId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, orderId])
+  @@index([shopId, settlementId, orderId])
+  @@map("cod_settlement_orders")
+}
+
+model CodFeeEvidence {
+  shopId              String          @map("shop_id") @db.Uuid
+  id                  String          @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  settlementId        String          @map("settlement_id") @db.Uuid
+  transactionId       String          @map("transaction_id") @db.Uuid
+  reference           String          @db.VarChar(200)
+  amount              Decimal         @db.Decimal(78, 18)
+  currency            String          @db.VarChar(3)
+  verifiedAt          DateTime        @map("verified_at") @db.Timestamptz(3)
+  settlement          CodSettlement   @relation(fields: [shopId, settlementId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  transaction         BankTransaction @relation(fields: [shopId, transactionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, settlementId, transactionId])
+  @@map("cod_fee_evidence")
+}
+
+model SettlementAllocation {
+  shopId          String             @map("shop_id") @db.Uuid
+  id              String             @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  journalId       String             @map("journal_id") @db.Uuid
+  debtLineId      String             @map("debt_line_id") @db.Uuid
+  transactionId   String             @map("transaction_id") @db.Uuid
+  codSettlementId String?            @map("cod_settlement_id") @db.Uuid
+  orderId         String?            @map("order_id") @db.Uuid
+  amount          Decimal            @db.Decimal(78, 18)
+  bankAmount      Decimal            @map("bank_amount") @db.Decimal(78, 18)
+  createdAt       DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  journal         FinanceJournal     @relation(fields: [shopId, journalId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  debtLine        FinanceJournalLine @relation(fields: [shopId, debtLineId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  transaction     BankTransaction    @relation(fields: [shopId, transactionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  codSettlement   CodSettlement?     @relation(fields: [shopId, codSettlementId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  order           SalesOrder?        @relation(fields: [shopId, orderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  applications    CollectionApplication[]
+
+  @@id([shopId, id])
+  @@unique([shopId, journalId, debtLineId])
+  @@index([shopId, debtLineId])
+  @@index([shopId, orderId])
+  @@index([shopId, transactionId])
+  @@map("settlement_allocations")
+}
+
+model CollectionApplication {
+  shopId         String               @map("shop_id") @db.Uuid
+  allocationId   String               @map("allocation_id") @db.Uuid
+  financeEntryId String               @map("finance_entry_id") @db.Uuid
+  amount         Decimal              @db.Decimal(78, 18)
+  allocation     SettlementAllocation @relation(fields: [shopId, allocationId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  financeEntry   FinanceEntry         @relation(fields: [shopId, financeEntryId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, allocationId, financeEntryId])
+  @@index([shopId, financeEntryId])
+  @@map("collection_applications")
+}
+
+enum KnowledgeSourceKind {
+  manual
+  file
+  feedback
+
+  @@map("knowledge_source_kind")
+}
+
+enum KnowledgeStatus {
+  draft
+  processing
+  ready_for_review
+  rejected
+  published
+  retired
+  failed
+
+  @@map("knowledge_status")
+}
+
+enum EvaluationStatus {
+  queued
+  running
+  passed
+  failed
+  error
+
+  @@map("evaluation_status")
+}
+
+enum FeedbackRating {
+  positive
+  negative
+
+  @@map("feedback_rating")
+}
+
+enum FeedbackStatus {
+  pending
+  approved
+  rejected
+
+  @@map("feedback_status")
+}
+
+model KnowledgeDocument {
+  shopId              String             @map("shop_id") @db.Uuid
+  id                  String             @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version             Int                @default(1)
+  status              KnowledgeStatus    @default(draft)
+  draftRevisionId     String?            @map("draft_revision_id") @db.Uuid
+  publishedRevisionId String?            @map("published_revision_id") @db.Uuid
+  feedbackId          String?            @map("feedback_id") @db.Uuid
+  latestRevision      Int                @default(1) @map("latest_revision")
+  createdAt           DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop                Shop               @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  revisions           KnowledgeRevision[] @relation("KnowledgeHistory")
+  draft               KnowledgeRevision? @relation("KnowledgeDraft", fields: [shopId, id, draftRevisionId], references: [shopId, documentId, id], onDelete: NoAction, onUpdate: NoAction)
+  published           KnowledgeRevision? @relation("KnowledgePublished", fields: [shopId, id, publishedRevisionId], references: [shopId, documentId, id], onDelete: NoAction, onUpdate: NoAction)
+  feedback            ConversationFeedback? @relation(fields: [shopId, feedbackId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, feedbackId])
+  @@index([shopId, createdAt, id])
+  @@map("knowledge_documents")
+}
+
+model KnowledgeRevision {
+  shopId            String         @map("shop_id") @db.Uuid
+  id                String         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  documentId        String         @map("document_id") @db.Uuid
+  revision          Int
+  version           Int            @default(1)
+  title             String         @db.VarChar(180)
+  sourceKind        KnowledgeSourceKind @map("source_kind")
+  fileId            String?        @map("file_id") @db.Uuid
+  content           String?
+  indexedText       String?        @map("indexed_text")
+  status            KnowledgeStatus @default(draft)
+  contentHash       String?        @map("content_hash") @db.VarChar(64)
+  warnings          String[]       @default([])
+  indexJobId        String?        @map("index_job_id") @db.Uuid
+  evaluationId      String?        @map("evaluation_id") @db.Uuid
+  publishedAt       DateTime?      @map("published_at") @db.Timestamptz(3)
+  publishedPolicy   String?        @map("published_policy") @db.VarChar(100)
+  approvedBy        String?        @map("approved_by") @db.Uuid
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  document          KnowledgeDocument @relation("KnowledgeHistory", fields: [shopId, documentId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  draftOf           KnowledgeDocument[] @relation("KnowledgeDraft")
+  publishedOf       KnowledgeDocument[] @relation("KnowledgePublished")
+  file              FileObject?    @relation(fields: [shopId, fileId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  indexJob          Job?           @relation("KnowledgeIndexJob", fields: [shopId, indexJobId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  evaluation        Evaluation?    @relation("PublishEvaluation", fields: [shopId, evaluationId], references: [shopId, id], onDelete: NoAction, onUpdate: NoAction)
+  evaluations       Evaluation[]   @relation("EvaluatedKnowledge")
+  approver          Membership?    @relation("KnowledgeApprover", fields: [shopId, approvedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, documentId, id])
+  @@unique([shopId, documentId, revision])
+  @@unique([shopId, indexJobId])
+  @@unique([shopId, evaluationId])
+  @@index([shopId, documentId, createdAt, id])
+  @@map("knowledge_revisions")
+}
+
+model Evaluation {
+  shopId              String           @map("shop_id") @db.Uuid
+  id                  String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version             Int              @default(1)
+  configRevision      Int              @map("config_revision")
+  datasetVersion      String           @map("dataset_version") @db.VarChar(160)
+  knowledgeRevisionId String?          @map("knowledge_revision_id") @db.Uuid
+  knowledgeHash       String?          @map("knowledge_hash") @db.VarChar(64)
+  policyVersion       String           @map("policy_version") @db.VarChar(100)
+  fixture             Boolean          @default(false)
+  status              EvaluationStatus @default(queued)
+  totalCases          Int              @default(0) @map("total_cases")
+  passedCases         Int              @default(0) @map("passed_cases")
+  criticalFailures    Int              @default(0) @map("critical_failures")
+  reportJobId         String?          @map("report_job_id") @db.Uuid
+  createdAt           DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop                Shop             @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  knowledge           KnowledgeRevision? @relation("EvaluatedKnowledge", fields: [shopId, knowledgeRevisionId], references: [shopId, id], onDelete: NoAction, onUpdate: NoAction)
+  publication         KnowledgeRevision? @relation("PublishEvaluation")
+  botPublication      BotRevision? @relation("BotPublicationEvaluation")
+  configHash          String?          @map("config_hash") @db.VarChar(64)
+  approvalRunId       String?          @unique @map("approval_run_id") @db.Uuid
+  cases               Json?
+  reportJob           Job?             @relation("EvaluationJob", fields: [shopId, reportJobId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, reportJobId])
+  @@index([shopId, createdAt, id])
+  @@map("evaluations")
+}
+
+model ConversationFeedback {
+  shopId          String         @map("shop_id") @db.Uuid
+  id              String         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId  String         @map("conversation_id") @db.Uuid
+  messageId       String         @map("message_id") @db.Uuid
+  actorId         String         @map("actor_id") @db.Uuid
+  rating          FeedbackRating
+  correction      String
+  status          FeedbackStatus @default(pending)
+  reviewReason    String?        @map("review_reason") @db.VarChar(2000)
+  reviewedBy      String?        @map("reviewed_by") @db.Uuid
+  redactedCorrection String?     @map("redacted_correction")
+  version         Int            @default(1)
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  message         ChannelMessage @relation(fields: [shopId, conversationId, messageId], references: [shopId, conversationId, id], onDelete: Restrict, onUpdate: NoAction)
+  actor           Membership     @relation("FeedbackAuthor", fields: [shopId, actorId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  reviewer        Membership?    @relation("FeedbackReviewer", fields: [shopId, reviewedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  document        KnowledgeDocument?
+
+  @@id([shopId, id])
+  @@unique([shopId, messageId, actorId])
+  @@index([shopId, createdAt, id])
+  @@map("conversation_feedback")
+}
+
+enum BotStatus {
+  draft
+  active
+  paused
+  degraded
+
+  @@map("bot_status")
+}
+
+model AiConnection {
+  shopId           String           @map("shop_id") @db.Uuid
+  id               String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version          Int              @default(1)
+  name             String           @db.VarChar(120)
+  providerId       String           @map("provider_id") @db.VarChar(128)
+  adapterId        String           @map("adapter_id") @db.VarChar(128)
+  modelId          String           @map("model_id") @db.VarChar(160)
+  endpointUrl      String?          @map("endpoint_url") @db.VarChar(500)
+  credentialCiphertext String?      @map("credential_ciphertext")
+  keyLast4         String?          @map("key_last4") @db.VarChar(4)
+  status           ChannelStatus    @default(unconfigured)
+  lastCheckedAt    DateTime?        @map("last_checked_at") @db.Timestamptz(3)
+  checkJobId       String?          @map("check_job_id") @db.Uuid
+  deletedAt        DateTime?        @map("deleted_at") @db.Timestamptz(3)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop             Shop             @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  revisions        BotRevision[]
+  agentRoles       AgentRole[]
+  checkJob         Job?             @relation("AiConnectionCheck", fields: [shopId, checkJobId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, checkJobId])
+  @@index([shopId, createdAt, id])
+  @@map("ai_connections")
+}
+
+model BotConfig {
+  shopId          String          @id @map("shop_id") @db.Uuid
+  version         Int             @default(1)
+  status          BotStatus       @default(draft)
+  draftRevision   Int             @default(1) @map("draft_revision")
+  liveRevision    Int?            @map("live_revision")
+  generation      Int             @default(1)
+  publishedAt     DateTime?       @map("published_at") @db.Timestamptz(3)
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop            Shop            @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  revisions       BotRevision[]
+
+  @@map("bot_configs")
+}
+
+model BotRevision {
+  shopId               String         @map("shop_id") @db.Uuid
+  id                   String         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  revision             Int
+  version              Int            @default(1)
+  connectionId         String?        @map("connection_id") @db.Uuid
+  instructions         String
+  knowledgeRevisionIds String[]       @default([]) @map("knowledge_revision_ids") @db.Uuid
+  maxToolSteps         Int            @default(0) @map("max_tool_steps")
+  dailyBudget          Decimal?       @map("daily_budget") @db.Decimal(78, 18)
+  currency             String         @db.VarChar(3)
+  evaluationId         String?        @map("evaluation_id") @db.Uuid
+  publishedAt          DateTime?      @map("published_at") @db.Timestamptz(3)
+  approvedBy           String?        @map("approved_by") @db.Uuid
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  bot                  BotConfig      @relation(fields: [shopId], references: [shopId], onDelete: Restrict, onUpdate: NoAction)
+  connection           AiConnection?  @relation(fields: [shopId, connectionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  evaluation           Evaluation?    @relation("BotPublicationEvaluation", fields: [shopId, evaluationId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  approver             Membership?    @relation("BotRevisionApprover", fields: [shopId, approvedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  runs                 PlaygroundRun[]
+
+  @@id([shopId, id])
+  @@unique([shopId, revision])
+  @@unique([shopId, evaluationId])
+  @@index([shopId, createdAt, id])
+  @@map("bot_revisions")
+}
+
+model BotDailyUsage {
+  shopId          String     @map("shop_id") @db.Uuid
+  accountingDate  DateTime   @map("accounting_date") @db.Date
+  currency        String     @db.VarChar(3)
+  spent           Decimal    @db.Decimal(78, 18)
+  runs            Int
+  shop            Shop       @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, accountingDate])
+  @@map("bot_daily_usage")
+}
+
+model PlaygroundRun {
+  shopId       String      @map("shop_id") @db.Uuid
+  id           String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  revisionId   String      @map("revision_id") @db.Uuid
+  output       Json
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  revision     BotRevision @relation(fields: [shopId, revisionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@map("playground_runs")
+}
+
+model BotInboundTask {
+  shopId                  String         @map("shop_id") @db.Uuid
+  messageId               String         @map("message_id") @db.Uuid
+  conversationGeneration  Int            @map("conversation_generation")
+  channelGeneration       Int            @map("channel_generation")
+  botGeneration           Int            @map("bot_generation")
+  providerRunId           String?        @unique @map("provider_run_id") @db.Uuid
+  externalStartedAt       DateTime?      @map("external_started_at") @db.Timestamptz(3)
+  outcome                 String?        @db.VarChar(64)
+  finishedAt              DateTime?      @map("finished_at") @db.Timestamptz(3)
+  createdAt               DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  message                 ChannelMessage @relation(fields: [shopId, messageId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, messageId])
+  @@index([finishedAt, createdAt])
+  @@map("bot_inbound_tasks")
+}
+
+enum AgentRoleKind {
+  sales_admin
+  accountant
+  warehouse_buyer
+  supervisor
+
+  @@map("agent_role_kind")
+}
+
+enum BudgetKind {
+  ai_usage
+  notification
+  procurement
+
+  @@map("budget_kind")
+}
+
+enum BudgetPeriod {
+  daily
+  monthly
+  per_order
+
+  @@map("budget_period")
+}
+
+enum PurchaseDelegationStatus {
+  paused
+  active
+  revoked
+
+  @@map("purchase_delegation_status")
+}
+
+enum BudgetReservationStatus {
+  reserved
+  consumed
+  unknown
+  released
+
+  @@map("budget_reservation_status")
+}
+
+model ShopAutomation {
+  shopId      String  @id @map("shop_id") @db.Uuid
+  version     Int     @default(1)
+  generation  Int     @default(1)
+  paused      Boolean @default(false)
+  shop        Shop    @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@map("shop_automation")
+}
+
+model AgentRole {
+  shopId          String       @map("shop_id") @db.Uuid
+  id              String       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kind            AgentRoleKind
+  version         Int          @default(1)
+  generation      Int          @default(1)
+  paused          Boolean      @default(false)
+  humanOwnerId    String?      @map("human_owner_id") @db.Uuid
+  modelConnectionId String?    @map("model_connection_id") @db.Uuid
+  policyVersion   String       @map("policy_version") @db.VarChar(100)
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop            Shop         @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  owner           Membership?  @relation("AgentRoleOwner", fields: [shopId, humanOwnerId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  connection      AiConnection? @relation(fields: [shopId, modelConnectionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  delegations     PurchaseDelegation[]
+
+  @@id([shopId, id])
+  @@unique([shopId, kind])
+  @@index([shopId, createdAt, id])
+  @@map("agent_roles")
+}
+
+model BudgetPolicy {
+  shopId        String      @map("shop_id") @db.Uuid
+  id            String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kind          BudgetKind
+  version       Int         @default(1)
+  limitAmount   Decimal?    @map("limit_amount") @db.Decimal(78, 18)
+  currency      String      @db.VarChar(3)
+  period        BudgetPeriod @default(daily)
+  approvalId    String?     @map("approval_id") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop          Shop        @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  approval      Approval?   @relation("BudgetApproval", fields: [shopId, approvalId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  delegations   PurchaseDelegation[]
+  reservations  PurchaseDelegationReservation[]
+  reorderRules  ReorderRule[]
+
+  @@id([shopId, id])
+  @@unique([shopId, kind])
+  @@unique([shopId, approvalId])
+  @@index([shopId, createdAt, id])
+  @@map("budget_policies")
+}
+
+model PurchaseDelegation {
+  shopId          String   @map("shop_id") @db.Uuid
+  id              String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version         Int      @default(1)
+  agentId         String   @map("agent_id") @db.Uuid
+  humanOwnerId    String   @map("human_owner_id") @db.Uuid
+  supplierId      String   @map("supplier_id") @db.Uuid
+  warehouseId     String   @map("warehouse_id") @db.Uuid
+  offerSnapshots  Json     @map("offer_snapshots")
+  maxPerOrder     Decimal  @map("max_per_order") @db.Decimal(78, 18)
+  currency        String   @db.VarChar(3)
+  budgetPolicyId  String   @map("budget_policy_id") @db.Uuid
+  budgetPolicyVersion Int  @map("budget_policy_version")
+  budgetPeriod    BudgetPeriod @map("budget_period")
+  agentGeneration Int      @map("agent_generation")
+  generation      Int      @default(1)
+  status          PurchaseDelegationStatus @default(paused)
+  expiresAt       DateTime @map("expires_at") @db.Timestamptz(3)
+  lastReason      String?  @map("last_reason") @db.VarChar(500)
+  lastChangedBy   String   @map("last_changed_by") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  agent           AgentRole @relation(fields: [shopId, agentId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  humanOwner      Membership @relation("PurchaseDelegateOwner", fields: [shopId, humanOwnerId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  changedBy       Membership @relation("PurchaseDelegateActor", fields: [shopId, lastChangedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  supplier        Supplier  @relation(fields: [shopId, supplierId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  warehouse       Warehouse @relation(fields: [shopId, warehouseId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  budgetPolicy    BudgetPolicy @relation(fields: [shopId, budgetPolicyId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  reservations    PurchaseDelegationReservation[]
+  reorderRules    ReorderRule[]
+
+  @@id([shopId, id])
+  @@index([shopId, createdAt, id])
+  @@map("purchase_delegations")
+}
+
+model PurchaseDelegationReservation {
+  shopId           String   @map("shop_id") @db.Uuid
+  id               String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version          Int      @default(1)
+  delegationId     String   @map("delegation_id") @db.Uuid
+  purchaseOrderId  String   @map("purchase_order_id") @db.Uuid
+  budgetPolicyId   String   @map("budget_policy_id") @db.Uuid
+  budgetPolicyVersion Int   @map("budget_policy_version")
+  delegationGeneration Int @map("delegation_generation")
+  agentGeneration  Int      @map("agent_generation")
+  shopGeneration   Int      @map("shop_generation")
+  intentHash       String   @map("intent_hash") @db.VarChar(64)
+  amount           Decimal  @db.Decimal(78, 18)
+  currency         String   @db.VarChar(3)
+  period           BudgetPeriod
+  periodKey        String   @map("period_key") @db.VarChar(100)
+  status           BudgetReservationStatus @default(reserved)
+  commandId        String?  @map("command_id") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  delegation       PurchaseDelegation @relation(fields: [shopId, delegationId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  purchaseOrder    PurchaseOrder @relation(fields: [shopId, purchaseOrderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  budgetPolicy     BudgetPolicy @relation(fields: [shopId, budgetPolicyId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  command          Command? @relation(fields: [shopId, commandId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, purchaseOrderId, intentHash])
+  @@unique([shopId, commandId])
+  @@index([shopId, budgetPolicyId, periodKey, status])
+  @@index([shopId, createdAt, id])
+  @@map("purchase_delegation_reservations")
+}
+
+model OwnerDigest {
+  shopId      String   @map("shop_id") @db.Uuid
+  id          String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  version     Int      @default(1)
+  periodDay   DateTime @map("period_day") @db.Date
+  periodStart DateTime @map("period_start") @db.Timestamptz(3)
+  periodEnd   DateTime @map("period_end") @db.Timestamptz(3)
+  status      String   @db.VarChar(20)
+  workItemIds String[] @default([]) @map("work_item_ids") @db.Uuid
+  text        String
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, periodDay])
+  @@index([shopId, createdAt, id])
+  @@map("owner_digests")
+}
+
+model WorkerHealth {
+  component String   @id @db.VarChar(80)
+  checkedAt DateTime @map("checked_at") @db.Timestamptz(3)
+  lagMs     Int      @map("lag_ms")
+
+  @@map("worker_health")
+}
+
+model WorkItem {
+  shopId         String        @map("shop_id") @db.Uuid
+  id             String        @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kind           WorkItemKind
+  sourceType     String        @map("source_type") @db.VarChar(64)
+  sourceId       String        @map("source_id") @db.Uuid
+  state          WorkItemState @default(queued)
+  assigneeUserId String?       @map("assignee_user_id") @db.Uuid
+  dueAt          DateTime?     @map("due_at") @db.Timestamptz(3)
+  blockedReason  String?       @map("blocked_reason") @db.VarChar(1000)
+  version        Int           @default(1)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  shop           Shop          @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  assignee       Membership?   @relation(fields: [shopId, assigneeUserId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  preparation    PrepJob?
+  notifications  AppNotification[]
+  notificationSchedule WorkNotificationSchedule?
+
+  @@id([shopId, id])
+  @@unique([shopId, kind, sourceType, sourceId])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, assigneeUserId, state])
+  @@map("work_items")
+}
+
+model PrepJob {
+  shopId      String           @map("shop_id") @db.Uuid
+  id          String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId     String           @map("order_id") @db.Uuid
+  workItemId  String           @map("work_item_id") @db.Uuid
+  state       PreparationState @default(queued)
+  version     Int              @default(1)
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  order       SalesOrder       @relation(fields: [shopId, orderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  workItem    WorkItem         @relation(fields: [shopId, workItemId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  lines       PreparationLine[]
+
+  @@id([shopId, id])
+  @@unique([shopId, orderId])
+  @@unique([shopId, workItemId])
+  @@index([shopId, createdAt, id])
+  @@map("prep_jobs")
+}
+
+model PreparationLine {
+  shopId         String      @map("shop_id") @db.Uuid
+  prepJobId      String      @map("prep_job_id") @db.Uuid
+  orderLineId    String      @map("order_line_id") @db.Uuid
+  sku            String      @db.VarChar(100)
+  requiredQuantity Int       @map("required_quantity")
+  pickedQuantity Int         @default(0) @map("picked_quantity")
+  hasIssue       Boolean     @default(false) @map("has_issue")
+  prepJob        PrepJob     @relation(fields: [shopId, prepJobId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  orderLine      OrderLine   @relation(fields: [shopId, orderLineId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, prepJobId, orderLineId])
+  @@map("prep_lines")
+}
+
+model AppNotification {
+  shopId         String               @map("shop_id") @db.Uuid
+  id             String               @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  workItemId     String?              @map("work_item_id") @db.Uuid
+  sourceType     String               @map("source_type") @db.VarChar(64)
+  sourceId       String               @map("source_id") @db.Uuid
+  recipientUserId String              @map("recipient_user_id") @db.Uuid
+  channel        NotificationChannel  @default(in_app)
+  title          String               @db.VarChar(120)
+  safeBody       String               @map("safe_body") @db.VarChar(300)
+  deliveryStatus NotificationDelivery @default(queued) @map("delivery_status")
+  deliveryIntent String               @map("delivery_intent") @db.VarChar(64)
+  pushDeviceId   String?              @map("push_device_id") @db.Uuid
+  pushPolicyVersion Int?              @map("push_policy_version")
+  pushWorkVersion Int?                @map("push_work_version")
+  pushDeviceVersion Int?              @map("push_device_version")
+  pushDeadlineAt DateTime?            @map("push_deadline_at") @db.Timestamptz(3)
+  deliveryStartedAt DateTime?         @map("delivery_started_at") @db.Timestamptz(3)
+  openedAt       DateTime?            @map("opened_at") @db.Timestamptz(3)
+  acknowledgedAt DateTime?            @map("acknowledged_at") @db.Timestamptz(3)
+  version        Int                  @default(1)
+  createdAt      DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime             @updatedAt @map("updated_at") @db.Timestamptz(3)
+  workItem       WorkItem?            @relation(fields: [shopId, workItemId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  recipient      Membership           @relation(fields: [shopId, recipientUserId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  pushDevice     NotificationDevice?  @relation(fields: [shopId, pushDeviceId, recipientUserId], references: [shopId, id, userId], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, recipientUserId, channel, deliveryIntent])
+  @@index([shopId, recipientUserId, createdAt, id])
+  @@index([channel, deliveryStatus, createdAt, id], map: "app_notifications_delivery_queue_idx")
+  @@map("app_notifications")
+}
+
+model NotificationDevice {
+  shopId          String               @map("shop_id") @db.Uuid
+  id              String               @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String               @map("user_id") @db.Uuid
+  deviceName      String               @map("device_name") @db.VarChar(120)
+  channel         NotificationChannel
+  status          DeviceStatus         @default(pending)
+  fingerprint     String               @db.VarChar(64)
+  fixtureOutcome  NotificationDelivery @map("fixture_outcome")
+  pushSubscriptionCiphertext String?    @map("push_subscription_ciphertext")
+  telegramChatCiphertext String?        @map("telegram_chat_ciphertext")
+  version         Int                  @default(1)
+  createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime             @updatedAt @map("updated_at") @db.Timestamptz(3)
+  lastVerifiedAt  DateTime?            @map("last_verified_at") @db.Timestamptz(3)
+  lastTestAt      DateTime?            @map("last_test_at") @db.Timestamptz(3)
+  member          Membership           @relation(fields: [shopId, userId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  pushDeliveries  AppNotification[]
+
+  @@id([shopId, id])
+  @@unique([shopId, fingerprint])
+  @@unique([shopId, id, userId])
+  @@index([shopId, createdAt, id])
+  @@index([shopId, userId, channel, status])
+  @@map("notification_devices")
+}
+
+model TelegramPairing {
+  shopId     String     @map("shop_id") @db.Uuid
+  id         String     @db.Uuid
+  userId     String     @map("user_id") @db.Uuid
+  expiresAt  DateTime   @map("expires_at") @db.Timestamptz(3)
+  usedAt     DateTime?  @map("used_at") @db.Timestamptz(3)
+  telegramBotId String? @map("telegram_bot_id") @db.VarChar(16)
+  telegramUpdateId BigInt? @map("telegram_update_id")
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  member     Membership @relation(fields: [shopId, userId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([telegramBotId, telegramUpdateId])
+  @@index([shopId, userId, createdAt])
+  @@map("telegram_pairings")
+}
+
+model NotificationPolicy {
+  shopId           String   @id @map("shop_id") @db.Uuid
+  version          Int      @default(1)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  enabled          Boolean  @default(false)
+  timezone         String   @db.VarChar(100)
+  quietStart       String?  @map("quiet_start") @db.VarChar(5)
+  quietEnd         String?  @map("quiet_end") @db.VarChar(5)
+  remindAfterMinutes Int?   @map("remind_after_minutes")
+  maxReminders     Int      @default(0) @map("max_reminders")
+  primaryUserIds   String[] @map("primary_user_ids") @db.Uuid
+  fallbackUserIds  String[] @map("fallback_user_ids") @db.Uuid
+  fallbackChannel  NotificationChannel? @map("fallback_channel")
+  urgentMayBypassQuietHours Boolean @default(false) @map("urgent_may_bypass_quiet_hours")
+  shop             Shop     @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@map("notification_policies")
+}
+
+model WorkNotificationSchedule {
+  shopId        String   @map("shop_id") @db.Uuid
+  workItemId    String   @map("work_item_id") @db.Uuid
+  policyVersion Int      @map("policy_version")
+  reminderCount Int      @default(0) @map("reminder_count")
+  nextDueAt     DateTime? @map("next_due_at") @db.Timestamptz(3)
+  workItem      WorkItem @relation(fields: [shopId, workItemId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, workItemId])
+  @@index([nextDueAt])
+  @@map("work_notification_schedules")
+}
+
 model Membership {
   shopId            String           @map("shop_id") @db.Uuid
   id                String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -1030,9 +2938,29 @@ model Membership {
   commands          Command[]
   auditEntries      AuditEntry[]
   stockMovements    StockMovement[]
+  stocktakesCounted Stocktake[] @relation("StocktakeCounter")
+  stocktakesReviewed Stocktake[] @relation("StocktakeReviewer")
+  approvalsRequested Approval[] @relation("ApprovalRequester")
+  approvalsDecided  Approval[] @relation("ApprovalDecider")
   stockReservations StockReservation[]
   assignedConversations ChannelConversation[]
+  channelIntents     ChannelAuthorization[]
+  approvedKnowledge KnowledgeRevision[] @relation("KnowledgeApprover")
+  approvedBotRevisions BotRevision[] @relation("BotRevisionApprover")
+  agentRoles         AgentRole[] @relation("AgentRoleOwner")
+  assignedDelegations PurchaseDelegation[] @relation("PurchaseDelegateOwner")
+  changedDelegations  PurchaseDelegation[] @relation("PurchaseDelegateActor")
+  approvedPrivacyPolicies PrivacyPolicy[] @relation("PrivacyPolicyApprover")
+  privacyRequested     PrivacyRequest[] @relation("PrivacyRequester")
+  privacyApproved      PrivacyRequest[] @relation("PrivacyApprover")
+  issuedConsents       ConsentChallenge[]
+  authoredFeedback ConversationFeedback[] @relation("FeedbackAuthor")
+  reviewedFeedback ConversationFeedback[] @relation("FeedbackReviewer")
   closedPeriods      AccountingPeriod[]
+  assignedWorkItems  WorkItem[]
+  notifications      AppNotification[]
+  notificationDevices NotificationDevice[]
+  telegramPairings    TelegramPairing[]
   jobs              Job[]
   uploads           FileObject[]
 
@@ -1056,10 +2984,15 @@ model FileObject {
   purpose    FilePurpose
   resourceId String?      @map("resource_id") @db.Uuid
   status     FileStatus
+  expiresAt  DateTime?    @map("expires_at") @db.Timestamptz(3)
   createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
   uploader   Membership   @relation(fields: [shopId, uploaderId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
   blob       FileBlob?
+  storage    FileStorage?
   images     ProductImage[]
+  statementBatches StatementBatch[]
+  channelAttachments ChannelAttachment[]
+  knowledgeRevisions KnowledgeRevision[]
 
   @@id([shopId, id])
   @@index([shopId, uploaderId, purpose])
@@ -1074,6 +3007,21 @@ model FileBlob {
 
   @@id([shopId, fileId])
   @@map("file_blobs")
+}
+
+model FileStorage {
+  shopId     String           @map("shop_id") @db.Uuid
+  fileId     String           @map("file_id") @db.Uuid
+  targetId   String           @map("target_id") @db.VarChar(64)
+  state      FileStorageState @default(pending)
+  dueAt      DateTime?        @map("due_at") @db.Timestamptz(3)
+  leaseUntil DateTime?        @map("lease_until") @db.Timestamptz(3)
+  attempts   Int              @default(0)
+  file       FileObject       @relation(fields: [shopId, fileId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, fileId])
+  @@index([targetId, state, dueAt])
+  @@map("file_storage")
 }
 
 model ProductImage {
@@ -1097,7 +3045,10 @@ model Session {
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
   revokedAt DateTime? @map("revoked_at") @db.Timestamptz(3)
+  stepUpFailures Int  @default(0) @map("step_up_failures")
+  stepUpWindowUntil DateTime? @map("step_up_window_until") @db.Timestamptz(3)
   user      User      @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  stepUpGrants StepUpGrant[]
 
   @@index([userId, expiresAt])
   @@map("sessions")
@@ -1118,6 +3069,10 @@ model Command {
   actor          Membership    @relation(fields: [shopId, actorId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
   outboxEvents   OutboxEvent[]
   jobs           Job[]
+  purchaseDispatch PurchaseDispatch?
+  reorderEvaluation ReorderEvaluation?
+  messageDispatch MessageDispatch?
+  purchaseBudgetReservation PurchaseDelegationReservation?
 
   @@id([shopId, id])
   @@unique([shopId, actorId, operationId, idempotencyKey])
@@ -1138,6 +3093,7 @@ model AuditEntry {
   createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
   shop         Shop        @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
   actor        Membership? @relation(fields: [shopId, actorId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+  consentRecovery ConsentEvidence[]
 
   @@id([shopId, id])
   @@index([shopId, createdAt, id])
@@ -1198,12 +3154,19 @@ model Job {
   outboxEvents      OutboxEvent[]
   importPreview     ProductImportPreview? @relation("ImportPreviewJob")
   importCommit      ProductImportPreview? @relation("ImportCommitJob")
+  statementBatch    StatementBatch?
+  knowledgeIndex    KnowledgeRevision? @relation("KnowledgeIndexJob")
+  evaluationReport  Evaluation? @relation("EvaluationJob")
+  aiConnectionCheck AiConnection? @relation("AiConnectionCheck")
+  privacyRequest    PrivacyRequest?
 
   @@id([shopId, id])
   @@unique([shopId, commandId])
   @@index([shopId, actorId, createdAt, id])
   @@index([status, dueAt, id])
   @@index([status, leaseUntil])
+  @@index([shopId, status, dueAt, id])
+  @@index([shopId, status, leaseUntil])
   @@map("jobs")
 }
 

@@ -243,7 +243,7 @@ test('UI006.C02 selected order identity survives a failed search and cursor retr
     await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');
     await page.getByRole('button', { name: 'Tạo yêu cầu trả', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Yêu cầu trả hàng' });
-    const selectedOrder = dialog.getByRole('combobox', { name: 'Đơn hàng đã giao' });
+    const selectedOrder = dialog.getByRole('combobox', { name: 'Đơn đủ điều kiện trả' });
     await expect(selectedOrder).toContainText(selectedOrderId);
 
     const query = 'ui006-no-matching-order';

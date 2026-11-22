@@ -49,6 +49,16 @@ export async function requireShopAccess(tx: Prisma.TransactionClient, userId: st
     return { ...current, permissions };
 }
 
+export async function canInShop(tx: Prisma.TransactionClient, userId: string, shopId: string, permission: string) {
+    try {
+        await requireShopAccess(tx, userId, shopId, permission);
+        return true;
+    } catch (error) {
+        if (error instanceof ForbiddenException || error instanceof NotFoundException) return false;
+        throw error;
+    }
+}
+
 export function canRevokeMembership(actorId: string, member: { userId: string; status: string }): boolean {
     return member.userId !== actorId && member.status !== 'revoked';
 }

@@ -1,10 +1,11 @@
 import { ConflictException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders } from 'node:http';
-import { Prisma, type AccountGroup, type AccountingPeriod, type AccountStatus } from '../../generated/prisma/client.js';
+import { Prisma, type AccountGroup, type AccountStatus } from '../../generated/prisma/client.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
 import { requireIfMatch, requireVersion } from '../../http/response.js';
 import { commandDto } from '../../platform/commands/index.js';
 import { FinanceAccess } from './access.js';
+import { consumePeriodApproval, lockedPeriod, periodInShop, periodViews } from './period-data.js';
 import { accountingDate, cleanFinanceText, financeKey, journalInShop, journalLines, journalView, postDraftJournal, reversePostedJournal, writeJournal,
     type JournalInput } from './journal.js';
 
@@ -12,6 +13,7 @@ export type AccountWrite = { code: string; name: string; group: AccountGroup };
 export type PeriodWrite = { startDate: string; endDate: string; reason: string };
 export type Version = { expectedVersion: number };
 export type Reason = Version & { reason: string };
+export type PeriodReopen = Reason & { approvalId: string };
 export type ManualJournal = Pick<JournalInput, 'sourceType' | 'sourceId' | 'effectiveDate' | 'lines' | 'reason' | 'replacesJournalId'>;
 
 const usedLines = { lines: { where: { journal: { status: { in: ['posted', 'reversed'] } } } } } satisfies Prisma.FinanceAccountCountOutputTypeSelect;
@@ -29,19 +31,8 @@ async function accountInShop(tx: Prisma.TransactionClient, shopId: string, id: s
     return account;
 }
 
-function periodView(period: AccountingPeriod) {
-    return {
-        ...period, startDate: period.startDate.toISOString().slice(0, 10), endDate: period.endDate.toISOString().slice(0, 10),
-        blockingIssues: [],
-    };
-}
-
-async function periodInShop(tx: Prisma.TransactionClient, shopId: string, id: string) {
-    if (!validUuid(id)) throw new NotFoundException();
-    const period = await tx.accountingPeriod.findUnique({ where: financeKey(shopId, id) });
-    if (!period) throw new NotFoundException();
-    return period;
-}
+const periodView = async (tx: Prisma.TransactionClient, shopId: string, id: string) =>
+    (await periodViews(tx, shopId, [await periodInShop(tx, shopId, id)]))[0];
 
 export class FinanceBook extends FinanceAccess {
     accounts(headers: IncomingHttpHeaders, shopId: string, raw: Record<string, unknown>) {
@@ -115,12 +106,12 @@ export class FinanceBook extends FinanceAccess {
             const result = page.result(await tx.accountingPeriod.findMany({
                 where: { shopId, ...page.after }, orderBy: page.orderBy, take: page.limit + 1,
             }));
-            return { ...result, data: result.data.map(periodView) };
+            return { ...result, data: await periodViews(tx, shopId, result.data) };
         });
     }
 
     getPeriod(headers: IncomingHttpHeaders, shopId: string, id: string) {
-        return this.read(headers, shopId, async tx => periodView(await periodInShop(tx, shopId, id)));
+        return this.read(headers, shopId, tx => periodView(tx, shopId, id));
     }
 
     createPeriod(headers: IncomingHttpHeaders, shopId: string, input: PeriodWrite, requestId: string) {
@@ -134,7 +125,25 @@ export class FinanceBook extends FinanceAccess {
                 where: { shopId, startDate: { lte: endDate }, endDate: { gte: startDate } }, select: { id: true },
             })) throw new ConflictException();
             return tx.accountingPeriod.create({ data: { shopId, startDate, endDate } });
-        }, async (tx, result) => periodView(await periodInShop(tx, shopId, result.id)));
+        }, (tx, result) => periodView(tx, shopId, result.id));
+    }
+
+    closePeriod(headers: IncomingHttpHeaders, shopId: string, id: string, input: Version, requestId: string) {
+        return this.write({ headers, shopId, action: 'closeAccountingPeriod', payload: { id, input }, requestId }, async (tx, scope) => {
+            const current = await lockedPeriod(tx, shopId, id, input.expectedVersion);
+            if (current.state !== 'open' || (await periodViews(tx, shopId, [current]))[0].blockingIssues.length > 0) throw new ConflictException();
+            return tx.accountingPeriod.update({ where: financeKey(shopId, id), data: { state: 'closed', closedBy: scope.userId, version: { increment: 1 } } });
+        }, async (_tx, _result, command) => commandDto(command, 'accounting_period'));
+    }
+
+    reopenPeriod(headers: IncomingHttpHeaders, shopId: string, id: string, input: PeriodReopen, requestId: string) {
+        const reason = cleanFinanceText(input.reason, 5);
+        return this.write({ headers, shopId, action: 'reopenAccountingPeriod', payload: { id, input }, requestId, reason }, async tx => {
+            const current = await lockedPeriod(tx, shopId, id, input.expectedVersion);
+            if (current.state !== 'closed') throw new ConflictException();
+            await consumePeriodApproval(tx, current, input.approvalId);
+            return tx.accountingPeriod.update({ where: financeKey(shopId, id), data: { state: 'open', closedBy: null, version: { increment: 1 } } });
+        }, async (_tx, _result, command) => commandDto(command, 'accounting_period'));
     }
 
     journals(headers: IncomingHttpHeaders, shopId: string, raw: Record<string, unknown>) {

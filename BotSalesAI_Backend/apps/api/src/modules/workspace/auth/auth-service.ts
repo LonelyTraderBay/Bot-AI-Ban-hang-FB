@@ -8,14 +8,16 @@ import { serializable } from '../../../platform/database/transactions.js';
 import type { AuthConfig } from './config.js';
 import { validIdempotencyKey } from '../../../http/contract-source.js';
 import { acceptInvitations } from '../members/invitations.js';
-import { activeMembership, membershipDto, membershipFields } from '../policy/access.js';
+import { activeMembership, membershipDto, membershipFields, requireShopAccess } from '../policy/access.js';
 import { OidcClient } from './oidc.js';
+import { issueStepUp, renewConfirmedSession, revealStepUp, type StepUpRequest } from './step-up.js';
 import {
     activeSession, cookieToken, csrfMatches, csrfToken, headerValue, loginCookie, loginLifetime, opaqueToken,
     requireMutationCsrf, requireSessionToken, sessionCookie, sessionLifetime, tokenHash,
 } from './session-tokens.js';
 
 const returnPaths = new Set(['/login', '/workspaces']);
+const stepUpBrowserHash = (browser: string, session: string) => tokenHash('step-up/browser/v1:' + browser + ':' + session);
 
 export class AuthService {
     private readonly oidcClient?: OidcClient;
@@ -27,6 +29,35 @@ export class AuthService {
     private setup() {
         if (!this.db || !this.config || !this.oidcClient) throw new ServiceUnavailableException();
         return { db: this.db, config: this.config, oidcClient: this.oidcClient };
+    }
+
+    async stepUp(headers: IncomingHttpHeaders, input: StepUpRequest) {
+        const { db, config, oidcClient } = this.setup();
+        if ('password' in input) return { data: await issueStepUp(db, config, headers, input.password) };
+        if (input.action === 'complete') return { data: await revealStepUp(db, config, headers), clearConfirmation: true };
+        const token = requireSessionToken(headers);
+        requireMutationCsrf(config, headers, token);
+        const browser = cookieToken(headers.cookie, loginCookie) ?? opaqueToken();
+        const { shopId, privacyRequestId } = input;
+        const returnTo = `/s/${shopId}/settings/privacy?approval=${privacyRequestId}`;
+        const attempt = await serializable(db, async tx => {
+            const now = new Date();
+            const session = await tx.session.findFirst({ where: activeSession(token, now), select: { id: true, userId: true } });
+            if (!session) throw new UnauthorizedException();
+            await requireShopAccess(tx, session.userId, shopId, 'privacy.manage');
+            await tx.authLoginAttempt.deleteMany({ where: { OR: [{ expiresAt: { lte: now } },
+                { stepUpSessionId: session.id, consumedAt: null }] } });
+            const state = oidc.randomState();
+            const nonce = oidc.randomNonce();
+            const verifier = oidc.randomPKCECodeVerifier();
+            const expiresAt = new Date(now.getTime() + loginLifetime * 1000);
+            await tx.authLoginAttempt.create({ data: { state, nonce, pkceVerifier: verifier, expiresAt,
+                browserHash: stepUpBrowserHash(browser, token), idempotencyKeyHash: tokenHash(state), returnTo, returnToHash: tokenHash(returnTo),
+                stepUpSessionId: session.id, stepUpShopId: shopId, stepUpResourceId: privacyRequestId } });
+            return { state, nonce, verifier, expiresAt };
+        }, true);
+        const url = await oidcClient.authorize(attempt.state, attempt.nonce, attempt.verifier, true);
+        return { browser, data: { authorizationUrl: url.href, expiresAt: attempt.expiresAt } };
     }
 
     async csrf(headers: IncomingHttpHeaders) {
@@ -74,21 +105,35 @@ export class AuthService {
         const { db, oidcClient } = this.setup();
         const browser = cookieToken(headers.cookie, loginCookie);
         if (!browser) throw new BadRequestException();
-        const where = { state, browserHash: tokenHash(browser), consumedAt: null, expiresAt: { gt: new Date() } };
+        const previous = cookieToken(headers.cookie, sessionCookie);
+        const where = { state, consumedAt: null, expiresAt: { gt: new Date() }, OR: [
+            { browserHash: tokenHash(browser), stepUpSessionId: null },
+            ...(previous ? [{ browserHash: stepUpBrowserHash(browser, previous), stepUpSessionId: { not: null } }] : []),
+        ] };
         const attempt = await db.$transaction(async tx => {
             const pending = await tx.authLoginAttempt.findFirst({ where });
             if (!pending?.nonce || !pending.pkceVerifier) throw new BadRequestException();
+            if (pending.stepUpSessionId && (!previous || !await tx.session.findFirst({
+                where: { id: pending.stepUpSessionId, ...activeSession(previous) }, select: { id: true },
+            }))) throw new UnauthorizedException();
             const claimed = await tx.authLoginAttempt.updateMany({
                 where,
                 data: { consumedAt: new Date(), nonce: null, pkceVerifier: null },
             });
             if (claimed.count !== 1) throw new BadRequestException();
-            return { nonce: pending.nonce, verifier: pending.pkceVerifier, returnTo: pending.returnTo };
+            return { nonce: pending.nonce, verifier: pending.pkceVerifier, returnTo: pending.returnTo,
+                stepUp: pending.stepUpSessionId && pending.stepUpShopId && pending.stepUpResourceId ? {
+                    sessionId: pending.stepUpSessionId, scope: { shopId: pending.stepUpShopId, resourceId: pending.stepUpResourceId },
+                    started: new Date(pending.expiresAt.getTime() - loginLifetime * 1000),
+                } : undefined };
         });
 
-        const identity = await oidcClient.redeem(query, state, attempt.nonce, attempt.verifier);
+        const identity = await oidcClient.redeem(query, state, attempt.nonce, attempt.verifier, attempt.stepUp?.started);
+        if (attempt.stepUp) {
+            if (!previous) throw new UnauthorizedException();
+            return { returnTo: attempt.returnTo, ...await renewConfirmedSession(db, previous, attempt.stepUp.sessionId, attempt.stepUp.scope, identity, requestId) };
+        }
         const token = opaqueToken();
-        const previous = cookieToken(headers.cookie, sessionCookie);
         await serializable(db, async tx => {
             const user = await acceptInvitations(tx, identity, requestId);
             const now = new Date();
@@ -97,7 +142,7 @@ export class AuthService {
                 data: { userId: user.id, tokenHash: tokenHash(token), expiresAt: new Date(now.getTime() + sessionLifetime * 1000) },
             });
         }, true);
-        return { token, returnTo: attempt.returnTo };
+        return { token, sessionSeconds: sessionLifetime, returnTo: attempt.returnTo, confirmation: '', confirmationSeconds: 0 };
     }
 
     async session(headers: IncomingHttpHeaders) {

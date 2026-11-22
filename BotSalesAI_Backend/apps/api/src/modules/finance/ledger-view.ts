@@ -1,10 +1,11 @@
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import type { IncomingHttpHeaders } from 'node:http';
 import { Prisma } from '../../generated/prisma/client.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
 import { ExactDecimal } from '../../platform/money/index.js';
 import { FinanceAccess } from './access.js';
-import { financeKey, financeMoney, financeShop, localAccountingDate } from './journal.js';
+import { financeKey, financeMoney, financeShop } from './journal.js';
+import { journalScope, reportWindow } from './report-data.js';
 
 type LedgerRow = {
     id: string; createdAt: Date; journalId: string; sourceType: string; sourceId: string; accountId: string;
@@ -18,12 +19,7 @@ export class LedgerReader extends FinanceAccess {
         return this.read(headers, shopId, async (tx, scope) => {
             const query = listQuery(raw, 'ledger');
             const { currency, timezone, policyVersion } = await financeShop(tx, shopId);
-            if (!query.from || !query.to || (query.timezone !== undefined && query.timezone !== timezone)) throw new UnprocessableEntityException();
-            const fromTime = new Date(query.from);
-            const toTime = new Date(query.to);
-            if (!Number.isFinite(fromTime.getTime()) || !Number.isFinite(toTime.getTime()) || fromTime >= toTime) throw new UnprocessableEntityException();
-            const from = localAccountingDate(fromTime, timezone);
-            const to = localAccountingDate(new Date(toTime.getTime() - 1), timezone);
+            const { from: fromTime, to: toTime, firstDay: from, lastDay: to } = reportWindow(query, timezone);
             if (query.accountId && (!validUuid(query.accountId) || !await tx.financeAccount.findUnique({
                 where: financeKey(shopId, query.accountId), select: { id: true },
             }))) throw new NotFoundException();
@@ -33,7 +29,7 @@ export class LedgerReader extends FinanceAccess {
             const account = query.accountId ? Prisma.sql`AND l.account_id = ${query.accountId}::uuid` : Prisma.empty;
             const source = Prisma.sql`
                 FROM finance_journal_lines l JOIN finance_journals j ON j.shop_id=l.shop_id AND j.id=l.journal_id
-                WHERE l.shop_id = ${shopId}::uuid AND j.status IN ('posted','reversed') AND j.currency = ${currency} ${account}
+                WHERE ${journalScope(shopId, currency)} ${account}
             `;
             const [summary] = await tx.$queryRaw<Summary[]>(Prisma.sql`
                 SELECT coalesce(sum(l.debit-l.credit) FILTER (WHERE j.effective_date < ${from}::date),0) AS opening,
@@ -61,7 +57,7 @@ export class LedgerReader extends FinanceAccess {
             return {
                 shopId, asOf: new Date().toISOString(), policyVersion,
                 completeness: 'provisional', warnings: ['Số liệu từ bút toán đã ghi trong sổ quản trị.'],
-                from: query.from, to: query.to, timezone, accountId: query.accountId ?? null,
+                from: fromTime, to: toTime, timezone, accountId: query.accountId ?? null,
                 openingBalance: money(summary.opening), totalDebit: money(summary.debit), totalCredit: money(summary.credit),
                 closingBalance: money(new ExactDecimal(summary.opening).plus(summary.debit).minus(summary.credit)),
                 entries: result.data.map(({ createdAt, debit, credit, balance, ...row }) => ({

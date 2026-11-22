@@ -9,6 +9,12 @@ import { noStore, requireIfMatch, requireVersion, versionedEnvelope } from '../.
 import { recordAudit } from '../../platform/audit/index.js';
 import { ExactDecimal } from '../../platform/money/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig } from '../workspace/index.js';
+import { PreparationController, PreparationService } from './preparation.js';
+
+export { cancelPreparation, preparationCommands, provisionPreparation } from './preparation.js';
+export { cancelPlannedShipment, shipmentCommands } from './shipments.js';
+export { recordManualShipmentEvidence } from './shipment-evidence.js';
+import { ShipmentsController, ShipmentsService } from './shipments.js';
 
 type ShippingRule = { countryCode: string; province: string; serviceName: string; amount: string };
 type ShippingPolicy = { shopId: string; version: number; rules: ShippingRule[] };
@@ -112,7 +118,11 @@ class FulfillmentModule {}
 
 export function fulfillmentModule(db?: PrismaClient, config?: AuthConfig): DynamicModule {
     return {
-        module: FulfillmentModule, controllers: [ShippingController],
-        providers: [{ provide: ShippingService, useFactory: () => new ShippingService(db, config) }],
+        module: FulfillmentModule, controllers: [ShippingController, PreparationController, ShipmentsController],
+        providers: [
+            { provide: ShippingService, useFactory: () => new ShippingService(db, config) },
+            { provide: PreparationService, useFactory: () => new PreparationService(db, config) },
+            { provide: ShipmentsService, useFactory: () => new ShipmentsService(db, config) },
+        ],
     };
 }

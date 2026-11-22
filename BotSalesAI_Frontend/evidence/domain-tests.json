@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-23T21:40:18.290Z",
-  "node": "v24.19.0",
+  "checkedAt": "2026-11-22T08:44:13.361Z",
+  "node": "v24.22.3",
   "typescript": "5.9.2",
   "compilerSource": "project dependency",
   "scope": "Synthetic frontend checks: pure TypeScript in-memory simulator plus MSW HTTP/SSE transport. NOT backend, real concurrency, finance certification or browser E2E.",
@@ -349,6 +349,26 @@
     {
       "name": "Read API listPurchaseDelegationReservations",
       "status": "PASS"
+    },
+    {
+      "name": "Read API getShippingPolicy",
+      "status": "PASS"
+    },
+    {
+      "name": "Read API listPromotions",
+      "status": "PASS"
+    },
+    {
+      "name": "Read API listPaymentReviews",
+      "status": "PASS"
+    },
+    {
+      "name": "Read API listStocktakes",
+      "status": "PASS"
+    },
+    {
+      "name": "Read API listStockTransfers",
+      "status": "PASS"
     }
   ],
   "transcript": [
@@ -445,6 +465,7 @@
         "warnings": [
           "Báo giá mô phỏng, chưa gửi khách."
         ],
+        "promotion": null,
         "shippingAddressSnapshot": {
           "addressId": "address-synthetic",
           "addressVersion": 1,
@@ -461,7 +482,8 @@
             "phone"
           ]
         },
-        "quoteHash": "53fbd4d0ea2006976d8635a4b58cfc1288ab77194bcba13897f256bba8557e03"
+        "shippingRate": null,
+        "quoteHash": "17eaa1a6967c3e50f5d58936ed62eae09717e6a2f17e2e88d2869dadde21fb18"
       }
     },
     {
@@ -469,7 +491,7 @@
       "requestSchema": "CustomerConfirmationRequest",
       "request": {
         "quoteId": "orderquote-10001",
-        "quoteHash": "53fbd4d0ea2006976d8635a4b58cfc1288ab77194bcba13897f256bba8557e03",
+        "quoteHash": "17eaa1a6967c3e50f5d58936ed62eae09717e6a2f17e2e88d2869dadde21fb18",
         "quoteVersion": 1,
         "customerIdentityId": "identity-1",
         "sourceMessageId": "message-10004"
@@ -482,7 +504,7 @@
         "createdAt": "2026-09-29T14:00:05.000Z",
         "updatedAt": "2026-09-29T14:00:05.000Z",
         "quoteId": "orderquote-10001",
-        "quoteHash": "53fbd4d0ea2006976d8635a4b58cfc1288ab77194bcba13897f256bba8557e03",
+        "quoteHash": "17eaa1a6967c3e50f5d58936ed62eae09717e6a2f17e2e88d2869dadde21fb18",
         "customerIdentityId": "identity-1",
         "sourceMessageId": "message-10004",
         "expiresAt": "2026-09-29T14:15:00.000Z",
@@ -4061,7 +4083,7 @@
           "recipientUserId": "user-demo",
           "channel": "in_app",
           "title": "Đơn DH-DEMO-PAID-01 cần chuẩn bị",
-          "safeBody": "1 mặt hàng · Bấm để nhận việc.",
+          "safeBody": "1 mặt hàng cần chuẩn bị.",
           "deliveryStatus": "queued",
           "openedAt": "2026-09-29T14:00:14.000Z",
           "acknowledgedAt": "2026-09-29T14:00:14.000Z",
@@ -4592,7 +4614,7 @@
           "createdAt": "2026-09-29T14:00:12.000Z",
           "updatedAt": "2026-09-29T14:00:12.000Z",
           "sourceType": "stock_adjustment",
-          "sourceId": "mv-p8",
+          "sourceId": "stockmovement-10011",
           "status": "posted",
           "effectiveDate": "2026-09-29",
           "periodId": "period-2026-09",
@@ -5748,7 +5770,7 @@
             "id": "journal-10012_line_0",
             "journalId": "journal-10012",
             "sourceType": "stock_adjustment",
-            "sourceId": "mv-p8",
+            "sourceId": "stockmovement-10011",
             "effectiveDate": "2026-09-29",
             "accountId": "operating_expense",
             "accountCode": "642",
@@ -5771,7 +5793,7 @@
             "id": "journal-10012_line_1",
             "journalId": "journal-10012",
             "sourceType": "stock_adjustment",
-            "sourceId": "mv-p8",
+            "sourceId": "stockmovement-10011",
             "effectiveDate": "2026-09-29",
             "accountId": "inventory",
             "accountCode": "156",
@@ -6977,6 +6999,128 @@
       "op": "listPurchaseDelegationReservations",
       "requestSchema": null,
       "schema": "PurchaseDelegationReservationListResponse",
+      "data": []
+    },
+    {
+      "op": "getShippingPolicy",
+      "requestSchema": null,
+      "schema": "ShippingPolicyResponse",
+      "data": {
+        "shopId": "shop-demo",
+        "version": 1,
+        "rules": []
+      }
+    },
+    {
+      "op": "listPromotions",
+      "requestSchema": null,
+      "schema": "PromotionListResponse",
+      "data": []
+    },
+    {
+      "op": "listPaymentReviews",
+      "requestSchema": null,
+      "schema": "PaymentReviewListResponse",
+      "data": [
+        {
+          "orderId": "DH-DEMO-PAID-01",
+          "dueAt": null,
+          "assigneeUserId": null,
+          "workItemId": null,
+          "returnIds": [
+            "seed-returncase-10035"
+          ],
+          "id": "collection-DH-DEMO-PAID-01",
+          "kind": "collection",
+          "status": "needs_check",
+          "expected": {
+            "amount": "249000",
+            "currency": "VND"
+          },
+          "verified": {
+            "amount": "249000",
+            "currency": "VND"
+          },
+          "remaining": null,
+          "bankTransactionIds": [],
+          "codSettlementIds": [],
+          "financeEntryIds": [
+            "seed-financeentry-10031"
+          ],
+          "journalIds": [],
+          "references": [],
+          "updatedAt": "2026-09-29T14:00:41.000Z"
+        },
+        {
+          "orderId": "DH-DEMO-PAID-01",
+          "dueAt": null,
+          "assigneeUserId": null,
+          "workItemId": null,
+          "returnIds": [
+            "seed-returncase-10035"
+          ],
+          "id": "refund-DH-DEMO-PAID-01",
+          "kind": "refund",
+          "status": "settled",
+          "expected": {
+            "amount": "249000",
+            "currency": "VND"
+          },
+          "verified": {
+            "amount": "249000",
+            "currency": "VND"
+          },
+          "remaining": {
+            "amount": "0",
+            "currency": "VND"
+          },
+          "bankTransactionIds": [],
+          "codSettlementIds": [],
+          "financeEntryIds": [
+            "seed-financeentry-10041"
+          ],
+          "journalIds": [],
+          "references": [
+            "REFUND1"
+          ],
+          "updatedAt": "2026-09-29T14:00:41.000Z"
+        },
+        {
+          "orderId": "DH-DEMO-RETURN-02",
+          "dueAt": null,
+          "assigneeUserId": null,
+          "workItemId": null,
+          "returnIds": [
+            "seed-returncase-10036"
+          ],
+          "id": "collection-DH-DEMO-RETURN-02",
+          "kind": "collection",
+          "status": "needs_check",
+          "expected": {
+            "amount": "498000",
+            "currency": "VND"
+          },
+          "verified": null,
+          "remaining": null,
+          "bankTransactionIds": [],
+          "codSettlementIds": [],
+          "financeEntryIds": [],
+          "journalIds": [],
+          "references": [],
+          "updatedAt": "2026-09-29T14:00:34.000Z"
+        }
+      ]
+    },
+    {
+      "op": "listStocktakes",
+      "requestSchema": null,
+      "schema": "StocktakeListResponse",
+      "data": []
+    },
+    {
+      "op": "listStockTransfers",
+      "requestSchema": null,
+      "schema": "StockTransferListResponse",
       "data": []
     }
   ],
@@ -10437,7 +10581,7 @@
         "recipientUserId": "user-demo",
         "channel": "in_app",
         "title": "Đơn DH-DEMO-PAID-01 cần chuẩn bị",
-        "safeBody": "1 mặt hàng · Bấm để nhận việc.",
+        "safeBody": "1 mặt hàng cần chuẩn bị.",
         "deliveryStatus": "queued",
         "openedAt": "2026-09-29T14:00:14.000Z",
         "acknowledgedAt": "2026-09-29T14:00:14.000Z",
@@ -11261,7 +11405,7 @@
         "createdAt": "2026-09-29T14:00:12.000Z",
         "updatedAt": "2026-09-29T14:00:12.000Z",
         "sourceType": "stock_adjustment",
-        "sourceId": "mv-p8",
+        "sourceId": "stockmovement-10011",
         "status": "posted",
         "effectiveDate": "2026-09-29",
         "periodId": "period-2026-09",
@@ -12525,7 +12669,7 @@
   },
   "network": {
     "status": "PASS",
-    "handlers": 245,
+    "handlers": 259,
     "checks": [
       {
         "name": "C05 warehouse CRUD is paginated, versioned and archives without deleting history",

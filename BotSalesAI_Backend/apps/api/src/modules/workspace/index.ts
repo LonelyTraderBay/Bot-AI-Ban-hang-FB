@@ -7,11 +7,15 @@ import { AuthController } from './auth/auth-controller.js';
 import { AuthService } from './auth/auth-service.js';
 import type { AuthConfig } from './auth/config.js';
 import { ShopsController } from './shops/shops-controller.js';
-import { ShopsService } from './shops/shops-service.js';
+import { ShopsService, shopCommands } from './shops/shops-service.js';
 
-export { readAuthConfig, type AuthConfig } from './auth/config.js';
-export { readAsSession, requireShopAccess } from './policy/access.js';
-export { writeShopCommand, type ShopScope } from './policy/command-scope.js';
+export { readAuthConfig, usesLocalOidcFixture, type AuthConfig } from './auth/config.js';
+export { OidcClient } from './auth/oidc.js';
+export { requireMutationCsrf, requirePublicBrowserCsrf, requireSessionToken } from './auth/session-tokens.js';
+export { consumeStepUp } from './auth/step-up.js';
+export { canInShop, permissionsFor, readAsSession, requireShopAccess, sessionPrincipal } from './policy/access.js';
+export { requireIdempotencyKey, writeShopCommand, type ShopScope } from './policy/command-scope.js';
+export { visibleUnknownCommandCount } from './activity/activity-service.js';
 
 @Module({})
 class WorkspaceModule {}
@@ -23,7 +27,7 @@ export function workspaceModule(db?: PrismaClient, config?: AuthConfig, commandS
         providers: [
             { provide: AuthService, useFactory: () => new AuthService(db, config) },
             { provide: ShopsService, useFactory: () => new ShopsService(db, config) },
-            { provide: ActivityService, useFactory: () => new ActivityService(db, commandSources) },
+            { provide: ActivityService, useFactory: () => new ActivityService(db, [...shopCommands, ...(commandSources ?? [])], config) },
         ],
     };
 }

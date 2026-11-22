@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
 import { createHash, randomUUID, sign } from 'node:crypto';
 import { once } from 'node:events';
 import { readFileSync } from 'node:fs';
 import { createServer } from 'node:https';
 import { after, before, test } from 'node:test';
+import { promisify } from 'node:util';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
-import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
+import { OidcClient, consumeStepUp, readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { startFixtureProvider } from '../../../infra/p0/oidc/idp.mjs';
@@ -17,6 +19,7 @@ const startPath = '/api/v2/auth/start';
 const sessionPath = '/api/v2/session';
 const logoutPath = '/api/v2/auth/logout';
 const csrfPath = '/api/v2/auth/csrf';
+const stepUpPath = '/api/v2/auth/step-up';
 const sessionCookie = '__Host-bs_session';
 const loginCookie = '__Host-bs_login';
 const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit/contracts/openapi.json', import.meta.url)));
@@ -53,7 +56,10 @@ before(async () => {
                 issuer: { iss: 'https://issuer-invalid.test' },
                 audience: { aud: 'audience-invalid' },
                 expiry: { exp: Math.floor(Date.now() / 1000) - 120 },
+                stale: { auth_time: Math.floor(Date.now() / 1000) - 120 },
+                subject: { sub: subjects.other, email: profiles[subjects.other].email, email_verified: true },
             };
+            if (tokenCase === 'missing-auth-time') delete claims.auth_time;
             const payload = Buffer.from(JSON.stringify({ ...claims, ...cases[tokenCase] })).toString('base64url');
             const data = header + '.' + payload;
             const signature = tokenCase === 'signature' ? Buffer.alloc(256) : sign('RSA-SHA256', Buffer.from(data), key);
@@ -73,6 +79,76 @@ after(async () => {
         service.closeAllConnections();
     })));
     await app?.close();
+});
+
+test('T068: read-only provider check uses trusted HTTPS and reports only the check outcome', async () => {
+    const run = promisify(execFile);
+    const script = 'scripts/check-oidc-provider.mjs';
+    const { stdout } = await run(process.execPath, [script, '--fixture']);
+    assert.deepEqual(JSON.parse(stdout), {
+        scope: 'fixture', status: 'OIDC_METADATA_VERIFIED', signingKeys: 1, pkce: 'S256', tokenAuth: 'client_secret_basic',
+    });
+    assert.ok(!stdout.includes(process.env.OIDC_CLIENT_SECRET));
+    await assert.rejects(run(process.execPath, [script]), error => {
+        assert.deepEqual(JSON.parse(error.stdout), { scope: 'staging', status: 'BLOCKED', failedCheck: 'OIDC_CONFIG_OR_SCOPE' });
+        return error.code === 1;
+    });
+    const untrusted = { ...process.env, NODE_OPTIONS: '--use-bundled-ca' };
+    delete untrusted.NODE_EXTRA_CA_CERTS;
+    delete untrusted.NODE_USE_SYSTEM_CA;
+    await assert.rejects(run(process.execPath, [script, '--fixture'], { env: untrusted }), error => {
+        assert.deepEqual(JSON.parse(error.stdout), { scope: 'fixture', status: 'BLOCKED', failedCheck: 'OIDC_DISCOVERY_OR_METADATA' });
+        return error.code === 1;
+    });
+});
+
+test('T068: mismatched metadata, unsupported client settings and unusable signing keys fail closed', async () => {
+    let endpoint, mode;
+    const reads = [];
+    const metadataServer = createServer(localTls(), (req, res) => {
+        reads.push({ method: req.method, path: req.url, authorized: req.headers.authorization !== undefined });
+        res.setHeader('content-type', 'application/json');
+        if (req.url === '/.well-known/openid-configuration') {
+            res.end(JSON.stringify({
+                issuer: mode === 'issuer' ? endpoint + '/different' : endpoint,
+                authorization_endpoint: endpoint + '/authorize',
+                token_endpoint: mode === 'http' ? 'http://127.0.0.1/token' : endpoint + '/token',
+                jwks_uri: endpoint + '/keys',
+                response_types_supported: ['code'],
+                id_token_signing_alg_values_supported: ['RS256'],
+                code_challenge_methods_supported: mode === 'pkce' ? ['plain'] : ['S256'],
+                token_endpoint_auth_methods_supported: mode === 'client-auth' ? ['client_secret_post'] : ['client_secret_basic'],
+            }));
+        } else if (req.url === '/keys' && mode === 'redirect') {
+            res.writeHead(302, { location: endpoint + '/wrong' }).end();
+        } else {
+            res.end(JSON.stringify({ keys: [{ kty: 'RSA', use: 'enc' }, { kty: 'RSA', use: 'sig' }] }));
+        }
+    });
+    const listening = once(metadataServer, 'listening');
+    metadataServer.listen(0, '127.0.0.1');
+    await listening;
+    endpoint = 'https://127.0.0.1:' + metadataServer.address().port;
+    const configuration = { ...readAuthConfig(process.env), issuer: endpoint };
+    try {
+        for (const defect of ['issuer', 'http', 'pkce', 'client-auth', 'redirect', 'keys']) {
+            mode = defect;
+            const from = reads.length;
+            const jwks = ['redirect', 'keys'].includes(defect);
+            assert.deepEqual(await new OidcClient(configuration).checkProvider(), {
+                status: 'BLOCKED', failedCheck: jwks ? 'OIDC_JWKS' : 'OIDC_DISCOVERY_OR_METADATA',
+            });
+            assert.deepEqual(reads.slice(from), [
+                { method: 'GET', path: '/.well-known/openid-configuration', authorized: false },
+                ...(jwks ? [{ method: 'GET', path: '/keys', authorized: false }] : []),
+            ]);
+        }
+        mode = 'http';
+        await assert.rejects(new OidcClient(configuration).authorize('state', 'nonce', 'verifier'), { status: 503 });
+    } finally {
+        metadataServer.closeAllConnections();
+        await new Promise(resolve => metadataServer.close(resolve));
+    }
 });
 
 class HttpsClient {
@@ -179,6 +255,85 @@ function memberWrite(browser, session, path, method, body, key = randomUUID(), v
         body: body ? JSON.stringify(body) : undefined,
     });
 }
+
+function confirm(browser, session, body, headers = {}) {
+    return browser.request(stepUpPath, { method: 'POST',
+        headers: { origin: appOrigin, 'content-type': 'application/json', 'x-csrf-token': session.csrfToken, ...headers },
+        body: JSON.stringify(body),
+    });
+}
+
+test('T068 step-up: current-account OIDC confirmation rotates the session and reveals one scoped grant', async () => {
+    const { browser } = await loginAs('p0-editor');
+    const prior = browser.sessionPair;
+    const current = await json(await browser.request(sessionPath), 200, 'SessionResponse');
+    const resourceId = randomUUID();
+    const scope = { shopId: shopA.id, resourceId };
+    const input = { action: 'begin', shopId: scope.shopId, privacyRequestId: resourceId };
+    await json(await confirm(browser, current, input, { origin: issuer }), 403, 'Problem');
+    await json(await confirm(browser, current, { ...input, shopId: randomUUID() }), 404, 'Problem');
+    await json(await confirm(browser, current, { action: 'complete' }), 403, 'Problem');
+    const initiated = await confirm(browser, current, input);
+    const binding = initiated.headers.getSetCookie().find(header => header.startsWith(loginCookie + '='))?.split(';')[0];
+    assert.ok(binding);
+    const start = await json(initiated, 200, 'StepUpResultResponse');
+    const authorization = new URL(start.authorizationUrl);
+    assert.equal(authorization.searchParams.get('prompt'), 'login');
+    assert.equal(authorization.searchParams.get('max_age'), '0');
+    assert.equal(authorization.searchParams.get('code_challenge_method'), 'S256');
+    const state = authorization.searchParams.get('state');
+    const legacyHash = createHash('sha256').update(binding.slice(loginCookie.length + 1)).digest('hex');
+    assert.equal(await db.authLoginAttempt.count({ where: { state, browserHash: legacyHash, consumedAt: null } }), 0);
+    const callback = await browser.followAuthorization(authorization.href);
+    const { browser: otherSession } = await loginAs('p0-editor');
+    await json(await browser.request(callback.href, { headers: { cookie: otherSession.sessionPair + '; ' + binding } }), 400, 'Problem');
+    const complete = await browser.request(callback.href);
+    assert.equal(complete.status, 302);
+    assertSessionCookie(complete);
+    assert.equal(complete.headers.get('location'), `/s/${scope.shopId}/settings/privacy?approval=${resourceId}`);
+    const confirmation = complete.headers.getSetCookie().find(header => header.startsWith('__Host-bs_step_up='));
+    assert.ok(confirmation && /; Secure; HttpOnly; SameSite=Lax/.test(confirmation));
+    assert.ok(browser.sessionPair !== prior, 'Session cookie was not rotated');
+    await json(await browser.request(sessionPath, { headers: { cookie: prior } }), 401, 'Problem');
+    await json(await browser.request(callback.href), 400, 'Problem');
+    const rotated = await json(await browser.request(sessionPath), 200, 'SessionResponse');
+    assert.equal(rotated.user.id, current.user.id);
+    assert.equal(rotated.expiresAt, current.expiresAt);
+    await json(await confirm(browser, current, { action: 'complete' }), 403, 'Problem');
+    const { reauthToken } = await json(await confirm(browser, rotated, { action: 'complete' }), 200, 'StepUpResultResponse');
+    const explicitCookie = browser.sessionPair + '; ' + confirmation.split(';')[0];
+    await json(await confirm(browser, rotated, { action: 'complete' }, { cookie: explicitCookie }), 403, 'Problem');
+    const config = readAuthConfig(process.env);
+    const consume = (target, cookie = browser.sessionPair) => db.$transaction(tx =>
+        consumeStepUp(tx, { cookie }, rotated.user.id, reauthToken, target, config));
+    await assert.rejects(consume({ ...scope, resourceId: randomUUID() }), { status: 403 });
+    await assert.rejects(consume({ ...scope, shopId: randomUUID() }), { status: 403 });
+    await assert.rejects(consume(scope, prior), { status: 403 });
+    await consume(scope);
+    await assert.rejects(consume(scope), { status: 403 });
+    assert.equal(await db.auditEntry.count({ where: { shopId: scope.shopId, actorId: rotated.user.id, action: 'stepUp', resourceId } }), 1);
+});
+
+test('T068 step-up: a different subject or missing or old authentication time cannot issue a grant', async () => {
+    for (const defect of ['subject', 'missing-auth-time', 'stale']) {
+        const { browser } = await loginAs('p0-editor');
+        const session = await json(await browser.request(sessionPath), 200, 'SessionResponse');
+        const prior = browser.sessionPair;
+        const resourceId = randomUUID();
+        const start = await json(await confirm(browser, session, { action: 'begin', shopId: shopA.id, privacyRequestId: resourceId }), 200, 'StepUpResultResponse');
+        try {
+            tokenCase = defect;
+            const callback = await browser.followAuthorization(start.authorizationUrl);
+            await json(await browser.request(callback.href), defect === 'subject' ? 403 : 400, 'Problem');
+        } finally {
+            tokenCase = undefined;
+        }
+        assert.ok(browser.sessionPair === prior, 'Rejected confirmation must leave the existing session valid');
+        await json(await confirm(browser, session, { action: 'complete' }), 403, 'Problem');
+        assert.equal(await db.stepUpGrant.count({ where: { resourceId } }), 0);
+        assert.equal(await db.auditEntry.count({ where: { shopId: shopA.id, action: 'stepUp', resourceId } }), 0);
+    }
+});
 
 test('P0-03: HTTPS authorization, idempotent begin, cookie and live membership response', async () => {
     const browser = new HttpsClient();

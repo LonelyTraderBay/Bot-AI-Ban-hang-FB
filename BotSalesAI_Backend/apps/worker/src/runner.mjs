@@ -1,40 +1,33 @@
 import { Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
 import { setTimeout as delay } from 'node:timers/promises';
-import { readDatabaseUrl } from '../../api/dist/config.js';
+import { readDatabaseUrl, readReleaseManifestHash } from '../../api/dist/config.js';
 import { createDatabaseClient } from '../../api/dist/platform/database/client.js';
-import { dueJobs, runJob } from '../../api/dist/platform/jobs/index.js';
-import { outboxLag, pendingOutbox, publishOutbox } from '../../api/dist/platform/outbox/relay.js';
-import { requireShopAccess } from '../../api/dist/modules/workspace/index.js';
+import { dueJobs, jobWorkerConcurrency, runJob } from '../../api/dist/platform/jobs/index.js';
+import { jobWorker, outboxLag, pendingOutbox, publishOutbox } from '../../api/dist/platform/outbox/relay.js';
+import { canInShop } from '../../api/dist/modules/workspace/index.js';
+import { readRedisConnection } from './redis-config.mjs';
 
 const queueName = 'botsales-outbox-v1';
 
-function readConnection(env) {
-    if (!env.REDIS_URL) throw new Error('REDIS_URL is required');
-    const redis = new URL(env.REDIS_URL);
-    if (redis.protocol !== 'redis:' && redis.protocol !== 'rediss:') throw new Error('Invalid Redis scheme');
-    const db = redis.pathname.slice(1);
-    if (db && !/^\d+$/.test(db)) throw new Error('Invalid Redis DB index');
-    return {
-        host: redis.hostname, port: redis.port ? Number(redis.port) : 6379, db: Number(db),
-        username: redis.username ? decodeURIComponent(redis.username) : undefined,
-        password: redis.password ? decodeURIComponent(redis.password) : undefined,
-        ...(redis.protocol === 'rediss:' ? { tls: {} } : {}),
-    };
-}
+const authorize = (tx, job, permission) => canInShop(tx, job.actorId, job.shopId, permission);
 
-async function authorize(tx, job, permission) {
-    try {
-        await requireShopAccess(tx, job.actorId, job.shopId, permission);
-        return true;
-    } catch (error) {
-        if (error.getStatus?.() === 403 || error.getStatus?.() === 404) return false;
-        throw error;
+async function poll(signal, interval, run, logFailure) {
+    while (!signal.aborted) {
+        try {
+            await run();
+        } catch {
+            logFailure();
+        }
+        await delay(interval, undefined, { signal }).catch(error => {
+            if (error.name !== 'AbortError') throw error;
+        });
     }
 }
 
-export async function runWorker(createHandlers, prefix, pollScheduled) {
-    const connection = readConnection(process.env);
+export async function runWorker(createHandlers, prefix, pollScheduled, dispatchers = []) {
+    const connection = readRedisConnection(process.env);
+    const releaseManifestSha256 = readReleaseManifestHash();
     const db = createDatabaseClient(readDatabaseUrl(process.env));
     const handlers = createHandlers(db);
     const producer = new Redis({ ...connection, maxRetriesPerRequest: 1, enableOfflineQueue: false });
@@ -44,11 +37,15 @@ export async function runWorker(createHandlers, prefix, pollScheduled) {
         const handler = handlers.get(job.data.sourceOperation);
         if (job.name === 'perform' && handler) return runJob(db, job.data, handler, authorize);
     }, {
-        connection: { ...connection, maxRetriesPerRequest: null }, concurrency: 4, prefix,
+        connection: { ...connection, maxRetriesPerRequest: null }, concurrency: jobWorkerConcurrency, prefix,
     });
     const stop = new AbortController();
-    const shutdown = () => stop.abort();
     const logFailure = () => console.error('Outbox worker dependency unavailable or delivery deferred.');
+    let closingWorker;
+    const shutdown = () => {
+        stop.abort();
+        closingWorker ??= worker.close().catch(logFailure);
+    };
     producer.on('error', logFailure);
     queue.on('error', logFailure);
     worker.on('error', logFailure);
@@ -56,41 +53,42 @@ export async function runWorker(createHandlers, prefix, pollScheduled) {
     process.once('SIGTERM', shutdown);
     process.once('SIGINT', shutdown);
     let nextHealth = 0;
-    let nextPoll = 0;
-    try {
-        while (!stop.signal.aborted) {
-            try {
-                if (pollScheduled && nextPoll <= Date.now()) {
-                    nextPoll = Date.now() + 15000;
-                    await pollScheduled(db);
-                }
-                const ready = await pendingOutbox(db);
-                const jobs = await dueJobs(db, [...handlers.keys()]);
-                const batch = [
-                    ...ready.map(data => ({ name: 'publish', data })),
-                    ...jobs.map(data => ({ name: 'perform', data })),
-                ];
-                if (batch.length) await queue.addBulk(batch.map(job => ({
-                    ...job, opts: {
-                        jobId: job.name + '-' + job.data.shopId + '-' + job.data.id, removeOnComplete: true, removeOnFail: true,
-                    },
-                })));
-                const now = Date.now();
-                if (now >= nextHealth) {
-                    if (await producer.ping() !== 'PONG') throw new Error('Redis not ready');
-                    console.log(JSON.stringify({ status: 'ready', outboxLagMs: await outboxLag(db) }));
-                    nextHealth = now + 10000;
-                }
-            } catch {
-                logFailure();
-            }
-            await delay(500, undefined, { signal: stop.signal }).catch(error => {
-                if (error.name !== 'AbortError') throw error;
-            });
+    const relay = async () => {
+        const ready = await pendingOutbox(db);
+        const jobs = await dueJobs(db, [...handlers.keys()]);
+        if (stop.signal.aborted) return;
+        const batch = [
+            ...ready.map(data => ({ name: 'publish', data })),
+            ...jobs.map(data => ({ name: 'perform', data })),
+        ];
+        if (batch.length) await queue.addBulk(batch.map(job => ({
+            ...job, opts: {
+                jobId: job.name + '-' + job.data.shopId + '-' + job.data.id, removeOnComplete: true, removeOnFail: true,
+            },
+        })));
+        const now = Date.now();
+        if (now >= nextHealth && !stop.signal.aborted) {
+            if (await producer.ping() !== 'PONG') throw new Error('Redis not ready');
+            const lagMs = Math.min(2147483647, await outboxLag(db));
+            const observation = { checkedAt: new Date(now), lagMs };
+            await db.workerHealth.upsert({ where: { component: jobWorker.component }, update: observation,
+                create: { component: jobWorker.component, ...observation } });
+            console.log(JSON.stringify({ status: 'ready', outboxLagMs: lagMs, releaseManifestSha256 }));
+            nextHealth = now + 10000;
         }
+    };
+    const polls = [poll(stop.signal, 500, relay, logFailure)];
+    if (pollScheduled) polls.push(poll(stop.signal, 15000, () => pollScheduled(db), () => console.error('Scheduled worker maintenance deferred.')));
+    for (const dispatch of dispatchers) polls.push(poll(stop.signal, 500, () => dispatch(db), () => console.error('External dispatch deferred.')));
+    try {
+        await Promise.all(polls);
     } finally {
-        await Promise.allSettled([worker.close(), queue.close()]);
+        shutdown();
+        await Promise.allSettled([...polls, closingWorker]);
+        await Promise.allSettled([queue.close()]);
         producer.disconnect();
+        process.removeListener('SIGTERM', shutdown);
+        process.removeListener('SIGINT', shutdown);
         await db.$disconnect();
     }
 }

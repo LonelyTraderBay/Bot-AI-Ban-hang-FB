@@ -1,15 +1,25 @@
 import { readDatabaseUrl } from '../dist/config.js';
 import { createDatabaseClient } from '../dist/platform/database/client.js';
-import { fixtureAccounts } from '../dist/modules/finance/account-policy.js';
-import { fixtureCategory, fixtureIssuer, fixtureShops, fixtureUsers } from './p0-fixture.mjs';
+import { provisionFixtureShopAccounts } from '../dist/modules/finance/index.js';
+import { fixtureCategory, fixtureIssuer, fixturePilotSubject, fixtureShops, fixtureUsers } from './p0-fixture.mjs';
 
 const legacyFixtureIssuer = 'https://idp.botsales.test';
 
 async function seed() {
     const connectionString = readDatabaseUrl(process.env);
-    if (new URL(connectionString).pathname !== '/botsales_be_dev') {
+    const target = new URL(connectionString);
+    if (target.pathname !== '/botsales_be_dev') {
         throw new Error('P0 seed requires the botsales_be_dev fixture database');
     }
+    const pilot = process.env.P0_LOCAL_PILOT === '1';
+    if (pilot && (target.hostname !== '127.0.0.1' || target.username !== 'botsales_runtime' ||
+        [...target.searchParams.keys()].length)) {
+        throw new Error('The local pilot requires a direct loopback fixture database');
+    }
+    const memberships = pilot ? [...fixtureUsers, ...fixtureShops.map(shop => ({
+        subject: fixturePilotSubject, shopId: shop.id, role: 'owner',
+    }))] : fixtureUsers;
+    const subjects = [...new Set(memberships.map(member => member.subject))];
     const db = createDatabaseClient(connectionString);
     try {
         await db.$transaction(async tx => {
@@ -26,12 +36,9 @@ async function seed() {
                 })),
                 skipDuplicates: true,
             });
-            await tx.financeAccount.createMany({
-                data: fixtureShops.flatMap(shop => fixtureAccounts.map(account => ({ ...account, shopId: shop.id }))),
-                skipDuplicates: true,
-            });
+            await provisionFixtureShopAccounts(tx, fixtureShops.map(shop => shop.id));
             // The BE-03 fixtures used a placeholder issuer before the local IdP was wired.
-            for (const { subject } of fixtureUsers) {
+            for (const subject of subjects) {
                 const identity = { oidcIssuer: fixtureIssuer, oidcSubject: subject };
                 const existing = await tx.user.findUnique({ where: { oidcIssuer_oidcSubject: identity }, select: { id: true } });
                 if (!existing) {
@@ -42,7 +49,7 @@ async function seed() {
                 }
             }
             await tx.user.createMany({
-                data: fixtureUsers.map(({ subject }) => ({
+                data: subjects.map(subject => ({
                     oidcIssuer: fixtureIssuer,
                     oidcSubject: subject,
                     displayName: subject,
@@ -51,12 +58,12 @@ async function seed() {
                 skipDuplicates: true,
             });
             const users = await tx.user.findMany({
-                where: { oidcIssuer: fixtureIssuer, oidcSubject: { in: fixtureUsers.map(user => user.subject) } },
+                where: { oidcIssuer: fixtureIssuer, oidcSubject: { in: subjects } },
                 select: { oidcSubject: true, id: true },
             });
             const usersBySubject = new Map(users.map(user => [user.oidcSubject, user.id]));
             await tx.membership.createMany({
-                data: fixtureUsers.map(({ subject, shopId, role }) => ({
+                data: memberships.map(({ subject, shopId, role }) => ({
                     shopId,
                     userId: usersBySubject.get(subject),
                     roles: [role],

@@ -250,9 +250,15 @@ test('P0-05: query filters and keyset cursor operate inside the authorized scope
 });
 
 test('P0-05: member detail and capabilities use the current actor and the composite shop key', async () => {
-    const rows = (await json(await request(membersPath(shopA.id), ownerA), 200, 'MembershipListResponse')).data;
-    const mine = rows.find(row => row.userId === ownerA.userId);
-    const target = rows.find(row => row.userId === reader.userId);
+    let cursor, mine, target;
+    do {
+        const query = new URLSearchParams({ status: 'active', limit: '50', ...(cursor ? { cursor } : {}) });
+        const { data, page } = await json(await request(membersPath(shopA.id) + '?' + query, ownerA), 200, 'MembershipListResponse');
+        mine ??= data.find(row => row.userId === ownerA.userId);
+        target ??= data.find(row => row.userId === reader.userId);
+        cursor = page.nextCursor;
+    } while (cursor && (!mine || !target));
+    assert.ok(mine && target);
     assert.deepEqual(mine.allowedActions, []);
     assert.deepEqual(target.allowedActions, ['updateMemberRoles', 'revokeMembership']);
     assert.equal('email' in target, false);

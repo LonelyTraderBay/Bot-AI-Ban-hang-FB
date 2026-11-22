@@ -1,12 +1,7 @@
-import Ajv2020 from 'ajv/dist/2020';
-import addFormats from 'ajv-formats';
-import { schemaCatalog } from '@botsales/contracts';
-const ajv = new Ajv2020({ strict: false, allErrors: true, validateFormats: true });
-addFormats(ajv);
-ajv.addSchema({ $id: 'botsales', ...schemaCatalog });
-const parameterValidators = new Map<string, ReturnType<typeof ajv.compile>>();
+import { componentValidators, parameterValidators } from './compiled-validators';
+
 export function assertSchema<T>(schema: string, value: unknown): asserts value is T {
-    const validate = ajv.getSchema('botsales#/components/schemas/' + schema);
+    const validate = componentValidators.get(schema);
     if (!validate)
         throw new Error('Không tìm thấy schema: ' + schema);
     if (!validate(value)) {
@@ -31,11 +26,8 @@ export function assertParameterSchema<T>(schema: unknown, value: unknown, label:
     const key = JSON.stringify(parameterSchema);
     if (!key)
         throw new Error(`Schema của tham số ${label} không hợp lệ.`);
-    let validate = parameterValidators.get(key);
-    if (!validate) {
-        validate = ajv.compile(parameterSchema);
-        parameterValidators.set(key, validate);
-    }
+    const validate = parameterValidators.get(key);
+    if (!validate) throw new Error(`Không tìm thấy schema của tham số ${label}.`);
     if (!validate(value)) {
         const fields = (validate.errors || []).slice(0, 5).map(error => `${error.instancePath || '/'} ${error.message}`).join('; ');
         throw new Error(`Tham số ${label} không đúng hợp đồng API: ${fields}`);

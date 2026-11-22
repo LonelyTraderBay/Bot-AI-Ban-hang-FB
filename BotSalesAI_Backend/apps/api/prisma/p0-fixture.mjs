@@ -25,6 +25,8 @@ export const fixtureUsers = [
     { subject: 'p0-reader', shopId: fixtureShops[0].id, role: 'viewer' },
 ];
 
+export const fixturePilotSubject = 'p0-pilot';
+
 export const fixtureCategory = {
     shopId: fixtureShops[0].id,
     id: 'ab030000-0000-4000-8000-000000000021',

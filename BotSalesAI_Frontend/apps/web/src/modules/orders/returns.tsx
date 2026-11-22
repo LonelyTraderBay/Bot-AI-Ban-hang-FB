@@ -50,7 +50,9 @@ export function ReturnsPage() {
             invalid: quantity !== '0' && (!/^\d+$/.test(quantity) || Number(quantity) < 1 || Number(quantity) > line.quantity)
         };
     }).filter(line => line.quantity !== '0') || [];
-    const createInvalid = !selectedOrder || !['delivered', 'part_returned'].includes(selectedOrder.fulfillmentState) || !reason.trim() || codePointLength(reason) > 1_000 || requestedLines.length === 0 || requestedLines.some(line => line.invalid);
+    const returnable = (order: { fulfillmentState: string; allowedActions: string[] }) =>
+        order.allowedActions.includes('request_return') || (__MOCK__ && ['delivered', 'part_returned'].includes(order.fulfillmentState));
+    const createInvalid = !selectedOrder || !returnable(selectedOrder) || !reason.trim() || codePointLength(reason) > 1_000 || requestedLines.length === 0 || requestedLines.some(line => line.invalid);
     const inspectionInvalid = !detailsReady || !inspectionCase || inspections.length === 0 || inspections.some(line => {
         const returned = inspectionCase.lines.find(item => item.orderLineId === line.orderLineId)?.quantity ?? 0;
         return !Number.isInteger(line.acceptedQuantity) || line.acceptedQuantity < 0 || line.acceptedQuantity > returned || !line.reason.trim() || codePointLength(line.reason) > 1_000;
@@ -78,9 +80,9 @@ export function ReturnsPage() {
                 {!canReadOrders && <Alert severity="warning">Không có quyền đọc danh sách đơn.</Alert>}
 
                 <TextField label="Tìm đơn hàng" value={orderSearchInput} onChange={event => setOrderSearchInput(event.target.value)} disabled={!canReadOrders} helperText="Tìm theo mã đơn hoặc khách hàng; truy vấn tìm kiếm do API hỗ trợ." />
-                <TextField label="Đơn hàng đã giao" select value={orderId} onChange={event => { setOrder(event.target.value); setQuantities({}); }} disabled={!canReadOrders || (orders.isPending && !orders.data)} helperText="Chỉ đơn đã giao hoặc đang trả một phần. API kiểm tra tổng số lượng còn được trả.">
+                <TextField label="Đơn đủ điều kiện trả" select value={orderId} onChange={event => { setOrder(event.target.value); setQuantities({}); }} disabled={!canReadOrders || (orders.isPending && !orders.data)} helperText="Chọn đơn đã giao hoặc đã có bằng chứng vận đơn hoàn về. API kiểm tra số lượng còn được trả.">
                     {orderId && !orders.data?.data.some(order => order.id === orderId) && <MenuItem value={orderId}>{selectedOrder?.id || (selectedOrderDetail.isPending ? 'Đang tải đơn đã chọn…' : orderId)}</MenuItem>}
-                    {orders.data?.data.filter(order => ['delivered', 'part_returned'].includes(order.fulfillmentState)).map(order => <MenuItem key={order.id} value={order.id}>{order.id}</MenuItem>)}
+                    {orders.data?.data.filter(returnable).map(order => <MenuItem key={order.id} value={order.id}>{order.id}</MenuItem>)}
                 </TextField>
                 <LookupLoadMore label="đơn hàng" loadedCount={orders.loadedCount} hasMore={orders.hasMore} busy={orders.isLoadingMore} onLoadMore={orders.loadMore}/>
                 {orders.isError && <FieldGroup ><ErrorNotice error={orders.error}/><Button size="small" onClick={() => { void (orders.isFetchNextPageError ? orders.loadMore() : orders.refetch()); }}>Thử lại danh sách đơn</Button></FieldGroup>}

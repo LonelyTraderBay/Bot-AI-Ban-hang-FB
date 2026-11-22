@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type { Job, JobStatus, Prisma, PrismaClient } from '../../generated/prisma/client.js';
+import { Prisma, type Job, type JobStatus, type PrismaClient } from '../../generated/prisma/client.js';
 import type { ResourceRef } from '../commands/index.js';
 import { serializable } from '../database/transactions.js';
 import { enqueueCommandUpdate, enqueueJobUpdate } from '../outbox/index.js';
@@ -20,10 +20,13 @@ export type JobHandler = (job: Job, controls: {
     beginExternalEffect: () => Promise<void>; renew: () => Promise<void>;
 }) => Promise<Outcome | TransactionalOutcome>;
 type Authorize = (tx: Prisma.TransactionClient, job: Candidate, permission: string) => Promise<boolean>;
+const commandOutcome = { succeeded: 'succeeded', partial: 'succeeded', awaiting_confirmation: 'unknown', failed: 'failed' } as const;
 
 const maxAttempts = 3;
 const leaseMs = 30000;
 const noLease = { leaseToken: null, leaseUntil: null };
+export const jobWorkerConcurrency = 4;
+const activeJobsPerShop = jobWorkerConcurrency - 1;
 
 export async function scheduleJob(tx: Prisma.TransactionClient, data: Pick<Prisma.JobUncheckedCreateInput,
     'shopId' | 'actorId' | 'sourceOperation' | 'kind' | 'input' | 'dueAt' | 'commandId'>) {
@@ -66,15 +69,41 @@ export async function dueJobs(db: PrismaClient, sourceOperations: string[], now 
         where: { status: 'running', leaseUntil: { lte: now } }, orderBy: { leaseUntil: 'asc' }, take: 100,
     });
     for (const job of expired) await db.$transaction(tx => settleFailedAttempt(tx, job, now));
-    return db.job.findMany({
-        where: { status: 'queued', dueAt: { lte: now }, sourceOperation: { in: sourceOperations } },
-        orderBy: [{ dueAt: 'asc' }, { id: 'asc' }], select: { shopId: true, id: true, sourceOperation: true }, take: 100,
-    });
+    if (!sourceOperations.length) return [];
+    return db.$queryRaw<(JobKey & { sourceOperation: string })[]>`
+        SELECT shop_id AS "shopId", id, source_operation AS "sourceOperation"
+        FROM (
+            SELECT candidate.*, row_number() OVER (PARTITION BY candidate.shop_id ORDER BY candidate.due_at, candidate.id) AS shop_position
+            FROM shops AS shop
+            CROSS JOIN LATERAL (
+                SELECT count(*)::integer AS count
+                FROM (
+                    SELECT 1 FROM jobs WHERE shop_id = shop.id AND status = 'running' AND lease_until > ${now}
+                    LIMIT ${activeJobsPerShop}
+                ) AS active_jobs
+            ) AS occupied
+            CROSS JOIN LATERAL (
+                SELECT shop_id, id, source_operation, due_at
+                FROM jobs
+                WHERE shop_id = shop.id AND status = 'queued' AND due_at <= ${now} AND attempts < ${maxAttempts}
+                  AND source_operation IN (${Prisma.join(sourceOperations)})
+                ORDER BY due_at, id
+                LIMIT greatest(${activeJobsPerShop} - occupied.count, 0)
+            ) AS candidate
+        ) AS ranked
+        ORDER BY shop_position, due_at, id, shop_id
+        LIMIT 100
+    `;
 }
 
 export async function runJob(db: PrismaClient, key: JobKey & { sourceOperation: string }, handler: JobHandler, authorize: Authorize) {
     const token = randomUUID();
     const job = await db.$transaction(async tx => {
+        // Only lease admission is serialized. A running handler never holds this lock.
+        const [{ locked }] = await tx.$queryRaw<{ locked: boolean }[]>`
+            SELECT pg_try_advisory_xact_lock(hashtextextended('botsales/job-claim/' || ${key.shopId}::uuid::text, 0)) AS locked
+        `;
+        if (!locked) return;
         const now = new Date();
         const eligible = { ...key, status: 'queued', dueAt: { lte: now }, attempts: { lt: maxAttempts } } satisfies Prisma.JobWhereInput;
         const current = await tx.job.findFirst({ where: eligible });
@@ -85,6 +114,8 @@ export async function runJob(db: PrismaClient, key: JobKey & { sourceOperation: 
             if (cancelled.count) await recordTransition(tx, current, 'failed');
             return;
         }
+        const active = await tx.job.count({ where: { shopId: key.shopId, status: 'running', leaseUntil: { gt: now } } });
+        if (active >= activeJobsPerShop) return;
         const [claimed] = await tx.job.updateManyAndReturn({
             where: eligible, data: {
                 status: 'running', leaseToken: token, leaseUntil: new Date(now.getTime() + leaseMs), attempts: { increment: 1 },
@@ -92,7 +123,7 @@ export async function runJob(db: PrismaClient, key: JobKey & { sourceOperation: 
         });
         if (claimed) await recordTransition(tx, claimed, 'running');
         return claimed;
-    });
+    }, { isolationLevel: 'ReadCommitted' });
     if (!job) return;
 
     const held = { ...key, status: 'running', leaseToken: token } as const;
@@ -136,12 +167,12 @@ export async function runJob(db: PrismaClient, key: JobKey & { sourceOperation: 
                 const settled = await outcome(tx);
                 if (Date.now() >= now.getTime() + leaseMs) throw new Error('Job lease expired during transaction');
                 await tx.job.update({ where: { shopId_id: { shopId: job.shopId, id: job.id } }, data: { ...settled, ...noLease } });
-                await recordTransition(tx, job, settled.status === 'failed' ? 'failed' : 'succeeded');
+                await recordTransition(tx, job, commandOutcome[settled.status]);
             }, false, leaseMs - 5000);
         } else {
             await db.$transaction(async tx => {
                 const updated = await tx.job.updateMany({ where: { ...held, leaseUntil: { gt: new Date() } }, data: { ...outcome, ...noLease } });
-                if (updated.count) await recordTransition(tx, job, outcome.status === 'failed' ? 'failed' : 'succeeded');
+                if (updated.count) await recordTransition(tx, job, commandOutcome[outcome.status]);
             });
         }
     } catch (error) {

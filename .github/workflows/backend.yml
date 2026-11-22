@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
@@ -31,11 +32,62 @@ jobs:
           npm ci
           test "$before" = "$(sha256sum package-lock.json)"
       - run: npm run verify
-      - name: Verify PostgreSQL, OIDC and workspace access
+      - name: Audit the complete backend lockfile
+        run: npm audit --include=dev --audit-level=high --json > test-results/backend/npm-audit.json
+      - name: Verify PostgreSQL, OIDC, workspace access and object storage
         run: bash scripts/verify-postgres.sh
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: ${{ always() }}
         with:
           name: backend-matrix-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
-          path: BotSalesAI_Backend/test-results/backend/matrix.json
+          path: |
+            BotSalesAI_Backend/test-results/backend/matrix.json
+            BotSalesAI_Backend/test-results/backend/npm-audit.json
+            BotSalesAI_Backend/test-results/backend/object-storage-ci.txt
+          if-no-files-found: error
+      - name: Build and verify the release candidate at the main SHA
+        if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          frontend=../BotSalesAI_Frontend
+          (cd "$frontend"; sha256sum package-lock.json) > "$RUNNER_TEMP/botsales-frontend-lock.sha256"
+          npm ci --prefix "$frontend"
+          (cd "$frontend"; sha256sum --check "$RUNNER_TEMP/botsales-frontend-lock.sha256")
+          npm run package:release
+          test -z "$(git status --porcelain)"
+          shopt -s nullglob
+          archives=(test-results/backend/releases/*.tgz)
+          test "${#archives[@]}" -eq 1
+          archive="${archives[0]}"
+          (cd "$(dirname "$archive")"; sha256sum --check --strict "$(basename "$archive").sha256")
+          extracted=$(mktemp -d "$RUNNER_TEMP/botsales-release.XXXXXX")
+          tar -xzf "$archive" -C "$extracted"
+          node scripts/package-release.mjs --verify "$extracted"
+          runtime="$extracted/BotSalesAI_Backend"
+          cmp package-lock.json "$runtime/package-lock.json"
+          npm --prefix "$runtime" ci --omit=dev --no-audit
+          npm --prefix "$runtime" ls --omit=dev --all --json > /dev/null
+          npm --prefix "$runtime" query '*' --json > "$extracted/installed-tree.json"
+          npm --prefix "$runtime" sbom --package-lock-only --include=dev --sbom-format=cyclonedx --sbom-type=application > "$archive.sbom.cdx.json"
+          cp test-results/backend/npm-audit.json "$archive.audit.json"
+          node scripts/release-dependency-evidence.mjs "$archive" "$extracted" "$extracted/installed-tree.json"
+          manifest_digest=$(sha256sum "$extracted/release-manifest.json")
+          bash scripts/verify-postgres.sh --release "$extracted" "${manifest_digest%% *}" > "$archive.runtime.json"
+          archive_digest=$(sha256sum "$archive")
+          node scripts/release-dependency-evidence.mjs --verify-candidate "$archive" "$GITHUB_SHA" "${archive_digest%% *}" > "$archive.verified.json"
+      - name: Upload the verified release candidate
+        if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: backend-candidate-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+          path: |
+            BotSalesAI_Backend/test-results/backend/releases/*.tgz
+            BotSalesAI_Backend/test-results/backend/releases/*.tgz.sha256
+            BotSalesAI_Backend/test-results/backend/releases/*.tgz.sbom.cdx.json
+            BotSalesAI_Backend/test-results/backend/releases/*.tgz.audit.json
+            BotSalesAI_Backend/test-results/backend/releases/*.tgz.dependencies.json
+            BotSalesAI_Backend/test-results/backend/releases/*.tgz.runtime.json
+            BotSalesAI_Backend/test-results/backend/releases/*.tgz.verified.json
           if-no-files-found: error

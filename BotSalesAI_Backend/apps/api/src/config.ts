@@ -1,4 +1,33 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { isIP } from 'node:net';
+
+function readReleaseManifest() {
+    try {
+        return readFileSync(new URL('../../../../release-manifest.json', import.meta.url));
+    } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+        return undefined;
+    }
+}
+
+export function readReleaseManifestHash(): string | undefined {
+    const manifest = readReleaseManifest();
+    return manifest && createHash('sha256').update(manifest).digest('hex');
+}
+
+export function readCleanReleaseManifestHash(): string | undefined {
+    const manifest = readReleaseManifest();
+    return manifest && cleanReleaseManifestHash(manifest);
+}
+
+export function cleanReleaseManifestHash(manifest: Buffer): string | undefined {
+    const { format, dirtyWorktree, sourceBase } = JSON.parse(manifest.toString('utf8'));
+    if (format === 1 && dirtyWorktree === false && typeof sourceBase === 'string' && /^[a-f0-9]{40}$/.test(sourceBase)) {
+        return createHash('sha256').update(manifest).digest('hex');
+    }
+    return undefined;
+}
 
 export function readDatabaseUrl(environment: NodeJS.ProcessEnv): string {
     const value = environment.DATABASE_URL;

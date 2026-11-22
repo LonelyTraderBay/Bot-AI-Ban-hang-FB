@@ -1,4 +1,4 @@
-import type { AccountGroup } from '../../generated/prisma/client.js';
+import type { AccountGroup, Prisma } from '../../generated/prisma/client.js';
 
 type Account = { code: string; name: string; group: AccountGroup; systemKey: string };
 export const fixtureAccounts: readonly Account[] = [
@@ -22,3 +22,7 @@ export const fixtureAccounts: readonly Account[] = [
     { code: '711', name: 'Tăng giá trị kho', group: 'income', systemKey: 'inventory_gain' },
     { code: '811', name: 'Giảm giá trị kho', group: 'expense', systemKey: 'inventory_loss' },
 ];
+
+export function provisionFixtureShopAccounts(tx: Prisma.TransactionClient, ids: string[]) {
+    return tx.financeAccount.createMany({ data: ids.flatMap(shopId => fixtureAccounts.map(account => ({ ...account, shopId }))), skipDuplicates: true });
+}

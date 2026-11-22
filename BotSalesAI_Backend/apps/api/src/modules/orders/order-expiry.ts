@@ -3,6 +3,7 @@ import type { PrismaClient } from '../../generated/prisma/client.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
+import { cancelPreparation } from '../fulfillment/index.js';
 import { settleStockReservation } from '../inventory/index.js';
 import { orderKey } from './order-data.js';
 
@@ -26,6 +27,7 @@ export async function expireOrdersWithReservations(db: PrismaClient, now = new D
             await settleStockReservation(tx, {
                 shopId, id: hold.id, actorId: hold.actorId, status: 'expired', expectedVersion: hold.version, reason,
             }, now);
+            await cancelPreparation(tx, shopId, id);
             const expired = await tx.salesOrder.update({
                 where: orderKey(shopId, id),
                 data: { orderState: 'cancelled', fulfillmentState: 'unfulfilled', version: { increment: 1 } },

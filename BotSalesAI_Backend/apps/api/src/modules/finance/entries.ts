@@ -20,6 +20,8 @@ const counterparts: Record<FinanceClassification, string> = {
     platform_fee: 'operating_expense', payment_fee: 'operating_expense', ai_expense: 'operating_expense',
     operating_expense: 'operating_expense', capital: 'owner_capital', loan_principal: 'loan', transfer: 'bank', other: 'operating_expense',
 };
+const entryDetails = { journal: { select: { settlementAllocations: { select: { debtLineId: true } } } } } satisfies Prisma.FinanceEntryInclude;
+type EntryView = Prisma.FinanceEntryGetPayload<{ include: typeof entryDetails }>;
 
 export function pairedLines(debitAccount: string, creditAccount: string, amount: Money, description: string): JournalLine[] {
     const zero = { amount: '0', currency: amount.currency };
@@ -32,18 +34,18 @@ export function pairedLines(debitAccount: string, creditAccount: string, amount:
 
 async function entryInShop(tx: Prisma.TransactionClient, shopId: string, id: string) {
     if (!validUuid(id)) throw new NotFoundException();
-    const row = await tx.financeEntry.findUnique({ where: financeKey(shopId, id) });
+    const row = await tx.financeEntry.findUnique({ where: financeKey(shopId, id), include: entryDetails });
     if (!row) throw new NotFoundException();
     return row;
 }
 
-function entryView(row: FinanceEntry) {
+function entryView(row: EntryView) {
     const { id, shopId, version, createdAt, updatedAt, kind, classification, status, occurredAt, description, reversalOf,
         sourceType, sourceId, amount, currency, paymentReference, evidenceId } = row;
     return {
         id, shopId, version, createdAt, updatedAt, kind, classification, status, occurredAt, description, reversalOf,
         amount: financeMoney(amount, currency), sourceRef: sourceType && sourceId ? { type: sourceType, id: sourceId } : null,
-        paymentReference, evidenceRef: evidenceId, reconciledDebtIds: [],
+        paymentReference, evidenceRef: evidenceId, reconciledDebtIds: row.journal?.settlementAllocations.map(item => item.debtLineId).sort() ?? [],
     };
 }
 
@@ -79,7 +81,7 @@ export class FinanceEntries extends FinanceAccess {
                     shopId, status: query.status as PostingStatus | undefined,
                     AND: [page.keyword ? { OR: [{ description: contains }, { sourceId: contains }, { paymentReference: contains }] } : {}, page.after ?? {}],
                 },
-                orderBy: page.orderBy, take: page.limit + 1,
+                orderBy: page.orderBy, take: page.limit + 1, include: entryDetails,
             }));
             return { ...result, data: result.data.map(entryView) };
         });
@@ -137,7 +139,8 @@ export class FinanceEntries extends FinanceAccess {
         return this.write({ headers, shopId, action: 'reverseFinanceEntry', payload: { id, input }, requestId, reason }, async tx => {
             const current = await entryInShop(tx, shopId, id);
             requireVersion(current.version, input.expectedVersion);
-            if (current.status !== 'posted' || !current.journalId || current.orderId || current.reversalOf) throw new ConflictException();
+            if (current.status !== 'posted' || !current.journalId || current.orderId || current.reversalOf ||
+                current.journal?.settlementAllocations.length) throw new ConflictException();
             const prior = await journalInShop(tx, shopId, current.journalId);
             const reversed = await reversePostedJournal(tx, prior, reason);
             const original = await tx.financeEntry.update({

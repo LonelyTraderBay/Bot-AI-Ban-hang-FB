@@ -2,6 +2,7 @@ import { schemaFromContract, SchemaPipe } from '../../../http/contracts.js';
 import { openapi, validator } from '../../../http/contract-source.js';
 
 export const authStartPipe = new SchemaPipe(validator.compile(schemaFromContract('AuthStart')));
+export const stepUpPipe = new SchemaPipe(validator.compile(schemaFromContract('StepUpRequest')));
 export const validEmail = validator.compile<string>(openapi.components.schemas.User.properties.email);
 
 const callbackParameters = openapi.paths['/auth/callback'].get.parameters as {

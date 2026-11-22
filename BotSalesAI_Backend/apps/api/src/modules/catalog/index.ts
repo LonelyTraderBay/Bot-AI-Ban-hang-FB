@@ -10,7 +10,8 @@ import { PromotionsController, PromotionsService } from './promotions.js';
 export { productCommands } from './catalog-service.js';
 export { categoryCommands } from './categories.js';
 export { catalogJobHandlers } from './imports.js';
-export { sellableVariants } from './catalog-service.js';
+export { sellableVariantBySku, sellableVariants } from './catalog-service.js';
+export { evaluateOrderPromotion, promotionCommands } from './promotions.js';
 
 @Module({})
 class CatalogModule {}
@@ -22,7 +23,7 @@ export function catalogModule(db?: PrismaClient, config?: AuthConfig): DynamicMo
             { provide: CatalogService, useFactory: () => new CatalogService(db, config) },
             { provide: CategoryService, useFactory: () => new CategoryService(db, config) },
             { provide: ImportsService, useFactory: () => new ImportsService(db, config) },
-            { provide: PromotionsService, useFactory: () => new PromotionsService(db) },
+            { provide: PromotionsService, useFactory: () => new PromotionsService(db, config) },
         ],
     };
 }

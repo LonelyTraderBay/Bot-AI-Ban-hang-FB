@@ -1,17 +1,20 @@
 import { ConflictException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders } from 'node:http';
-import { Prisma, type PrismaClient, type OrderState } from '../../generated/prisma/client.js';
+import { Prisma, type PrismaClient, type OrderState, type SalesOrder } from '../../generated/prisma/client.js';
 import { OrderState as States } from '../../generated/prisma/enums.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
 import { requireIfMatch, requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { commandDto, type ResourceRef } from '../../platform/commands/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
+import type { MetaInboundConfig } from '../channels/index.js';
 import { addressSnapshotView, type AddressInput } from '../customers/index.js';
+import { cancelPlannedShipment, cancelPreparation, provisionPreparation } from '../fulfillment/index.js';
 import { requireQuoteEvidence } from '../inbox/index.js';
 import { reserveStock, settleStockReservation } from '../inventory/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
-import { draftDetails, lineIndex, orderDetails, orderInShop, orderKey, orderView, requireDraft, saveOrderLines, type OrderDetails } from './order-data.js';
+import { canCancelOrder, draftDetails, lineIndex, orderDetails, orderInShop, orderKey, orderView, requireDraft,
+    saveOrderLines, type OrderDetails } from './order-data.js';
 import { orderMoney, orderQuoteHash, priceOrder, quoteWarnings, type DraftOrder } from './pricing.js';
 
 export type DraftPatch = Partial<Omit<DraftOrder, 'paymentMethod'>>;
@@ -44,13 +47,37 @@ async function currentQuote(tx: Prisma.TransactionClient, order: OrderDetails, i
     requireDraft(order);
     const quote = await quoteForOrder(tx, order, id);
     if (quote.orderVersion !== order.version || quote.customerId !== order.customerId || quote.expiresAt <= now) throw new ConflictException();
-    const priced = await priceOrder(tx, order.shopId, draftDetails(order), lineIndex(order));
+    const priced = await priceOrder(tx, order.shopId, draftDetails(order), lineIndex(order), now);
     if (quote.quoteHash !== orderQuoteHash(order.id, order.version, priced.termsHash)) throw new ConflictException();
     return { quote, priced };
 }
 
+function pricedOrderFields(priced: Awaited<ReturnType<typeof priceOrder>>) {
+    const { total, currency, promotion } = priced;
+    return { total, currency, promotionId: promotion?.id ?? null, promotionSnapshot: promotion ?? Prisma.DbNull };
+}
+
+export async function requireCurrentPaymentPrice(tx: Prisma.TransactionClient, order: SalesOrder) {
+    if (order.orderState !== 'draft' || !order.promotionId) return;
+    const current = await orderInShop(tx, order.shopId, order.id);
+    const priced = await priceOrder(tx, order.shopId, draftDetails(current), lineIndex(current));
+    const version = (order.promotionSnapshot as { version?: number } | null)?.version;
+    if (!order.total.eq(priced.total) || priced.promotion?.version !== version ||
+        priced.lines.some((line, index) => !current.lines[index].lineTotal.eq(line.lineTotal))) throw new ConflictException();
+}
+
+export async function createSalesDraft(tx: Prisma.TransactionClient, shopId: string, draft: DraftOrder) {
+    const priced = await priceOrder(tx, shopId, draft, new Map());
+    const { customerId, conversationId, warehouseId, shippingAddressId, paymentMethod, notes } = draft;
+    const order = await tx.salesOrder.create({
+        data: { shopId, customerId, conversationId, warehouseId, shippingAddressId, paymentMethod, notes, ...pricedOrderFields(priced) },
+    });
+    await saveOrderLines(tx, shopId, order.id, priced.lines);
+    return order;
+}
+
 export class OrdersService {
-    constructor(private readonly db?: PrismaClient, private readonly config?: AuthConfig) {}
+    constructor(private readonly db?: PrismaClient, private readonly config?: AuthConfig, private readonly meta?: MetaInboundConfig) {}
 
     list(headers: IncomingHttpHeaders, shopId: string, raw: Record<string, unknown>) {
         return readAsSession(this.db, headers, async (tx, userId) => {
@@ -82,15 +109,8 @@ export class OrdersService {
     }
 
     create(headers: IncomingHttpHeaders, shopId: string, draft: DraftOrder, requestId: string) {
-        return this.change(headers, shopId, 'createOrder', draft, requestId, async tx => {
-            const { lines, currency, total } = await priceOrder(tx, shopId, draft, new Map());
-            const { customerId, conversationId, warehouseId, shippingAddressId, paymentMethod, notes } = draft;
-            const order = await tx.salesOrder.create({
-                data: { shopId, customerId, conversationId, warehouseId, shippingAddressId, paymentMethod, notes, currency, total },
-            });
-            await saveOrderLines(tx, shopId, order.id, lines);
-            return order;
-        }, async (tx, scope, result) => orderView(await orderInShop(tx, shopId, result.id), scope));
+        return this.change(headers, shopId, 'createOrder', draft, requestId, tx => createSalesDraft(tx, shopId, draft),
+            async (tx, scope, result) => orderView(await orderInShop(tx, shopId, result.id), scope));
     }
 
     patch(headers: IncomingHttpHeaders, shopId: string, id: string, patch: DraftPatch, requestId: string) {
@@ -101,15 +121,15 @@ export class OrdersService {
             requireDraft(current);
             if (current.paymentState !== 'unpaid') throw new ConflictException();
             const draft = { ...draftDetails(current), ...patch };
-            const { lines, currency, total } = await priceOrder(tx, shopId, draft, lineIndex(current));
+            const priced = await priceOrder(tx, shopId, draft, lineIndex(current));
             const { customerId, conversationId, warehouseId, shippingAddressId, notes } = draft;
             const order = await tx.salesOrder.update({
                 where: orderKey(shopId, id), data: {
-                    customerId, conversationId, warehouseId, shippingAddressId, notes, currency, total,
+                    customerId, conversationId, warehouseId, shippingAddressId, notes, ...pricedOrderFields(priced),
                     customerConfirmationId: null, version: { increment: 1 },
                 },
             });
-            await saveOrderLines(tx, shopId, id, lines, current.lines);
+            await saveOrderLines(tx, shopId, id, priced.lines, current.lines);
             return order;
         }, async (tx, scope, result) => orderView(await orderInShop(tx, shopId, result.id), scope));
     }
@@ -118,15 +138,19 @@ export class OrdersService {
         return this.change(headers, shopId, 'quoteOrder', { id }, requestId, async tx => {
             const current = await orderInShop(tx, shopId, id);
             requireDraft(current);
-            const priced = await priceOrder(tx, shopId, draftDetails(current), lineIndex(current));
-            const warnings = await quoteWarnings(tx, shopId, current.warehouseId, priced.lines);
             const now = new Date();
+            const priced = await priceOrder(tx, shopId, draftDetails(current), lineIndex(current), now);
+            const warnings = await quoteWarnings(tx, shopId, current.warehouseId, priced.lines);
+            if (priced.promotion && !['unpaid', 'refunded'].includes(current.paymentState) && !current.total.eq(priced.total)) {
+                throw new ConflictException();
+            }
             return tx.orderQuote.create({
                 data: {
                     shopId, orderId: id, orderVersion: current.version, customerId: current.customerId,
                     addressSnapshotId: priced.address?.id, quoteHash: orderQuoteHash(id, current.version, priced.termsHash),
                     lines: priced.publicLines, total: priced.total, currency: priced.currency, warnings,
-                    shippingRate: priced.rate ?? Prisma.DbNull, createdAt: now, expiresAt: new Date(now.getTime() + quoteMs),
+                    shippingRate: priced.rate ?? Prisma.DbNull, promotionSnapshot: priced.promotion ?? Prisma.DbNull,
+                    createdAt: now, expiresAt: new Date(now.getTime() + quoteMs),
                 },
             });
         }, async (tx, scope, result) => {
@@ -138,7 +162,7 @@ export class OrdersService {
             const { id: quoteId, orderId, orderVersion, quoteHash, lines, total, currency, warnings, expiresAt, shippingRate, addressSnapshot } = quote;
             return {
                 id: quoteId, shopId, orderId, orderVersion, quoteHash, lines, total: orderMoney(total, currency), warnings, expiresAt,
-                shippingRate, promotion: null,
+                shippingRate, promotion: quote.promotionSnapshot,
                 shippingAddressSnapshot: addressSnapshot && quote.order.customer.id === quote.customerId
                     ? addressSnapshotView(addressSnapshot, quote.order.customer, scope.permissions.includes('customers.read')) : null,
             };
@@ -154,7 +178,7 @@ export class OrdersService {
                 shopId, customerId: current.customerId, conversationId: current.conversationId, identityId: body.customerIdentityId,
                 sourceMessageId: body.sourceMessageId, quoteId: quote.id, quoteHash: quote.quoteHash,
                 quotedAt: quote.createdAt, expiresAt: quote.expiresAt,
-            }, config);
+            }, config, this.meta);
             const existing = await tx.orderCustomerConfirmation.findUnique({ where: { shopId_sourceMessageId: { shopId, sourceMessageId: body.sourceMessageId } } });
             if (existing) {
                 if (existing.quoteId !== quote.id || existing.customerIdentityId !== body.customerIdentityId) throw new ConflictException();
@@ -198,18 +222,21 @@ export class OrdersService {
                 shopId, customerId: current.customerId, conversationId: current.conversationId, identityId: evidence.customerIdentityId,
                 sourceMessageId: evidence.sourceMessageId, quoteId: quote.id, quoteHash: quote.quoteHash,
                 quotedAt: quote.createdAt, expiresAt: quote.expiresAt,
-            }, config);
+            }, config, this.meta);
             const reservation = await reserveStock(tx, {
                 shopId, orderId: id, orderVersion: current.version + 1, actorId: scope.userId, expiresAt: new Date(now.getTime() + holdMs),
                 lines: priced.lines.map(line => ({ warehouseId: current.warehouseId, variantId: line.variantId, lineId: line.id, quantity: line.quantity })),
             }, now);
             await saveOrderLines(tx, shopId, id, priced.lines, current.lines);
-            return tx.salesOrder.update({
+            const updated = await tx.salesOrder.update({
                 where: orderKey(shopId, id), data: {
                     orderState: 'confirmed', fulfillmentState: 'reserved', customerConfirmationId: evidence.id,
-                    reservationId: reservation.id, total: priced.total, currency: priced.currency, version: { increment: 1 },
+                    reservationId: reservation.id, ...pricedOrderFields(priced), promotionAppliedAt: priced.promotion ? now : null,
+                    version: { increment: 1 },
                 },
             });
+            await provisionPreparation(tx, updated, priced.lines, scope.userId, reservation.expiresAt);
+            return updated;
         }, async (_tx, _scope, _result, command) => commandDto(command, 'order'));
     }
 
@@ -219,12 +246,13 @@ export class OrdersService {
         return this.change(headers, shopId, 'cancelOrder', { id, body }, requestId, async (tx, scope) => {
             const current = await orderInShop(tx, shopId, id);
             requireVersion(current.version, body.expectedVersion);
-            const canCancel = current.orderState === 'draft' || (current.orderState === 'confirmed' && current.fulfillmentState === 'reserved');
-            if (!canCancel || !['unpaid', 'refunded'].includes(current.paymentState)) throw new ConflictException();
+            if (!canCancelOrder(current, scope)) throw new ConflictException();
             if (current.reservation) await settleStockReservation(tx, {
                 shopId, id: current.reservation.id, expectedVersion: current.reservation.version,
                 actorId: scope.userId, status: 'released', reason,
             });
+            await cancelPreparation(tx, shopId, id);
+            await cancelPlannedShipment(tx, shopId, id);
             return tx.salesOrder.update({
                 where: orderKey(shopId, id), data: { orderState: 'cancelled', fulfillmentState: 'unfulfilled', version: { increment: 1 } },
             });

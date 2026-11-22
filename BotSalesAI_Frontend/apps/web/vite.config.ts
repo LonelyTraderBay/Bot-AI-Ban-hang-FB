@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
+import { contractValidatorModule, contractValidators } from '../../scripts/contract-validators.mjs';
 import { isolatedViteCacheDir } from '../../scripts/vite-cache.mjs';
 import { existsSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
@@ -34,7 +35,7 @@ export default defineConfig(({ mode }) => {
   return {
     envDir: repoRoot,
     cacheDir,
-    plugins: [react(),...(mocks ? [completeDemoAssets] : []),{name:'exclude-mock-worker-from-live',writeBundle(options){if(mocks)return;const file=join(options.dir||'dist','mockServiceWorker.js');if(existsSync(file))unlinkSync(file);}}],
+    plugins: [react(), contractValidators(), ...(mocks ? [completeDemoAssets] : []),{name:'exclude-mock-worker-from-live',writeBundle(options){if(mocks)return;const file=join(options.dir||'dist','mockServiceWorker.js');if(existsSync(file))unlinkSync(file);}}],
     resolve: { alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@botsales/contracts': fileURLToPath(new URL('../../packages/contracts/src/index.ts', import.meta.url)),
@@ -59,7 +60,7 @@ export default defineConfig(({ mode }) => {
         if (modulePath.includes('/node_modules/@mui/') || modulePath.includes('/node_modules/@emotion/')) return 'mui';
         if (modulePath.includes('/node_modules/@tanstack/')) return 'query';
         if (modulePath.includes('/node_modules/i18next/') || modulePath.includes('/node_modules/react-i18next/')) return 'i18n';
-        if ([
+        if (id === contractValidatorModule || [
           '/node_modules/ajv/',
           '/node_modules/ajv-formats/',
           '/node_modules/fast-uri/',

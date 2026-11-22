@@ -7,15 +7,29 @@ import { ContractOperation } from '../../http/operations.js';
 import { idPipe } from '../../http/query.js';
 import { envelope, noStore, versionedEnvelope } from '../../http/response.js';
 import type { AuthConfig } from '../workspace/index.js';
-import { FinanceBook, type AccountWrite, type ManualJournal, type PeriodWrite, type Reason, type Version } from './book.js';
+import { FinanceBook, type AccountWrite, type ManualJournal, type PeriodReopen, type PeriodWrite, type Reason, type Version } from './book.js';
 import { FinanceEntries, type EntryWrite } from './entries.js';
 import { LedgerReader } from './ledger-view.js';
 import { OpeningBalances, type OpeningWrite } from './opening.js';
+import { PaymentReviews, PaymentReviewsController } from './payment-reviews.js';
+import { Reconciliation, ReconciliationController } from './reconciliation.js';
+import { FinanceReports, FinanceReportsController } from './reports.js';
+import { ReportExports, ReportExportsController } from './exports.js';
+import { MarketingController, MarketingService } from './marketing.js';
+import { FinanceStatements, StatementsController } from './statements.js';
 import { FinanceSettlement, type Adjustment, type Payment, type Refund } from './settlement.js';
 
 export { financeCommands } from './access.js';
-export { writeJournal, systemAccounts, financeShop, financeMoney, localAccountingDate, type Money } from './journal.js';
+export { periodApprovalResource } from './period-data.js';
+export { financeJobHandlers, statementCommands } from './statements.js';
+export { accountingDate, writeJournal, systemAccounts, financeShop, financeMoney, parseMoney, localAccountingDate, lockOpenPeriod, type Money } from './journal.js';
 export { pairedLines } from './entries.js';
+export { bookBusinessPairs, bookDelivery, bookHandover, bookInspectedReturn } from './order-accounting.js';
+export { allocationTotals } from './reconciliation-data.js';
+export { provisionFixtureShopAccounts } from './account-policy.js';
+export { reportExportCommand, reportExportHandler } from './exports.js';
+export { dashboardMoney } from './report-data.js';
+export { marketingProjection } from './marketing.js';
 
 const bodySchema = (name: string) => new SchemaPipe(validator.compile(schemaFromContract(name)));
 const requestId = (response: ServerResponse) => String(response.getHeader('X-Request-Id'));
@@ -89,6 +103,24 @@ class FinanceBookController {
         @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
         noStore(response);
         return versionedEnvelope(response, await this.book.createPeriod(request.headers, shopId, input, requestId(response)));
+    }
+
+    @Post('periods/:resourceId/close')
+    @HttpCode(202)
+    @ContractOperation('closeAccountingPeriod')
+    async closePeriod(@Param('shopId', idPipe) shopId: string, @Param('resourceId', idPipe) id: string, @Body(bodySchema('VersionRequest')) input: Version,
+        @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
+        noStore(response);
+        return envelope(response, await this.book.closePeriod(request.headers, shopId, id, input, requestId(response)));
+    }
+
+    @Post('periods/:resourceId/reopen')
+    @HttpCode(202)
+    @ContractOperation('reopenAccountingPeriod')
+    async reopenPeriod(@Param('shopId', idPipe) shopId: string, @Param('resourceId', idPipe) id: string, @Body(bodySchema('PeriodReopen')) input: PeriodReopen,
+        @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
+        noStore(response);
+        return envelope(response, await this.book.reopenPeriod(request.headers, shopId, id, input, requestId(response)));
     }
 
     @Get('journals')
@@ -289,13 +321,20 @@ class FinanceModule {}
 export function financeModule(db?: PrismaClient, config?: AuthConfig): DynamicModule {
     return {
         module: FinanceModule,
-        controllers: [FinanceBookController, LedgerController, FinanceEntriesController, OpeningBalancesController, FinanceSettlementController],
+        controllers: [FinanceBookController, LedgerController, FinanceEntriesController, OpeningBalancesController, FinanceSettlementController,
+            FinanceReportsController, StatementsController, ReconciliationController, PaymentReviewsController, MarketingController, ReportExportsController],
         providers: [
             { provide: FinanceBook, useFactory: () => new FinanceBook(db, config) },
             { provide: LedgerReader, useFactory: () => new LedgerReader(db, config) },
             { provide: FinanceEntries, useFactory: () => new FinanceEntries(db, config) },
             { provide: OpeningBalances, useFactory: () => new OpeningBalances(db, config) },
             { provide: FinanceSettlement, useFactory: () => new FinanceSettlement(db, config) },
+            { provide: FinanceReports, useFactory: () => new FinanceReports(db, config) },
+            { provide: MarketingService, useFactory: () => new MarketingService(db) },
+            { provide: ReportExports, useFactory: () => new ReportExports(db, config) },
+            { provide: FinanceStatements, useFactory: () => new FinanceStatements(db, config) },
+            { provide: Reconciliation, useFactory: () => new Reconciliation(db, config) },
+            { provide: PaymentReviews, useFactory: () => new PaymentReviews(db, config) },
         ],
     };
 }

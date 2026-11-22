@@ -7,11 +7,14 @@ import { commandDto } from '../../platform/commands/index.js';
 import { ExactDecimal, proportionalAmount } from '../../platform/money/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { recordStockMovement } from '../inventory/index.js';
+import { requireCurrentPaymentPrice } from '../orders/index.js';
 import { FinanceAccess } from './access.js';
 import type { Version } from './book.js';
 import { pairedLines } from './entries.js';
 import { cleanFinanceText, financeKey, financeMoney, financeShop, localAccountingDate, lockOpenPeriod, parseMoney,
     systemAccounts, writeJournal, type Money } from './journal.js';
+import { moneyOnOrder, returnBalances } from './order-accounting.js';
+import { bindImportedBankReceipt } from './reconciliation-data.js';
 
 type Observation = Version & { amount: Money; reason: string; evidenceRef: string };
 export type Payment = Observation & { method: 'cash' | 'bank_transfer' | 'external'; reference: string };
@@ -39,16 +42,6 @@ async function readEvidence(tx: Prisma.TransactionClient, shopId: string, orderI
     return evidence;
 }
 
-async function moneyOnOrder(tx: Prisma.TransactionClient, shopId: string, orderId: string) {
-    const data = await tx.financeEntry.groupBy({
-        by: ['kind'], where: { shopId, orderId, status: 'posted' }, _sum: { amount: true },
-    });
-    return {
-        paid: new ExactDecimal(data.find(item => item.kind === 'receipt')?._sum.amount ?? 0),
-        refunded: new ExactDecimal(data.find(item => item.kind === 'disbursement')?._sum.amount ?? 0),
-    };
-}
-
 const paymentKinds: Record<Payment['method'], PaymentEvidenceKind[]> = {
     cash: ['cash_receipt'], bank_transfer: ['bank_receipt'], external: ['provider_receipt', 'carrier_collection'],
 };
@@ -61,6 +54,7 @@ export class FinanceSettlement extends FinanceAccess {
             const order = await orderForPayment(tx, shopId, id);
             requireVersion(order.version, body.expectedVersion);
             if (order.orderState === 'cancelled' || order.paymentState === 'settled') throw new ConflictException();
+            await requireCurrentPaymentPrice(tx, order);
             const { currency, timezone } = await financeShop(tx, shopId);
             if (order.currency !== currency) throw new ConflictException();
             const evidence = await readEvidence(tx, shopId, id, body, reference, paymentKinds[body.method], currency);
@@ -70,8 +64,13 @@ export class FinanceSettlement extends FinanceAccess {
             const effectiveDate = localAccountingDate(evidence.observedAt, timezone);
             await lockOpenPeriod(tx, shopId, effectiveDate);
             const cod = evidence.kind === 'carrier_collection';
+            const { refund, credit } = cod ? await returnBalances(tx, shopId, id) :
+                { refund: new ExactDecimal(0), credit: new ExactDecimal(0) };
+            const collectible = new ExactDecimal(order.total).minus(refund).minus(credit);
+            if (gross.gt(collectible)) throw new UnprocessableEntityException();
             if (cod) {
-                if (order.paymentMethod !== 'cod' || order.fulfillmentState !== 'delivered') throw new ConflictException();
+                const shipment = await tx.shipment.findUnique({ where: { shopId_orderId: { shopId, orderId: id } }, select: { deliveredAt: true } });
+                if (order.paymentMethod !== 'cod' || (order.fulfillmentState !== 'delivered' && !shipment?.deliveredAt)) throw new ConflictException();
             } else if (!['unfulfilled', 'reserved', 'picking', 'packed'].includes(order.fulfillmentState) || order.paymentState === 'cod_collected') {
                 throw new ConflictException();
             }
@@ -79,6 +78,7 @@ export class FinanceSettlement extends FinanceAccess {
             let journalId: string | null = null;
             if (!cod) {
                 const [liquid, deposit] = await systemAccounts(tx, shopId, body.method === 'cash' ? 'cash' : 'bank', 'customer_deposit');
+                if (evidence.kind === 'bank_receipt') await bindImportedBankReceipt(tx, evidence, liquid, effectiveDate, timezone);
                 const { journal } = await writeJournal(tx, shopId, {
                     sourceType: 'order_payment', sourceId: evidence.id, sourceRevision: 1, eventType: 'receive', effectiveDate,
                     lines: pairedLines(liquid, deposit, amount, 'Ghi nhận tiền khách đã trả'), reason,
@@ -95,7 +95,7 @@ export class FinanceSettlement extends FinanceAccess {
             await enqueueResourceUpdate(tx, 'finance.updated', entry);
             return tx.salesOrder.update({
                 where: financeKey(shopId, id), data: {
-                    paymentState: cod ? (gross.eq(order.total) ? 'cod_collected' : 'part_paid') : gross.eq(order.total) ? 'verified' : 'part_paid',
+                    paymentState: cod ? (gross.eq(collectible) ? 'cod_collected' : 'part_paid') : gross.eq(order.total) ? 'verified' : 'part_paid',
                     version: { increment: 1 },
                 },
             });
@@ -108,24 +108,33 @@ export class FinanceSettlement extends FinanceAccess {
         return this.write({ headers, shopId, action: 'refundOrder', payload: { id, body }, requestId, reason }, async tx => {
             const order = await orderForPayment(tx, shopId, id);
             requireVersion(order.version, body.expectedVersion);
-            if (!['unfulfilled', 'reserved'].includes(order.fulfillmentState)) throw new ConflictException();
+            const beforeHandover = ['unfulfilled', 'reserved', 'picking', 'packed'].includes(order.fulfillmentState);
+            if (!beforeHandover && !['part_returned', 'returned'].includes(order.fulfillmentState)) throw new ConflictException();
             const { currency, timezone } = await financeShop(tx, shopId);
             if (order.currency !== currency) throw new ConflictException();
             const evidence = await readEvidence(tx, shopId, id, body, reference, ['observed_refund'], currency);
             const { paid, refunded } = await moneyOnOrder(tx, shopId, id);
             const cumulative = refunded.plus(evidence.amount);
             if (!paid.gt(0) || cumulative.gt(paid)) throw new UnprocessableEntityException();
-            const [deposit, bank] = await systemAccounts(tx, shopId, 'customer_deposit', 'bank');
+            if (!beforeHandover) {
+                const { refund } = await returnBalances(tx, shopId, id);
+                const consumed = await tx.financeEntry.aggregate({
+                    where: { shopId, orderId: id, status: 'posted', sourceType: 'return_refund' }, _sum: { amount: true },
+                });
+                if (new ExactDecimal(consumed._sum.amount ?? 0).plus(evidence.amount).gt(refund)) throw new UnprocessableEntityException();
+            }
+            const [liability, bank] = await systemAccounts(tx, shopId, beforeHandover ? 'customer_deposit' : 'refund_payable', 'bank');
             const { journal } = await writeJournal(tx, shopId, {
                 sourceType: 'order_refund', sourceId: evidence.id, sourceRevision: 1, eventType: 'refund',
                 effectiveDate: localAccountingDate(evidence.observedAt, timezone), reason,
-                lines: pairedLines(deposit, bank, financeMoney(evidence.amount, currency), 'Ghi nhận khoản đã hoàn'),
+                lines: pairedLines(liability, bank, financeMoney(evidence.amount, currency), 'Ghi nhận khoản đã hoàn'),
             }, true);
             const entry = await tx.financeEntry.create({
                 data: {
                     shopId, orderId: id, kind: 'disbursement', classification: 'sales_receipt', currency, amount: evidence.amount,
                     status: 'posted', occurredAt: evidence.observedAt, description: reason,
-                    sourceType: 'order_refund', sourceId: id, paymentReference: reference, evidenceId: evidence.id, journalId: journal.id,
+                    sourceType: beforeHandover ? 'order_refund' : 'return_refund', sourceId: id,
+                    paymentReference: reference, evidenceId: evidence.id, journalId: journal.id,
                 },
             });
             await enqueueResourceUpdate(tx, 'finance.updated', entry);

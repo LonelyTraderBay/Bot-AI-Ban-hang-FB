@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { Prisma, type StockMovementKind } from '../../generated/prisma/client.js';
 import { validUuid } from '../../http/query.js';
 import { ExactDecimal as Decimal, proportionalAmount } from '../../platform/money/index.js';
+import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 
 type StockKey = { shopId: string; warehouseId: string; variantId: string };
 type Delta = { onHand?: number; reserved?: number; quarantine?: number; transit?: number; inbound?: number };
@@ -66,12 +67,22 @@ export async function requireWarehouseClear(tx: Prisma.TransactionClient, shopId
     if (await tx.salesOrder.findFirst({
         where: { shopId, warehouseId, orderState: { in: ['draft', 'confirmed'] } }, select: { id: true },
     })) throw new ConflictException();
+    if (await tx.stockTransfer.findFirst({
+        where: { shopId, toWarehouseId: warehouseId, status: 'in_transit' }, select: { id: true },
+    })) throw new ConflictException();
+    if (await tx.stocktake.findFirst({
+        where: { shopId, warehouseId, status: { in: ['counting', 'submitted'] } }, select: { id: true },
+    })) throw new ConflictException();
+}
+
+export function sellableStockPositions(tx: Prisma.TransactionClient, shopId: string, warehouseId: string, variantIds: string[]) {
+    return tx.stockPosition.findMany({
+        where: { shopId, warehouseId, variantId: { in: variantIds } }, select: { variantId: true, onHand: true, reserved: true, carryingValue: true },
+    });
 }
 
 export async function sellableAvailability(tx: Prisma.TransactionClient, shopId: string, warehouseId: string, ids: string[]) {
-    const rows = await tx.stockPosition.findMany({
-        where: { shopId, warehouseId, variantId: { in: ids } }, select: { variantId: true, onHand: true, reserved: true },
-    });
+    const rows = await sellableStockPositions(tx, shopId, warehouseId, ids);
     return new Map(rows.map(row => [row.variantId, row.onHand - row.reserved]));
 }
 
@@ -136,14 +147,16 @@ export async function recordStockMovement(tx: Prisma.TransactionClient, input: S
         : new Decimal(receivedValue ?? 0);
     const carryingValue = new Decimal(position.carryingValue).plus(carryingDelta);
     if (carryingValue.gte('1e60')) throw new UnprocessableEntityException();
-    await tx.stockPosition.update({
+    const updated = await tx.stockPosition.update({
         where: { shopId_id: { shopId, id: position.id } },
         data: { ...totals, carryingValue, version: { increment: 1 } },
     });
-    return tx.stockMovement.create({
+    const movement = await tx.stockMovement.create({
         data: {
             ...key, ...source, actorId, sku: variant.sku, requestHash, reason, quantityDelta: onHand, reservedDelta: reserved,
             quarantineDelta: quarantine, transitDelta: transit, inboundDelta: inbound, carryingDelta,
         },
     });
+    await enqueueResourceUpdate(tx, 'inventory.updated', updated);
+    return movement;
 }

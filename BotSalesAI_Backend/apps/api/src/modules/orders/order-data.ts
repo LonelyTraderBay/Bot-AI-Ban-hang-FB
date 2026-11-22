@@ -3,6 +3,7 @@ import { Prisma, type SalesOrder } from '../../generated/prisma/client.js';
 import { validUuid } from '../../http/query.js';
 import { ExactDecimal } from '../../platform/money/index.js';
 import { addressSnapshotView } from '../customers/index.js';
+import { allocationTotals } from '../finance/index.js';
 import type { ShopScope } from '../workspace/index.js';
 import { lineView, orderMoney, type DraftOrder } from './pricing.js';
 
@@ -11,7 +12,11 @@ export const orderDetails = {
     customer: true,
     reservation: { select: { id: true, status: true, version: true } },
     confirmation: { include: { quote: { include: { addressSnapshot: { include: { address: true } } } } } },
-    moneyEntries: { where: { status: 'posted' }, select: { kind: true, amount: true, journalId: true } },
+    moneyEntries: { where: { status: 'posted' }, select: { kind: true, amount: true, journalId: true, sourceType: true } },
+    settlementAllocations: { select: { amount: true, bankAmount: true, applications: { select: { amount: true } } } },
+    preparation: { select: { workItemId: true, workItem: { select: { assigneeUserId: true } } } },
+    shipments: { select: { id: true, state: true, deliveredAt: true,
+        returns: { where: { state: 'inspected' }, select: { refundObligation: true, receivableCredit: true } } } },
 } satisfies Prisma.SalesOrderInclude;
 
 export type OrderDetails = Prisma.SalesOrderGetPayload<{ include: typeof orderDetails }>;
@@ -28,7 +33,7 @@ export function draftDetails(order: OrderDetails): DraftOrder {
     return {
         customerId: order.customerId, conversationId: order.conversationId, warehouseId: order.warehouseId,
         lines: order.lines.map(({ variantId, quantity }) => ({ variantId, quantity })),
-        notes: order.notes, paymentMethod: order.paymentMethod, shippingAddressId: order.shippingAddressId,
+        notes: order.notes, paymentMethod: order.paymentMethod, shippingAddressId: order.shippingAddressId, promotionId: order.promotionId,
     };
 }
 
@@ -36,6 +41,13 @@ export const lineIndex = (order: OrderDetails) => new Map(order.lines.map(line =
 
 export function requireDraft(order: Pick<SalesOrder, 'orderState'>) {
     if (order.orderState !== 'draft') throw new ConflictException();
+}
+
+export function canCancelOrder(order: OrderDetails, scope: ShopScope) {
+    if (!['unpaid', 'refunded'].includes(order.paymentState)) return false;
+    return order.orderState === 'draft' || (order.orderState === 'confirmed' && (order.fulfillmentState === 'reserved' ||
+        (['picking', 'packed'].includes(order.fulfillmentState) && scope.permissions.includes('fulfillment.write') &&
+            order.preparation?.workItem.assigneeUserId === scope.userId)));
 }
 
 export function orderView(order: OrderDetails, scope: ShopScope) {
@@ -47,30 +59,38 @@ export function orderView(order: OrderDetails, scope: ShopScope) {
     const canWrite = permissions.includes('orders.write');
     const allowedActions: string[] = [];
     if (order.orderState === 'draft') {
-        if (canWrite) allowedActions.push('edit', 'quote', 'cancel');
+        if (canWrite) allowedActions.push('edit', 'quote');
         if (permissions.includes('orders.confirm')) allowedActions.push('confirm');
-    } else if (order.orderState === 'confirmed' && order.fulfillmentState === 'reserved' && canWrite &&
-        ['unpaid', 'refunded'].includes(order.paymentState)) {
-        allowedActions.push('cancel');
     }
-    const paymentOpen = ['unfulfilled', 'reserved', 'picking', 'packed'].includes(order.fulfillmentState) ||
-        (order.paymentMethod === 'cod' && order.fulfillmentState === 'delivered');
-    if (order.orderState !== 'cancelled' && paymentOpen && permissions.includes('finance.post') &&
-        ['unpaid', 'part_paid', 'part_refunded', 'refunded'].includes(order.paymentState)) allowedActions.push('record_payment');
-    if (['unfulfilled', 'reserved'].includes(order.fulfillmentState) && permissions.includes('finance.refund') &&
-        ['part_paid', 'verified', 'part_refunded'].includes(order.paymentState)) allowedActions.push('request_refund');
+    if (canWrite && canCancelOrder(order, scope)) allowedActions.push('cancel');
+    const shipment = order.shipments[0];
+    const beforeHandover = ['unfulfilled', 'reserved', 'picking', 'packed'].includes(order.fulfillmentState);
+    const collectCod = order.paymentMethod === 'cod' && (order.fulfillmentState === 'delivered' || Boolean(shipment?.deliveredAt));
+    if (permissions.includes('orders.return') && ['delivered', 'returned'].includes(shipment?.state ?? '') &&
+        order.fulfillmentState !== 'returned') allowedActions.push('request_return');
     if (!canSeeAddress) redactedFields.push('shippingAddressSnapshot');
     if (!canWrite) redactedFields.push('notes');
-    let paid = new ExactDecimal(0);
+    const settled = allocationTotals(order.settlementAllocations);
+    let paid = settled.additionalVerified;
     let refunded = new ExactDecimal(0);
-    let cashReceived = new ExactDecimal(0);
+    let returnPayout = new ExactDecimal(0);
+    let cashReceived = settled.cashReceived;
     for (const entry of order.moneyEntries) {
         const incoming = entry.kind === 'receipt';
         if (incoming) paid = paid.plus(entry.amount);
-        else refunded = refunded.plus(entry.amount);
+        else {
+            refunded = refunded.plus(entry.amount);
+            if (entry.sourceType === 'return_refund') returnPayout = returnPayout.plus(entry.amount);
+        }
         if (entry.journalId) cashReceived = incoming ? cashReceived.plus(entry.amount) : cashReceived.minus(entry.amount);
     }
-    const due = order.orderState === 'cancelled' ? new ExactDecimal(0) : ExactDecimal.max(0, new ExactDecimal(order.total).minus(paid).plus(refunded));
+    const credit = (shipment?.returns ?? []).reduce((total, item) => total.plus(item.receivableCredit ?? 0), new ExactDecimal(0));
+    const refundBalance = (shipment?.returns ?? []).reduce((total, item) => total.plus(item.refundObligation ?? 0), returnPayout.neg());
+    const due = order.orderState === 'cancelled' || (shipment?.state === 'returned' && order.fulfillmentState === 'returned') ? new ExactDecimal(0) :
+        ExactDecimal.max(0, new ExactDecimal(order.total).minus(paid).plus(refunded).minus(returnPayout).minus(credit));
+    if (order.orderState !== 'cancelled' && due.gt(0) && (beforeHandover || collectCod) && permissions.includes('finance.post') &&
+        ['unpaid', 'part_paid', 'part_refunded', 'refunded'].includes(order.paymentState)) allowedActions.push('record_payment');
+    if (permissions.includes('finance.refund') && (refundBalance.gt(0) || (beforeHandover && paid.gt(refunded)))) allowedActions.push('request_refund');
     return {
         id: order.id, shopId: order.shopId, version: order.version, createdAt: order.createdAt, updatedAt: order.updatedAt,
         customerId: order.customerId, conversationId: order.conversationId, warehouseId: order.warehouseId,
@@ -79,11 +99,13 @@ export function orderView(order: OrderDetails, scope: ShopScope) {
         paidAmount: orderMoney(paid, order.currency), refundedAmount: orderMoney(refunded, order.currency), amountDue: orderMoney(due, order.currency),
         cashReceived: permissions.includes('finance.read') ? orderMoney(cashReceived, order.currency) : null,
         lines: order.lines.map(line => lineView(line, order.currency)),
-        allowedActions, redactedFields, prepTaskId: null, shipmentIds: [], customerConfirmationId: order.customerConfirmationId,
+        allowedActions, redactedFields, prepTaskId: order.preparation?.workItemId ?? null,
+        shipmentIds: order.shipments.map(shipment => shipment.id), customerConfirmationId: order.customerConfirmationId,
         recognitionPolicyVersion: order.recognitionPolicyVersion, notes: canWrite ? order.notes : '',
         shippingAddressId: order.shippingAddressId,
         shippingAddressSnapshot: snapshot ? addressSnapshotView(snapshot, order.customer, canSeeAddress) : null,
-        shippingRate: confirmed?.shippingRate ?? null, promotionId: null, promotion: null, promotionAppliedAt: null,
+        shippingRate: confirmed?.shippingRate ?? null, promotionId: order.promotionId, promotion: order.promotionSnapshot,
+        promotionAppliedAt: order.promotionAppliedAt,
     };
 }
 

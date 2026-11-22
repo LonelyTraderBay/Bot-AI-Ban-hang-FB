@@ -16,10 +16,13 @@ import { proportionalAmount } from '../../platform/money/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig } from '../workspace/index.js';
 import { lockWarehouse, requireWarehouseClear } from './stock.js';
+import { StocktakeController, StocktakeService } from './stocktakes.js';
+import { TransfersController, TransfersService } from './transfers.js';
 
 export { createDefaultStockPositions, recordStockMovement, requireVariantsClear, lockWarehouse } from './stock.js';
-export { sellableAvailability } from './stock.js';
+export { sellableAvailability, sellableStockPositions } from './stock.js';
 export { expireStockReservations, reserveStock, settleStockReservation } from './reservations.js';
+export { stockCommands } from './stock-commands.js';
 
 export const warehouseCommands = ['createWarehouse', 'updateWarehouse', 'archiveWarehouse'].map(operationId => ({ operationId, resourceType: 'warehouse' }));
 type WarehouseInput = { code: string; name: string; addressLine: string };
@@ -267,7 +270,11 @@ class InventoryModule {}
 
 export function inventoryModule(db?: PrismaClient, config?: AuthConfig): DynamicModule {
     return {
-        module: InventoryModule, controllers: [InventoryController],
-        providers: [{ provide: InventoryService, useFactory: () => new InventoryService(db, config) }],
+        module: InventoryModule, controllers: [InventoryController, StocktakeController, TransfersController],
+        providers: [
+            { provide: InventoryService, useFactory: () => new InventoryService(db, config) },
+            { provide: StocktakeService, useFactory: () => new StocktakeService(db, config) },
+            { provide: TransfersService, useFactory: () => new TransfersService(db, config) },
+        ],
     };
 }

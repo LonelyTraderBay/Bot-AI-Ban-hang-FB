@@ -23,12 +23,12 @@ function hasIssue(result, pattern) {
     assert.ok(result.some(message => pattern.test(message)), JSON.stringify(result, null, 2));
 }
 
-test('matrix matches canonical IDs and reports only the two documented gaps', () => {
+test('matrix matches canonical IDs and reports only the documented historical event duplicate', () => {
     assert.deepEqual(source.issues, []);
     assert.equal(source.counts.operations, original.sources.index.operations.length);
     assert.equal(source.counts.screens, original.sources.routes.routes.length);
     assert.deepEqual(source.knownGaps.map(issue => [issue.id, issue.owner]),
-        [['SC2-C07-CONSENT', 'BE-21'], ['journal.updated', 'BE-10']]);
+        [['journal.updated', 'BE-10']]);
 });
 
 test('matrix rejects missing, duplicate and wrong method/path rows', () => {
@@ -83,6 +83,17 @@ test('registration rejects duplicate handlers, wrong methods and missing handler
     hasIssue(result, /Duplicate operation registration: listProducts/);
     hasIssue(result, /listProducts: expected GET.*got POST/);
     hasIssue(checkRegistration(source, enabled, health, workspace), /Missing HTTP registration: listProducts/);
+});
+
+test('only the exact provider callback methods are exempt from product operation registration', () => {
+    const path = '/integrations/meta/messenger/webhook';
+    const callback = { method: 'GET', path, handler: 'MetaMessengerController.challenge' };
+    const telegram = { method: 'POST', path: '/integrations/telegram/updates', handler: 'TelegramWebhookController.update' };
+    const routes = [...health, catalogRoute, callback, { ...callback, method: 'POST' }, telegram];
+    assert.deepEqual(checkRegistration(source, enabled, routes, workspace), []);
+    hasIssue(checkRegistration(source, enabled, [...routes, { ...callback, method: 'PATCH' }], workspace), /missing ContractOperation on PATCH/);
+    hasIssue(checkRegistration(source, enabled, [...routes, { ...callback, path: '/integrations/other/webhook' }], workspace), /missing ContractOperation on GET/);
+    hasIssue(checkRegistration(source, enabled, [...routes, { ...telegram, method: 'GET' }], workspace), /missing ContractOperation on GET/);
 });
 
 test('registration rejects enabled scope without a mapped executable case', () => {

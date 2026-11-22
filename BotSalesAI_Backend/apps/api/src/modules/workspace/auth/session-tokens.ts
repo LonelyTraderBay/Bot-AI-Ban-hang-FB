@@ -1,10 +1,12 @@
 import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { IncomingHttpHeaders } from 'node:http';
+import type { Prisma } from '../../../generated/prisma/client.js';
 import type { AuthConfig } from './config.js';
 
 export const loginCookie = '__Host-bs_login';
 export const sessionCookie = '__Host-bs_session';
+export const stepUpCookie = '__Host-bs_step_up';
 export const loginLifetime = 10 * 60;
 export const sessionLifetime = 8 * 60 * 60;
 const tokenPattern = /^[A-Za-z0-9_-]{43}$/;
@@ -56,4 +58,13 @@ export function requireMutationCsrf(config: AuthConfig, headers: IncomingHttpHea
         !csrfMatches(csrfToken(config.signingKey, 'session', token), headerValue(headers, 'x-csrf-token'))) {
         throw new ForbiddenException();
     }
+}
+
+export async function requirePublicBrowserCsrf(tx: Prisma.TransactionClient, config: AuthConfig, headers: IncomingHttpHeaders) {
+    const browser = cookieToken(headers.cookie, loginCookie);
+    if (!browser || headers.origin !== config.appOrigin) throw new ForbiddenException();
+    const session = cookieToken(headers.cookie, sessionCookie);
+    const active = session && await tx.session.findFirst({ where: activeSession(session), select: { id: true } });
+    const token = active && session ? csrfToken(config.signingKey, 'session', session) : csrfToken(config.signingKey, 'login', browser);
+    if (!csrfMatches(token, headerValue(headers, 'x-csrf-token'))) throw new ForbiddenException();
 }

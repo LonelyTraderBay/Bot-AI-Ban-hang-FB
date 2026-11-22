@@ -165,7 +165,8 @@ export class CustomersService {
 
     createCase(headers: IncomingHttpHeaders, shopId: string, input: CaseInput, requestId: string) {
         return this.change(headers, shopId, 'createServiceCase', 'service_case', input, requestId, async tx => {
-            await customerInShop(tx, shopId, input.customerId);
+            const customer = await customerInShop(tx, shopId, input.customerId);
+            if (customer.privacyErasedAt) throw new ConflictException();
             if (input.orderId !== null && (!validUuid(input.orderId) || !await tx.salesOrder.findUnique({
                 where: {
                     shopId_customerId_id: { shopId, customerId: input.customerId, id: input.orderId },

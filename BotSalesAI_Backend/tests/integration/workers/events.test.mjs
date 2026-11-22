@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { once } from 'node:events';
 import { readFileSync } from 'node:fs';
@@ -12,6 +12,7 @@ import { createContractValidator, schemaFromContract } from '../../../apps/api/d
 import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
+import { redisTarget } from '../../../scripts/staging-data-config.mjs';
 import { assertFixtureDatabase, fixtureSession, restoreReader } from '../workspace/session-fixture.mjs';
 
 const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit/contracts/openapi.json', import.meta.url)));
@@ -24,9 +25,7 @@ const streams = new Set();
 before(async () => {
     const connection = readDatabaseUrl(process.env);
     assertFixtureDatabase(connection);
-    const redis = new URL(process.env.REDIS_URL);
-    assert.equal(redis.hostname, '127.0.0.1');
-    assert.equal(redis.port, '56379');
+    redisTarget(process.env, true);
     const auth = readAuthConfig(process.env);
     assert.ok(auth);
     origin = auth.appOrigin;
@@ -211,6 +210,16 @@ test('BE-10-SSE: a reader does not see other commands and a revoked membership c
 });
 
 test('BE-10-SSE: invalid outbox work is isolated after bounded attempts', async () => {
+    const observeQueue = () => {
+        const result = spawnSync(process.execPath, ['scripts/check-operations.mjs', 'queue', '60000', '60000'], {
+            env: { ...process.env, OPERATIONS_DATABASE_URL: readDatabaseUrl(process.env) }, encoding: 'utf8', timeout: 8000,
+        });
+        assert.ifError(result.error);
+        return { exitCode: result.status, result: JSON.parse(result.stdout) };
+    };
+    const beforeFailure = observeQueue();
+    assert.equal(beforeFailure.result.observations.terminalOutboxFailures, 0);
+    assert.ok(!beforeFailure.result.issues.includes('OUTBOX_TERMINAL_FAILURE'));
     const event = await db.outboxEvent.create({ data: { shopId: shopA.id, eventType: 'fixture.unsupported', payload: {} } });
     const row = await until(async () => {
         const candidate = await db.outboxEvent.findUniqueOrThrow({ where: { shopId_id: { shopId: shopA.id, id: event.id } } });
@@ -220,4 +229,10 @@ test('BE-10-SSE: invalid outbox work is isolated after bounded attempts', async 
     assert.equal(row.sequence, null);
     assert.equal(row.publishedAt, null);
     assert.equal(row.leaseToken, null);
+    const afterFailure = observeQueue();
+    assert.equal(afterFailure.exitCode, 2);
+    assert.equal(afterFailure.result.status, 'ATTENTION');
+    assert.equal(afterFailure.result.observations.terminalOutboxFailures, 1);
+    assert.equal(afterFailure.result.observations.outboxLagMs, 0);
+    assert.ok(afterFailure.result.issues.includes('OUTBOX_TERMINAL_FAILURE'));
 });

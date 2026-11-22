@@ -7,6 +7,16 @@ const leaseMs = 30000;
 const retryDelayMs = 1000;
 type EventKey = { shopId: string; id: string };
 
+export const jobWorker = { component: 'jobs', heartbeatTtlMs: 30000 } as const;
+
+export function observeJobWorker(checkedAt: Date | undefined, now: Date) {
+    const ageMs = checkedAt ? now.getTime() - checkedAt.getTime() : null;
+    return {
+        ageMs, expiresAt: checkedAt ? new Date(checkedAt.getTime() + jobWorker.heartbeatTtlMs) : null,
+        fresh: ageMs !== null && ageMs >= 0 && ageMs < jobWorker.heartbeatTtlMs,
+    };
+}
+
 const pending = {
     publishedAt: null, failedAt: null,
 } satisfies Prisma.OutboxEventWhereInput;
@@ -29,7 +39,7 @@ export async function pendingOutbox(db: PrismaClient, now = new Date()) {
     });
 }
 
-export async function outboxLag(db: PrismaClient, now = new Date()) {
+export async function outboxLag(db: Prisma.TransactionClient, now = new Date()) {
     const oldest = await db.outboxEvent.findFirst({
         where: { ...pending, availableAt: { lte: now } },
         select: { availableAt: true }, orderBy: { availableAt: 'asc' },

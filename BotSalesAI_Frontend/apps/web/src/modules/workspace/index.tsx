@@ -62,12 +62,17 @@ export function OnboardingPage() {
     const [name, setName] = useState(''), [currency, setCurrency] = useState('VND'), [timezone, setTimezone] = useState('Asia/Vientiane'), [pending, setPending] = useState(false), [error, setError] = useState<Error | null>(null), [timezoneTouched, setTimezoneTouched] = useState(false), [submitted, setSubmitted] = useState(false);
     const formElement = useRef<HTMLFormElement>(null);
     const baseline = useRef({name: '',currency: 'VND',timezone: 'Asia/Vientiane'});
+    const creation = useRef<{ content: string; key: string } | null>(null);
     const mounted = useRef(true);
     useEffect(() => { mounted.current=true; return () => { mounted.current=false; }; },[]);
     const bindDraft = useDraftForm(name!==baseline.current.name || currency!==baseline.current.currency || timezone!==baseline.current.timezone);
     const timezoneError = !isValidTimeZone(timezone) ? 'Nhập múi giờ hợp lệ, ví dụ Asia/Vientiane.' : '';
     const save = async () => { setSubmitted(true); if (pending || !name.trim() || timezoneError) return; setPending(true); setError(null); try {
-        const r = await request('createShop', { body: { name, currency, timezone, locale: 'vi-VN' } });
+        const body = { name: name.trim(), currency, timezone: timezone.trim(), locale: 'vi-VN' };
+        const content = JSON.stringify(body);
+        const intent = creation.current?.content === content ? creation.current : { content, key: crypto.randomUUID() };
+        creation.current = intent;
+        const r = await request('createShop', { body, idempotencyKey: intent.key });
         await refresh();
         await cache.invalidateQueries({ queryKey: ['shops'] });
         if (!mounted.current) return;
@@ -76,7 +81,11 @@ export function OnboardingPage() {
         navigate(`/s/${r.data.id}/overview`);
     }
     catch (e) {
-        if (mounted.current) setError(e instanceof Error ? e : new Error('Không tạo được cửa hàng'));
+        if (mounted.current) {
+            setError(e instanceof ApiError && e.code === 'RESULT_UNKNOWN'
+                ? new Error('Chưa đọc được kết quả tạo cửa hàng. Giữ nguyên thông tin và bấm Tạo cửa hàng để kiểm tra lại.')
+                : e instanceof Error ? e : new Error('Không tạo được cửa hàng'));
+        }
     }
     finally {
         if (mounted.current) setPending(false);

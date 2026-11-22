@@ -6,10 +6,12 @@ import { URLSearchParams } from 'node:url';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
+import { localAccountingDate } from '../../../apps/api/dist/modules/finance/index.js';
 import { expireStockReservations, recordStockMovement, reserveStock, settleStockReservation } from '../../../apps/api/dist/modules/inventory/index.js';
 import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { serializable } from '../../../apps/api/dist/platform/database/transactions.js';
+import { ExactDecimal, proportionalAmount } from '../../../apps/api/dist/platform/money/index.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
 
@@ -276,4 +278,183 @@ test('SC2-C05-WAREHOUSE: adding stock and archiving the same warehouse cannot bo
     assert.equal(current.status, archived ? 'archived' : 'active');
     const count = await db.stockMovement.count({ where: { shopId, warehouseId: warehouse.id, variantId: variant.id } });
     assert.equal(count, archived ? 0 : 1);
+});
+
+async function openPeriod() {
+    const date = localAccountingDate(new Date(), shopA.timezone);
+    const day = new Date(date + 'T00:00:00.000Z');
+    const period = await db.accountingPeriod.findFirst({ where: { shopId, startDate: { lte: day }, endDate: { gte: day } } });
+    if (period) assert.equal(period.state, 'open');
+    else await json(await mutate(route('periods'), owner, {
+        startDate: date, endDate: date, reason: 'Kỳ thử kiểm kê và điều chuyển',
+    }), 201, 'AccountingPeriodResponse');
+}
+
+function patch(path, actor, body, version, key) {
+    return mutate(path, actor, body, { method: 'PATCH', key, headers: { 'if-match': '"' + version + '"' } });
+}
+
+function warehouse(name) {
+    return mutate(route('warehouses'), owner, { name, code: 'BE15-' + randomUUID().slice(0, 8), addressLine: 'Địa chỉ fixture' })
+        .then(response => json(response, 201, 'WarehouseResponse'));
+}
+
+test('SC2-D01: a stocktake rebases only changed SKUs and applies balanced gain or loss exactly once', async () => {
+    await openPeriod();
+    const { variants: [first, second] } = await product(2);
+    const warehouseId = shopA.defaultWarehouseId;
+    await tx(t => recordStockMovement(t, receipt(first.id, 5, '100')));
+    await tx(t => recordStockMovement(t, receipt(second.id, 4, '20')));
+    const create = { warehouseId, variantIds: [first.id, second.id], reason: 'Kiểm kê hai SKU có tồn' };
+    const createKey = randomUUID();
+    const initial = await json(await mutate(route('inventory/stocktakes'), warehouseUser, create, { key: createKey }), 201, 'StocktakeResponse');
+    const duplicate = await json(await mutate(route('inventory/stocktakes'), warehouseUser, create, { key: createKey }), 201, 'StocktakeResponse');
+    assert.equal(duplicate.id, initial.id);
+    assert.deepEqual(initial.lines.map(line => [line.expected, line.counted]), [[5, null], [4, null]]);
+    assert.equal(initial.countedBy, warehouseUser.userId);
+    const path = route('inventory/stocktakes/' + initial.id);
+    const update = (state, body) => patch(path, warehouseUser, body, state.version);
+    await json(await patch(route('inventory/stocktakes/' + initial.id, shopB), other, { action: 'submit' }, initial.version), 404, 'Problem');
+    await json(await update(initial, { action: 'submit' }), 422, 'Problem');
+    await json(await update(initial, { action: 'count', counts: [{ variantId: randomUUID(), counted: 1 }] }), 422, 'Problem');
+    const counted = await json(await update(initial, { action: 'count', counts: [
+        { variantId: first.id, counted: 4 }, { variantId: second.id, counted: 6 },
+    ] }), 200, 'StocktakeResponse');
+    const waiting = await json(await update(counted, { action: 'submit' }), 200, 'StocktakeResponse');
+    assert.equal(waiting.status, 'submitted');
+    const review = { reason: 'Đã kiểm đối chiếu và duyệt' };
+    await json(await patch(path + '/posting', warehouseUser, review, waiting.version), 403, 'Problem');
+    await tx(t => recordStockMovement(t, receipt(first.id, 1, '20')));
+    await json(await patch(path + '/posting', owner, review, waiting.version), 409, 'Problem');
+    assert.equal(await db.stockMovement.count({ where: { shopId, sourceType: 'stocktake', sourceId: initial.id } }), 0);
+    const refreshed = await json(await update(waiting, { action: 'rebase' }), 200, 'StocktakeResponse');
+    assert.equal(refreshed.status, 'counting');
+    assert.deepEqual(refreshed.lines.map(line => [line.expected, line.counted]), [[6, null], [4, 6]]);
+    assert.equal(refreshed.lines[1].baselineVersion, initial.lines[1].baselineVersion);
+    const recounted = await json(await update(refreshed, { action: 'count', counts: [{ variantId: first.id, counted: 5 }] }),
+        200, 'StocktakeResponse');
+    const submitted = await json(await update(recounted, { action: 'submit' }), 200, 'StocktakeResponse');
+    const keys = [randomUUID(), randomUUID()];
+    const competing = await Promise.all(keys.map(key => patch(path + '/posting', owner, review, submitted.version, key)));
+    assert.deepEqual(competing.map(response => response.status).sort(), [200, 412]);
+    const winner = competing.findIndex(response => response.status === 200);
+    const posted = await json(competing[winner], 200, 'StocktakeResponse');
+    await json(competing[1 - winner], 412, 'Problem');
+    assert.equal(posted.reviewedBy, owner.userId);
+    assert.equal(posted.countedBy, warehouseUser.userId);
+    assert.equal(posted.status, 'posted');
+    assert.ok(posted.postedAt);
+    const repeated = await json(await patch(path + '/posting', owner, review, submitted.version, keys[winner]), 200, 'StocktakeResponse');
+    assert.deepEqual(repeated, posted);
+    assert.deepEqual(await json(await request(route('inventory/stocktakes') + '?' +
+        new URLSearchParams({ q: initial.id, warehouseId, status: 'posted' }), warehouseUser), 200, 'StocktakeListResponse'), [posted]);
+    const result = await Promise.all([balance(first.id), balance(second.id)]);
+    assert.deepEqual(result.map(row => [row.onHand, row.carryingValue.toFixed()]), [[5, '100'], [6, '30']]);
+    const movements = await db.stockMovement.findMany({ where: { shopId, sourceType: 'stocktake', sourceId: initial.id } });
+    assert.equal(movements.length, 2);
+    assert.ok(movements.every(move => move.actorId === owner.userId && move.kind === 'adjustment'));
+    const journal = await db.financeJournal.findFirstOrThrow({ where: { shopId, sourceType: 'stocktake', sourceId: initial.id },
+        include: { lines: { include: { account: true } } } });
+    assert.equal(journal.lines.find(line => line.account.systemKey === 'inventory_loss').debit.toFixed(), '20');
+    assert.equal(journal.lines.find(line => line.account.systemKey === 'inventory_gain').credit.toFixed(), '10');
+    assert.equal(await db.auditEntry.count({ where: { shopId, resourceId: initial.id, action: 'postStocktake' } }), 1);
+});
+
+test('SC2-D01: warehouse transfer keeps custody, proportional posted value and one source across partial receipts and shortage', async () => {
+    await openPeriod();
+    const { variants: [variant] } = await product();
+    const fromWarehouseId = shopA.defaultWarehouseId;
+    const destination = await warehouse('Kho nhận từng phần');
+    await tx(t => recordStockMovement(t, receipt(variant.id, 3, '10.01')));
+    const input = { fromWarehouseId, toWarehouseId: destination.id, lines: [{ variantId: variant.id, quantity: 3 }], reason: 'Chuyển kho từng phần' };
+    const create = body => mutate(route('inventory/transfers'), warehouseUser, body);
+    await json(await create({ ...input, toWarehouseId: fromWarehouseId }), 422, 'Problem');
+    await json(await create({ ...input, toWarehouseId: shopB.defaultWarehouseId }), 404, 'Problem');
+    const draft = await json(await create(input), 201, 'StockTransferResponse');
+    const resource = 'inventory/transfers/' + draft.id;
+    const update = (state, body, actor = warehouseUser, key) => patch(route(resource), actor, body, state.version, key);
+    await json(await patch(route(resource, shopB), other, { action: 'dispatch' }, draft.version), 404, 'Problem');
+    const sent = await json(await update(draft, { action: 'dispatch' }), 200, 'StockTransferResponse');
+    assert.equal(sent.status, 'in_transit');
+    assert.deepEqual([(await balance(variant.id)).onHand, (await balance(variant.id)).transit], [0, 3]);
+    const pendingDestination = await db.stockPosition.findUnique({ where: { shopId_warehouseId_variantId: {
+        shopId, warehouseId: destination.id, variantId: variant.id,
+    } } });
+    assert.equal(pendingDestination, null);
+    await json(await mutate(route('warehouses/' + destination.id + '/archive'), owner, {
+        expectedVersion: destination.version, reason: 'Kiểm hàng đang đi đến kho trống',
+    }), 409, 'Problem');
+    assert.equal((await json(await request(route('warehouses/' + destination.id), owner), 200, 'WarehouseResponse')).status, 'active');
+    const read = status => request(route('inventory/transfers') + '?' + new URLSearchParams({ q: draft.id, status }), owner)
+        .then(response => json(response, 200, 'StockTransferListResponse'));
+    assert.deepEqual(await read('in_transit'), [sent]);
+    await json(await update(draft, { action: 'dispatch' }), 412, 'Problem');
+    const receive = quantity => ({ action: 'receive', lines: [{ variantId: variant.id, quantity }] });
+    await json(await update(sent, receive(4)), 422, 'Problem');
+    const receiveKey = randomUUID();
+    const first = await json(await update(sent, receive(1), warehouseUser, receiveKey), 200, 'StockTransferResponse');
+    assert.equal(first.lines[0].received, 1);
+    assert.deepEqual(await json(await update(sent, receive(1), warehouseUser, receiveKey), 200, 'StockTransferResponse'), first);
+    await json(await update(sent, receive(1)), 412, 'Problem');
+    assert.equal((await balance(variant.id, destination.id)).onHand, 1);
+    const second = await json(await update(first, receive(1)), 200, 'StockTransferResponse');
+    assert.equal(second.lines[0].received, 2);
+    assert.equal((await balance(variant.id)).transit, 1);
+    const short = { action: 'close_short', reason: 'Hàng còn lại bị mất đã đối chiếu' };
+    await json(await update(second, short), 403, 'Problem');
+    const closed = await json(await update(second, short, owner), 200, 'StockTransferResponse');
+    assert.equal(closed.status, 'closed_short');
+    assert.equal(closed.lines[0].missing, 1);
+    assert.equal(closed.discrepancyReason, short.reason);
+    assert.deepEqual(await read('closed_short'), [closed]);
+    await json(await update(closed, receive(1)), 409, 'Problem');
+    const cost = new ExactDecimal('10.01');
+    const costAtDestination = proportionalAmount(cost, 2, 3);
+    assert.equal((await balance(variant.id)).transit, 0);
+    const final = await balance(variant.id, destination.id);
+    assert.deepEqual([final.onHand, final.transit, final.carryingValue.toFixed()], [2, 0, costAtDestination.toFixed()]);
+    const ledger = await db.financeJournal.findMany({ where: { shopId, sourceType: 'stock_transfer', sourceId: draft.id },
+        include: { lines: { include: { account: true } } } });
+    assert.equal(ledger.length, 4);
+    const value = event => ledger.filter(row => row.eventType === event).flatMap(row => row.lines)
+        .reduce((sum, row) => sum.plus(row.debit), new ExactDecimal(0)).toFixed();
+    assert.equal(value('dispatch'), cost.toFixed());
+    assert.equal(value('receive'), costAtDestination.toFixed());
+    assert.equal(value('close_short'), cost.minus(costAtDestination).toFixed());
+    const movements = await json(await request(route('inventory/movements') + '?' + new URLSearchParams({ q: draft.id }), owner),
+        200, 'StockMovementListResponse');
+    assert.equal(movements.length, 6);
+    assert.ok(movements.every(move => move.sourceRef.id === draft.id));
+    assert.equal(await db.outboxEvent.count({ where: { shopId, eventType: 'inventory.updated', payload: { path: ['resourceId'], equals: final.id } } }), 2);
+});
+
+test('SC2-D01 and SC2-C05-WAREHOUSE: dispatch and archive of an empty receiving warehouse cannot both win', async () => {
+    await openPeriod();
+    const { variants: [variant] } = await product();
+    const target = await warehouse('Kho đích kiểm khóa');
+    await tx(t => recordStockMovement(t, receipt(variant.id, 1, '3.01')));
+    const draft = await json(await mutate(route('inventory/transfers'), owner, {
+        fromWarehouseId: shopA.defaultWarehouseId, toWarehouseId: target.id, lines: [{ variantId: variant.id, quantity: 1 }],
+        reason: 'Kiểm đua xuất và lưu kho',
+    }), 201, 'StockTransferResponse');
+    const path = route('inventory/transfers/' + draft.id);
+    const [dispatch, archive] = await Promise.all([
+        patch(path, warehouseUser, { action: 'dispatch' }, draft.version),
+        mutate(route('warehouses/' + target.id + '/archive'), owner, { expectedVersion: target.version, reason: 'Đua khóa kho đích' }),
+    ]);
+    const current = await json(await request(route('warehouses/' + target.id), owner), 200, 'WarehouseResponse');
+    if (dispatch.status === 200) {
+        const sent = await json(dispatch, 200, 'StockTransferResponse');
+        await json(archive, 409, 'Problem');
+        assert.equal(current.status, 'active');
+        const received = await json(await patch(path, warehouseUser, { action: 'receive', lines: [{ variantId: variant.id, quantity: 1 }] }, sent.version),
+            200, 'StockTransferResponse');
+        assert.equal(received.status, 'completed');
+        assert.equal((await balance(variant.id, target.id)).carryingValue.toFixed(), '3.01');
+    } else {
+        await json(dispatch, 409, 'Problem');
+        await json(archive, 202, 'CommandResponse');
+        assert.equal(current.status, 'archived');
+        assert.equal((await balance(variant.id)).onHand, 1);
+    }
 });

@@ -6,12 +6,16 @@ import { schemaFromContract, SchemaPipe } from '../../http/contracts.js';
 import { ContractOperation } from '../../http/operations.js';
 import { idPipe } from '../../http/query.js';
 import { envelope, noStore, versionedEnvelope } from '../../http/response.js';
+import type { MetaInboundConfig } from '../channels/index.js';
 import type { AuthConfig } from '../workspace/index.js';
 import { OrdersService, type CancelOrder, type ConfirmOrder, type CustomerEvidence, type DraftPatch } from './orders-service.js';
 import type { DraftOrder } from './pricing.js';
 
-export { orderCommands } from './orders-service.js';
+export { createSalesDraft, orderCommands, requireCurrentPaymentPrice } from './orders-service.js';
+export { returnCommands } from './returns.js';
+import { ReturnsController, ReturnsService } from './returns.js';
 export { expireOrdersWithReservations } from './order-expiry.js';
+export { confirmedOrderMarketing } from './marketing.js';
 const draftInput = new SchemaPipe(validator.compile(schemaFromContract('OrderDraft')));
 const patchInput = new SchemaPipe(validator.compile(schemaFromContract('OrderDraftPatch')));
 const evidenceInput = new SchemaPipe(validator.compile(schemaFromContract('CustomerConfirmationRequest')));
@@ -96,9 +100,12 @@ class OrdersController {
 @Module({})
 class OrdersModule {}
 
-export function ordersModule(db?: PrismaClient, config?: AuthConfig): DynamicModule {
+export function ordersModule(db?: PrismaClient, config?: AuthConfig, meta?: MetaInboundConfig): DynamicModule {
     return {
-        module: OrdersModule, controllers: [OrdersController],
-        providers: [{ provide: OrdersService, useFactory: () => new OrdersService(db, config) }],
+        module: OrdersModule, controllers: [OrdersController, ReturnsController],
+        providers: [
+            { provide: OrdersService, useFactory: () => new OrdersService(db, config, meta) },
+            { provide: ReturnsService, useFactory: () => new ReturnsService(db, config) },
+        ],
     };
 }

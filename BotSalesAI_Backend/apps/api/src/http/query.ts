@@ -9,6 +9,9 @@ type ListQuery = {
     categoryId?: string; warehouseId?: string; variantId?: string; customerId?: string; effective?: 'yes';
     channelId?: string; assignedUserId?: string; mode?: 'human' | 'bot' | 'paused';
     from?: string; to?: string; timezone?: string; accountId?: string;
+    state?: string; assignee?: 'me' | 'unassigned'; exception?: 'active'; due?: 'overdue' | 'unscheduled';
+    stage?: 'open' | 'settled';
+    fromDate?: string; toDate?: string; bucket?: 'day' | 'week' | 'month';
 };
 const listParameters = ['Limit', 'Cursor', 'Query', 'StatusFilter', 'Sort'].map(name => openapi.components.parameters[name]);
 const commandKind = openapi.paths['/shops/{shopId}/commands'].get.parameters.find((param: { name?: string }) => param.name === 'kind');
@@ -24,6 +27,8 @@ const queryPipe = listPipe(listParameters);
 const commandQueryPipe = listPipe([...listParameters, commandKind]);
 const productQueryPipe = listPipe([...listParameters, { name: 'categoryId', schema: schemaFromContract('Id') }]);
 const inventoryQueryPipe = listPipe([...listParameters, openapi.components.parameters.WarehouseFilter, openapi.components.parameters.VariantFilter]);
+const stocktakeQueryPipe = listPipe([...listParameters.slice(0, 4), openapi.components.parameters.WarehouseFilter]);
+const transferQueryPipe = listPipe(listParameters.slice(0, 4));
 const ordersQueryPipe = listPipe([...listParameters, openapi.components.parameters.CustomerFilter]);
 const conversationQueryPipe = listPipe([
     ...listParameters, ...['CustomerFilter', 'ChannelFilter', 'AssigneeFilter', 'ConversationMode'].map(name => openapi.components.parameters[name]),
@@ -31,14 +36,28 @@ const conversationQueryPipe = listPipe([
 const promotionFilter = openapi.paths['/shops/{shopId}/promotions'].get.parameters.find((param: { name?: string }) => param.name === 'effective');
 const promotionsQueryPipe = listPipe([...listParameters, promotionFilter]);
 const pageQueryPipe = listPipe(listParameters.slice(0, 2));
+const windowParameters = ['From', 'To', 'Timezone'].map(name => openapi.components.parameters[name]);
+const reportQueryPipe = listPipe(windowParameters);
+const marketingQueryPipe = listPipe(openapi.paths['/shops/{shopId}/marketing-summary'].get.parameters.filter(
+    (parameter: { in: string }) => parameter.in === 'query'));
+const paymentReviewQueryPipe = listPipe([
+    ...listParameters.slice(0, 3), ...openapi.paths['/shops/{shopId}/payment-reviews'].get.parameters.filter(
+        (parameter: { name?: string }) => parameter.name === 'kind' || parameter.name === 'stage'),
+]);
 const ledgerQueryPipe = listPipe([
-    ...listParameters.slice(0, 2), ...['From', 'To', 'Timezone'].map(name => openapi.components.parameters[name]),
+    ...listParameters.slice(0, 2), ...windowParameters,
     { name: 'accountId', schema: schemaFromContract('Id') },
+]);
+const workQueryPipe = listPipe([listParameters[0], listParameters[1], listParameters[2],
+    ...openapi.paths['/shops/{shopId}/work-items'].get.parameters.filter((param: { name?: string }) =>
+        param.name && ['kind', 'state', 'assignee', 'exception', 'due'].includes(param.name)),
 ]);
 const listPipes = {
     general: queryPipe, listCommands: commandQueryPipe, listJobs: commandQueryPipe, listProducts: productQueryPipe,
     inventory: inventoryQueryPipe, orders: ordersQueryPipe, promotions: promotionsQueryPipe, conversations: conversationQueryPipe,
-    page: pageQueryPipe, ledger: ledgerQueryPipe,
+    stocktakes: stocktakeQueryPipe, transfers: transferQueryPipe,
+    page: pageQueryPipe, ledger: ledgerQueryPipe, report: reportQueryPipe, marketing: marketingQueryPipe, work: workQueryPipe,
+    paymentReviews: paymentReviewQueryPipe,
 };
 export const idPipe = new SchemaPipe(validator.compile(schemaFromContract('Id')));
 export const validUuid = (id: string) => /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(id);

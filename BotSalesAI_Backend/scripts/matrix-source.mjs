@@ -140,15 +140,7 @@ export function checkSource({ sources, hashes, plan }) {
                 'R19: listPromotions is a conditional lookup when opening the edit form');
         }
     }
-    const pendingConsent = 'R61/SC2-C07-CONSENT';
-    if (unknownScenarios.includes(pendingConsent) && plan.includes('| Tham chiếu \x60SC2-C07-CONSENT\x60 ở R61 | BE-21 |')) {
-        knownGaps.push({ id: 'SC2-C07-CONSENT', owner: 'BE-21', detail: 'R61 references a missing acceptance fixture' });
-    }
-    for (const gap of unknownScenarios) {
-        if (gap !== pendingConsent || !knownGaps.some(issue => issue.id === 'SC2-C07-CONSENT')) {
-            issues.push('Untracked acceptance gap: ' + gap);
-        }
-    }
+    for (const gap of unknownScenarios) issues.push('Untracked acceptance gap: ' + gap);
 
     const features = indexed(sources.features.features, item => item.id, 'feature catalog');
     const featureRows = indexed(table(plan, '### Toàn bộ tính năng', /^\| [A-H]\d{2} /), row => routeId(row[0]), 'feature matrix');

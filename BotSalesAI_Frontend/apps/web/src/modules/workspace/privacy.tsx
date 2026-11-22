@@ -3,7 +3,7 @@ import { ActionGroup, FieldGroup, FormFields, SectionGrid } from '../../shared/u
 import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, MenuItem, TextField, Typography } from '@mui/material';
-import type { ConsentConfirmation, Customer, PublicConsentChallengeView } from '@botsales/contracts';
+import type { ConsentConfirmation, Customer, PrivacyRequest, PublicConsentChallengeView } from '@botsales/contracts';
 import { request, setCsrfToken } from '@/shared/api/client';
 import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
 import { assertSchema } from '@/shared/api/validation';
@@ -14,14 +14,91 @@ import { useDraftForm } from '@/shared/model/dirty-drafts';
 import { useVersionedDraft } from '@/shared/model/versioned-draft';
 import { DraftConflict } from '@/shared/ui/draft-conflict';
 import { layoutSx } from '@/shared/ui/layout';
-import { PageHeader, Panel, QueryState, DataTable, Pager, Status, MutationButton, EditDialog, ErrorNotice, DetailLine, LookupLoadMore } from '@/shared/ui/components';
+import { PageHeader, Panel, QueryState, DataTable, Pager, Status, MutationButton, EditDialog, ErrorNotice, DetailLine, LookupLoadMore, RouteLink } from '@/shared/ui/components';
+
+function PrivacyApproval({ row, returning, onClose }: { row: PrivacyRequest; returning: boolean; onClose: () => void }) {
+    const { shop } = useScope();
+    const approve = useCommand('approvePrivacyRequest', ['listPrivacyRequests', 'listJobs']);
+    const [confirming, setConfirming] = useState(returning);
+    const [reason, setReason] = useState('');
+    const [verifying, setVerifying] = useState(false);
+    const [verificationError, setVerificationError] = useState<Error | null>(null);
+    const verification = useRef<AbortController | null>(null);
+    const grant = useRef<{ reauthToken: string; expiresAt: string } | null>(null);
+    useEffect(() => () => verification.current?.abort(), []);
+    const busy = verifying || approve.pending;
+    const valid = !confirming || (codePointLength(reason.trim()) >= 5 && codePointLength(reason.trim()) <= 2000);
+    const submit = async () => {
+        if (!valid || busy || verification.current) return;
+        const controller = new AbortController();
+        verification.current = controller;
+        setVerifying(true);
+        setVerificationError(null);
+        try {
+            if (!confirming) {
+                const { data } = await request('stepUp', { body: { action: 'begin', shopId: shop.id, privacyRequestId: row.id }, signal: controller.signal });
+                if (!('authorizationUrl' in data)) throw new Error('Phiên xác minh chưa được mở.');
+                const url = new URL(data.authorizationUrl);
+                if (url.protocol !== 'https:' || url.username || url.password) throw new Error('Địa chỉ xác minh không an toàn.');
+                window.location.assign(url.href);
+                return;
+            }
+            if (grant.current && Date.parse(grant.current.expiresAt) <= Date.now()) grant.current = null;
+            if (!grant.current) {
+                try {
+                    const { data } = await request('stepUp', { body: { action: 'complete' }, signal: controller.signal });
+                    if (!('reauthToken' in data)) throw new Error('Phiên xác minh chưa hoàn tất.');
+                    grant.current = data;
+                } catch (error) {
+                    if (!controller.signal.aborted) setConfirming(false);
+                    throw error;
+                }
+            }
+            setVerifying(false);
+            await approve.execute({ path: { privacyRequestId: row.id }, body: {
+                expectedVersion: row.version, reason: reason.trim(), reauthToken: grant.current.reauthToken,
+            } });
+            onClose();
+        } catch (error) {
+            if (!controller.signal.aborted && error instanceof Error) setVerificationError(error);
+        } finally {
+            verification.current = null;
+            if (!controller.signal.aborted) setVerifying(false);
+        }
+    };
+    return <EditDialog open title="Phê duyệt yêu cầu dữ liệu" onClose={onClose} busy={busy}
+        actions={<MutationButton permission="privacy.manage" variant="contained" busy={busy} disabled={!valid || approve.unresolved}
+            onClick={() => void submit()}>{confirming ? 'Phê duyệt yêu cầu' : 'Xác minh qua tài khoản công ty'}</MutationButton>}>
+        <FormFields>
+            <DetailLine label="Loại yêu cầu">{businessLabel(row.kind)}</DetailLine>
+            {confirming && <TextField label="Lý do phê duyệt" multiline minRows={3} value={reason} onChange={event => setReason(event.target.value)} disabled={busy}/>}
+            <ErrorNotice error={verificationError || approve.error}/>
+        </FormFields>
+    </EditDialog>;
+}
 
 export function PrivacyPage() {
     const { shop } = useScope();
+    const [search, setSearch] = useSearchParams();
+    const approval = search.get('approval');
+    const returning = approval && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(approval) ? approval : null;
     const policy = useApi('getPrivacyPolicy');
-    const requests = useApi('listPrivacyRequests', { query: useListQuery('listPrivacyRequests') });
+    const requestQuery = useListQuery('listPrivacyRequests');
+    const requests = useApi('listPrivacyRequests', { query: returning ? { q: returning } : requestQuery });
     const save = useCommand('updatePrivacyPolicy', ['getPrivacyPolicy']);
     const create = useCommand('createPrivacyRequest', ['listPrivacyRequests']);
+    const [selection, setSelectedRequest] = useState<PrivacyRequest | null>(null);
+    const resumedRequest = returning ? requests.data?.data.find(row => row.id === returning && row.status === 'pending_approval') : undefined;
+    const selectedRequest = selection ?? resumedRequest;
+    const closeApproval = () => {
+        setSelectedRequest(null);
+        if (returning) setSearch(current => {
+            const next = new URLSearchParams(current);
+            next.delete('approval');
+            return next;
+        }, { replace: true });
+    };
+    const canApprove = !__MOCK__ && policy.data?.data.processingEnabled === true;
     const [days, setDays] = useState(''), [note, setNote] = useState(''), [customerId, setCustomer] = useState(''), [kind, setKind] = useState<'export' | 'delete'>('export'), [reason, setReason] = useState(''), [open, setOpen] = useState(false), [daysTouched, setDaysTouched] = useState(false), [noteTouched, setNoteTouched] = useState(false), [policySubmitted, setPolicySubmitted] = useState(false), [policySaved, setPolicySaved] = useState('');
     const canReadCustomers = useCan('customers.read');
     const [customerSearchInput, setCustomerSearchInput] = useState(''), [customerSearch, setCustomerSearch] = useState('');
@@ -56,12 +133,57 @@ export function PrivacyPage() {
                 ...(prepared.patch.note !== undefined ? { jurisdictionNote: prepared.patch.note } : {}),
             } });
             const clean = editor.committed({ version: result.data.version, values: { days: result.data.chatRetentionDays?.toString() || '', note: result.data.jurisdictionNote } }, submitted);
-            setPolicySaved(clean ? 'Đã lưu bản nháp chính sách lưu trữ.' : 'Đã lưu phần thay đổi đã gửi; chỉnh sửa mới vẫn chưa được lưu.');
+            setPolicySaved(clean ? result.data.status === 'active' ? 'Đã lưu chính sách lưu trữ thử nghiệm.' : 'Đã lưu bản nháp chính sách lưu trữ.'
+                : 'Đã lưu phần thay đổi đã gửi; chỉnh sửa mới vẫn chưa được lưu.');
         } catch (error) { editor.failed(error); }
     };
-    return <><PageHeader title="Quyền riêng tư & vòng đời dữ liệu" subtitle="Tách cấu hình nháp với chính sách được duyệt; yêu cầu xóa không tự vượt điều kiện lưu chứng từ."/><SectionGrid columns={{ xs: '1fr', lg: '1fr 1.4fr' }}><Panel title="Chính sách lưu trữ" bodyMode="inset"><QueryState query={policy} pendingProfile="section"><FormFields component="form" ref={policyForm} onSubmit={event => { event.preventDefault(); void savePolicy(); }}><ErrorNotice error={save.error}/><DraftConflict editor={editor} labels={{ days: 'Số ngày lưu hội thoại', note: 'Căn cứ / thị trường áp dụng' }} busy={save.pending}/>{policySaved && <Alert severity="success" role="status">{policySaved}</Alert>}{policy.data && <ActionGroup><Status value={policy.data.data.status}/></ActionGroup>}<TextField label="Số ngày lưu hội thoại" value={days} onBlur={() => setDaysTouched(true)} onChange={e => { setDays(e.target.value); setDaysTouched(true); setPolicySaved(''); }} type="number" inputProps={{ min: 1, max: 36500, step: 1 }} error={showDaysError} helperText={showDaysError ? daysError : 'Nhập số nguyên từ 1 đến 36.500 ngày.'}/><TextField label="Căn cứ / thị trường áp dụng" multiline minRows={4} value={note} onBlur={() => setNoteTouched(true)} onChange={e => { setNote(e.target.value); setNoteTouched(true); setPolicySaved(''); }} error={showNoteError} helperText={showNoteError ? noteError : 'Tối thiểu 5 và tối đa 2.000 ký tự.'}/><MutationButton permission="privacy.manage" type="submit" variant="contained" busy={save.pending} disabled={!policy.data || !editor.dirty || save.pending || !!daysError || !!noteError}>Lưu bản nháp chính sách</MutationButton><Alert severity="info">Không tự chứng nhận tuân thủ pháp luật. Phê duyệt yêu cầu xóa cần xác thực nâng cao của backend; luồng OIDC step-up chưa được xác minh trong frontend này.</Alert></FormFields></QueryState></Panel><Panel title="Yêu cầu của khách" action={<MutationButton permission="privacy.manage" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>}><QueryState query={requests} pendingProfile="section">{requests.data && <><DataTable label="Yêu cầu quyền riêng tư" rows={requests.data.data} rowKey={r => r.id} columns={[
-        { key: 'customer', label: 'Khách', render: r => `Mã khách hàng: ${r.customerId}` }, { key: 'kind', label: 'Yêu cầu', render: r => <Status value={r.kind}/> }, { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> }, { key: 'reason', label: 'Lý do', render: r => r.reason }
-    ]}/><Pager page={requests.data.page}/></>}</QueryState></Panel></SectionGrid><ConsentManagement customers={customers.data?.data || []} canReadCustomers={canReadCustomers} shopId={shop.id} />
+    return <>
+        <PageHeader title="Quyền riêng tư & vòng đời dữ liệu" subtitle="Quản lý thời hạn lưu dữ liệu và yêu cầu của khách."/>
+        <SectionGrid columns={{ xs: '1fr', lg: '1fr 1.4fr' }}>
+            <Panel title="Chính sách lưu trữ" bodyMode="inset">
+                <QueryState query={policy} pendingProfile="section">
+                    <FormFields component="form" ref={policyForm} onSubmit={event => { event.preventDefault(); void savePolicy(); }}>
+                        <ErrorNotice error={save.error}/>
+                        <DraftConflict editor={editor} labels={{ days: 'Số ngày lưu hội thoại', note: 'Căn cứ / thị trường áp dụng' }} busy={save.pending}/>
+                        {policySaved && <Alert severity="success" role="status">{policySaved}</Alert>}
+                        {policy.data && <ActionGroup><Status value={policy.data.data.status}/></ActionGroup>}
+                        <TextField label="Số ngày lưu hội thoại" value={days} onBlur={() => setDaysTouched(true)}
+                            onChange={e => { setDays(e.target.value); setDaysTouched(true); setPolicySaved(''); }} type="number"
+                            inputProps={{ min: 1, max: 36500, step: 1 }} error={showDaysError} helperText={showDaysError ? daysError : 'Nhập số nguyên từ 1 đến 36.500 ngày.'}/>
+                        <TextField label="Căn cứ / thị trường áp dụng" multiline minRows={4} value={note} onBlur={() => setNoteTouched(true)}
+                            onChange={e => { setNote(e.target.value); setNoteTouched(true); setPolicySaved(''); }} error={showNoteError}
+                            helperText={showNoteError ? noteError : 'Tối thiểu 5 và tối đa 2.000 ký tự.'}/>
+                        <MutationButton permission="privacy.manage" type="submit" variant="contained" busy={save.pending}
+                            disabled={!policy.data || !editor.dirty || save.pending || !!daysError || !!noteError}>
+                            {__MOCK__ ? 'Lưu bản nháp chính sách' : 'Lưu chính sách'}
+                        </MutationButton>
+                        {!canApprove && <Alert severity="info">Phê duyệt yêu cầu xóa cần xác thực nâng cao của backend và chính sách đang hiệu lực.</Alert>}
+                    </FormFields>
+                </QueryState>
+            </Panel>
+            <Panel title="Yêu cầu của khách" action={<MutationButton permission="privacy.manage" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>}>
+                <QueryState query={requests} pendingProfile="section">
+                    {requests.data && <>
+                        <DataTable label="Yêu cầu quyền riêng tư" rows={requests.data.data} rowKey={r => r.id} columns={[
+                            { key: 'customer', label: 'Khách', render: r => `Mã khách hàng: ${r.customerId}` },
+                            { key: 'kind', label: 'Yêu cầu', render: r => <Status value={r.kind}/> },
+                            { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> },
+                            { key: 'reason', label: 'Lý do', render: r => r.reason },
+                            ...(canApprove || requests.data.data.some(r => r.jobId) ? [{
+                                key: 'action', label: 'Thao tác', render: (r: PrivacyRequest) => r.jobId
+                                    ? <RouteLink to={`/s/${shop.id}/jobs/${r.jobId}`}>Theo dõi công việc</RouteLink>
+                                    : canApprove && r.status === 'pending_approval'
+                                        ? <MutationButton permission="privacy.manage" onClick={() => setSelectedRequest(r)}>Phê duyệt</MutationButton>
+                                        : null,
+                            }] : []),
+                        ]}/>
+                        <Pager page={requests.data.page}/>
+                    </>}
+                </QueryState>
+            </Panel>
+        </SectionGrid>
+        {selectedRequest && canApprove && <PrivacyApproval key={selectedRequest.id} row={selectedRequest} returning={returning === selectedRequest.id} onClose={closeApproval}/>}
+        <ConsentManagement customers={customers.data?.data || []} canReadCustomers={canReadCustomers} shopId={shop.id} />
  <EditDialog open={open} title="Yêu cầu dữ liệu cá nhân" onClose={() => setOpen(false)} busy={create.pending} actions={<Button variant="contained" disabled={!customerId || codePointLength(reason.trim()) < 5 || create.pending} onClick={async () => { try {
         await create.execute({ body: { kind, customerId, reason } });
         setOpen(false);
@@ -153,7 +275,7 @@ export function ConsentConfirmationPage() {
     const [params] = useSearchParams();
     const location = useLocation();
     const navigate = useNavigate();
-    const token = params.get('token') || '';
+    const token = new URLSearchParams(location.hash.slice(1)).get('token') || params.get('token') || '';
     const [challenge, setChallenge] = useState<PublicConsentChallengeView | null>(() => savedConsentChallenge((location.state as { consentChallenge?: unknown } | null)?.consentChallenge));
     const [confirmation, setConfirmation] = useState<ConsentConfirmation | null>(null);
     const [error, setError] = useState<Error | null>(null);

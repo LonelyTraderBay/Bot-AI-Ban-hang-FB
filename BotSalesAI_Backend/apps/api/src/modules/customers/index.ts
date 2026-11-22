@@ -5,7 +5,7 @@ import { AddressController, CustomersController, ServiceCaseController } from '.
 import { CustomersService } from './customers-service.js';
 
 export { customerCommands } from './customers-service.js';
-export { customerForChannelIdentity, customerInShop, customerView, snapshotAddress, addressSnapshotView, type AddressInput } from './customer-data.js';
+export { addressView, customerForChannelIdentity, customerInShop, customerView, snapshotAddress, addressSnapshotView, type AddressInput } from './customer-data.js';
 
 @Module({})
 class CustomersModule {}

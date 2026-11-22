@@ -59,6 +59,11 @@ async function productInShop(tx: Prisma.TransactionClient, shopId: string, produ
 
 export const skuKey = (value: string) => value.trim().normalize('NFC').toLowerCase();
 
+export async function sellableVariantBySku(tx: Prisma.TransactionClient, shopId: string, sku: string) {
+    const candidate = await tx.variant.findUnique({ where: { shopId_skuKey: { shopId, skuKey: skuKey(sku) } }, select: { id: true } });
+    return candidate ? (await sellableVariants(tx, shopId, [candidate.id]))[0] : undefined;
+}
+
 export function sellableVariants(tx: Prisma.TransactionClient, shopId: string, ids: string[]) {
     return tx.variant.findMany({
         where: { shopId, id: { in: ids }, active: true, archivedAt: null, product: { status: 'active' } },

@@ -6,8 +6,8 @@ const operationKinds: Readonly<Record<string, JobKind>> = {
     createProductImport: 'import', commitProductImport: 'import',
     importBankStatement: 'import', importCODStatement: 'import',
     createExport: 'export', submitKnowledgeReview: 'knowledge_index',
-    createEvaluation: 'evaluation', approvePrivacyRequest: 'privacy',
-    testAIConnection: 'connection_test', checkChannelHealth: 'connection_test',
+    createEvaluation: 'evaluation', publishBotConfig: 'evaluation', approvePrivacyRequest: 'privacy',
+    testAIConnection: 'connection_test', checkChannelHealth: 'connection_test', testDevice: 'connection_test',
 };
 const { operations } = JSON.parse(readFileSync(new URL('operation-index.json', contractDirectory), 'utf8')) as {
     operations: { operationId: string; permission?: string }[];

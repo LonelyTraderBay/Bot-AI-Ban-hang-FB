@@ -36,6 +36,22 @@ function snapshot() {
     ]);
 }
 
+test('database sessions normalize timestamps to UTC and preserve other connection options', async () => {
+    const url = new URL(connectionString);
+    url.searchParams.set('options', '-c timezone=Asia/Bangkok -c application_name=botsales-timezone-test');
+    const isolated = createDatabaseClient(url.href);
+    const instant = new Date('2026-11-21T15:30:12.123Z');
+    try {
+        const [result] = await isolated.$queryRaw`
+            SELECT current_setting('TimeZone') AS zone, current_setting('application_name') AS application,
+                   ${instant}::timestamp::timestamptz AS instant
+        `;
+        assert.deepEqual(result, { zone: 'UTC', application: 'botsales-timezone-test', instant });
+    } finally {
+        await isolated.$disconnect();
+    }
+});
+
 test('P0 seed replay preserves the two shops, warehouse IDs, memberships and roles', async () => {
     const beforeSeed = await snapshot();
     const [shops, users, memberships, categories] = beforeSeed;

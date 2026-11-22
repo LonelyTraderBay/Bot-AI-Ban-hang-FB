@@ -34,7 +34,7 @@ Prisma CLI dùng `MIGRATION_DATABASE_URL` cho migration. API và seed dùng `DAT
 | Kiểm tra | Hành vi |
 |---|---|
 | `GET /api/v2/health/live` | 200 và `{"status":"ok"}` |
-| `GET /api/v2/health/ready` | Truy vấn bảng `shops` bằng kết nối runtime. PostgreSQL hoặc schema chưa sẵn sàng trả 503 `SERVICE_UNAVAILABLE`. Khi truy vấn chạy lại thành công, endpoint trả 200. |
+| `GET /api/v2/health/ready` | Kiểm PostgreSQL đã rời chế độ phục hồi, phiên runtime ở chế độ đọc/ghi và truy vấn được bảng `shops`. Trả 503 `SERVICE_UNAVAILABLE` nếu bất kỳ điều kiện nào chưa đạt. |
 | `GET /api/v2/health/ready?unknown=value` | 400 và `VALIDATION_FAILED` dưới dạng `application/problem+json` theo schema `Problem`. |
 | Endpoint chưa bật | 404 với `Problem`. Phản hồi có `X-Request-Id`; lỗi dùng cùng giá trị cho trường `requestId`. |
 
@@ -102,14 +102,34 @@ Chạy `npm run test:inventory` để kiểm tồn, lịch sử kho, giữ hàng
 
 `npm run test:finance` kiểm sổ kép, mở sổ, thu theo bằng chứng và đối ứng kho. `npm run test:finance:browser` kiểm R15, R19 và R48 với PostgreSQL fixture và Firefox HTTPS. Phiếu tài chính ghi vào kỳ mở. Bằng chứng thu/hoàn trong các bộ kiểm là bản ghi tổng hợp. Ledger trả số tổng theo cả cửa sổ trước khi phân trang.
 
+`npm run test:orders` cũng kiểm nhận việc, lấy và đóng gói, bàn giao, sự kiện giao, kiểm hàng trả từng phần, phiên bản policy và thông báo. `npm run test:fulfillment:browser` chạy luồng R39–R43 với HTTPS, PostgreSQL và Redis fixture. Bộ kiểm bật `NOTIFICATION_FIXTURE_ADAPTER=1` riêng cho phiên thử. Adapter yêu cầu OIDC loopback P0 và nhận endpoint Web Push tổng hợp tại `https://push-fixture.invalid`. Kết quả adapter là dữ liệu thử cục bộ. Dữ liệu hãng giao và thông báo đến thiết bị thực được kiểm ở môi trường BE-22 sau khi cấp cấu hình.
+
+`npm run test:procurement` kiểm duyệt mua theo phiên bản, gửi thử, đối chiếu kết quả và nhận từng phần. `npm run test:procurement:browser` kiểm R44–R47 và R38 qua Firefox HTTPS. `PROCUREMENT_FIXTURE_ADAPTER=1` bật cổng gửi thử trong phiên OIDC loopback. Chứng từ nhận và xác nhận bên bán dùng dữ liệu tổng hợp trên cơ sở fixture.
+
+`npm run test:finance` kiểm CSV sao kê, quyền và token xem trước, một job cho mỗi đợt, phân bổ từng phần, phí COD thực tế, xác minh thu/hoàn R65 và khóa kỳ có phê duyệt. `npm run test:reconciliation:browser` kiểm nhập CSV, tra job, ghép công nợ, R65, khóa kỳ và báo cáo qua Firefox HTTPS cùng Redis fixture. Biểu mẫu ngân hàng và COD lấy từ bộ định dạng tổng hợp trong kit. Sổ ghi tiền khi đối chiếu theo chứng từ, và lưu liên kết từ từng khoản phân bổ về giao dịch, công nợ và bút toán.
+
+`npm run test:inbox` kiểm kết nối Messenger thử nghiệm, sự kiện lặp và lệch thứ tự, tiếp quản, tệp riêng tư và duyệt tri thức. `npm run test:inbox:browser` chạy luồng với Firefox HTTPS và Redis fixture. Adapter Messenger thử bật riêng bằng `MESSENGER_FIXTURE_ADAPTER=1` trong cấu hình OIDC loopback.
+
+`npm run test:ai` kiểm kết nối thử nghiệm, hạn mức theo ngày của shop, phòng thử, đánh giá gắn phiên bản và xử lý hội thoại bằng worker. `npm run test:ai:browser` kiểm R26, R27, R28 và R30 trên Firefox HTTPS. Cổng thử yêu cầu `AI_FIXTURE_ADAPTER=1` và OIDC loopback. Ở R30 chọn Cổng AI thử nghiệm, model `synthetic-model`, dùng giá trị tổng hợp dạng `fixture-<chuỗi ngẫu nhiên>`, rồi chạy kiểm kết nối. Ở R28 dùng bộ ca `botsales-fixture-v1`. Phòng thử hỗ trợ `SKU <mã>`, `TỒN <mã>`, `FAQ <cụm từ>` và `NHÁP <mã> <số lượng>`. Cổng thử tính một đơn vị tiền cấu hình cho lần chạy được chấp nhận. Đơn nháp trong hộp thư sử dụng quy trình xác nhận đơn chung của Orders.
+
+`npm run test:operations` kiểm vai trò, phê duyệt, giới hạn gửi tự động, bản tin và báo cáo. Chạy `npm run test:operations:browser` sau suite này để mở các hồ sơ đã tạo trên Firefox HTTPS. Để bật bản tin nội bộ ở môi trường thử, đặt `OWNER_DIGEST_LOCAL_HOUR` từ `0` đến `23` và bật chính sách thông báo với chủ shop trong danh sách người nhận. Worker ghi mỗi bản tin của một ngày địa phương một lần. Dấu thời gian kiểm worker hết hiệu lực sau 30 giây.
+
+Để đề nghị một giới hạn, người có quyền gửi `createApproval` cho `budget_policy` với action `budget.change.daily`, `budget.change.monthly` hoặc `budget.change.per_order`. Dòng đầu của `reason` là `LIMIT <số tiền> <tiền tệ>`, dòng sau ghi lý do. `intentHash` là SHA-256 hex của chuỗi JSON mảng `[action, shopId, budgetPolicyId, resourceVersion, amount, currency]`, trong đó `amount` là chuỗi thập phân dương bỏ số 0 thừa ở sau dấu thập phân. Kiểm số tiền và kỳ trên phê duyệt trước khi người có quyền khác quyết định. Gửi mã phê duyệt trong `updateBudgetPolicy` với đúng số tiền, kỳ và phiên bản. Hạn mức AI và thông báo thử dùng kỳ ngày và tính một đơn vị cấu hình trên mỗi lần thử được ghi.
+
+Ủy quyền đơn mua được tạo ở trạng thái tạm dừng. Sau khi kích hoạt, cập nhật quy tắc đã lưu với cặp mã ngân sách và ủy quyền có cùng phạm vi. Khoản ngân sách giữ trước khi gửi được chốt khi adapter nhận hoặc khi có bằng chứng nhà cung cấp, giữ chờ khi kết quả chưa rõ và giải phóng khi kiểm quyền chặn trước lúc gửi. Phạm vi tạm dừng shop dùng `automationVersion` từ `getBotConfig`.
+
+`npm run test:privacy` kiểm mở shop, consent, step-up, pháp lý giữ chứng từ và tải tệp xuất. `npm run test:privacy:browser` chạy Firefox HTTPS với PostgreSQL và Redis fixture. Suite tự cấp mật khẩu ngẫu nhiên cho phiên thử. Khi chạy thủ công, `P0_STEP_UP_PASSWORD` cần ít nhất 16 ký tự và chỉ dùng với IdP loopback. `PRIVACY_FIXTURE_ACTIONS=1` cho phép chủ shop thử phê duyệt sau khi lưu chính sách trên dữ liệu tổng hợp. Bản xuất có hạn 24 giờ, đường dẫn đọc tối đa 5 phút và kiểm lại quyền mỗi lần tải. [Kết quả BE-21](BACKEND_PLAN.md#kết-quả-kiểm-be-21)
+
 - `npm run lint` kiểm lint và ranh giới workspace. Module nghiệp vụ sử dụng `index` công khai của module khác.
 - `npm run typecheck` kiểm TypeScript, `npm run build` sinh API ở `apps/api/dist/`.
 - `npm test` chạy các ca HTTP và ca đối chứng của ma trận trên bản build.
 - `npm run test:postgres` chạy các ca tích hợp với PostgreSQL đã migrate và seed. Dùng database fixture riêng cho suite.
-- `bash scripts/verify-postgres.sh` kiểm từ database trống, lặp migration, kiểm schema và seed, thử dừng PostgreSQL, kiểm OIDC qua HTTPS, quyền workspace, catalog, worker, SSE và job. Script dùng project Compose, volume và chứng thư thử riêng. Các cổng `55432`, `55433`, `56379`, `5173` và `9443` cần trống.
+- `bash scripts/verify-postgres.sh` kiểm từ database trống, lặp migration, kiểm schema và seed, thử dừng PostgreSQL, kiểm OIDC qua HTTPS, quyền workspace, kho tệp S3, catalog, worker, SSE và job. Script dùng project Compose, volume và chứng thư thử riêng. Bước kho tệp chạy trên Linux x64, tải SeaweedFS 4.54 theo SHA-256, khởi động bucket loopback dùng một lần và lưu log `test-results/backend/object-storage-ci.txt`. Các cổng `55432`, `55433`, `56379`, `5173`, `9443`, `28333`, `29333`, `29340` và `28888` cần trống.
 - `npm run verify:matrix` đọc ma trận từ kế hoạch và hợp đồng chuẩn trong kit, rồi dò controller đã đăng ký trên bản build. Khi bật operation sản phẩm, cập nhật `api-scope.json` với ID operation, ID ca và tệp kiểm thử tương ứng. Gắn `ContractOperation` cho handler sản phẩm để đối chiếu cùng method/path của OpenAPI.
 - `npm run verify` chạy lint, kiểm ranh giới, validate Prisma, generate, build, ma trận và các ca kiểm dùng được khi chưa có DB. CI bổ sung kiểm PostgreSQL riêng và lưu báo cáo ma trận gắn SHA checkout và baseline hợp đồng. [Workflow backend](../.github/workflows/backend.yml)
 
 ### Khôi phục migration
 
 `npm run db:migrate` áp dụng migration tiến tới. Giữ SQL đã áp dụng và thêm migration sửa tiếp khi cần. Với môi trường có dữ liệu, lưu backup trước migration và kiểm khả năng restore ở môi trường riêng. Database fixture có thể dựng lại trong một project và volume mới.
+
+Chạy `npm run test:load:local` trên PostgreSQL fixture để đo đọc, cách ly shop và tranh cùng ý định. Quy trình đóng gói, kiểm staging, phục hồi và quay lui nằm trong [runbook](infra/RELEASE_RUNBOOK.md).

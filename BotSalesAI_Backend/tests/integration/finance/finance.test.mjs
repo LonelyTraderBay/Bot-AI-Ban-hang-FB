@@ -7,12 +7,17 @@ import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
 import { fixtureAccounts } from '../../../apps/api/dist/modules/finance/account-policy.js';
-import { localAccountingDate } from '../../../apps/api/dist/modules/finance/index.js';
-import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
+import { bookInspectedReturn, financeJobHandlers, localAccountingDate } from '../../../apps/api/dist/modules/finance/index.js';
+import { manualCarrierId } from '../../../apps/api/dist/modules/finance/debts.js';
+import { periodIntent } from '../../../apps/api/dist/modules/finance/period-data.js';
+import { readAuthConfig, requireShopAccess } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
+import { runJob } from '../../../apps/api/dist/platform/jobs/index.js';
+import { ExactDecimal } from '../../../apps/api/dist/platform/money/index.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
 import { fixtureWriter, orderConversation, quoteEvidenceFixture } from '../orders/fixtures.mjs';
+import { deliveredDebt, independentReceipt } from './fixtures.mjs';
 
 const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit/contracts/openapi.json', import.meta.url)));
 const validator = createContractValidator(components.schemas);
@@ -362,4 +367,260 @@ test('SC2-E05: prepay uses verified observations, partial totals and one receipt
     assert.deepEqual(collectedOrder.amountDue, money('0'));
     assert.deepEqual(collectedOrder.cashReceived, money('0'));
     assert.equal(await db.financeJournal.count({ where: { shopId, sourceId: collected.id } }), 0);
+});
+
+test('SC2-C06-FINANCE and SC2-E07: reports use posted sources, and versioned closing requires one current approval to reopen', async () => {
+    const shop = await openingShop();
+    const { id: shopId } = shop;
+    const period = await ensurePeriod(shop, today);
+    const [bank, cash, inventory, capital, sales, costs, expenses] = await Promise.all([
+        'bank', 'cash', 'inventory', 'owner_capital', 'sales', 'cost_of_goods', 'operating_expense',
+    ].map(account => fixedAccount(account, shop)));
+    const draft = (debit, credit, amount) => send('journals', {
+        sourceType: 'manual_report_proof', sourceId: randomUUID(), effectiveDate: today,
+        reason: 'Chứng từ kiểm thử báo cáo', lines: lines(debit, credit, amount, shop),
+    }, { shop }).then(response => json(response, 201, 'JournalResponse'));
+    const post = journal => send('journals/' + journal.id + '/post', { expectedVersion: journal.version }, { shop })
+        .then(response => json(response, 202, 'CommandResponse'));
+    const closePath = 'periods/' + period.id + '/close';
+    const postDraft = await draft(inventory, capital, '500000');
+    const pending = await json(await request(path('periods/' + period.id, shop)), 200, 'AccountingPeriodResponse');
+    assert.deepEqual(pending.blockingIssues, ['Còn bút toán nháp.']);
+    await json(await send(closePath, { expectedVersion: period.version }, { shop }), 409, 'Problem');
+    await post(postDraft);
+    const deposit = await draft(bank, sales, '249000');
+    await post(deposit);
+    await post(await draft(costs, inventory, '169000'));
+    const from = new Date(Date.now() - 86400000).toISOString();
+    const to = new Date(Date.now() + 86400000).toISOString();
+    const window = '?' + new URLSearchParams({ from, to, timezone: shop.timezone });
+    const read = (resource, schema) => request(path(resource, shop)).then(response => json(response, 200, schema));
+    const profit = await read('finance/profit-loss' + window, 'ProfitLossResponse');
+    assert.deepEqual(profit.grossProfit, money('80000', shop));
+    assert.ok(profit.sourceJournalIds.includes(deposit.id));
+    await post(await draft(expenses, bank, '50000'));
+    const transfer = await draft(cash, bank, '12000');
+    await post(transfer);
+    const cashflow = await read('finance/cashflow' + window, 'CashflowResponse');
+    assert.deepEqual(cashflow.receipts, money('249000', shop));
+    assert.deepEqual(cashflow.disbursements, money('50000', shop));
+    assert.ok(!cashflow.sourceJournalIds.includes(transfer.id));
+    assert.deepEqual((await read('finance/profit-loss' + window, 'ProfitLossResponse')).operatingProfit, money('30000', shop));
+    const trial = await read('finance/trial-balance' + window, 'TrialBalanceResponse');
+    assert.equal(trial.balanced, true);
+    assert.deepEqual(trial.totalDebit, trial.totalCredit);
+    const balance = await read('finance/balance-sheet?atDate=' + today, 'BalanceSheetResponse');
+    assert.equal(balance.balanced, true);
+    assert.deepEqual(balance.assets, money('530000', shop));
+    assert.deepEqual(balance.retainedProfit, money('30000', shop));
+    assert.ok((await read('reports', 'ReportSummaryResponse')).availableReports.includes('profit_loss'));
+    await json(await request(path('finance/profit-loss' + window, shop), other), 404, 'Problem');
+    const close = { expectedVersion: period.version };
+    const closeKey = randomUUID();
+    const closed = await json(await send(closePath, close, { shop, key: closeKey }), 202, 'CommandResponse');
+    assert.equal((await json(await send(closePath, close, { shop, key: closeKey }), 202, 'CommandResponse')).id, closed.id);
+    await json(await send('journals', { sourceType: 'manual', sourceId: randomUUID(), effectiveDate: today,
+        reason: 'Kiểm ghi lùi ngày', lines: lines(bank, capital, '100', shop) }, { shop }), 409, 'Problem');
+    const current = await db.accountingPeriod.findUniqueOrThrow({ where: { shopId_id: { shopId, id: period.id } } });
+    const approval = await json(await send('approvals', { action: 'finance.period.reopen', resource: { type: 'accounting_period', id: period.id },
+        resourceVersion: current.version, intentHash: periodIntent(current), reason: 'Cần bổ sung bút toán kỳ đã khóa' }, { shop }), 201, 'ApprovalResponse');
+    const reopenPath = 'periods/' + period.id + '/reopen';
+    const input = { expectedVersion: current.version, approvalId: approval.id, reason: 'Điều chỉnh theo chứng từ nguồn' };
+    await json(await send(reopenPath, input, { shop }), 409, 'Problem');
+    await json(await send('approvals/' + approval.id + '/decision', { expectedVersion: approval.version, intentHash: approval.intentHash,
+        decision: 'approve', reason: 'Đã kiểm đúng kỳ cần mở lại' }, { shop }), 200, 'ApprovalResponse');
+    await json(await send(reopenPath, input, { shop }), 202, 'CommandResponse');
+    assert.equal((await read('approvals/' + approval.id, 'ApprovalResponse')).status, 'consumed');
+    assert.equal((await read('periods/' + period.id, 'AccountingPeriodResponse')).state, 'open');
+    assert.equal(await db.auditEntry.count({ where: { shopId, action: 'closeAccountingPeriod', resourceId: period.id } }), 1);
+});
+
+test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, partial allocation and actual COD fee preserve source identity', async () => {
+    const shop = await openingShop();
+    const { id: shopId, currency } = shop;
+    const period = await ensurePeriod(shop, today);
+    const at = new Date();
+    const bank = await fixedAccount('bank', shop);
+    const buyer = await admin.customer.create({ data: { shopId, displayName: 'Khách đối chiếu tổng hợp' } });
+    const same = await deliveredDebt(admin, db, shop, buyer.id, at);
+    const independent = await deliveredDebt(admin, db, shop, buyer.id, at);
+    const evidence = await admin.paymentEvidence.create({ data: {
+        shopId, orderId: same.order.id, kind: 'carrier_collection', amount: '249000', reference: 'CARRIER-COLLECT-' + randomUUID(),
+        currency, verifiedAt: at, observedAt: at,
+    } });
+    await json(await send('orders/' + same.order.id + '/pay', { expectedVersion: same.order.version, method: 'external', amount: money('249000', shop),
+        reference: evidence.reference, evidenceRef: evidence.id, reason: 'Chứng từ khách trả cho hãng giao hàng' }, { shop }), 202, 'CommandResponse');
+    const separateReceipt = await independentReceipt(admin, db, shop, independent.order.id, at, today, 'OBSERVED-OTHER-' + randomUUID());
+    const priorAccount = await admin.financeAccount.create({ data: {
+        shopId, group: 'asset', code: 'BANK-' + randomUUID().slice(0, 8), name: 'Tài khoản ngân hàng cũ',
+    } });
+    const priorOrder = await admin.salesOrder.create({ data: { shopId, customerId: buyer.id, warehouseId: shop.defaultWarehouseId,
+        paymentMethod: 'prepay', total: '50000', currency, notes: '' } });
+    const priorReceipt = await independentReceipt(admin, db, shop, priorOrder.id, at, today, 'BANK-PRIOR-' + randomUUID(), priorAccount.id);
+    const get = (resource, schema, expect = 200) => request(path(resource, shop)).then(response => json(response, expect, schema));
+    const post = (resource, body, schema, expect = 200, key) => send(resource, body, { shop, key }).then(response => json(response, expect, schema));
+    const formats = await get('finance/statement-formats', 'StatementFormatListResponse');
+    assert.deepEqual(formats.map(format => format.kind), ['bank', 'cod']);
+    assert.equal(formats[1].resourceOptions[0].id, manualCarrierId);
+    const handlers = financeJobHandlers();
+    const authorize = async (tx, job, permission) => Boolean(await requireShopAccess(tx, job.actorId, job.shopId, permission));
+    async function ingest(kind, data, accountOrCarrierId, expectedCounts) {
+        const form = new globalThis.FormData();
+        form.set('purpose', kind + '_statement');
+        form.set('resourceId', accountOrCarrierId);
+        form.set('file', new globalThis.Blob([data], { type: 'text/csv' }), kind + '-statement.csv');
+        const file = await json(await request(path('uploads', shop), owner, { method: 'POST', body: form,
+            headers: { origin, 'x-csrf-token': owner.csrf, 'idempotency-key': randomUUID() } }), 201, 'FileObjectResponse');
+        assert.equal(file.status, 'ready');
+        const body = { fileId: file.id, accountOrCarrierId, formatId: 'botsales-csv-v1', sourceBatchId: randomUUID() };
+        const preview = await post('finance/statement-import-preview', body, 'StatementPreviewResponse');
+        assert.deepEqual([preview.validRows, preview.invalidRows], expectedCounts);
+        const route = kind === 'bank' ? 'bank-transactions/import' : 'cod-settlements/import';
+        const input = { ...body, validationToken: preview.validationToken };
+        await post(route, { ...input, sourceBatchId: randomUUID() }, 'Problem', 409);
+        const key = randomUUID();
+        const queued = await post(route, input, 'JobResponse', 200, key);
+        assert.equal((await post(route, input, 'JobResponse', 200, key)).id, queued.id);
+        const operation = kind === 'bank' ? 'importBankStatement' : 'importCODStatement';
+        await runJob(db, { shopId, id: queued.id, sourceOperation: operation }, handlers.get(operation), authorize);
+        const result = await get('jobs/' + queued.id, 'JobResponse');
+        assert.equal(result.status, expectedCounts[1] > 0 ? 'partial' : 'succeeded');
+        assert.equal(result.completed, expectedCounts[0]);
+        await post(route, input, 'Problem', 409);
+        return { file, body };
+    }
+    const external = { b: 'BANK-INDEPENDENT-' + randomUUID(), first: 'BANK-COD-1-' + randomUUID(),
+        last: 'BANK-COD-2-' + randomUUID(), deferred: 'BANK-BEFORE-PAY-' + randomUUID() };
+    const line = (id, amount, reference) => [id, amount, currency, 'credit', at.toISOString(), reference].join(',');
+    const csv = ['externalTransactionId,amount,currency,direction,occurredAt,referenceText',
+        line(external.b, '249000', independent.order.id), line(external.first, '100000', same.order.id),
+        line(external.last, '129000', same.order.id), line(separateReceipt.reference, '50000', 'Đã ghi trước khi nhập sao kê'),
+        line(external.deferred, '1000', 'Ghi nhận phiếu sau khi nhập sao kê'),
+        line(priorReceipt.reference, '50000', 'Trùng mã với giao dịch trên tài khoản khác'),
+        line(external.b, '249000', independent.order.id)].join('\n');
+    const imported = await ingest('bank', csv, bank.id, [6, 1]);
+    const previous = await post('finance/statement-import-preview', { ...imported.body, sourceBatchId: randomUUID() }, 'StatementPreviewResponse');
+    assert.equal(previous.validRows, 0);
+    await json(await request(path('uploads/' + imported.file.id, shopB), other), 404, 'Problem');
+    const externalBatchId = 'COD-PROOF-' + randomUUID();
+    const codLine = externalBatchId + ',' + same.order.id;
+    const codImport = await ingest('cod', ['externalBatchId,orderIds', codLine, codLine].join('\n'), manualCarrierId, [1, 1]);
+    const repeatedCod = await post('finance/statement-import-preview', { ...codImport.body, sourceBatchId: randomUUID() }, 'StatementPreviewResponse');
+    assert.deepEqual([repeatedCod.validRows, repeatedCod.invalidRows], [0, 2]);
+    const [cod] = await get('cod-settlements', 'CODSettlementListResponse');
+    assert.deepEqual(cod.grossDue, money('249000', shop));
+    assert.equal((await get('cod-settlements/' + cod.id, 'CODSettlementResponse')).status, 'pending');
+    const banks = await get('bank-transactions', 'BankTransactionListResponse');
+    const bankByRef = new Map(banks.map(transaction => [transaction.externalTransactionId, transaction]));
+    const cases = await get('reconciliation-cases', 'ReconciliationCaseListResponse');
+    const byTransaction = new Map(cases.map(item => [item.transactionId, item]));
+    assert.equal(byTransaction.get(bankByRef.get(separateReceipt.reference).id).state, 'matched');
+    const separateAccountTransaction = bankByRef.get(priorReceipt.reference);
+    assert.equal(byTransaction.get(separateAccountTransaction.id).state, 'unmatched');
+    assert.equal((await db.bankTransaction.findUniqueOrThrow({ where: { shopId_id: { shopId, id: separateAccountTransaction.id } } })).paymentEvidenceId, null);
+    assert.equal(await db.codSettlement.count({ where: { shopId, carrierId: manualCarrierId, externalBatchId } }), 1);
+    assert.equal(await db.financeJournal.count({ where: { shopId, sourceType: 'bank_transaction', sourceId: bankByRef.get(separateReceipt.reference).id } }), 0);
+    const prepay = await admin.salesOrder.create({ data: { shopId, customerId: buyer.id, warehouseId: shop.defaultWarehouseId,
+        paymentMethod: 'prepay', total: '1000', currency, notes: '' } });
+    const prepayProof = await admin.paymentEvidence.create({ data: { shopId, orderId: prepay.id, kind: 'bank_receipt', amount: '1000',
+        currency, reference: external.deferred, observedAt: at, verifiedAt: at } });
+    const incoming = bankByRef.get(external.deferred);
+    assert.equal(incoming.matchState, 'unmatched');
+    await post('orders/' + prepay.id + '/pay', { expectedVersion: prepay.version, method: 'bank_transfer', amount: money('1000', shop),
+        reference: external.deferred, evidenceRef: prepayProof.id, reason: 'Ghi phiếu sau khi nhập sao kê' }, 'CommandResponse', 202);
+    assert.equal((await get('bank-transactions/' + incoming.id, 'BankTransactionResponse')).matchState, 'matched');
+    const [linkedPayment] = await get('payment-reviews?kind=collection&stage=settled&q=' + prepay.id, 'PaymentReviewListResponse');
+    assert.deepEqual(linkedPayment.bankTransactionIds, [incoming.id]);
+    const debts = await get('debts', 'DebtItemListResponse');
+    const debt = debts.find(item => item.source.id === independent.order.id);
+    const bankTx = bankByRef.get(external.b);
+    assert.equal((await get('bank-transactions/' + bankTx.id, 'BankTransactionResponse')).externalTransactionId, external.b);
+    const review = byTransaction.get(bankTx.id);
+    assert.deepEqual(review.suggestedResourceIds, [debt.id]);
+    const matchedPath = 'reconciliation-cases/' + review.id + '/match';
+    const allocation = (amount, expectedVersion = review.version) => ({ transactionId: bankTx.id, expectedVersion,
+        reason: 'Đã xác minh giao dịch và công nợ', allocations: [{ resource: { type: 'debt', id: debt.id }, amount: money(amount, shop) }] });
+    await post(matchedPath, allocation('249001'), 'Problem', 422);
+    const allocKey = randomUUID();
+    const first = await post(matchedPath, allocation('90000'), 'CommandResponse', 202, allocKey);
+    assert.equal((await post(matchedPath, allocation('90000'), 'CommandResponse', 202, allocKey)).id, first.id);
+    await post(matchedPath, allocation('159000'), 'Problem', 412);
+    const afterFirst = await get('reconciliation-cases/' + review.id, 'ReconciliationCaseResponse');
+    assert.equal(afterFirst.state, 'suggested');
+    assert.deepEqual(afterFirst.difference, money('159000', shop));
+    assert.deepEqual((await get('debts/' + debt.id, 'DebtItemResponse')).outstandingAmount, money('159000', shop));
+    await post(matchedPath, allocation('159000', afterFirst.version), 'CommandResponse', 202);
+    assert.equal((await get('reconciliation-cases/' + review.id, 'ReconciliationCaseResponse')).state, 'matched');
+    assert.deepEqual((await get('debts/' + debt.id, 'DebtItemResponse')).outstandingAmount, money('0', shop));
+    const broken = (await get('payment-reviews?kind=collection&stage=open&q=' + external.b, 'PaymentReviewListResponse'))[0];
+    assert.equal(broken.status, 'needs_check');
+    assert.deepEqual(broken.expected, money('249000', shop));
+    assert.deepEqual(broken.verified, money('299000', shop));
+    assert.equal(broken.remaining, null);
+    assert.deepEqual(broken.bankTransactionIds, [bankTx.id, bankByRef.get(separateReceipt.reference).id].sort());
+    assert.ok(broken.workItemId);
+    await post('work-items/' + broken.workItemId + '/claim', { expectedVersion: 1 }, 'WorkItemResponse');
+    const dueAt = new Date(Date.now() + 3600000);
+    await db.workItem.update({ where: { shopId_id: { shopId, id: broken.workItemId } },
+        data: { dueAt, version: { increment: 1 } } });
+    const assigned = (await get('payment-reviews?q=' + independent.order.id, 'PaymentReviewListResponse'))[0];
+    assert.equal(assigned.assigneeUserId, owner.userId);
+    assert.equal(assigned.dueAt, dueAt.toISOString());
+    await post('periods/' + period.id + '/close', { expectedVersion: period.version }, 'Problem', 409);
+    for (const [ref, fee, status] of [[external.first, '12000', 'part_settled'], [external.last, '8000', 'matched']]) {
+        const source = bankByRef.get(ref);
+        const latest = await get('cod-settlements/' + cod.id, 'CODSettlementResponse');
+        const feeEvidence = await admin.codFeeEvidence.create({ data: { shopId, settlementId: cod.id, transactionId: source.id,
+            amount: fee, currency, reference: 'FEE-' + randomUUID(), verifiedAt: at } });
+        const match = { expectedVersion: latest.version, bankTransactionId: source.id, feeEvidenceRef: feeEvidence.id,
+            actualFees: money(fee, shop), reason: 'Đối chiếu phí sau khi hãng trả tiền' };
+        const route = 'cod-settlements/' + cod.id + '/match';
+        await post(route, { ...match, feeEvidenceRef: randomUUID() }, 'Problem', 422);
+        await post(route, match, 'CommandResponse', 202);
+        assert.equal((await get('cod-settlements/' + cod.id, 'CODSettlementResponse')).status, status);
+    }
+    const finalCod = await get('cod-settlements/' + cod.id, 'CODSettlementResponse');
+    assert.deepEqual(finalCod.actualFees, money('20000', shop));
+    assert.deepEqual(finalCod.bankReceived, money('229000', shop));
+    assert.deepEqual(finalCod.difference, money('0', shop));
+    const [complete] = await get('payment-reviews?kind=collection&stage=settled&q=' + same.order.id, 'PaymentReviewListResponse');
+    assert.deepEqual(complete.verified, money('249000', shop));
+    assert.deepEqual(complete.remaining, money('0', shop));
+    assert.equal(complete.bankTransactionIds.length, 2);
+    assert.deepEqual(complete.codSettlementIds, [cod.id]);
+    const order = await get('orders/' + same.order.id, 'OrderResponse');
+    assert.deepEqual(order.cashReceived, money('229000', shop));
+    assert.equal(order.paymentState, 'settled');
+    assert.equal((await db.collectionApplication.aggregate({ where: { shopId }, _sum: { amount: true } }))._sum.amount.toFixed(), '249000');
+    const lockedByReview = await get('periods/' + period.id, 'AccountingPeriodResponse');
+    assert.deepEqual(lockedByReview.blockingIssues, [
+        'Còn giao dịch ngân hàng chưa đối soát trong kỳ.', 'Còn khoản thu hoặc hoàn có chênh lệch cần kiểm trong kỳ.',
+    ]);
+    const returnId = randomUUID();
+    const { refund, credit } = await db.$transaction(tx => bookInspectedReturn(tx,
+        { shopId, sourceId: returnId, at, currency }, same.order, true, new ExactDecimal(9900), new ExactDecimal(0), new ExactDecimal(0)));
+    await admin.orderReturn.create({ data: { shopId, id: returnId, orderId: same.order.id, shipmentId: same.shipment.id,
+        state: 'inspected', reason: 'Hàng đã kiểm nhận trong fixture hoàn', refundObligation: refund, receivableCredit: credit } });
+    const returnOrder = await admin.salesOrder.update({ where: { shopId_id: { shopId, id: same.order.id } },
+        data: { fulfillmentState: 'part_returned', version: { increment: 1 } } });
+    const [refundOpen] = await get('payment-reviews?kind=refund&stage=open&q=' + same.order.id, 'PaymentReviewListResponse');
+    assert.equal(refundOpen.status, 'refund_due');
+    assert.deepEqual(refundOpen.remaining, money('9900', shop));
+    assert.deepEqual(refundOpen.returnIds, [returnId]);
+    const observedRefund = await admin.paymentEvidence.create({ data: { shopId, orderId: same.order.id, currency, kind: 'observed_refund',
+        amount: '9900', reference: 'REFUND-' + randomUUID(), observedAt: at, verifiedAt: at } });
+    await post('orders/' + same.order.id + '/refund', { expectedVersion: returnOrder.version, amount: money('9900', shop),
+        evidenceRef: observedRefund.id, paymentReference: observedRefund.reference, reason: 'Đã kiểm chứng từ hoàn cho khách' }, 'CommandResponse', 202);
+    const [refundSettled] = await get('payment-reviews?kind=refund&stage=settled&q=' + same.order.id, 'PaymentReviewListResponse');
+    assert.deepEqual(refundSettled.remaining, money('0', shop));
+    assert.deepEqual(refundSettled.verified, money('9900', shop));
+    assert.equal(refundSettled.journalIds.length, 2);
+    const from = new Date(Date.now() - 86400000).toISOString();
+    const to = new Date(Date.now() + 86400000).toISOString();
+    const window = '?' + new URLSearchParams({ from, to, timezone: shop.timezone });
+    const cashflow = await get('finance/cashflow' + window, 'CashflowResponse');
+    assert.deepEqual(cashflow.receipts, money('529000', shop));
+    assert.deepEqual(cashflow.disbursements, money('9900', shop));
+    assert.deepEqual((await get('finance/profit-loss' + window, 'ProfitLossResponse')).shippingExpense, money('20000', shop));
+    await json(await request(path('payment-reviews', shop), other), 404, 'Problem');
 });

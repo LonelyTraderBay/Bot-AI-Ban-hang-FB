@@ -70,7 +70,7 @@ export function OperationsPage() {
     return <>
         <PageHeader title="Công việc hôm nay" subtitle="Giao việc → nhận việc → hoàn thành → kiểm tra kết quả."
             actions={<RouteLink to={`/s/${shop.id}/operations/exceptions`}>Ngoại lệ và tác vụ nền</RouteLink>} />
-        <Alert severity="info" sx={layoutSx.notice.afterGap}>Dữ liệu vận hành và trạng thái dịch vụ đang được mô phỏng; chưa xác minh worker hoặc backend thật.</Alert>
+        {__MOCK__ && <Alert severity="info" sx={layoutSx.notice.afterGap}>Dữ liệu vận hành và trạng thái dịch vụ đang được mô phỏng; chưa xác minh worker hoặc backend thật.</Alert>}
         <QueryState query={summary} pendingProfile="section">
             {summary.data && <Stats>
                 <Stat title="Chưa có người nhận" value={summary.data.data.queuedTasks} accent />
@@ -170,7 +170,7 @@ export function DigestsPage() {
 
     return <>
         <PageHeader title="Bản tin & sức khỏe hệ thống" subtitle="Những việc quan trọng cần chủ shop quyết định; không thay thế người trực thực tế." />
-        <Alert severity="info" sx={layoutSx.notice.afterGap}>Đây là dữ liệu mô phỏng. Trạng thái “chưa xác minh” không chứng minh backend, provider hoặc worker đã sẵn sàng.</Alert>
+        {__MOCK__ && <Alert severity="info" sx={layoutSx.notice.afterGap}>Đây là dữ liệu mô phỏng. Trạng thái “chưa xác minh” không chứng minh backend, provider hoặc worker đã sẵn sàng.</Alert>}
         <SectionGrid columns={{ xs: '1fr', lg: '1.5fr 1fr' }}>
             <Panel title="Bản tin điều hành" bodyMode="inset">
                 <QueryState query={list}>

@@ -9,6 +9,11 @@ export interface AuthConfig {
     signingKey: Buffer;
 }
 
+export function usesLocalOidcFixture(config: AuthConfig) {
+    return config.clientId === 'botsales-p0-dev' && new URL(config.appOrigin).hostname === 'localhost' &&
+        new URL(config.issuer).hostname === '127.0.0.1';
+}
+
 function httpsUrl(value: string, variable: string): URL {
     const url = URL.parse(value);
     if (!url || url.protocol !== 'https:' || url.username || url.password || url.search || url.hash) {

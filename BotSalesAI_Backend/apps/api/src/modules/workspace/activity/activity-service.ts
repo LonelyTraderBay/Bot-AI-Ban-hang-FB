@@ -8,7 +8,10 @@ import { visibleJobSources } from '../../../platform/jobs/sources.js';
 import { jobDetails, jobDto } from '../../../platform/jobs/view.js';
 import { accessibleResourceEvents } from '../../../platform/outbox/index.js';
 import { contractDirectory, openapi } from '../../../http/contract-source.js';
+import { generatedFileUrl } from '../../files/index.js';
+import type { AuthConfig } from '../auth/config.js';
 import { membershipCommandKinds } from '../members/activity.js';
+import type { ShopScope } from '../policy/command-scope.js';
 import { readAsSession, requireShopAccess } from '../policy/access.js';
 import { listQuery, paging, validUuid } from '../../../http/query.js';
 
@@ -18,6 +21,15 @@ const { operations } = JSON.parse(readFileSync(new URL('operation-index.json', c
 const commandStatuses: string[] = openapi.components.schemas.Command.properties.status.enum;
 const replayWindowMs = 24 * 60 * 60 * 1000;
 const pageSize = 100;
+
+export function visibleUnknownCommandCount(tx: Prisma.TransactionClient, scope: ShopScope) {
+    if (!scope.permissions.includes('jobs.read')) return Promise.resolve(0);
+    const operationsAllowed = operations.flatMap(({ operationId, permission }) => permission && scope.permissions.includes(permission) ? [operationId] : []);
+    return tx.command.count({ where: { shopId: scope.shopId, actorId: scope.userId, status: 'unknown', OR: [
+        { operationId: { in: operationsAllowed } },
+        { jobs: { some: { actorId: scope.userId, OR: visibleJobSources(scope.permissions) } } },
+    ] } });
+}
 // A command kind becomes readable when its owner has established the source resource policy.
 export type CommandSource = { operationId: string; resourceType: string; scopePermissions?: Readonly<Record<string, string>> };
 const auditSummaries = new Map([
@@ -42,12 +54,19 @@ export class ActivityService {
     private readonly sources: ReadonlyMap<string, string>;
     private readonly scopedSources: readonly CommandSource[];
 
-    constructor(private readonly db?: PrismaClient, sources: readonly CommandSource[] = []) {
+    constructor(private readonly db?: PrismaClient, sources: readonly CommandSource[] = [], private readonly auth?: AuthConfig) {
         this.sources = new Map([
             ...membershipCommandKinds.map(kind => [kind, 'membership'] as const),
             ...sources.map(source => [source.operationId, source.resourceType] as const),
         ]);
         this.scopedSources = sources.filter(source => source.scopePermissions);
+    }
+
+    private async jobView(tx: Prisma.TransactionClient, scope: ShopScope, job: Parameters<typeof jobDto>[0]) {
+        const view = jobDto(job);
+        if (view.status !== 'succeeded' || view.result?.type !== 'file') return view;
+        const downloadUrl = await generatedFileUrl(tx, scope, view.result.id, this.auth);
+        return { ...view, downloadUrl };
     }
 
     private visibleKinds(permissions: readonly string[]) {
@@ -77,6 +96,9 @@ export class ActivityService {
                     actorId: userId, OR: visibleJobSources(sourcePermissions),
                 } } },
                 { eventType: { in: accessibleResourceEvents(permissions) } },
+                ...(permissions.includes('notifications.read') ? [{
+                    eventType: 'notification.updated', payload: { path: ['recipientUserId'], equals: userId },
+                }] : []),
             ],
         };
     }
@@ -172,7 +194,9 @@ export class ActivityService {
                 orderBy: page.orderBy, take: page.limit + 1, include: jobDetails,
             });
             const result = page.result(rows);
-            return { ...result, data: result.data.map(jobDto) };
+            const data = [];
+            for (const job of result.data) data.push(await this.jobView(tx, scope, job));
+            return { ...result, data };
         });
     }
 
@@ -185,7 +209,7 @@ export class ActivityService {
                 include: jobDetails,
             });
             if (!job) throw new NotFoundException();
-            return jobDto(job);
+            return this.jobView(tx, scope, job);
         });
     }
 

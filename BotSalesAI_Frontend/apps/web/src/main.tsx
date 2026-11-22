@@ -3,12 +3,15 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { config as configureZod } from 'zod/v4/core';
 import { theme } from './shared/ui/theme';
 import { SessionProvider } from './app/SessionProvider';
 import { router } from './app/router';
 import './app/i18n';
 import './app/tokens.css';
 import './app/bootstrap.css';
+
+configureZod({ jitless: true });
 const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: true, gcTime: 120000 }, mutations: { retry: false } } });
 async function start() {
     if (__MOCK__) {
