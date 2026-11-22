@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
 import {test,expect} from '@playwright/test';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
@@ -39,7 +39,9 @@ function observeShopRequests(page: import('@playwright/test').Page){
 
 test('product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP',async({page})=>{
     const calls=observeShopRequests(page);
-    await gotoDemo(page,'/s/shop-demo/products/new');
+    const categories=await navigateDemoAndRead(page,new URL('/s/shop-demo/products/new',demoUrl).toString(),
+        response=>response.request().method()==='GET'&&new URL(response.url()).pathname==='/api/v2/shops/shop-demo/categories');
+    expect(categories.status()).toBe(200);
     await expect(page.getByRole('heading',{name:'Thêm sản phẩm',exact:true})).toBeVisible();
     const name=page.getByLabel('Tên sản phẩm');
     const skus=page.getByLabel('SKU');

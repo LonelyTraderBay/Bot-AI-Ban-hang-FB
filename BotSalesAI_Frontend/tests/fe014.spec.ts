@@ -185,10 +185,14 @@ test('FE014.S04 owner manages a paused purchase delegation only after rechecking
     await resume.getByRole('button', { name: 'Kiểm tra để tiếp tục' }).click();
     expect((await resumeWait).status()).toBe(202);
     expect((await rolesRefresh).status()).toBe(200);
+    await expect(resume).toBeHidden();
 
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Cần phê duyệt', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Ủy quyền gửi đơn mua', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Tạo ủy quyền có giới hạn', exact: true }).click();
+    await expect(page.getByRole('table', { name: 'Yêu cầu phê duyệt', exact: true })).toBeVisible();
+    const createButton = page.getByRole('button', { name: 'Tạo ủy quyền có giới hạn', exact: true });
+    await expect(createButton).toBeEnabled();
+    await createButton.press('Enter');
     const create = page.getByRole('dialog', { name: 'Tạo ủy quyền mua hàng' });
     await expect(create.getByRole('combobox', { name: 'Vai trò mua hàng chịu trách nhiệm' })).toBeVisible({ timeout: 30_000 });
     await chooseOption(page, 'Vai trò mua hàng chịu trách nhiệm', /agent-2/);
