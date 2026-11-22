@@ -1,5 +1,9 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Chờ hộp thoại đơn mua trong UI006.C05 · PR #31 · 22/11/2026
+
+Trên head `b81f1b44`, trace của Chromium 8/9 cho thấy ca UI006.C05 bấm nút đóng khi URL vẫn là `/s/shop-demo/purchases`. Sau đó URL chuyển sang `?purchaseId=…`, hộp thoại chi tiết mở và ca kiểm chờ liên kết “Đơn hàng” đến hết thời gian. Selector trước đó khớp cả tiêu đề “Đơn mua mới” và tiêu đề chi tiết. Ca kiểm lấy ID từ phản hồi 201 của `createPurchaseOrder`, chờ hộp thoại chi tiết của đúng ID rồi kiểm hộp thoại đã đóng trước khi điều hướng. Dữ liệu tổng hợp, xác nhận POST, ca phân trang và thời hạn giữ theo nguồn hiện hành. [Job Chromium](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45014635122/job/137184339455) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45014635122/artifacts/14750763974)
+
 ## Ngân sách JavaScript của demo · PR #31 · 22/11/2026
 
 Firefox 9/9 trên head `9724078`, lượt `45013329691` lần 1, đo 559.050 byte gzip cho trang tổng quan demo. Giới hạn trong `demo-preview.spec.ts` là 512.000 byte. Phạm vi sửa là cấu hình build và bộ kiểm hợp đồng dùng chung. Nguồn schema là OpenAPI của kit và bản sinh cho frontend. Các trường hợp kiểm hợp đồng, route và ngưỡng tải giữ theo nguồn hiện hành. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45013329691/job/137180205282)
