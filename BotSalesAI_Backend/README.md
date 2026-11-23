@@ -72,6 +72,20 @@ Thử với `npm run test:oidc` trên DB fixture đã có seed và chạy API qu
 
 Lượt đăng nhập hết hạn sau 10 phút và callback tiêu thụ dữ liệu dùng một lần. Phiên ứng dụng hết hạn sau 8 giờ. Server lưu hash của cookie phiên, đổi phiên khi đăng nhập lại và thu hồi phiên khi logout. Phản hồi phiên dùng quyền từ các preset trong danh mục chuẩn. IdP bên ngoài được cấu hình và nghiệm thu ở BE-22.
 
+## Kiểm bản thử cục bộ với hai shop
+
+Dùng PostgreSQL fixture riêng tên `botsales_be_dev`, Redis riêng trên loopback và cấu hình HTTPS ở trên. Để trống cấu hình Meta, OpenAI, Web Push và Telegram thật. Bộ kiểm sử dụng tài khoản tổng hợp `p0-pilot` và ghi thêm hội thoại, tệp, lệnh và thiết bị thử vào fixture. Dành riêng cơ sở dữ liệu này cho ca pilot vì một số bộ kiểm nền tảng cần dữ liệu seed chuẩn.
+
+```powershell
+$env:P0_LOCAL_PILOT = '1'
+npm run build
+npm run db:migrate
+npm run db:seed
+npm run test:pilot:browser
+```
+
+Bộ kiểm tự mở IdP, API, worker và frontend `dev:live`. Các cổng `9443`, `3000` và `5173` phải trống. Firefox xác nhận truy cập từng shop, phát lại webhook có chữ ký, đọc tệp WAV và lưu bản chép lời, gửi thử và thu hồi thiết bị mô phỏng. Dòng JSON `LOCAL_PILOT_BROWSER_PASSED` ghi kết quả từng shop. Trạng thái tiếp nhận từ adapter mô phỏng xác nhận việc xử lý của worker. Xác nhận trên điện thoại thật thuộc nghiệm thu T070.
+
 ## Chọn cửa hàng và quản lý nhân sự
 
 Vào `https://localhost:5173/login` để kiểm đường dẫn mặc định về `/workspaces`. Danh sách chỉ hiện những shop người dùng có membership hoạt động. Chọn shop để frontend đọc chi tiết và mở khung làm việc của shop. Dữ liệu trang Tổng quan thuộc BE-07.
