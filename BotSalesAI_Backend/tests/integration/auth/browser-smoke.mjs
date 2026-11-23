@@ -25,6 +25,7 @@ import { verifyPrivacyFlow } from '../privacy/browser-cases.mjs';
 import { provisionManualSupplier, verifyProcurementFlow } from '../procurement/browser-cases.mjs';
 import { verifyCommandRecovery, verifyWorkspaceSelection } from '../workspace/browser-cases.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
+import { configureLocalPilot, verifyLocalPilot } from './pilot-cases.mjs';
 
 const require = createRequire(new URL('../../../../BotSalesAI_Frontend/package.json', import.meta.url));
 const { firefox } = require('playwright');
@@ -34,6 +35,7 @@ const run = promisify(execFile);
 let browser;
 let profile;
 const workspace = process.argv.includes('--workspace');
+const pilot = process.argv.includes('--pilot');
 const httpOnly = process.argv.includes('--http-only');
 const measureBrowser = process.argv.includes('--performance');
 const catalog = process.argv.includes('--catalog');
@@ -302,6 +304,10 @@ async function waitForStoredUploads(page) {
 async function smoke() {
     if (!httpOnly) assert.ok(process.env.P0_FIREFOX_TRUST_PROFILE, 'Use a Firefox fixture profile that trusts your local CA');
     assert.equal(process.env.APP_ORIGIN, appOrigin);
+    if (pilot) {
+        assert.deepEqual(process.argv.slice(2), ['--pilot']);
+        configureLocalPilot(process.env);
+    }
     const release = await installedRelease();
     if (httpOnly) assert.ok(release && process.argv.length === 6 && process.argv[5] === '--http-only',
         'Use --release <directory> <manifest-sha256> --http-only');
@@ -341,7 +347,7 @@ async function smoke() {
     let api = startApi();
     if (edge) startEdge(edge, release.root);
     else start('infra/p0/oidc/dev-live.mjs', release ? [release.root] : []);
-    const liveEvents = Boolean(release || catalog || imports || inventory || orders || finance || fulfillment || promotion || procurement ||
+    const liveEvents = Boolean(pilot || release || catalog || imports || inventory || orders || finance || fulfillment || promotion || procurement ||
         reconciliation || inbox || ai || operations || privacy) && Boolean(process.env.REDIS_URL);
     const transports = [metaReply && '../inbox/meta-reply-transport.mjs', openAiModelCheck && '../ai/openai-probe-transport.mjs', webPush && '../notifications/web-push-transport.mjs',
         telegram && '../notifications/telegram-transport.mjs'].filter(Boolean);
@@ -366,6 +372,13 @@ async function smoke() {
         console.log(stdout.trim());
     }
     browser = await firefox.launchPersistentContext(profile, { headless: true });
+    const outside = [];
+    if (pilot) await browser.route('**/*', route => {
+        const url = new URL(route.request().url());
+        if (url.origin === appOrigin || url.origin === issuer) return route.continue();
+        outside.push(url.origin);
+        return route.abort();
+    });
     const page = browser.pages()[0] ?? await browser.newPage();
     if (process.env.OBJECT_STORE_FIXTURE_ADAPTER === '1') await waitForStoredUploads(page);
     page.setDefaultTimeout(20000);
@@ -394,7 +407,7 @@ async function smoke() {
             }
         };
     });
-    const shopFlow = workspace || catalog || imports || inventory || orders || finance || fulfillment || promotion || procurement;
+    const shopFlow = pilot || workspace || catalog || imports || inventory || orders || finance || fulfillment || promotion || procurement;
     const returnPath = shopFlow ? '/workspaces' : '/login';
     await page.goto(appOrigin + '/login?returnTo=' + encodeURIComponent(returnPath));
     const signIn = page.getByRole('button', { name: 'Đăng nhập bằng tài khoản công ty' });
@@ -411,7 +424,7 @@ async function smoke() {
     if (measureBrowser) await reportBrowserTiming(page, 'authenticated-landing');
     assert.equal(new URL(page.url()).pathname, returnPath);
     const sessionBody = await session.json();
-    assert.deepEqual(sessionBody.data.memberships.map(member => member.roles), [['owner']]);
+    assert.deepEqual(sessionBody.data.memberships.map(member => member.roles), pilot ? [['owner'], ['owner']] : [['owner']]);
     const cookie = (await browser.cookies(appOrigin)).find(item => item.name === '__Host-bs_session');
     assert.ok(cookie?.secure && cookie.httpOnly);
     assert.equal(cookie.domain, 'localhost');
@@ -424,6 +437,7 @@ async function smoke() {
     await nextSession;
     await landing.waitFor();
     if (measureBrowser) await reportBrowserTiming(page, 'authenticated-reload');
+    const pilotShops = pilot ? await verifyLocalPilot(page, sessionBody.data) : undefined;
     if (workspace) {
         await verifyWorkspaceSelection(browser, page, cookie);
         await verifyCommandRecovery(page);
@@ -509,6 +523,11 @@ async function smoke() {
     assert.doesNotMatch(log, /\b(access_token|id_token|refresh_token|code_verifier|client_secret)\b/i);
     console.log('Firefox ' + (edge ? 'packaged web via Caddy' : release ? 'packaged web' : 'dev:live') + ' on trusted HTTPS: callback 302, session 200 after reload, logout 204, session 401.');
     console.log('Cookie attributes, separate IdP hostname and process log redaction verified.');
+    if (pilot) {
+        assert.equal(outside.length, 0, 'The pilot browser attempted an external request');
+        console.log(JSON.stringify({ status: 'LOCAL_PILOT_BROWSER_PASSED', scope: 'fixture',
+            shops: pilotShops, callback: 302, reload: 200, ...afterLogout, externalBrowserRequests: outside.length }));
+    }
 }
 
 try {
@@ -519,7 +538,7 @@ try {
     if (/^(apps\/|infra\/|Local HTTPS dependency unavailable)/.test(error.message)) console.error(error.message);
     const browserCase = error.stack?.split('\n').find(line => /browser-(cases|smoke)\.mjs:\d+:\d+/.test(line));
     if (browserCase) console.error(browserCase.trim());
-    if ((fulfillment || promotion || inventoryDocuments || procurement || reconciliation || inbox || metaInbound || ai || operations || privacy || webPush || telegram) && browserCase?.includes('browser-cases.mjs')) {
+    if ((pilot || fulfillment || promotion || inventoryDocuments || procurement || reconciliation || inbox || metaInbound || ai || operations || privacy || webPush || telegram) && (browserCase?.includes('browser-cases.mjs') || pilot)) {
         console.error(error.message.split('\n')[0]);
     }
     process.exitCode = 1;

@@ -1,6 +1,6 @@
 # Kế hoạch triển khai và theo dõi backend BotSales AI
 
-**Phiên bản 1.79 · 23/11/2026.** Mỗi hành vi có một nơi triển khai và bộ ca kiểm theo thao tác. Kế hoạch xác định baseline tích hợp, cách kiểm ma trận tự động và tiêu chí nghiệm thu ở từng mốc. Mục tiêu Enterprise-Grade được đánh giá trên mã, dữ liệu và artifact triển khai có bằng chứng.
+**Phiên bản 1.80 · 23/11/2026.** Mỗi hành vi có một nơi triển khai và bộ ca kiểm theo thao tác. Kế hoạch xác định baseline tích hợp, cách kiểm ma trận tự động và tiêu chí nghiệm thu ở từng mốc. Mục tiêu Enterprise-Grade được đánh giá trên mã, dữ liệu và artifact triển khai có bằng chứng.
 
 **Giai đoạn hiện tại [bản thử cục bộ](#bản-thử-cục-bộ--be-22).** Chủ dự án chốt dùng máy cá nhân trong giai đoạn thử với hai shop tổng hợp. Kiểm tích hợp thật, cam kết SLO/RPO/RTO và phát hành tiếp tục theo điều kiện nghiệm thu BE-22–BE-24.
 
@@ -12,6 +12,7 @@
 - BE-01 và BE-02 đã kiểm chứng. BE-03–BE-21 đã kiểm chứng cục bộ trên PostgreSQL 18.7, Redis 8.0.5 và HTTPS thử nghiệm. Đợt 1 đã chốt 10 việc, đợt 2 đạt 9/10. Ma trận đối chiếu 259 operation đã đăng ký và 2 endpoint health. [Bảng tiến độ](#bảng-theo-dõi) · [Nhật ký và kết quả từng mốc](#nhật-ký-tiến-độ-và-bằng-chứng)
 - Mã hai đợt và bản thử cục bộ đã lên `main` qua PR #31. PR #32 xử lý hai lỗi CI sau merge. CI trên `main@1054b73f` đạt 27/27 job và gói backend có biên nhận xác minh. [CI hợp nhất hai đợt](#ci-hợp-nhất-hai-đợt)
 - Đợt bổ sung bảy chức năng đã hợp nhất qua PR #33. PR #34 và PR #35 xử lý các lỗi frontend phát hiện trong CI. Trên `main@8ac4adc2`, CI sau merge đạt 27/27 job và gói backend có biên nhận cùng SHA. [Bằng chứng CI](#ci-hợp-nhất-đợt-bổ-sung)
+- BE-22 đã có lệnh kiểm lặp bản thử trên hai shop. Hai lượt Firefox qua HTTPS đều đạt. Hồi quy cục bộ đạt 73/73 ca tích hợp chọn lọc. Nghiệm thu staging vẫn chờ các đầu vào được cấp. [Kết quả pilot](#hồi-quy-bản-thử-hai-shop--be-22)
 - Baseline thiết kế và tích hợp là `main@e22bb99d`. Hợp đồng từ [PR #27](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/27) giữ nguyên sau [PR #28](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/28). Baseline gồm R01–R67, 16 module, 259 thao tác và 376 schema. Hợp đồng sau đợt bổ sung có 381 schema với cùng tập thao tác và màn hình. [Bằng chứng CI](#xử-lý-ci-pr-27-và-chọn-baseline) · [SHA-256](#dấu-vân-tay-nguồn)
 - Frontend hiện có bản demo MSW. Chế độ `dev:live` gửi API cùng origin qua `/api`, với `API_PROXY_TARGET` mặc định `http://127.0.0.1:3000`. Luồng đăng nhập live yêu cầu URL ủy quyền HTTPS. [Cấu hình frontend](../BotSalesAI_Frontend/README.md#6-nối-backend-sau-này)
 - Đã kiểm preflight Node/npm, NestJS, PostgreSQL/Prisma và HTTPS/OIDC với fixture cô lập. Mốc chạy backend từ checkout sạch thuộc BE-02, migration/seed của dự án thuộc BE-03 và phiên live thuộc BE-04. [Bằng chứng kiểm môi trường](#bằng-chứng-kiểm-môi-trường-be-01)
@@ -200,7 +201,7 @@ Cả bảy chức năng nằm trong một commit [`583efb78`](https://github.com
 | [BE-19](#be-19) | P2 | BE-11, BE-18 | AI, công cụ bán hàng và đánh giá | Đã kiểm chứng cục bộ |
 | [BE-20](#be-20) | P2 | BE-10, BE-17, BE-19 | Điều phối, phê duyệt, marketing và R63 | Đã kiểm chứng cục bộ |
 | [BE-21](#be-21) | P2 | BE-20 | Quyền riêng tư, xuất dữ liệu và kiểm toàn phạm vi | Đã kiểm chứng cục bộ |
-| [BE-22](#be-22) | P3 | BE-21 | Staging và dịch vụ ngoài đã cấp quyền | Gói cục bộ đạt, chờ môi trường và quyền |
+| [BE-22](#be-22) | P3 | BE-21 | Staging và dịch vụ ngoài đã cấp quyền | Pilot hai shop đạt cục bộ, chờ môi trường và quyền |
 | [BE-23](#be-23) | P3 | BE-21 | Bảo mật, tải, phục hồi và CI/CD | Đã diễn tập cục bộ, chờ kiểm staging |
 | [BE-24](#be-24) | P3 | BE-22, BE-23 | UAT, phát hành giới hạn và bàn giao | Hồi quy gói đạt cục bộ, chờ staging và UAT |
 
@@ -755,6 +756,21 @@ Log cục bộ `test-results/backend/be21/` gồm `verify.txt` SHA-256 `6ffd2005
 - ClamAV chấp nhận tệp CSV tổng hợp. Worker chuyển tệp sang SeaweedFS, xóa bản bytes tạm và xác nhận lại checksum của một object với 0 sai lệch. Worker hoàn tất ca kết nối AI mô phỏng. Trong ca smoke, trình duyệt ghi 0 yêu cầu HTTP ra ngoài máy. Phiên chạy chỉ lắng nghe loopback. Đã mở màn **Chọn cửa hàng** trên Firefox và giữ các dịch vụ chạy để chủ dự án thử.
 - Hồ sơ cục bộ `test-results/backend/local-pilot/verification.json` có SHA-256 `4a9cb60470d1d3d358ab8943213241fdcb05662ea6397cd3aba52de4575e86da`. Việc dùng thử của chủ dự án được thực hiện sau ca smoke. CI ứng viên đã đạt trên `main@1054b73f`. Tiếp tục kiểm dịch vụ thật và nghiệm thu phát hành theo các điều kiện BE-22–BE-24. [Bằng chứng CI](#ci-hợp-nhất-hai-đợt)
 
+#### Hồi quy bản thử hai shop · BE-22
+
+Triển khai và kiểm theo thứ tự phụ thuộc. Lệnh `npm run test:pilot:browser` mở IdP, API, worker và frontend `dev:live` trên loopback. Bộ kiểm chỉ nhận fixture cục bộ và từ chối cấu hình nhà cung cấp thật trước khi mở dịch vụ. [Cách chạy](README.md#kiểm-bản-thử-cục-bộ-với-hai-shop)
+
+| Ưu tiên | Phạm vi BE-22 | Kết quả trên máy |
+|---|---|---|
+| 1 | T067–T068 · Dữ liệu, HTTPS và phân quyền | PostgreSQL 18.7 trống áp dụng đủ 44 migration, seed pilot hai lần. Tiền kiểm khớp 44 checksum, Redis 8.0.5 có AOF và `noeviction`. Firefox xác nhận callback 302, phiên sau tải lại 200, logout 204 và sau logout 401. Tài khoản một shop đọc shop mình 200 và shop kia 404 theo cả hai chiều. |
+| 2 | T069 · Messenger mô phỏng và B08 | Cả shop A (VND) và B (LAK) nhận đúng một tin dù dùng lại cùng mã sự kiện giữa hai Page và gửi lại trong từng Page. Chữ ký sai trả 404. Worker hoàn tất gửi WAV thử. Firefox đọc được metadata âm thanh và lưu bản chép lời nội bộ có đúng tệp và tin nguồn. Phát lại lệnh ghi trả cùng bản ghi, không sinh lượt gửi cho ghi chú. Đọc hội thoại hoặc tệp từ shop kia trả 404. |
+| 3 | T070 · Thông báo mô phỏng | Mỗi shop gửi thử một thiết bị qua worker. Cùng khóa chống lặp chỉ tạo một thông báo, lưu trạng thái `accepted_by_provider`, giữ `openedAt` và `acknowledgedAt` rỗng rồi thu hồi thiết bị. Bộ Orders kiểm thêm Web Push, Telegram dự phòng, giờ yên lặng và phản hồi chưa rõ. |
+| 4 | T071–T072 · Chứng từ và luồng nghiệp vụ | Bộ Orders, Procurement và Finance chạy lại luồng vận chuyển thủ công, bàn giao đơn mua, phiếu nhận và đối soát COD. Bộ Inbox và AI kiểm lại xác nhận báo giá bằng tin có chữ ký, tạo một đơn nháp hoặc bàn giao khi chưa rõ kết quả mô phỏng. |
+
+Hai lượt pilot liên tiếp đạt trên cùng fixture và mỗi lượt ghi 0 yêu cầu trình duyệt ra ngoài. `npm run verify` đạt 45/45 và ma trận 259 thao tác. Hồi quy trên database chuẩn dựng riêng đạt 73/73 gồm PostgreSQL 7, OIDC 13, Workspace 9, Inbox 9, AI 6, Orders 14, Procurement 4, Finance 6 và Operations 5. Lượt thử PostgreSQL ban đầu dùng lại DB pilot nên sai kỳ vọng về số tài khoản và phiên. Chạy lại từ DB dành cho seed chuẩn đạt 7/7. Sau kiểm đã dừng hai bộ dịch vụ riêng của lượt này.
+
+Hồ sơ cục bộ tại `test-results/backend/be22/local-pilot-v180/verification.json`, SHA-256 `19b94b1def363e7fef6df4a99eb57b1c385dbea9a3fd86bfeceba8cfe0aced21`. Hồ sơ gắn với `main@1448fbfc` và checksum phần mã kiểm sửa cục bộ. Lượt này dùng kho tệp fixture trong PostgreSQL và kiểm frontend qua HTTPS development. Tiền kiểm staging trả `BLOCKED` với 7 nhóm đầu vào còn thiếu. Điện thoại thật, Meta/OpenAI và kết nối vận chuyển, mua hàng, sao kê được cấp tiếp tục theo T067–T072.
+
 #### Chuẩn bị và điều kiện mở BE-22
 
 - Gói `test-results/backend/be23/release/botsales-backend-local-candidate.tgz` được tạo từ checkout cô lập tại `b236c446` và phần thay đổi cục bộ. Hai workspace cài mới bằng `npm ci`, giữ hash lockfile. Gói có 580 tệp đã đối chiếu theo manifest, 30 migration, API và worker cùng với web live tĩnh. SHA-256 `039695abc2c4683c8500b8ed29d927524a5f4d654955a4eae7f21547e350a6d8`. Source gói có thay đổi cục bộ và cần có SHA phát hành được duyệt trước khi dùng làm bản staging chính thức. [Runbook](infra/RELEASE_RUNBOOK.md)
@@ -1283,6 +1299,7 @@ Thêm một dòng khi chuyển trạng thái hoặc có kết quả kiểm mới
 | 23/11/2026 | Đợt bổ sung · 7 chức năng | Hợp nhất nhóm thay đổi ưu tiên | [PR #33](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/33) · `main@5064ed35` | 27/27 job trước merge, 23/27 sau merge. Backend đạt, Firefox ghi nhận hai lỗi frontend. [Bằng chứng CI](#ci-hợp-nhất-đợt-bổ-sung) | Xử lý qua PR #34. |
 | 23/11/2026 | FE010, R31, FE014.S04 | Hợp nhất bản sửa frontend | [PR #34](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/34) · `main@5f4bfae8` | 27/27 job trước merge. Sau merge, Firefox ghi nhận ca đồng bộ thanh toán chưa điều hướng đến Tổng quan. [Bằng chứng CI](#ci-hợp-nhất-đợt-bổ-sung) | Xử lý qua PR #35. |
 | 23/11/2026 | Kiểm thanh toán liên trang · BE-23 | Xác minh CI và ứng viên sau sửa | [PR #35](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/35) · `main@8ac4adc2` | 27/27 job trước và sau merge. Gói backend và biên nhận kiểm fixture cùng SHA. [Bằng chứng CI](#ci-hợp-nhất-đợt-bổ-sung) | Tiếp tục dùng thử cục bộ và theo dõi điều kiện nghiệm thu BE-22. |
+| 23/11/2026 | BE-22 · T067–T072 | Kiểm lặp pilot hai shop | `1448fbfc` + thay đổi cục bộ | Hai lượt Firefox qua HTTPS, 73/73 ca tích hợp và 45/45 ca verify. Hai shop đều đạt webhook, tệp WAV, bản chép lời, thông báo và cô lập dữ liệu. [Kết quả](#hồi-quy-bản-thử-hai-shop--be-22) | Giữ thay đổi cục bộ. Chờ môi trường, thiết bị và quyền tích hợp thật. |
 
 ## Ma trận truy vết baseline
 
