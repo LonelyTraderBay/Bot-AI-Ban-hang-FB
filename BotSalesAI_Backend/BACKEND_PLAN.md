@@ -1,6 +1,6 @@
 # Kế hoạch triển khai và theo dõi backend BotSales AI
 
-**Phiên bản 1.80 · 23/11/2026.** Mỗi hành vi có một nơi triển khai và bộ ca kiểm theo thao tác. Kế hoạch xác định baseline tích hợp, cách kiểm ma trận tự động và tiêu chí nghiệm thu ở từng mốc. Mục tiêu Enterprise-Grade được đánh giá trên mã, dữ liệu và artifact triển khai có bằng chứng.
+**Phiên bản 1.81 · 23/11/2026.** Mỗi hành vi có một nơi triển khai và bộ ca kiểm theo thao tác. Kế hoạch xác định baseline tích hợp, cách kiểm ma trận tự động và tiêu chí nghiệm thu ở từng mốc. Mục tiêu Enterprise-Grade được đánh giá trên mã, dữ liệu và artifact triển khai có bằng chứng.
 
 **Giai đoạn hiện tại [bản thử cục bộ](#bản-thử-cục-bộ--be-22).** Chủ dự án chốt dùng máy cá nhân trong giai đoạn thử với hai shop tổng hợp. Kiểm tích hợp thật, cam kết SLO/RPO/RTO và phát hành tiếp tục theo điều kiện nghiệm thu BE-22–BE-24.
 
@@ -13,6 +13,7 @@
 - Mã hai đợt và bản thử cục bộ đã lên `main` qua PR #31. PR #32 xử lý hai lỗi CI sau merge. CI trên `main@1054b73f` đạt 27/27 job và gói backend có biên nhận xác minh. [CI hợp nhất hai đợt](#ci-hợp-nhất-hai-đợt)
 - Đợt bổ sung bảy chức năng đã hợp nhất qua PR #33. PR #34 và PR #35 xử lý các lỗi frontend phát hiện trong CI. Trên `main@8ac4adc2`, CI sau merge đạt 27/27 job và gói backend có biên nhận cùng SHA. [Bằng chứng CI](#ci-hợp-nhất-đợt-bổ-sung)
 - BE-22 đã có lệnh kiểm lặp bản thử trên hai shop. Hai lượt Firefox qua HTTPS đều đạt. Hồi quy cục bộ đạt 73/73 ca tích hợp chọn lọc. Nghiệm thu staging vẫn chờ các đầu vào được cấp. [Kết quả pilot](#hồi-quy-bản-thử-hai-shop--be-22)
+- BE-23 đã đo tải hai shop, khôi phục sang cụm PostgreSQL riêng và chạy lại export từ Redis thử mới. Bản phục hồi khớp 31 nhóm đối chiếu. Mục tiêu tải, SLO, RPO và RTO trên staging vẫn chờ xác nhận. [Diễn tập hai shop](#tải-và-khôi-phục-hai-shop--be-23)
 - Baseline thiết kế và tích hợp là `main@e22bb99d`. Hợp đồng từ [PR #27](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/27) giữ nguyên sau [PR #28](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/28). Baseline gồm R01–R67, 16 module, 259 thao tác và 376 schema. Hợp đồng sau đợt bổ sung có 381 schema với cùng tập thao tác và màn hình. [Bằng chứng CI](#xử-lý-ci-pr-27-và-chọn-baseline) · [SHA-256](#dấu-vân-tay-nguồn)
 - Frontend hiện có bản demo MSW. Chế độ `dev:live` gửi API cùng origin qua `/api`, với `API_PROXY_TARGET` mặc định `http://127.0.0.1:3000`. Luồng đăng nhập live yêu cầu URL ủy quyền HTTPS. [Cấu hình frontend](../BotSalesAI_Frontend/README.md#6-nối-backend-sau-này)
 - Đã kiểm preflight Node/npm, NestJS, PostgreSQL/Prisma và HTTPS/OIDC với fixture cô lập. Mốc chạy backend từ checkout sạch thuộc BE-02, migration/seed của dự án thuộc BE-03 và phiên live thuộc BE-04. [Bằng chứng kiểm môi trường](#bằng-chứng-kiểm-môi-trường-be-01)
@@ -202,7 +203,7 @@ Cả bảy chức năng nằm trong một commit [`583efb78`](https://github.com
 | [BE-20](#be-20) | P2 | BE-10, BE-17, BE-19 | Điều phối, phê duyệt, marketing và R63 | Đã kiểm chứng cục bộ |
 | [BE-21](#be-21) | P2 | BE-20 | Quyền riêng tư, xuất dữ liệu và kiểm toàn phạm vi | Đã kiểm chứng cục bộ |
 | [BE-22](#be-22) | P3 | BE-21 | Staging và dịch vụ ngoài đã cấp quyền | Pilot hai shop đạt cục bộ, chờ môi trường và quyền |
-| [BE-23](#be-23) | P3 | BE-21 | Bảo mật, tải, phục hồi và CI/CD | Đã diễn tập cục bộ, chờ kiểm staging |
+| [BE-23](#be-23) | P3 | BE-21 | Bảo mật, tải, phục hồi và CI/CD | Tải và khôi phục hai shop đạt cục bộ, chờ staging |
 | [BE-24](#be-24) | P3 | BE-22, BE-23 | UAT, phát hành giới hạn và bàn giao | Hồi quy gói đạt cục bộ, chờ staging và UAT |
 
 ## P0 Nền backend và luồng đầu tiên với frontend
@@ -931,6 +932,22 @@ Log T067 ở `test-results/backend/be22/data-services/`. SHA-256 của `probe-su
 - [ ] Sau khi có môi trường BE-22, đo theo tải đã thống nhất, thử mất dịch vụ ngoài, restart worker, restore DB và tệp, kiểm migration và diễn tập rollback. Ghi mục tiêu tải và phục hồi theo đầu vào của chủ dự án.
 - [ ] Kiểm chứng bản khôi phục bằng truy vấn đối chiếu tồn, tiền và công việc đang chờ. Kiểm thử CI/CD trên artifact đầy đủ và ghi kết quả thực tế cùng điều kiện phát hành.
 
+#### Tải và khôi phục hai shop · BE-23
+
+Lượt diễn tập từ `main@d6d9ede5` với thay đổi cục bộ chạy trên Windows 11 và Ubuntu WSL2, 24 luồng xử lý, RAM 63,5 GiB, PostgreSQL 18.7, Redis 8.0.5 và 44 migration. Shop A dùng VND và shop B dùng LAK. Mỗi shop có tồn, một bút toán đã ghi, đơn nháp, tệp và job export tổng hợp. [Cách chạy](infra/RELEASE_RUNBOOK.md#diễn-tập-postgresql-với-hai-shop-mẫu)
+
+| Ưu tiên | Mục | Kết quả trên máy |
+|---|---|---|
+| 1 | T074 · Tải và cô lập hai shop | Mỗi lượt: 720/720 GET hợp lệ trả 200, 80/80 đọc chéo shop trả 404, 64/64 lượt ghi lặp trả 201. Mỗi shop có đúng một khách, một command, một audit và một outbox cho intent. Qua hai lượt cuối, p95 toàn nhóm đọc ở mức 6, 12 và 24 đồng thời lần lượt là 16,5–16,9 ms, 26,5–26,9 ms và 34,8–35,2 ms. Ở mức 24, tải chia A:B là 3:1 và p95 của A là 33,9–34,1 ms, của B là 36,6–37,1 ms. |
+| 2 | T075 · Backup và phục hồi sang cụm khác | Dump custom 497.902 byte mất 60 ms. Giải mã từ archive GnuPG AES256 khớp SHA-256 dump. `pg_restore --single-transaction` mất 240 ms, gồm tạo báo cáo đích là 270 ms. Báo cáo định dạng 3 khớp 31 nhóm, sai lệch kho, journal và tệp đều 0. Hai bản ghi đánh dấu được thêm sau snapshot chỉ có ở nguồn. Khoảng đo từ mốc lấy snapshot đến dấu thử là 260 ms. |
+| 3 | T075.S04 · Kiểm thất bại và PITR | Sai khóa bị từ chối, dump bị cắt lỗi và để schema đích trống. Bỏ blob của tệp còn hiệu lực làm bộ kiểm mới báo đúng một lỗi. Tệp hết hạn không bị tính thiếu và rollback khôi phục trạng thái sạch. WAL đạt hai mốc `0/4000090` và `0/5017530`, mỗi mốc mất 520 ms tới pause. Mốc sau giữ rút consent, dấu xóa và tin đã che của A, dữ liệu đối chứng của B giữ nguyên, giao dịch sau mốc không xuất hiện. API ở trạng thái pause trả liveness 200 và readiness 503. Bản thiếu segment đích bị từ chối. |
+| 4 | T076 · API và hàng đợi sau phục hồi | API trên cụm đích trả readiness 200, tải tệp đúng shop trả 200 và chéo shop 404. Kiểm API và job đang chờ mất 1.252 ms. Từ lúc khởi động vòng worker đến kiểm xong hai export mất 1.458 ms. Cả hai job hoàn tất đúng một lần, SHA-256 CSV khớp bản đã đóng băng trước backup. Kiểm tại chỗ ghi 0 job đến hạn và 0 lease quá hạn. `test:jobs` đạt 5/5, gồm gián đoạn Redis, kết quả provider chưa rõ và burst 104 job ở A. A giữ tối đa ba lease, B hoàn tất một lần trong 836 ms. |
+| 5 | T073, T077 · Hồi quy và gói cục bộ | `npm run verify` đạt 45/45, ma trận 259 operation. Bản gói có 666 tệp và 44 migration, đã kiểm manifest sau giải nén. Công cụ so restore từ gói cũng khớp cả 31 nhóm. Lượt đóng gói dùng checkout có thay đổi cục bộ. |
+
+Lượt đo thời gian đầu bị nhảy đồng hồ hệ thống. Các số liệu trên lấy từ lượt đo lại bằng đồng hồ đơn điệu và được ghi riêng theo công đoạn. Ca kiểm lặp trên một đích mới xác nhận Redis trống, hai job chạy đúng một lần và lệnh từ chối chạy lại khi cả hai job đã hoàn tất. Hồ sơ `test-results/backend/be23/local-rehearsal-v181/verification.json` có SHA-256 `f1000095ba15f8923143a2b571f0e9f1c345a7098e33986cac8c3136ab92767b`. Hồ sơ lưu hash mã, báo cáo và log. Các cụm PostgreSQL và Redis riêng đã dừng sau kiểm.
+
+Lượt này kiểm bytes tệp trong PostgreSQL và kho WAL trên máy. Nghiệm thu backup ngoài máy, S3 staging, lịch giữ bản sao, mất nhà cung cấp thật, CI trên commit mới và các mục tiêu `WORKLOAD_SLO_RPO_RTO` tiếp tục theo BE-22–BE-24. [Đầu vào cần xác nhận](../botsales-kit/execution/owner-inputs.json)
+
 #### Kết quả diễn tập cục bộ BE-23
 
 | Phạm vi | Kết quả quan sát |
@@ -1300,6 +1317,7 @@ Thêm một dòng khi chuyển trạng thái hoặc có kết quả kiểm mới
 | 23/11/2026 | FE010, R31, FE014.S04 | Hợp nhất bản sửa frontend | [PR #34](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/34) · `main@5f4bfae8` | 27/27 job trước merge. Sau merge, Firefox ghi nhận ca đồng bộ thanh toán chưa điều hướng đến Tổng quan. [Bằng chứng CI](#ci-hợp-nhất-đợt-bổ-sung) | Xử lý qua PR #35. |
 | 23/11/2026 | Kiểm thanh toán liên trang · BE-23 | Xác minh CI và ứng viên sau sửa | [PR #35](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/pull/35) · `main@8ac4adc2` | 27/27 job trước và sau merge. Gói backend và biên nhận kiểm fixture cùng SHA. [Bằng chứng CI](#ci-hợp-nhất-đợt-bổ-sung) | Tiếp tục dùng thử cục bộ và theo dõi điều kiện nghiệm thu BE-22. |
 | 23/11/2026 | BE-22 · T067–T072 | Kiểm lặp pilot hai shop | `1448fbfc` + thay đổi cục bộ | Hai lượt Firefox qua HTTPS, 73/73 ca tích hợp và 45/45 ca verify. Hai shop đều đạt webhook, tệp WAV, bản chép lời, thông báo và cô lập dữ liệu. [Kết quả](#hồi-quy-bản-thử-hai-shop--be-22) | Giữ thay đổi cục bộ. Chờ môi trường, thiết bị và quyền tích hợp thật. |
+| 23/11/2026 | BE-23 · T073–T077 | Đo tải và phục hồi hai shop | `d6d9ede5` + thay đổi cục bộ | Hai lượt tải, 31 nhóm restore khớp, WAL hai mốc và lỗi thiếu segment, 5/5 job và 45/45 verify. [Kết quả](#tải-và-khôi-phục-hai-shop--be-23) | Giữ thay đổi cục bộ. Chờ mục tiêu và nghiệm thu staging. |
 
 ## Ma trận truy vết baseline
 

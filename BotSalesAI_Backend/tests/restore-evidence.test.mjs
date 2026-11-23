@@ -52,4 +52,21 @@ test('restore comparison pins evidence and catches changed provider state with u
     assert.equal(compare({ ...target, format: 1 }).code, 1);
     assert.equal(compare({ ...target, externalEffects: source.externalEffects.slice(1) }).code, 1);
     assert.equal(compare({ ...target, externalEffects: [...source.externalEffects, source.externalEffects[0]] }).code, 1);
+
+    const tenantState = ['shops', 'memberships', 'products', 'variants', 'customers', 'sales_orders', 'audit_entries'];
+    const current = { ...source, format: 3, observations: [
+        ...source.observations, ...tenantState.map(component => ({ component, records: 2, snapshot: 'a'.repeat(32) })),
+    ] };
+    const currentBytes = JSON.stringify(current);
+    const currentHash = createHash('sha256').update(currentBytes).digest('hex');
+    writeFileSync(sourceFile, currentBytes);
+    const restored = { ...current, databaseFingerprint: target.databaseFingerprint };
+    assert.equal(compare(restored, currentHash).report.checkedComponents, 30);
+    assert.equal(compare(target, currentHash).code, 1);
+    assert.equal(compare({ ...restored, observations: restored.observations.slice(0, -1) }, currentHash).code, 1);
+    const changed = structuredClone(restored);
+    changed.observations.find(row => row.component === 'memberships').snapshot = 'c'.repeat(32);
+    const scopeDrift = compare(changed, currentHash);
+    assert.equal(scopeDrift.code, 2);
+    assert.deepEqual(scopeDrift.report.mismatches, ['memberships']);
 });

@@ -26,8 +26,9 @@ before(async () => {
     const connection = readDatabaseUrl(process.env);
     assertFixtureDatabase(connection);
     const redis = new URL(process.env.REDIS_URL);
+    assert.equal(redis.protocol, 'redis:');
     assert.equal(redis.hostname, '127.0.0.1');
-    assert.equal(redis.port, '56379');
+    assert.ok(redis.port, 'Set the port of a dedicated loopback Redis fixture');
     const database = new Database(connection);
     db = database.client;
     [ownerA, ownerB, reader] = await Promise.all(['p0-editor', 'p0-editor-b', 'p0-reader'].map(subject => fixtureSession(db, subject)));

@@ -6,7 +6,21 @@ SET LOCAL timezone = 'UTC';
 \ir integrity-counts.sql
 \ir external-effect-fingerprints.sql
 WITH state AS (
-    SELECT 'stock_positions' AS component, count(*) AS records,
+    SELECT 'shops' AS component, count(*) AS records,
+        md5(coalesce(string_agg(md5(to_jsonb(s)::text), '' ORDER BY id), '')) AS snapshot FROM public.shops s
+    UNION ALL SELECT 'memberships', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(m)::text), '' ORDER BY shop_id, id), '')) FROM public.memberships m
+    UNION ALL SELECT 'products', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(p)::text), '' ORDER BY shop_id, id), '')) FROM public.products p
+    UNION ALL SELECT 'variants', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(v)::text), '' ORDER BY shop_id, id), '')) FROM public.variants v
+    UNION ALL SELECT 'customers', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(c)::text), '' ORDER BY shop_id, id), '')) FROM public.customers c
+    UNION ALL SELECT 'sales_orders', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(o)::text), '' ORDER BY shop_id, id), '')) FROM public.sales_orders o
+    UNION ALL SELECT 'audit_entries', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(a)::text), '' ORDER BY shop_id, id), '')) FROM public.audit_entries a
+    UNION ALL SELECT 'stock_positions', count(*),
         md5(coalesce(string_agg(md5(to_jsonb(p)::text), '' ORDER BY shop_id, id), '')) AS snapshot FROM public.stock_positions p
     UNION ALL SELECT 'stock_movements', count(*),
         md5(coalesce(string_agg(md5(to_jsonb(m)::text), '' ORDER BY shop_id, id), '')) FROM public.stock_movements m
@@ -34,7 +48,7 @@ WITH state AS (
         md5(coalesce(string_agg(checksum, '' ORDER BY migration_name), '')) FROM public._prisma_migrations
         WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL
 )
-SELECT jsonb_build_object('format', 2,
+SELECT jsonb_build_object('format', 3,
     'databaseFingerprint', encode(sha256(convert_to(jsonb_build_array(current_database(), inet_server_addr(), inet_server_port(),
         pg_postmaster_start_time())::text, 'UTF8')), 'hex'),
     'observations', (SELECT jsonb_agg(to_jsonb(state) ORDER BY component) FROM state),

@@ -21,8 +21,14 @@ WITH movement_totals AS (
     ) invalid
 ), blob_drift AS (
     SELECT count(*) AS violations
-    FROM public.file_blobs b JOIN public.file_objects f ON f.shop_id = b.shop_id AND f.id = b.file_id
-    WHERE octet_length(b.bytes) <> f.size_bytes OR encode(sha256(b.bytes), 'hex') <> f.sha256
+    FROM public.file_objects f
+    LEFT JOIN public.file_blobs b ON (b.shop_id, b.file_id) = (f.shop_id, f.id)
+    LEFT JOIN public.file_storage s ON (s.shop_id, s.file_id) = (f.shop_id, f.id)
+    WHERE (b.file_id IS NOT NULL AND
+           (octet_length(b.bytes) <> f.size_bytes OR encode(sha256(b.bytes), 'hex') <> f.sha256))
+       OR (b.file_id IS NULL AND f.status = 'ready'
+           AND (f.expires_at IS NULL OR f.expires_at > now())
+           AND s.state IS DISTINCT FROM 'stored')
 )
 SELECT jsonb_build_object(
     'stockBalanceMismatches', (SELECT violations FROM stock_drift),
