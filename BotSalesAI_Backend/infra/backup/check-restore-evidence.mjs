@@ -5,6 +5,7 @@ const sha256 = value => createHash('sha256').update(value).digest('hex');
 const hashes = { core: /^[a-f0-9]{32}$/, external: /^[a-f0-9]{64}$/ };
 const core = ['stock_positions', 'stock_movements', 'finance_journals', 'finance_lines', 'file_objects', 'file_blobs', 'outbox',
     'consents', 'customer_tombstones', 'migration_checksums'];
+const tenantState = ['shops', 'memberships', 'products', 'variants', 'customers', 'sales_orders', 'audit_entries'];
 const external = ['messenger_receipts', 'messenger_dispatches', 'ai_approvals', 'ai_inbound_runs', 'ai_daily_usage',
     'purchase_dispatches', 'purchase_evidence', 'notification_deliveries', 'notification_devices', 'telegram_pairings', 'carrier_events']
     .map(component => 'external/' + component);
@@ -28,13 +29,14 @@ function observations(rows, required, hash, optional = () => false) {
 function parse(bytes) {
     if (bytes.length > 65536) throw new Error();
     const report = JSON.parse(bytes.toString('utf8'));
-    if (report?.format !== 2 || typeof report.databaseFingerprint !== 'string' || !hashes.external.test(report.databaseFingerprint) ||
+    if (![2, 3].includes(report?.format) || typeof report.databaseFingerprint !== 'string' || !hashes.external.test(report.databaseFingerprint) ||
         !integrity.every(key => count(report[key]))) throw new Error();
+    const required = report.format === 3 ? [...core, ...tenantState] : core;
     const rows = new Map([
-        ...observations(report.observations, core, hashes.core, component => ledgerStatus.test(component)),
+        ...observations(report.observations, required, hashes.core, component => ledgerStatus.test(component)),
         ...observations(report.externalEffects, external, hashes.external),
     ]);
-    return { databaseFingerprint: report.databaseFingerprint, rows, integrity: integrity.filter(key => report[key] !== 0) };
+    return { format: report.format, databaseFingerprint: report.databaseFingerprint, rows, integrity: integrity.filter(key => report[key] !== 0) };
 }
 
 try {
@@ -45,7 +47,7 @@ try {
     const restoredBytes = readFileSync(restoredFile);
     const source = parse(sourceBytes);
     const restored = parse(restoredBytes);
-    if (source.databaseFingerprint === restored.databaseFingerprint) throw new Error();
+    if (source.format !== restored.format || source.databaseFingerprint === restored.databaseFingerprint) throw new Error();
     const components = new Set([...source.rows.keys(), ...restored.rows.keys()]);
     const mismatches = [...components].filter(component => {
         const before = source.rows.get(component);
@@ -59,6 +61,6 @@ try {
         sourceIntegrityIssues: source.integrity, restoredIntegrityIssues: restored.integrity }));
     if (attention) process.exitCode = 2;
 } catch {
-    console.log(JSON.stringify({ status: 'UNAVAILABLE', reason: 'Provide two format 2 reports from separate database instances and the verified source report SHA-256.' }));
+    console.log(JSON.stringify({ status: 'UNAVAILABLE', reason: 'Provide two reports of the same supported format (2 or 3) from separate database instances and the verified source report SHA-256.' }));
     process.exitCode = 1;
 }

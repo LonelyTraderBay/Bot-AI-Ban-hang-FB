@@ -235,7 +235,9 @@ Lệnh chạy 21 nhóm tuần tự trên cùng manifest, gồm cả adapter th�
 
 ### Phép đo tải tổng hợp · T074
 
-Từ backend đã build, chạy `npm run test:load:local` trên PostgreSQL loopback có hai shop thử. Kết quả gồm p50/p95/p99 của nhóm đọc, số yêu cầu chéo shop và ca ghi lặp cùng intent. `npm run test:jobs` chạy ca burst hai shop trên PostgreSQL và Redis thử. Bản từ migration 38 giới hạn mỗi shop ba lease job còn hiệu lực trên các worker dùng chung PostgreSQL. Kiểm lại giới hạn sau khi mọi worker đã chuyển sang cùng revision.
+Từ backend đã build, chạy `npm run test:load:local` với PostgreSQL loopback, IdP thử và hai shop đã seed. Lệnh ghi hai khách tổng hợp vào DB thử. Mỗi mức 6, 12 và 24 đồng thời chạy 240 lượt đọc danh mục, tồn, đơn, hội thoại, job và báo cáo. Hai mức đầu chia đều. Ở mức 24, shop A nhận 180 lượt và shop B nhận 60 lượt. Kết quả gồm p50/p95/p99 từng shop và toàn lượt, 80 lượt đọc chéo shop và 64 lượt ghi lặp. Mỗi shop phải có đúng một khách, một command, một audit và một outbox cho khóa đã dùng.
+
+`npm run test:jobs` chạy ca burst hai shop trên PostgreSQL và Redis fixture loopback. Đặt cổng Redis tường minh khi dùng bản riêng. Bản từ migration 38 giới hạn mỗi shop ba lease job còn hiệu lực trên các worker dùng chung PostgreSQL. Kiểm lại giới hạn sau khi mọi worker đã chuyển sang cùng revision.
 
 Với gói đã xác minh, chạy ca Firefox `npm run test:release:browser -- "<thư mục giải nén>" "<manifestSha256>" --meta-reply --fulfillment --performance`. Chế độ đo xuất thời điểm phản hồi đầu, thời gian đến khi màn hình hoặc tin nhắn xuất hiện và số byte script truyền cùng origin. Mẫu inbox gồm thao tác mở hội thoại từ danh sách. Lưu cấu hình máy và gói cùng kết quả. Dùng tải, thiết bị và ngưỡng do chủ dự án duyệt để nghiệm thu staging.
 
@@ -287,7 +289,14 @@ psql -XAtq 'service=botsales_restore_target' -f infra/backup/verify-restore.sql 
 npm run --silent check:restore-evidence -- source.json restored.json "$APPROVED_SOURCE_REPORT_SHA256"
 ```
 
-`SNAPSHOT_MATCHED` và mã thoát 0 xác nhận dấu vân tay và số lượng khớp, ba phép đối chiếu toàn vẹn đều đạt. `ATTENTION` và mã 2 chỉ tên nhóm lệch hoặc chỉ số có lỗi. `UNAVAILABLE` và mã 1 báo tệp thiếu, sai định dạng, sai digest nguồn hoặc cùng dấu vân tay database. Báo cáo định dạng 2 gồm trạng thái nhận/gửi Messenger, đánh giá đã duyệt và lượt AI, hạn mức ngày, chứng cứ đơn mua, thiết bị và thông báo ngoài, ghép Telegram và sự kiện vận chuyển.
+`SNAPSHOT_MATCHED` và mã thoát 0 xác nhận dấu vân tay và số lượng khớp, ba phép đối chiếu toàn vẹn đều đạt. `ATTENTION` và mã 2 chỉ tên nhóm lệch hoặc chỉ số có lỗi. `UNAVAILABLE` và mã 1 báo tệp thiếu, sai định dạng, sai digest nguồn hoặc cùng dấu vân tay database. Báo cáo định dạng 3 thêm dấu vân tay shop, membership, sản phẩm, SKU, khách hàng, đơn bán và audit vào các nhóm của định dạng 2. Có thể so lại hai báo cáo lịch sử cùng định dạng 2. Khi so snapshot mới, xuất cả hai báo cáo bằng cùng bản SQL. Tệp còn hiệu lực và chưa có trạng thái lưu ở kho S3 phải còn blob trong PostgreSQL. Đối chiếu byte thực trong S3 dùng `check:object-storage`.
+
+### Diễn tập PostgreSQL với hai shop mẫu
+
+1. Dùng hai cụm riêng trên loopback, cùng tên database `botsales_be_dev` và khác cổng. Áp migration và seed cho nguồn. Ở đích, tạo database trống và cấp role theo [bootstrap fixture](p0/bootstrap.sql). Dùng cấu hình HTTPS/OIDC tổng hợp và PostgreSQL riêng như [hướng dẫn backend](../README.md#chạy-oidc-thử-qua-https).
+2. Trỏ `DATABASE_URL` đến nguồn và chạy `npm run test:recovery:local -- prepare <tệp-trạng-thái-mới>`. Lệnh tạo tồn, bút toán, đơn nháp, tệp và export đang chờ cho hai shop. Giữ nguyên trạng thái nguồn trong lúc xuất báo cáo và lấy dump. Xác minh checksum backup trước khi dùng `pg_restore --exit-on-error --single-transaction` trên đích. Lưu tệp trạng thái, dump và khóa bên ngoài Git.
+3. Xuất báo cáo ở đích và đối chiếu hai báo cáo theo mục trên. Trỏ `DATABASE_URL` đến đích và chạy `npm run test:recovery:local -- verify-queued <tệp-trạng-thái>`. Ca kiểm dùng API loopback để xác nhận readiness, đơn hàng, tệp tải được và quyền chéo shop, đồng thời kiểm tồn và bút toán ở DB đích.
+4. Cấp Redis thử trống trên loopback rồi chạy `npm run test:recovery:local -- verify-completed <tệp-trạng-thái>`. Lệnh xác nhận cả hai job còn chờ và chưa chạy, sau đó khởi động vòng worker bằng handler export hiện có. Mỗi shop phải hoàn tất một lần và trả đúng SHA-256 CSV của snapshot trước backup. Xác nhận tải chéo shop bị từ chối. Muốn lặp ca, phục hồi lại bản snapshot vào đích thử mới. Đo riêng thời gian dump, restore, kiểm API và thực thi lại job. Các số liệu này thuộc fixture cục bộ.
 
 Sau khi đối chiếu dữ liệu, chạy `check:operations -- queue` để xem phần chờ xử lý. Đối chiếu mọi tác động có thể đã được nhà cung cấp nhận sau điểm snapshot, áp lại dấu xóa và consent theo nguồn độc lập, rồi mở worker khi có phê duyệt của môi trường. Dùng báo cáo đã lưu làm bằng chứng về snapshot tại thời điểm đọc.
 
