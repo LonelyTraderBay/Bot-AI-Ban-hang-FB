@@ -23,6 +23,8 @@ Dùng báo cáo cài tương ứng với nền tảng triển khai. Rà các m�
 
 ## Kiểm cấu hình staging
 
+Hồ sơ Supabase Cloud Free dùng dữ liệu tổng hợp và các dịch vụ Windows cho bản thử. Kết quả nhập và chạy hai shop lưu trong [BE-CLOUD](../BACKEND_PLAN.md#be-cloud). Dùng các điều kiện staging dưới đây khi nghiệm thu BE-22–BE-24.
+
 Chạy `npm run check:staging` sau build với cấu hình mục tiêu được cấp. Kết quả chỉ nêu tên đầu vào hoặc nhóm biến cần xử lý. PostgreSQL cần role `botsales_runtime` cho API/worker và `botsales_migrator` cho migration. Staging dùng database, Redis, secret store và dữ liệu thử riêng. Dùng callback đúng HTTPS và cấu hình IdP không phải fixture. Node phải xác minh chứng chỉ TLS. Tiền kiểm báo `NODE_TLS_REJECT_UNAUTHORIZED` nếu giá trị `0` đang tắt xác minh. Endpoint Redis, phạm vi mạng và cấu hình lưu trữ lấy theo hạ tầng đã duyệt.
 
 Các phép kiểm cấu hình, dữ liệu, OIDC và HTTPS dùng cùng quy tắc cho hostname khai báo. Đích loopback gồm `localhost`, tên dưới `.localhost`, dải `127.0.0.0/8`, `::1` và dạng IPv6 ánh xạ IPv4 loopback. Chỉ dùng các đích đó cho chế độ `--fixture` của lệnh hỗ trợ. Địa chỉ lắng nghe mọi giao diện như `0.0.0.0` và `::` bị từ chối làm đích kiểm. Hồ sơ staging ghi thêm hostname và đích triển khai đã được người phụ trách xác nhận.

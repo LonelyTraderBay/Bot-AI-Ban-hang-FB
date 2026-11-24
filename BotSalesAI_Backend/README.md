@@ -4,6 +4,8 @@ Workspace triển khai API và công việc nền. [Kế hoạch triển khai](B
 
 ## Cài và chạy
 
+Bản thử Windows dùng PostgreSQL trên Supabase Cloud Free. Dùng [hồ sơ chạy Cloud](infra/supabase/README.md#chạy-api-và-worker-trên-windows) để mở API và worker. Kết quả nhập và kiểm hai shop ở [BE-CLOUD](BACKEND_PLAN.md#be-cloud). [Hồ sơ PostgreSQL Windows](infra/windows/README.md) phục vụ kiểm thử fixture và quay lui. Các lệnh Compose bên dưới áp dụng cho fixture Compose.
+
 Từ `BotSalesAI_Backend/`, dùng Node.js `24.22.3` và npm `11.17.0` theo manifest.
 
 ```powershell
