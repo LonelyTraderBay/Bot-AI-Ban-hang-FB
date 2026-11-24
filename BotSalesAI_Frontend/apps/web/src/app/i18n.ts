@@ -71,7 +71,7 @@ void i18n.use(initReactI18next).init({
     fallbackLng: 'vi',
     supportedLngs: ['vi'],
     load: 'languageOnly',
-    initImmediate: false,
+    initAsync: false,
     interpolation: { escapeValue: false },
     returnNull: false,
     returnEmptyString: false,
