@@ -1,8 +1,8 @@
 # Kế hoạch triển khai và theo dõi backend BotSales AI
 
-**Phiên bản 1.81 · 23/11/2026.** Mỗi hành vi có một nơi triển khai và bộ ca kiểm theo thao tác. Kế hoạch xác định baseline tích hợp, cách kiểm ma trận tự động và tiêu chí nghiệm thu ở từng mốc. Mục tiêu Enterprise-Grade được đánh giá trên mã, dữ liệu và artifact triển khai có bằng chứng.
+**Phiên bản 1.96 · 25/11/2026.** Mỗi hành vi có một nơi triển khai và bộ ca kiểm theo thao tác. Kế hoạch xác định baseline tích hợp, cách kiểm ma trận tự động và tiêu chí nghiệm thu ở từng mốc. Mục tiêu Enterprise-Grade được đánh giá trên mã, dữ liệu và artifact triển khai có bằng chứng.
 
-**Giai đoạn hiện tại [bản thử cục bộ](#bản-thử-cục-bộ--be-22).** Chủ dự án chốt dùng máy cá nhân trong giai đoạn thử với hai shop tổng hợp. Kiểm tích hợp thật, cam kết SLO/RPO/RTO và phát hành tiếp tục theo điều kiện nghiệm thu BE-22–BE-24.
+**Bản thử Windows dùng PostgreSQL trên Supabase Cloud Free theo [BE-CLOUD](#be-cloud).** API và worker đã kiểm kết nối Cloud với hai shop. PostgreSQL Windows giữ vai trò fixture, kiểm phục hồi và quay lui theo [hồ sơ ổ D](#hồ-sơ-lưu-trữ-trên-ổ-d). Kiểm tích hợp thật, cam kết SLO/RPO/RTO và phát hành theo BE-22–BE-24.
 
 - [Kiến trúc](#kiến-trúc-backend-v1) · [Dữ liệu và giao dịch](#quyền-sở-hữu-dữ-liệu-và-giao-dịch) · [Bảng tiến độ](#bảng-theo-dõi) · [Commit theo nhóm](#commit-theo-nhóm) · [Kiểm chứng từng thao tác](#kiểm-chứng-từng-thao-tác)
 - [Mốc nghiệm thu](#mốc-nghiệm-thu) · [Kiểm chứng theo module](#kiểm-chứng-theo-module) · [Nhật ký](#nhật-ký-tiến-độ-và-bằng-chứng) · [Ma trận truy vết](#ma-trận-truy-vết-baseline)
@@ -205,6 +205,56 @@ Cả bảy chức năng nằm trong một commit [`583efb78`](https://github.com
 | [BE-22](#be-22) | P3 | BE-21 | Staging và dịch vụ ngoài đã cấp quyền | Pilot hai shop đạt cục bộ, chờ môi trường và quyền |
 | [BE-23](#be-23) | P3 | BE-21 | Bảo mật, tải, phục hồi và CI/CD | Tải và khôi phục hai shop đạt cục bộ, chờ staging |
 | [BE-24](#be-24) | P3 | BE-22, BE-23 | UAT, phát hành giới hạn và bàn giao | Hồi quy gói đạt cục bộ, chờ staging và UAT |
+
+## Bản thử Windows và Supabase Cloud
+
+| Việc | Ưu tiên | Phụ thuộc | Kết quả cần đạt | Trạng thái |
+|---|---|---|---|---|
+| [BE-CLOUD](#be-cloud) | P0 · Bản thử | BE-WIN, BE-03, BE-05 | Chuyển dữ liệu hai shop từ D sang Supabase Cloud Free và đổi cấu hình API/worker sau kiểm. | Đã kiểm chứng. TLS hai chặng và quyền hai shop đạt sau restart. Đã kiểm 2 export, backup và phục hồi. |
+| [BE-WIN](#be-win) | P0 · Bản thử | BE-03, BE-10, pilot BE-22 và diễn tập BE-23 | Cấu hình PostgreSQL Windows phục vụ fixture và quay lui. Dữ liệu, backup và đầu ra mới nằm trên ổ D. | Hai shop, dữ liệu và backup mới đã kiểm trên ổ D. |
+
+### BE-CLOUD
+
+Chuyển PostgreSQL của bản thử hai shop lên Supabase Cloud Free. API, worker, frontend, IdP thử, Redis, SeaweedFS và ClamAV chạy trên Windows. Tiếp tục dùng Prisma và các role `botsales_migrator`, `botsales_runtime`. Backend đọc metadata tệp từ Cloud và truy xuất object qua kho hiện có trên D. Quy trình chi tiết ở [hướng dẫn chuyển PostgreSQL sang Supabase](infra/supabase/README.md).
+
+| Thứ tự | Việc | Điều kiện nghiệm thu | Trạng thái |
+|---|---|---|---|
+| 1 | Xác minh nguồn và tạo dump | Đúng cụm `D:/BotSalesAI/data/postgres-55770`. Lưu dump, SHA-256 và đối chiếu nghiệp vụ trên D. | Đạt. PostgreSQL 18.7, 2 shop, 113 bảng, 51 migration. |
+| 2 | Tập dượt phục hồi | Phục hồi nguyên tử sang cụm trống, giữ bảng, trigger, quyền và lịch sử Prisma. Chạy bộ đối chiếu của BE-23. | Đạt trên cụm Windows riêng ở cổng 55774. Khớp fingerprint của 113 bảng và 46 nhóm nghiệp vụ, 0 sai lệch toàn vẹn. Đã kiểm quyền runtime. Hai cụm đã dừng. |
+| 3 | Xác minh đích và nhập dữ liệu | Dự án Free dành riêng cho pilot, trạng thái hoạt động, kiểm TLS máy khách và phiên bản PostgreSQL, kiểm schema trống, tắt Data API và xác nhận quyền trước khi nhập. Restore một giao dịch, đối chiếu với dump, kiểm quyền các role và migration Prisma. | Đạt. `botsalesai-dev` ở Singapore, PostgreSQL 17.12. Khớp 113 bảng và 46 nhóm, 0 sai lệch toàn vẹn. Prisma xác nhận 51 migration. |
+| 4 | Chuyển cấu hình và kiểm hai shop | Dùng hồ sơ Cloud riêng ngoài Git. Kiểm readiness, OIDC qua HTTPS, đọc hai shop, truy cập chéo trả 404 và chạy worker với Redis/kho đối tượng fixture. | Đạt. Cả hai shop có readiness 200, OIDC 302, đọc shop mình 200, đọc shop kia 404. Hai export CSV qua worker đều hoàn tất và tải được. Đã đặt hồ sơ Cloud làm hồ sơ chạy trên Windows. |
+| 5 | Kiểm khả năng quay lui và chốt kế hoạch | Dump thủ công từ Cloud xuống D, phục hồi sang PostgreSQL riêng và đối chiếu. Giữ hồ sơ về lại PostgreSQL Windows. | Đạt. Dump Cloud phục hồi trên Windows cổng 55776, khớp 113 bảng và 46 nhóm, 0 sai lệch toàn vẹn. |
+| 6 | Bật Enforce SSL và kiểm sau khởi động lại | Xác nhận mốc khởi động mới của PostgreSQL. Kiểm TLS và chứng thư từ Windows đến pooler, TLS từ pooler đến PostgreSQL, rồi kiểm readiness, Prisma và quyền hai shop. | Đạt. Cả hai chặng dùng TLS 1.3. Prisma đủ 51 migration. Mỗi chủ shop đọc đúng shop trả 200 và đọc chéo trả 404. |
+
+Lượt chuẩn bị ngày 24/11/2026 lưu dump 562.567 byte ở `D:/BotSalesAI/backup/supabase-source-20261124-235354/database.dump`, SHA-256 `fbb871117f8da2c69d7a36b467e0d605bf8e452c4f8879239b933a1dd709d90a`. Mốc cuối của dump là `20261123005100_evaluation_planned_cases`. Thư mục `D:/BotSalesAI/artifacts/supabase-rehearsal-20261124-235422` lưu `compare.json`, `table-source.tsv` và `table-restored.tsv`. Hai tệp TSV có cùng SHA-256 `90497af7ae3231c016090a8ac58e9d55d622cd52bd8eda8d4a00647e3cdc3ef0`. Role runtime đọc được hai shop, có quyền ghi outbox và thực thi hàm dọn blob theo migration, đồng thời bị giới hạn quyền tạo đối tượng và ghi lịch sử Prisma.
+
+Lượt chuyển ngày 25/11/2026 dùng dự án [botsalesai-dev](https://supabase.com/dashboard/project/ssxkuwmnfnbkahejrgoj) trong `jokerse7en7`, Free với báo giá $0/tháng. Data API đã tắt. Kiểm catalog PostgreSQL xác nhận `anon`, `authenticated` và `service_role` có 0 quyền trên bảng và hàm ứng dụng. Runtime không có quyền tạo đối tượng hay ghi lịch sử migration. API/worker dùng Session pooler cổng 5432 với TLS `verify-full`. Prisma CLI dùng CA của Supabase ở chế độ `strict` và từ chối CA thử khác.
+
+Đã bật **Enforce SSL** ngày 25/11/2026. Sau khi áp cấu hình, pooler đã dùng TLS tới PostgreSQL nhưng `pg_postmaster_start_time()` vẫn là mốc cũ. Đã chạy **Fast database reboot** cho riêng PostgreSQL. Mốc khởi động mới là 00:15:03 ngày 25/11/2026 (UTC+7) và trạng thái dự án là `ACTIVE_HEALTHY`. [Cài đặt SSL Supabase](https://supabase.com/docs/guides/platform/ssl-enforcement)
+
+- Windows → Session pooler qua `verify-full` thương lượng TLS 1.3 và xác thực chứng thư thành công. Trong cùng phiên runtime, `pg_stat_ssl` ghi `ssl=true` và TLS 1.3 cho chặng pooler → PostgreSQL. Cả hai chặng dùng `TLS_AES_256_GCM_SHA384`.
+- API readiness trả 200. Hai chủ shop VND và LAK đăng nhập OIDC qua HTTPS, callback trả 302. Mỗi chủ shop chỉ thấy shop của mình trong danh sách, đọc shop mình trả 200 và shop kia trả 404. Logout trả 204 và phiên đã thu hồi trả 401. Prisma kiểm đủ 51 migration. Đã dừng IdP và máy chủ HTTPS của lượt kiểm.
+- Bằng chứng lưu trong `D:/BotSalesAI/artifacts/supabase-cloud-ssxkuwmnfnbkahejrgoj/ssl-enforcement-20261125`. Xem `tls-before.json`, `tls-after.json`, `shops-after-restart.log` và `prisma-after-restart.log`.
+
+Hồ sơ đang chọn là `D:/BotSalesAI/config/supabase/windows-supabase.env` qua `activeEnvironmentFile` trong `D:/BotSalesAI/config/windows-pilot.json`. Khởi động bằng [start-pilot.ps1](infra/windows/start-pilot.ps1). Giữ hồ sơ `D:/BotSalesAI/config/windows-pilot.env` cho fixture và quay lui. Đầu ra nhập, kiểm quyền shop và worker nằm trong `D:/BotSalesAI/artifacts/supabase-cloud-ssxkuwmnfnbkahejrgoj`. Redis, SeaweedFS và ClamAV của lượt kiểm đã dừng cùng API và worker sau khi hoàn thành.
+
+Backup Cloud sau kiểm nằm tại `D:/BotSalesAI/backup/supabase-cloud-20261125-000802/database.dump`, 572.090 byte, SHA-256 `ade1a9d890561049ea27a065bae108ff9d18a227c8c694d83f8d5060407ff574`. Lượt restore đầu rollback vì dump chứa quyền mặc định cấp schema dành cho role nền tảng Supabase. Danh sách `restore-application.list` loại các mục quyền mặc định của `postgres` và `supabase_admin` khi phục hồi trên Windows. Lượt sau giữ dữ liệu và grant của ứng dụng, khớp fingerprint cả 113 bảng. Biên nhận nằm tại `D:/BotSalesAI/artifacts/supabase-cloud-restore-20261125-000802/compare.json`. Cụm phục hồi đã dừng. Dump kiểm phần PostgreSQL. Tệp nhị phân tiếp tục thuộc kho đối tượng trên D và sao lưu theo quy trình riêng.
+
+Bằng chứng Cloud dùng checkout Windows trên `292d4bd4` với thay đổi cục bộ. DB Cloud có 51 migration đã kiểm trên checkout đó. Baseline GitHub của đợt bàn giao BE-CLOUD chứa 44 migration. Chạy kiểm migration trên DB fixture riêng khi dùng checkout GitHub này.
+
+### BE-WIN
+
+Hồ sơ PostgreSQL Windows đã kiểm hai shop trên ổ D và dùng cho fixture, sao lưu, phục hồi và quay lui. Redis, SeaweedFS, ClamAV và IdP thử tiếp tục chạy trực tiếp trên Windows. [Hướng dẫn Windows](infra/windows/README.md)
+
+#### Hồ sơ lưu trữ trên ổ D
+
+| Phạm vi | Đường dẫn |
+|---|---|
+| PostgreSQL fixture và kho đối tượng | `D:/BotSalesAI/data/postgres-55770` và `D:/BotSalesAI/data/seaweed-source` |
+| Backup và bằng chứng local | `D:/BotSalesAI/backup` và `D:/BotSalesAI/artifacts` |
+| Hồ sơ quay lui | `D:/BotSalesAI/config/windows-pilot.env` |
+
+Kết quả trước khi chuyển Cloud gồm hai shop qua HTTPS, truy cập chéo trả 404, restore PostgreSQL Windows khớp 46 nhóm dữ liệu và sao lưu 18 object trên D. Bản thử hiện hành chọn hồ sơ ở BE-CLOUD.
 
 ## P0 Nền backend và luồng đầu tiên với frontend
 
@@ -750,7 +800,7 @@ Log cục bộ `test-results/backend/be21/` gồm `verify.txt` SHA-256 `6ffd2005
 
 #### Bản thử cục bộ · BE-22
 
-- Quyết định ngày 22/11/2026 dùng Windows 11 và Ubuntu WSL2 trên máy chủ dự án cho giai đoạn dùng thử. Chi phí thuê hạ tầng bằng 0. Giao diện `dev:live` chạy qua trình khởi động HTTPS hiện có, phục vụ tại `https://localhost:5173/workspaces`. Dữ liệu gồm hai shop tổng hợp trong PostgreSQL 18.7 riêng, Redis 8.0.5, kho SeaweedFS 4.54 riêng và ClamAV 1.5.4 với chữ ký thử.
+- Mốc lịch sử ngày 22/11/2026 dùng Windows 11 và Ubuntu WSL2 trên máy chủ dự án. Chi phí thuê hạ tầng bằng 0. Giao diện `dev:live` chạy qua trình khởi động HTTPS hiện có, phục vụ tại `https://localhost:5173/workspaces`. Dữ liệu gồm hai shop tổng hợp trong PostgreSQL 18.7 riêng, Redis 8.0.5, kho SeaweedFS 4.54 riêng và ClamAV 1.5.4 với chữ ký thử. Hồ sơ bản thử hiện hành theo [BE-CLOUD](#be-cloud).
 - Chế độ `P0_LOCAL_PILOT=1` tạo tài khoản OIDC tổng hợp `p0-pilot` có quyền chủ shop ở cả hai cửa hàng để dễ chuyển qua lại. Hai tài khoản thử một shop giữ nguyên phạm vi cho các ca cách ly. Tùy chọn pilot chỉ dùng với DB fixture loopback và IdP thử. Firefox dùng profile riêng tin CA thử. Khóa, cấu hình bí mật và profile nằm ngoài Git.
 - Các adapter AI, Messenger, thông báo và mua hàng chạy ở chế độ mô phỏng đã có. Dữ liệu thử, tệp và hoạt động nền xử lý trên máy. T067–T072 giữ nguyên tiêu chí kiểm hạ tầng được cấp và nhà cung cấp thật cho giai đoạn staging.
 - Đã áp đủ 41 migration từ PostgreSQL trống, chạy seed hai lần và đạt `npm run verify` 45/45. Firefox qua HTTPS đăng nhập và mở được **BotSales P0 A** và **BotSales P0 B**. Hai tài khoản một shop đều nhận `404` khi đọc shop còn lại. Mỗi shop có một SKU mẫu được tạo qua API. Gửi lại yêu cầu tạo với cùng khóa trả đúng cùng sản phẩm.
@@ -1155,6 +1205,7 @@ Dùng chung fixture tổng hợp cho BE-11–BE-17. Giá và tổng nội bộ l
 
 | Mốc | Điều kiện hoàn thành | Bằng chứng tối thiểu |
 |---|---|---|
+| P0 · [BE-CLOUD](#be-cloud) | Dữ liệu hai shop trên Supabase Cloud khớp nguồn, quyền và luồng HTTPS đạt, backup từ Cloud phục hồi được trên Windows. | Dự án đích, biên bản đối chiếu và quyền DB, kết quả runtime, checksum dump, kiểm phục hồi và quay lui. |
 | P0 · BE-01–BE-07 | Baseline BE-01 có CI đúng commit. Kiểm ma trận BE-02 đạt. Từ checkout sạch, migrate và seed PostgreSQL, đăng nhập HTTPS → chọn shop → tạo SKU → mở chi tiết → đọc lại sau restart. Phiên hết hạn, quyền thiếu và scope khác shop cho phản hồi đúng. Mất phản hồi rồi reload vẫn tra được kết quả và DB chỉ có một sản phẩm. Ghi giới hạn realtime trong smoke. | Quyết định baseline, link CI, báo cáo ma trận, commit và hash hợp đồng, lockfile, migration/seed, log HTTP/DB và browser live, kết quả hai shop và số lần ghi. |
 | P1 · BE-08–BE-13 | BE-10 sẵn sàng trước import BE-08. Đạt luồng sản phẩm → tồn → báo giá → xác nhận bằng fixture tin nhắn trên PostgreSQL → giao/hoàn → nguồn ghi thu. Dữ liệu khớp giữa đơn, kho, công việc và chứng từ. SSE nối lại đúng ID và phạm vi. Quyền R41 và chính sách phân bổ được kiểm. | Ca SKU cuối, báo giá đổi, thiếu/sai bằng chứng, đối ứng kho, tranh nhận việc theo vai trò, hoàn nhiều phần, COD, restart worker, mất Redis, ngắt/nối SSE và hồi quy P0. |
 | P2 · BE-14–BE-21 | Ma trận route, chức năng, operation và quyền đã được kiểm trên backend local theo khả năng tương ứng. Luồng R62–R67 và các nghiệp vụ mua, tài chính, inbox, AI, privacy có ca thành công, từ chối và phục hồi. Tổng giá vốn chuyển kho và phần dư đối soát khớp nguồn. | Báo cáo ma trận, đối chiếu DB theo fixture phân bổ, kiểm tenant/role, kiểm realtime, bằng chứng adapter thử và danh sách khả năng còn giới hạn theo môi trường. |
