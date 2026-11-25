@@ -18,3 +18,9 @@ R02 dùng bộ lọc trạng thái và phân trang theo URL. R33 dùng Panel, Mu
 - Demo ghi nhận lệnh đóng/mở theo shop, người thao tác, loại lệnh và mã băm của khóa chống gửi lặp. Ca mất phản hồi sau khi đóng đã tra lại kết quả qua danh sách lệnh. Trình duyệt chỉ gửi một POST đóng, đọc lại phiên bản 2 và một bản ghi lệnh. Ca service gửi lại cùng khóa và nhận lại kết quả cũ.
 - Bản demo dựng lại đạt 12/12 ca luồng đóng/mở trên Chromium và Firefox, gồm cả danh sách đang mở tự cập nhật và chủ shop đóng vẫn xem được màn hình báo cáo. Hai phép đo trang tổng quan đều đạt 511.254/512.000 byte gzip, còn dư 746 byte. Khối lớn nhất là 104.320/204.800 byte gzip.
 - `npm run verify` đạt toàn bộ cổng frontend, gồm 122 ca domain/network và 287 ca Vitest. Các ca trình duyệt trên dùng API mô phỏng cục bộ.
+
+## Bản nháp khi tải lại trạng thái shop
+
+Ca hồi quy ban đầu tái hiện việc ô tên cửa hàng và bản nháp biến mất khi lần tải lại nhận HTTP 503. Với bản sửa, cùng ca kiểm tra trên Chromium và Firefox giữ được nội dung đang nhập, hiện cảnh báo dữ liệu cũ và xóa cảnh báo sau khi tải thành công. Khi lần tải kế tiếp nhận 404, biểu mẫu biến mất. Phản hồi 503 tiếp theo vẫn giữ màn hình lỗi và dữ liệu shop đã bị xóa khỏi cache của Shell.
+
+Bản demo dựng lại đạt 14/14 ca luồng đóng/mở và 2/2 phép đo kích thước trên Chromium và Firefox. Trang đầu dùng 511.404/512.000 byte gzip, còn dư 596 byte. Khối lớn nhất dùng 104.320/204.800 byte. Ba ca phiên bị thu hồi qua SSE hoặc hết hạn qua 401 đều đạt trên cả hai trình duyệt với API kiểm thử cục bộ.

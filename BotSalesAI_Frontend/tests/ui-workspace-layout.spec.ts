@@ -276,3 +276,37 @@ test('shop closure recovers a lost demo receipt without a second change', async 
     }, shopId);
     expect(counts).toEqual({ version: 2, count: 1 });
 });
+
+test('shop closure keeps a draft through a transient shop refresh and hides it after access loss', async ({ page }) => {
+    await page.clock.install();
+    await openRoute(page, routes[4]);
+    const name = page.getByRole('textbox', { name: 'Tên cửa hàng' });
+    const draft = 'Tên đang sửa trên tab';
+    await name.fill(draft);
+    const failNextPoll = async (status: number) => {
+        await page.evaluate(status => {
+            const original = window.fetch.bind(window);
+            window.fetch = (input, init) => {
+                const url = new URL(input instanceof Request ? input.url : String(input), location.origin);
+                if (url.pathname !== '/api/v2/shops/shop-demo' || init?.method !== 'GET') return original(input, init);
+                window.fetch = original;
+                return Promise.resolve(Response.json({ type: 'about:blank', title: 'Lỗi tải shop', status, code: 'HTTP_ERROR',
+                    detail: 'Lỗi tải shop ' + status, requestId: 'shop-refresh-test' }, { status }));
+            };
+        }, status);
+        await page.clock.fastForward(21_000);
+    };
+    await failNextPoll(503);
+    await expect(name).toHaveValue(draft);
+    const warning = page.getByRole('status').filter({ hasText: 'Chưa cập nhật được trạng thái cửa hàng' });
+    await expect(warning).toBeVisible();
+    await page.clock.fastForward(21_000);
+    await expect(warning).toHaveCount(0);
+    await expect(name).toHaveValue(draft);
+    await failNextPoll(404);
+    await expect(name).toHaveCount(0);
+    await expect(page.getByRole('alert')).toContainText('404');
+    await failNextPoll(503);
+    await expect(page.getByRole('alert')).toContainText('503');
+    await expect(name).toHaveCount(0);
+});

@@ -112,7 +112,18 @@ export default function Shell() {
     const scopeUserId = session?.user.id;
     const permissionVersion = membership?.permissionVersion;
     const shopQuery = useQuery({
-        queryKey: ['shop', session?.user.id, shopId, membership?.permissionVersion], queryFn: ({ signal }) => request('getShop', { path: { shopId }, signal }), enabled: !!membership, retry: false,
+        queryKey: ['shop', session?.user.id, shopId, membership?.permissionVersion],
+        queryFn: async ({ signal, queryKey }) => {
+            try {
+                return await request('getShop', { path: { shopId }, signal });
+            } catch (error) {
+                // A later failed refresh must not restore a shop whose access was denied.
+                if (!signal.aborted && error instanceof ApiError && [403, 404].includes(error.status))
+                    cache.setQueryData(queryKey, null);
+                throw error;
+            }
+        },
+        enabled: !!membership, retry: false,
         refetchInterval: 20_000, refetchIntervalInBackground: false
     });
     useEffect(() => { setMobileOpen(false); document.querySelector('main')?.focus(); }, [location.pathname]);
@@ -137,7 +148,10 @@ export default function Shell() {
         return <Box sx={layoutSx.shell.pageFallbackInset}><Stack sx={layoutSx.query.stateGap}><Alert severity="error">Bạn không có quyền truy cập cửa hàng này.</Alert><Button component={RouterLink} to="/workspaces">Chọn cửa hàng</Button></Stack></Box>;
     if (shopQuery.isPending)
         return <LinearProgress aria-label="Đang tải cửa hàng" />;
-    if (shopQuery.isError || !shopQuery.data)
+    const refreshError = shopQuery.error;
+    const transientRefresh = refreshError instanceof TypeError || (refreshError instanceof ApiError
+        && (refreshError.status >= 500 || refreshError.code === 'REQUEST_TIMEOUT'));
+    if (!shopQuery.data || (shopQuery.isError && !transientRefresh))
         return <Box sx={layoutSx.shell.pageFallbackInset}><Stack sx={layoutSx.query.stateGap}><Alert severity="error">{shopQuery.error?.message || error?.message || 'Không đọc được cửa hàng'}</Alert><Button onClick={() => shopQuery.refetch()}>Thử lại</Button></Stack></Box>;
     const shop = shopQuery.data.data;
     const currentRoute = routeMetadata(location.pathname);
@@ -159,6 +173,7 @@ export default function Shell() {
  </Stack></Paper>
  {__MOCK__ && <Box component="aside" aria-label="Công cụ mô phỏng" sx={layoutSx.shell.demoBanner}><Alert severity="info" action={<Button color="inherit" size="small" onClick={() => setFeedback(true)}>Góp ý</Button>}>Frontend review: API được mô phỏng trong bộ nhớ; không gửi tin hoặc đặt hàng thật. Tải lại sẽ đặt lại dữ liệu.</Alert><MockTools onChange={refresh} expanded={demoExpanded} setExpanded={setDemoExpanded} role={demoRole} setRole={setDemoRole} fault={demoFault} setFault={setDemoFault} dataset={demoDataset} setDataset={setDemoDataset} datasetStatus={demoStatus} setDatasetStatus={setDemoStatus}/></Box>}
  {logoutError && <Alert severity="error" sx={layoutSx.shell.statusBanner}>{logoutError}</Alert>}<ScopeEvents /><CommandRecovery />
+ {transientRefresh && <Alert severity="warning" role="status" sx={layoutSx.shell.statusBanner}>Chưa cập nhật được trạng thái cửa hàng. Đang hiển thị dữ liệu gần nhất.</Alert>}
  {shop.status === 'closed' && <Alert severity="info" role="status" sx={layoutSx.shell.statusBanner}>Cửa hàng đã đóng. Bạn có thể xem lại dữ liệu nghiệp vụ.</Alert>}
  {!online && <Alert severity="warning" sx={layoutSx.shell.statusBanner}>Đang ngoại tuyến. Dữ liệu đang xem có thể cũ; mọi thao tác ghi bị tạm khóa.</Alert>}
  <Box component="main" id="main-content" tabIndex={-1} sx={[layoutSx.page.gutter, layoutSx.page.contentInsetBlock, layoutSx.shell.mainFill, { outline: 'none' }]}><Outlet key={`${session.user.id}:${shopId}:${membership.permissionVersion}`}/></Box>
