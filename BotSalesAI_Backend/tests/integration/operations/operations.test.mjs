@@ -551,6 +551,9 @@ test('SC2-G07 SC2-G08 -- shop-local reporting counts the actual order and net pr
         kind: 'receipt', source: { type: 'fixture_receipt', id: randomUUID() }, reason: 'Sổ kho kiểm báo cáo', delta: { onHand: 3 }, receivedValue: '30',
     }));
     const date = localAccountingDate(new Date(), shopA.timezone);
+    const marketingQuery = 'marketing-summary?fromDate=' + date + '&toDate=' + date + '&bucket=week';
+    // Other CI suites can leave posted and reversed advertising entries for the same day.
+    const before = await request(marketingQuery, 'MarketingSummaryResponse');
     const promo = await post('promotions', { name: 'R53 kiểm xác nhận ' + randomUUID().slice(0, 6), startsOn: date, endsOn: date,
         discountAmount: '10', minMarginPercent: 1, lines }, 'PromotionResponse', { status: 201 });
     await patch('promotions/' + promo.id + '/decision', { action: 'activate', reason: 'Kiểm chứng đầu kỳ theo ngày' },
@@ -570,15 +573,15 @@ test('SC2-G07 SC2-G08 -- shop-local reporting counts the actual order and net pr
     const result = await post('orders/' + first.id + '/confirm', { expectedVersion: first.version, quoteId: offer.id, customerConfirmationId: proof.id },
         'CommandResponse', { status: 202 });
     assert.equal(result.status, 'succeeded');
-    const summary = await request('marketing-summary?fromDate=' + date + '&toDate=' + date + '&bucket=week', 'MarketingSummaryResponse');
+    const summary = await request(marketingQuery, 'MarketingSummaryResponse');
     assert.equal(summary.period.timezone, shopA.timezone);
     assert.equal(summary.trend.length, 1);
     const row = summary.promotionResults.find(row => row.promotionId === promo.id);
     assert.deepEqual({ orders: row.orders, discount: row.discount, netSales: row.netSales }, { orders: 1, discount: money('10'), netSales: money('190') });
     assert.equal(summary.knownAttributedOrders, 0);
     assert.ok(summary.unknownAttributionOrders >= 1);
-    assert.equal(summary.actualSpend, null);
-    assert.equal(summary.estimatedSpend, null);
+    assert.deepEqual(summary.actualSpend, before.actualSpend);
+    assert.deepEqual(summary.estimatedSpend, before.estimatedSpend);
     const defaults = await request('marketing-summary', 'MarketingSummaryResponse');
     assert.equal(defaults.trend.length, 30);
     const foreignReport = await request('marketing-summary?fromDate=' + date + '&toDate=' + date, 'MarketingSummaryResponse', { shop: shopB.id, actor: foreign });
