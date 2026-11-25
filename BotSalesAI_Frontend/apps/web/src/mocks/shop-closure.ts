@@ -1,4 +1,4 @@
-import { all, MockFailure, num, str, units, type Input } from './database';
+import { all, MockFailure, num, record, str, units, type Input } from './database';
 import { paymentReviews } from './payment-reviews';
 
 export function requireCloseableShop(input: Input) {
@@ -26,10 +26,19 @@ export function requireCloseableShop(input: Input) {
         || notifications.some(row => row.deliveryStatus === 'queued'),
         'BACKGROUND_WORK', 'Hoàn tất công việc, tác vụ nền hoặc lượt gửi đang chờ.');
     const payments = paymentReviews({ ...input, query: new URLSearchParams({ stage: 'open' }) });
+    const deposits = orders.filter(order => order.orderState === 'draft' || order.orderState === 'cancelled');
+    const posted = scoped('financeEntries').filter(entry => entry.status === 'posted' && !entry.reversalOf);
+    const hasDeposit = deposits.some(order => posted.reduce((net, entry) => {
+        const source = record(entry.sourceRef);
+        if (source.id !== order.id || record(entry.amount).currency !== record(order.total).currency) return net;
+        if (source.type === 'order' && entry.kind === 'receipt') return net + units(entry.amount);
+        if (source.type === 'order_refund' && entry.kind === 'disbursement') return net - units(entry.amount);
+        return net;
+    }, 0n) !== 0n);
     block(scoped('codSettlements').some(row => row.status !== 'matched')
         || scoped('reconciliations').some(row => row.state !== 'matched')
         || scoped('debts').some(row => units(row.outstandingAmount) !== 0n)
-        || payments.some(row => row.kind === 'refund' || (row.verified != null && units(row.verified) !== 0n) || orders.some(order => order.id === row.orderId && order.orderState !== 'draft')),
+        || hasDeposit || payments.some(row => row.kind === 'refund' || !deposits.some(order => order.id === row.orderId)),
         'RECONCILIATION', 'Đối soát các khoản thu, COD, công nợ hoặc hoàn tiền còn mở.');
     block(businessCommands.some(row => row.status === 'unknown') || has('purchases', 'status', 'unknown') || has('shipments', 'state', 'unknown')
         || scoped('messages').some(row => row.direction === 'outbound' && row.status === 'unknown') || notifications.some(row => row.deliveryStatus === 'unknown'),

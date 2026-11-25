@@ -38,6 +38,25 @@ it('returns actionable blocker groups and keeps the seeded shop active', async (
     expect((await list()).data).toHaveLength(2);
 });
 
+it.each([['draft', 'prepay'], ['draft', 'cod'], ['cancelled', 'prepay'], ['cancelled', 'cod']])(
+    'keeps %s %s deposits open until the posted refund covers the collection', async (orderState, paymentMethod) => {
+        const shop = record((await handle({ op: 'createShop', path: {}, headers: headers(1, 'new'),
+            body: { name: 'Đặt cọc', currency: 'VND', locale: 'vi-VN', timezone: 'Asia/Vientiane' } })).data);
+        const shopId = String(shop.id), path = { shopId };
+        const money = (amount: string) => ({ currency: 'VND', amount });
+        db.orders.push({ id: 'deposit-order', shopId, orderState, paymentMethod, total: money('100') });
+        db.financeEntries.push({ shopId, status: 'posted', kind: 'receipt', sourceRef: { type: 'order', id: 'deposit-order' }, amount: money('100') });
+        const close = () => handle({ op: 'closeShop', path, headers: headers(1, 'close') });
+        const open = { code: 'SHOP_CLOSE_BLOCKED', errors: [expect.objectContaining({ code: 'RECONCILIATION' })] };
+        await expect(close()).rejects.toMatchObject(open);
+        const refund = { shopId, kind: 'disbursement', sourceRef: { type: 'order_refund', id: 'deposit-order' } };
+        db.financeEntries.push({ ...refund, status: 'posted', amount: money('40') }, { ...refund, status: 'draft', amount: money('60') });
+        await expect(close()).rejects.toMatchObject(open);
+        db.financeEntries.at(-1)!.status = 'posted';
+        expect((await close()).data).toMatchObject({ status: 'closed' });
+    },
+);
+
 it('allows privacy requests and membership revocation while closed, then removes the revoked shop from discovery', async () => {
     const path = { shopId: 'shop-demo' };
     const shop = db.shops.find(s => s.id === path.shopId)!;

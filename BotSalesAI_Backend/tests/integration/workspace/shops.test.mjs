@@ -12,8 +12,12 @@ import { acceptInvitations } from '../../../apps/api/dist/modules/workspace/memb
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { recordAudit } from '../../../apps/api/dist/platform/audit/index.js';
 import { recordCommand } from '../../../apps/api/dist/platform/commands/index.js';
+import { recordAdvertisingEstimate, recordMarketingEvidence } from '../../../apps/api/dist/modules/finance/index.js';
+import { recordManualShipmentEvidence } from '../../../apps/api/dist/modules/fulfillment/index.js';
+import { recordManualEvidence } from '../../../apps/api/dist/modules/procurement/index.js';
 import { fixtureIssuer, fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { orderConversation } from '../orders/fixtures.mjs';
+import { reviewedEvidenceFixture } from '../helpers/reviewed-evidence-fixture.mjs';
 import { assertFixtureDatabase, fixtureSession, restoreReader } from './session-fixture.mjs';
 
 const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit/contracts/openapi.json', import.meta.url)));
@@ -610,6 +614,66 @@ test('P0-05 SHOP-LIFECYCLE: operations report every outstanding blocker, then is
     assert.deepEqual(await blockers(), ['EXTERNAL_UNKNOWN', 'RECONCILIATION']);
     await db.purchaseOrder.update({ where: key(purchase.id), data: { status: 'cancelled' } });
     assert.deepEqual(await blockers(), ['RECONCILIATION']);
+});
+
+test('P0-05 SHOP-LIFECYCLE: reviewed evidence writers replay prior receipts and reject new attestations after closure', async t => {
+    const { shop, owner, change } = await closureFixture(t);
+    const { id: shopId, currency, defaultWarehouseId: warehouseId } = shop;
+    const reviewerId = owner.userId, key = id => ({ shopId_id: { shopId, id } });
+    const customer = await db.customer.create({ data: { shopId, displayName: 'Khách hàng' } });
+    const supplier = await db.supplier.create({ data: { shopId, name: 'Nhà cung cấp', contactLabel: 'Liên hệ', currency,
+        leadTimeDays: 1, paymentTerms: 'Trả khi nhận', sendMethod: 'manual' } });
+    for (const [name, value] of Object.entries({ ADVERTISING_ESTIMATE_SHOPS: shopId, MARKETING_EVIDENCE_SHOPS: shopId,
+        SHIPMENT_MANUAL_SHOPS: shopId, PROCUREMENT_MANUAL_SUPPLIERS: shopId + '/' + supplier.id })) {
+        const previous = process.env[name];
+        process.env[name] = value;
+        t.after(() => { if (previous === undefined) delete process.env[name]; else process.env[name] = previous; });
+    }
+    const day = new Date('2020-01-01T12:00:00Z');
+    const order = await db.salesOrder.create({ data: { shopId, warehouseId, customerId: customer.id, orderState: 'completed',
+        fulfillmentState: 'returned', paymentMethod: 'cod', currency, total: '15000', notes: '' } });
+    const reservation = await db.stockReservation.create({ data: { shopId, orderId: order.id, orderVersion: 1, actorId: reviewerId,
+        requestHash: digest(randomUUID()), status: 'released', createdAt: day, settledAt: day, expiresAt: day } });
+    await db.salesOrder.update({ where: key(order.id), data: { reservationId: reservation.id } });
+    const shipment = await db.shipment.create({ data: { shopId, orderId: order.id, warehouseId, currency, state: 'returned', handedOverAt: day, lastEventAt: day } });
+    const purchase = await db.purchaseOrder.create({ data: { shopId, warehouseId, supplierId: supplier.id, supplierVersion: 1,
+        currency, total: '10000', intentHash: digest(randomUUID()), status: 'unknown' } });
+    const command = await db.command.create({ data: { shopId, actorId: reviewerId, operationId: 'sendPurchaseOrder',
+        idempotencyKey: randomUUID(), requestHash: digest(randomUUID()), status: 'succeeded' } });
+    await db.purchaseDispatch.create({ data: { shopId, purchaseOrderId: purchase.id, commandId: command.id, manualHandoff: true } });
+    const common = { shopId, reviewerId, documentSha256: digest('reviewed document') };
+    const date = '2020-01-01', occurredAt = new Date().toISOString();
+    const writers = [
+        ['advertising-estimate', recordAdvertisingEstimate, db.advertisingEstimate, { date, expectedRevision: 0, amount: { amount: '500', currency } }, { expectedRevision: 1 }],
+        ['marketing', recordMarketingEvidence, db.marketingEvidence, { orderId: order.id, date, expectedRevision: 0, confidence: 'known', channel: 'messenger',
+            campaignId: 'campaign', sourceId: 'source-1' }, { expectedRevision: 1, sourceId: 'source-2' }],
+        ['shipment', recordManualShipmentEvidence, db.shipmentObservation, { orderId: order.id, shipmentId: shipment.id, expectedVersion: shipment.version,
+            eventType: 'returned', externalEventId: 'returned-1', occurredAt }, { externalEventId: 'returned-2' }],
+        ['procurement', recordManualEvidence, db.procurementEvidence, { purchaseOrderId: purchase.id, supplierId: supplier.id, intentHash: purchase.intentHash,
+            expectedVersion: purchase.version, kind: 'supplier_confirmation', externalRef: 'observation-1', occurredAt }, { externalRef: 'observation-2' }],
+    ];
+    const prepared = [];
+    for (const [kind, writer, table, input, revision] of writers) {
+        const cli = await reviewedEvidenceFixture(kind, { document: 'reviewed document' });
+        t.after(cli.close);
+        const original = { ...common, ...input }, hash = await cli.prepare(original);
+        const { stdout } = await cli.execute(hash);
+        prepared.push({ kind, writer, table, cli, original, hash, revision, id: JSON.parse(stdout).evidenceId });
+    }
+    await db.purchaseOrder.update({ where: key(purchase.id), data: { status: 'cancelled' } });
+    await json(await change('close'), 200, 'ShopResponse');
+    const auditCount = () => db.auditEntry.count({ where: { shopId } });
+    const audits = await auditCount();
+    for (const { kind, writer, table, cli, original, hash, revision, id } of prepared) await t.test(kind, async () => {
+        assert.equal(JSON.parse((await cli.execute(hash)).stdout).evidenceId, id);
+        await assert.rejects(writer(db, { ...original, reviewerId: ownerB.userId }, hash),
+            error => error.getStatus() === 404);
+        const next = { ...original, ...revision }, nextHash = await cli.prepare(next);
+        await assert.rejects(writer(db, next, nextHash), { problemCode: 'SHOP_CLOSED' });
+        await assert.rejects(cli.execute(nextHash), { stderr: /rejected \(409\)/ });
+        assert.equal(await table.count({ where: { shopId } }), 1);
+        assert.equal(await auditCount(), audits);
+    });
 });
 
 test('P0-05 SHOP-LIFECYCLE: a closed shop rejects pending marketing opt-ins and lets a customer withdraw earlier consent', async t => {

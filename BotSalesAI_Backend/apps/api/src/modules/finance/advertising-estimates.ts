@@ -4,6 +4,7 @@ import type { Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { validUuid } from '../../http/query.js';
 import { requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
+import { requireOpenShop } from '../../platform/database/shop-lifecycle.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { requireShopAccess } from '../workspace/index.js';
 import { accountingDate, financeShop, parseMoney, type Money } from './journal.js';
@@ -30,6 +31,7 @@ export function recordAdvertisingEstimate(db: PrismaClient, input: EstimateAttes
             where: { shopId_attestationHash: { shopId, attestationHash } }, select: { id: true },
         });
         if (prior) return prior.id;
+        await requireOpenShop(tx, shopId);
         const { currency } = await financeShop(tx, shopId);
         const value = parseMoney(amount, currency);
         const latest = await tx.advertisingEstimate.findFirst({ where: { shopId, accountingDate: accountingDay },

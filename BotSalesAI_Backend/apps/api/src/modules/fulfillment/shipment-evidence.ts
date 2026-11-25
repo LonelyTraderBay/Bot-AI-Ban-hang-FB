@@ -5,6 +5,7 @@ import { openapi } from '../../http/contract-source.js';
 import { validUuid } from '../../http/query.js';
 import { requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
+import { requireOpenShop } from '../../platform/database/shop-lifecycle.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { requireShopAccess } from '../workspace/index.js';
 
@@ -44,6 +45,7 @@ export function recordManualShipmentEvidence(db: PrismaClient, input: Attestatio
             if (prior.attestationHash !== attestationHash) throw new ConflictException();
             return prior.id;
         }
+        await requireOpenShop(tx, shopId);
         requireVersion(shipment.version, expectedVersion);
         if (!shipment.handedOverAt) throw new ConflictException();
         if (occurredAt < shipment.handedOverAt) throw new UnprocessableEntityException();
