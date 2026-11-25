@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
 import {test,expect} from '@playwright/test';
 import {startDemoServer} from './session/demo-server.mjs';
 
@@ -38,7 +38,10 @@ function observeShopRequests(page: import('@playwright/test').Page){
 
 test('workspace onboarding creates a shop with an active membership and returns to its scoped route',async({page})=>{
     const calls=observeShopRequests(page);
-    await gotoDemo(page,'/workspaces');
+    const shops=await navigateDemoAndRead(page,new URL('/workspaces',demoUrl).toString(),response=>
+        response.request().method()==='GET'&&new URL(response.url()).pathname==='/api/v2/shops');
+    expect(shops.status()).toBe(200);
+    expect(await shops.finished()).toBeNull();
     await expect(page.getByRole('heading',{name:'Chọn cửa hàng',exact:true})).toBeVisible();
     await expect(page.getByText('Joker Studio · Shop mẫu',{exact:true})).toBeVisible();
     await expect(page.getByText('Cửa hàng mẫu thứ hai',{exact:true})).toBeVisible();
