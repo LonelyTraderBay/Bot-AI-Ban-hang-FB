@@ -1,6 +1,6 @@
 import { webcrypto } from 'node:crypto';
 import { beforeEach, expect, it, vi } from 'vitest';
-import { CSRF, handle, resetService, setRole } from '../src/mocks/service';
+import { CSRF, handle, resetService, setFault, setRole } from '../src/mocks/service';
 import { db, record } from '../src/mocks/database';
 
 beforeEach(() => { vi.stubGlobal('crypto', webcrypto); resetService(); });
@@ -14,9 +14,15 @@ it('preserves the owner’s shop, moves it between filtered lists and replays a 
     setRole('manager');
     await expect(close()).rejects.toMatchObject({ status: 403 });
     setRole('owner');
-    const closed = record((await close()).data);
+    setFault('unknown');
+    const first = await close();
+    expect(first.dropResponse).toBe(true);
+    const closed = record(first.data);
     expect(closed).toMatchObject({ id: shop.id, status: 'closed', version: 2 });
-    expect((await close()).data).toEqual(closed);
+    const replay = await close();
+    expect(replay.dropResponse).toBeUndefined();
+    expect(replay.data).toEqual(closed);
+    expect(db.commands.filter(row => row.shopId === shop.id && row.kind === 'closeShop')).toHaveLength(1);
     expect(db.audit.filter(row => row.shopId === shop.id && row.action === 'closeShop')).toHaveLength(1);
     expect((await list()).data).not.toContainEqual(closed);
     expect((await list('closed')).data).toEqual([closed]);

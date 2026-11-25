@@ -8,7 +8,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Text, Toolti
 import type { ExportRequest, Job, MarketingBucket } from '@botsales/contracts';
 import { colors, tokens } from '@botsales/tokens';
 import { useApi, useCommand } from '../../shared/api/hooks';
-import { useScope, useCan, useCanWrite } from '../../shared/model/scope';
+import { useScope, useCan } from '../../shared/model/scope';
 import { dateTime, formatDateOnly, isValidDateOnly } from '../../shared/model/format';
 import { Amount, DataTable, DetailLine, ErrorNotice, PageHeader, Panel, Pager, QueryState, RouteLink, Stat, Stats, Status } from '../../shared/ui/components';
 import { layoutSx } from '../../shared/ui/layout';
@@ -76,7 +76,7 @@ export function ReportsPage() {
     };
     const [rangeError, setRangeError] = useState('');
     const [lastExport, setLastExport] = useState<{ job: Job; type: ExportRequest['reportType']; from: string; to: string } | null>(null);
-    const canExportReports = useCanWrite('reports.export');
+    const canExportReports = useCan('reports.export');
     const canExportSource = useCan(sourcePermissions[type]);
     const availableReports = summary.data?.data.availableReports || [];
     const reportAvailable = availableReports.includes(type);
@@ -165,7 +165,7 @@ export function ReportsPage() {
                             {!canExportReports && <Alert severity="warning">Vai trò hiện tại không có quyền reports.export.</Alert>}
                             {canExportReports && !canExportSource && <Alert severity="warning">Quyền xuất không thay thế quyền đọc nguồn {sourcePermissions[type]}; loại báo cáo này chưa thể xuất.</Alert>}
                             {canExportReports && canExportSource && !reportAvailable && availableReports.length > 0 && <Alert severity="warning">API không liệt kê loại báo cáo này cho vai trò hiện tại.</Alert>}
-                            <Button variant="contained" onClick={handleExport} disabled={!canExportReports || !canExportSource || !reportAvailable || !snapshotAsOf || !from || !to || from > to || run.pending}>
+                            <Button variant="contained" onClick={handleExport} disabled={shop.status === 'closed' || !canExportReports || !canExportSource || !reportAvailable || !snapshotAsOf || !from || !to || from > to || run.pending}>
                                 {run.pending ? 'Đang tạo snapshot…' : 'Tạo tệp báo cáo CSV'}
                             </Button>
                             {lastExport && <ActionGroup direction={{ xs: 'column', sm: 'row' }}  alignItems={{ xs: 'stretch', sm: 'center' }}>

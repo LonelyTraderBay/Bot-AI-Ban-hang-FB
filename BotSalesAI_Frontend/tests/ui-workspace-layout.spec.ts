@@ -121,6 +121,9 @@ test('shop closure preserves history and settings across both workspace lists', 
     await page.locator('a[href="/s/' + shopId + '/settings/audit"]').first().click();
     await expect(page.getByRole('heading', { name: 'Nhật ký hoạt động' })).toBeVisible();
     await expect(page.getByText('closeShop', { exact: true }).first()).toBeVisible();
+    await page.locator('a[href="/s/' + shopId + '/reports"]').first().click();
+    await expect(page.getByRole('button', { name: 'Tạo tệp báo cáo CSV' })).toBeDisabled();
+    await expect(page.getByText('Vai trò hiện tại không có quyền reports.export.')).toHaveCount(0);
     await settings.click();
     await page.getByRole('button', { name: 'Mở lại cửa hàng' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'Mở lại cửa hàng' }).click();
@@ -184,4 +187,92 @@ test('shop closure reconciles version conflicts and writes from a stale tab', as
     await expect(page.getByRole('button', { name: 'Mở lại cửa hàng' })).toBeVisible();
     await expect(page.getByRole('alert').filter({ hasText: 'Cửa hàng đã đóng' }).first()).toBeVisible();
     expect(pageErrors).toEqual([]);
+});
+
+async function openFreshShop(page: import('@playwright/test').Page) {
+    await openRoute(page, routes[2]);
+    await page.getByRole('textbox', { name: 'Tên cửa hàng' }).fill('Shop thử đồng bộ');
+    await page.getByRole('button', { name: 'Tạo cửa hàng' }).click();
+    await expect(page).toHaveURL(/\/s\/shop-\d+\/overview/);
+    return new URL(page.url()).pathname.split('/')[2];
+}
+
+function changeShop(page: import('@playwright/test').Page, shopId: string, suffix: string, method: string, version: number, body?: object) {
+    return page.evaluate(async args => {
+        const { data: { csrfToken } } = await (await fetch('/api/v2/session')).json();
+        return (await fetch('/api/v2/shops/' + args.shopId + args.suffix, {
+            method: args.method, headers: { 'X-CSRF-Token': csrfToken, 'Idempotency-Key': crypto.randomUUID(),
+                'If-Match': '"' + args.version + '"', ...(args.body ? { 'Content-Type': 'application/json' } : {}) },
+            body: JSON.stringify(args.body),
+        })).status;
+    }, { shopId, suffix, method, version, body });
+}
+
+test('shop closure refreshes a visible read-only tab and locks shipping fees until reopen', async ({ page }) => {
+    await page.clock.install();
+    await page.addInitScript(() => Object.defineProperty(window, 'EventSource', { value: class { close() {} } }));
+    const shopId = await openFreshShop(page);
+    expect(await changeShop(page, shopId, '/shipping-policy', 'PUT', 1, { rules: [{ countryCode: 'VN', province: 'Hà Nội', serviceName: 'Giao thường', amount: '20000' }] })).toBe(200);
+    await page.locator('a[href="/s/' + shopId + '/settings/shipping"]').first().click();
+    const edit = page.getByRole('button', { name: 'Sửa vùng', exact: true });
+    const remove = page.getByRole('button', { name: 'Gỡ vùng', exact: true });
+    await remove.click();
+    await expect(page.getByRole('dialog', { name: 'Gỡ vùng giao' })).toBeVisible();
+    expect(await changeShop(page, shopId, '/close', 'POST', 1)).toBe(200);
+    await page.clock.fastForward(31_000);
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(edit).toBeDisabled();
+    await expect(remove).toBeDisabled();
+    await expect(page.getByRole('cell', { name: 'Giao thường', exact: true })).toBeVisible();
+    expect(await changeShop(page, shopId, '/reopen', 'POST', 2)).toBe(200);
+    await page.clock.fastForward(31_000);
+    await expect(edit).toBeEnabled();
+    await edit.click();
+    const editor = page.getByRole('dialog', { name: 'Sửa vùng giao' });
+    const service = editor.getByRole('textbox', { name: 'Tên dịch vụ' });
+    await service.fill('Tên dịch vụ đang sửa');
+    expect(await changeShop(page, shopId, '/close', 'POST', 3)).toBe(200);
+    await page.clock.fastForward(31_000);
+    await expect(service).toBeDisabled();
+    await expect(service).toHaveValue('Tên dịch vụ đang sửa');
+    await expect(editor.getByRole('button', { name: 'Lưu vùng giao' })).toBeDisabled();
+    expect(apiWrites.filter(line => /PUT .*shipping-policy$/.test(line))).toHaveLength(1);
+});
+
+test('shop closure refreshes the filtered workspace list while it is visible', async ({ page }) => {
+    await page.clock.install();
+    const shopId = await openFreshShop(page);
+    await page.locator('header a[href="/workspaces"]').click();
+    const listing = page.getByRole('heading', { name: 'Shop thử đồng bộ' });
+    await expect(listing).toBeVisible();
+    expect(await changeShop(page, shopId, '/close', 'POST', 1)).toBe(200);
+    await page.clock.fastForward(31_000);
+    await expect(listing).toHaveCount(0);
+});
+
+test('shop closure recovers a lost demo receipt without a second change', async ({ page }) => {
+    const shopId = await openFreshShop(page);
+    await page.locator('a[href="/s/' + shopId + '/settings/shop"]').first().click();
+    await openDemoControls(page);
+    await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
+    await waitForDemoMenu(page, 'Trạng thái thử');
+    await page.getByRole('option', { name: 'Kết quả ghi chưa rõ' }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
+    await page.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Đóng cửa hàng' });
+    await dialog.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();
+    await expect(dialog.getByRole('alert')).toContainText('Chưa xác minh');
+    await dialog.getByRole('button', { name: 'Hủy' }).click();
+    const recovery = page.getByRole('button', { name: 'Kiểm tra trạng thái lệnh' });
+    await expect(recovery).toBeEnabled();
+    await recovery.click();
+    await expect(recovery).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Mở lại cửa hàng' })).toBeVisible();
+    expect(apiWrites.filter(line => line.endsWith('/' + shopId + '/close'))).toHaveLength(1);
+    const counts = await page.evaluate(async id => {
+        const shop = (await (await fetch('/api/v2/shops/' + id)).json()).data;
+        const commands = (await (await fetch('/api/v2/shops/' + id + '/commands?kind=closeShop')).json()).data;
+        return { version: shop.version, count: commands.length };
+    }, shopId);
+    expect(counts).toEqual({ version: 2, count: 1 });
 });

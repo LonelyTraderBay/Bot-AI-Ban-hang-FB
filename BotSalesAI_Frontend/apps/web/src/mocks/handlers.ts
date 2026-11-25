@@ -39,6 +39,7 @@ export const handlers = Object.entries(operations).filter(([id]) => id !== 'subs
                 if (header.required && !request.headers.get(header.name))
                     return failure(header.name.toLowerCase() === 'if-match' ? 428 : header.name.toLowerCase() === 'x-csrf-token' ? 403 : 400, header.name.toLowerCase() === 'x-csrf-token' ? 'CSRF_INVALID' : 'REQUIRED_HEADER', `Thiếu ${header.name}.`, requestId);
             const result = await handle({ op, path, body, form, query: url.searchParams, headers: Object.fromEntries(request.headers.entries()), origin: url.origin });
+            if (result.dropResponse) return HttpResponse.error();
             if (result.status === 204)
                 return new HttpResponse(null, { status: 204 });
             let data = result.data;

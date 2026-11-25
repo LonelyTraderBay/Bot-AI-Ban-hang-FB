@@ -112,7 +112,8 @@ export default function Shell() {
     const scopeUserId = session?.user.id;
     const permissionVersion = membership?.permissionVersion;
     const shopQuery = useQuery({
-        queryKey: ['shop', session?.user.id, shopId, membership?.permissionVersion], queryFn: ({ signal }) => request('getShop', { path: { shopId }, signal }), enabled: !!membership, retry: false
+        queryKey: ['shop', session?.user.id, shopId, membership?.permissionVersion], queryFn: ({ signal }) => request('getShop', { path: { shopId }, signal }), enabled: !!membership, retry: false,
+        refetchInterval: 20_000, refetchIntervalInBackground: false
     });
     useEffect(() => { setMobileOpen(false); document.querySelector('main')?.focus(); }, [location.pathname]);
     useEffect(() => {

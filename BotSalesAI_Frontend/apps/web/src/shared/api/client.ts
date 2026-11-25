@@ -2,6 +2,7 @@ import { API_BASE_PATH, operations } from '@botsales/contracts';
 import type { Csrf, OperationId, Operations, RequestOf, ResponseOf, Problem } from '@botsales/contracts';
 import { ApiError, UnknownResultError } from './errors';
 import { assertParameterSchema, assertSchema } from './validation';
+import { isShopTransition } from '../model/shop-lifecycle';
 import { rememberUnknown } from './intents';
 let csrfToken = '';
 let scopeEpoch = 0;
@@ -250,7 +251,7 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
     catch (error) {
         if (mutation && sent && idempotencyParameter?.required && intent && (!(error instanceof ApiError) || error.status >= 500 || error.status < 300)) {
             const commandId = error instanceof ApiError ? error.problem?.commandId : undefined;
-            if (__MOCK__)
+            if (__MOCK__ && !isShopTransition(op))
                 rememberUnknown({ intentId: intent, shopId: options.path?.shopId || '', operation: op, commandId: commandId || null });
             throw new UnknownResultError(intent, commandId);
         }

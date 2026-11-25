@@ -55,7 +55,7 @@ export function WorkspacesPage() {
     const shops = useQuery({
         queryKey: ['shops', session?.user.id, status, cursor],
         queryFn: ({ signal }) => request('listShops', { signal, query: { status, cursor } }),
-        enabled: !!session, retry: false,
+        enabled: !!session, retry: false, refetchInterval: 20_000, refetchIntervalInBackground: false,
     });
     const isEmpty = !shops.isError && shops.data?.data.length === 0;
     const createShopButton = <Button component={RouterLink} to="/onboarding" variant="contained">Tạo cửa hàng</Button>;

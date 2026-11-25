@@ -6,7 +6,7 @@ import { operations } from '@botsales/contracts';
 import { request, subscribeScopeCancellation } from './client';
 import type { ApiArguments, ApiOptions, MutationOperationId, QueryApiOptions, QueryOperationId } from './client';
 import { ApiError, UnknownResultError } from './errors';
-import { permitsClosedShopWrite } from '../model/shop-lifecycle';
+import { isShopTransition, permitsClosedShopWrite } from '../model/shop-lifecycle';
 import { useScope } from '../model/scope';
 import {
     rememberUnknown, hasUnknownIntent, subscribeIntents, intentSnapshot, intentInScope,
@@ -113,7 +113,7 @@ export function useCommand<K extends MutationOperationId>(op: K, invalidate: rea
         let retainRecovery = false;
         try {
             assertAlive();
-            if (!__MOCK__ && operations[op].headers.some(header => header.name === 'Idempotency-Key' && header.required)) {
+            if ((!__MOCK__ || isShopTransition(op)) && operations[op].headers.some(header => header.name === 'Idempotency-Key' && header.required)) {
                 recovery = await prepareIntent(scope.session.user.id, scope.shop.id, op, intentId);
                 assertAlive();
                 // A tab reload can happen before fetch reports a network error.

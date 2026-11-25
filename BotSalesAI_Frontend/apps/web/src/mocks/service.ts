@@ -1,7 +1,8 @@
 import operationIndex from '../../../../packages/contracts/src/operations.json';
-import { permitsClosedShopWrite } from '../shared/model/shop-lifecycle';
+import { sha256Text } from '../shared/api/sha256';
+import { isShopTransition, permitsClosedShopWrite } from '../shared/model/shop-lifecycle';
 import collections from './collections.json';
-import { db, all, first, find, insert, resetDb, restoreDb, ensure, str, num, record, rows, id, now, future, grantedPermissions, audit, MockFailure } from './database';
+import { command, db, all, first, find, insert, resetDb, restoreDb, ensure, str, num, record, rows, id, now, future, grantedPermissions, audit, MockFailure } from './database';
 import type { Row, Input } from './database';
 import { catalog } from './catalog';
 import { orders } from './orders';
@@ -106,6 +107,7 @@ export type MockResult = {
     status: number;
     data: unknown;
     commandId?: string;
+    dropResponse?: boolean;
 };
 async function read(op: string, input: Input): Promise<unknown> {
     const { shopId } = input;
@@ -156,6 +158,12 @@ async function read(op: string, input: Input): Promise<unknown> {
         const command = find('commands', input.id, shopId);
         ensure(canReadCommand(command), 'Bạn không có quyền xem nguồn của thao tác này.', 403, 'FORBIDDEN');
         return command;
+    }
+    const kind = input.query.get('kind') ?? '';
+    const lookup = input.query.get('q');
+    if (op === 'listCommands' && isShopTransition(kind) && lookup && /^[a-f0-9]{64}$/.test(lookup)) {
+        const receipt = all('shopLifecycleReceipts', shopId).find(row => row.actorId === input.userId && row.kind === kind && row.digest === lookup);
+        return all('commands', shopId).filter(row => row.id === receipt?.commandId && canReadCommand(row));
     }
     const responseSchema = opMap[op]?.responseSchema;
     const schema = responseSchema?.replace(/ListResponse$|Response$/, '');
@@ -302,7 +310,7 @@ async function execute(request: MockRequest): Promise<MockResult> {
     }
     if (meta.permission)
         ensure(grantedPermissions(role).includes(meta.permission), 'Bạn không có quyền thực hiện thao tác này.', 403, 'FORBIDDEN');
-    const transition = request.op === 'closeShop' || request.op === 'reopenShop';
+    const transition = isShopTransition(request.op);
     if (transition) {
         ensure(role === 'owner' && Array.isArray(member?.roles) && member.roles.includes('owner'), 'Chỉ chủ cửa hàng được thay đổi trạng thái.', 403, 'FORBIDDEN');
         ensure(headers['idempotency-key'], 'Thiếu khóa chống gửi lặp.', 400, 'REQUIRED_HEADER');
@@ -393,7 +401,7 @@ async function execute(request: MockRequest): Promise<MockResult> {
         else formEntries.push([name, value]);
     }
     const canonicalBody = JSON.stringify({ path: request.path, body: request.body, form: formEntries, ...(transition ? { version: input.version } : {}) });
-    const bodyHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonicalBody))), byte => byte.toString(16).padStart(2, '0')).join('');
+    const bodyHash = await sha256Text(canonicalBody);
     if (mutating && headers['idempotency-key']) {
         const previous = seen.get(dedupeKey);
         if (previous) {
@@ -454,6 +462,11 @@ async function execute(request: MockRequest): Promise<MockResult> {
             const quote=record(data),order=find('orders',str(quote.orderId),shopId);
             data={...quote,shippingAddressSnapshot:visibleOrderAddress({customerId:order.customerId,shippingAddressSnapshot:quote.shippingAddressSnapshot},shopId).shippingAddressSnapshot};
         }
+        if (transition) {
+            const receipt = command(shopId, request.op, { type: 'shop', id: shopId });
+            (db.shopLifecycleReceipts ??= []).push({ shopId, actorId: input.userId, kind: request.op, commandId: receipt.id,
+                digest: await sha256Text(headers['idempotency-key']!) });
+        }
         const result: MockResult = { status: meta.status, data: meta.status === 204 ? undefined : data };
         if (fault === 'unknown' && mutating && meta.responseSchema === 'CommandResponse') {
             fault = 'none';
@@ -483,6 +496,10 @@ async function execute(request: MockRequest): Promise<MockResult> {
         if (request.op === 'evaluateReorder') record(data).result = null;
         if (mutating && headers['idempotency-key'])
             seen.set(dedupeKey, { body: bodyHash, response: structuredClone(result) });
+        if (transition && fault === 'unknown') {
+            fault = 'none';
+            return { ...result, dropResponse: true };
+        }
         return result;
     }
     catch (error) {
